@@ -1,4 +1,4 @@
-package com.upload.controller;
+package com.gmteam.upload.controller;
 
 import java.util.List;
 import java.util.Map;

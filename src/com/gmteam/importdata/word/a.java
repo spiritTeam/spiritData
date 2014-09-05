@@ -1,4 +1,4 @@
-package com.importdata.word;
+package com.gmteam.importdata.word;
 /** 
  * @author 
  * @version  

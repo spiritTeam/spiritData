@@ -1,4 +1,4 @@
-package com.analysis.word;
+package com.gmteam.analysis.word;
 /** 
  * @author 
  * @version  

@@ -1,4 +1,4 @@
-package com.analysis.db;
+package com.gmteam.matedata.db;
 /** 
  * @author 
  * @version  

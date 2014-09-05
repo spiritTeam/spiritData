@@ -1,4 +1,4 @@
-package com.matedata.word;
+package com.gmteam.importdata.db;
 /** 
  * @author 
  * @version  
