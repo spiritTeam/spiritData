@@ -1,0 +1,12 @@
+﻿/doc
+/WebContent/log
+/WebContent/WEB-INF/lib
+/WebContent/WEB-INF/classes
+/
+/pom.xml
+
+/.classpath
+/.project
+/target
+/test
+/build
