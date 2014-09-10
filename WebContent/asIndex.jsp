@@ -21,15 +21,6 @@
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/spiritui/themes/default/all.css"/>
 <style>
-#waittingArea {
-  position:absolute;
-  border:1px solid #BCCBDC;
-  width:505px;
-  height:305px;
-  top:230px;
-//  background-image:url(resources/images/waitting.gif);
-  display:none;
-}
 #fileIn {
   position:absolute;
   width:650px;
@@ -100,6 +91,45 @@
   height:130px;
   border:1px solid red;
 }
+
+/*休息等待区*/
+#waittingArea {
+  position:absolute;
+  border:1px solid #BCCBDC;
+  width:505px;
+  height:305px;
+  top:230px;
+//  background-image:url(resources/images/waitting.gif);
+  display:none;
+}
+#ppbar {
+  position:absolute;
+  width:505px;
+  height:35px;
+}
+#pp {
+  position:absolute;
+  width:435px;
+  top:6px;
+  left:20px;
+}
+#logshow {
+  position:absolute;
+  border-top:1px solid #BCCBDC;
+  width:505px;
+  height:269px;
+  top:35px;
+}
+#showResult {
+  position:absolute;
+  width:25px;
+  height:25px;
+  border:1px solid blue;
+  border-radius:3px;
+  top:4px;
+  left:473px;
+  background-image:url(resources/images/uploadIcon.gif)
+}
 </style>
 </head>
 
@@ -118,19 +148,27 @@
 
 <!-- 实际功能区中部 -->
 <div id="mainSegment">
-<div id="fileIn">
-  <div id="dayLogo"></div>
-  <div id="inForm"><form method="post" action="/abc/uploadtest.do" enctype="multipart/form-data" id="afUpload" target="tframe">
-    <input id="upf" name="upf" type=file style="display:none;" onchange="showFileInfo()"/>
-    <div id="upIcon" onclick="upIcon_clk();"></div>
-    <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>
-    <input id="su" type="button" value="分析一下" onclick="uploadF();"/>
-  </form></div>
-</div>
+  <div id="fileIn">
+    <div id="dayLogo"></div>
+    <div id="inForm"><form method="post" action="/abc/uploadtest.do" enctype="multipart/form-data" id="afUpload" target="tframe">
+      <input id="upf" name="upf" type=file style="display:none;" onchange="showFileInfo()"/>
+      <div id="upIcon" onclick="upIcon_clk();"></div>
+      <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>
+      <input id="su" type="button" value="分析一下" onclick="uploadF();"/>
+    </form></div>
+  </div>
 <!-- 等待提示区 -->
-<div id="waittingArea">
-<div >
-</div>
+  <div id="waittingArea">
+    <div id="ppbar">
+      <div id="pp"></div>
+      <div id="showResult" onclick="showResult();"></div>
+    </div>
+    <div id="logshow">
+      <p>abc</p>
+      <p>abc</p>
+      <p>1235234</p>
+    </div>
+  </div>
 </div>
 <iframe id="tframe" name="tframe" bordercolor=red frameborder="yes" border=1 width="600" height="200" style="width:600px;heigth:200px; boder:1px solid red;display:yes;"></iframe>
 
@@ -188,8 +226,12 @@ function uploadF() {
     if (form.encoding) form.encoding = 'multipart/form-data';    
     else form.enctype = 'multipart/form-data';
     $(form).submit();
-    analysizeing=true;//开始分析
-    $("#waittingArea").fadeIn(200);//等待提示区
+    //演示
+    {
+      analysizeing=true;//开始分析
+      $("#waittingArea").fadeIn(200);//等待提示区
+      showDemo();
+    }
   } catch(e) {
   	$.messager.alert("文件上传失败", e, "error");
   }
@@ -244,6 +286,71 @@ function myResize() {
     $("#waittingArea").css({"left": left});
   }
 };
+
+//demo
+function showDemo() {
+  $("#pp").progressbar();
+
+  var time=new Date();
+  var time1=time, time2=time;
+  var logInfo="";
+  var value = $("#pp").progressbar("getValue");
+  //上传
+  var stepStr = "上传文件...";
+  logInfo += "<p>"+time.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[001文件上传] 开始上传";
+  $("#logshow").html(logInfo);
+  function uploadFile() {
+    value = $("#pp").progressbar("getValue");
+    if (value<100){
+      value += Math.floor(Math.random() * 10);
+      if (value>100) value=100;
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+      setTimeout(arguments.callee, 100);
+    } else {
+      time2=new Date();
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[001文件上传] 文件上传成功，用时"+(time2-time1)+"毫秒";
+      $("#logshow").html(logInfo);
+      $("#pp").progressbar("setValue", 0);
+
+      stepStr="分析文件格式...";
+      analysisStructure();
+    }
+  };
+  uploadFile();
+
+  //分析结构
+  function analysisStructure() {
+    value = $("#pp").progressbar("getValue");
+    if (value==0) {
+      time2=new Date();
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 数据为电子表格(excel)文档";
+      $("#logshow").html(logInfo);
+      time2=new Date();
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 分析数据元数据结构";
+      $("#logshow").html(logInfo);
+
+      value += Math.floor(Math.random() * 10);
+      if (value>100) value=100;
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+      setTimeout(arguments.callee, 100);
+    } else if (value<100){
+      value += Math.floor(Math.random() * 10);
+      if (value>100) value=100;
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+      setTimeout(arguments.callee, 100);
+    } else {
+      time2=new Date();
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 元数据分析成功，用时"+(time2-time1)+"毫秒";
+      $("#logshow").html(logInfo);
+      $("#pp").progressbar("setValue", 0);
+    }
+  }
+//  while (process==true) {
+  	console.log("abc");
+//  }
+  $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
+
+}
 </script>
 </body>
 </html>
