@@ -220,7 +220,7 @@ function uploadF() {
   }
   try {
     var form = $('#afUpload');
-    $(form).attr('action', _PATH+'/uploadtest.do');
+    $(form).attr('action', _PATH+'/fileUpLoad.do');
     $(form).attr('method', 'POST');
     $(form).attr('target', 'tframe');
     if (form.encoding) form.encoding = 'multipart/form-data';    

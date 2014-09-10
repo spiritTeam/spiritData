@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="tableInfo" >
+  <resultMap id="BaseResultMap" type="TableInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="tableName" property="tableName" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select * from MD_TABLE_INFO
+  </select>
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from MD_TABLE_INFO
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="TableInfo" >
+    insert into MD_TABLE_INFO 
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tableName != null" >
+        tableName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="tableName != null" >
+        #{tableName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="TableInfo" >
+    update MD_TABLE_INFO
+    <set >
+      <if test="tableName != null" >
+        tableName = #{tableName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

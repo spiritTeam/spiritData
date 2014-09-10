@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="columnInfo" >
+  <resultMap id="BaseResultMap" type="ColumnInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="tableId" property="tableId" jdbcType="VARCHAR" />
+    <result column="titleIndex" property="titleIndex" jdbcType="INTEGER" />
+    <result column="titleName" property="titleName" jdbcType="VARCHAR" />
+    <result column="titleType" property="titleType" jdbcType="VARCHAR" />
+    <result column="pk" property="pk" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="getList" resultMap="BaseResultMap" >
+    select * from MD_COLUMN_INFO
+  </select>
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from MD_COLUMN_INFO
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="ColumnInfo" >
+    insert into MD_COLUMN_INFO
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tableId != null" >
+        tableId,
+      </if>
+      <if test="titleIndex != null" >
+        titleIndex,
+      </if>
+      <if test="titleName != null" >
+        titleName,
+      </if>
+      <if test="titleType != null" >
+        titleType,
+      </if>
+      <if test="pk != null" >
+        pk,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="tableId != null" >
+        #{tableId,jdbcType=VARCHAR},
+      </if>
+      <if test="titleIndex != null" >
+        #{titleIndex,jdbcType="INTEGER"},
+      </if>
+      <if test="titleName != null" >
+        #{titleName,jdbcType=VARCHAR},
+      </if>
+      <if test="titleType != null" >
+        #{titleType,jdbcType=VARCHAR},
+      </if>
+      <if test="pk != null" >
+        #{pk,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="ColumnInfo" >
+    update MD_COLUMN_INFO
+    <set >
+      <if test="tableId != null" >
+        tableId = #{tableId,jdbcType=VARCHAR},
+      </if>
+      <if test="titleIndex != null" >
+        titleIndex = #{titleIndex,jdbcType="INTEGER"},
+      </if>
+      <if test="titleName != null" >
+        titleName = #{titleName,jdbcType=VARCHAR},
+      </if>
+      <if test="titleType != null" >
+        titleType = #{titleType,jdbcType=VARCHAR},
+      </if>
+      <if test="pk != null" >
+        pk = #{pk,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

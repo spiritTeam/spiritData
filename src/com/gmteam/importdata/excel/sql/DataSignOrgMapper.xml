@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dataSignOrg" >
+	<resultMap id="BaseResultMap" type="DataSignOrg" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="tableId" property="tableId" jdbcType="VARCHAR" />
+    <result column="dataId" property="dataId" jdbcType="VARCHAR" />
+    <result column="sign" property="sign" jdbcType="VARCHAR" />
+  </resultMap>
+   <select id="getList" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select * from MD_DATA_SIGN_ORG
+  </select>
+  <insert id="insert" parameterType="DataSignOrg" >
+    insert into MD_DATA_SIGN_ORG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tableId != null" >
+        tableId,
+      </if>
+      <if test="dataId != null" >
+        dataId,
+      </if>
+      <if test="sign != null" >
+        sign,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="tableId != null" >
+        #{tableId,jdbcType=VARCHAR},
+      </if>
+      <if test="dataId != null" >
+        #{dataId,jdbcType=VARCHAR},
+      </if>
+      <if test="sign != null" >
+        #{sign,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>
