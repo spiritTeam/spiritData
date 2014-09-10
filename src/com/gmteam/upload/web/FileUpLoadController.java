@@ -1,9 +1,7 @@
-package com.gmteam.upload.controller;
+package com.gmteam.upload.web;
 
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.stereotype.Controller;
 
 import com.gmteam.framework.core.web.AbstractFileUploadController;
 
@@ -12,13 +10,21 @@ import com.gmteam.framework.core.web.AbstractFileUploadController;
  * @version  
  * 类说明 
  */
-@Controller
 public class FileUpLoadController extends AbstractFileUploadController {
-
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,
             Map<String, Object> arg1, Map<String, Object> arg2) {
-        
+        Map<String,Object> uploadInfoMap= uploadInfoMapList.get(0);
+        String uploadFileName = (String) uploadInfoMap.get("storeFilename");
+        String fileType = getFileType(uploadFileName);
+    }
+
+    private String getFileType(String uploadFileName) {
+        String fileType = uploadFileName.substring(uploadFileName.lastIndexOf("."),uploadFileName.length());
+        if(fileType.equals(".xls")||fileType.equals(".xlsx")){
+            
+        }
+        return fileType;
     }
 
     @Override
