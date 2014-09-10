@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dataUploadLog" >
+  <resultMap id="BaseResultMap" type="DataUploadLog" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="sourceFileName" property="sourceFileName" jdbcType="VARCHAR" />
+    <result column="uploadDate" property="uploadDate" jdbcType="DATE" />
+    <result column="uploadUser" property="uploadUser" jdbcType="VARCHAR" />
+    <result column="sheetSize" property="sheetSize" jdbcType="INTEGER" />
+    <result column="descn" property="descn" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select * from MD_DATA_UPLOAD_LOG
+  </select>
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from MD_DATA_UPLOAD_LOG
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="DataUploadLog" >
+    insert into MD_DATA_UPLOAD_LOG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="sourceFileName != null" >
+        sourceFileName,
+      </if>
+      <if test="uploadDate != null" >
+        uploadDate,
+      </if>
+      <if test="uploadUser != null" >
+        uploadUser,
+      </if>
+      <if test="descn != null" >
+        descn,
+      </if>
+      <if test="sheetSize != null" >
+        sheetSize,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceFileName != null" >
+        #{sourceFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadDate != null" >
+        #{uploadDate,jdbcType=DATE},
+      </if>
+      <if test="uploadUser != null" >
+        #{uploadUser,jdbcType=VARCHAR},
+      </if>
+      <if test="descn != null" >
+        #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="sheetSize != null" >
+        #{sheetSize,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="excute" parameterType="map" >
+  ${sql}
+  </update>
+  <select id="getPKList" resultType="String" parameterType="map" >
+  ${pKSql}
+  </select>
+  <select id="getDataIdList" resultType="String" parameterType="map" >
+  ${dataIdSql}
+  </select>
+  <update id="update" parameterType="DataUploadLog" >
+    update MD_DATA_UPLOAD_LOG
+    <set>
+      <if test="sourceFileName != null" >
+        sourceFileName = #{sourceFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadDate != null" >
+        uploadDate = #{uploadDate,jdbcType=DATE},
+      </if>
+      <if test="uploadUser != null" >
+        uploadUser = #{uploadUser,jdbcType=VARCHAR},
+      </if>
+      <if test="descn != null" >
+        descn = #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="sheetSize != null" >
+        sheetSize = #{sheetSize,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

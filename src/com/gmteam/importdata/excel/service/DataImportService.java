@@ -14,8 +14,8 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.gmteam.DataToolsConstants;
 import com.gmteam.cache.excel.ExcelCacheLifecycleUnit;
+import com.gmteam.constants.excel.ExcelConstants;
 import com.gmteam.contextattributes.excel.ExcelContentAttributes;
 import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
@@ -232,7 +232,7 @@ public  class DataImportService extends BaseObject {
     @SuppressWarnings("unchecked")
     public Map<String,Object> getColumnPk(List<ColumnInfo> columnInfoList) {
         Map<String,Object> map = new HashMap<String, Object>();
-        CacheEle<?> matchDataCacheEle = SystemCache.getCache(DataToolsConstants.DATATOOLS_METADATA_CATCH_STORE);
+        CacheEle<?> matchDataCacheEle = SystemCache.getCache(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE);
         Map<String,Object> matchDataCacheContent = (Map<String, Object>) matchDataCacheEle.getContent();
         List<MetaInfo> metaInfoList = (List<MetaInfo>) matchDataCacheContent.get("metaInfoList");
         if(metaInfoList==null||metaInfoList.size()==0){
@@ -286,7 +286,7 @@ public  class DataImportService extends BaseObject {
     @SuppressWarnings({ "unchecked" })
     public Map<String,Object> matchData(ExcelContentAttributes saveAttributes) {
         Map<String,Object> map = new HashMap<String, Object>();
-        CacheEle<?> matchDataCacheEle = SystemCache.getCache(DataToolsConstants.DATATOOLS_METADATA_CATCH_STORE);
+        CacheEle<?> matchDataCacheEle = SystemCache.getCache(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE);
         Map<String,Object> matchDataCacheContent = (Map<String, Object>) matchDataCacheEle.getContent();
         List<MetaInfo> metaInfoList = (List<MetaInfo>) matchDataCacheContent.get("metaInfoList");
         int m = metaInfoList.size();
@@ -361,7 +361,7 @@ public  class DataImportService extends BaseObject {
     @Resource
     ExcelCacheLifecycleUnit bclu;
     public void refulshCache() {
-        bclu.refresh(DataToolsConstants.DATATOOLS_METADATA_CATCH_STORE);
+        bclu.refresh(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE);
     }
     @Resource
     DataSignOrgService dataSignOrgService;
@@ -433,8 +433,8 @@ public  class DataImportService extends BaseObject {
     public void putUploadDataInCache(Map<SheetInfo, Object[][]> dataMap, ExcelContentAttributes saveAttributes, String cacheId) throws Exception {
         try {
             Map<String, Object> moStore = new HashMap<String,Object>();
-            moStore.put(DataToolsConstants.DATATOOLS_UPLOADDATA_DATAMAP_NAME, dataMap);
-            moStore.put(DataToolsConstants.DATATOOLS_UPLOADDATA_SAVEATTRIBUTE_NAME, saveAttributes);
+            moStore.put(ExcelConstants.DATATOOLS_UPLOADDATA_DATAMAP_NAME, dataMap);
+            moStore.put(ExcelConstants.DATATOOLS_UPLOADDATA_SAVEATTRIBUTE_NAME, saveAttributes);
             SystemCache.setCache(new CacheEle<Map<String, Object>>(cacheId, "模块", moStore));
         } catch(Exception e) {
             throw new Exception("upload信息放入缓存中失败{DataTools[MateData_UploadData]}失败：", e);

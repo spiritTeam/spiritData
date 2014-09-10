@@ -1,10 +1,10 @@
-package com.gmteam;
+package com.gmteam.constants.excel;
 /** 
  * @author 
  * @version  
  * 类说明 
  */
-public class DataToolsConstants {
+public class ExcelConstants {
     //缓存MetaData
     public final static String DATATOOLS_METADATA_CATCH_STORE="DataTools_MetaData";//模块及系统权限
     //缓存上传数据

@@ -7,8 +7,8 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.gmteam.DataToolsConstants;
 import com.gmteam.cache.excel.service.ExcelCacheService;
+import com.gmteam.constants.excel.ExcelConstants;
 import com.gmteam.framework.core.cache.AbstractCacheLifecycleUnit;
 import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
@@ -37,7 +37,7 @@ public class ExcelCacheLifecycleUnit extends AbstractCacheLifecycleUnit {
     public void loadMateDataCache() throws Exception {
         try {
             Map<String,Object> moStore = dataToolsCacheService.getResultMap(); 
-            SystemCache.setCache(new CacheEle<Map<String, Object>>(DataToolsConstants.DATATOOLS_METADATA_CATCH_STORE, "模块", moStore));
+            SystemCache.setCache(new CacheEle<Map<String, Object>>(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE, "模块", moStore));
         } catch(Exception e) {
             throw new Exception("加载缓存项{DataTools[MateData-储存]}失败：", e);
         }
@@ -50,8 +50,8 @@ public class ExcelCacheLifecycleUnit extends AbstractCacheLifecycleUnit {
     public void refresh(String key) {
         try {
             CacheEle<?> rce;
-            if (key.equals(DataToolsConstants.DATATOOLS_METADATA_CATCH_STORE)) {
-                rce = (CacheEle<?>)SystemCache.remove(DataToolsConstants.DATATOOLS_METADATA_CATCH_STORE);
+            if (key.equals(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE)) {
+                rce = (CacheEle<?>)SystemCache.remove(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE);
                 key = rce.getName();
                 loadMateDataCache();
             }
