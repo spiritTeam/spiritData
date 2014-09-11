@@ -16,13 +16,12 @@ public class FileUpLoadController extends AbstractFileUploadController {
             Map<String, Object> arg1, Map<String, Object> arg2) {
         Map<String,Object> uploadInfoMap= uploadInfoMapList.get(0);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
-        String fileType = getFileType(uploadFileName);
+        //String fileType = getFileType(uploadFileName);
     }
 
     private String getFileType(String uploadFileName) {
         String fileType = uploadFileName.substring(uploadFileName.lastIndexOf("."),uploadFileName.length());
         if(fileType.equals(".xls")||fileType.equals(".xlsx")){
-            
         }
         return fileType;
     }
@@ -33,5 +32,5 @@ public class FileUpLoadController extends AbstractFileUploadController {
             Map<String, Object> arg2) {
         return null;
     }
-
+    
 }
