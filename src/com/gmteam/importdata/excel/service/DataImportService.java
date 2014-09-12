@@ -14,12 +14,12 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.gmteam.cache.excel.ExcelCacheLifecycleUnit;
-import com.gmteam.constants.excel.ExcelConstants;
-import com.gmteam.contextattributes.excel.ExcelContentAttributes;
 import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.framework.core.model.BaseObject;
+import com.gmteam.importdata.excel.ExcelConstants;
+import com.gmteam.importdata.excel.ExcelContentAttributes;
+import com.gmteam.importdata.excel.cache.ExcelCacheLifecycleUnit;
 import com.gmteam.importdata.excel.pojo.ColumnInfo;
 import com.gmteam.importdata.excel.pojo.DataSignOrg;
 import com.gmteam.importdata.excel.pojo.DataUploadLog;
@@ -32,8 +32,8 @@ import com.gmteam.importdata.excel.service.pojoservice.LogTableOrgService;
 import com.gmteam.importdata.excel.service.pojoservice.TableInfoService;
 import com.gmteam.importdata.excel.util.CommonUtils;
 import com.gmteam.importdata.excel.util.SheetInfo;
-import com.gmteam.matedata.excel.MetaColumnInfo;
-import com.gmteam.matedata.excel.MetaInfo;
+import com.gmteam.matedata.relation.excel.MetaColumnInfo;
+import com.gmteam.matedata.relation.excel.MetaInfo;
 
 import org.apache.commons.dbcp.BasicDataSource;
 /** 

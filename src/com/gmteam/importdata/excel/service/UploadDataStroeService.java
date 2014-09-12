@@ -10,10 +10,10 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.gmteam.contextattributes.excel.ExcelContentAttributes;
 import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.framework.core.model.BaseObject;
+import com.gmteam.importdata.excel.ExcelContentAttributes;
 import com.gmteam.importdata.excel.pojo.ColumnInfo;
 import com.gmteam.importdata.excel.pojo.DataSignOrg;
 import com.gmteam.importdata.excel.pojo.PkNameCacheIdSign;
