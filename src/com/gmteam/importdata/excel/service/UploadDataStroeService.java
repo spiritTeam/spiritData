@@ -37,23 +37,23 @@ public class UploadDataStroeService extends BaseObject {
     @Resource
     DataImportService dataImportService;
     @SuppressWarnings("unchecked")
-    public SaveResultInfo saveInDB(ExcelContentAttributes saveAttributes, Map<String, Object> uploadDataMap, Map<SheetInfo, Object[][]> dataMap){
+    public SaveResultInfo saveInDB(ExcelContentAttributes contentAttributes, Map<String, Object> uploadDataMap, Map<SheetInfo, Object[][]> dataMap){
         SaveResultInfo saveResultInfo = new SaveResultInfo();
-        String sheetName = saveAttributes.getSheetName();
+        String sheetName = contentAttributes.getSheetName();
         Integer allRows = 0;
         Integer insertRows = 0;
-        Map<String,Object> uploadInfoMap = saveAttributes.getUploadInfoMap();
+        Map<String,Object> uploadInfoMap = contentAttributes.getUploadInfoMap();
         Integer sheetSize = dataMap.size();
         /**上传日志id*/
         String logId = dataImportService.saveFileUploadLog(uploadInfoMap,sheetSize);
-        saveAttributes.setLogId(logId);
+        contentAttributes.setLogId(logId);
         /**数据map*/
         Iterator<SheetInfo> it = dataMap.keySet().iterator();
         while(it.hasNext()){
             SheetInfo sheetInfo = it.next();
             if(sheetName.equals(sheetInfo.getSheetName())){
                 Integer sheetIndex = sheetInfo.getSheetIndex();
-                saveAttributes.setSheetIndex(sheetIndex);
+                contentAttributes.setSheetIndex(sheetIndex);
                 Object[][] sheetData = dataMap.get(sheetInfo);
                 allRows = sheetData.length-2;
                 /**列标题*/
@@ -74,7 +74,7 @@ public class UploadDataStroeService extends BaseObject {
                         dataTypeAry =  sheetData[i];
                     }
                 }
-                saveAttributes.setDataList(dataList);
+                contentAttributes.setDataList(dataList);
                 List<ColumnInfo> columnInfoList = new ArrayList<ColumnInfo>();
                 for(int i=0;i<title.length;i++){
                     ColumnInfo mci = new ColumnInfo();
@@ -83,7 +83,7 @@ public class UploadDataStroeService extends BaseObject {
                     mci.setTitleType(dataTypeAry[i]+"");
                     columnInfoList.add(mci);
                 }
-                saveAttributes.setColumnInfo(columnInfoList);
+                contentAttributes.setColumnInfo(columnInfoList);
                 /***/
                 String tableName = "";
                 String tableId = "";
@@ -93,7 +93,7 @@ public class UploadDataStroeService extends BaseObject {
                      * 获取判断结果(判断数据表是否与excel类型一样)
                      * 并编排excel数据的对应顺序
                      */
-                    Map<String,Object> matchInfoMap = dataImportService.matchData(saveAttributes);
+                    Map<String,Object> matchInfoMap = dataImportService.matchData(contentAttributes);
                     /**
                     * 包含
                     */
@@ -106,36 +106,36 @@ public class UploadDataStroeService extends BaseObject {
                         * 放入调整顺序后的dataList
                         */
                        List<Object[]> newDataList = (List<Object[]>) matchInfoMap.get("newDataList");
-                       saveAttributes.setDataList(newDataList);
-                       saveAttributes.setTableName(tableName);
-                       saveAttributes.setTableId(tableId);
+                       contentAttributes.setDataList(newDataList);
+                       contentAttributes.setTableName(tableName);
+                       contentAttributes.setTableId(tableId);
                        /**
                         * 返回null,标识不包含Sign,返回不是null，包含返回一个map
                         */
-                       Map<String,Object> resultMap = includeSign(saveAttributes,matchInfoMap,tableId);
+                       Map<String,Object> resultMap = includeSign(contentAttributes,matchInfoMap,tableId);
                        if(resultMap!=null){
                            /**
                             * 包含sign，
                             * 如果pk重复update，pk不重复，insert
                             */
-                           insertRows = dataImportService.insertData(saveAttributes,resultMap);
+                           insertRows = dataImportService.insertData(contentAttributes,resultMap);
                        }else{
                            /**
                             * 不包含sign的，执行insert
                             */
                            //储存Table与log关系信息
-                           dataImportService.saveLogTableOrgInfo(saveAttributes);
+                           dataImportService.saveLogTableOrgInfo(contentAttributes);
                            //保存数据
-                           dataIdList = dataImportService.insertData(saveAttributes);
+                           dataIdList = dataImportService.insertData(contentAttributes);
                            insertRows = dataIdList.size();
-                           saveAttributes.setDataIdList(dataIdList);
-                           dataImportService.saveDataSignOrg(saveAttributes);
+                           contentAttributes.setDataIdList(dataIdList);
+                           dataImportService.saveDataSignOrg(contentAttributes);
                        }
                    }else{
                        /**
                         * 不包含
                         */
-                       String pkName = saveAttributes.getPkName();
+                       String pkName = contentAttributes.getPkName();
                        Integer pkIndex = 0;
                        for(int i=0;i<title.length;i++){
                            if(title[i].equals(pkName)){
@@ -147,20 +147,20 @@ public class UploadDataStroeService extends BaseObject {
                        String repeatMessage = (String) checkResultMap.get("repeatMessage");
                        if(nullMessage==null&&repeatMessage==null){
                            //创建数据表，并插入数据
-                           tableName = dataImportService.createDataTable(saveAttributes);
-                           saveAttributes.setTableName(tableName);
+                           tableName = dataImportService.createDataTable(contentAttributes);
+                           contentAttributes.setTableName(tableName);
                            //储存表信息
-                           tableId = dataImportService.saveTitleInfo(saveAttributes);
-                           saveAttributes.setTableId(tableId);
+                           tableId = dataImportService.saveTableInfo(contentAttributes);
+                           contentAttributes.setTableId(tableId);
                            //储存列信息
-                           dataImportService.saveColumnInfo(saveAttributes);
+                           dataImportService.saveColumnInfo(contentAttributes);
                            //储存Table与log关系信息
-                           dataImportService.saveLogTableOrgInfo(saveAttributes);
+                           dataImportService.saveLogTableOrgInfo(contentAttributes);
                            //储存数据
-                           dataIdList = dataImportService.insertData(saveAttributes);
+                           dataIdList = dataImportService.insertData(contentAttributes);
                            insertRows = dataIdList.size();
-                           saveAttributes.setDataIdList(dataIdList);
-                           dataImportService.saveDataSignOrg(saveAttributes);
+                           contentAttributes.setDataIdList(dataIdList);
+                           dataImportService.saveDataSignOrg(contentAttributes);
                        }else{
                            saveResultInfo.setSheetName(sheetName);
                            saveResultInfo.setSaveResult(false);
@@ -187,14 +187,14 @@ public class UploadDataStroeService extends BaseObject {
     }
     /**
      * 判断是否包含Sgin
-     * @param saveAttributes 
+     * @param contentAttributes 
      * @param matchInfoMap 
      * @param tableId 
      */
     @SuppressWarnings("unchecked")
-    private Map<String,Object> includeSign(ExcelContentAttributes saveAttributes, Map<String, Object> matchInfoMap, String tableId) {
+    private Map<String,Object> includeSign(ExcelContentAttributes contentAttributes, Map<String, Object> matchInfoMap, String tableId) {
         Map<String,Object> resultMap = new HashMap<String, Object>();
-        String sign = saveAttributes.getSign();
+        String sign = contentAttributes.getSign();
         Map<String,Object> matchDataCacheContentMap = (Map<String, Object>) matchInfoMap.get("matchDataCacheContent");
         Map<String,Map<Integer,Map<String,String>>> pkListMap = (Map<String,Map<Integer,Map<String,String>>>) matchDataCacheContentMap.get("pkListMap");
         Map<String,List<DataSignOrg>> dataSignOrgMap = (Map<String, List<DataSignOrg>>) matchDataCacheContentMap.get("dataSignOrgMap");

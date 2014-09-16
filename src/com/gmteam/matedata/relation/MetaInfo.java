@@ -1,4 +1,4 @@
-package com.gmteam.matedata.relation.excel;
+package com.gmteam.matedata.relation;
 
 import java.util.List;
 import org.springframework.stereotype.Component;

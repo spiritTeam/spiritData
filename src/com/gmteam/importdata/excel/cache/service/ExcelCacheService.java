@@ -22,8 +22,8 @@ import com.gmteam.importdata.excel.service.pojoservice.DataSignOrgService;
 import com.gmteam.importdata.excel.service.pojoservice.DataUploadLogService;
 import com.gmteam.importdata.excel.service.pojoservice.TableInfoService;
 import com.gmteam.importdata.excel.util.CommonUtils;
-import com.gmteam.matedata.relation.excel.MetaColumnInfo;
-import com.gmteam.matedata.relation.excel.MetaInfo;
+import com.gmteam.matedata.relation.MetaColumnInfo;
+import com.gmteam.matedata.relation.MetaInfo;
 
 /** 
  * @author 

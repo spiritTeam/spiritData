@@ -32,8 +32,8 @@ import com.gmteam.importdata.excel.service.pojoservice.LogTableOrgService;
 import com.gmteam.importdata.excel.service.pojoservice.TableInfoService;
 import com.gmteam.importdata.excel.util.CommonUtils;
 import com.gmteam.importdata.excel.util.SheetInfo;
-import com.gmteam.matedata.relation.excel.MetaColumnInfo;
-import com.gmteam.matedata.relation.excel.MetaInfo;
+import com.gmteam.matedata.relation.MetaColumnInfo;
+import com.gmteam.matedata.relation.MetaInfo;
 
 import org.apache.commons.dbcp.BasicDataSource;
 /** 
@@ -53,14 +53,14 @@ public  class DataImportService extends BaseObject {
      * 获得上传记录Service
      */
     @Resource
-    private DataUploadLogService  bulService;
+    private DataUploadLogService  dataUploadLogService;
     /**
      * commonutils，用于获取uuid
      * 和截取的序列
      */
     CommonUtils cu = new CommonUtils();
     /**
-     * 保存上传日志
+     * 保存上传记录
      * @param uploadInfoMap
      * @param sheetSize 
      * @return
@@ -80,20 +80,17 @@ public  class DataImportService extends BaseObject {
         dataUploadLog.setUploadDate(new Date());
         dataUploadLog.setSheetSize(sheetSize);
         dataUploadLog.setDescn("测试存入");
-        bulService.insertUploadLog(dataUploadLog);
+        dataUploadLogService.insertUploadLog(dataUploadLog);
         return uuid;
     }
     /**
-     * 动态创建datetable
-     * @param title
-     * @param dataList
-     * @param logId
+     * 动态创建Datetable
      * @throws Exception 
      */
-    public String createDataTable(ExcelContentAttributes saveAttributes) throws Exception {
-        List<ColumnInfo> metaColumnInfoList = saveAttributes.getColumnInfo();
+    public String createDataTable(ExcelContentAttributes contentAttributes) throws Exception {
+        List<ColumnInfo> metaColumnInfoList = contentAttributes.getColumnInfo();
         int columnSize = metaColumnInfoList.size();
-        String tableName = "MD_TAB_"+cu.getUUID2TableSeq(saveAttributes.getLogId())+saveAttributes.getSheetIndex();
+        String tableName = "MD_TAB_"+cu.getUUID2TableSeq(contentAttributes.getLogId())+contentAttributes.getSheetIndex();
         StringBuffer sbSQl = new StringBuffer("create table "+tableName+"( id varchar2(200) primary key,");
         for(int i=0;i<columnSize;i++){
             String columnName = "column"+metaColumnInfoList.get(i).getTitleIndex();
@@ -113,36 +110,37 @@ public  class DataImportService extends BaseObject {
         }
         Map<String , Object> map=new HashMap<String , Object>();
         map.put("sql",sbSQl.toString()); 
-        bulService.createDataTableInfo(map);
+        dataUploadLogService.createDataTableInfo(map);
         //向新建data表中插入数据
         return tableName;
     }
     /**
-     * 保存Title到columnInfo
-     * @param title
-     * @param tableName 
+     * 保存Title到tableInfo
      */
     @Resource
     private TableInfoService tis;
     @Resource
     private ColumnInfoService cis;
-    public String saveTitleInfo(ExcelContentAttributes metaInfo) throws SQLException {
+    public String saveTableInfo(ExcelContentAttributes excelContentAttributes) throws SQLException {
         TableInfo ti = new TableInfo();
         String tableId = cu.getUUID();
         ti.setId(tableId);
-        ti.setTableName(metaInfo.getTableName());
+        ti.setTableName(excelContentAttributes.getTableName());
         tis.insertTableInfo(ti);
         return tableId;
-       
     }
+    /**
+     *日志与数据表关系，可以根据上传日志找到
+     *对应的数据表
+     */
     @Resource
-    private LogTableOrgService ltos;
-    public void saveLogTableOrgInfo(ExcelContentAttributes metaInfo) {
+    private LogTableOrgService logTableOrgService;
+    public void saveLogTableOrgInfo(ExcelContentAttributes excelContentAttributes) {
         LogTableOrg lto = new LogTableOrg();
         lto.setId(cu.getUUID());
-        lto.setLogId(metaInfo.getLogId());
-        lto.setTableId(metaInfo.getTableId());
-        ltos.insertLogTableOrg(lto);
+        lto.setLogId(excelContentAttributes.getLogId());
+        lto.setTableId(excelContentAttributes.getTableId());
+        logTableOrgService.insertLogTableOrg(lto);
     }
     /**
      * 向data表中插入数据
@@ -150,17 +148,17 @@ public  class DataImportService extends BaseObject {
      * @param tableName
      * @param lO,metaInfo, "metaDataName"
      */
-    public List<String> insertData(ExcelContentAttributes saveAttributes) {
+    public List<String> insertData(ExcelContentAttributes contentAttributes) {
         List<String> dataIdList = new ArrayList<String>();
         Connection insertDataConn = null;
         PreparedStatement ps = null;
         try {
             insertDataConn = ds.getConnection();
             String formatDate;
-            for(Object[] o:saveAttributes.getDataList()){
+            for(Object[] o:contentAttributes.getDataList()){
                 String dataId = cu.getUUID();
                 dataIdList.add(dataId);
-                StringBuffer sbSql = new StringBuffer("insert into "+saveAttributes.getTableName()+" values('"+dataId+"',");
+                StringBuffer sbSql = new StringBuffer("insert into "+contentAttributes.getTableName()+" values('"+dataId+"',");
                 for(int i=0;i<o.length;i++){
                     Object oo = o[i];
                     if(oo!=null&&!oo.equals("")&&(oo.getClass()+"").equals("class java.util.Date")){
@@ -192,19 +190,23 @@ public  class DataImportService extends BaseObject {
             cu.closeConn(insertDataConn, ps, null);
         }
     }
-    public void saveColumnInfo(ExcelContentAttributes saveAttributes) {
-        List<ColumnInfo> metaColumnInfoList = saveAttributes.getColumnInfo(); 
+    /**
+     * 保存列信息，如列类型，列
+     * @param contentAttributes
+     */
+    public void saveColumnInfo(ExcelContentAttributes contentAttributes) {
+        List<ColumnInfo> metaColumnInfoList = contentAttributes.getColumnInfo(); 
         int columnSize = metaColumnInfoList.size();
         Connection saveColumnInfoConn = null;
         PreparedStatement ps = null;
         try {
             String sql = "insert into MD_COLUMN_INFO(id,tableId,titleIndex,titleName,titleType,pk) values(?,?,?,?,?,?)";
-            String pkName = saveAttributes.getPkName();
+            String pkName = contentAttributes.getPkName();
             saveColumnInfoConn = ds.getConnection();
             ps = saveColumnInfoConn.prepareStatement(sql);
             for(int i=0;i<columnSize;i++){
                 ps.setObject(1, cu.getUUID());
-                ps.setObject(2, saveAttributes.getTableId());
+                ps.setObject(2, contentAttributes.getTableId());
                 ps.setObject(3, metaColumnInfoList.get(i).getTitleIndex()); 
                 ps.setObject(4, metaColumnInfoList.get(i).getTitleName());
                 ps.setObject(5, metaColumnInfoList.get(i).getTitleType());
@@ -280,11 +282,11 @@ public  class DataImportService extends BaseObject {
     }
     /**
      * 比对是结构，如果结构相符，进行数据的正确排序
-     * @param saveAttributes
+     * @param contentAttributes
      * @return
      */
     @SuppressWarnings({ "unchecked" })
-    public Map<String,Object> matchData(ExcelContentAttributes saveAttributes) {
+    public Map<String,Object> matchData(ExcelContentAttributes contentAttributes) {
         Map<String,Object> map = new HashMap<String, Object>();
         CacheEle<?> matchDataCacheEle = SystemCache.getCache(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE);
         Map<String,Object> matchDataCacheContent = (Map<String, Object>) matchDataCacheEle.getContent();
@@ -301,7 +303,7 @@ public  class DataImportService extends BaseObject {
         for(int i=0;i<metaInfoList.size();i++){
             MetaInfo metaInfo = metaInfoList.get(i);
             List<MetaColumnInfo> metaColumnInfoList = metaInfo.getMateColumnInfo();
-            List<ColumnInfo> columnList = saveAttributes.getColumnInfo();
+            List<ColumnInfo> columnList = contentAttributes.getColumnInfo();
             int columnSize = columnList.size();
             if(metaColumnInfoList.size()==columnSize){
                 int flag = columnSize;
@@ -319,7 +321,7 @@ public  class DataImportService extends BaseObject {
                         map.put("dataTableName", tableName);
                         map.put("tableId", tableId);
                         map.put("matchDataCacheContent", matchDataCacheContent);
-                        List<Object[]> newDataList = reviseDataIndex(metaColumnInfoList,saveAttributes);
+                        List<Object[]> newDataList = reviseDataIndex(metaColumnInfoList,contentAttributes);
                         map.put("newDataList", newDataList);
                         return map;
                     }
@@ -329,12 +331,18 @@ public  class DataImportService extends BaseObject {
         map.put("Match", false);
         return map; 
     }
-    private List<Object[]> reviseDataIndex(List<MetaColumnInfo> metaColumnInfoList,ExcelContentAttributes saveAttributes) {
+    /**
+     * 调整列的顺序
+     * @param metaColumnInfoList
+     * @param contentAttributes
+     * @return
+     */
+    private List<Object[]> reviseDataIndex(List<MetaColumnInfo> metaColumnInfoList,ExcelContentAttributes contentAttributes) {
         List<Object[]> newDataList = new ArrayList<Object[]>();
         /**
          * 得到新数据的列信息
          */
-        List<ColumnInfo> columnList = saveAttributes.getColumnInfo();
+        List<ColumnInfo> columnList = contentAttributes.getColumnInfo();
         /**
          * 吧列名和列index放入Map中
          */
@@ -347,7 +355,7 @@ public  class DataImportService extends BaseObject {
             int k = columnInfoMap.get(metaColumnInfoList.get(i).getTitleName());
             indexList.add(k);
         }
-        List<Object[]> dataList = saveAttributes.getDataList();
+        List<Object[]> dataList = contentAttributes.getDataList();
         for(Object[] oldDataArray: dataList){
             Object[] newDataArray = new Object[oldDataArray.length];
             for(int i=0;i<indexList.size();i++){
@@ -358,32 +366,41 @@ public  class DataImportService extends BaseObject {
         }
         return newDataList;
     }
+    /**
+     * 刷新缓存
+     */
     @Resource
-    ExcelCacheLifecycleUnit bclu;
+    ExcelCacheLifecycleUnit excelCacheLifecycleUnit;
     public void refulshCache() {
-        bclu.refresh(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE);
+        excelCacheLifecycleUnit.refresh(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE);
     }
+    /**
+     * 保存数据与数据标识关系
+     */
     @Resource
     DataSignOrgService dataSignOrgService;
-    public void saveDataSignOrg(ExcelContentAttributes saveAttributes) {
-        List<String> dataIdList = saveAttributes.getDataIdList();
+    public void saveDataSignOrg(ExcelContentAttributes contentAttributes) {
+        List<String> dataIdList = contentAttributes.getDataIdList();
         for(int i=0;i<dataIdList.size();i++){
             DataSignOrg dataSignOrg = new DataSignOrg();
             dataSignOrg.setId(cu.getUUID());
-            dataSignOrg.setTableId(saveAttributes.getTableId());
+            dataSignOrg.setTableId(contentAttributes.getTableId());
             dataSignOrg.setDataId(dataIdList.get(i));
-            dataSignOrg.setSign(saveAttributes.getSign());
+            dataSignOrg.setSign(contentAttributes.getSign());
             dataSignOrgService.insertDataSignOrg(dataSignOrg);
         }
     }
     /**
-     * 得到Title集合，得到columnInfo集合
-     * 得到数据
+     * 根据读取的数据，得到想要的数据
      * @param dataMap
      * @return
      */
     public List<Map<String, Object>> getTitle_ColumnInfo_DataListMap(Map<SheetInfo, Object[][]> dataMap) {
+        /**
+         * 返回一个map的集合，每一个map为一个sheet的对应信息
+         */
         List<Map<String, Object>> titlePkMapList = new ArrayList<Map<String,Object>>();
+        /**迭代数据map，key=sheetInfo,val=dataArray*/
         Iterator<SheetInfo> it = dataMap.keySet().iterator();
         while(it.hasNext()){
             List<String> titleList = new ArrayList<String>();
@@ -395,6 +412,7 @@ public  class DataImportService extends BaseObject {
             for(Object o :tt){
                 titleList.add((String) o);
             }
+            /**放入标题*/
             titlePkMap.put("titleList", titleList);
             List<ColumnInfo> columnInfoList = new ArrayList<ColumnInfo>();
             String[] title = new String[tt.length] ;
@@ -403,7 +421,9 @@ public  class DataImportService extends BaseObject {
             }
             /**组装列信息*/
             Object[] dataTypeAry = dataArray[dataArray.length-1];
+            /**sheetName*/
             String sheetName = sheetInfo.getSheetName();
+            /**组装columnInfoList，用于匹配缓存中的数据 */
             for(int i=0;i<title.length;i++){
                 ColumnInfo mci = new ColumnInfo();
                 mci.setTitleIndex(i);
@@ -411,6 +431,7 @@ public  class DataImportService extends BaseObject {
                 mci.setTitleType(dataTypeAry[i]+"");
                 columnInfoList.add(mci);
             }
+            /**放入columnInfoList，用于匹配缓存中的数据 */
             titlePkMap.put("columnInfoList", columnInfoList);
             /**获得数据*/
             List<Object[]> dataList = new ArrayList<Object[]>();
@@ -424,17 +445,17 @@ public  class DataImportService extends BaseObject {
         return titlePkMapList;
     }
     /**
-     * 吧数据放入缓存中
+     * 把数据放入缓存中
      * @param dataMap
-     * @param saveAttributes
+     * @param contentAttributes
      * @param cacheId
      * @throws Exception
      */
-    public void putUploadDataInCache(Map<SheetInfo, Object[][]> dataMap, ExcelContentAttributes saveAttributes, String cacheId) throws Exception {
+    public void putUploadDataInCache(Map<SheetInfo, Object[][]> dataMap, ExcelContentAttributes contentAttributes, String cacheId) throws Exception {
         try {
             Map<String, Object> moStore = new HashMap<String,Object>();
             moStore.put(ExcelConstants.DATATOOLS_UPLOADDATA_DATAMAP_NAME, dataMap);
-            moStore.put(ExcelConstants.DATATOOLS_UPLOADDATA_SAVEATTRIBUTE_NAME, saveAttributes);
+            moStore.put(ExcelConstants.DATATOOLS_UPLOADDATA_SAVEATTRIBUTE_NAME, contentAttributes);
             SystemCache.setCache(new CacheEle<Map<String, Object>>(cacheId, "模块", moStore));
         } catch(Exception e) {
             throw new Exception("upload信息放入缓存中失败{DataTools[MateData_UploadData]}失败：", e);
@@ -442,12 +463,12 @@ public  class DataImportService extends BaseObject {
     }
     /**
      * 
-     * @param saveAttributes
+     * @param contentAttributes
      * @param resultMap
      * @throws SQLException 
      */
     @SuppressWarnings({ "unused", "unchecked" })
-    public int insertData(ExcelContentAttributes saveAttributes,Map<String, Object> resultMap)  {
+    public int insertData(ExcelContentAttributes contentAttributes,Map<String, Object> resultMap)  {
         /**
          * 获取比对数据
          * targetDataSignOrgList，
@@ -456,7 +477,7 @@ public  class DataImportService extends BaseObject {
         int insertRows = 0;
         List<DataSignOrg> targetDataSignOrgList = (List<DataSignOrg>) resultMap.get("targetDataSignOrgList");
         Map<Integer, Map<String, String>> targetDataIdPkMap = (Map<Integer, Map<String, String>>) resultMap.get("targetDataIdPkMap");
-        String tableName = saveAttributes.getTableName();
+        String tableName = contentAttributes.getTableName();
         Iterator<Integer> it = targetDataIdPkMap.keySet().iterator();
         Connection conn =null;
         PreparedStatement ps = null;
@@ -468,7 +489,7 @@ public  class DataImportService extends BaseObject {
                 /**
                  * 获取元数据,插入或更新数据
                  */
-                List<Object[]> dataList = saveAttributes.getDataList();
+                List<Object[]> dataList = contentAttributes.getDataList();
                 List<String> insetDataIdList = new ArrayList<String>();
                 conn = ds.getConnection();
                 String formatDate;
@@ -526,8 +547,8 @@ public  class DataImportService extends BaseObject {
                         ps = conn.prepareStatement(sbUpdateSql.toString());
                         ps.executeUpdate();
                     }
-                    saveAttributes.setDataIdList(insetDataIdList);
-                    saveDataSignOrg(saveAttributes);
+                    contentAttributes.setDataIdList(insetDataIdList);
+                    saveDataSignOrg(contentAttributes);
                 }
             }
             cu.closeConn(conn, ps, null);

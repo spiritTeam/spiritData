@@ -1,4 +1,4 @@
-package com.gmteam.matedata.relation.excel;
+package com.gmteam.matedata.relation;
 /** 
  * @author 
  * @version  
