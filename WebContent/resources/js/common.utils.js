@@ -151,14 +151,14 @@ function formField2Object(formId) {
 }
 
 function jqueryColor2HexColor(jqueryColor) {
-	var rgb = jqueryColor.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-	if (!rgb) return "#FFFFFF";
-	if (rgb.length!=4) return "#FFFFFF";
-	rgb= "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-	return rgb;
-	function hex(x) {
-	  return ("0" + parseInt(x).toString(16)).slice(-2);
-	};
+  var rgb = jqueryColor.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  if (!rgb) return "#FFFFFF";
+  if (rgb.length!=4) return "#FFFFFF";
+  rgb= "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+  return rgb;
+  function hex(x) {
+    return ("0" + parseInt(x).toString(16)).slice(-2);
+  };
 }
 
 /**
@@ -184,7 +184,13 @@ Date.prototype.Format = function(fmt) {
   };
   if (/(y+)/.test(fmt)) fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
   for(var k in o) {
-    if(new RegExp("("+ k +")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length))); 
+    if(new RegExp("("+ k +")").test(fmt)) {
+      if (k=="S") {
+      	fmt = fmt.replace("S", ("00"+o["S"]).substr(("00"+o["S"]).length-3));
+      } else {
+        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length))); 
+      }
+    }
   }
   return fmt;
 }

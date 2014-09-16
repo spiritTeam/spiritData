@@ -119,6 +119,7 @@
   width:505px;
   height:269px;
   top:35px;
+  overflow-y:auto;
 }
 #showResult {
   position:absolute;
@@ -164,9 +165,6 @@
       <div id="showResult" onclick="showResult();"></div>
     </div>
     <div id="logshow">
-      <p>abc</p>
-      <p>abc</p>
-      <p>1235234</p>
     </div>
   </div>
 </div>
@@ -215,8 +213,8 @@ function showFileInfo() {
 //文件上传
 function uploadF() {
   if ($("#upfs").val()==_promptMessage) {
-  	 $("#upf").click();
-  	return;
+    $("#upf").click();
+    return;
   }
   try {
     var form = $('#afUpload');
@@ -233,7 +231,7 @@ function uploadF() {
       showDemo();
     }
   } catch(e) {
-  	$.messager.alert("文件上传失败", e, "error");
+    $.messager.alert("文件上传失败", e, "error");
   }
 }
 
@@ -246,16 +244,17 @@ $(function() {
   };
   $("#upfs").val(_promptMessage);
   $("#su").mouseover(function(){
-  	if ($("#upfs").val()!=_promptMessage) {
+    if ($("#upfs").val()!=_promptMessage) {
       $(this).attr("title", "");
       $(this).css({"color":"yellow", "background-color":"#81FC6A"});
-  	} else {
+    } else {
       $(this).attr("title", "请先上传文件");
-  	}
+    }
   }).mouseout(function(){
     $(this).css({"color":"white", "background-color":"#36B148"});
   });
 });
+
 //初始化界面
 function initPosition() {//注意，不要在此设置topSegment/mainSegment/footSegment等框架元素的宽高等，否则，页面不会自动进行调整
   //控制中心区域图片
@@ -295,10 +294,13 @@ function showDemo() {
   var time1=time, time2=time;
   var logInfo="";
   var value = $("#pp").progressbar("getValue");
+
   //上传
   var stepStr = "上传文件...";
   logInfo += "<p>"+time.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[001文件上传] 开始上传";
   $("#logshow").html(logInfo);
+  uploadFile();
+
   function uploadFile() {
     value = $("#pp").progressbar("getValue");
     if (value<100){
@@ -310,15 +312,23 @@ function showDemo() {
       time2=new Date();
       logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[001文件上传] 文件上传成功，用时"+(time2-time1)+"毫秒";
       $("#logshow").html(logInfo);
-      $("#pp").progressbar("setValue", 0);
 
-      stepStr="分析文件格式...";
+      stepStr="分析数据结构...";
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
       analysisStructure();
     }
   };
-  uploadFile();
 
-  //分析结构
+  //结构分析
+  mdSys =['有3个页签(sheet)可供分析'
+    ,'页签"人员"(sheet1)元数据分析...'
+    ,'页签"人员"(sheet1)元数据分析完成，符合导入标准，已匹配现有元数据'
+    ,'页签"案件"(sheet2)元数据分析...'
+    ,'页签"案件"(sheet2)元数据分析完成，符合导入标准，不匹配现有元数据'
+    ,'页签"统计"(sheet3)元数据分析...'
+    ,'页签"统计"(sheet3)元数据分析完成，不符合导入标准，此页签信息无法导入'
+  ];
+  var i=0;
   function analysisStructure() {
     value = $("#pp").progressbar("getValue");
     if (value==0) {
@@ -326,30 +336,72 @@ function showDemo() {
       logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 数据为电子表格(excel)文档";
       $("#logshow").html(logInfo);
       time2=new Date();
-      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 分析数据元数据结构";
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 分析元数据结构";
       $("#logshow").html(logInfo);
 
-      value += Math.floor(Math.random() * 10);
+      value += Math.floor(Math.random()*10);
       if (value>100) value=100;
-      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+      $("#pp").progressbar("setValue", value);
       setTimeout(arguments.callee, 100);
     } else if (value<100){
-      value += Math.floor(Math.random() * 10);
+      value += Math.floor(Math.random()*10);
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+      if (i<=6) {
+        logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] "+mdSys[i++];
+        $("#logshow").html(logInfo);
+      }
       if (value>100) value=100;
       $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
       setTimeout(arguments.callee, 100);
     } else {
+      if (i<6) {
+        for (;i<6;i++) {
+          logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] "+mdSys[i++];
+          $("#logshow").html(logInfo);
+        }
+      }
       time2=new Date();
       logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 元数据分析成功，用时"+(time2-time1)+"毫秒";
       $("#logshow").html(logInfo);
-      $("#pp").progressbar("setValue", 0);
+
+      stepStr="元数据语意分析...";
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
+      analysisContent();
     }
   }
-//  while (process==true) {
-  	console.log("abc");
-//  }
-  $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
 
+  //语意分析
+  dcSys =[
+    '分析"人员"(sheet1)元数据语意...'
+    ,'"人员"(sheet1)元数据语意分析完成，列(SFZ)为身份证，列(JG)为字典项'
+    ,'分析"案件"(sheet2)元数据语意...'
+    ,'"案件"(sheet2)元数据语意分析完成，列(SFZ)为身份证，列(JG)为字典项'
+  ];
+  var i=0;
+  function analysisContent() {
+    value = $("#pp").progressbar("getValue");
+    if (value==0) {
+      time2=new Date();
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003元数据语意分析] 数据为电子表格(excel)文档";
+      $("#logshow").html(logInfo);
+      time2=new Date();
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003元数据语意分析] 分析元数据语意";
+      $("#logshow").html(logInfo);
+
+      value += Math.floor(Math.random()*10);
+      if (value>100) value=100;
+      $("#pp").progressbar("setValue", value);
+    } else if (value<100){
+    } else {
+      time2=new Date();
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003元数据语意分析] 元数据语意分析成功，用时"+(time2-time1)+"毫秒";
+      $("#logshow").html(logInfo);
+
+      stepStr="数据导入...";
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
+      analysisContent();
+    }
+  }
 }
 </script>
 </body>
