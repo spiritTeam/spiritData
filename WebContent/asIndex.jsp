@@ -151,7 +151,7 @@
 <div id="mainSegment">
   <div id="fileIn">
     <div id="dayLogo"></div>
-    <div id="inForm"><form method="post" action="/abc/uploadtest.do" enctype="multipart/form-data" id="afUpload" target="tframe">
+    <div id="inForm"><form method="post" action="/sa/uploadtest.do" enctype="multipart/form-data" id="afUpload" target="tframe">
       <input id="upf" name="upf" type=file style="display:none;" onchange="showFileInfo()"/>
       <div id="upIcon" onclick="upIcon_clk();"></div>
       <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>
@@ -218,7 +218,7 @@ function uploadF() {
   }
   try {
     var form = $('#afUpload');
-    $(form).attr('action', _PATH+'/fileUpLoad.do');
+    $(form).attr('action', _PATH+'/uploadtest.do');
     $(form).attr('method', 'POST');
     $(form).attr('target', 'tframe');
     if (form.encoding) form.encoding = 'multipart/form-data';    
@@ -294,6 +294,7 @@ function showDemo() {
   var time1=time, time2=time;
   var logInfo="";
   var value = $("#pp").progressbar("getValue");
+  var i=0;
 
   //上传
   var stepStr = "上传文件...";
@@ -312,15 +313,16 @@ function showDemo() {
       time2=new Date();
       logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[001文件上传] 文件上传成功，用时"+(time2-time1)+"毫秒";
       $("#logshow").html(logInfo);
-
-      stepStr="分析数据结构...";
       $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
+
+      i=0;
+      stepStr="分析元数据结构...";
       analysisStructure();
     }
   };
 
   //结构分析
-  mdSys =['有3个页签(sheet)可供分析'
+  var mdSys =['有3个页签(sheet)可供分析'
     ,'页签"人员"(sheet1)元数据分析...'
     ,'页签"人员"(sheet1)元数据分析完成，符合导入标准，已匹配现有元数据'
     ,'页签"案件"(sheet2)元数据分析...'
@@ -328,26 +330,27 @@ function showDemo() {
     ,'页签"统计"(sheet3)元数据分析...'
     ,'页签"统计"(sheet3)元数据分析完成，不符合导入标准，此页签信息无法导入'
   ];
-  var i=0;
   function analysisStructure() {
     value = $("#pp").progressbar("getValue");
     if (value==0) {
       time2=new Date();
-      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 数据为电子表格(excel)文档";
+      time1=time2;
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002元数据结构分析] 数据为电子表格(excel)文档";
       $("#logshow").html(logInfo);
       time2=new Date();
-      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 分析元数据结构";
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002元数据结构分析] 分析元数据结构";
       $("#logshow").html(logInfo);
 
       value += Math.floor(Math.random()*10);
       if (value>100) value=100;
       $("#pp").progressbar("setValue", value);
+
       setTimeout(arguments.callee, 100);
     } else if (value<100){
       value += Math.floor(Math.random()*10);
       $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
       if (i<=6) {
-        logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] "+mdSys[i++];
+        logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002元数据结构分析] "+mdSys[i++];
         $("#logshow").html(logInfo);
       }
       if (value>100) value=100;
@@ -356,50 +359,158 @@ function showDemo() {
     } else {
       if (i<6) {
         for (;i<6;i++) {
-          logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] "+mdSys[i++];
+          logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002元数据结构分析] "+mdSys[i++];
           $("#logshow").html(logInfo);
         }
       }
       time2=new Date();
-      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002数据结构分析] 元数据分析成功，用时"+(time2-time1)+"毫秒";
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[002元数据结构分析] 元数据分析成功，用时"+(time2-time1)+"毫秒";
       $("#logshow").html(logInfo);
-
-      stepStr="元数据语意分析...";
       $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
-      analysisContent();
+
+      i=0;
+      stepStr="数据导入...";
+      importData();
     }
   }
 
-  //语意分析
-  dcSys =[
-    '分析"人员"(sheet1)元数据语意...'
-    ,'"人员"(sheet1)元数据语意分析完成，列(SFZ)为身份证，列(JG)为字典项'
-    ,'分析"案件"(sheet2)元数据语意...'
-    ,'"案件"(sheet2)元数据语意分析完成，列(SFZ)为身份证，列(JG)为字典项'
+  //结构分析
+  var imSys =[
+    '导入"人员"(sheet1)数据...'
+    ,'导入"人员"(sheet1)数据成功'
+    ,'导入"案件"(sheet2)数据...'
+    ,'导入"案件"(sheet2)数据成功'
   ];
-  var i=0;
-  function analysisContent() {
+  function importData() {
     value = $("#pp").progressbar("getValue");
     if (value==0) {
       time2=new Date();
-      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003元数据语意分析] 数据为电子表格(excel)文档";
-      $("#logshow").html(logInfo);
-      time2=new Date();
-      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003元数据语意分析] 分析元数据语意";
+      time1=time2;
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003数据导入] 开始导入数据";
       $("#logshow").html(logInfo);
 
       value += Math.floor(Math.random()*10);
       if (value>100) value=100;
       $("#pp").progressbar("setValue", value);
+
+      setTimeout(arguments.callee, 100);
     } else if (value<100){
+      value += Math.floor(Math.random()*10);
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+      if (i<=3) {
+        logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003数据导入] "+imSys[i++];
+        $("#logshow").html(logInfo);
+      }
+      if (value>100) value=100;
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+
+      setTimeout(arguments.callee, 100);
     } else {
+      if (i<3) {
+        for (;i<3;i++) {
+          logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003数据导入] "+imSys[i++];
+          $("#logshow").html(logInfo);
+        }
+      }
       time2=new Date();
-      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003元数据语意分析] 元数据语意分析成功，用时"+(time2-time1)+"毫秒";
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[003数据导入] 数据导入成功，用时"+(time2-time1)+"毫秒";
+      $("#logshow").html(logInfo);
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
+
+      i=0;
+      stepStr="分析元数据语意...";
+      analysisContent();
+    }
+  }
+
+  //语意分析
+  var dcSys =[
+    '分析"人员"(sheet1)元数据语意...'
+    ,'"人员"(sheet1)元数据语意分析完成，列(SFZ)为身份证，列(JG)为字典项'
+    ,'分析"案件"(sheet2)元数据语意...'
+    ,'"案件"(sheet2)元数据语意分析完成，列(SFZ)为身份证，列(AJLX)为字典项'
+  ];
+  function analysisContent() {
+    value = $("#pp").progressbar("getValue");
+    if (value==0) {
+      time2=new Date();
+      time1=time2;
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[004元数据语意分析] 开始分析元数据语义";
       $("#logshow").html(logInfo);
 
-      stepStr="数据导入...";
+      value += Math.floor(Math.random()*10);
+      if (value>100) value=100;
+      $("#pp").progressbar("setValue", value);
+
+      setTimeout(arguments.callee, 100);
+    } else if (value<100){
+      value += Math.floor(Math.random()*10);
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+      if (i<=3) {
+        logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[004元数据语义分析] "+dcSys[i++];
+        $("#logshow").html(logInfo);
+      }
+      if (value>100) value=100;
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+
+      setTimeout(arguments.callee, 100);
+    } else {
+      if (i<3) {
+        for (;i<3;i++) {
+          logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[004元数据语义分析] "+dcSys[i++];
+          $("#logshow").html(logInfo);
+        }
+      }
+      time2=new Date();
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[004元数据语义分析] 元数据语义分析成功，用时"+(time2-time1)+"毫秒";
+      $("#logshow").html(logInfo);
       $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
-      analysisContent();
+
+      i=0;
+      stepStr="单项数据分析...";
+      singleAnalysis();
+    }
+  }
+
+  function singleAnalysis() {
+    value = $("#pp").progressbar("getValue");
+    if (value==0) {
+      time2=new Date();
+      time1=time2;
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[005单项数据分析] 开始单项数据分析";
+      $("#logshow").html(logInfo);
+
+      value += Math.floor(Math.random()*10);
+      if (value>100) value=100;
+      $("#pp").progressbar("setValue", value);
+
+      setTimeout(arguments.callee, 100);
+    } else if (value<100){
+      value += Math.floor(Math.random()*10);
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+//      if (i<=3) {
+//        logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[004元数据语义分析] "+dcSys[i++];
+//        $("#logshow").html(logInfo);
+//      }
+      if (value>100) value=100;
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":value});
+
+      setTimeout(arguments.callee, 100);
+    } else {
+//      if (i<3) {
+//        for (;i<3;i++) {
+//          logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[004元数据语义分析] "+dcSys[i++];
+//          $("#logshow").html(logInfo);
+//        }
+//      }
+      time2=new Date();
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[005单项数据分析] 单项数据分析成功，用时"+(time2-time1)+"毫秒";
+      $("#logshow").html(logInfo);
+      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
+
+      i=0;
+      stepStr="...";
+      //singleAnalysis();
     }
   }
 }
