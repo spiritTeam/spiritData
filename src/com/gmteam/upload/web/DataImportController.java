@@ -40,6 +40,24 @@ public class DataImportController extends AbstractFileUploadController {
         ExcelContentAttributes contentAttributes = new ExcelContentAttributes();
         /**上传路径id*/
         String filePath = (String) uploadInfoMap.get("storeFilename");
+        int fileDataType = 1;//spachFile(filePath)===={分析扩展名，决定处理类型}
+        switch(fileDataType) {
+        case 1://exc
+            //peu = new SaPoiExecl("c:\e1.xls");
+            //peu2 = new SaPoiExecl("c:\e2.xlsx");
+            //Map<Sheet, SheetMdata> re = peu.anMdata();
+            //PoiExeclUtil.getXSSFRowMd(row)
+            //PoiExeclUtil.getHSSFRowMd(row)
+            //1分析数据的元数据；
+            //  metaDatas = PoiExeclUtil.anMdata(filePath);
+            //2根据元数据调整系统元数据结构
+            //  = RelationData.dealMd(metaData, user)
+            //3- RelationData.insertData(metaDataId, peu, sheetIndex)
+          break;
+        case 2:
+          break;
+        
+        }
         contentAttributes.setSavePath(filePath);
         /**poi类*/
         Object poi = new HSSFPoiUtil();
