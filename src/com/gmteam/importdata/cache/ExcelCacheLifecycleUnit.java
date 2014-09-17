@@ -1,4 +1,4 @@
-package com.gmteam.importdata.excel.cache;
+package com.gmteam.importdata.cache;
 
 import java.util.Map;
 
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import com.gmteam.framework.core.cache.AbstractCacheLifecycleUnit;
 import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
+import com.gmteam.importdata.cache.service.ExcelCacheService;
 import com.gmteam.importdata.excel.ExcelConstants;
-import com.gmteam.importdata.excel.cache.service.ExcelCacheService;
 /**
  * 简报缓存生命周期
  * @author mht
