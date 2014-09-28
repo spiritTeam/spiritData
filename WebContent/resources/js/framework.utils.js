@@ -35,6 +35,22 @@ function openWin(winOption) {
 }
 
 /**
+ * 创建并打开简单模态窗口
+ * @param winOption是一个js对象，目前支持如下参数
+ * winOption.title 窗口标题
+ * winOption.url 窗口内嵌的iframe的url
+ * winOption.height 窗口高度
+ * winOption.width 窗口宽度
+ * winOption.minButton 最小化窗口按钮是否显示
+ * winOption.expandAttr 窗口的扩展属性，可定义iframe的id，是javaScript对象，如expandAttr={"frameID":"iframeID"}
+ * @returns 返回生成窗口的UUID
+ */
+function openSWin(winOption) {
+  var mainPage = getMainPage();
+  if (mainPage) return mainPage.newSWin(winOption);
+}
+
+/**
  * 关闭并销毁窗口
  * @param winId 窗口的ID
  */

@@ -168,12 +168,13 @@
     </div>
   </div>
 </div>
-<iframe id="tframe" name="tframe" bordercolor=red frameborder="yes" border=1 width="600" height="200" style="width:600px;heigth:200px; boder:1px solid red;display:yes;"></iframe>
+<iframe id="tframe" name="tframe" bordercolor=red frameborder="yes" border=1 width="600" height="200" style="width:600px;heigth:200px; boder:1px solid red;display:none;"></iframe>
 
 <script>
 //提示信息
 var _promptMessage="点击选择分析的文件";
 var analysizeing=false;
+var _suClicked=false;
 
 //主窗口参数
 var INIT_PARAM = {
@@ -189,7 +190,7 @@ var INIT_PARAM = {
   top_height: 30, //顶部高度
   top_peg: true,
 
-  foot_height: 30, //脚部高度
+  foot_height: 75, //脚部高度
   foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
 
   win_min_width: 800, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分宽度也照此设置
@@ -200,6 +201,7 @@ var INIT_PARAM = {
 
 //点击大的输入框
 function upfs_clk() {
+  _suClicked=false;
   if ($("#upfs").val()==_promptMessage) $("#upf").click();
 };
 //点击上传按钮
@@ -209,10 +211,12 @@ function upIcon_clk() {
 //显示选择的文件名称
 function showFileInfo() {
   $("#upfs").val($("#upf").val());
+  if (_suClicked) uploadF();
 };
 //文件上传
 function uploadF() {
   if ($("#upfs").val()==_promptMessage) {
+  	_suClicked=true;
     $("#upf").click();
     return;
   }
@@ -506,13 +510,18 @@ function showDemo() {
       time2=new Date();
       logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[005单项数据分析] 单项数据分析成功，用时"+(time2-time1)+"毫秒";
       $("#logshow").html(logInfo);
-      $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
+      //$("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
 
       i=0;
       stepStr="...";
       //singleAnalysis();
+      showResult();
     }
   }
+}
+
+function showResult() {
+  openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
 }
 </script>
 </body>

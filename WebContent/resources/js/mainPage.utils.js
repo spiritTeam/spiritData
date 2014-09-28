@@ -9,6 +9,8 @@ var IS_MAINPAGE=true;
  * 打开windows的数组
  */
 var winArray = [];
+var _Zindex = 1000;
+var winMask = null;
 
 /**
  * 得到窗口的ID
@@ -70,6 +72,7 @@ function newWin(winOption) {
     if (winOption.expandAttr.frameID) $(newWin).attr("id", winOption.expandAttr.frameID);
   }
   $(newWin).appendTo($(newWinDiv));
+
   //esayUi win处理
   var top = ($(window).height() - parseInt(winOption.height?winOption.height:0))*0.5;
   if (winOption.top&&winOption.top!=""&&((parseInt(winOption.top)+"")!="NaN")) top=parseInt(winOption.top);
@@ -80,8 +83,8 @@ function newWin(winOption) {
     width: parseInt(winOption.width?winOption.width:400),
     height: parseInt(winOption.height?winOption.height:300),
     top: top,
-    left: left,     
-    modal: winOption.modal?winOption.modal:true,
+    left: left,
+    modal: ((winOption.modal==undefined)?true:winOption.modal),
     collapsible: false,
     shadow: true,
     closed: true,
@@ -119,7 +122,100 @@ function newWin(winOption) {
   }
   $(newWinDiv).attr("winID", _uuid);
   $(newWinDiv).window("open");
-  $(newWinDiv).expandAttr = expandAttr;
+  if (winOption.expandAttr) $(newWinDiv).expandAttr = winOption.expandAttr;
+  //全局变量处理
+  winArray.push({"winID": _uuid, "winOBJ": $(newWinDiv)});
+  return _uuid;
+}
+
+
+/**
+ * 创建并打开简单模态窗口
+ * @param winOption是一个js对象，目前支持如下参数
+ * winOption.title 窗口标题
+ * winOption.url 窗口内嵌的iframe的url
+ * winOption.height 窗口高度
+ * winOption.width 窗口宽度
+ * winOption.minButton 最小化窗口按钮是否显示
+ * winOption.expandAttr 窗口的扩展属性，可定义iframe的id，是javaScript对象，如expandAttr={"frameID":"iframeID"}
+ * @returns 返回生成窗口的UUID
+ */
+function newSWin(winOption) {
+  if (!winOption) {
+    $.messager.alert('新建窗口错误','请指定窗口参数!','error');
+    return ;
+  } else {
+    if (!winOption.url) {
+      $.messager.alert('新建窗口错误','窗口参数url必须指定!','error');
+      return ;
+    }
+  }
+  //得到UUID
+  var _uuid = getWinUUID();
+  if (!_uuid) return;
+  //遮罩
+  if (winMask==null) {
+  	winMask=window.document.createElement("div");
+    $(winMask).appendTo($("body"));
+  }
+  $(winMask).css({
+  	width:$(window).width(),
+    height:$(window).height(),
+    top:0,
+    left:0,
+    border:"solid 0px",
+    position:"absolute",
+    "background-color": "#EBEBEB",
+    zIndex:_Zindex++,
+    display:"none",
+    "filter":"alpha(opacity=70)",
+    "-moz-opacity":"0.7",
+    "opacity":"0.7"
+  }).attr("id", "winMask");
+  $(winMask).show();
+
+  //在顶层窗口创建对象
+  var newWinDiv = window.document.createElement("div");
+  var newWin = window.document.createElement("iframe");
+  $(newWin).attr("width", winOption.width?winOption.width:400).attr("height", winOption.height?winOption.height:300)
+    .attr("scrolling", "auto")
+    .attr("frameborder", "no")
+    .attr("src", winOption.url.indexOf("?")==-1?winOption.url+"?_winID="+_uuid:winOption.url+"&_winID="+_uuid);
+  if (winOption.expandAttr) {
+    if (winOption.expandAttr.frameID) $(newWin).attr("id", winOption.expandAttr.frameID);
+  }
+  $(newWin).appendTo($(newWinDiv));
+  var top = ($(window).height() - parseInt(winOption.height?winOption.height:0))*0.5;
+  if (winOption.top&&winOption.top!=""&&((parseInt(winOption.top)+"")!="NaN")) top=parseInt(winOption.top);
+  var left = ($(window).width() - parseInt(winOption.width?winOption.width:0))*0.5;
+  if (winOption.left&&winOption.left!=""&&((parseInt(winOption.left)+"")!="NaN")) left=parseInt(winOption.left);
+  $(newWinDiv).css({
+    width: parseInt(winOption.width?winOption.width:400),
+    height: parseInt(winOption.height?winOption.height:300),
+    top: top,
+    left: left,
+    border: "solid 1px #36B148",
+    position:"absolute",
+    zIndex:_Zindex++,
+    display:"none"
+  }).attr("id", _uuid);
+  //按钮调整
+  //最小化按钮
+  var btnBar = window.document.createElement("div");
+  $(btnBar).appendTo($(newWinDiv));
+  $(btnBar).css({
+  	border: "solid 1px red",
+    position:"absolute",
+  	width: 80,
+  	height: 40,
+  	left:900,
+  	top:0
+  });
+//  $(btnBar).hide();
+  if (winOption.expandAttr) $(newWinDiv).expandAttr = winOption.expandAttr;
+  $(newWinDiv).attr("winID", _uuid);
+  $(newWinDiv).appendTo($("body"));
+  $(newWinDiv).show();
   //全局变量处理
   winArray.push({"winID": _uuid, "winOBJ": $(newWinDiv)});
   return _uuid;
