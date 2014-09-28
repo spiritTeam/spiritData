@@ -1,0 +1,10 @@
+{"total":1,"rows":[
+  {"mdName":"ID","mdType":"字符串","mdDetail":"2","mdMemo":"唯一列，可做主键"},
+  {"mdName":"名称","mdType":"字符串","mdDetail":"2","mdMemo":"可能是中文名称，可能性98%"},
+  {"mdName":"SFZ","mdType":"字符串","mdDetail":"2","mdMemo":"可能是身份证，可能性99%"},
+  {"mdName":"性别","mdType":"字符串","mdDetail":"1","mdMemo":"字典项"},
+  {"mdName":"籍贯","mdType":"字符串","mdDetail":"1","mdMemo":"字典项"},
+  {"mdName":"出生日期","mdType":"日期","mdDetail":"4","mdMemo":"唯一列"},
+  {"mdName":"政治面貌","mdType":"未知","mdDetail":"-1","mdMemo":"此元数据列为空，数据抛弃"},
+  {"mdName":"其他","mdType":"未知","mdDetail":"-1","mdMemo":"此元数据列数据格式混乱，数据抛弃"}
+]}

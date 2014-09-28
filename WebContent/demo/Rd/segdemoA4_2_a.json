@@ -1,0 +1,12 @@
+{"total":1,"rows":[
+  {"mdName":"ID","mdType":"字符串","mdDetail":"2","mdMemo":"唯一列，用作主键","mdRange":"长度(32->32)","mdNullV":"0%"},
+  {"mdName":"案件编号","mdType":"字符串","mdDetail":"2","mdMemo":"唯一列","mdRange":"长度(12->12)","mdNullV":"2%"},
+  {"mdName":"接报派出所","mdType":"字符串","mdDetail":"1","mdMemo":"字典项","mdRange":"长度(14->22)，压缩率(23%)","mdNullV":"4%"},
+  {"mdName":"接报派出所编号","mdType":"字符串","mdDetail":"1","mdMemo":"字典项","mdRange":"长度(10->10)，压缩率(23%)","mdNullV":"4%"},
+  {"mdName":"案件类别","mdType":"字符串","mdDetail":"1","mdMemo":"字典项","mdRange":"长度(6->7)，压缩率(24%)","mdNullV":"2%"},
+  {"mdName":"报案金额","mdType":"数值","mdDetail":"3","mdMemo":"","mdRange":"从(125)到(100000)","mdNullV":"78%"},
+  {"mdName":"发现形式","mdType":"字符串","mdDetail":"1","mdMemo":"字典项","mdRange":"长度(6->7)，压缩率(24%)","mdNullV":"2%"},
+  {"mdName":"发案地址","mdType":"字符串","mdDetail":"2","mdMemo":"","mdRange":"长度(6->24)","mdNullV":"35%"},
+  {"mdName":"发案时间","mdType":"日期-时间","mdDetail":"5","mdMemo":"","mdRange":"从(2013-09-28)到(2013-10-30)","mdNullV":"2%"},
+  {"mdName":"录入时间","mdType":"日期-时间","mdDetail":"5","mdMemo":"","mdRange":"从(2013-10-08)到(2013-10-31)","mdNullV":"2%"}
+]}

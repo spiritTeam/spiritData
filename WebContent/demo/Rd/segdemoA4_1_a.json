@@ -1,0 +1,8 @@
+{"total":1,"rows":[
+  {"mdName":"ID","mdType":"字符串","mdDetail":"2","mdMemo":"唯一列，用作主键","mdRange":"长度(32->32)","mdNullV":"0%"},
+  {"mdName":"名称","mdType":"字符串","mdDetail":"2","mdMemo":"中文名称，可能性98%","mdRange":"长度(2->4)","mdNullV":"2%"},
+  {"mdName":"SFZ","mdType":"字符串","mdDetail":"2","mdMemo":"身份证，可能性99%","mdRange":"长度(13->18)","mdNullV":"2%"},
+  {"mdName":"性别","mdType":"字符串","mdDetail":"1","mdMemo":"字典项","mdRange":"长度(2->2)，压缩率(34%)","mdNullV":"6%"},
+  {"mdName":"籍贯","mdType":"字符串","mdDetail":"1","mdMemo":"字典项","mdRange":"长度(2->8)，压缩率(67%)","mdNullV":"35%"},
+  {"mdName":"出生日期","mdType":"日期","mdDetail":"4","mdMemo":"","mdRange":"从(1934-10-07)到(2013-12-22)","mdNullV":"2%"}
+]}
