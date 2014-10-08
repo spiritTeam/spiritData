@@ -13,7 +13,7 @@ import com.gmteam.spiritdata.matedata.relation.MetaInfo;
 /** 
  * @author mht
  * @version  
- * 类说明  2007+
+ * 类说明  2007 +
  */
 public class XSSFWorkBookImpl implements IPoiUtils {
     /**workbook*/
