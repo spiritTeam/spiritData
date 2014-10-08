@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.excel.util.proxy;
+package com.gmteam.spiritdata.importdata.proxy;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +23,6 @@ public class HSSFWorkBookImpl implements IPoiUtils{
     }
     @Override
     public Object getMDList() throws Exception {
-        // TODO Auto-generated method stub
         return null;
     }
 }

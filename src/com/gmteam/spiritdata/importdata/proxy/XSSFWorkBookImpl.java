@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.excel.util.proxy;
+package com.gmteam.spiritdata.importdata.proxy;
 
 import java.io.File;
 import java.io.FileInputStream;

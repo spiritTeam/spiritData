@@ -1,9 +1,9 @@
-package com.gmteam.spiritdata.importdata.excel.util.proxy;
+package com.gmteam.spiritdata.importdata.proxy;
 
 /** 
  * @author mht
  * @version  
- * 类说明 代理类接口
+ * 类说明 excel接口类
  */
 public interface IPoiUtils {
     /**
@@ -12,5 +12,10 @@ public interface IPoiUtils {
      * @return
      */
     public Object getWorkBook()throws Exception;
+    /**
+     * 返回一个mdList
+     * @return
+     * @throws Exception
+     */
     public Object getMDList()throws Exception;
 }
