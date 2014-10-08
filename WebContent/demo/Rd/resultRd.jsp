@@ -20,6 +20,7 @@
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.pie.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.categories.js"></script>
+<script type="text/javascript" src="<%=path%>/resources/plugins/Chart.min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mySpiritUi/pageFrame.css"/>
 
@@ -349,6 +350,18 @@ body {
   <div id="seg2frag4" class="segConteent">
     <div class="subTitle">4、时间指标分析</div>
     <ul>
+      <li>
+        <div><span style="font-weight:bold;">“案件”按[发案时间]</span>分析，当月分布情况如下:</div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA2_4_a" style="width:590px;height:180px;"></div></div>
+      </li>
+      <li>
+        <div><span style="font-weight:bold;">“案件”按[发案时间]发案数量</span>分析，月同环比情况如下:</div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA2_4_c" style="width:590px;height:180px;"></div></div>
+      </li>
+      <li>
+        <div><span style="font-weight:bold;">“案件”按[发案时间][报案金额]</span>分析，月同环比情况如下:</div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA2_4_b" style="width:590px;height:180px;"></div></div>
+      </li>
     </ul>
   </div>
 </div>
@@ -374,6 +387,22 @@ body {
           </thead>
         </table>
         </div>
+      </li>
+      <li>
+        <div>“人员”元数据质量如下：</div>
+        <div style="padding:3px 0 3px 5px;"><table><tr>
+        <td><div style="width:432px;height:180px;border:1px solid #95B8E7;padding:5px;">
+          <p>数据稀疏率：11%，达到良好水平。</p>
+          <p>数据语义质量：90%，达到良好水平。其中{出生日期}判断为生日，其中有12%数据不准确。</p>
+          <p>数据更新率：20%，不经常更新，最近一次更新32天前。</p>
+          <p>数据使用率：70%，经常参与分析，最近一次分析0天前。</p>
+          <p>数据关联性：0%，未发现与其关联的其他数据。</p>
+          <p></p>
+        </div></td>
+        <td><div style="width:210px;height:180px;border:1px solid #95B8E7;padding:5px;margin-left:5px;">
+          <canvas id="chartA4_1_a" height="170" width="170"></canvas>
+        </div></td>
+        </tr></table></div>
       </li>
       <li>
         <div>“案件”元数据结构如下：</div>
@@ -700,6 +729,140 @@ $(function() {
       tickDecimals:0
     },
     legend:{show:false}
+  });
+
+  $.plot("#chartA1_4_f", [
+      {label:"值", data:[["w1",120],["w2",340],["w3",300],["w4",240]], bars:{
+        show:true,
+        barWidth: 0.3,
+        align: "center",
+        fill:0.3
+      }, lines:{show:false}, points:{show:false}},
+      {label:"增长率", data:[null,["w2",240],["w3",200],["w4",340]], lines:{show:true}, points:{show:false}}
+    ], {
+    series: {
+      lines: { show: true },
+      points: { show: true }
+    },
+    xaxis: {
+      mode: "categories",
+      autoscaleMargin: 0.05,
+      tickLength: 0
+    },
+    yaxis:{
+      show:true,
+      position:'left',
+      tickLength:40,
+      tickDecimals:0
+    },
+    legend:{show:true}
+  });
+
+  $.plot("#chartA1_4_g", [
+      {label:"入室盗窃", data:[["w1",3],["w2",6],["w3",2],["w4",12]]},
+      {label:"诈骗", data:[["w1",2],["w2",3],["w3",1],["w4",0]]},
+      {label:"抢夺", data:[["w1",1],["w2",0],["w3",0],["w4",3]]},
+      {label:"抢劫", data:[["w1",1],["w2",0],["w3",0],["w4",0]]},
+      {label:"扒窃", data:[["w1",3],["w2",6],["w3",3],["w4",8]]},
+      {label:"故意伤害", data:[["w1",0],["w2",2],["w3",0],["w4",0]]}
+    ], {
+    series: {
+      lines: { show: true },
+      points: { show: true }
+    },
+    xaxis: {
+      mode: "categories",
+      autoscaleMargin: 0.05,
+      tickLength: 0
+    },
+    yaxis:{
+      show:true,
+      position:'left',
+      tickLength:40,
+      tickDecimals:0
+    },
+    legend:{show:true}
+  });
+
+  $.plot("#chartA2_4_a", [
+      {label:"当月", data:[["9-28",12],["9-29",34],["9-30",30],["9-31",24],["10-1",3],["10-2",5],["10-3",7],["10-4",10],["10-5",11],["10-6",23],["10-7",34],["10-8",56],["10-9",34]]}
+    ], {
+    series: {
+      lines: { show: true },
+      points: { show: true }
+    },
+    xaxis: {
+      mode: "categories",
+      autoscaleMargin: 0.05,
+      tickLength: 0
+    },
+    yaxis:{
+      show:true,
+      position:'left',
+      tickLength:40,
+      tickDecimals:0
+    },
+    legend:{show:false}
+  });
+
+  $.plot("#chartA2_4_b", [
+      {label:"2013年", data:[["1月",12],["2月",30],["3月",24],["4月",3],["5月",5],["6月",7],["7月",10],["8月",11],["9月",23],["10月",34],["11月",56],["12月",33]], bars:{
+        show:true,
+        barWidth: 0.3,
+        align: "left",
+        fill:0.3
+      }, lines:{show:false}, points:{show:false}},
+      {label:"2014年", data:[["1月",34],["2月",33],["3月",12],["4月",56],["5月",53],["6月",17],["7月",11],["8月",34],["9月",44],["10月",32],["11月",11],["12月",34]],bars:{
+        show:true,
+        barWidth: 0.3,
+        align: "right",
+        fill:0.3
+      }, lines:{show:false}, points:{show:false}},
+      {label:"2014年同比", data:[["1月",0.34],["2月",0.33],["3月",-0.12],["4月",0.56],["5月",0.53],["6月",-0.17],["7月",0.11],["8月",0.34],["9月",0.44],["10月",0.32],["11月",0.11],["12月",0.34]],
+        lines:{show:true}, points:{show:true}, yaxis: 2
+      },
+      {label:"2013年同比", data:[["1月",0.34],["2月",0.33],["3月",-0.12],["4月",0.56],["5月",0.53],["6月",-0.17],["7月",0.11],["8月",0.34],["9月",0.44],["10月",0.32],["11月",0.11],["12月",0.34]],
+        lines:{show:true}, points:{show:true}, yaxis: 2
+      },
+      {label:"2014年环比", data:[["1月",0.34],["2月",0.33],["3月",-0.12],["4月",0.56],["5月",0.53],["6月",-0.17],["7月",0.11],["8月",0.34],["9月",0.44],["10月",0.32],["11月",0.11],["12月",0.34]],
+        lines:{show:true}, points:{show:true}, yaxis: 2
+      },
+      {label:"2013年环比", data:[["1月",0.34],["2月",0.33],["3月",-0.12],["4月",0.56],["5月",0.53],["6月",-0.17],["7月",0.11],["8月",0.34],["9月",0.44],["10月",0.32],["11月",0.11],["12月",0.34]],
+        lines:{show:true}, points:{show:true}, yaxis: 2
+      }
+    ], {
+    xaxis: {
+      mode: "categories",
+      autoscaleMargin: 0.05,
+      tickLength: 0
+    },
+    yaxes: [
+      { position: "left",min: 0 },
+      {
+        position: "right",
+        tickFormatter: null,
+        tickFormatter: function (v, axis) {
+          return (parseFloat(v.toFixed(axis.tickDecimals))*100) +"%";
+        }
+      }
+    ], legend:{show:true}
+  });
+
+  var radarChartData = {
+    labels: ["数据稀疏率", "语义质量", "更新率", "利用率", "关联性"],
+    datasets: [{
+      label: "001",
+      fillColor: "rgba(220,220,220,0.2)",
+      strokeColor: "rgba(220,220,220,1)",
+      pointColor: "rgba(220,220,220,1)",
+      pointStrokeColor: "#fff",
+      pointHighlightFill: "#fff",
+      pointHighlightStroke: "rgba(220,220,220,1)",
+      data: [0.11,0.23,0.30,0.54,0]
+    }]
+  };
+  var myRadar = new Chart(document.getElementById("chartA4_1_a").getContext("2d")).Radar(radarChartData, {
+    responsive: true
   });
 });
 

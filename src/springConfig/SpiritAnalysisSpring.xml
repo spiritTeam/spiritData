@@ -21,4 +21,7 @@
   </context:component-scan>
   <!--业务缓存
   <bean id="dataToolsCacheManager" class="com.gmteam.datatools.dtcache.DataToolsCacheLifecycleUnit"/>-->
+
+  <!--分析缓存-->
+  <bean id="excelCacheLifecycleUnit" class="com.gmteam.spiritdata.cache.ExcelCacheLifecycleUnit"/>
 </beans>

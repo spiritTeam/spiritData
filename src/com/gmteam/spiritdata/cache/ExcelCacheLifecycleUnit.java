@@ -12,8 +12,9 @@ import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.spiritdata.cache.service.ExcelCacheService;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
+
 /**
- * 简报缓存生命周期
+ * 精灵数据分析缓存生命周期
  * @author mht
  */
 @Component

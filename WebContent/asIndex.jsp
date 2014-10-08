@@ -422,24 +422,24 @@ function showDemo() {
       $("#pp").progressbar({"text": stepStr+"("+value+"%)", "value":0});
 
       i=0;
-      stepStr="分析元数据语意...";
+      stepStr="分析元数据语义...";
       analysisContent();
     }
   }
 
-  //语意分析
+  //语义分析
   var dcSys =[
-    '分析"人员"(sheet1)元数据语意...'
-    ,'"人员"(sheet1)元数据语意分析完成，列(SFZ)为身份证，列(JG)为字典项'
-    ,'分析"案件"(sheet2)元数据语意...'
-    ,'"案件"(sheet2)元数据语意分析完成，列(SFZ)为身份证，列(AJLX)为字典项'
+    '分析"人员"(sheet1)元数据语义...'
+    ,'"人员"(sheet1)元数据语义分析完成，列(SFZ)为身份证，列(JG)为字典项'
+    ,'分析"案件"(sheet2)元数据语义...'
+    ,'"案件"(sheet2)元数据语义分析完成，列(SFZ)为身份证，列(AJLX)为字典项'
   ];
   function analysisContent() {
     value = $("#pp").progressbar("getValue");
     if (value==0) {
       time2=new Date();
       time1=time2;
-      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[004元数据语意分析] 开始分析元数据语义";
+      logInfo += "<p>"+time2.Format("yyyy-MM-dd hh:mm:ss.S")+"\t[004元数据语义分析] 开始分析元数据语义";
       $("#logshow").html(logInfo);
 
       value += Math.floor(Math.random()*10);
