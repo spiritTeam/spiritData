@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.excel.util.proxy;
+package com.gmteam.spiritdata.importdata.proxy;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +13,7 @@ import com.gmteam.spiritdata.matedata.relation.MetaInfo;
 /** 
  * @author mht
  * @version  
- * 类说明 
+ * 类说明  2007 +
  */
 public class XSSFWorkBookImpl implements IPoiUtils {
     /**workbook*/

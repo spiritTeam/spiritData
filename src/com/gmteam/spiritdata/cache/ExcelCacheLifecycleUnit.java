@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import com.gmteam.framework.core.cache.AbstractCacheLifecycleUnit;
 import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
-import com.gmteam.spiritdata.cache.service.ExcelCacheService;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
+import com.gmteam.spiritdata.importdata.excel.service.cacheservice.ExcelCacheService;
 
 /**
  * 精灵数据分析缓存生命周期
@@ -34,10 +34,10 @@ public class ExcelCacheLifecycleUnit extends AbstractCacheLifecycleUnit {
         }
     }
     @Resource
-    ExcelCacheService dataToolsCacheService;
+    ExcelCacheService excelCacheService;
     public void loadMateDataCache() throws Exception {
         try {
-            Map<String,Object> moStore = dataToolsCacheService.getResultMap(); 
+            Map<String,Object> moStore = excelCacheService.getResultMap(); 
             SystemCache.setCache(new CacheEle<Map<String, Object>>(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE, "模块", moStore));
         } catch(Exception e) {
             throw new Exception("加载缓存项{DataTools[MateData-储存]}失败：", e);

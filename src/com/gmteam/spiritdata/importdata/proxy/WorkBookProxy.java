@@ -1,10 +1,11 @@
-package com.gmteam.spiritdata.importdata.excel.util.proxy;
+package com.gmteam.spiritdata.importdata.proxy;
 
 import java.io.File;
 /** 
  * @author mht
  * @version  
- * 类说明 
+ * 类说明 代理类，根据fileType类型，
+ * 得到相应的workbook，
  */
 public class WorkBookProxy implements IPoiUtils{
     private Object excelWorkBook;
