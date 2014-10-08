@@ -6,14 +6,39 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
+
+import org.junit.Test;
 /** 
  * @author mht
  * @version  
  * 类说明 :常用工具类，获得uuid,截取uuid
  */
 public class CommonUtils {
+    /**
+     * 从给定的行中，随机取出10行
+     * @param rows
+     * @return
+     */
+    public List<Integer> getRandomList(int rows){
+        List<Integer> randomList = new ArrayList<Integer>();
+        Map<Integer,Integer> randomMap = new HashMap<Integer,Integer>(); 
+        Random r = new Random();
+        while(randomMap.size()<10){
+            int k = r.nextInt(100);
+            if(randomMap.get(k)==null){
+                randomMap.put(k, k);
+                randomList.add(k);
+            }
+        }
+        return randomList;
+    }
     /**
      * 获得uuid
      * @return

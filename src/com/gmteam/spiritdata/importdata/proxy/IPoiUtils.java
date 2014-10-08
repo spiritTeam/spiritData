@@ -13,7 +13,7 @@ public interface IPoiUtils {
      */
     public Object getWorkBook()throws Exception;
     /**
-     * 返回一个mdList
+     * 返回一个MateDate的集合
      * @return
      * @throws Exception
      */

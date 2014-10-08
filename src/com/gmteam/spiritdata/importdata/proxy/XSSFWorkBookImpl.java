@@ -13,7 +13,7 @@ import com.gmteam.spiritdata.matedata.relation.MetaInfo;
 /** 
  * @author mht
  * @version  
- * 类说明  2007 +
+ * 类说明  适用于2007之后版本的excel(包含2007)
  */
 public class XSSFWorkBookImpl implements IPoiUtils {
     /**workbook*/
@@ -32,26 +32,50 @@ public class XSSFWorkBookImpl implements IPoiUtils {
         int sheetSize = workbook.getNumberOfSheets();
         XSSFSheet sheet;
         for(int i=0;i<sheetSize;i++ ){
+            int sheetIndex = i;
             sheet = workbook.getSheetAt(i);
             int rows = sheet.getLastRowNum()+1;
+            /**
+             * 保存sheetInfo
+             */
+            SheetInfo sheetInfo = new SheetInfo();
+            sheetInfo.setSheetIndex(sheetIndex);
+            sheetInfo.setSheetName(sheet.getSheetName());
+            /**
+             * 根据条数分析MateData
+             */
             if(rows<10&&rows>=2){
-                 MetaInfo metaInfo =  getMateDataLessRows(i,sheet,rows);
+                 MetaInfo metaInfo =  getMDLess10Rows(sheetIndex,sheet,rows);
             }else{
-                MetaInfo metaInfo =  getMateDataMoreRows(i,sheet,rows);
+                MetaInfo metaInfo =  getMDMore10Rows(sheetIndex,sheet,rows);
             }
         }
         return null;
     }
-    private MetaInfo getMateDataMoreRows(int i, XSSFSheet sheet,int rows) {
+    /**
+     * 总条数多于10的
+     * @param i
+     * @param sheet
+     * @param rows
+     * @return
+     */
+    private MetaInfo getMDMore10Rows(int sheetIndex, XSSFSheet sheet,int rows) {
         SheetInfo sheetInfo = new SheetInfo();
-        sheetInfo.setSheetIndex(i);
+        sheetInfo.setSheetIndex(sheetIndex);
         sheetInfo.setSheetName(sheet.getSheetName());
         MetaColumnInfo metaColumnInfo = new MetaColumnInfo();
         return null;
     }
-    private MetaInfo getMateDataLessRows(int i, XSSFSheet sheet,int rows) {
+    /**
+     * 总条数少于10的
+     * @param i
+     * @param sheet
+     * @param rows
+     * @return
+     */
+    private MetaInfo getMDLess10Rows(int sheetIndex, XSSFSheet sheet,int rows) {
         SheetInfo sheetInfo = new SheetInfo();
-        sheetInfo.setSheetIndex(i);
+        sheetInfo.setSheetIndex(sheetIndex);
         sheetInfo.setSheetName(sheet.getSheetName());
         MetaColumnInfo metaColumnInfo = new MetaColumnInfo();
         return null;
