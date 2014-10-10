@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
 import com.gmteam.framework.core.model.BaseObject;
-import com.gmteam.spiritdata.importdata.excel.storepojo.DataUploadLog;
+import com.gmteam.spiritdata.importdata.excel.pojo.store.DataUploadLog;
 /** 
  * @author 
  * @version  
