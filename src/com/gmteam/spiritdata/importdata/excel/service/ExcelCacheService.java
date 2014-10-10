@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.excel.service.cacheservice;
+package com.gmteam.spiritdata.importdata.excel.service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,13 +14,13 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Service;
 
-import com.gmteam.spiritdata.importdata.excel.pojo.ColumnInfo;
-import com.gmteam.spiritdata.importdata.excel.pojo.DataSignOrg;
-import com.gmteam.spiritdata.importdata.excel.pojo.TableInfo;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.ColumnInfoService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.DataSignOrgService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.DataUploadLogService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.TableInfoService;
+import com.gmteam.spiritdata.importdata.excel.storepojo.ColumnInfo;
+import com.gmteam.spiritdata.importdata.excel.storepojo.DataSignOrg;
+import com.gmteam.spiritdata.importdata.excel.storepojo.TableInfo;
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.matedata.relation.MetaColumnInfo;
 import com.gmteam.spiritdata.matedata.relation.MetaInfo;
@@ -68,11 +68,11 @@ public class ExcelCacheService {
                     ColumnInfo columnInfo = columnInfoList.get(k);
                     if(tableId.equals(columnInfo.getTableId())){
                         if(columnInfo.getPk().equals("Y")){
-                            pkIndex =  columnInfo.getTitleIndex();
+                            pkIndex =  columnInfo.getColumnIndex();
                         }
-                        metaColumnInfo.setTitleName(columnInfo.getTitleName());
-                        metaColumnInfo.setTitleType(columnInfo.getTitleType());
-                        metaColumnInfo.setTitleIndex(columnInfo.getTitleIndex());
+                        metaColumnInfo.setColumnName(columnInfo.getColumnName());
+                        metaColumnInfo.setColumnType(columnInfo.getColumnType());
+                        metaColumnInfo.setColumnIndex(columnInfo.getColumnIndex());
                         metaColumnInfo.setPk(columnInfo.getPk());
                         metaColumnList.add(metaColumnInfo);
                     }

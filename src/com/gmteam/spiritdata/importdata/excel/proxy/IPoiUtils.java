@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.proxy;
+package com.gmteam.spiritdata.importdata.excel.proxy;
 
 /** 
  * @author mht

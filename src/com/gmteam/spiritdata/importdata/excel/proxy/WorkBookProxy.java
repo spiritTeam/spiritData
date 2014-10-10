@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.proxy;
+package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
 /** 
@@ -11,9 +11,6 @@ public class WorkBookProxy implements IPoiUtils{
     private Object excelWorkBook;
     private IPoiUtils iPoiUtils;
     private Integer fileType;
-    /**
-     * 默认的代理是XSSF的
-     */
     public WorkBookProxy(File execlFile,Integer fileType) throws Exception {
         this.fileType = fileType;
         if (fileType==2)

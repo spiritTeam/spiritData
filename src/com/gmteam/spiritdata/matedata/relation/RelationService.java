@@ -12,12 +12,12 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelContentAttributes;
-import com.gmteam.spiritdata.importdata.excel.pojo.ColumnInfo;
-import com.gmteam.spiritdata.importdata.excel.pojo.LogTableOrg;
-import com.gmteam.spiritdata.importdata.excel.pojo.TableInfo;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.DataUploadLogService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.LogTableOrgService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.TableInfoService;
+import com.gmteam.spiritdata.importdata.excel.storepojo.ColumnInfo;
+import com.gmteam.spiritdata.importdata.excel.storepojo.LogTableOrg;
+import com.gmteam.spiritdata.importdata.excel.storepojo.TableInfo;
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 
 /** 
@@ -46,8 +46,8 @@ public class RelationService {
         String tableName = "MD_TAB_"+cu.getUUID2TableSeq(contentAttributes.getLogId())+contentAttributes.getSheetIndex();
         StringBuffer sbSQl = new StringBuffer("create table "+tableName+"( id varchar2(200) primary key,");
         for(int i=0;i<columnSize;i++){
-            String columnName = "column"+metaColumnInfoList.get(i).getTitleIndex();
-            String dataType = metaColumnInfoList.get(i).getTitleType();
+            String columnName = "column"+metaColumnInfoList.get(i).getColumnIndex();
+            String dataType = metaColumnInfoList.get(i).getColumnType();
             if(dataType.equals("String")){
                 dataType = "varchar(200)";
             }else if(dataType.equals("Double")){
@@ -110,10 +110,10 @@ public class RelationService {
             for(int i=0;i<columnSize;i++){
                 ps.setObject(1, cu.getUUID());
                 ps.setObject(2, contentAttributes.getTableId());
-                ps.setObject(3, metaColumnInfoList.get(i).getTitleIndex()); 
-                ps.setObject(4, metaColumnInfoList.get(i).getTitleName());
-                ps.setObject(5, metaColumnInfoList.get(i).getTitleType());
-                if(pkName.equals(metaColumnInfoList.get(i).getTitleName())){
+                ps.setObject(3, metaColumnInfoList.get(i).getColumnIndex()); 
+                ps.setObject(4, metaColumnInfoList.get(i).getColumnName());
+                ps.setObject(5, metaColumnInfoList.get(i).getColumnType());
+                if(pkName.equals(metaColumnInfoList.get(i).getColumnName())){
                     ps.setObject(6, "Y");
                 }else{
                     ps.setObject(6, "N");

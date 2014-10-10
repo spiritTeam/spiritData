@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
-import com.gmteam.spiritdata.importdata.excel.pojo.TableInfo;
+import com.gmteam.spiritdata.importdata.excel.storepojo.TableInfo;
 /** 
  * @author 
  * @version  

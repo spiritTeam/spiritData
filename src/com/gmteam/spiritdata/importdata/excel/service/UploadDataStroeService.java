@@ -14,10 +14,10 @@ import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.framework.core.model.BaseObject;
 import com.gmteam.spiritdata.importdata.excel.ExcelContentAttributes;
-import com.gmteam.spiritdata.importdata.excel.pojo.ColumnInfo;
-import com.gmteam.spiritdata.importdata.excel.pojo.DataSignOrg;
-import com.gmteam.spiritdata.importdata.excel.pojo.PkNameCacheIdSign;
-import com.gmteam.spiritdata.importdata.excel.pojo.SaveResultInfo;
+import com.gmteam.spiritdata.importdata.excel.storepojo.ColumnInfo;
+import com.gmteam.spiritdata.importdata.excel.storepojo.DataSignOrg;
+import com.gmteam.spiritdata.importdata.excel.storepojo.PkNameCacheIdSign;
+import com.gmteam.spiritdata.importdata.excel.storepojo.SaveResultInfo;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
 
 /** 
@@ -78,9 +78,9 @@ public class UploadDataStroeService extends BaseObject {
                 List<ColumnInfo> columnInfoList = new ArrayList<ColumnInfo>();
                 for(int i=0;i<title.length;i++){
                     ColumnInfo mci = new ColumnInfo();
-                    mci.setTitleIndex(i);
-                    mci.setTitleName(title[i]);
-                    mci.setTitleType(dataTypeAry[i]+"");
+                    mci.setColumnIndex(i);
+                    mci.setColumnName(title[i]);
+                    mci.setColumnType(dataTypeAry[i]+"");
                     columnInfoList.add(mci);
                 }
                 contentAttributes.setColumnInfo(columnInfoList);

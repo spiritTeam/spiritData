@@ -5,9 +5,9 @@ package com.gmteam.spiritdata.matedata.relation;
  * 类说明 
  */
 public class MetaColumnInfo {
-    private Integer titleIndex;
-    private String titleName;
-    private String titleType;
+    private Integer columnIndex;
+    private String columnName;
+    private String columnType;
     private String pk;
     public String getPk() {
         return pk;
@@ -15,23 +15,23 @@ public class MetaColumnInfo {
     public void setPk(String pk) {
         this.pk = pk;
     }
-    public Integer getTitleIndex() {
-        return titleIndex;
+    public Integer getColumnIndex() {
+        return columnIndex;
     }
-    public void setTitleIndex(Integer titleIndex) {
-        this.titleIndex = titleIndex;
+    public void setColumnIndex(Integer columnIndex) {
+        this.columnIndex = columnIndex;
     }
-    public String getTitleName() {
-        return titleName;
+    public String getColumnName() {
+        return columnName;
     }
-    public void setTitleName(String titleName) {
-        this.titleName = titleName;
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
     }
-    public String getTitleType() {
-        return titleType;
+    public String getColumnType() {
+        return columnType;
     }
-    public void setTitleType(String titleType) {
-        this.titleType = titleType;
+    public void setColumnType(String columnType) {
+        this.columnType = columnType;
     }
     
 }

@@ -11,7 +11,7 @@ import com.gmteam.framework.core.cache.AbstractCacheLifecycleUnit;
 import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
-import com.gmteam.spiritdata.importdata.excel.service.cacheservice.ExcelCacheService;
+import com.gmteam.spiritdata.importdata.excel.service.ExcelCacheService;
 
 /**
  * 精灵数据分析缓存生命周期

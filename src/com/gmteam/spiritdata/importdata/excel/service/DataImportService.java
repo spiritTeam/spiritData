@@ -20,16 +20,16 @@ import com.gmteam.framework.core.model.BaseObject;
 import com.gmteam.spiritdata.cache.ExcelCacheLifecycleUnit;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelContentAttributes;
-import com.gmteam.spiritdata.importdata.excel.pojo.ColumnInfo;
-import com.gmteam.spiritdata.importdata.excel.pojo.DataSignOrg;
-import com.gmteam.spiritdata.importdata.excel.pojo.DataUploadLog;
-import com.gmteam.spiritdata.importdata.excel.pojo.LogTableOrg;
-import com.gmteam.spiritdata.importdata.excel.pojo.TableInfo;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.ColumnInfoService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.DataSignOrgService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.DataUploadLogService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.LogTableOrgService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.TableInfoService;
+import com.gmteam.spiritdata.importdata.excel.storepojo.ColumnInfo;
+import com.gmteam.spiritdata.importdata.excel.storepojo.DataSignOrg;
+import com.gmteam.spiritdata.importdata.excel.storepojo.DataUploadLog;
+import com.gmteam.spiritdata.importdata.excel.storepojo.LogTableOrg;
+import com.gmteam.spiritdata.importdata.excel.storepojo.TableInfo;
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
 import com.gmteam.spiritdata.matedata.relation.MetaColumnInfo;
@@ -93,8 +93,8 @@ public  class DataImportService extends BaseObject {
         String tableName = "MD_TAB_"+cu.getUUID2TableSeq(contentAttributes.getLogId())+contentAttributes.getSheetIndex();
         StringBuffer sbSQl = new StringBuffer("create table "+tableName+"( id varchar2(200) primary key,");
         for(int i=0;i<columnSize;i++){
-            String columnName = "column"+metaColumnInfoList.get(i).getTitleIndex();
-            String dataType = metaColumnInfoList.get(i).getTitleType();
+            String columnName = "column"+metaColumnInfoList.get(i).getColumnIndex();
+            String dataType = metaColumnInfoList.get(i).getColumnType();
             if(dataType.equals("String")){
                 dataType = "varchar(200)";
             }else if(dataType.equals("Double")){
@@ -207,10 +207,10 @@ public  class DataImportService extends BaseObject {
             for(int i=0;i<columnSize;i++){
                 ps.setObject(1, cu.getUUID());
                 ps.setObject(2, contentAttributes.getTableId());
-                ps.setObject(3, metaColumnInfoList.get(i).getTitleIndex()); 
-                ps.setObject(4, metaColumnInfoList.get(i).getTitleName());
-                ps.setObject(5, metaColumnInfoList.get(i).getTitleType());
-                if(pkName.equals(metaColumnInfoList.get(i).getTitleName())){
+                ps.setObject(3, metaColumnInfoList.get(i).getColumnIndex()); 
+                ps.setObject(4, metaColumnInfoList.get(i).getColumnName());
+                ps.setObject(5, metaColumnInfoList.get(i).getColumnType());
+                if(pkName.equals(metaColumnInfoList.get(i).getColumnName())){
                     ps.setObject(6, "Y");
                 }else{
                     ps.setObject(6, "N");
@@ -255,11 +255,11 @@ public  class DataImportService extends BaseObject {
                 int flag = columnSize;
                 for (int k=0;k<columnSize;k++) {
                     for (int j=0; j<columnSize; j++) {
-                        if(metaColumnInfoList.get(k).getTitleName().equals(columnInfoList.get(j).getTitleName())
-                                    &&metaColumnInfoList.get(k).getTitleType().equals(columnInfoList.get(j).getTitleType())){
+                        if(metaColumnInfoList.get(k).getColumnName().equals(columnInfoList.get(j).getColumnName())
+                                    &&metaColumnInfoList.get(k).getColumnType().equals(columnInfoList.get(j).getColumnType())){
                             if(metaColumnInfoList.get(k).getPk().equals("Y")){
-                                pkName = metaColumnInfoList.get(k).getTitleName();
-                                pkIndex = columnInfoList.get(j).getTitleIndex();
+                                pkName = metaColumnInfoList.get(k).getColumnName();
+                                pkIndex = columnInfoList.get(j).getColumnIndex();
                             }
                             flag--;
                         }
@@ -309,8 +309,8 @@ public  class DataImportService extends BaseObject {
                 int flag = columnSize;
                 for (int k=0;k<columnSize;k++) {
                     for (int j=0; j<columnSize; j++) {
-                        if(metaColumnInfoList.get(k).getTitleName().equals(columnList.get(j).getTitleName())
-                                    &&metaColumnInfoList.get(k).getTitleType().equals(columnList.get(j).getTitleType())){
+                        if(metaColumnInfoList.get(k).getColumnName().equals(columnList.get(j).getColumnName())
+                                    &&metaColumnInfoList.get(k).getColumnType().equals(columnList.get(j).getColumnType())){
                             flag--;
                         }
                     }
@@ -348,11 +348,11 @@ public  class DataImportService extends BaseObject {
          */
         Map<String,Integer> columnInfoMap = new HashMap<String,Integer>();
         for(ColumnInfo ci:columnList){
-            columnInfoMap.put(ci.getTitleName(), ci.getTitleIndex());
+            columnInfoMap.put(ci.getColumnName(), ci.getColumnIndex());
         }
         List<Integer> indexList = new ArrayList<Integer>();
         for(int i=0;i<metaColumnInfoList.size();i++){
-            int k = columnInfoMap.get(metaColumnInfoList.get(i).getTitleName());
+            int k = columnInfoMap.get(metaColumnInfoList.get(i).getColumnName());
             indexList.add(k);
         }
         List<Object[]> dataList = contentAttributes.getDataList();
@@ -426,9 +426,9 @@ public  class DataImportService extends BaseObject {
             /**组装columnInfoList，用于匹配缓存中的数据 */
             for(int i=0;i<title.length;i++){
                 ColumnInfo mci = new ColumnInfo();
-                mci.setTitleIndex(i);
-                mci.setTitleName(title[i]);
-                mci.setTitleType(dataTypeAry[i]+"");
+                mci.setColumnIndex(i);
+                mci.setColumnName(title[i]);
+                mci.setColumnType(dataTypeAry[i]+"");
                 columnInfoList.add(mci);
             }
             /**放入columnInfoList，用于匹配缓存中的数据 */

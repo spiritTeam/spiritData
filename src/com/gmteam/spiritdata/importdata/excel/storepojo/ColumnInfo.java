@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.excel.pojo;
+package com.gmteam.spiritdata.importdata.excel.storepojo;
 
 import com.gmteam.framework.core.model.BaseObject;
 /** 
@@ -10,16 +10,28 @@ import com.gmteam.framework.core.model.BaseObject;
 public class ColumnInfo extends BaseObject{
     private String id;
     private String tableId;
-    private Integer titleIndex;
-    private String titleName;
-    private String titleType;
+    private Integer columnIndex;
+    private String columnName;
+    private String columnType;
     private String pk;
     
-    public Integer getTitleIndex() {
-        return titleIndex;
+    public Integer getColumnIndex() {
+        return columnIndex;
     }
-    public void setTitleIndex(Integer titleIndex) {
-        this.titleIndex = titleIndex;
+    public void setColumnIndex(Integer columnIndex) {
+        this.columnIndex = columnIndex;
+    }
+    public String getColumnName() {
+        return columnName;
+    }
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
+    public String getColumnType() {
+        return columnType;
+    }
+    public void setColumnType(String columnType) {
+        this.columnType = columnType;
     }
     public String getPk() {
         return pk;
@@ -38,17 +50,5 @@ public class ColumnInfo extends BaseObject{
     }
     public void setTableId(String tableId) {
         this.tableId = tableId;
-    }
-    public String getTitleName() {
-        return titleName;
-    }
-    public void setTitleName(String titleName) {
-        this.titleName = titleName;
-    }
-    public String getTitleType() {
-        return titleType;
-    }
-    public void setTitleType(String titleType) {
-        this.titleType = titleType;
     }
 }
