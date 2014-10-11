@@ -2,7 +2,7 @@ package com.gmteam.spiritdata.matedata.pojo;
 /** 
  * @author mht
  * @version  
- * 类说明 table与StatisticsInfo关联类
+ * 类说明 table与StatisticsInfo关联类..
  */
 public class TableStatisticsInfoOrg {
     private String id;
