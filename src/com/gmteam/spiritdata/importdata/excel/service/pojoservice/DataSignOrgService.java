@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
-import com.gmteam.spiritdata.importdata.excel.pojo.store.DataSignOrg;
+import com.gmteam.spiritdata.importdata.excel.pojo.DataSignOrg;
 
 /** 
  * @author 

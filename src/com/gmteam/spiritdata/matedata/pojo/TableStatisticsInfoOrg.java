@@ -1,10 +1,10 @@
-package com.gmteam.spiritdata.importdata.excel.pojo.statistics;
+package com.gmteam.spiritdata.matedata.pojo;
 /** 
  * @author mht
  * @version  
- * 类说明 
+ * 类说明 table与StatisticsInfo关联类
  */
-public class TableStatistocsInfoOrg {
+public class TableStatisticsInfoOrg {
     private String id;
     private String tableId;
     private Integer rows;

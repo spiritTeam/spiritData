@@ -12,9 +12,9 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelContentAttributes;
-import com.gmteam.spiritdata.importdata.excel.pojo.store.ColumnInfo;
-import com.gmteam.spiritdata.importdata.excel.pojo.store.LogTableOrg;
-import com.gmteam.spiritdata.importdata.excel.pojo.store.TableInfo;
+import com.gmteam.spiritdata.importdata.excel.pojo.ColumnInfo;
+import com.gmteam.spiritdata.importdata.excel.pojo.LogTableOrg;
+import com.gmteam.spiritdata.importdata.excel.pojo.TableInfo;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.DataUploadLogService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.LogTableOrgService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.TableInfoService;

@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
-import com.gmteam.spiritdata.importdata.excel.pojo.store.ColumnInfo;
+import com.gmteam.spiritdata.importdata.excel.pojo.ColumnInfo;
 /** 
  * @author 
  * @version  

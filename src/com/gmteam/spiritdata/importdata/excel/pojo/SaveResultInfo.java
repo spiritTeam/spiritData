@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.excel.pojo.store;
+package com.gmteam.spiritdata.importdata.excel.pojo;
 /** 
  * @author mht
  * @version  
