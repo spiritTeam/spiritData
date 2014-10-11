@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gmteam.framework.core.web.AbstractFileUploadController;
 import com.gmteam.spiritdata.importdata.excel.ExcelContentAttributes;
+import com.gmteam.spiritdata.importdata.excel.pojo.ColumnInfo;
 import com.gmteam.spiritdata.importdata.excel.service.DataImportService;
-import com.gmteam.spiritdata.importdata.excel.storepojo.ColumnInfo;
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.HSSFPoiUtil;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;

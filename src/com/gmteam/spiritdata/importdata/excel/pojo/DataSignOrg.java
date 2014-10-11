@@ -1,9 +1,9 @@
-package com.gmteam.spiritdata.importdata.excel.storepojo;
+package com.gmteam.spiritdata.importdata.excel.pojo;
 
 import com.gmteam.framework.core.model.BaseObject;
 
 /** 
- * @author 
+ * @author mht
  * @version  
  * 类说明 
  */

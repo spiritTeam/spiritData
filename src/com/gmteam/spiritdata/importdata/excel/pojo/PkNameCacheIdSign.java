@@ -1,6 +1,6 @@
-package com.gmteam.spiritdata.importdata.excel.storepojo;
+package com.gmteam.spiritdata.importdata.excel.pojo;
 /** 
- * @author 
+ * @author mht
  * @version  
  * 类说明 
  */
