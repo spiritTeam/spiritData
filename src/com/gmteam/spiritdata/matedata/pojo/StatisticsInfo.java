@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.excel.statisticspojo;
+package com.gmteam.spiritdata.matedata.pojo;
 
 import com.gmteam.framework.core.model.BaseObject;
 

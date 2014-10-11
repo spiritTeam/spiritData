@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.excel.storepojo;
+package com.gmteam.spiritdata.importdata.excel.pojo;
 
 import org.springframework.stereotype.Component;
 

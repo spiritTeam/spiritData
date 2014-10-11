@@ -14,13 +14,13 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Service;
 
+import com.gmteam.spiritdata.importdata.excel.pojo.ColumnInfo;
+import com.gmteam.spiritdata.importdata.excel.pojo.DataSignOrg;
+import com.gmteam.spiritdata.importdata.excel.pojo.TableInfo;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.ColumnInfoService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.DataSignOrgService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.DataUploadLogService;
 import com.gmteam.spiritdata.importdata.excel.service.pojoservice.TableInfoService;
-import com.gmteam.spiritdata.importdata.excel.storepojo.ColumnInfo;
-import com.gmteam.spiritdata.importdata.excel.storepojo.DataSignOrg;
-import com.gmteam.spiritdata.importdata.excel.storepojo.TableInfo;
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.matedata.relation.MetaColumnInfo;
 import com.gmteam.spiritdata.matedata.relation.MetaInfo;
