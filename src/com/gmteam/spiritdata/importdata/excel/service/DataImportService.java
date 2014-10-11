@@ -39,7 +39,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 /** 
  * @author mht
  * @version  
- * 类说明 
+ * 类说明  
  */
 @Component
 @SuppressWarnings("serial")
