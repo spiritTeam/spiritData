@@ -6,7 +6,7 @@ import com.gmteam.framework.core.model.BaseObject;
 
 /**
  * 元数据列描述
- * 对应持久化中数据库的表为，SD_mdTABMODULE
+ * 对应持久化中数据库的表为SD_MD_TABMODULE
  * @author wh, mht
  */
 public class MetaDataColumn extends BaseObject {

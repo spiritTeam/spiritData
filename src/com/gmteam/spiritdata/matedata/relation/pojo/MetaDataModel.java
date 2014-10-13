@@ -1,13 +1,14 @@
 package com.gmteam.spiritdata.matedata.relation.pojo;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gmteam.framework.core.model.BaseObject;
 
 /**
  * 元数据模式
- * 对应持久化中数据库的表为，SD_MD_TABMODULE
+ * 对应持久化中数据库的表为SD_MD_TABMODULE
  * @author wh, mht
  */
 public class MetaDataModel extends BaseObject {
@@ -77,12 +78,12 @@ public class MetaDataModel extends BaseObject {
     public void addColumn(MetaDataColumn mdc) throws Exception{
         if (mdc==null) return;
         if (mdc.getMdCId().equals(null)) throw new Exception("列Id不能为空");
-        MetaDataColumn ret = null;
         for (MetaDataColumn c: this.columnList) {
             if (c.getMdCId().equals(mdc.getMdCId())) throw new Exception("在列描述列表中已经有与所添加对象[列Id]相同的对象，不同重复添加！");
             if (c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的对象，不同重复添加！");
             if (c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的对象，不同重复添加！");
         }
+        if (this.columnList==null) this.columnList = new ArrayList<MetaDataColumn>();
         this.columnList.add(mdc);
     }
 
@@ -92,9 +93,9 @@ public class MetaDataModel extends BaseObject {
      * @return 列描述对象
      */
     public MetaDataColumn getColumnByTName(String titleName) {
-        MetaDataColumn paramRet = new MetaDataColumn(); 
-        paramRet.setTitleName(titleName);
-        return getColumn(paramRet);
+        MetaDataColumn param = new MetaDataColumn(); 
+        param.setTitleName(titleName);
+        return getColumn(param);
     }
 
     /**
@@ -103,9 +104,9 @@ public class MetaDataModel extends BaseObject {
      * @return 列描述对象
      */
     public MetaDataColumn getColumnByCName(String columnName) {
-        MetaDataColumn paramRet = new MetaDataColumn(); 
-        paramRet.setColumnName(columnName);
-        return getColumn(paramRet);
+        MetaDataColumn param = new MetaDataColumn(); 
+        param.setColumnName(columnName);
+        return getColumn(param);
     }
 
     /**
@@ -114,9 +115,9 @@ public class MetaDataModel extends BaseObject {
      * @return 列描述对象
      */
     public MetaDataColumn getColumnById(String cId) {
-        MetaDataColumn paramRet = new MetaDataColumn(); 
-        paramRet.setMdCId(cId);
-        return getColumn(paramRet);
+        MetaDataColumn param = new MetaDataColumn(); 
+        param.setMdCId(cId);
+        return getColumn(param);
     }
 
     private MetaDataColumn getColumn(MetaDataColumn mdc) {
@@ -125,6 +126,7 @@ public class MetaDataModel extends BaseObject {
         for (MetaDataColumn c: this.columnList) {
             if (c.getMdCId().equals(mdc.getMdCId())||c.getTitleName().equals(mdc.getTitleName())||c.getColumnName().equals(mdc.getColumnName())) {
                 ret = c;
+                break;
             }
         }
         return ret;
