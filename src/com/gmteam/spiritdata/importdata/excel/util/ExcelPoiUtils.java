@@ -2,7 +2,7 @@ package com.gmteam.spiritdata.importdata.excel.util;
 
 import java.io.File;
 
-import com.gmteam.spiritdata.importdata.proxy.WorkBookProxy;
+import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 
 /** 
  * @author mht
