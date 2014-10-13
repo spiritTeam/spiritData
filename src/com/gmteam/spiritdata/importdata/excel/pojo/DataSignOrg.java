@@ -3,7 +3,7 @@ package com.gmteam.spiritdata.importdata.excel.pojo;
 import com.gmteam.framework.core.model.BaseObject;
 
 /** 
- * @author 
+ * @author mht
  * @version  
  * 类说明 
  */
@@ -13,13 +13,6 @@ public class DataSignOrg extends BaseObject {
     private String tableId;
     private String dataId;
     private String sign;
-    private Object pkValue;
-    public Object getPkValue() {
-        return pkValue;
-    }
-    public void setPkValue(Object pkValue) {
-        this.pkValue = pkValue;
-    }
     public String getId() {
         return id;
     }

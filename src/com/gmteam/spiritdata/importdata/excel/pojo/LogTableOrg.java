@@ -9,9 +9,16 @@ import com.gmteam.framework.core.model.BaseObject;
 @SuppressWarnings("serial")
 public class LogTableOrg extends BaseObject {
     private int sheetIndex;
+    private String sheetName;
     private String id;
     private String logId;
     private String tableId;
+    public String getSheetName() {
+        return sheetName;
+    }
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
+    }
     public int getSheetIndex() {
         return sheetIndex;
     }

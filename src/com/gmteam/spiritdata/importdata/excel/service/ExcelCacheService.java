@@ -68,11 +68,11 @@ public class ExcelCacheService {
                     ColumnInfo columnInfo = columnInfoList.get(k);
                     if(tableId.equals(columnInfo.getTableId())){
                         if(columnInfo.getPk().equals("Y")){
-                            pkIndex =  columnInfo.getTitleIndex();
+                            pkIndex =  columnInfo.getColumnIndex();
                         }
-                        metaColumnInfo.setTitleName(columnInfo.getTitleName());
-                        metaColumnInfo.setTitleType(columnInfo.getTitleType());
-                        metaColumnInfo.setTitleIndex(columnInfo.getTitleIndex());
+                        metaColumnInfo.setColumnName(columnInfo.getColumnName());
+                        metaColumnInfo.setColumnType(columnInfo.getColumnType());
+                        metaColumnInfo.setColumnIndex(columnInfo.getColumnIndex());
                         metaColumnInfo.setPk(columnInfo.getPk());
                         metaColumnList.add(metaColumnInfo);
                     }

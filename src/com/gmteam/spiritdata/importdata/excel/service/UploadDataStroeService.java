@@ -78,9 +78,9 @@ public class UploadDataStroeService extends BaseObject {
                 List<ColumnInfo> columnInfoList = new ArrayList<ColumnInfo>();
                 for(int i=0;i<title.length;i++){
                     ColumnInfo mci = new ColumnInfo();
-                    mci.setTitleIndex(i);
-                    mci.setTitleName(title[i]);
-                    mci.setTitleType(dataTypeAry[i]+"");
+                    mci.setColumnIndex(i);
+                    mci.setColumnName(title[i]);
+                    mci.setColumnType(dataTypeAry[i]+"");
                     columnInfoList.add(mci);
                 }
                 contentAttributes.setColumnInfo(columnInfoList);
