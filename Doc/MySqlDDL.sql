@@ -1,4 +1,4 @@
-/**001 PLAT_USER（用户）*/
+﻿/**001 PLAT_USER（用户）*/
 DROP TABLE IF EXISTS plat_user;
 CREATE TABLE plat_user (
   id         varchar(36) NOT NULL       COMMENT 'uuid（用户id）',
@@ -55,7 +55,8 @@ CREATE TABLE  sa_md_colsemanteme (
   cTime timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
   lmTime timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '每次更新时修改',
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据语义表';
+)
+ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据语义表';
 
 /**005 元数据表对照[SA_MD_TABMAP_ORG]*/
 DROP TABLE IF EXISTS sa_md_tabmap_org;
@@ -67,7 +68,8 @@ CREATE TABLE  sa_md_tabmap_org (
   tableType         int(1) unsigned NOT NULL DEFAULT '1' COMMENT '表类型(1-积累表。2-临时表)',
   cTime             timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时的系统时间',
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据对照关系表';
+)
+ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据对照关系表';
 
 /**006 元数据表指标[SA_MD_TABLEQUOTA]*/
 DROP TABLE IF EXISTS sa_md_tablequota;
@@ -81,7 +83,8 @@ CREATE TABLE  sa_md_tablequota (
   lmTime        timestamp NOT NULL DEFAULT   CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
   laTime        timestamp NOT NULL DEFAULT   CURRENT_TIMESTAMP COMMENT '最后访问修改',
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据表指标';
+)
+ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据表指标';
 
 /**007 元数据列指标[SA_MD_COLUMNQUOTA]*/
 DROP TABLE IF EXISTS sa_md_columnquota;
@@ -96,7 +99,8 @@ CREATE TABLE  sa_md_columnquota (
   cTime         timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   lmTime        timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改',
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据列指标表';
+)
+ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据列指标表';
 
 /**008 数据导入日志[SA_IMP_LOG]*/
 DROP TABLE IF EXISTS sa_imp_log;
@@ -108,7 +112,8 @@ CREATE TABLE  sa_imp_log (
   cFileName     varchar(500) DEFAULT NULL     COMMENT '客户端文件名(包含文件路径)',
   cTime         timestamp NOT NULL DEFAULT    CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间(也可以作为上传时间)',
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='数据导入日志';
+)
+ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='数据导入日志';
 
 /**009 数据文件/实体表对应[SA_IMP_TABLOG_ORG]*/
 DROP TABLE IF EXISTS sa_imp_tablog_org;
@@ -121,4 +126,5 @@ CREATE TABLE  sa_imp_tablog_org (
   sheetIndex    int(3) unsigned NOT NULL     COMMENT '页签排序',
   cTime         timestamp NOT NULL DEFAULT   CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='数据文件/实体表对应关系表';
+)
+ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='数据文件/实体表对应关系表';

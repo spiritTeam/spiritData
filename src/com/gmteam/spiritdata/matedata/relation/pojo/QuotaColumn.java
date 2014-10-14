@@ -9,7 +9,7 @@ import com.gmteam.framework.core.model.BaseObject;
  * 对应持久化中数据库的表为SA_MD_COLQUOTA
  * @author wh, mht
  */
-public class ColumnQuota extends BaseObject {
+public class QuotaColumn extends BaseObject {
     private static final long serialVersionUID = 7021542418630072318L;
 
     private String cqId; //实体表指标Id
@@ -23,8 +23,8 @@ public class ColumnQuota extends BaseObject {
     private Timestamp cTime; //本记录创建时间
     private Timestamp lmTime; //本记录最后修改时间
     //以上信息对应数据库中的信息
-    private MetaDataColumn column; //本列指标对应的列描述信息
-    private TableQuota tabQuota; //本列指标对应的表指标信息
+    private MetadataColumn column; //本列指标对应的列描述信息
+    private QuotaTable tabQuota; //本列指标对应的表指标信息
 
     public String getCqId() {
         return cqId;
@@ -80,16 +80,18 @@ public class ColumnQuota extends BaseObject {
     public void setLmTime(Timestamp lmTime) {
         this.lmTime = lmTime;
     }
-    public MetaDataColumn getColumn() {
+    public MetadataColumn getColumn() {
         return column;
     }
-    public void setColumn(MetaDataColumn column) {
+    public void setColumn(MetadataColumn column) {
+        this.colId = column.getColId();
         this.column = column;
     }
-    public TableQuota getTabQuota() {
+    public QuotaTable getTabQuota() {
         return tabQuota;
     }
-    public void setTabQuota(TableQuota tabQuota) {
+    public void setTabQuota(QuotaTable tabQuota) {
+        this.tqId = tabQuota.getTqId();
         this.tabQuota = tabQuota;
     }
 

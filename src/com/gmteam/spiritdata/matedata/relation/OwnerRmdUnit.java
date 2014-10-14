@@ -1,5 +1,9 @@
 package com.gmteam.spiritdata.matedata.relation;
 
+import java.util.Map;
+
+import com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel;
+
 /**
  * 所有者“关系型元数据”处理单元。
  * 所有者对“关系型元数据”的存储结构以及对这个存储结构的操作的集合。
@@ -11,5 +15,6 @@ package com.gmteam.spiritdata.matedata.relation;
  * @author wh
  */
 public class OwnerRmdUnit {
-
+    private String onwerId; //所有者Id，有可能是用户Id也有可能是SessionId
+    private Map<String, MetadataModel> metadataModelList; //
 }
