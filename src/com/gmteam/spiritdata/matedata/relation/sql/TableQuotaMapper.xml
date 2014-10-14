@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="tableMapOrg" >
-  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
+<mapper namespace="tableQuota" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.matedata.relation.pojo.TableQuota" >
     <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="ownerId" property="ownerId" jdbcType="VARCHAR" />
+    <result column="tmoId" property="tmoId" jdbcType="VARCHAR" />
     <result column="tmId" property="tmId" jdbcType="VARCHAR" />
     <result column="tableName" property="tableName" jdbcType="VARCHAR" />
-    <result column="tableType" property="tableType" jdbcType="INTEGER" />
+    <result column="allCount" property="allCount" jdbcType="INTEGER" />
     <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
+    <result column="lmTime" property="lmTime" jdbcType="TIMESTAMP" />
+    <result column="laTime" property="laTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.matedata.relation.pojo.TableQuota" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from sa_md_tabmap_org
+    from sa_md_tablequota
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -26,27 +28,27 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from sa_md_tabmap_org
+    from sa_md_tablequota
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from sa_md_tabmap_org
+    delete from sa_md_tablequota
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
-    delete from sa_md_tabmap_org
+  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.matedata.relation.pojo.TableQuota" >
+    delete from sa_md_tablequota
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdTabMapOrg" >
-    insert into sa_md_tabmap_org
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdTabQuota" >
+    insert into sa_md_tablequota
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="ownerId != null" >
-        ownerId,
+      <if test="tmoId != null" >
+        tmoId,
       </if>
       <if test="tmId != null" >
         tmId,
@@ -54,19 +56,25 @@
       <if test="tableName != null" >
         tableName,
       </if>
-      <if test="tableType != null" >
-        tableType,
+      <if test="allCount != null" >
+        allCount,
       </if>
       <if test="cTime != null" >
         cTime,
+      </if>
+      <if test="lmTime != null" >
+        lmTime,
+      </if>
+      <if test="laTime != null" >
+        laTime,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="ownerId != null" >
-        #{ownerId,jdbcType=VARCHAR},
+      <if test="tmoId != null" >
+        #{tmoId,jdbcType=VARCHAR},
       </if>
       <if test="tmId != null" >
         #{tmId,jdbcType=VARCHAR},
@@ -74,28 +82,34 @@
       <if test="tableName != null" >
         #{tableName,jdbcType=VARCHAR},
       </if>
-      <if test="tableType != null" >
-        #{tableType,jdbcType=INTEGER},
+      <if test="allCount != null" >
+        #{allCount,jdbcType=INTEGER},
       </if>
       <if test="cTime != null" >
         #{cTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="lmTime != null" >
+        #{lmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="laTime != null" >
+        #{laTime,jdbcType=TIMESTAMP},
+      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" resultType="java.lang.Integer" >
-    select count(*) from sa_md_tabmap_org
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.matedata.relation.pojo.TableQuota" resultType="java.lang.Integer" >
+    select count(*) from sa_md_tablequota
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update sa_md_tabmap_org
+    update sa_md_tablequota
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
       </if>
-      <if test="record.ownerId != null" >
-        ownerId = #{record.ownerId,jdbcType=VARCHAR},
+      <if test="record.tmoId != null" >
+        tmoId = #{record.tmoId,jdbcType=VARCHAR},
       </if>
       <if test="record.tmId != null" >
         tmId = #{record.tmId,jdbcType=VARCHAR},
@@ -103,22 +117,28 @@
       <if test="record.tableName != null" >
         tableName = #{record.tableName,jdbcType=VARCHAR},
       </if>
-      <if test="record.tableType != null" >
-        tableType = #{record.tableType,jdbcType=INTEGER},
+      <if test="record.allCount != null" >
+        allCount = #{record.allCount,jdbcType=INTEGER},
       </if>
       <if test="record.cTime != null" >
         cTime = #{record.cTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lmTime != null" >
+        lmTime = #{record.lmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.laTime != null" >
+        laTime = #{record.laTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdTabMapOrg" >
-    update sa_md_tabmap_org
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdTabQuota" >
+    update sa_md_tablequota
     <set >
-      <if test="ownerId != null" >
-        ownerId = #{ownerId,jdbcType=VARCHAR},
+      <if test="tmoId != null" >
+        tmoId = #{tmoId,jdbcType=VARCHAR},
       </if>
       <if test="tmId != null" >
         tmId = #{tmId,jdbcType=VARCHAR},
@@ -126,11 +146,17 @@
       <if test="tableName != null" >
         tableName = #{tableName,jdbcType=VARCHAR},
       </if>
-      <if test="tableType != null" >
-        tableType = #{tableType,jdbcType=INTEGER},
+      <if test="allCount != null" >
+        allCount = #{allCount,jdbcType=INTEGER},
       </if>
       <if test="cTime != null" >
         cTime = #{cTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lmTime != null" >
+        lmTime = #{lmTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="laTime != null" >
+        laTime = #{laTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}

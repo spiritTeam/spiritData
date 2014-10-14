@@ -24,7 +24,7 @@ public class ColumnQuota extends BaseObject {
     private Timestamp lmTime; //本记录最后修改时间
     //以上信息对应数据库中的信息
     private MetaDataColumn column; //本列指标对应的列描述信息
-    private TabQuota tabQuota; //本列指标对应的表指标信息
+    private TableQuota tabQuota; //本列指标对应的表指标信息
 
     public String getCqId() {
         return cqId;
@@ -86,10 +86,10 @@ public class ColumnQuota extends BaseObject {
     public void setColumn(MetaDataColumn column) {
         this.column = column;
     }
-    public TabQuota getTabQuota() {
+    public TableQuota getTabQuota() {
         return tabQuota;
     }
-    public void setTabQuota(TabQuota tabQuota) {
+    public void setTabQuota(TableQuota tabQuota) {
         this.tabQuota = tabQuota;
     }
 

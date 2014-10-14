@@ -10,7 +10,7 @@ import com.gmteam.framework.core.model.BaseObject;
  * 对应持久化中数据库的表为SA_MD_TABQUOTA
  * @author wh, mht
  */
-public class TabQuota extends BaseObject {
+public class TableQuota extends BaseObject {
     private static final long serialVersionUID = -6314845278741671296L;
 
     private String tqId; //实体表指标Id

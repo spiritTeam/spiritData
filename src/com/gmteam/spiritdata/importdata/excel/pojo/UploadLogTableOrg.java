@@ -2,7 +2,7 @@ package com.gmteam.spiritdata.importdata.excel.pojo;
 
 import java.util.Date;
 
-public class UploadLogOrg {
+public class UploadLogTableOrg {
     private String id;
 
     private String ufid;

@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="tableMapOrg" >
-  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
+<mapper namespace="uploadLogTableOrg" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg" >
     <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="ownerId" property="ownerId" jdbcType="VARCHAR" />
+    <result column="ufId" property="ufId" jdbcType="VARCHAR" />
+    <result column="tmoId" property="tmoId" jdbcType="VARCHAR" />
     <result column="tmId" property="tmId" jdbcType="VARCHAR" />
-    <result column="tableName" property="tableName" jdbcType="VARCHAR" />
-    <result column="tableType" property="tableType" jdbcType="INTEGER" />
+    <result column="sheetName" property="sheetName" jdbcType="VARCHAR" />
+    <result column="sheetIndex" property="sheetIndex" jdbcType="INTEGER" />
     <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from sa_md_tabmap_org
+    from sa_imp_tablog_org
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -26,36 +27,33 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from sa_md_tabmap_org
+    from sa_imp_tablog_org
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from sa_md_tabmap_org
+    delete from sa_imp_tablog_org
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
-    delete from sa_md_tabmap_org
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdTabMapOrg" >
-    insert into sa_md_tabmap_org
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogOrg" >
+    insert into sa_imp_tablog_org
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="ownerId != null" >
-        ownerId,
+      <if test="ufId != null" >
+        ufId,
+      </if>
+      <if test="tmoId != null" >
+        tmoId,
       </if>
       <if test="tmId != null" >
         tmId,
       </if>
-      <if test="tableName != null" >
-        tableName,
+      <if test="sheetName != null" >
+        sheetName,
       </if>
-      <if test="tableType != null" >
-        tableType,
+      <if test="sheetIndex != null" >
+        sheetIndex,
       </if>
       <if test="cTime != null" >
         cTime,
@@ -65,46 +63,52 @@
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="ownerId != null" >
-        #{ownerId,jdbcType=VARCHAR},
+      <if test="ufId != null" >
+        #{ufId,jdbcType=VARCHAR},
+      </if>
+      <if test="tmoId != null" >
+        #{tmoId,jdbcType=VARCHAR},
       </if>
       <if test="tmId != null" >
         #{tmId,jdbcType=VARCHAR},
       </if>
-      <if test="tableName != null" >
-        #{tableName,jdbcType=VARCHAR},
+      <if test="sheetName != null" >
+        #{sheetName,jdbcType=VARCHAR},
       </if>
-      <if test="tableType != null" >
-        #{tableType,jdbcType=INTEGER},
+      <if test="sheetIndex != null" >
+        #{sheetIndex,jdbcType=INTEGER},
       </if>
       <if test="cTime != null" >
         #{cTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" resultType="java.lang.Integer" >
-    select count(*) from sa_md_tabmap_org
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg" resultType="java.lang.Integer" >
+    select count(*) from sa_imp_tablog_org
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update sa_md_tabmap_org
+    update sa_imp_tablog_org
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
       </if>
-      <if test="record.ownerId != null" >
-        ownerId = #{record.ownerId,jdbcType=VARCHAR},
+      <if test="record.ufId != null" >
+        ufId = #{record.ufId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tmoId != null" >
+        tmoId = #{record.tmoId,jdbcType=VARCHAR},
       </if>
       <if test="record.tmId != null" >
         tmId = #{record.tmId,jdbcType=VARCHAR},
       </if>
-      <if test="record.tableName != null" >
-        tableName = #{record.tableName,jdbcType=VARCHAR},
+      <if test="record.sheetName != null" >
+        sheetName = #{record.sheetName,jdbcType=VARCHAR},
       </if>
-      <if test="record.tableType != null" >
-        tableType = #{record.tableType,jdbcType=INTEGER},
+      <if test="record.sheetIndex != null" >
+        sheetIndex = #{record.sheetIndex,jdbcType=INTEGER},
       </if>
       <if test="record.cTime != null" >
         cTime = #{record.cTime,jdbcType=TIMESTAMP},
@@ -114,20 +118,23 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdTabMapOrg" >
-    update sa_md_tabmap_org
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogOrg" >
+    update sa_imp_tablog_org
     <set >
-      <if test="ownerId != null" >
-        ownerId = #{ownerId,jdbcType=VARCHAR},
+      <if test="ufId != null" >
+        ufId = #{ufId,jdbcType=VARCHAR},
+      </if>
+      <if test="tmoId != null" >
+        tmoId = #{tmoId,jdbcType=VARCHAR},
       </if>
       <if test="tmId != null" >
         tmId = #{tmId,jdbcType=VARCHAR},
       </if>
-      <if test="tableName != null" >
-        tableName = #{tableName,jdbcType=VARCHAR},
+      <if test="sheetName != null" >
+        sheetName = #{sheetName,jdbcType=VARCHAR},
       </if>
-      <if test="tableType != null" >
-        tableType = #{tableType,jdbcType=INTEGER},
+      <if test="sheetIndex != null" >
+        sheetIndex = #{sheetIndex,jdbcType=INTEGER},
       </if>
       <if test="cTime != null" >
         cTime = #{cTime,jdbcType=TIMESTAMP},
