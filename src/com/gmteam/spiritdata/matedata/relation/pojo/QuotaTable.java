@@ -10,7 +10,7 @@ import com.gmteam.framework.core.model.BaseObject;
  * 对应持久化中数据库的表为SA_MD_TABQUOTA
  * @author wh, mht
  */
-public class TabQuota extends BaseObject {
+public class QuotaTable extends BaseObject {
     private static final long serialVersionUID = -6314845278741671296L;
 
     private String tqId; //实体表指标Id
@@ -25,7 +25,7 @@ public class TabQuota extends BaseObject {
     private Timestamp cTime; //本记录创建时间，也是实体表创建时间
     private Timestamp lmTime; //本记录最后修改时间
 
-    private List<ColumnQuota> colQuotaList; //列指标列表
+    private List<QuotaColumn> colQuotaList; //列指标列表
 
     public String getTqId() {
         return tqId;
@@ -82,11 +82,11 @@ public class TabQuota extends BaseObject {
         this.lmTime = lmTime;
     }
 
-    public List<ColumnQuota> getColumnList() {
+    public List<QuotaColumn> getColumnList() {
         return colQuotaList;
     }
 
-    public void setColumnList(List<ColumnQuota> colQuotaList) {
+    public void setColumnList(List<QuotaColumn> colQuotaList) {
         this.colQuotaList = colQuotaList;
     }
 
@@ -95,15 +95,15 @@ public class TabQuota extends BaseObject {
      * @param cq 被插入的列指标对象，其中tqId/tabQuota可以省略，本对象的tqId/tabQuota将填入参数cq
      * @throws Exception
      */
-    public void addColumn(ColumnQuota cq) throws Exception{
+    public void addColumn(QuotaColumn cq) throws Exception{
         if (cq==null) return;
         if (cq.getCqId().equals(null)) throw new Exception("列指标Id不能为空");
         if (cq.getColumn()==null) throw new Exception("列指标Id不能为空");
 
-        MetaDataColumn mdc=cq.getColumn();
-        for (ColumnQuota c: this.colQuotaList) {
-            MetaDataColumn _c=c.getColumn();
-            if (_c.getMdCId().equals(mdc.getMdCId())) throw new Exception("在列指标列表中已经有与所添加对象[列Id]相同的列指标对象，不同重复添加！");
+        MetadataColumn mdc=cq.getColumn();
+        for (QuotaColumn c: this.colQuotaList) {
+            MetadataColumn _c=c.getColumn();
+            if (_c.getColId().equals(mdc.getColId())) throw new Exception("在列指标列表中已经有与所添加对象[列Id]相同的列指标对象，不同重复添加！");
             if (_c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列指标对象，不同重复添加！");
             if (_c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列指标对象，不同重复添加！");
         }
@@ -115,9 +115,9 @@ public class TabQuota extends BaseObject {
      * @param titleName 意义名称
      * @return 列描述对象
      */
-    public ColumnQuota getColumnByTName(String titleName) {
-        ColumnQuota param = new ColumnQuota();
-        MetaDataColumn mc = new MetaDataColumn(); 
+    public QuotaColumn getColumnByTName(String titleName) {
+        QuotaColumn param = new QuotaColumn();
+        MetadataColumn mc = new MetadataColumn(); 
         mc.setTitleName(titleName);
         param.setColumn(mc);
         return getColQuota(param);
@@ -128,9 +128,9 @@ public class TabQuota extends BaseObject {
      * @param columnName 列名称
      * @return 列指标对象
      */
-    public ColumnQuota getColumnByCName(String columnName) {
-        ColumnQuota param = new ColumnQuota();
-        MetaDataColumn mc = new MetaDataColumn(); 
+    public QuotaColumn getColumnByCName(String columnName) {
+        QuotaColumn param = new QuotaColumn();
+        MetadataColumn mc = new MetadataColumn(); 
         mc.setColumnName(columnName);
         param.setColumn(mc);
         return getColQuota(param);
@@ -141,8 +141,8 @@ public class TabQuota extends BaseObject {
      * @param colId 列描述Id
      * @return 列指标对象
      */
-    public ColumnQuota getColQuotaByColId(String colId) {
-        ColumnQuota param = new ColumnQuota(); 
+    public QuotaColumn getColQuotaByColId(String colId) {
+        QuotaColumn param = new QuotaColumn(); 
         param.setColId(colId);
         return getColQuota(param);
     }
@@ -152,23 +152,23 @@ public class TabQuota extends BaseObject {
      * @param cqId 列指标Id
      * @return 列指标对象
      */
-    public ColumnQuota getColQuotaById(String cqId) {
-        ColumnQuota param = new ColumnQuota(); 
+    public QuotaColumn getColQuotaById(String cqId) {
+        QuotaColumn param = new QuotaColumn(); 
         param.setCqId(cqId);
         return getColQuota(param);
     }
 
-    private ColumnQuota getColQuota(ColumnQuota cq) {
+    private QuotaColumn getColQuota(QuotaColumn cq) {
         if (this.colQuotaList==null||this.colQuotaList.size()==0||cq==null) return null;
-        ColumnQuota ret = null;
-        MetaDataColumn mdc=cq.getColumn();
-        for (ColumnQuota c: this.colQuotaList) {
+        QuotaColumn ret = null;
+        MetadataColumn mdc=cq.getColumn();
+        for (QuotaColumn c: this.colQuotaList) {
             if (c.getColId().equals(cq.getColId())||c.getCqId().equals(cq.getCqId())) {
                 ret = c;
                 break;
             }
             if (c.getColumn()!=null&&cq.getColumn()!=null) {
-                MetaDataColumn _c=c.getColumn();
+                MetadataColumn _c=c.getColumn();
                 if (_c.getTitleName().equals(mdc.getTitleName())||_c.getColumnName().equals(mdc.getColumnName())) {
                     ret = c;
                     break;

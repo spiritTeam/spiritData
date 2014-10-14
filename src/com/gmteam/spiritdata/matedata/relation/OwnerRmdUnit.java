@@ -11,5 +11,5 @@ package com.gmteam.spiritdata.matedata.relation;
  * @author wh
  */
 public class OwnerRmdUnit {
-
+    private TableMap<String, MetadataModel> mdModelList;
 }
