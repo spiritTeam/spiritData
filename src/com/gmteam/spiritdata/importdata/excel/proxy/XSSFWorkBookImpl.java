@@ -6,9 +6,11 @@ import java.io.FileInputStream;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.gmteam.spiritdata.importdata.excel.util.MdPmters;
+import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
-import com.gmteam.spiritdata.matedata.relation.MetaColumnInfo;
-import com.gmteam.spiritdata.matedata.relation.MetaInfo;
+import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel;
 
 /** 
  * @author mht
@@ -44,40 +46,18 @@ public class XSSFWorkBookImpl implements IPoiUtils {
             /**
              * 根据条数分析MateData
              */
-            if(rows<10&&rows>=2){
-                 MetaInfo metaInfo =  getMDLess10Rows(sheetIndex,sheet,rows);
-            }else{
-                MetaInfo metaInfo =  getMDMore10Rows(sheetIndex,sheet,rows);
-            }
+            MdPmters mdPmters = new MdPmters();
+            mdPmters.setFileType(1);
+            mdPmters.setRows(rows);
+            mdPmters.setSheet(sheet);
+            MetadataModel metadataModel;
+                metadataModel =  getMetaDatas(mdPmters);
         }
         return null;
     }
-    /**
-     * 总条数多于10的
-     * @param i
-     * @param sheet
-     * @param rows
-     * @return
-     */
-    private MetaInfo getMDMore10Rows(int sheetIndex, XSSFSheet sheet,int rows) {
-        SheetInfo sheetInfo = new SheetInfo();
-        sheetInfo.setSheetIndex(sheetIndex);
-        sheetInfo.setSheetName(sheet.getSheetName());
-        MetaColumnInfo metaColumnInfo = new MetaColumnInfo();
-        return null;
-    }
-    /**
-     * 总条数少于10的
-     * @param i
-     * @param sheet
-     * @param rows
-     * @return
-     */
-    private MetaInfo getMDLess10Rows(int sheetIndex, XSSFSheet sheet,int rows) {
-        SheetInfo sheetInfo = new SheetInfo();
-        sheetInfo.setSheetIndex(sheetIndex);
-        sheetInfo.setSheetName(sheet.getSheetName());
-        MetaColumnInfo metaColumnInfo = new MetaColumnInfo();
+    private MetadataModel getMetaDatas(MdPmters mdPmters) {
+        PoiUtils.getMDColumn(mdPmters);
+        MetadataColumn metaColumnInfo = new MetadataColumn();
         return null;
     }
 

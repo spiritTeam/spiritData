@@ -10,8 +10,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
-import com.gmteam.spiritdata.matedata.relation.MetaColumnInfo;
-import com.gmteam.spiritdata.matedata.relation.MetaInfo;
 
 /** 
  * @author mht
@@ -47,9 +45,9 @@ public class HSSFWorkBookImpl implements IPoiUtils{
              * 根据条数分析MateData
              */
             if(rows<12&&rows>=2){
-                 MetaInfo metaInfo =  getMDLessThan10Rows(sheetIndex,sheet,rows);
+                 //MetaInfo metaInfo =  getMDLessThan10Rows(sheetIndex,sheet,rows);
             }else{
-                MetaInfo metaInfo =  getMDMoreThan10Rows(sheetIndex,sheet,rows);
+                //MetaInfo metaInfo =  getMDMoreThan10Rows(sheetIndex,sheet,rows);
             }
         }
         return null;

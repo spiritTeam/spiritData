@@ -3,9 +3,6 @@ package com.gmteam.spiritdata.importdata.excel;
 import java.util.List;
 import java.util.Map;
 
-import com.gmteam.spiritdata.importdata.excel.pojo.ColumnInfo;
-
-
 /** 
  * @author mht
  * @version  

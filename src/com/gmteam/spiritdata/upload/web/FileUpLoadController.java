@@ -5,8 +5,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Controller;
+
 import com.gmteam.framework.core.web.AbstractFileUploadController;
-import com.gmteam.spiritdata.importdata.excel.util.ExcelPoiUtils;
 import com.gmteam.spiritdata.upload.service.FileUploadService;
 
 /** 
@@ -14,32 +15,14 @@ import com.gmteam.spiritdata.upload.service.FileUploadService;
  * @version  
  * 类说明 
  */
+@Controller
 public class FileUpLoadController extends AbstractFileUploadController {
     @Resource
     private FileUploadService fileUploadService;
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {Map<String,Object> uploadInfoMap= uploadInfoMapList.get(0);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
-        int fileType = fileUploadService.getFileType(uploadFileName);
-        switch (fileType) {
-        case 1:
-            try {
-                ExcelPoiUtils.getWorkBook(uploadFileName, fileType);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } 
-            break;
-        case 2:
-            try {
-                ExcelPoiUtils.getWorkBook(uploadFileName, fileType);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } 
-            break;
-        default:
-            break;
-        }
-        //String fileType = getFileType(uploadFileName);
+        fileUploadService.getWorkBook(uploadFileName);
     }
     @Override
     public Map<String, Object> afterUploadOneFileOnSuccess(
