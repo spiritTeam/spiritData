@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gmteam.spiritdata.importdata.excel.pojo.MdColQuotaMapper" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.importdata.excel.pojo.MdColQuota" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="cId" property="cid" jdbcType="VARCHAR" />
+    <result column="tqId" property="tqid" jdbcType="VARCHAR" />
+    <result column="max" property="max" jdbcType="VARCHAR" />
+    <result column="min" property="min" jdbcType="VARCHAR" />
+    <result column="nullCount" property="nullcount" jdbcType="INTEGER" />
+    <result column="distinctCount" property="distinctcount" jdbcType="INTEGER" />
+    <result column="cTime" property="ctime" jdbcType="TIMESTAMP" />
+    <result column="lmTime" property="lmtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, cId, tqId, max, min, nullCount, distinctCount, cTime, lmTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColQuotaExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sa_md_columnquota
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_md_columnquota
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sa_md_columnquota
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColQuotaExample" >
+    delete from sa_md_columnquota
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColQuota" >
+    insert into sa_md_columnquota (id, cId, tqId, 
+      max, min, nullCount, 
+      distinctCount, cTime, lmTime
+      )
+    values (#{id,jdbcType=VARCHAR}, #{cid,jdbcType=VARCHAR}, #{tqid,jdbcType=VARCHAR}, 
+      #{max,jdbcType=VARCHAR}, #{min,jdbcType=VARCHAR}, #{nullcount,jdbcType=INTEGER}, 
+      #{distinctcount,jdbcType=INTEGER}, #{ctime,jdbcType=TIMESTAMP}, #{lmtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColQuota" >
+    insert into sa_md_columnquota
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cid != null" >
+        cId,
+      </if>
+      <if test="tqid != null" >
+        tqId,
+      </if>
+      <if test="max != null" >
+        max,
+      </if>
+      <if test="min != null" >
+        min,
+      </if>
+      <if test="nullcount != null" >
+        nullCount,
+      </if>
+      <if test="distinctcount != null" >
+        distinctCount,
+      </if>
+      <if test="ctime != null" >
+        cTime,
+      </if>
+      <if test="lmtime != null" >
+        lmTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="cid != null" >
+        #{cid,jdbcType=VARCHAR},
+      </if>
+      <if test="tqid != null" >
+        #{tqid,jdbcType=VARCHAR},
+      </if>
+      <if test="max != null" >
+        #{max,jdbcType=VARCHAR},
+      </if>
+      <if test="min != null" >
+        #{min,jdbcType=VARCHAR},
+      </if>
+      <if test="nullcount != null" >
+        #{nullcount,jdbcType=INTEGER},
+      </if>
+      <if test="distinctcount != null" >
+        #{distinctcount,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lmtime != null" >
+        #{lmtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColQuotaExample" resultType="java.lang.Integer" >
+    select count(*) from sa_md_columnquota
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sa_md_columnquota
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cid != null" >
+        cId = #{record.cid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tqid != null" >
+        tqId = #{record.tqid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.max != null" >
+        max = #{record.max,jdbcType=VARCHAR},
+      </if>
+      <if test="record.min != null" >
+        min = #{record.min,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nullcount != null" >
+        nullCount = #{record.nullcount,jdbcType=INTEGER},
+      </if>
+      <if test="record.distinctcount != null" >
+        distinctCount = #{record.distinctcount,jdbcType=INTEGER},
+      </if>
+      <if test="record.ctime != null" >
+        cTime = #{record.ctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lmtime != null" >
+        lmTime = #{record.lmtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sa_md_columnquota
+    set id = #{record.id,jdbcType=VARCHAR},
+      cId = #{record.cid,jdbcType=VARCHAR},
+      tqId = #{record.tqid,jdbcType=VARCHAR},
+      max = #{record.max,jdbcType=VARCHAR},
+      min = #{record.min,jdbcType=VARCHAR},
+      nullCount = #{record.nullcount,jdbcType=INTEGER},
+      distinctCount = #{record.distinctcount,jdbcType=INTEGER},
+      cTime = #{record.ctime,jdbcType=TIMESTAMP},
+      lmTime = #{record.lmtime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColQuota" >
+    update sa_md_columnquota
+    <set >
+      <if test="cid != null" >
+        cId = #{cid,jdbcType=VARCHAR},
+      </if>
+      <if test="tqid != null" >
+        tqId = #{tqid,jdbcType=VARCHAR},
+      </if>
+      <if test="max != null" >
+        max = #{max,jdbcType=VARCHAR},
+      </if>
+      <if test="min != null" >
+        min = #{min,jdbcType=VARCHAR},
+      </if>
+      <if test="nullcount != null" >
+        nullCount = #{nullcount,jdbcType=INTEGER},
+      </if>
+      <if test="distinctcount != null" >
+        distinctCount = #{distinctcount,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        cTime = #{ctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lmtime != null" >
+        lmTime = #{lmtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColQuota" >
+    update sa_md_columnquota
+    set cId = #{cid,jdbcType=VARCHAR},
+      tqId = #{tqid,jdbcType=VARCHAR},
+      max = #{max,jdbcType=VARCHAR},
+      min = #{min,jdbcType=VARCHAR},
+      nullCount = #{nullcount,jdbcType=INTEGER},
+      distinctCount = #{distinctcount,jdbcType=INTEGER},
+      cTime = #{ctime,jdbcType=TIMESTAMP},
+      lmTime = #{lmtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gmteam.spiritdata.importdata.excel.pojo.MdColumnInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.importdata.excel.pojo.MdColumnInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="tmId" property="tmid" jdbcType="VARCHAR" />
+    <result column="columnName" property="columnname" jdbcType="VARCHAR" />
+    <result column="titleName" property="titlename" jdbcType="VARCHAR" />
+    <result column="columnType" property="columntype" jdbcType="VARCHAR" />
+    <result column="columnIndex" property="columnindex" jdbcType="INTEGER" />
+    <result column="isPk" property="ispk" jdbcType="INTEGER" />
+    <result column="cTime" property="ctime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, tmId, columnName, titleName, columnType, columnIndex, isPk, cTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColumnInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sa_md_column
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_md_column
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sa_md_column
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColumnInfoExample" >
+    delete from sa_md_column
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColumnInfo" >
+    insert into sa_md_column (id, tmId, columnName, 
+      titleName, columnType, columnIndex, 
+      isPk, cTime)
+    values (#{id,jdbcType=VARCHAR}, #{tmid,jdbcType=VARCHAR}, #{columnname,jdbcType=VARCHAR}, 
+      #{titlename,jdbcType=VARCHAR}, #{columntype,jdbcType=VARCHAR}, #{columnindex,jdbcType=INTEGER}, 
+      #{ispk,jdbcType=INTEGER}, #{ctime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColumnInfo" >
+    insert into sa_md_column
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tmid != null" >
+        tmId,
+      </if>
+      <if test="columnname != null" >
+        columnName,
+      </if>
+      <if test="titlename != null" >
+        titleName,
+      </if>
+      <if test="columntype != null" >
+        columnType,
+      </if>
+      <if test="columnindex != null" >
+        columnIndex,
+      </if>
+      <if test="ispk != null" >
+        isPk,
+      </if>
+      <if test="ctime != null" >
+        cTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="tmid != null" >
+        #{tmid,jdbcType=VARCHAR},
+      </if>
+      <if test="columnname != null" >
+        #{columnname,jdbcType=VARCHAR},
+      </if>
+      <if test="titlename != null" >
+        #{titlename,jdbcType=VARCHAR},
+      </if>
+      <if test="columntype != null" >
+        #{columntype,jdbcType=VARCHAR},
+      </if>
+      <if test="columnindex != null" >
+        #{columnindex,jdbcType=INTEGER},
+      </if>
+      <if test="ispk != null" >
+        #{ispk,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColumnInfoExample" resultType="java.lang.Integer" >
+    select count(*) from sa_md_column
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sa_md_column
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tmid != null" >
+        tmId = #{record.tmid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.columnname != null" >
+        columnName = #{record.columnname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.titlename != null" >
+        titleName = #{record.titlename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.columntype != null" >
+        columnType = #{record.columntype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.columnindex != null" >
+        columnIndex = #{record.columnindex,jdbcType=INTEGER},
+      </if>
+      <if test="record.ispk != null" >
+        isPk = #{record.ispk,jdbcType=INTEGER},
+      </if>
+      <if test="record.ctime != null" >
+        cTime = #{record.ctime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sa_md_column
+    set id = #{record.id,jdbcType=VARCHAR},
+      tmId = #{record.tmid,jdbcType=VARCHAR},
+      columnName = #{record.columnname,jdbcType=VARCHAR},
+      titleName = #{record.titlename,jdbcType=VARCHAR},
+      columnType = #{record.columntype,jdbcType=VARCHAR},
+      columnIndex = #{record.columnindex,jdbcType=INTEGER},
+      isPk = #{record.ispk,jdbcType=INTEGER},
+      cTime = #{record.ctime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColumnInfo" >
+    update sa_md_column
+    <set >
+      <if test="tmid != null" >
+        tmId = #{tmid,jdbcType=VARCHAR},
+      </if>
+      <if test="columnname != null" >
+        columnName = #{columnname,jdbcType=VARCHAR},
+      </if>
+      <if test="titlename != null" >
+        titleName = #{titlename,jdbcType=VARCHAR},
+      </if>
+      <if test="columntype != null" >
+        columnType = #{columntype,jdbcType=VARCHAR},
+      </if>
+      <if test="columnindex != null" >
+        columnIndex = #{columnindex,jdbcType=INTEGER},
+      </if>
+      <if test="ispk != null" >
+        isPk = #{ispk,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        cTime = #{ctime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdColumnInfo" >
+    update sa_md_column
+    set tmId = #{tmid,jdbcType=VARCHAR},
+      columnName = #{columnname,jdbcType=VARCHAR},
+      titleName = #{titlename,jdbcType=VARCHAR},
+      columnType = #{columntype,jdbcType=VARCHAR},
+      columnIndex = #{columnindex,jdbcType=INTEGER},
+      isPk = #{ispk,jdbcType=INTEGER},
+      cTime = #{ctime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
