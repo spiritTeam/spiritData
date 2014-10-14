@@ -79,9 +79,9 @@ public class MetaDataModel extends BaseObject {
         if (mdc==null) return;
         if (mdc.getMdCId().equals(null)) throw new Exception("列Id不能为空");
         for (MetaDataColumn c: this.columnList) {
-            if (c.getMdCId().equals(mdc.getMdCId())) throw new Exception("在列描述列表中已经有与所添加对象[列Id]相同的对象，不同重复添加！");
-            if (c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的对象，不同重复添加！");
-            if (c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的对象，不同重复添加！");
+            if (c.getMdCId().equals(mdc.getMdCId())) throw new Exception("在列描述列表中已经有与所添加对象[列Id]相同的列描述对象，不同重复添加！");
+            if (c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列描述对象，不同重复添加！");
+            if (c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列描述对象，不同重复添加！");
         }
         if (this.columnList==null) this.columnList = new ArrayList<MetaDataColumn>();
         this.columnList.add(mdc);
