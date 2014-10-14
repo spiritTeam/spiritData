@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="columnQuota" >
-  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.matedata.relation.pojo.ColumnQuota" >
+<mapper namespace="quotaColumn" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.matedata.relation.pojo.QuotaColumn" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="cId" property="cId" jdbcType="VARCHAR" />
     <result column="tqId" property="tqId" jdbcType="VARCHAR" />
@@ -12,23 +12,6 @@
     <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
     <result column="lmTime" property="lmTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    id, cId, tqId, max, min, nullCount, distinctCount, cTime, lmTime
-  </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.matedata.relation.pojo.ColumnQuota" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from sa_md_columnquota
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
@@ -39,7 +22,7 @@
     delete from sa_md_columnquota
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.matedata.relation.pojo.ColumnQuota" >
+  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.matedata.relation.pojo.QuotaColumn" >
     delete from sa_md_columnquota
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -106,7 +89,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.gmteam.spiritdata.matedata.relation.pojo.ColumnQuota" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.matedata.relation.pojo.QuotaColumn" resultType="java.lang.Integer" >
     select count(*) from sa_md_columnquota
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />

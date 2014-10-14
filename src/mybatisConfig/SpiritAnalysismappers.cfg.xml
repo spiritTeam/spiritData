@@ -7,19 +7,19 @@
     <typeAlias alias="FileUploadLog" type="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog"/>
     <typeAlias alias="TableMapOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg"/>
     <typeAlias alias="UploadLogTableOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg"/> 
-    <typeAlias alias="ColumnQuota" type="com.gmteam.spiritdata.matedata.relation.pojo.ColumnQuota"/>
+    <typeAlias alias="QuotaColumn" type="com.gmteam.spiritdata.matedata.relation.pojo.QuotaColumn"/>
     <typeAlias alias="MetaDataColumn" type="com.gmteam.spiritdata.matedata.relation.pojo.MetaDataColumn"/>
     <typeAlias alias="MetaDataModel" type="com.gmteam.spiritdata.matedata.relation.pojo.MetaDataModel"/>
-    <typeAlias alias="TableQuota" type="com.gmteam.spiritdata.matedata.relation.pojo.TableQuota"/>
+    <typeAlias alias="QuotaTable" type="com.gmteam.spiritdata.matedata.relation.pojo.QuotaTable"/>
   </typeAliases>
   <mappers>
 	  <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/ColSemantemeMapper.xml"/>
     <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/FileUploadLogMapper.xml"/>
     <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/MdTabMapOrgMapper.xml"/>
     <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/UploadLogTableOrgMapper.xml"/> 
-    <mapper resource="com/gmteam/spiritdata/matedata/relation/sql/ColumnQuotaMapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/matedata/relation/sql/QuotaColumnMapper.xml"/>
      <mapper resource="com/gmteam/spiritdata/matedata/relation/sql/MdColumnInfoMapper.xml"/>
     <mapper resource="com/gmteam/spiritdata/matedata/relation/sql/MdTabModelMapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/matedata/relation/sql/TableQuotaMapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/matedata/relation/sql/QuotaTableMapper.xml"/>
   </mappers>
 </configuration>
