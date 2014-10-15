@@ -108,12 +108,12 @@
       <bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
     </property>
   </bean>
- 
+
+  <!-- 以下为UGA框架(用户/用户组/权限框架)所需配置 --> 
   <!-- 以下为UGA框架(用户/用户组/权限框架)所需配置 -->
-  <!--Uga缓存：平台
-  <bean id="cacheFrameworkUgaManager" class="com.gmteam.framework.component.UGA.cache.FrameworkUgaCLU"/> -->
-  <!--Uga用户服务：平台-->
-  <bean id="ugaUserService"           class="com.gmteam.framework.component.UGA.service.UserService"/> 
+
+  <!--gisUga用户服务：平台 -->
+  <bean id="ugaUserService"       class="com.gmteam.spiritdata.UGA.service.UserService"/>
   <!--Uga用户模块服务：平台 -->
-  <bean id="ugaAuthorityService"      class="com.gmteam.framework.component.UGA.service.AuthorityService"/>
+  <bean id="ugaAuthorityService"  class="com.gmteam.spiritdata.UGA.service.AuthorityService"/>
 </beans>

@@ -8,8 +8,8 @@
     <typeAlias alias="TableMapOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg"/>
     <typeAlias alias="UploadLogTableOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg"/> 
     <typeAlias alias="QuotaColumn" type="com.gmteam.spiritdata.matedata.relation.pojo.QuotaColumn"/>
-    <typeAlias alias="MetaDataColumn" type="com.gmteam.spiritdata.matedata.relation.pojo.MetaDataColumn"/>
-    <typeAlias alias="MetaDataModel" type="com.gmteam.spiritdata.matedata.relation.pojo.MetaDataModel"/>
+    <typeAlias alias="MetadataColumn" type="com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn"/>
+    <typeAlias alias="MetadataModel" type="com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel"/>
     <typeAlias alias="QuotaTable" type="com.gmteam.spiritdata.matedata.relation.pojo.QuotaTable"/>
   </typeAliases>
   <mappers>
