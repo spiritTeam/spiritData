@@ -9,8 +9,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.gmteam.spiritdata.importdata.excel.util.MdPmters;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
-import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
-import com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /** 
  * @author mht

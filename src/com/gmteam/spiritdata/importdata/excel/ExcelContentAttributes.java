@@ -15,7 +15,7 @@ public class ExcelContentAttributes {
     private String tableName;
     private String tableId;
     private String savePath;
-    private List<ColumnInfo> columnInfo;
+//    private List<ColumnInfo> columnInfo;
     private List<Object[]> dataList;
     private Integer sheetIndex;
     private Map<String,Object> uploadInfoMap;
@@ -88,11 +88,12 @@ public class ExcelContentAttributes {
     public void setSavePath(String savePath) {
         this.savePath = savePath;
     }
+    /*
     public List<ColumnInfo> getColumnInfo() {
         return columnInfo;
     }
     public void setColumnInfo(List<ColumnInfo> columnInfo) {
         this.columnInfo = columnInfo;
     }
-    
+    */
 }

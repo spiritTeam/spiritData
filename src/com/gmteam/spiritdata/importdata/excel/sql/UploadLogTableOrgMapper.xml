@@ -34,7 +34,7 @@
     delete from sa_imp_tablog_org
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogOrg" >
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg" >
     insert into sa_imp_tablog_org
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -118,7 +118,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogOrg" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg" >
     update sa_imp_tablog_org
     <set >
       <if test="ufId != null" >

@@ -39,7 +39,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdTabMapOrg" >
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
     insert into sa_md_tabmap_org
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -114,7 +114,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.MdTabMapOrg" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
     update sa_md_tabmap_org
     <set >
       <if test="ownerId != null" >

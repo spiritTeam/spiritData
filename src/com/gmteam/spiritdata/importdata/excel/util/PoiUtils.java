@@ -13,7 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 
 /** 
  * @author 
