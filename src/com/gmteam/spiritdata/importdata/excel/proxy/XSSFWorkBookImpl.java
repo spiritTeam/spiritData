@@ -6,9 +6,9 @@ import java.io.FileInputStream;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.gmteam.spiritdata.importdata.excel.util.MdPmters;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
+import com.gmteam.spiritdata.importdata.excel.util.pmters.MdPmters;
 import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel;
 

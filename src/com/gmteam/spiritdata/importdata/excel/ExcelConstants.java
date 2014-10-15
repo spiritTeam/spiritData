@@ -1,14 +1,21 @@
 package com.gmteam.spiritdata.importdata.excel;
 /** 
- * @author 
+ * @author mht
  * @version  
- * 类说明 
+ * 类说明 处理excel中的常量
  */
 public class ExcelConstants {
-    //缓存MetaData
-    public final static String DATATOOLS_METADATA_CATCH_STORE="DataTools_MetaData";//模块及系统权限
-    //缓存上传数据
-    public final static String DATATOOLS_UPLOADDATA_DATAMAP_NAME="DataTools_UploadData_DataMap";//模块及系统权限
-    public final static String DATATOOLS_UPLOADDATA_SAVEATTRIBUTE_NAME="DataTools_UploadData_SaveAttributes";//模块及系统权限
+    /**抽取随机数的个数,用于得到随机的行数*/
+    public final static int EXCEL_MD_RANDOM_ROWSIZE=100;
+    /**dataType类型，double*/
+    public final static String DATA_TYPE_DOUBLE = "Double";
+    /**dataType类型，date*/
+    public final static String DATA_TYPE_DATE = "Date";
+    /**dataType类型，boolean*/
+    public final static String DATA_TYPE_BOOLEAN = "Boolean";
+    /**dataType类型，null*/
+    public final static String DATA_TYPE_NULL = "Null";
+    /**dataType类型，string*/
+    public final static String DATA_TYPE_STRING = "String";
 }
  
