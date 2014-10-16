@@ -2,6 +2,7 @@ package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Map;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -50,14 +51,9 @@ public class XSSFWorkBookImpl implements IPoiUtils {
             mdPmters.setFileType(1);
             mdPmters.setRows(rows);
             mdPmters.setSheet(sheet);
-            MetadataModel metadataModel;
-                metadataModel =  getMetaDatas(mdPmters);
+            mdPmters.setSheetInfo(sheetInfo);
+            Map<SheetInfo,MetadataModel> mdModelMap =  PoiUtils.getMdModelMap(mdPmters);
         }
-        return null;
-    }
-    private MetadataModel getMetaDatas(MdPmters mdPmters) {
-        PoiUtils.getMDColumn(mdPmters);
-        MetadataColumn metaColumnInfo = new MetadataColumn();
         return null;
     }
 

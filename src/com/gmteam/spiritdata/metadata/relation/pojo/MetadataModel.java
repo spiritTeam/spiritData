@@ -19,7 +19,7 @@ public class MetadataModel extends BaseObject {
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
     private Timestamp cTime; //记录创建时间
     private String tableName; //积累表名称
-
+    //以上信息对应数据库中的信息
     private List<MetadataColumn> columnList; //列描述信息列表
 
     public String getMdMId() {

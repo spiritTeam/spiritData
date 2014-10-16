@@ -60,7 +60,6 @@ public class HSSFWorkBookImpl implements IPoiUtils{
      * @param sheet
      * @param rows
      * @return
-     */
     CommonUtils cu = new CommonUtils();
     private MetadataModel getMDMoreThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
         MetadataColumn metaColumnInfo = new MetadataColumn();
@@ -72,15 +71,13 @@ public class HSSFWorkBookImpl implements IPoiUtils{
 //        }
         return null;
     }
+     */
     /**
      * 总条数少于10的
      * @param i
      * @param sheet
      * @param rows
      * @return
+<<<<<<< HEAD
      */
-    private MetadataModel getMDLessThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
-        MetadataColumn metaColumnInfo = new MetadataColumn();
-        return null;
-    }
 }

@@ -142,7 +142,12 @@
 </div>
 
 <!-- 头部:悬浮 -->
-<div id="topSegment">数据是关键！！ 登陆|注册 || 收藏</div>
+<div id="topSegment">数据是关键！！ 登陆|注册 || 收藏
+  <div>
+  <label for="loginName">登录名：</label><input type="text" id='loginName' tabindex="1"/><label for="password">密　码：</label><input type="password" id='password' tabindex="2"/>
+  <div id="commitButton" style="height:16px; weight:16px; background-color:green;"></div>
+  </div>
+</div>
 
 <!-- 脚部:悬浮 -->
 <div id="footSegment"></div>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="SA_UGA">
+<resultMap id="userMap" type="WebUser">
+  <id     column="id"         property="userId"     jdbcType="VARCHAR" />
+  <result column="loginName"  property="loginName"  jdbcType="VARCHAR" />
+  <result column="userName"   property="userName"   jdbcType="VARCHAR" />
+  <result column="password"   property="password"   jdbcType="VARCHAR" />
+  <result column="mailAdress" property="mailAdress" jdbcType="VARCHAR" />
+  <result column="nickName"   property="nickName"   jdbcType="VARCHAR" />
+  <result column="userType"   property="userType"   jdbcType="INTEGER" />
+  <result column="descn"      property="descn"      jdbcType="VARCHAR" />
+  <result column="cTime"      property="cTime"      jdbcType="TIMESTAMP" />
+  <result column="lmTime"     property="lmTime"     jdbcType="TIMESTAMP" />
+</resultMap>
+
+<select id="getUserByLoginName" resultMap="userMap" parameterType="java.lang.String">
+select * from plat_user where loginName=#loginName#
+</select>
+
+<select id="getUserById" resultMap="userMap" parameterType="java.lang.String">
+select * from plat_user where id=#id#
+</select>
+</mapper>

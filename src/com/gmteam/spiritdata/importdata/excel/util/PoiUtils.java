@@ -1,6 +1,5 @@
 package com.gmteam.spiritdata.importdata.excel.util;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.junit.Test;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.CellPmters;
@@ -29,8 +27,9 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
  * 类说明 用于得到Md
  */
 public class PoiUtils {
-    public static List<MetadataColumn> getMDColumn(MdPmters mdPmters){
-        List<MetadataColumn> mdCList = new ArrayList<MetadataColumn>();
+    public static Map<SheetInfo,MetadataModel> getMdModelMap(MdPmters mdPmters){
+        Map<SheetInfo,MetadataModel> mdModelMap = new HashMap<SheetInfo, MetadataModel>();
+        MetadataModel metadataModel = new MetadataModel();
         int dataRows = mdPmters.getRows();
         /**
          * 1代表是2007+，否则代表
@@ -49,11 +48,12 @@ public class PoiUtils {
                 titleAry[i] = columnName;
             }
             /**得到dataType*/
-            getDataTypesInfo(sheet,dataRows,rowLength,titleAry); 
+            metadataModel = getMetadata(sheet,dataRows,rowLength,titleAry); 
+            mdModelMap.put(mdPmters.getSheetInfo(), metadataModel);
         }else{
             HSSFSheet sheet = (HSSFSheet) mdPmters.getSheet();
         }
-        return null;
+        return mdModelMap;
     }
     /**
      * 设定记录结构
@@ -80,7 +80,7 @@ public class PoiUtils {
      * @param rowLength 每行长度
      * @param titleAry 标题数组
      */
-    private static MetadataModel getDataTypesInfo(XSSFSheet sheet, int dataRows, int rowLength, String[] titleAry) {
+    private static MetadataModel getMetadata(XSSFSheet sheet, int dataRows, int rowLength, String[] titleAry) {
         MetadataModel mdModel = null;
         /**
          * 首先获得便于得到Md的结构

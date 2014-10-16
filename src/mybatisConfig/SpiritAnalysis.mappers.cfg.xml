@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <!-- 类别名设置 -->
+  <typeAliases>
+    <typeAlias alias="ColSemanteme" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme"/>
+    <typeAlias alias="FileUploadLog" type="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog"/>
+    <typeAlias alias="TableMapOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg"/>
+    <typeAlias alias="UploadLogTableOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg"/> 
+    <typeAlias alias="QuotaColumn" type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn"/>
+    <typeAlias alias="MetadataColumn" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn"/>
+    <typeAlias alias="MetadataModel" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel"/>
+    <typeAlias alias="QuotaTable" type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaTable"/>
+  </typeAliases>
+  <mappers>
+	  <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdColSemanteme.Mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/FileUploadLog.Mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabMapOrg.Mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/UploadLogTableOrg.Mapper.xml"/> 
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaColumn.Mapper.xml"/>
+     <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdColumnInfo.Mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabModel.Mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaTable.Mapper.xml"/>
+  </mappers>
+</configuration>

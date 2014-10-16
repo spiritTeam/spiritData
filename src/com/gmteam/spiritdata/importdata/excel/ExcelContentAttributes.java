@@ -90,11 +90,4 @@ public class ExcelContentAttributes {
     public void setSavePath(String savePath) {
         this.savePath = savePath;
     }
-    public List<MetadataColumn> getColumnInfo() {
-        return columnInfo;
-    }
-    public void setColumnInfo(List<MetadataColumn> columnInfo) {
-        this.columnInfo = columnInfo;
-    }
-    
 }
