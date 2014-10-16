@@ -18,8 +18,10 @@ import org.junit.Test;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.CellPmters;
+import com.gmteam.spiritdata.importdata.excel.util.pmters.DTPmters;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.MdPmters;
 import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel;
 
 /** 
  * @author 
@@ -29,7 +31,6 @@ import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
 public class PoiUtils {
     public static List<MetadataColumn> getMDColumn(MdPmters mdPmters){
         List<MetadataColumn> mdCList = new ArrayList<MetadataColumn>();
-        MetadataColumn mdc;
         int dataRows = mdPmters.getRows();
         /**
          * 1代表是2007+，否则代表
@@ -38,17 +39,17 @@ public class PoiUtils {
         if(mdPmters.getFileType()==1){
             XSSFSheet sheet = (XSSFSheet) mdPmters.getSheet();
             XSSFRow xRow = sheet.getRow(1);
+            /**每行长度*/
             int rowLength = xRow.getLastCellNum();
-            /**得到Index和Name*/
+            /**得到TitleAry*/
+            String [] titleAry = new String[rowLength];
             for(int i=0;i<rowLength;i++){
                 XSSFCell xCell = xRow.getCell(i);
-                mdc = new MetadataColumn();
-                mdc.setColumnIndex(i);
                 String columnName = (String) getCellValue(xCell);
-                mdc.setColumnName(columnName);
+                titleAry[i] = columnName;
             }
             /**得到dataType*/
-            getDataTypesInfo(sheet,dataRows,rowLength); 
+            getDataTypesInfo(sheet,dataRows,rowLength,titleAry); 
         }else{
             HSSFSheet sheet = (HSSFSheet) mdPmters.getSheet();
         }
@@ -73,12 +74,17 @@ public class PoiUtils {
         return typeMap;
     }
     /**
-     * 获得dataTypes，并记录一些关于types信息
-     * @param sheet
-     * @param dataRows
-     * @param rowLength 
+     * 得到md
+     * @param sheet 
+     * @param dataRows 数据行数
+     * @param rowLength 每行长度
+     * @param titleAry 标题数组
      */
-    private static Map<Integer,Map<String,List<CellPmters>>> getDataTypesInfo(XSSFSheet sheet, int dataRows, int rowLength) {
+    private static MetadataModel getDataTypesInfo(XSSFSheet sheet, int dataRows, int rowLength, String[] titleAry) {
+        MetadataModel mdModel = null;
+        /**
+         * 首先获得便于得到Md的结构
+         */
         Map<Integer,Map<String,List<CellPmters>>> recordMap = new HashMap<Integer,Map<String,List<CellPmters>>>();
         if(dataRows>2&&dataRows<101){
             /**小于100条数据的时候*/
@@ -99,7 +105,7 @@ public class PoiUtils {
                     recordMap.put(y, typeMap);
                 }
             }
-            getDataTypes(recordMap,dataRows-1);
+            mdModel = getDataTypes(recordMap,dataRows-1,titleAry);
         }else if(dataRows>101){
             /**大于100条数据的时候*/
             int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE);
@@ -120,28 +126,71 @@ public class PoiUtils {
                     recordMap.put(y, typeMap);
                 }
             }
-            getDataTypes(recordMap,randoms.length);
+            mdModel = getDataTypes(recordMap,randoms.length,titleAry);
         }else if(dataRows<2){
             return null;
         }
-        return recordMap;
+        return mdModel;
     }
-    private static void getDataTypes(Map<Integer, Map<String, List<CellPmters>>> recordMap, int dataRows) {
+    /**
+     * 得到mD
+     * @param recordMap 记录map
+     * @param dataRows 代表抽取的条数
+     * @param titleAry 标题数组
+     */
+    private static MetadataModel getDataTypes(Map<Integer, Map<String, List<CellPmters>>> recordMap, int dataRows, String[] titleAry) {
+        MetadataModel metadataModule = new MetadataModel();
+        List<MetadataColumn> mdColumnList = new ArrayList<MetadataColumn>();
         Iterator<Integer> recordIt = recordMap.keySet().iterator();
         while(recordIt.hasNext()){
             int columnIndex = recordIt.next();
             Map<String, List<CellPmters>> typeMap = recordMap.get(columnIndex);
-            getMainDataType(typeMap);
+            DTPmters dtPmters = getMainDataType(typeMap,dataRows);
+            if(dtPmters.getProportion()>=ExcelConstants.DATA_TYPE_PROPORTION){
+                MetadataColumn mdColumn = new MetadataColumn();
+                mdColumn.setColumnIndex(columnIndex);
+                mdColumn.setColumnType(dtPmters.getDataType());
+                mdColumn.setColumnName(titleAry[columnIndex]);
+                mdColumnList.add(mdColumn);
+            }
         }
-        
+        metadataModule.setColumnList(mdColumnList);
+        return metadataModule;
     }
-    private static void getMainDataType(Map<String, List<CellPmters>> typeMap) {
-        int doubleList = typeMap.get(ExcelConstants.DATA_TYPE_DOUBLE).size();
-        int dateList = typeMap.get(ExcelConstants.DATA_TYPE_DATE).size();
-        int stringList = typeMap.get(ExcelConstants.DATA_TYPE_STRING).size();
-        int booleanList = typeMap.get(ExcelConstants.DATA_TYPE_BOOLEAN).size();
-        int nullList = typeMap.get(ExcelConstants.DATA_TYPE_NULL).size();
-        
+    /**
+     * 得到数量最多的type和比重，空的个数
+     * @param typeMap
+     * @param dataRows
+     * @return
+     */
+    private static DTPmters getMainDataType(Map<String, List<CellPmters>> typeMap, int dataRows) {
+        int doubleTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_DOUBLE).size();
+        int dateTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_DATE).size();
+        int stringTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_STRING).size();
+        int booleanTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_BOOLEAN).size();
+        int nullTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_NULL).size();
+        DTPmters dtPmters = new DTPmters();
+        if(nullTypeSize!=dataRows){
+            dtPmters.setNullNum(nullTypeSize);
+            String type="";
+            int max=0;
+            max = doubleTypeSize;
+            type = ExcelConstants.DATA_TYPE_DOUBLE;
+            if(max<dateTypeSize) max = dateTypeSize;
+            type = ExcelConstants.DATA_TYPE_DATE;
+            if(max<stringTypeSize) max=stringTypeSize;
+            type = ExcelConstants.DATA_TYPE_STRING;
+            if(max<booleanTypeSize) max=booleanTypeSize;
+            type = ExcelConstants.DATA_TYPE_NULL;
+            int proportion = (100*max)/(dataRows-dtPmters.getNullNum());
+            dtPmters.setDataType(type);
+            dtPmters.setProportion(proportion);
+        }else{
+            dtPmters.setNullNum(dataRows);
+            dtPmters.setDataType(ExcelConstants.DATA_TYPE_NULL);
+            dtPmters.setProportion(0);
+        }
+        return dtPmters;
     }
     /**
      * 根据给定随机范围randomRange和给定的随机个数

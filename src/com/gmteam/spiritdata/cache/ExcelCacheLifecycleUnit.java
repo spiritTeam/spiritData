@@ -48,16 +48,16 @@ public class ExcelCacheLifecycleUnit extends AbstractCacheLifecycleUnit {
      */
     @Override
     public void refresh(String key) {
-        try {
-            CacheEle<?> rce;
-            if (key.equals(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE)) {
-                rce = (CacheEle<?>)SystemCache.remove(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE);
-                key = rce.getName();
-//                loadMateDataCache();
-            }
-        } catch (Exception e) {
-            logger.info("加载缓存项{UGA["+key+"]}失败：", e);
-        }
+//        try {
+//            CacheEle<?> rce;
+//            if (key.equals(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE)) {
+//                rce = (CacheEle<?>)SystemCache.remove(ExcelConstants.DATATOOLS_METADATA_CATCH_STORE);
+//                key = rce.getName();
+////                loadMateDataCache();
+//            }
+//        } catch (Exception e) {
+//            logger.info("加载缓存项{UGA["+key+"]}失败：", e);
+//        }
     }
 
 }

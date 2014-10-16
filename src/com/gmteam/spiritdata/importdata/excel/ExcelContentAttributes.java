@@ -3,6 +3,8 @@ package com.gmteam.spiritdata.importdata.excel;
 import java.util.List;
 import java.util.Map;
 
+import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
+
 /** 
  * @author mht
  * @version  
@@ -15,7 +17,7 @@ public class ExcelContentAttributes {
     private String tableName;
     private String tableId;
     private String savePath;
-    private List<ColumnInfo> columnInfo;
+    private List<MetadataColumn> columnInfo;
     private List<Object[]> dataList;
     private Integer sheetIndex;
     private Map<String,Object> uploadInfoMap;
@@ -88,10 +90,10 @@ public class ExcelContentAttributes {
     public void setSavePath(String savePath) {
         this.savePath = savePath;
     }
-    public List<ColumnInfo> getColumnInfo() {
+    public List<MetadataColumn> getColumnInfo() {
         return columnInfo;
     }
-    public void setColumnInfo(List<ColumnInfo> columnInfo) {
+    public void setColumnInfo(List<MetadataColumn> columnInfo) {
         this.columnInfo = columnInfo;
     }
     

@@ -10,6 +10,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
+import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel;
 
 /** 
  * @author mht
@@ -60,14 +62,14 @@ public class HSSFWorkBookImpl implements IPoiUtils{
      * @return
      */
     CommonUtils cu = new CommonUtils();
-    private MetaInfo getMDMoreThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
-        MetaColumnInfo metaColumnInfo = new MetaColumnInfo();
+    private MetadataModel getMDMoreThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
+        MetadataColumn metaColumnInfo = new MetadataColumn();
         
-        List<Integer> randomList = cu.getRandomList(rows);
-        for(int i=0;i<randomList.size();i++){
-            HSSFRow row = sheet.getRow(i);
-            
-        }
+        //List<Integer> randomList = cu.getRandomList(rows);
+//        for(int i=0;i<randomList.size();i++){
+//            HSSFRow row = sheet.getRow(i);
+//            
+//        }
         return null;
     }
     /**
@@ -77,8 +79,8 @@ public class HSSFWorkBookImpl implements IPoiUtils{
      * @param rows
      * @return
      */
-    private MetaInfo getMDLessThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
-        MetaColumnInfo metaColumnInfo = new MetaColumnInfo();
+    private MetadataModel getMDLessThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
+        MetadataColumn metaColumnInfo = new MetadataColumn();
         return null;
     }
 }
