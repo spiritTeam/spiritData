@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -27,17 +29,23 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
  * 类说明 用于得到Md
  */
 public class PoiUtils {
-    public static Map<SheetInfo,MetadataModel> getMdModelMap(MdPmters mdPmters){
+    public static Map<SheetInfo,MetadataModel> getMdModelMap(Object sheet,int sheetIndex,int fileTypes){
         Map<SheetInfo,MetadataModel> mdModelMap = new HashMap<SheetInfo, MetadataModel>();
         MetadataModel metadataModel = new MetadataModel();
-        int dataRows = mdPmters.getRows();
+        int dataRows;
         /**
          * 1代表是2007+，否则代表
          * 2007以下版本
          */
-        if(mdPmters.getFileType()==1){
-            XSSFSheet sheet = (XSSFSheet) mdPmters.getSheet();
-            XSSFRow xRow = sheet.getRow(1);
+        /**sheetInfo*/
+        SheetInfo sheetInfo = new SheetInfo();
+        if(fileTypes==1){
+            XSSFSheet xSheet = (XSSFSheet) sheet;
+            XSSFRow xRow = xSheet.getRow(0);
+            /**init sheetInfo*/
+            sheetInfo.setSheetIndex(sheetIndex);
+            sheetInfo.setSheetName(xSheet.getSheetName());
+            dataRows = xSheet.getLastRowNum()+1;
             /**每行长度*/
             int rowLength = xRow.getLastCellNum();
             /**得到TitleAry*/
@@ -48,10 +56,28 @@ public class PoiUtils {
                 titleAry[i] = columnName;
             }
             /**得到dataType*/
-            metadataModel = getMetadata(sheet,dataRows,rowLength,titleAry); 
-            mdModelMap.put(mdPmters.getSheetInfo(), metadataModel);
+            metadataModel = getMetadata(xSheet,dataRows,rowLength,titleAry); 
+            mdModelMap.put(sheetInfo, metadataModel);
         }else{
-            HSSFSheet sheet = (HSSFSheet) mdPmters.getSheet();
+            HSSFSheet hSheet = (HSSFSheet) sheet;
+            HSSFRow hRow = hSheet.getRow(0);
+            /**init sheetInfo*/
+            sheetInfo.setSheetIndex(sheetIndex);
+            sheetInfo.setSheetName(hSheet.getSheetName());
+            dataRows = hSheet.getLastRowNum()+1;
+            /**每行长度*/
+            int rowLength = hRow.getLastCellNum();
+            /**得到TitleAry*/
+            String [] titleAry = new String[rowLength];
+            for(int i=0;i<rowLength;i++){
+                HSSFCell hCell = hRow.getCell(i);
+                //String columnName = (String) getCellValue(hCell);
+                // TODO
+                //titleAry[i] = columnName;
+            }
+            /**得到dataType*/
+           // metadataModel = getMetadata(hSheet,dataRows,rowLength,titleAry); 
+            mdModelMap.put(sheetInfo, metadataModel);
         }
         return mdModelMap;
     }
@@ -88,7 +114,7 @@ public class PoiUtils {
         Map<Integer,Map<String,List<CellPmters>>> recordMap = new HashMap<Integer,Map<String,List<CellPmters>>>();
         if(dataRows>2&&dataRows<101){
             /**小于100条数据的时候*/
-            for(int x=0;x<dataRows-2;x++){
+            for(int x=0;x<dataRows-1;x++){
                 XSSFRow xRow = sheet.getRow(x);
                 for(int y=0;y<xRow.getLastCellNum();y++){
                     Map<String,List<CellPmters>> typeMap = recordMap.get(y);
@@ -176,12 +202,18 @@ public class PoiUtils {
             int max=0;
             max = doubleTypeSize;
             type = ExcelConstants.DATA_TYPE_DOUBLE;
-            if(max<dateTypeSize) max = dateTypeSize;
-            type = ExcelConstants.DATA_TYPE_DATE;
-            if(max<stringTypeSize) max=stringTypeSize;
-            type = ExcelConstants.DATA_TYPE_STRING;
-            if(max<booleanTypeSize) max=booleanTypeSize;
-            type = ExcelConstants.DATA_TYPE_NULL;
+            if(max<dateTypeSize) {
+                max = dateTypeSize;
+                type = ExcelConstants.DATA_TYPE_DATE;
+            }
+            if(max<stringTypeSize){
+                max=stringTypeSize;
+                type = ExcelConstants.DATA_TYPE_STRING;
+            } 
+            if(max<booleanTypeSize) {
+                max=booleanTypeSize;
+                type = ExcelConstants.DATA_TYPE_BOOLEAN;
+            }
             int proportion = (100*max)/(dataRows-dtPmters.getNullNum());
             dtPmters.setDataType(type);
             dtPmters.setProportion(proportion);
@@ -206,7 +238,7 @@ public class PoiUtils {
         Random r = new Random();
         for(int i=0;i<randomSize;i++){
             int k = r.nextInt(randomRange-1)+1;
-            if(randomMap.get(k)==null&&k<randomSize){
+            if(randomMap.get(k)==null&&k<randomRange){
                 randomMap.put(k, k);
                 rdmAry[i] = k;
             }
@@ -278,7 +310,7 @@ public class PoiUtils {
                 type = "Boolean";  
                 break;  
             case XSSFCell.CELL_TYPE_BLANK:  
-                type = null;  
+                type = "Null";  
                 break;  
             default:  
                 break;  

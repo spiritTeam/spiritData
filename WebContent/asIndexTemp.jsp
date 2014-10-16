@@ -232,7 +232,7 @@ function uploadF() {
     {
       analysizeing=true;//开始分析
       $("#waittingArea").fadeIn(200);//等待提示区
-      showDemo();
+      //showDemo();
     }
   } catch(e) {
     $.messager.alert("文件上传失败", e, "error");
