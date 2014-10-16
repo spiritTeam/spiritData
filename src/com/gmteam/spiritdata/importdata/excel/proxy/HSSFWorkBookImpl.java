@@ -22,7 +22,7 @@ public class HSSFWorkBookImpl implements IPoiUtils{
     private HSSFWorkbook workbook;
     public HSSFWorkBookImpl() {  
     }
-    public HSSFWorkBookImpl(File execlFile) throws Exception{
+    public HSSFWorkBookImpl(File execlFile,int fileType) throws Exception{
         workbook = new HSSFWorkbook(new FileInputStream(execlFile)); 
     } 
     @Override
