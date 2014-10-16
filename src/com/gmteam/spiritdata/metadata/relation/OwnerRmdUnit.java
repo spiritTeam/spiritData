@@ -1,5 +1,7 @@
 package com.gmteam.spiritdata.metadata.relation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +22,9 @@ public class OwnerRmdUnit {
 
     private String onwerId; //所有者Id，有可能是用户Id也有可能是SessionId
     private int onwerType; //所有者类型：1=用户；2=Session
+    protected String test="aabbcc";
+    private List<String> l = new ArrayList<String>();
+    private Boolean b = Boolean.FALSE;;
 
     private Map<String, MetadataModel> mdModelMap; //所有者元数据集合
 
@@ -32,20 +37,47 @@ public class OwnerRmdUnit {
         this.onwerId = onwerId;
         this.onwerType = onwerType;
         this.mdModelMap = new ConcurrentHashMap();
+        loadDataThread lm = new loadDataThread(test, l, b);
+        Thread t = new Thread(lm);
+        System.out.println("Bgin::="+l.size()+">>"+test+">>"+b);
+        t.start();
+
+        int i=0;
+        while (i<1000) {
+            i++;
+            System.out.println("::="+l.size()+">>"+test+">>"+b);
+        }
         
         //读取数据库内容到mdModelList；采用线程的方式
         
+    }
+
+    public String getOnwerId() {
+        return onwerId;
     }
 
     /**
      * 加入新的元数据模型，注意这个方法不判断元数据信息是否意义重复。
      * 这个方法做两个事情：
      * 1-向mdModelMap中加入元数据模型
-     * 2-向数据库中插入相应的记录
+     * 2-向数据库中插入相应的记录——注意只是基本元数据的信息(除了语义表)，不涉及关联表和数据表
      * @param mm 新元数据模型
      */
     public void addMetedataModel(MetadataModel mm) {
-        
+        //
+    }
+
+    /**
+     * 删除元数据模型。
+     * 这个方法做两个事情：
+     * 1-从mdModelMap中删除元数据模型
+     * 2-从数据库中删除相应的记录
+     * @param mdMId 元数据模型Id
+     */
+    public void delMetedataModel(String mdMId) {
+        //先删除数据表
+        //再删除metadata表
+        //最后删除mdModelMap中信息
     }
 
     /**
@@ -60,17 +92,27 @@ public class OwnerRmdUnit {
     public void updateMetedataModel(MetadataModel mm) {
         
     }
+
+    public static void main(String args[]) throws InterruptedException {
+        OwnerRmdUnit oru = new OwnerRmdUnit("", 1);
+    }
 }
 
 class loadDataThread implements Runnable{
-    public loadDataThread() {
-        
+    private String t="";
+    private List<String> l2;
+    private Boolean _b;
+    public loadDataThread(String t, List<String> l, Boolean b) {
+        this.t=t;
+        this.l2 = l;
+        this._b=b;
     }
     
     @Override
     public void run() {
-        // TODO Auto-generated method stub
-        
+        this.t="change";
+        _b = Boolean.TRUE;
+        l2.add("SSSSS");
     }
     
 }

@@ -17,7 +17,7 @@ public class MetadataColSemanteme extends BaseObject {
     private String mdMId; //元数据模式Id
     private Integer semantemeCode; //语义代码
     private Integer semantemeType; //语义类型
-    private Timestamp cTime; //创建时间
+    private Timestamp cTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间
     //以上对应数据库信息
     private MetadataColumn column; //本列语义对应的列描述信息

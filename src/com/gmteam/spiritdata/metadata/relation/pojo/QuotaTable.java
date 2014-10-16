@@ -22,7 +22,7 @@ public class QuotaTable extends BaseObject {
     private long allCount; //实体表指标——表总行数
     private Timestamp laTime; //实体表指标——最新用于分析的访问时间，只对积累表有意义
 
-    private Timestamp cTime; //本记录创建时间，也是实体表创建时间
+    private Timestamp cTime; //本记录创建时间，也是表实体创建时间
     private Timestamp lmTime; //本记录最后修改时间
 
     private List<QuotaColumn> colQuotaList; //列指标列表

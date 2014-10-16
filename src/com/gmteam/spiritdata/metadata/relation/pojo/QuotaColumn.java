@@ -20,7 +20,7 @@ public class QuotaColumn extends BaseObject {
     private long nullCount; //列指标——空值数
     private long distinctCount; //列指标——单值数
 
-    private Timestamp cTime; //本记录创建时间
+    private Timestamp cTime; //记录创建时间
     private Timestamp lmTime; //本记录最后修改时间
     //以上信息对应数据库中的信息
     private MetadataColumn column; //本列指标对应的列描述信息
