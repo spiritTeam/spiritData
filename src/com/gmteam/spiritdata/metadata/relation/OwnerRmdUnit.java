@@ -38,16 +38,6 @@ public class OwnerRmdUnit {
     }
 
     /**
-     * 在所有者创建的全部元数据模型集合中 比较 元数据模型是否已经存在
-     * @param mm 被比较的元数据模型
-     * @return 若存在返回true，否则返回false
-     */
-    public boolean compareMetadataModel(MetadataModel mm) {
-        
-        return false;
-    }
-
-    /**
      * 加入新的元数据模型，注意这个方法不判断元数据信息是否意义重复。
      * 这个方法做两个事情：
      * 1-向mdModelMap中加入元数据模型
