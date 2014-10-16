@@ -15,10 +15,10 @@
 </resultMap>
 
 <select id="getUserByLoginName" resultMap="userMap" parameterType="java.lang.String">
-select * from plat_user where loginName=#loginName#
+select * from plat_user where loginName=#{loginName,jdbcType=VARCHAR}
 </select>
 
 <select id="getUserById" resultMap="userMap" parameterType="java.lang.String">
-select * from plat_user where id=#id#
+select * from plat_user where id=#{id,jdbcType=VARCHAR}
 </select>
 </mapper>
