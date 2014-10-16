@@ -3,9 +3,9 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="ColSemanteme" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme"/>
+    <typeAlias alias="MetadataColSemanteme" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme"/>
     <typeAlias alias="FileUploadLog" type="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog"/>
-    <typeAlias alias="TableMapOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg"/>
+    <typeAlias alias="TableMapOrg" type="com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg"/>
     <typeAlias alias="UploadLogTableOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg"/> 
     <typeAlias alias="QuotaColumn" type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn"/>
     <typeAlias alias="MetadataColumn" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn"/>
