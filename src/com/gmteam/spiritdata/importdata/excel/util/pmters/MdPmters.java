@@ -1,13 +1,31 @@
-package com.gmteam.spiritdata.importdata.excel.util;
+package com.gmteam.spiritdata.importdata.excel.util.pmters;
+
+import java.util.prefs.BackingStoreException;
+
+import com.gmteam.framework.core.model.BaseObject;
+import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
+
 /** 
  * @author mht
  * @version  
  * 类说明 存一些常量，用于得到md
  */
-public class MdPmters {
+public class MdPmters extends BaseObject{
+    /**文件类型*/
     private int fileType;
+    /**sheet*/
     private Object sheet;
+    /**条数*/
     private int rows;
+    /**sheetInfo*/
+    private SheetInfo sheetInfo;
+    
+    public SheetInfo getSheetInfo() {
+        return sheetInfo;
+    }
+    public void setSheetInfo(SheetInfo sheetInfo) {
+        this.sheetInfo = sheetInfo;
+    }
     public int getFileType() {
         return fileType;
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="tableMapOrg" >
-  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="ownerId" property="ownerId" jdbcType="VARCHAR" />
     <result column="tmId" property="tmId" jdbcType="VARCHAR" />
@@ -9,7 +9,7 @@
     <result column="tableType" property="tableType" jdbcType="INTEGER" />
     <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg" >
     select
     <if test="distinct" >
       distinct
@@ -33,13 +33,13 @@
     delete from sa_md_tabmap_org
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
+  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg" >
     delete from sa_md_tabmap_org
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg" >
     insert into sa_md_tabmap_org
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -82,7 +82,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg" resultType="java.lang.Integer" >
     select count(*) from sa_md_tabmap_org
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -114,7 +114,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.TableMapOrg" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg" >
     update sa_md_tabmap_org
     <set >
       <if test="ownerId != null" >
