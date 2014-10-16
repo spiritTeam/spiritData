@@ -20,8 +20,8 @@ import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.CellPmters;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.DTPmters;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.MdPmters;
-import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
-import com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /** 
  * @author 

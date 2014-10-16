@@ -1,8 +1,8 @@
-package com.gmteam.spiritdata.matedata.relation;
+package com.gmteam.spiritdata.metadata.relation;
 
 import java.util.Map;
 
-import com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /**
  * 所有者“关系型元数据”处理单元。

@@ -10,8 +10,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
-import com.gmteam.spiritdata.matedata.relation.pojo.MetadataColumn;
-import com.gmteam.spiritdata.matedata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /** 
  * @author mht

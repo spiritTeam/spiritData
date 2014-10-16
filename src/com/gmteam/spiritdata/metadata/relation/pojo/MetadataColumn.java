@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.matedata.relation.pojo;
+package com.gmteam.spiritdata.metadata.relation.pojo;
 
 import java.sql.Timestamp;
 
