@@ -21,6 +21,7 @@ public class MdDealService {
         return ownerRmdMemery;
     }
 
+    public MdDealService() {}
     public MdDealService(HttpSession session) {
         this.ownerRmdMemery = (OwnerRmdUnit)session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         if (this.ownerRmdMemery==null||this.ownerRmdMemery.getOnwerId()==null||"".equals(this.ownerRmdMemery.getOnwerId())) {
