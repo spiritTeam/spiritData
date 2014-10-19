@@ -9,8 +9,6 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 

@@ -22,14 +22,11 @@ public class MetadataService {
 
     @Resource
     private _OwnerMetadataService _ownerMdService;
-    public _OwnerMetadataService get_ownerMdService() {
-        return _ownerMdService;
-    }
-    public void set_ownerMdService(_OwnerMetadataService _ownerMdService) {
-        this._ownerMdService = _ownerMdService;
-    }
+    @Resource
+    private MdEntityTableService mdTableOrgService;
 
     public void setSession(HttpSession session) {
+        this.session = session;
     }
 
     /**
@@ -78,18 +75,5 @@ public class MetadataService {
         while (!_om.isLoadSuccess()) ; //等待执行，这个用线程间通信更好
         //比较是否存储在
         return false;
-    }
-
-    public void storeOwnerMetadate2Session() {
-        
-    }
-    
-    @Resource
-    private MdEntityTableService mdTableOrgService;
-    public MdEntityTableService getMdTableOrgService() {
-        return mdTableOrgService;
-    }
-    public void setMdTableOrgService(MdEntityTableService mdTableOrgService) {
-        this.mdTableOrgService = mdTableOrgService;
     }
 }
