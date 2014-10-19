@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="fileUploadLog" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="ownerId" property="ownerId" jdbcType="VARCHAR" />
+    <result column="sFileName" property="sFileName" jdbcType="VARCHAR" />
+    <result column="fileSize" property="fileSize" jdbcType="INTEGER" />
+    <result column="cFileName" property="cFileName" jdbcType="VARCHAR" />
+    <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_imp_log
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sa_imp_log
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog" >
+    delete from sa_imp_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog" >
+    insert into sa_imp_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ownerId != null" >
+        ownerId,
+      </if>
+      <if test="sFileName != null" >
+        sFileName,
+      </if>
+      <if test="fileSize != null" >
+        fileSize,
+      </if>
+      <if test="cFileName != null" >
+        cFileName,
+      </if>
+      <if test="cTime != null" >
+        cTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerId != null" >
+        #{ownerId,jdbcType=VARCHAR},
+      </if>
+      <if test="sFileName != null" >
+        #{sFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null" >
+        #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="cFileName != null" >
+        #{cFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="cTime != null" >
+        #{cTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog" resultType="java.lang.Integer" >
+    select count(*) from sa_imp_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sa_imp_log
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ownerId != null" >
+        ownerId = #{record.ownerId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sFileName != null" >
+        sFileName = #{record.sFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileSize != null" >
+        fileSize = #{record.fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="record.cFileName != null" >
+        cFileName = #{record.cFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cTime != null" >
+        cTime = #{record.cTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog" >
+    update sa_imp_log
+    <set >
+      <if test="ownerId != null" >
+        ownerId = #{ownerId,jdbcType=VARCHAR},
+      </if>
+      <if test="sFileName != null" >
+        sFileName = #{sFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null" >
+        fileSize = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="cFileName != null" >
+        cFileName = #{cFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="cTime != null" >
+        cTime = #{cTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

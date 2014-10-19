@@ -12,8 +12,8 @@ public class User extends UgaUser {
     private static final long serialVersionUID = -6658966661407738276L;
     private String mailAdress; //用户邮箱
     private String nickName; //昵称
-    private String descn; //用户描述
     private int userType; //用户分类：1=自然人用户;2=组织用户
+    private String descn; //用户描述
     private Timestamp cTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间:last modify time
 

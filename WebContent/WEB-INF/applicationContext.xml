@@ -34,7 +34,7 @@
     <property name="configLocations">
       <list merge="default">
         <value>classpath*:mybatisConfig/frameworkMybatis.xml</value>
-        <value>classpath*:mybatisConfig/*.mappers.cfg.xml</value>
+        <value>classpath*:mybatisConfig/UGA.mappers.cfg.xml</value>
       </list>
     </property>
     <!--备选方案
@@ -76,44 +76,12 @@
     <property name="uploadTempDir" value="/tempUpload/"/> <!-- 此路径为临时路径上传后的目录名 (WebUtils#TEMP_DIR_CONTEXT_ATTRIBUTE) -->
     <property name="resolveLazily" value="true"/> <!--resolveLazily属性启用是为了推迟文件解析，以便在UploadAction 中捕获文件大小异常-->
   </bean>
-  
-  <!-- gisDcSys数据库  -->
-  <bean id="defaultDAO_dcSys" class="com.gmteam.framework.core.dao.mybatis.MybatisDAO"  scope="prototype" init-method="initialize">
-    <property name="sqlSessionFactory" ref="sqlSessionFactory_DcSys"/>
-  </bean>
-  <bean id="dcSysDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" lazy-init="false">
-    <property name="driverClassName" value="${jdbc.sys.driverClassName}"/>
-    <property name="url" value="${jdbc.sys.url}"/>
-    <property name="username" value="${jdbc.sys.username}"/>
-    <property name="password" value="${jdbc.sys.password}"/>
-    <property name="initialSize" value="30"/>
-    <property name="maxActive" value="50"/>
-    <property name="maxWait" value="60000"/>
-    <property name="poolPreparedStatements" value="true"/>
-    <property name="maxOpenPreparedStatements" value="30"/>
-  </bean>
-  <bean id="transactionManager_gisDcSys" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    <property name="dataSource" ref="dcSysDS"/>
-  </bean>
-  <bean id="sqlSessionFactory_DcSys" class="com.gmteam.framework.ext.spring.mybatis.MySqlSessionFactoryBean">
-    <property name="configLocations">
-      <list merge="default">
-        <value>classpath*:mybatisConfig/frameworkMybatis.xml</value>
-        <value>classpath*:mybatisConfig/dcSys.mappers.cfg.xml</value>
-      </list>
-    </property>
-    <property name="databaseType" value="oracle"/>
-    <property name="dataSource" ref="dcSysDS"/>
-    <property name="transactionFactory">
-      <bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
-    </property>
-  </bean>
- 
+
+  <!-- 以下为web环境Session加载的定义 -->
+  <bean id="sessionLoader"        class="com.gmteam.spiritdata.login.SessionLoaderImp"/>
   <!-- 以下为UGA框架(用户/用户组/权限框架)所需配置 -->
-  <!--Uga缓存：平台
-  <bean id="cacheFrameworkUgaManager" class="com.gmteam.framework.component.UGA.cache.FrameworkUgaCLU"/> -->
-  <!--Uga用户服务：平台-->
-  <bean id="ugaUserService"           class="com.gmteam.framework.component.UGA.service.UserService"/> 
+  <!--gisUga用户服务：平台 -->
+  <bean id="ugaUserService"       class="com.gmteam.spiritdata.UGA.service.UserService"/>
   <!--Uga用户模块服务：平台 -->
-  <bean id="ugaAuthorityService"      class="com.gmteam.framework.component.UGA.service.AuthorityService"/>
+  <bean id="ugaAuthorityService"  class="com.gmteam.spiritdata.UGA.service.AuthorityService"/>
 </beans>

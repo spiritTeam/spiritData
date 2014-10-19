@@ -10,13 +10,11 @@ import java.io.File;
 public class WorkBookProxy implements IPoiUtils{
     private Object excelWorkBook;
     private IPoiUtils iPoiUtils;
-    private Integer fileType;
     public WorkBookProxy(File execlFile,Integer fileType) throws Exception {
-        this.fileType = fileType;
         if (fileType==2)
-            this.iPoiUtils = new XSSFWorkBookImpl(execlFile);
+            this.iPoiUtils = new XSSFWorkBookImpl(execlFile,fileType);
         else if (fileType==1)
-            this.iPoiUtils = new HSSFWorkBookImpl(execlFile);
+            this.iPoiUtils = new HSSFWorkBookImpl(execlFile,fileType);
         else throw new Exception("不是excel文件");
     }
     @Override

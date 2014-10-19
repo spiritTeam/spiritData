@@ -10,8 +10,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
-import com.gmteam.spiritdata.matedata.relation.MetaColumnInfo;
-import com.gmteam.spiritdata.matedata.relation.MetaInfo;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /** 
  * @author mht
@@ -22,7 +22,7 @@ public class HSSFWorkBookImpl implements IPoiUtils{
     private HSSFWorkbook workbook;
     public HSSFWorkBookImpl() {  
     }
-    public HSSFWorkBookImpl(File execlFile) throws Exception{
+    public HSSFWorkBookImpl(File execlFile,int fileType) throws Exception{
         workbook = new HSSFWorkbook(new FileInputStream(execlFile)); 
     } 
     @Override
@@ -47,9 +47,9 @@ public class HSSFWorkBookImpl implements IPoiUtils{
              * 根据条数分析MateData
              */
             if(rows<12&&rows>=2){
-                 MetaInfo metaInfo =  getMDLessThan10Rows(sheetIndex,sheet,rows);
+                 //MetaInfo metaInfo =  getMDLessThan10Rows(sheetIndex,sheet,rows);
             }else{
-                MetaInfo metaInfo =  getMDMoreThan10Rows(sheetIndex,sheet,rows);
+                //MetaInfo metaInfo =  getMDMoreThan10Rows(sheetIndex,sheet,rows);
             }
         }
         return null;
@@ -60,27 +60,24 @@ public class HSSFWorkBookImpl implements IPoiUtils{
      * @param sheet
      * @param rows
      * @return
-     */
     CommonUtils cu = new CommonUtils();
-    private MetaInfo getMDMoreThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
-        MetaColumnInfo metaColumnInfo = new MetaColumnInfo();
+    private MetadataModel getMDMoreThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
+        MetadataColumn metaColumnInfo = new MetadataColumn();
         
-        List<Integer> randomList = cu.getRandomList(rows);
-        for(int i=0;i<randomList.size();i++){
-            HSSFRow row = sheet.getRow(i);
-            
-        }
+        //List<Integer> randomList = cu.getRandomList(rows);
+//        for(int i=0;i<randomList.size();i++){
+//            HSSFRow row = sheet.getRow(i);
+//            
+//        }
         return null;
     }
+     */
     /**
      * 总条数少于10的
      * @param i
      * @param sheet
      * @param rows
      * @return
+<<<<<<< HEAD
      */
-    private MetaInfo getMDLessThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
-        MetaColumnInfo metaColumnInfo = new MetaColumnInfo();
-        return null;
-    }
 }

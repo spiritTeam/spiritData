@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="metadataColumn" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="tmId" property="tmId" jdbcType="VARCHAR" />
+    <result column="columnName" property="columnName" jdbcType="VARCHAR" />
+    <result column="titleName" property="titleName" jdbcType="VARCHAR" />
+    <result column="columnType" property="columnType" jdbcType="VARCHAR" />
+    <result column="columnIndex" property="columnIndex" jdbcType="INTEGER" />
+    <result column="isPk" property="isPk" jdbcType="INTEGER" />
+    <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_md_column
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sa_md_column
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn" >
+    delete from sa_md_column
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn" >
+    insert into sa_md_column
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tmId != null" >
+        tmId,
+      </if>
+      <if test="columnName != null" >
+        columnName,
+      </if>
+      <if test="titleName != null" >
+        titleName,
+      </if>
+      <if test="columnType != null" >
+        columnType,
+      </if>
+      <if test="columnIndex != null" >
+        columnIndex,
+      </if>
+      <if test="isPk != null" >
+        isPk,
+      </if>
+      <if test="cTime != null" >
+        cTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="tmId != null" >
+        #{tmId,jdbcType=VARCHAR},
+      </if>
+      <if test="columnName != null" >
+        #{columnName,jdbcType=VARCHAR},
+      </if>
+      <if test="titleName != null" >
+        #{titleName,jdbcType=VARCHAR},
+      </if>
+      <if test="columnType != null" >
+        #{columnType,jdbcType=VARCHAR},
+      </if>
+      <if test="columnIndex != null" >
+        #{columnIndex,jdbcType=INTEGER},
+      </if>
+      <if test="isPk != null" >
+        #{isPk,jdbcType=INTEGER},
+      </if>
+      <if test="cTime != null" >
+        #{cTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn" resultType="java.lang.Integer" >
+    select count(*) from sa_md_column
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sa_md_column
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tmId != null" >
+        tmId = #{record.tmId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.columnName != null" >
+        columnName = #{record.columnName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.titleName != null" >
+        titleName = #{record.titleName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.columnType != null" >
+        columnType = #{record.columnType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.columnIndex != null" >
+        columnIndex = #{record.columnIndex,jdbcType=INTEGER},
+      </if>
+      <if test="record.isPk != null" >
+        isPk = #{record.isPk,jdbcType=INTEGER},
+      </if>
+      <if test="record.cTime != null" >
+        cTime = #{record.cTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn" >
+    update sa_md_column
+    <set >
+      <if test="tmId != null" >
+        tmId = #{tmId,jdbcType=VARCHAR},
+      </if>
+      <if test="columnName != null" >
+        columnName = #{columnName,jdbcType=VARCHAR},
+      </if>
+      <if test="titleName != null" >
+        titleName = #{titleName,jdbcType=VARCHAR},
+      </if>
+      <if test="columnType != null" >
+        columnType = #{columnType,jdbcType=VARCHAR},
+      </if>
+      <if test="columnIndex != null" >
+        columnIndex = #{columnIndex,jdbcType=INTEGER},
+      </if>
+      <if test="isPk != null" >
+        isPk = #{isPk,jdbcType=INTEGER},
+      </if>
+      <if test="cTime != null" >
+        cTime = #{cTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

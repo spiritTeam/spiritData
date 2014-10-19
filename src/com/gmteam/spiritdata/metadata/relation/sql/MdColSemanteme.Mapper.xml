@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="metadataColSemanteme" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="cId" property="cId" jdbcType="VARCHAR" />
+    <result column="tmId" property="tmId" jdbcType="VARCHAR" />
+    <result column="semantemeCode" property="semantemeCode" jdbcType="INTEGER" />
+    <result column="semantemeType" property="semantemeType" jdbcType="INTEGER" />
+    <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
+    <result column="lmTime" property="lmTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_md_colsemanteme
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sa_md_colsemanteme
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" >
+    delete from sa_md_colsemanteme
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" >
+    insert into sa_md_colsemanteme
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cid != null" >
+        cId,
+      </if>
+      <if test="tmid != null" >
+        tmId,
+      </if>
+      <if test="semantemecode != null" >
+        semantemeCode,
+      </if>
+      <if test="semantemetype != null" >
+        semantemeType,
+      </if>
+      <if test="ctime != null" >
+        cTime,
+      </if>
+      <if test="lmtime != null" >
+        lmTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="cid != null" >
+        #{cid,jdbcType=VARCHAR},
+      </if>
+      <if test="tmid != null" >
+        #{tmid,jdbcType=VARCHAR},
+      </if>
+      <if test="semantemecode != null" >
+        #{semantemecode,jdbcType=INTEGER},
+      </if>
+      <if test="semantemetype != null" >
+        #{semantemetype,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lmtime != null" >
+        #{lmtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" resultType="java.lang.Integer" >
+    select count(*) from sa_md_colsemanteme
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sa_md_colsemanteme
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cid != null" >
+        cId = #{record.cid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tmid != null" >
+        tmId = #{record.tmid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.semantemecode != null" >
+        semantemeCode = #{record.semantemecode,jdbcType=INTEGER},
+      </if>
+      <if test="record.semantemetype != null" >
+        semantemeType = #{record.semantemetype,jdbcType=INTEGER},
+      </if>
+      <if test="record.ctime != null" >
+        cTime = #{record.ctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lmtime != null" >
+        lmTime = #{record.lmtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" >
+    update sa_md_colsemanteme
+    <set >
+      <if test="cid != null" >
+        cId = #{cid,jdbcType=VARCHAR},
+      </if>
+      <if test="tmid != null" >
+        tmId = #{tmid,jdbcType=VARCHAR},
+      </if>
+      <if test="semantemecode != null" >
+        semantemeCode = #{semantemecode,jdbcType=INTEGER},
+      </if>
+      <if test="semantemetype != null" >
+        semantemeType = #{semantemetype,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        cTime = #{ctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lmtime != null" >
+        lmTime = #{lmtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
