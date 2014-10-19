@@ -35,6 +35,7 @@
       <list merge="default">
         <value>classpath*:mybatisConfig/frameworkMybatis.xml</value>
         <value>classpath*:mybatisConfig/UGA.mappers.cfg.xml</value>
+        <value>classpath*:mybatisConfig/Metadata.mappers.cfg.xml</value>
       </list>
     </property>
     <!--备选方案

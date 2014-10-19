@@ -1,47 +1,71 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  基础元数据：元数据模式
+-->
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="metadataModel" >
-  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="ownerId" property="ownerId" jdbcType="VARCHAR" />
+  <!-- 对象定义:元数据模式 -->
+  <resultMap id="BaseResultMap" type="MdM" >
+    <id     column="id"        property="id"        jdbcType="VARCHAR" />
+    <result column="ownerId"   property="ownerId"   jdbcType="VARCHAR" />
     <result column="ownerType" property="ownerType" jdbcType="INTEGER" />
     <result column="tableName" property="tableName" jdbcType="VARCHAR" />
-    <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
+    <result column="cTime"     property="cTime"     jdbcType="TIMESTAMP" />
   </resultMap>
+  <!-- 所有列 -->
   <sql id="Base_Column_List" >
     id, ownerId, ownerType, tableName, cTime
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel" >
-    select
-    <if test="distinct" >
-      distinct
+  <!-- 条件子句 -->
+  <sql id="WhereClauseByEntiey" >
+    <where >
+      <trim prefix="(" suffix=")" prefixOverrides="and" >
+        <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
+        <if test="ownerId != null" > and ownerId = #{ownerId,jdbcType=VARCHAR} </if>
+        <if test="ownerType != null" > and ownerType = #{ownerType,jdbcType=INTEGER} </if>
+        <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
+        <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
+      </trim>
+    </where>
+  </sql>
+
+  <!-- 获得记录条数-->
+  <select id="count" parameterType="MdM" resultType="java.lang.Integer" >
+    select count(*) from sa_md_tabmodel
+    <if test="_parameter != null" >
+      <include refid="WhereClauseByEntiey" />
     </if>
-    <include refid="Base_Column_List" />
+  </select>
+
+  <!-- 获得列表 -->
+  <select id="getList" resultMap="BaseResultMap" parameterType="MdM" >
+    select <include refid="Base_Column_List" />
     from sa_md_tabmodel
     <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
+      <include refid="WhereClauseByEntiey" />
     </if>
     <if test="orderByClause != null" >
       order by ${orderByClause}
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
+    select <include refid="Base_Column_List" />
     from sa_md_tabmodel
     where id = #{id,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from sa_md_tabmodel
-    where id = #{id,jdbcType=VARCHAR}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel" >
-    delete from sa_md_tabmodel
+
+  <!-- 获得一条数据 -->
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="MdM" >
+    select <include refid="Base_Column_List" />
+    from sa_md_tabmodel
     <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
+      <include refid="WhereClauseByEntiey" />
     </if>
-  </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel" >
+  </select>
+
+  <!-- 新增数据 -->
+  <insert id="insert" parameterType="MdM" >
     insert into sa_md_tabmodel
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -78,36 +102,9 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel" resultType="java.lang.Integer" >
-    select count(*) from sa_md_tabmodel
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
-    update sa_md_tabmodel
-    <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
-      </if>
-      <if test="record.ownerId != null" >
-        ownerId = #{record.ownerId,jdbcType=VARCHAR},
-      </if>
-      <if test="record.ownerType != null" >
-        ownerType = #{record.ownerType,jdbcType=INTEGER},
-      </if>
-      <if test="record.tableName != null" >
-        tableName = #{record.tableName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.cTime != null" >
-        cTime = #{record.cTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel" >
+
+  <!-- 修改 根据主键-->
+  <update id="update" parameterType="MdM" >
     update sa_md_tabmodel
     <set >
       <if test="ownerId != null" >
@@ -125,4 +122,15 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from sa_md_tabmodel where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByEntity" parameterType="MdM" >
+    delete from sa_md_tabmodel
+    <if test="_parameter != null" >
+      <include refid="WhereClauseByEntiey" />
+    </if>
+  </delete>
 </mapper>
