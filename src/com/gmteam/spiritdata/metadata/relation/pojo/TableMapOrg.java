@@ -16,7 +16,7 @@ public class TableMapOrg extends BaseObject {
     private String mdMId; //元数据模式表Id
     private String tableName; //数据表名称
     private Integer tableType; //表类型：1=积累表；2=临时表
-    private String tableMemo; //表说明
+    private String tableDescn; //表说明
     private Timestamp cTime; //本记录创建时间，也是表实体创建时间
 
     public String getId() {
@@ -59,12 +59,12 @@ public class TableMapOrg extends BaseObject {
         this.tableType = tableType;
     }
 
-    public String getTableMemo() {
-        return tableMemo;
+    public String getTableDescn() {
+        return tableDescn;
     }
 
-    public void setTableMemo(String tableMemo) {
-        this.tableMemo = tableMemo;
+    public void setTableDescn(String tableDescn) {
+        this.tableDescn = tableDescn;
     }
 
     public Timestamp getcTime() {

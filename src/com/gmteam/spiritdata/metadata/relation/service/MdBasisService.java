@@ -32,7 +32,7 @@ public class MdBasisService {
     public void initParam() {
         mmDao.setNamespace("metadataModel");
         mcDao.setNamespace("metadataColumn");
-        mcsDao.setNamespace("metadatColSemanteme");
+        mcsDao.setNamespace("metadataColSemanteme");
     }
 
     /**
@@ -64,7 +64,7 @@ public class MdBasisService {
      * @throws Exception
      */
     public List<MetadataColumn> getMdColList(MetadataColumn paramMc) throws Exception {
-        return mcDao.queryForList(paramMc);
+        return mcDao.queryForList(paramMc.toHashMapAsBean());
     }
 
     /**

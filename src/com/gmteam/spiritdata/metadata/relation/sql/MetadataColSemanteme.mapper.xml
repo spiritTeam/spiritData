@@ -1,103 +1,129 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  基础元数据：元数据列语义
+-->
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="metadataColSemanteme" >
-  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="cId" property="cId" jdbcType="VARCHAR" />
-    <result column="tmId" property="tmId" jdbcType="VARCHAR" />
+  <!-- 对象定义:元数据列语义 -->
+  <resultMap id="BaseResultMap" type="MdColS" >
+    <id     column="id"            property="id"            jdbcType="VARCHAR" />
+    <result column="cId"           property="colId"         jdbcType="VARCHAR" />
+    <result column="tmId"          property="mdMId"         jdbcType="VARCHAR" />
     <result column="semantemeCode" property="semantemeCode" jdbcType="INTEGER" />
     <result column="semantemeType" property="semantemeType" jdbcType="INTEGER" />
-    <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
-    <result column="lmTime" property="lmTime" jdbcType="TIMESTAMP" />
+    <result column="cTime"         property="cTime"         jdbcType="TIMESTAMP" />
+    <result column="lmTime"        property="lmTime"        jdbcType="TIMESTAMP" />
   </resultMap>
+  <!-- 所有列 -->
+  <sql id="Base_Column_List" >
+    id, cId, tmId, semantemeCode, semantemeType, cTime, lmTime
+  </sql>
+  <!-- 条件子句 -->
+  <sql id="WhereClauseByEntiey" >
+    <where >
+      <trim prefix="(" suffix=")" prefixOverrides="and" >
+        <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
+        <if test="cId != null" > and cId = #{colId,jdbcType=VARCHAR} </if>
+        <if test="tmId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
+        <if test="semantemeCode != null" > and semantemeCode = #{semantemeCode,jdbcType=INTEGER} </if>
+        <if test="semantemeType != null" > and semantemeType = #{semantemeType,jdbcType=INTEGER} </if>
+        <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
+        <if test="lmTime != null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
+      </trim>
+    </where>
+  </sql>
+  <!-- 获得记录条数-->
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
+    select count(*) from sa_md_colsemanteme
+    <if test="_parameter != null" >
+      <include refid="WhereClauseByEntiey"/>
+    </if>
+  </select>
+
+  <!-- 获得列表 -->
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select <include refid="Base_Column_List" />
+    from sa_md_colsemanteme
+    <if test="_parameter != null" >
+      <include refid="WhereClauseByEntiey" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
+    select <include refid="Base_Column_List" />
     from sa_md_colsemanteme
     where id = #{id,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from sa_md_colsemanteme
-    where id = #{id,jdbcType=VARCHAR}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" >
-    delete from sa_md_colsemanteme
+
+  <!-- 获得一条数据 -->
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select <include refid="Base_Column_List" />
+    from sa_md_colsemanteme
     <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
+      <include refid="WhereClauseByEntiey" />
     </if>
-  </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" >
+  </select>
+
+  <!-- 新增数据 -->
+  <insert id="insert" parameterType="java.util.Map" >
     insert into sa_md_colsemanteme
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="cid != null" >
+      <if test="colId != null" >
         cId,
       </if>
-      <if test="tmid != null" >
+      <if test="mdMId != null" >
         tmId,
       </if>
-      <if test="semantemecode != null" >
+      <if test="semantemeCode != null" >
         semantemeCode,
       </if>
-      <if test="semantemetype != null" >
+      <if test="semantemeType != null" >
         semantemeType,
-      </if>
-      <if test="ctime != null" >
-        cTime,
-      </if>
-      <if test="lmtime != null" >
-        lmTime,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="cid != null" >
-        #{cid,jdbcType=VARCHAR},
+      <if test="colId != null" >
+        #{coId,jdbcType=VARCHAR},
       </if>
-      <if test="tmid != null" >
-        #{tmid,jdbcType=VARCHAR},
+      <if test="mdMId != null" >
+        #{mdMId,jdbcType=VARCHAR},
       </if>
       <if test="semantemecode != null" >
-        #{semantemecode,jdbcType=INTEGER},
+        #{semantemeCode,jdbcType=INTEGER},
       </if>
       <if test="semantemetype != null" >
-        #{semantemetype,jdbcType=INTEGER},
-      </if>
-      <if test="ctime != null" >
-        #{ctime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="lmtime != null" >
-        #{lmtime,jdbcType=TIMESTAMP},
+        #{semantemeType,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" resultType="java.lang.Integer" >
-    select count(*) from sa_md_colsemanteme
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
+
+  <!-- 修改 根据主键 -->
+  <update id="update" parameterType="java.util.Map" >
     update sa_md_colsemanteme
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.cid != null" >
-        cId = #{record.cid,jdbcType=VARCHAR},
+        cId = #{record.colId,jdbcType=VARCHAR},
       </if>
       <if test="record.tmid != null" >
-        tmId = #{record.tmid,jdbcType=VARCHAR},
+        tmId = #{record.mdMId,jdbcType=VARCHAR},
       </if>
       <if test="record.semantemecode != null" >
-        semantemeCode = #{record.semantemecode,jdbcType=INTEGER},
+        semantemeCode = #{record.semantemeCode,jdbcType=INTEGER},
       </if>
       <if test="record.semantemetype != null" >
-        semantemeType = #{record.semantemetype,jdbcType=INTEGER},
+        semantemeType = #{record.semantemeType,jdbcType=INTEGER},
       </if>
       <if test="record.ctime != null" >
         cTime = #{record.ctime,jdbcType=TIMESTAMP},
@@ -106,32 +132,17 @@
         lmTime = #{record.lmtime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme" >
-    update sa_md_colsemanteme
-    <set >
-      <if test="cid != null" >
-        cId = #{cid,jdbcType=VARCHAR},
-      </if>
-      <if test="tmid != null" >
-        tmId = #{tmid,jdbcType=VARCHAR},
-      </if>
-      <if test="semantemecode != null" >
-        semantemeCode = #{semantemecode,jdbcType=INTEGER},
-      </if>
-      <if test="semantemetype != null" >
-        semantemeType = #{semantemetype,jdbcType=INTEGER},
-      </if>
-      <if test="ctime != null" >
-        cTime = #{ctime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="lmtime != null" >
-        lmTime = #{lmtime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from sa_md_colsemanteme where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByEntity" parameterType="java.util.Map" >
+    delete from sa_md_colsemanteme
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
 </mapper>
