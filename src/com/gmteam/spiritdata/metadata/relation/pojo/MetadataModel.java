@@ -21,7 +21,7 @@ public class MetadataModel extends BaseObject {
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
     private Timestamp cTime; //记录创建时间
     private String tableName; //积累表名称
-    private String memo; //模式说明
+    private String descn; //模式说明
 
     //以上信息对应数据库中的信息
     private List<MetadataColumn> columnList; //列描述信息列表
@@ -74,12 +74,12 @@ public class MetadataModel extends BaseObject {
         this.columnList = columnList;
     }
 
-    public String getMemo() {
-        return memo;
+    public String getDescn() {
+        return descn;
     }
 
-    public void setMemo(String memo) {
-        this.memo = memo;
+    public void setDescn(String descn) {
+        this.descn = descn;
     }
 
     /**

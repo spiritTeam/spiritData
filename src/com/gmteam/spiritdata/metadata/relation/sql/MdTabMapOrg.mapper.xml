@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  元数据：元数据实体表映射关系
+-->
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="mdTableMapOrg" >
+  <!-- 对象定义:元数据表映射 -->
   <resultMap id="BaseResultMap" type="TabOrgMap" >
     <id     column="id"        property="id"        jdbcType="VARCHAR" />
     <result column="tmId"      property="mdMId"     jdbcType="VARCHAR" />
     <result column="ownerId"   property="ownerId"   jdbcType="VARCHAR" />
     <result column="tableName" property="tableName" jdbcType="VARCHAR" />
     <result column="tableType" property="tableType" jdbcType="INTEGER" />
-    <result column="tableMemo" property="tableMemo" jdbcType="VARCHAR" />
+    <result column="tableDescn" property="tableDescn" jdbcType="VARCHAR" />
     <result column="cTime"     property="cTime"     jdbcType="TIMESTAMP" />
   </resultMap>
   <!-- 所有列 -->
   <sql id="Base_Column_List" >
-    id, tmId, ownerId, tableName, tableType, tableMemo, cTime
+    id, tmId, ownerId, tableName, tableType, tableDescn, cTime
   </sql>
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey" >
@@ -24,7 +29,7 @@
         <if test="columnType != null" > and columnType = #{columnType,jdbcType=VARCHAR} </if>
         <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
         <if test="tableType != null" > and tableType = #{tableType,jdbcType=INTEGER} </if>
-        <if test="tableMemo != null" > and tableMemo = #{tableMemo,jdbcType=VARCHAR} </if>
+        <if test="tableDescn != null" > and tableDescn = #{tableDescn,jdbcType=VARCHAR} </if>
         <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
       </trim>
     </where>
@@ -81,8 +86,8 @@
       <if test="tableType != null" >
         tableType,
       </if>
-      <if test="tableMemo != null" >
-        tableMemo,
+      <if test="tableDescn != null" >
+        tableDescn,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -101,8 +106,8 @@
       <if test="tableType != null" >
         #{tableType,jdbcType=INTEGER},
       </if>
-      <if test="tableMemo != null" >
-        #{tableMemo,jdbcType=VARCHAR},
+      <if test="tableDescn != null" >
+        #{tableDescn,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -126,8 +131,8 @@
       <if test="record.tableType != null" >
         tableType = #{record.tableType,jdbcType=INTEGER},
       </if>
-      <if test="record.tableMemo != null" >
-        tableName = #{record.tableMemo,jdbcType=VARCHAR},
+      <if test="record.tableDescn != null" >
+        tableName = #{record.tableDescn,jdbcType=VARCHAR},
       </if>
       <if test="record.cTime != null" >
         cTime = #{record.cTime,jdbcType=TIMESTAMP},

@@ -67,7 +67,7 @@ public class MdEntityTableService {
             columnStr = columnStr.substring(0, columnStr.length()-1)+") USING BTREE";
         }
         btm.put("columnStr", columnStr);
-        btm.put("tableComment", (tableType==2?"temp::":"")+mm.getMemo());
+        btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDescn());
         tmoDao.excute("createTable", btm);
         //修改mm中的积累表名称
         if (tableType==1) mm.setTableName(tableName);

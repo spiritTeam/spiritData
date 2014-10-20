@@ -35,9 +35,8 @@
       </trim>
     </where>
   </sql>
-
   <!-- 获得记录条数-->
-  <select id="count" parameterType="MdCol" resultType="java.lang.Integer" >
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
     select count(*) from sa_md_column
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
@@ -71,7 +70,7 @@
   </select>
 
   <!-- 新增数据 -->
-  <insert id="insert" parameterType="MdCol" >
+  <insert id="insert" parameterType="java.util.Map" >
     insert into sa_md_column
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
