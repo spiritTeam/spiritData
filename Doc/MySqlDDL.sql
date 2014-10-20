@@ -24,6 +24,7 @@ CREATE TABLE sa_md_tabmodel (
   ownerId   varchar(36) NOT NULL     COMMENT '指向用户表(用户id或sessionId)',
   ownerType int(1) unsigned NOT NULL COMMENT '用户类型(1-用户，2-session)',
   tableName varchar(40) NOT NULL     COMMENT '业务 表中的积累表的名称',
+  memo      varchar(400) NOT NULL    COMMENT '模式说明',
   cTime     timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建的系统时间',
   PRIMARY KEY (id)
 )
@@ -66,6 +67,7 @@ CREATE TABLE  sa_md_tabmap_org (
   tmId              varchar(36) NOT NULL        COMMENT '元数据模式Id(表模式ID)',
   tableName         varchar(40) NOT NULL        COMMENT '表名称（此名称与业务数据表名称对应）',
   tableType         int(1) unsigned NOT NULL DEFAULT '1' COMMENT '表类型(1-积累表。2-临时表)',
+  tableMemo         varchar(400) NOT NULL       COMMENT '业务表说明',
   cTime             timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时的系统时间',
   PRIMARY KEY (id)
 )

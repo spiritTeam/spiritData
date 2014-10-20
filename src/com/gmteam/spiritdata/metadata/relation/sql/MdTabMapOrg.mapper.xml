@@ -7,11 +7,12 @@
     <result column="ownerId"   property="ownerId"   jdbcType="VARCHAR" />
     <result column="tableName" property="tableName" jdbcType="VARCHAR" />
     <result column="tableType" property="tableType" jdbcType="INTEGER" />
+    <result column="tableMemo" property="tableMemo" jdbcType="VARCHAR" />
     <result column="cTime"     property="cTime"     jdbcType="TIMESTAMP" />
   </resultMap>
   <!-- 所有列 -->
   <sql id="Base_Column_List" >
-    id, tmId, ownerId, tableName, tableType, cTime
+    id, tmId, ownerId, tableName, tableType, tableMemo, cTime
   </sql>
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey" >
@@ -23,6 +24,7 @@
         <if test="columnType != null" > and columnType = #{columnType,jdbcType=VARCHAR} </if>
         <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
         <if test="tableType != null" > and tableType = #{tableType,jdbcType=INTEGER} </if>
+        <if test="tableMemo != null" > and tableMemo = #{tableMemo,jdbcType=VARCHAR} </if>
         <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
       </trim>
     </where>
@@ -35,7 +37,7 @@
     </if>
   </select>
   <!-- 获得列表 -->
-  <select id="getList" resultMap="BaseResultMap" parameterType="TabOrgMap" >
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select <include refid="Base_Column_List" />
     from sa_md_tablemap_org
     <if test="_parameter != null" >
@@ -47,7 +49,7 @@
   </select>
 
   <!-- 获得一条数据 -->
-  <select id="getInfo" resultMap="BaseResultMap" parameterType="TabOrgMap" >
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select <include refid="Base_Column_List" />
     from sa_md_tablemap_org
     <if test="_parameter != null" >
@@ -79,6 +81,9 @@
       <if test="tableType != null" >
         tableType,
       </if>
+      <if test="tableMemo != null" >
+        tableMemo,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -96,11 +101,14 @@
       <if test="tableType != null" >
         #{tableType,jdbcType=INTEGER},
       </if>
+      <if test="tableMemo != null" >
+        #{tableMemo,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
 
   <!-- 修改 根据主键 -->
-  <update id="update" parameterType="TabOrgMap" >
+  <update id="update" parameterType="java.util.Map" >
     update sa_md_tabmap_org
     <set >
       <if test="record.id != null" >
@@ -118,6 +126,9 @@
       <if test="record.tableType != null" >
         tableType = #{record.tableType,jdbcType=INTEGER},
       </if>
+      <if test="record.tableMemo != null" >
+        tableName = #{record.tableMemo,jdbcType=VARCHAR},
+      </if>
       <if test="record.cTime != null" >
         cTime = #{record.cTime,jdbcType=TIMESTAMP},
       </if>
@@ -129,10 +140,15 @@
   <delete id="delete" parameterType="java.lang.String" >
     delete from sa_md_tabmap_org where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByEntity" parameterType="TabOrgMap" >
+  <delete id="deleteByEntity" parameterType="java.util.Map" >
     delete from sa_md_tabmap_org
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
   </delete>
+
+  <!-- 创建数据表 只对mySql起作用 -->
+  <update id="createTable" parameterType="java.util.Map" >
+    create table #{tableName,jdbcType=VARCHAR} (${columnStr,jdbcType=VARCHAR}) ENGINE=InnoDB DEFAULT CHARSET=utf-8 COMMENT=#{tableComment,jdbcType=VARCHAR};
+  </update>
 </mapper>
