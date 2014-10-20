@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <!-- 类别名设置 -->
+  <typeAliases>
+    <typeAlias alias="MdM"       type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel"/>
+    <typeAlias alias="MdCol"     type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn"/>
+    <typeAlias alias="MdColS"    type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme"/>
+    <typeAlias alias="QuotaTab"  type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaTable"/>
+    <typeAlias alias="QuotaCol"  type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn"/>
+    <typeAlias alias="TabOrgMap" type="com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg"/>
+  </typeAliases>
+  <mappers>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MetadataModel.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MetadataColumn.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabMapOrg.mapper.xml"/>
+  </mappers>
+</configuration>
