@@ -11,10 +11,12 @@ import java.util.Random;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.CellPmters;
@@ -28,57 +30,127 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
  * 类说明 用于得到Md
  */
 public class PoiUtils {
-    public static Map<SheetInfo,MetadataModel> getMdModelMap(Object sheet,int sheetIndex,int fileTypes){
+    public static Map<SheetInfo,MetadataModel> getMdModelMap(Object workbook,int fileType) {
+        //List<Map<SheetInfo,MetadataModel>> mdModelMapList = new ArrayList<Map<SheetInfo,MetadataModel>>();
         Map<SheetInfo,MetadataModel> mdModelMap = new HashMap<SheetInfo, MetadataModel>();
-        MetadataModel metadataModel = new MetadataModel();
         int dataRows;
-        /**
-         * 1代表是2007+，否则代表
-         * 2007以下版本
-         */
-        /**sheetInfo*/
-        SheetInfo sheetInfo = new SheetInfo();
-        if(fileTypes==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-            XSSFSheet xSheet = (XSSFSheet) sheet;
-            XSSFRow xRow = xSheet.getRow(0);
-            /**init sheetInfo*/
-            sheetInfo.setSheetIndex(sheetIndex);
-            sheetInfo.setSheetName(xSheet.getSheetName());
-            dataRows = xSheet.getLastRowNum()+1;
-            /**每行长度*/
-            int rowLength = xRow.getLastCellNum();
-            /**得到TitleAry*/
-            String [] titleAry = new String[rowLength];
-            for(int i=0;i<rowLength;i++){
-                XSSFCell xCell = xRow.getCell(i);
-                String columnName = (String) getCellValue(xCell);
-                titleAry[i] = columnName;
+        if(fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
+            int sheetSize = ((XSSFWorkbook) workbook).getNumberOfSheets();
+            /**sheetInfo*/
+            SheetInfo sheetInfo = new SheetInfo();
+            XSSFSheet sheet;
+            for(int i=0;i<sheetSize;i++ ){
+                int sheetIndex = i;
+                sheet = ((XSSFWorkbook) workbook).getSheetAt(sheetIndex);
+                int rows = sheet.getLastRowNum()+1;
+                MetadataModel metadataModel = new MetadataModel();
+                if(rows+1>=2){
+                    XSSFSheet xSheet = (XSSFSheet) sheet;
+                    XSSFRow xRow = xSheet.getRow(0);
+                    /**init sheetInfo*/
+                    sheetInfo.setSheetIndex(sheetIndex);
+                    sheetInfo.setSheetName(xSheet.getSheetName());
+                    dataRows = xSheet.getLastRowNum()+1;
+                    /**每行长度*/
+                    int rowLength = xRow.getLastCellNum();
+                    /**得到TitleAry*/
+                    String [] titleAry = new String[rowLength];
+                    for(int k=0;k<rowLength;k++){
+                        XSSFCell xCell = xRow.getCell(k);
+                        String columnName = (String) getCellValue(xCell);
+                        titleAry[k] = columnName;
+                    }
+                    /**得到dataType*/
+                    metadataModel = getMetadata(xSheet,dataRows,rowLength,titleAry); 
+                    mdModelMap.put(sheetInfo, metadataModel);
+                }
             }
-            /**得到dataType*/
-            metadataModel = getMetadata(xSheet,dataRows,rowLength,titleAry); 
-            mdModelMap.put(sheetInfo, metadataModel);
-        }else if((fileTypes==ExcelConstants.EXCEL_FILE_TYPE_HSSF)){
-            HSSFSheet hSheet = (HSSFSheet) sheet;
-            HSSFRow hRow = hSheet.getRow(0);
-            /**init sheetInfo*/
-            sheetInfo.setSheetIndex(sheetIndex);
-            sheetInfo.setSheetName(hSheet.getSheetName());
-            dataRows = hSheet.getLastRowNum()+1;
-            /**每行长度*/
-            int rowLength = hRow.getLastCellNum();
-            /**得到TitleAry*/
-            String [] titleAry = new String[rowLength];
-            for(int i=0;i<rowLength;i++){
-                HSSFCell hCell = hRow.getCell(i);
-                String columnName = ""+ getCellValue(hCell);
-                titleAry[i] = columnName;
+        }else if(fileType==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
+            int sheetSize = ((HSSFWorkbook) workbook).getNumberOfSheets();
+            SheetInfo sheetInfo = new SheetInfo();
+            HSSFSheet sheet;
+            boolean isActive;
+            for(int i=0;i<sheetSize;i++ ){
+                int sheetIndex = i;
+                sheet = ((HSSFWorkbook) workbook).getSheetAt(sheetIndex);
+                isActive = sheet.isActive();
+                int rows = sheet.getLastRowNum()+1;
+                if(isActive==false&&rows+1>=2){
+                    MetadataModel metadataModel = new MetadataModel();
+                    HSSFSheet hSheet = (HSSFSheet) sheet;
+                    HSSFRow hRow = hSheet.getRow(0);
+                    /**init sheetInfo*/
+                    sheetInfo.setSheetIndex(sheetIndex);
+                    sheetInfo.setSheetName(hSheet.getSheetName());
+                    dataRows = hSheet.getLastRowNum()+1;
+                    /**每行长度*/
+                    int rowLength = hRow.getLastCellNum();
+                    /**得到TitleAry*/
+                    String [] titleAry = new String[rowLength];
+                    for(int k=0;k<rowLength;i++){
+                        HSSFCell hCell = hRow.getCell(k);
+                        String columnName = ""+ getCellValue(hCell);
+                        titleAry[k] = columnName;
+                    }
+                    /**得到dataType*/
+                    metadataModel = getMetadata(hSheet,dataRows,rowLength,titleAry); 
+                    mdModelMap.put(sheetInfo, metadataModel);
+                }
             }
-            /**得到dataType*/
-            metadataModel = getMetadata(hSheet,dataRows,rowLength,titleAry); 
-            mdModelMap.put(sheetInfo, metadataModel);
         }
         return mdModelMap;
-    }
+    }  
+//    public static Map<SheetInfo,MetadataModel> getMdModelMap(Object sheet,int sheetIndex,int fileTypes){
+//        Map<SheetInfo,MetadataModel> mdModelMap = new HashMap<SheetInfo, MetadataModel>();
+//        MetadataModel metadataModel = new MetadataModel();
+//        int dataRows;
+//        /**
+//         * 1代表是2007+，否则代表
+//         * 2007以下版本
+//         */
+//        /**sheetInfo*/
+//        SheetInfo sheetInfo = new SheetInfo();
+//        if(fileTypes==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
+//            XSSFSheet xSheet = (XSSFSheet) sheet;
+//            XSSFRow xRow = xSheet.getRow(0);
+//            /**init sheetInfo*/
+//            sheetInfo.setSheetIndex(sheetIndex);
+//            sheetInfo.setSheetName(xSheet.getSheetName());
+//            dataRows = xSheet.getLastRowNum()+1;
+//            /**每行长度*/
+//            int rowLength = xRow.getLastCellNum();
+//            /**得到TitleAry*/
+//            String [] titleAry = new String[rowLength];
+//            for(int i=0;i<rowLength;i++){
+//                XSSFCell xCell = xRow.getCell(i);
+//                String columnName = (String) getCellValue(xCell);
+//                titleAry[i] = columnName;
+//            }
+//            /**得到dataType*/
+//            metadataModel = getMetadata(xSheet,dataRows,rowLength,titleAry); 
+//            mdModelMap.put(sheetInfo, metadataModel);
+//        }else if((fileTypes==ExcelConstants.EXCEL_FILE_TYPE_HSSF)){
+//            HSSFSheet hSheet = (HSSFSheet) sheet;
+//            HSSFRow hRow = hSheet.getRow(0);
+//            /**init sheetInfo*/
+//            sheetInfo.setSheetIndex(sheetIndex);
+//            sheetInfo.setSheetName(hSheet.getSheetName());
+//            dataRows = hSheet.getLastRowNum()+1;
+//            /**每行长度*/
+//            int rowLength = hRow.getLastCellNum();
+//            /**得到TitleAry*/
+//            String [] titleAry = new String[rowLength];
+//            for(int i=0;i<rowLength;i++){
+//                HSSFCell hCell = hRow.getCell(i);
+//                String columnName = ""+ getCellValue(hCell);
+//                titleAry[i] = columnName;
+//            }
+//            /**得到dataType*/
+//            metadataModel = getMetadata(hSheet,dataRows,rowLength,titleAry); 
+//            mdModelMap.put(sheetInfo, metadataModel);
+//        }
+//        return mdModelMap;
+//    }
     /**
      * 设定记录结构
      * @return
@@ -447,5 +519,5 @@ public class PoiUtils {
             }  
         }  
         return type;  
-    }  
+    }
 }
