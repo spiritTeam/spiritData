@@ -1,6 +1,12 @@
 package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -8,6 +14,10 @@ import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
+import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
+import com.gmteam.spiritdata.metadata.relation.service.MetadataService;
 
 /** 
  * @author mht
@@ -35,22 +45,40 @@ public class FileUploadService {
     }
     /**workBook代理类*/
     private  WorkBookProxy workBookProxy;
+    private HttpSession session;
     /**
      * 获取workBook,和MdList
+     * @param session 
      */
-    public Object getFileMetaDate(String uploadFileName, int fileType) throws Exception {
+    @SuppressWarnings("unchecked")
+    public Object getFileMetaDate(String uploadFileName, int fileType, HttpSession session) throws Exception {
+        this.session = session;
         /**文件类型，要用于表判断返回来的workbook类型*/
         File excelFile = new File(uploadFileName);
         Object workBook = null;
+        Map<SheetInfo,MetadataModel> mdMap = new HashMap<SheetInfo,MetadataModel>();
         if(fileType==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
             workBookProxy= new WorkBookProxy(excelFile,fileType);
             workBook = (HSSFWorkbook) workBookProxy.getWorkBook();
-            workBookProxy.getMDList();
+            mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
         }else if(fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
             workBookProxy= new WorkBookProxy(excelFile,fileType);
             workBook = (XSSFWorkbook) workBookProxy.getWorkBook();
-            workBookProxy.getMDList();
+            mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
         }
+        getTabName(mdMap);
         return workBook;
+    }
+    @Resource
+    MetadataService mdService;
+    private void getTabName(Map<SheetInfo, MetadataModel> mdMap) throws Exception {
+        mdService.setSession(session);
+        Iterator<SheetInfo> it = mdMap.keySet().iterator();
+        while(it.hasNext()){
+            SheetInfo sheetInfo = it.next();
+            MetadataModel md = mdMap.get(sheetInfo);
+            TableMapOrg[] art =mdService.storeMdModel4Import(md);
+            System.out.println(art.length);
+        }
     }
 }

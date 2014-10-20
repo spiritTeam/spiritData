@@ -76,7 +76,7 @@ public class MetadataService {
             String ownerId = mm.getOwnerId();
 
             int ownerType = mm.getOwnerType();
-            if (ownerType!=1&&ownerType!=2) ownerType=2;//session型
+            if (ownerType!=1&&ownerType!=2) ownerType=2; //ssion型
             if (ownerType==2) ownerId = this.session.getId();
             else {
                 if (ownerId==null||ownerId.equals("")) {//从Session取用户信息
@@ -91,8 +91,8 @@ public class MetadataService {
                 }
             }
             _ownerMdService.loadData2Session(ownerId, ownerType, this.session);
-            _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         }
+        _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         if (_om==null) new Exception("从session中不能取得所有者数据模型，未知错误！");
         while (!_om.isLoadSuccess()) ; //等待执行，这个用线程间通信更好
         //比较是否存储在

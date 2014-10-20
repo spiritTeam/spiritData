@@ -13,13 +13,13 @@
     <typeAlias alias="QuotaTable" type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaTable"/>
   </typeAliases>
   <mappers>
-	  <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdColSemanteme.Mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/FileUploadLog.Mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabMapOrg.Mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/UploadLogTableOrg.Mapper.xml"/> 
-    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaColumn.Mapper.xml"/>
-     <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdColumnInfo.Mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabModel.Mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaTable.Mapper.xml"/>
+	  <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdColSemanteme.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/FileUploadLog.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabMapOrg.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/UploadLogTableOrg.mapper.xml"/> 
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaColumn.mapper.xml"/>
+     <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdColumnInfo.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabModel.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaTable.mapper.xml"/>
   </mappers>
 </configuration>
