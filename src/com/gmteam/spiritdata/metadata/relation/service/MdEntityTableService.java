@@ -1,11 +1,17 @@
 package com.gmteam.spiritdata.metadata.relation.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.util.SequenceUUID;
@@ -34,7 +40,35 @@ public class MdEntityTableService {
      */
     public TableMapOrg registTabOrgMap(String tableName, MetadataModel mm, int tableType)  throws Exception {
         if (tableName==null||tableName.equals("")) throw new IllegalArgumentException("实体表名称不能为空！");
+        if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new IllegalArgumentException("元数据模式没有任何列描述信息！");
         //创建相应的表
+        Map<String, String> btm = new HashMap<String, String>(); //build table map
+        btm.put("tableName", tableName);
+        //列名称
+        String columnStr = "";
+        List<MetadataColumn> pks = new ArrayList<MetadataColumn>();
+        for (MetadataColumn mc : mm.getColumnList()) {
+            columnStr += ",";
+            if (mc.getColumnType().equalsIgnoreCase("String")) {
+                columnStr += mc.getColumnName()+" varchar(200)";
+                if (!mc.getColumnName().equals("")&&mc.getColumnName()==null) columnStr += " COMMENT'"+mc.getColumnName()+"'";
+            } else {
+                columnStr += mc.getColumnName()+" "+mc.getColumnType();
+                if (!mc.getColumnName().equals("")&&mc.getColumnName()==null) columnStr += " COMMENT'"+mc.getColumnName()+"'";
+            }
+            if (mc.getIsPk()==1) pks.add(mc);
+        }
+        columnStr = columnStr.substring(1);
+        if (pks.size()>0) {
+            columnStr += ", PRIMARY KEY (";
+            for (MetadataColumn mc : pks) {
+                columnStr += mc.getColumnName()+",";
+            }
+            columnStr = columnStr.substring(0, columnStr.length()-1)+") USING BTREE";
+        }
+        btm.put("columnStr", columnStr);
+        btm.put("tableComment", (tableType==2?"temp::":"")+mm.getMemo());
+        tmoDao.excute("createTable", btm);
         //修改mm中的积累表名称
         if (tableType==1) mm.setTableName(tableName);
         //写入注册信息

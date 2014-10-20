@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -15,6 +16,7 @@ import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.service.MetadataService;
 
 /** 
@@ -43,11 +45,14 @@ public class FileUploadService {
     }
     /**workBook代理类*/
     private  WorkBookProxy workBookProxy;
+    private HttpSession session;
     /**
      * 获取workBook,和MdList
+     * @param session 
      */
     @SuppressWarnings("unchecked")
-    public Object getFileMetaDate(String uploadFileName, int fileType) throws Exception {
+    public Object getFileMetaDate(String uploadFileName, int fileType, HttpSession session) throws Exception {
+        this.session = session;
         /**文件类型，要用于表判断返回来的workbook类型*/
         File excelFile = new File(uploadFileName);
         Object workBook = null;
@@ -67,11 +72,13 @@ public class FileUploadService {
     @Resource
     MetadataService mdService;
     private void getTabName(Map<SheetInfo, MetadataModel> mdMap) throws Exception {
+        mdService.setSession(session);
         Iterator<SheetInfo> it = mdMap.keySet().iterator();
         while(it.hasNext()){
             SheetInfo sheetInfo = new SheetInfo();
             MetadataModel md = mdMap.get(sheetInfo);
-            mdService.storeMdModel4Import(md);
+            TableMapOrg[] art =mdService.storeMdModel4Import(md);
+            System.out.println(art.length);
         }
     }
 }

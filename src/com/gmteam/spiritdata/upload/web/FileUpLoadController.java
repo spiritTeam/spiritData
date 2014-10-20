@@ -25,12 +25,11 @@ public class FileUpLoadController extends AbstractFileUploadController {
     HttpServletRequest request;
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {Map<String,Object> uploadInfoMap= uploadInfoMapList.get(0);
-        HttpSession ss = request.getSession();
-        System.out.print(ss.getId());;
+        HttpSession session = request.getSession();
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         int fileType = fileUploadService.getFileType(uploadFileName);
         try {
-            fileUploadService.getFileMetaDate(uploadFileName,fileType);
+            fileUploadService.getFileMetaDate(uploadFileName,fileType,session);
         } catch (Exception e) {
             e.printStackTrace();
         }
