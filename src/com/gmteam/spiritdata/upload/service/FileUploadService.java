@@ -1,10 +1,11 @@
 package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -14,6 +15,7 @@ import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.service.MetadataService;
 
 /** 
  * @author mht
@@ -49,16 +51,27 @@ public class FileUploadService {
         /**文件类型，要用于表判断返回来的workbook类型*/
         File excelFile = new File(uploadFileName);
         Object workBook = null;
-        Map<SheetInfo,MetadataModel> mdList = new HashMap<SheetInfo,MetadataModel>();
+        Map<SheetInfo,MetadataModel> mdMap = new HashMap<SheetInfo,MetadataModel>();
         if(fileType==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
             workBookProxy= new WorkBookProxy(excelFile,fileType);
             workBook = (HSSFWorkbook) workBookProxy.getWorkBook();
-            mdList = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
+            mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
         }else if(fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
             workBookProxy= new WorkBookProxy(excelFile,fileType);
             workBook = (XSSFWorkbook) workBookProxy.getWorkBook();
-            mdList = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
+            mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
         }
+        getTabName(mdMap);
         return workBook;
+    }
+    @Resource
+    MetadataService mdService;
+    private void getTabName(Map<SheetInfo, MetadataModel> mdMap) throws Exception {
+        Iterator<SheetInfo> it = mdMap.keySet().iterator();
+        while(it.hasNext()){
+            SheetInfo sheetInfo = new SheetInfo();
+            MetadataModel md = mdMap.get(sheetInfo);
+            mdService.storeMdModel4Import(md);
+        }
     }
 }

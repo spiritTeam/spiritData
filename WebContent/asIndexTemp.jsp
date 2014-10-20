@@ -2,6 +2,7 @@
 <%@page import="java.util.*"%>
 <%
   String path = request.getContextPath();
+  String sid = request.getSession().getId();
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -142,7 +143,12 @@
 </div>
 
 <!-- 头部:悬浮 -->
-<div id="topSegment">数据是关键！！ 登陆|注册 || 收藏</div>
+<div id="topSegment">
+  <div>
+  <label for="loginName"><%=sid %>||登录名：</label><input type="text" id='loginName' tabindex="1"/><label for="password">密　码：</label><input type="password" id='password' tabindex="2"/>
+  <div id="commitButton" style="height:16px; width:16px; background-color:green;"></div>
+  </div>
+</div>
 
 <!-- 脚部:悬浮 -->
 <div id="footSegment"></div>
@@ -216,7 +222,7 @@ function showFileInfo() {
 //文件上传
 function uploadF() {
   if ($("#upfs").val()==_promptMessage) {
-  	_suClicked=true;
+    _suClicked=true;
     $("#upf").click();
     return;
   }
@@ -232,15 +238,60 @@ function uploadF() {
     {
       analysizeing=true;//开始分析
       $("#waittingArea").fadeIn(200);//等待提示区
-      //showDemo();
+      showDemo();
     }
   } catch(e) {
     $.messager.alert("文件上传失败", e, "error");
   }
 }
-
+//登陆
+function loginF() {
+  var url="<%=path%>/login.do";
+  var pData={
+    "loginName":$("#loginName").val(),
+    "password":$("#password").val(),
+    "browser":getBrowserVersion()
+  };
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+    success: function(json) {
+      if (json.type==1) {
+        alert("loginOk");
+        return;
+      } else if (json.type==2) {
+        $.messager.alert("错误", "登录失败："+json.data, "error", function(){
+          $("#loginname").focus();
+          $("#mask").hide();
+          setBodyEnter(true);
+        });
+      } else {
+        $.messager.alert("错误", "登录异常："+json.data, "error", function(){
+          $("#loginname").focus();
+          $("#mask").hide();
+          setBodyEnter(true);
+        });
+      }
+    },
+    error: function(errorData) {
+      if (errorData) {
+        $.messager.alert("错误", "登录异常：未知！", "error", function(){
+          $("#loginname").focus();
+          $("#mask").hide();
+          setBodyEnter(true);
+        });
+      } else {
+        $("#mask").hide();
+        setBodyEnter(true);
+      }
+    }
+  });
+}
 //主函数
 $(function() {
+  $("#commitButton")
+  .click(function(){
+    loginF();
+  });
+
   var initStr = $().spiritPageFrame(INIT_PARAM);
   if (initStr) {
     $.messager.alert("页面初始化失败", initStr, "error");

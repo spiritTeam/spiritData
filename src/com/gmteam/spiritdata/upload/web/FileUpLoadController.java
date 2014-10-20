@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 
@@ -19,8 +21,12 @@ import com.gmteam.spiritdata.upload.service.FileUploadService;
 public class FileUpLoadController extends AbstractFileUploadController {
     @Resource
     private FileUploadService fileUploadService;
+    @Resource
+    HttpServletRequest request;
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {Map<String,Object> uploadInfoMap= uploadInfoMapList.get(0);
+        HttpSession ss = request.getSession();
+        System.out.print(ss.getId());;
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         int fileType = fileUploadService.getFileType(uploadFileName);
         try {
