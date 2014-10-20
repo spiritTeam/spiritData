@@ -294,7 +294,7 @@ public class PoiUtils {
      * @param titleAry 标题数组
      */
     private static MetadataModel getDataTypes(Map<Integer, Map<String, List<CellPmters>>> recordMap, int dataRows, String[] titleAry) {
-        MetadataModel metadataModule = new MetadataModel();
+        MetadataModel metadataModel = new MetadataModel();
         List<MetadataColumn> mdColumnList = new ArrayList<MetadataColumn>();
         Iterator<Integer> recordIt = recordMap.keySet().iterator();
         while(recordIt.hasNext()){
@@ -309,8 +309,13 @@ public class PoiUtils {
                 mdColumnList.add(mdColumn);
             }
         }
-        metadataModule.setColumnList(mdColumnList);
-        return metadataModule;
+        try {
+            metadataModel.setColumnList(mdColumnList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return metadataModel;
     }
     /**
      * 得到数量最多的type和比重，空的个数

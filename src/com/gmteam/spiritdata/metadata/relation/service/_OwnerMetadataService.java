@@ -14,6 +14,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
+import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**
  * 对[所有者“关系型元数据”]的操作。
@@ -61,6 +62,7 @@ public class _OwnerMetadataService {
             List<MetadataColumn> mcList = mm.getColumnList();
             if (mcList!=null&&mcList.size()>0) {
                 for (MetadataColumn mc: mcList) {
+                    if (mc.getId()==null||mc.getId().equals("")) mc.setId(SequenceUUID.getUUIDSubSegment(4));
                     mdBasisService.addMetadataColumn(mc);
                 }
             }
@@ -122,16 +124,15 @@ class loadDataThread implements Runnable {
                     }
                     _om.mdModelMap.put(mm.getId(), mm);
                 }
-                
-            }
-            mcList = new ArrayList<MetadataColumn>();
-            mcsList = new ArrayList<MetadataColSemanteme>();
-            for (String mdMId: _om.mdModelMap.keySet()) {
-                List<MetadataColumn> _mcl = ((MetadataModel)_om.mdModelMap.get(mdMId)).getColumnList();
-                if (_mcl!=null&&_mcl.size()>0) {
-                    mcList.addAll(((MetadataModel)_om.mdModelMap.get(mdMId)).getColumnList());
-                    for (MetadataColumn mc: mcList) {
-                        if (mc.getColSem()!=null)  mcsList.add(mc.getColSem());
+                mcList = new ArrayList<MetadataColumn>();
+                mcsList = new ArrayList<MetadataColSemanteme>();
+                for (String mdMId: _om.mdModelMap.keySet()) {
+                    List<MetadataColumn> _mcl = ((MetadataModel)_om.mdModelMap.get(mdMId)).getColumnList();
+                    if (_mcl!=null&&_mcl.size()>0) {
+                        mcList.addAll(((MetadataModel)_om.mdModelMap.get(mdMId)).getColumnList());
+                        for (MetadataColumn mc: mcList) {
+                            if (mc.getColSem()!=null)  mcsList.add(mc.getColSem());
+                        }
                     }
                 }
             }

@@ -35,6 +35,7 @@ public class MdBasisService {
         mcsDao.setNamespace("metadataColSemanteme");
     }
 
+    //以下为元数据模式相关操作
     /**
      * 获得元数据模式列表
      * @param paramMm 元数据模式对象，此对象中的值将是条件，这些条件是And的关系
@@ -57,6 +58,7 @@ public class MdBasisService {
         return this.getMdMList(paramMm);
     }
 
+    //以下为元数据列描述相关操作
     /**
      * 获得元数据列描述列表
      * @param paramMc 元数据列描述对象，此对象中的值将是条件，这些条件是And的关系
@@ -77,6 +79,7 @@ public class MdBasisService {
         return mcDao.queryForList("getListByOwnerId", ownerId);
     }
 
+    //以下为元数据列语义相关操作
     /**
      * 获得元数据列语义列表
      * @param paramMc 元数据列语义对象，此对象中的值将是条件，这些条件是And的关系
@@ -84,7 +87,7 @@ public class MdBasisService {
      * @throws Exception
      */
     public List<MetadataColSemanteme> getMdColSemantemeList(MetadataColSemanteme paramMc) throws Exception {
-        return mcsDao.queryForList(paramMc);
+        return mcsDao.queryForList(paramMc.toHashMapAsBean());
     }
 
     /**

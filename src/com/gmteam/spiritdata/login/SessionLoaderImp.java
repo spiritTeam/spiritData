@@ -6,17 +6,16 @@ import com.gmteam.framework.FConstants;
 import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.framework.core.web.AbstractSessionLoader;
 import com.gmteam.framework.core.web.SessionLoader;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.service.MetadataService;
 import com.gmteam.spiritdata.metadata.relation.service._OwnerMetadataService;
 
 public class SessionLoaderImp extends AbstractSessionLoader implements SessionLoader {
     @Resource
     private _OwnerMetadataService _ownerMdService;
-    public _OwnerMetadataService get_ownerMdService() {
-        return _ownerMdService;
-    }
-    public void set_ownerMdService(_OwnerMetadataService _ownerMdService) {
-        this._ownerMdService = _ownerMdService;
-    }
+    @Resource
+    private MetadataService metadataService;
 
     @Override
     public void loader() {
@@ -30,5 +29,38 @@ public class SessionLoaderImp extends AbstractSessionLoader implements SessionLo
             ownerType = 1;
         }
         _ownerMdService.loadData2Session(ownerId, ownerType, this.session);
+        //一下测试代码
+        MetadataModel mm = new MetadataModel();
+        mm.setId("1235434dsf");
+        mm.setOwnerId(ownerId);
+        mm.setOwnerType(ownerType);
+        mm.setDescn("ddd");
+        MetadataColumn mc = new MetadataColumn();
+        mc.setColumnIndex(1);
+        mc.setColumnName("col001");
+        mc.setColumnType("String");
+        mc.setTitleName("列111");
+        mc.setId(null);
+        try {
+            mm.addColumn(mc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mc = new MetadataColumn();
+        mc.setColumnIndex(2);
+        mc.setColumnName("col002");
+        mc.setColumnType("String");
+        mc.setTitleName("列112");
+        try {
+            mm.addColumn(mc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            metadataService.setSession(session);
+            metadataService.storeMdModel4Import(mm);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

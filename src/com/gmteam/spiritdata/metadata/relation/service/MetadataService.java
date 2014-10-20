@@ -39,11 +39,15 @@ public class MetadataService {
      * @return TableMapOrg数据的第一个元素是积累表，第二个元素是临时表
      */
     public TableMapOrg[] storeMdModel4Import(MetadataModel mm) throws Exception {
-        if (session==null) new NullPointerException("session为空，请通过[setSession]方法设置！");
+        if (session==null) throw new NullPointerException("session为空，请通过[setSession]方法设置！");
         TableMapOrg accumulationTable=null, tempTable=null;
         if (!existMetadataModel(mm)) {
             //生成积累表名称
-            String accumulationTabName = "tab_"+SequenceUUID.getUUIDSubSegment(4);
+            String mdMId = mm.getId();
+            if (mdMId==null||mdMId.equals("")) {
+                mdMId = SequenceUUID.getUUIDSubSegment(4);
+            }
+            String accumulationTabName = "tab_"+mdMId;
             //注册积累表
             accumulationTable = mdTableOrgService.registTabOrgMap(accumulationTabName, mm, 1);
             //添加模型
@@ -70,8 +74,9 @@ public class MetadataService {
         _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         if (_om==null) {
             String ownerId = mm.getOwnerId();
+
             int ownerType = mm.getOwnerType();
-            if (ownerType!=1&&ownerType!=2) ownerType=2;//ssion型
+            if (ownerType!=1&&ownerType!=2) ownerType=2; //ssion型
             if (ownerType==2) ownerId = this.session.getId();
             else {
                 if (ownerId==null||ownerId.equals("")) {//从Session取用户信息
@@ -85,7 +90,6 @@ public class MetadataService {
                     }
                 }
             }
-
             _ownerMdService.loadData2Session(ownerId, ownerType, this.session);
         }
         _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
@@ -99,6 +103,4 @@ public class MetadataService {
         }
         return false;
     }
-
-
 }
