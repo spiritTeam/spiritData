@@ -59,11 +59,6 @@
     from sa_md_column
     where id = #{id,jdbcType=VARCHAR}
   </select>
-  <select id="getListByOwnerId" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select a.*
-    from sa_md_column a, sa_md_tabmodel b 
-    where a.tmid=b.id and b.ownerId=#{ownerId,jdbcType=VARCHAR}
-  </select>
 
   <!-- 获得一条数据 -->
   <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
