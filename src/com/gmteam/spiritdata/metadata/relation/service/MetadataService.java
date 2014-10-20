@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Component;
 
+import com.gmteam.framework.FConstants;
+import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
@@ -69,7 +71,21 @@ public class MetadataService {
         if (_om==null) {
             String ownerId = mm.getOwnerId();
             int ownerType = mm.getOwnerType();
+            if (ownerType!=1&&ownerType!=2) ownerType=2;//ssion型
             if (ownerType==2) ownerId = this.session.getId();
+            else {
+                if (ownerId==null||ownerId.equals("")) {//从Session取用户信息
+                    UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+                    if (user!=null) {
+                        ownerId = user.getUserId();
+                        ownerType = 1;
+                    } else {
+                        ownerId = this.session.getId();
+                        ownerType = 2;
+                    }
+                }
+            }
+
             _ownerMdService.loadData2Session(ownerId, ownerType, this.session);
         }
         _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
@@ -83,5 +99,6 @@ public class MetadataService {
         }
         return false;
     }
+
 
 }

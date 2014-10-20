@@ -75,7 +75,7 @@ public class FileUploadService {
         mdService.setSession(session);
         Iterator<SheetInfo> it = mdMap.keySet().iterator();
         while(it.hasNext()){
-            SheetInfo sheetInfo = new SheetInfo();
+            SheetInfo sheetInfo = it.next();
             MetadataModel md = mdMap.get(sheetInfo);
             TableMapOrg[] art =mdService.storeMdModel4Import(md);
             System.out.println(art.length);

@@ -92,6 +92,7 @@ class loadDataThread implements Runnable {
         String ownerId = _om.getOnwerId();
         int ownerType = _om.getOnwerType();
         _om.mdModelMap = new ConcurrentHashMap<String, MetadataModel>();
+        
         MdBasisService mdBasisService = caller.getMdBasisService();
         try {
             List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId(ownerId);
