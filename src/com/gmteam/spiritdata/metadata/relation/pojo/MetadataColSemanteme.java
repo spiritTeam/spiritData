@@ -12,7 +12,7 @@ import com.gmteam.framework.core.model.BaseObject;
 public class MetadataColSemanteme extends BaseObject {
     private static final long serialVersionUID = 4955422640865996870L;
 
-    private String csId; //列语义Id
+    private String id; //列语义Id
     private String colId; //列Id
     private String mdMId; //元数据模式Id
     private Integer semantemeCode; //语义代码
@@ -22,12 +22,12 @@ public class MetadataColSemanteme extends BaseObject {
     //以上对应数据库信息
     private MetadataColumn column; //本列语义对应的列描述信息
 
-    public String getCsId() {
-        return csId;
+    public String getId() {
+        return id;
     }
 
-    public void setCsId(String csId) {
-        this.csId = csId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getColId() {
@@ -83,9 +83,9 @@ public class MetadataColSemanteme extends BaseObject {
     }
 
     public void setColumn(MetadataColumn column) {
-        this.colId=column.getColId();
+        this.colId=column.getId();
         this.mdMId=column.getMdMId();
-        if (column.getMdModel()!=null) this.mdMId=column.getMdModel().getMdMId();
+        if (column.getMdModel()!=null) this.mdMId=column.getMdModel().getId();
         this.column = column;
     }
 }

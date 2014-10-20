@@ -8,7 +8,7 @@
   <!-- 对象定义:元数据列模式 -->
   <resultMap id="BaseResultMap" type="MdCol" >
     <id     column="id"          property="id"          jdbcType="VARCHAR" />
-    <result column="tmId"        property="tmId"        jdbcType="VARCHAR" />
+    <result column="tmId"        property="mdMId"        jdbcType="VARCHAR" />
     <result column="columnName"  property="columnName"  jdbcType="VARCHAR" />
     <result column="columnType"  property="columnType"  jdbcType="VARCHAR" />
     <result column="columnIndex" property="columnIndex" jdbcType="INTEGER" />
@@ -25,7 +25,7 @@
     <where >
       <trim prefix="(" suffix=")" prefixOverrides="and" >
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="tmId != null" > and tmId = #{tmId,jdbcType=VARCHAR} </if>
+        <if test="tmId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
         <if test="columnName != null" > and columnName = #{columnName,jdbcType=VARCHAR} </if>
         <if test="columnType != null" > and columnType = #{columnType,jdbcType=VARCHAR} </if>
         <if test="columnIndex != null" > and columnIndex = #{columnIndex,jdbcType=INTEGER} </if>
@@ -45,7 +45,7 @@
   </select>
 
   <!-- 获得列表 -->
-  <select id="getList" resultMap="BaseResultMap" parameterType="MdCol" >
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select <include refid="Base_Column_List" />
     from sa_md_column
     <if test="_parameter != null" >
@@ -62,7 +62,7 @@
   </select>
 
   <!-- 获得一条数据 -->
-  <select id="getInfo" resultMap="BaseResultMap" parameterType="MdCol" >
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select <include refid="Base_Column_List" />
     from sa_md_column
     <if test="_parameter != null" >
@@ -95,16 +95,13 @@
       <if test="isPk != null" >
         isPk,
       </if>
-      <if test="cTime != null" >
-        cTime,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
       <if test="tmId != null" >
-        #{tmId,jdbcType=VARCHAR},
+        #{mdMId,jdbcType=VARCHAR},
       </if>
       <if test="columnName != null" >
         #{columnName,jdbcType=VARCHAR},
@@ -121,18 +118,15 @@
       <if test="isPk != null" >
         #{isPk,jdbcType=INTEGER},
       </if>
-      <if test="cTime != null" >
-        #{cTime,jdbcType=TIMESTAMP},
-      </if>
     </trim>
   </insert>
 
   <!-- 修改 根据主键 -->
-  <update id="update" parameterType="MdCol" >
+  <update id="update" parameterType="java.util.Map" >
     update sa_md_column
     <set >
       <if test="tmId != null" >
-        tmId = #{tmId,jdbcType=VARCHAR},
+        tmId = #{mdMId,jdbcType=VARCHAR},
       </if>
       <if test="columnName != null" >
         columnName = #{columnName,jdbcType=VARCHAR},
@@ -160,7 +154,7 @@
   <delete id="delete" parameterType="java.lang.String" >
     delete from sa_md_column where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByEntity" parameterType="MdCol" >
+  <delete id="deleteByEntity" parameterType="java.util.Map" >
     delete from sa_md_column
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
