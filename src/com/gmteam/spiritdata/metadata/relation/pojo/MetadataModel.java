@@ -70,8 +70,11 @@ public class MetadataModel extends BaseObject {
         return columnList;
     }
 
-    public void setColumnList(List<MetadataColumn> columnList) {
-        this.columnList = columnList;
+    public void setColumnList(List<MetadataColumn> columnList) throws Exception {
+        this.columnList = new ArrayList<MetadataColumn>();
+        for (MetadataColumn mc: columnList) {
+            this.addColumn(mc);
+        }
     }
 
     public String getDescn() {
@@ -87,15 +90,18 @@ public class MetadataModel extends BaseObject {
      * @param mdc 被插入的对象，其中Mid可以省略，本对象的Mid将填入传来的参数mdc
      * @throws Exception 若对象重复
      */
-    public void addColumn(MetadataColumn mdc) throws Exception{
+    public void addColumn(MetadataColumn mdc) throws Exception {
         if (mdc==null) return;
-        if (mdc.getId().equals(null)) throw new Exception("列Id不能为空");
-        for (MetadataColumn c: this.columnList) {
-            if (c.getId().equals(mdc.getId())) throw new Exception("在列描述列表中已经有与所添加对象[列Id]相同的列描述对象，不同重复添加！");
-            if (c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列描述对象，不同重复添加！");
-            if (c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列描述对象，不同重复添加！");
-        }
+        if (mdc.getColumnType()==null||mdc.getColumnType().equals("")) throw new IllegalArgumentException("列描术必须设置类型columnType");
+        if (mdc.getTitleName()==null||mdc.getTitleName().equals("")) throw new IllegalArgumentException("列描术必须设置列标题TitleName");
+
         if (this.columnList==null) this.columnList = new ArrayList<MetadataColumn>();
+        for (MetadataColumn c: this.columnList) {
+            if (mdc.getId()!=null&&(c.getId().equals(mdc.getId()))) throw new Exception("在列描述列表中已经有与所添加对象[列Id]相同的列描述对象，不同重复添加！");
+            if (mdc.getTitleName()!=null&&(c.getTitleName().equals(mdc.getTitleName()))) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列描述对象，不同重复添加！");
+            if (mdc.getColumnName()!=null&&(c.getColumnName().equals(mdc.getColumnName()))) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列描述对象，不同重复添加！");
+        }
+        mdc.setMdModel(this);
         this.columnList.add(mdc);
     }
 

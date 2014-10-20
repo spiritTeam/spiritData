@@ -20,7 +20,8 @@ public class FileUpLoadController extends AbstractFileUploadController {
     @Resource
     private FileUploadService fileUploadService;
     @Override
-    public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {Map<String,Object> uploadInfoMap= uploadInfoMapList.get(0);
+    public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {
+        Map<String,Object> uploadInfoMap= uploadInfoMapList.get(0);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         int fileType = fileUploadService.getFileType(uploadFileName);
         try {

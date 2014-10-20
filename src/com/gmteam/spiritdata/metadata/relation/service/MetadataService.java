@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Component;
 
+import com.gmteam.framework.FConstants;
+import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
@@ -37,11 +39,15 @@ public class MetadataService {
      * @return TableMapOrg数据的第一个元素是积累表，第二个元素是临时表
      */
     public TableMapOrg[] storeMdModel4Import(MetadataModel mm) throws Exception {
-        if (session==null) new NullPointerException("session为空，请通过[setSession]方法设置！");
+        if (session==null) throw new NullPointerException("session为空，请通过[setSession]方法设置！");
         TableMapOrg accumulationTable=null, tempTable=null;
         if (!existMetadataModel(mm)) {
             //生成积累表名称
-            String accumulationTabName = "tab_"+SequenceUUID.getUUIDSubSegment(4);
+            String mdMId = mm.getId();
+            if (mdMId==null||mdMId.equals("")) {
+                mdMId = SequenceUUID.getUUIDSubSegment(4);
+            }
+            String accumulationTabName = "tab_"+mdMId;
             //注册积累表
             accumulationTable = mdTableOrgService.registTabOrgMap(accumulationTabName, mm, 1);
             //添加模型
@@ -68,11 +74,25 @@ public class MetadataService {
         _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         if (_om==null) {
             String ownerId = mm.getOwnerId();
+
             int ownerType = mm.getOwnerType();
+            if (ownerType!=1&&ownerType!=2) ownerType=2;//session型
             if (ownerType==2) ownerId = this.session.getId();
+            else {
+                if (ownerId==null||ownerId.equals("")) {//从Session取用户信息
+                    UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+                    if (user!=null) {
+                        ownerId = user.getUserId();
+                        ownerType = 1;
+                    } else {
+                        ownerId = this.session.getId();
+                        ownerType = 2;
+                    }
+                }
+            }
             _ownerMdService.loadData2Session(ownerId, ownerType, this.session);
+            _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         }
-        _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         if (_om==null) new Exception("从session中不能取得所有者数据模型，未知错误！");
         while (!_om.isLoadSuccess()) ; //等待执行，这个用线程间通信更好
         //比较是否存储在
@@ -83,5 +103,4 @@ public class MetadataService {
         }
         return false;
     }
-
 }
