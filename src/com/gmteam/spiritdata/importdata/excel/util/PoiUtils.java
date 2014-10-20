@@ -19,7 +19,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.CellPmters;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.DTPmters;
-import com.gmteam.spiritdata.importdata.excel.util.pmters.MdPmters;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
@@ -39,7 +38,7 @@ public class PoiUtils {
          */
         /**sheetInfo*/
         SheetInfo sheetInfo = new SheetInfo();
-        if(fileTypes==1){
+        if(fileTypes==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
             XSSFSheet xSheet = (XSSFSheet) sheet;
             XSSFRow xRow = xSheet.getRow(0);
             /**init sheetInfo*/
@@ -58,7 +57,7 @@ public class PoiUtils {
             /**得到dataType*/
             metadataModel = getMetadata(xSheet,dataRows,rowLength,titleAry); 
             mdModelMap.put(sheetInfo, metadataModel);
-        }else{
+        }else if((fileTypes==ExcelConstants.EXCEL_FILE_TYPE_HSSF)){
             HSSFSheet hSheet = (HSSFSheet) sheet;
             HSSFRow hRow = hSheet.getRow(0);
             /**init sheetInfo*/
@@ -71,12 +70,11 @@ public class PoiUtils {
             String [] titleAry = new String[rowLength];
             for(int i=0;i<rowLength;i++){
                 HSSFCell hCell = hRow.getCell(i);
-                //String columnName = (String) getCellValue(hCell);
-                // TODO
-                //titleAry[i] = columnName;
+                String columnName = ""+ getCellValue(hCell);
+                titleAry[i] = columnName;
             }
             /**得到dataType*/
-           // metadataModel = getMetadata(hSheet,dataRows,rowLength,titleAry); 
+            metadataModel = getMetadata(hSheet,dataRows,rowLength,titleAry); 
             mdModelMap.put(sheetInfo, metadataModel);
         }
         return mdModelMap;
@@ -100,8 +98,8 @@ public class PoiUtils {
         return typeMap;
     }
     /**
-     * 得到md
-     * @param sheet 
+     * 得到md,
+     * @param sheet 为XSSFSHeet
      * @param dataRows 数据行数
      * @param rowLength 每行长度
      * @param titleAry 标题数组
@@ -146,6 +144,65 @@ public class PoiUtils {
                     cp.setY(y);
                     XSSFCell xCell = xRow.getCell(y);
                     String dataType= getCellValueType(xCell);
+                    cp.setDataType(dataType);
+                    List<CellPmters> cpList = typeMap.get(dataType);
+                    cpList.add(cp);
+                    recordMap.put(y, typeMap);
+                }
+            }
+            mdModel = getDataTypes(recordMap,randoms.length,titleAry);
+        }else if(dataRows<2){
+            return null;
+        }
+        return mdModel;
+    }
+    /**
+     * 得到md,
+     * @param sheet 为HSSFSheet
+     * @param dataRows 数据行数
+     * @param rowLength 每行长度
+     * @param titleAry 标题数组
+     */
+    private static MetadataModel getMetadata(HSSFSheet sheet, int dataRows, int rowLength, String[] titleAry) {
+        MetadataModel mdModel = null;
+        /**
+         * 首先获得便于得到Md的结构
+         */
+        Map<Integer,Map<String,List<CellPmters>>> recordMap = new HashMap<Integer,Map<String,List<CellPmters>>>();
+        if(dataRows>2&&dataRows<101){
+            /**小于100条数据的时候*/
+            for(int x=1;x<dataRows;x++){
+                HSSFRow hRow = sheet.getRow(x);
+                for(int y=0;y<hRow.getLastCellNum();y++){
+                    Map<String,List<CellPmters>> typeMap = recordMap.get(y);
+                    if(typeMap==null) typeMap = getTypeMap();
+                    /**cp赋值*/
+                    CellPmters cp = new CellPmters();
+                    cp.setX(x);
+                    cp.setY(y);
+                    HSSFCell hCell = hRow.getCell(y);
+                    String dataType= getCellValueType(hCell);
+                    cp.setDataType(dataType);
+                    List<CellPmters> cpList = typeMap.get(dataType);
+                    cpList.add(cp);
+                    recordMap.put(y, typeMap);
+                }
+            }
+            mdModel = getDataTypes(recordMap,dataRows-1,titleAry);
+        }else if(dataRows>101){
+            /**大于100条数据的时候*/
+            int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE);
+            for(int x=0;x<randoms.length;x++){
+                HSSFRow hRow = sheet.getRow(randoms[x]);
+                for(int y=0;y<hRow.getLastCellNum();y++){
+                    Map<String,List<CellPmters>> typeMap = recordMap.get(y);
+                    if(typeMap==null) typeMap = getTypeMap();
+                    /**cp赋值*/
+                    CellPmters cp = new CellPmters();
+                    cp.setX(randoms[x]);
+                    cp.setY(y);
+                    HSSFCell hCell = hRow.getCell(y);
+                    String dataType= getCellValueType(hCell);
                     cp.setDataType(dataType);
                     List<CellPmters> cpList = typeMap.get(dataType);
                     cpList.add(cp);
@@ -245,7 +302,44 @@ public class PoiUtils {
         }
         return rdmAry;
     }
-    /** 获取单元格中数据的值*/  
+    /** 获取单元格中数据的值对应HCell*/  
+    public static Object getCellValue(HSSFCell hCell) {
+        if (hCell == null)
+            return null;
+        Object result = null;  
+        if (hCell != null) {  
+            int cellType = hCell.getCellType();  
+            switch (cellType) {  
+            case XSSFCell.CELL_TYPE_STRING:  
+                result = hCell.getRichStringCellValue().getString();  
+                break;  
+            case XSSFCell.CELL_TYPE_NUMERIC: 
+                if (DateUtil.isCellDateFormatted(hCell)) {  
+                    Date d = hCell.getDateCellValue();
+                    result = d;
+                } else {  
+                    result = hCell.getNumericCellValue();  
+                }
+                break;  
+            case XSSFCell.CELL_TYPE_FORMULA:  
+                result = hCell.getNumericCellValue();  
+                break;  
+            case XSSFCell.CELL_TYPE_ERROR:  
+                result = null;  
+                break;  
+            case XSSFCell.CELL_TYPE_BOOLEAN:  
+                result = hCell.getBooleanCellValue();  
+                break;  
+            case XSSFCell.CELL_TYPE_BLANK:  
+                result = null;  
+                break;  
+            default:  
+                break;  
+            }  
+        }  
+        return result;
+    }
+    /** 获取单元格中数据的值对应XCell*/  
     public static Object getCellValue(XSSFCell xCell) {
         if (xCell == null)
             return null;
@@ -282,7 +376,7 @@ public class PoiUtils {
         }  
         return result;
     }
-    /** 得到单元格的valType*/  
+    /** 得到单元格类型为XSSFCELL的valType,*/  
     private static String getCellValueType(XSSFCell xCell) { 
         if (xCell == null)
             return "null";
@@ -295,6 +389,42 @@ public class PoiUtils {
                 break;  
             case XSSFCell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(xCell)) {  
+                    type = "Date";
+                } else {  
+                    type = "Double";  
+                }
+                break;  
+            case XSSFCell.CELL_TYPE_FORMULA:  
+                type = "Double";  
+                break;  
+            case XSSFCell.CELL_TYPE_ERROR:  
+                type = null;  
+                break;  
+            case XSSFCell.CELL_TYPE_BOOLEAN:  
+                type = "Boolean";  
+                break;  
+            case XSSFCell.CELL_TYPE_BLANK:  
+                type = "Null";  
+                break;  
+            default:  
+                break;  
+            }  
+        }  
+        return type;  
+    }  
+    /** 得到单元格类型为HSSFCELL的valType,*/  
+    private static String getCellValueType(HSSFCell hCell) { 
+        if (hCell == null)
+            return "null";
+        String type = null;  
+        if (hCell != null) {  
+            int cellType = hCell.getCellType();  
+            switch (cellType) {  
+            case XSSFCell.CELL_TYPE_STRING:  
+                type = "String";  
+                break;  
+            case XSSFCell.CELL_TYPE_NUMERIC:
+                if (DateUtil.isCellDateFormatted(hCell)) {  
                     type = "Date";
                 } else {  
                     type = "Double";  

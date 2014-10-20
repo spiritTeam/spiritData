@@ -11,7 +11,7 @@ import com.gmteam.framework.core.web.AbstractFileUploadController;
 import com.gmteam.spiritdata.upload.service.FileUploadService;
 
 /** 
- * @author 
+ * @author mht
  * @version  
  * 类说明 
  */
@@ -22,7 +22,12 @@ public class FileUpLoadController extends AbstractFileUploadController {
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {Map<String,Object> uploadInfoMap= uploadInfoMapList.get(0);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
-        fileUploadService.getWorkBook(uploadFileName);
+        int fileType = fileUploadService.getFileType(uploadFileName);
+        try {
+            fileUploadService.getFileMetaDate(uploadFileName,fileType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public Map<String, Object> afterUploadOneFileOnSuccess(
