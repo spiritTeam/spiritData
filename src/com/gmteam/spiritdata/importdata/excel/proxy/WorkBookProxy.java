@@ -1,6 +1,8 @@
 package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
+
+import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 /** 
  * @author mht
  * @version  
@@ -10,11 +12,11 @@ import java.io.File;
 public class WorkBookProxy implements IPoiUtils{
     private Object excelWorkBook;
     private IPoiUtils iPoiUtils;
-    public WorkBookProxy(File execlFile,Integer fileType) throws Exception {
-        if (fileType==2)
-            this.iPoiUtils = new XSSFWorkBookImpl(execlFile,fileType);
-        else if (fileType==1)
-            this.iPoiUtils = new HSSFWorkBookImpl(execlFile,fileType);
+    public WorkBookProxy(File execlFile,int fileType) throws Exception {
+        if (fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF)
+            this.iPoiUtils = new XSSFWorkBookImpl(execlFile);
+        else if (fileType==ExcelConstants.EXCEL_FILE_TYPE_HSSF)
+            this.iPoiUtils = new HSSFWorkBookImpl(execlFile);
         else throw new Exception("不是excel文件");
     }
     @Override

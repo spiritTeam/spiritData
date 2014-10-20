@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.MdPmters;
@@ -22,12 +23,12 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 public class XSSFWorkBookImpl implements IPoiUtils {
     /**workbook*/
     private XSSFWorkbook workbook;
-    private int fileType;
+    /**文件类型，1代表2007+excel，2代表2007-*/
+    private int fileType = ExcelConstants.EXCEL_FILE_TYPE_XSSF;
     public XSSFWorkBookImpl() {  
     }
-    public XSSFWorkBookImpl(File execlFile,int fileType) throws Exception{
+    public XSSFWorkBookImpl(File execlFile) throws Exception{
         workbook = new XSSFWorkbook(new FileInputStream(execlFile));
-        this.fileType = fileType;
     } 
     @Override
     public Object getWorkBook() {
@@ -37,11 +38,11 @@ public class XSSFWorkBookImpl implements IPoiUtils {
     public Object getMDList() throws Exception {
         List<Map<SheetInfo,MetadataModel>> mdModelMapList = new ArrayList<Map<SheetInfo,MetadataModel>>();
         int sheetSize = workbook.getNumberOfSheets();
-        Object sheet;
+        XSSFSheet sheet;
         for(int i=0;i<sheetSize;i++ ){
             int sheetIndex = i;
             sheet = workbook.getSheetAt(sheetIndex);
-            int rows = ((XSSFSheet) sheet).getLastRowNum()+1;
+            int rows = sheet.getLastRowNum()+1;
             if(rows+1>=2){
                 /**
                  * 根据条数分析MateData
@@ -55,5 +56,4 @@ public class XSSFWorkBookImpl implements IPoiUtils {
         }
         return null;
     }
-
 }

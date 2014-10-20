@@ -2,15 +2,17 @@ package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
+import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
+import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.importdata.excel.util.pmters.MdPmters;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /** 
@@ -19,10 +21,11 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
  * 类说明  适用于2007之前版本的excel(不包含2007)
  */
 public class HSSFWorkBookImpl implements IPoiUtils{
+    private int fileType = ExcelConstants.EXCEL_FILE_TYPE_HSSF;
     private HSSFWorkbook workbook;
     public HSSFWorkBookImpl() {  
     }
-    public HSSFWorkBookImpl(File execlFile,int fileType) throws Exception{
+    public HSSFWorkBookImpl(File execlFile) throws Exception{
         workbook = new HSSFWorkbook(new FileInputStream(execlFile)); 
     } 
     @Override
@@ -31,53 +34,26 @@ public class HSSFWorkBookImpl implements IPoiUtils{
     }
     @Override
     public Object getMDList() throws Exception {
+        List<Map<SheetInfo,MetadataModel>> mdModelMapList = new ArrayList<Map<SheetInfo,MetadataModel>>();
         int sheetSize = workbook.getNumberOfSheets();
         HSSFSheet sheet;
+        boolean isActive;
         for(int i=0;i<sheetSize;i++ ){
             int sheetIndex = i;
-            sheet = workbook.getSheetAt(i);
+            sheet = workbook.getSheetAt(sheetIndex);
+            isActive = sheet.isActive();
             int rows = sheet.getLastRowNum()+1;
-            /**
-             * 保存sheetInfo
-             */
-            SheetInfo sheetInfo = new SheetInfo();
-            sheetInfo.setSheetIndex(sheetIndex);
-            sheetInfo.setSheetName(sheet.getSheetName());
-            /**
-             * 根据条数分析MateData
-             */
-            if(rows<12&&rows>=2){
-                 //MetaInfo metaInfo =  getMDLessThan10Rows(sheetIndex,sheet,rows);
-            }else{
-                //MetaInfo metaInfo =  getMDMoreThan10Rows(sheetIndex,sheet,rows);
+            if(isActive==false&&rows+1>=2){
+                /**
+                 * 根据条数分析MateData
+                 */
+                MdPmters mdPmters = new MdPmters();
+                mdPmters.setFileType(1);
+                mdPmters.setSheet(sheet);
+                Map<SheetInfo,MetadataModel> mdModelMap =  PoiUtils.getMdModelMap(sheet,sheetIndex,fileType);
+                mdModelMapList.add(mdModelMap);
             }
         }
         return null;
     }
-    /**
-     * 总条数多于10的
-     * @param i
-     * @param sheet
-     * @param rows
-     * @return
-    CommonUtils cu = new CommonUtils();
-    private MetadataModel getMDMoreThan10Rows(int sheetIndex, HSSFSheet sheet,int rows) {
-        MetadataColumn metaColumnInfo = new MetadataColumn();
-        
-        //List<Integer> randomList = cu.getRandomList(rows);
-//        for(int i=0;i<randomList.size();i++){
-//            HSSFRow row = sheet.getRow(i);
-//            
-//        }
-        return null;
-    }
-     */
-    /**
-     * 总条数少于10的
-     * @param i
-     * @param sheet
-     * @param rows
-     * @return
-<<<<<<< HEAD
-     */
 }

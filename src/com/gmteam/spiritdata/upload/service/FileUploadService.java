@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
+import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 
 /** 
@@ -26,9 +27,9 @@ public class FileUploadService {
         int fileType = 0;
         String fileTypeStr = uploadFileName.substring(uploadFileName.lastIndexOf("."),uploadFileName.length());
         if(fileTypeStr.equals(".xls")){
-            fileType = 1;
+            fileType = ExcelConstants.EXCEL_FILE_TYPE_HSSF;
         }else if(fileTypeStr.equals(".xlsx")){
-            fileType = 2;
+            fileType = ExcelConstants.EXCEL_FILE_TYPE_XSSF;
         }
         return fileType;
     }
@@ -37,34 +38,19 @@ public class FileUploadService {
     /**
      * 获取workBook,和MdList
      */
-    public Object getWorkBook(String uploadFileName) {
+    public Object getFileMetaDate(String uploadFileName, int fileType) throws Exception {
         /**文件类型，要用于表判断返回来的workbook类型*/
-        int fileType = getFileType(uploadFileName);
         File excelFile = new File(uploadFileName);
-        switch (fileType) {
-        case 1:
-            try {
-                workBookProxy= new WorkBookProxy(excelFile,fileType);
-                HSSFWorkbook workBook = (HSSFWorkbook) workBookProxy.getWorkBook();
-                workBookProxy.getMDList();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } 
-            break;
-        case 2:
-            try {
-                workBookProxy= new WorkBookProxy(excelFile,fileType);
-                XSSFWorkbook workBook = (XSSFWorkbook) workBookProxy.getWorkBook();
-                workBookProxy.getMDList();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } 
-            break;
-        default:
-            break;
+        Object workBook = null;
+        if(fileType==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
+            workBookProxy= new WorkBookProxy(excelFile,fileType);
+            workBook = (HSSFWorkbook) workBookProxy.getWorkBook();
+            workBookProxy.getMDList();
+        }else if(fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
+            workBookProxy= new WorkBookProxy(excelFile,fileType);
+            workBook = (XSSFWorkbook) workBookProxy.getWorkBook();
+            workBookProxy.getMDList();
         }
-        //String fileType = getFileType(uploadFileName);
-
-        return null;
+        return workBook;
     }
 }
