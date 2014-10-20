@@ -1,5 +1,7 @@
 package com.gmteam.spiritdata.metadata.relation.service;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
@@ -39,16 +41,16 @@ public class MetadataService {
         TableMapOrg accumulationTable=null, tempTable=null;
         if (!existMetadataModel(mm)) {
             //生成积累表名称
-            String accumulationTabName = SequenceUUID.getUUIDSubSegment(4);
+            String accumulationTabName = "tab_"+SequenceUUID.getUUIDSubSegment(4);
             //注册积累表
             accumulationTable = mdTableOrgService.registTabOrgMap(accumulationTabName, mm, 1);
             //添加模型
             _ownerMdService.addMetadataModelModel(mm, session);
         } else {
-            accumulationTable = mdTableOrgService.getAccumulationTableMapOrg(mm.getMdMId(), mm.getOwnerId());
+            accumulationTable = mdTableOrgService.getAccumulationTableMapOrg(mm.getId());
         }
         //创建临时表
-        String tempTabName = SequenceUUID.getUUIDSubSegment(4);
+        String tempTabName = "tabt_"+SequenceUUID.getUUIDSubSegment(4);
         tempTable = mdTableOrgService.registTabOrgMap(tempTabName, mm, 2);
         //获得积累表
         TableMapOrg[] ret = new TableMapOrg[2];
@@ -62,7 +64,7 @@ public class MetadataService {
      * @param mm 被比较的元数据模型
      * @return 若存在返回true，否则返回false
      */
-    private boolean existMetadataModel(MetadataModel mm) {
+    private boolean existMetadataModel(MetadataModel mm) throws Exception {
         _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         if (_om==null) {
             String ownerId = mm.getOwnerId();
@@ -74,6 +76,12 @@ public class MetadataService {
         if (_om==null) new Exception("从session中不能取得所有者数据模型，未知错误！");
         while (!_om.isLoadSuccess()) ; //等待执行，这个用线程间通信更好
         //比较是否存储在
+        Map<String, MetadataModel> mmMap = _om.mdModelMap;
+        
+        for (String id: mmMap.keySet()) {
+            if ((mmMap.get(id).isSame(mm, 1)).get("flag").equals("1")) return true;
+        }
         return false;
     }
+
 }

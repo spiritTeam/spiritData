@@ -12,7 +12,7 @@ import com.gmteam.framework.core.model.BaseObject;
 public class MetadataColumn extends BaseObject {
     private static final long serialVersionUID = 2522485255389052683L;
 
-    private String colId; //列Id
+    private String id; //列Id
     private String mdMId; //模式Id
     private String columnName; //列名称，此名称为英文，用于创建表时作为字段名称
     private String titleName; //列显示/标题名称，此名称为数据源中列的标题(中文/英文)
@@ -28,14 +28,14 @@ public class MetadataColumn extends BaseObject {
         return mdModel;
     }
     public void setMdModel(MetadataModel mdModel) {
-        this.mdMId = mdModel.getMdMId();
+        this.mdMId = mdModel.getId();
         this.mdModel = mdModel;
     }
-    public String getColId() {
-        return colId;
+    public String getId() {
+        return id;
     }
-    public void setColId(String colId) {
-        this.colId = colId;
+    public void setId(String id) {
+        this.id = id;
     }
     public String getMdMId() {
         return mdMId;
@@ -47,7 +47,7 @@ public class MetadataColumn extends BaseObject {
      */
     public void setMdMId(String mdMId) throws Exception {
         if (this.mdModel==null) this.mdMId = mdMId;
-        else if (this.mdModel.getMdMId().equals(mdMId)) this.mdMId = mdMId;
+        else if (this.mdModel.getId().equals(mdMId)) this.mdMId = mdMId;
         else throw new Exception("所设置的元数据模式Id与已有的元数据模式不同！");
     }
 

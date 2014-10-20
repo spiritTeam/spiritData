@@ -42,7 +42,7 @@ public class MdBasisService {
      * @throws Exception
      */
     public List<MetadataModel> getMdMList(MetadataModel paramMm) throws Exception {
-        return mmDao.queryForList(paramMm);
+        return mmDao.queryForList(paramMm.toHashMapAsBean());
     }
 
     /**

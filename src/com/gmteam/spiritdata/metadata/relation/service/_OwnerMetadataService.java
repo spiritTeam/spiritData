@@ -2,6 +2,7 @@ package com.gmteam.spiritdata.metadata.relation.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -51,7 +52,7 @@ public class _OwnerMetadataService {
      * @param mm 元数据模式
      * @param session
      */
-    public void addMetadataModelModel(MetadataModel mm, HttpSession session) {
+    protected void addMetadataModelModel(MetadataModel mm, HttpSession session) {
         _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         try {
             //新增数据库-主表
@@ -64,7 +65,7 @@ public class _OwnerMetadataService {
                 }
             }
             //新增缓存
-            _om.mdModelMap.put(mm.getMdMId(), mm);
+            _om.mdModelMap.put(mm.getId(), mm);
             _om.mmList.add(mm);
             if (mcList!=null&&mcList.size()>0) {
                 for (MetadataColumn mc: mcList) {
@@ -90,6 +91,7 @@ class loadDataThread implements Runnable {
         _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         String ownerId = _om.getOnwerId();
         int ownerType = _om.getOnwerType();
+        _om.mdModelMap = new ConcurrentHashMap<String, MetadataModel>();
         MdBasisService mdBasisService = caller.getMdBasisService();
         try {
             List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId(ownerId);
@@ -107,17 +109,17 @@ class loadDataThread implements Runnable {
                     }
                     if (mcList!=null&&mcList.size()>0) {
                         for (MetadataColumn mdc: mcList) {
-                            if (mdc.getMdMId().equals(mm.getMdMId())) {
+                            if (mdc.getMdMId().equals(mm.getId())) {
                                 mm.addColumn(mdc);
                                 if (mcsList!=null&&mcsList.size()>0) {
                                     for (MetadataColSemanteme mcs: mcsList) {
-                                        if (mcs.getColId().equals(mdc.getColId())) mdc.setColSem(mcs);
+                                        if (mcs.getColId().equals(mdc.getId())) mdc.setColSem(mcs);
                                     }
                                 }
                             }
                         }
                     }
-                    _om.mdModelMap.put(mm.getMdMId(), mm);
+                    _om.mdModelMap.put(mm.getId(), mm);
                 }
                 
             }
@@ -138,6 +140,7 @@ class loadDataThread implements Runnable {
 
             _om.setLoadSuccess();
         } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 }

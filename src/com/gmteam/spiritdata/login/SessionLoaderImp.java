@@ -20,11 +20,11 @@ public class SessionLoaderImp extends AbstractSessionLoader implements SessionLo
 
     @Override
     public void loader() {
-        System.out.println("==="+this.session.getId());
         //创建所有者元数据
         String ownerId = this.session.getId();
-        UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
         int ownerType = 2;
+
+        UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
         if (user!=null) {
             ownerId = user.getUserId();
             ownerType = 1;

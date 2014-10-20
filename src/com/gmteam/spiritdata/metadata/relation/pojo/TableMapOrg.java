@@ -13,7 +13,7 @@ public class TableMapOrg extends BaseObject {
 
     private String id; //对照表Id
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
-    private String tmId; //元数据模式表Id
+    private String mdMId; //元数据模式表Id
     private String tableName; //数据表名称
     private Integer tableType; //表类型：1=积累表；2=临时表
     private Timestamp cTime; //本记录创建时间，也是表实体创建时间
@@ -34,12 +34,12 @@ public class TableMapOrg extends BaseObject {
         this.ownerId = ownerId;
     }
 
-    public String getTmId() {
-        return tmId;
+    public String getMdMId() {
+        return mdMId;
     }
 
-    public void setTmId(String tmId) {
-        this.tmId = tmId;
+    public void setMdMId(String mdMId) {
+        this.mdMId = mdMId;
     }
 
     public String getTableName() {

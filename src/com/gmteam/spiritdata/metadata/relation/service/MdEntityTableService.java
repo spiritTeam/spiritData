@@ -1,8 +1,5 @@
 package com.gmteam.spiritdata.metadata.relation.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
@@ -11,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
+import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**
  * 元数据实体表相关功能服务
@@ -40,8 +38,16 @@ public class MdEntityTableService {
         //修改mm中的积累表名称
         if (tableType==1) mm.setTableName(tableName);
         //写入注册信息
-        
-        return null;
+        TableMapOrg insertTmo = new TableMapOrg();
+        String newkey = SequenceUUID.getUUIDSubSegment(4);
+        insertTmo.setId(newkey);
+        insertTmo.setOwnerId(mm.getOwnerId());
+        insertTmo.setMdMId(mm.getId());
+        insertTmo.setTableName(tableName);
+        insertTmo.setTableType(tableType);
+        tmoDao.insert(insertTmo);
+        insertTmo = tmoDao.getInfoObject("getInfoById", newkey);
+        return insertTmo;
     }
 
     /**
@@ -51,11 +57,11 @@ public class MdEntityTableService {
      * @return 积累表信息
      * @throws Exception
      */
-    public TableMapOrg getAccumulationTableMapOrg(String mdMId, String ownerId) throws Exception {
+    public TableMapOrg getAccumulationTableMapOrg(String mdMId) throws Exception {
         if (mdMId==null||mdMId.equals("")) throw new IllegalArgumentException("元数据模式Id不能为空！");
-        if (ownerId==null||ownerId.equals("")) throw new IllegalArgumentException("所有者Id不能为空！");
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("tmId", mdMId);param.put("ownerId", ownerId);
-        return tmoDao.getInfoObject("getAccumulationTmo", param);
+        TableMapOrg paramTmo = new TableMapOrg();
+        paramTmo.setMdMId(mdMId);
+        paramTmo.setTableType(1);
+        return tmoDao.getInfoObject(paramTmo);
     }
 }

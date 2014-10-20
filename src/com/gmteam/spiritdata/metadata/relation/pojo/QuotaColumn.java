@@ -84,7 +84,7 @@ public class QuotaColumn extends BaseObject {
         return column;
     }
     public void setColumn(MetadataColumn column) {
-        this.colId = column.getColId();
+        this.colId = column.getId();
         this.column = column;
     }
     public QuotaTable getTabQuota() {
