@@ -31,7 +31,6 @@ public class SessionLoaderImp extends AbstractSessionLoader implements SessionLo
         _ownerMdService.loadData2Session(ownerId, ownerType, this.session);
         //一下测试代码
         MetadataModel mm = new MetadataModel();
-        mm.setId("1235434dsf");
         mm.setOwnerId(ownerId);
         mm.setOwnerType(ownerType);
         mm.setDescn("ddd");
