@@ -23,6 +23,7 @@ public class FileUpLoadController extends AbstractFileUploadController {
     private FileUploadService fileUploadService;
     @Resource
     HttpServletRequest request;
+
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {Map<String,Object> uploadInfoMap= uploadInfoMapList.get(0);
         HttpSession session = request.getSession();

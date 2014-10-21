@@ -24,9 +24,8 @@
     <where >
       <trim prefix="(" suffix=")" prefixOverrides="and" >
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="tmId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
+        <if test="mdMId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
         <if test="ownerId != null" > and ownerId = #{ownerId,jdbcType=VARCHAR} </if>
-        <if test="columnType != null" > and columnType = #{columnType,jdbcType=VARCHAR} </if>
         <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
         <if test="tableType != null" > and tableType = #{tableType,jdbcType=INTEGER} </if>
         <if test="tableDescn != null" > and tableDescn = #{tableDescn,jdbcType=VARCHAR} </if>

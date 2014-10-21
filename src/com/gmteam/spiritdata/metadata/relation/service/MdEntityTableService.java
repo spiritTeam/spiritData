@@ -1,6 +1,8 @@
 package com.gmteam.spiritdata.metadata.relation.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +83,7 @@ public class MdEntityTableService {
         insertTmo.setTableName(tableName);
         insertTmo.setTableType(tableType);
         tmoDao.insert(insertTmo);
-        insertTmo = tmoDao.getInfoObject("getInfoById", newkey);
+        insertTmo.setcTime(new Timestamp(new Date().getTime()));
         return insertTmo;
     }
 

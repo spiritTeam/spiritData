@@ -572,7 +572,7 @@ function showDemo() {
 }
 
 function showResult() {
-  openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
+  //openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
 }
 </script>
 </body>

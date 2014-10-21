@@ -62,11 +62,13 @@ public class _OwnerMetadataService {
                 mdBasisService.addMetadataColumn(mc);
             }
         }
+
         //新增缓存
         _om.mdModelMap.put(mm.getId(), mm);
-        if (_om.mmList==null) 
+        if (_om.mmList==null) _om.mmList = new ArrayList<MetadataModel>(); 
         _om.mmList.add(mm);
         if (mcList!=null&&mcList.size()>0) {
+            if (_om.mcList==null) _om.mcList = new ArrayList<MetadataColumn>(); 
             for (MetadataColumn mc: mcList) {
                 _om.mcList.add(mc);
             }
