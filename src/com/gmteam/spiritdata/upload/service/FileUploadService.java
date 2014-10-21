@@ -3,6 +3,7 @@ package com.gmteam.spiritdata.upload.service;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
+import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
@@ -66,6 +68,8 @@ public class FileUploadService {
             workBook = (XSSFWorkbook) workBookProxy.getWorkBook();
             mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
         }
+        /**得到要删除列的indexList */
+        List<Integer> delColIndexList = PoiUtils.delColIndexList;
         getTabName(mdMap);
         return workBook;
     }

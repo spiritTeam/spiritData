@@ -566,7 +566,7 @@ function showDemo() {
       i=0;
       stepStr="...";
       //singleAnalysis();
-      showResult();
+     // showResult();
     }
   }
 }
