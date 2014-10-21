@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="quotaColumn" >
+  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="cId" property="cId" jdbcType="VARCHAR" />
+    <result column="tqId" property="tqId" jdbcType="VARCHAR" />
+    <result column="max" property="max" jdbcType="VARCHAR" />
+    <result column="min" property="min" jdbcType="VARCHAR" />
+    <result column="nullCount" property="nullCount" jdbcType="INTEGER" />
+    <result column="distinctCount" property="distinctCount" jdbcType="INTEGER" />
+    <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
+    <result column="lmTime" property="lmTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_md_columnquota
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sa_md_columnquota
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" >
+    delete from sa_md_columnquota
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" >
+    insert into sa_md_columnquota
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cId != null" >
+        cId,
+      </if>
+      <if test="tqId != null" >
+        tqId,
+      </if>
+      <if test="max != null" >
+        max,
+      </if>
+      <if test="min != null" >
+        min,
+      </if>
+      <if test="nullCount != null" >
+        nullCount,
+      </if>
+      <if test="distinctCount != null" >
+        distinctCount,
+      </if>
+      <if test="cTime != null" >
+        cTime,
+      </if>
+      <if test="lmTime != null" >
+        lmTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="cId != null" >
+        #{cId,jdbcType=VARCHAR},
+      </if>
+      <if test="tqId != null" >
+        #{tqId,jdbcType=VARCHAR},
+      </if>
+      <if test="max != null" >
+        #{max,jdbcType=VARCHAR},
+      </if>
+      <if test="min != null" >
+        #{min,jdbcType=VARCHAR},
+      </if>
+      <if test="nullCount != null" >
+        #{nullCount,jdbcType=INTEGER},
+      </if>
+      <if test="distinctCount != null" >
+        #{distinctCount,jdbcType=INTEGER},
+      </if>
+      <if test="cTime != null" >
+        #{cTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lmTime != null" >
+        #{lmTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" resultType="java.lang.Integer" >
+    select count(*) from sa_md_columnquota
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sa_md_columnquota
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cId != null" >
+        cId = #{record.cId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tqId != null" >
+        tqId = #{record.tqId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.max != null" >
+        max = #{record.max,jdbcType=VARCHAR},
+      </if>
+      <if test="record.min != null" >
+        min = #{record.min,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nullCount != null" >
+        nullCount = #{record.nullCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.distinctCount != null" >
+        distinctCount = #{record.distinctCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.cTime != null" >
+        cTime = #{record.cTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lmTime != null" >
+        lmTime = #{record.lmTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" >
+    update sa_md_columnquota
+    <set >
+      <if test="cId != null" >
+        cId = #{cId,jdbcType=VARCHAR},
+      </if>
+      <if test="tqId != null" >
+        tqId = #{tqId,jdbcType=VARCHAR},
+      </if>
+      <if test="max != null" >
+        max = #{max,jdbcType=VARCHAR},
+      </if>
+      <if test="min != null" >
+        min = #{min,jdbcType=VARCHAR},
+      </if>
+      <if test="nullCount != null" >
+        nullCount = #{nullCount,jdbcType=INTEGER},
+      </if>
+      <if test="distinctCount != null" >
+        distinctCount = #{distinctCount,jdbcType=INTEGER},
+      </if>
+      <if test="cTime != null" >
+        cTime = #{cTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lmTime != null" >
+        lmTime = #{lmTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

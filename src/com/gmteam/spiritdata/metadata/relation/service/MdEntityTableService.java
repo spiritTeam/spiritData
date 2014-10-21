@@ -47,15 +47,16 @@ public class MdEntityTableService {
         //列名称
         String columnStr = "";
         List<MetadataColumn> pks = new ArrayList<MetadataColumn>();
+        int _index = 0;
         for (MetadataColumn mc : mm.getColumnList()) {
             columnStr += ",";
+            if (mc.getColumnName()==null||mc.getColumnName().equals("")) mc.setColumnName("col_"+(_index++));
             if (mc.getColumnType().equalsIgnoreCase("String")) {
                 columnStr += mc.getColumnName()+" varchar(200)";
-                if (!mc.getColumnName().equals("")&&mc.getColumnName()==null) columnStr += " COMMENT'"+mc.getColumnName()+"'";
             } else {
                 columnStr += mc.getColumnName()+" "+mc.getColumnType();
-                if (!mc.getColumnName().equals("")&&mc.getColumnName()==null) columnStr += " COMMENT'"+mc.getColumnName()+"'";
             }
+            if (mc.getTitleName()!=null&&!mc.getTitleName().equals("")) columnStr += " COMMENT '"+mc.getTitleName()+"'";
             if (mc.getIsPk()==1) pks.add(mc);
         }
         columnStr = columnStr.substring(1);

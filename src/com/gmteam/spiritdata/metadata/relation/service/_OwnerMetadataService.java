@@ -29,9 +29,6 @@ public class _OwnerMetadataService {
     public MdBasisService getMdBasisService() {
         return mdBasisService;
     }
-    public void setMdBasisService(MdBasisService mdBasisService) {
-        this.mdBasisService = mdBasisService;
-    }
 
     /**
      * 构造所有者元数据信息，并存入Session。构造过程会启动另一个线程处理
