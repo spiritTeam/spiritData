@@ -6,11 +6,15 @@ import com.gmteam.framework.FConstants;
 import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.framework.core.web.AbstractSessionLoader;
 import com.gmteam.framework.core.web.SessionLoader;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.service.MdBasisService;
 import com.gmteam.spiritdata.metadata.relation.service._OwnerMetadataService;
 
 public class SessionLoaderImp extends AbstractSessionLoader implements SessionLoader {
     @Resource
     private _OwnerMetadataService _ownerMdService;
+    @Resource
+    private MdBasisService mdBasisService;
 
     @Override
     public void loader() {
@@ -24,5 +28,13 @@ public class SessionLoaderImp extends AbstractSessionLoader implements SessionLo
             ownerType = 1;
         }
         _ownerMdService.loadData2Session(ownerId, ownerType, this.session);
+
+        try {
+            MetadataModel mm = mdBasisService.getMetadataMode("bcaab1cdf43f");
+            mm.toString();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

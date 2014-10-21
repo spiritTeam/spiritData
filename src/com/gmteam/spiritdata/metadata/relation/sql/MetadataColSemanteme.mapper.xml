@@ -25,7 +25,7 @@
       <trim prefix="(" suffix=")" prefixOverrides="and" >
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
         <if test="cId != null" > and cId = #{colId,jdbcType=VARCHAR} </if>
-        <if test="tmId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
+        <if test="mdMId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
         <if test="semantemeCode != null" > and semantemeCode = #{semantemeCode,jdbcType=INTEGER} </if>
         <if test="semantemeType != null" > and semantemeType = #{semantemeType,jdbcType=INTEGER} </if>
         <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>

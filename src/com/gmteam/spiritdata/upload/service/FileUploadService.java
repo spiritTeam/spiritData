@@ -46,7 +46,7 @@ public class FileUploadService {
         return fileType;
     }
     /**workBook代理类*/
-    private  WorkBookProxy workBookProxy;
+    private WorkBookProxy workBookProxy;
     private HttpSession session;
     /**
      * 获取workBook,和MdList

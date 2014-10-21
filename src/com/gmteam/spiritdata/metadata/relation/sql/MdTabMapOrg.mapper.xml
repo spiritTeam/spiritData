@@ -34,12 +34,13 @@
     </where>
   </sql>
   <!-- 获得记录条数-->
-  <select id="count" parameterType="TabOrgMap" resultType="java.lang.Integer" >
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
     select count(*) from sa_md_tabmap_org
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
   </select>
+
   <!-- 获得列表 -->
   <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select <include refid="Base_Column_List" />
@@ -67,7 +68,7 @@
   </select>
 
   <!-- 新增数据 -->
-  <insert id="insert" parameterType="TabOrgMap" >
+  <insert id="insert" parameterType="java.util.Map" >
     insert into sa_md_tabmap_org
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

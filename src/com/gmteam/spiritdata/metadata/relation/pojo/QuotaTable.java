@@ -13,11 +13,10 @@ import com.gmteam.framework.core.model.BaseObject;
 public class QuotaTable extends BaseObject {
     private static final long serialVersionUID = -6314845278741671296L;
 
-    private String tqId; //实体表指标Id
-    private String tmId; //元数据模式表Id
+    private String id; //实体表指标Id
+    private String mdMId; //元数据模式表Id
     private String tmoId; //实体表对应的对照表Id
     private String tableName; //实体表名称
-    private String ownerId; //实体表所有者标识（可能是用户id，也可能是SessionID）
 
     private long allCount; //实体表指标——表总行数
     private Timestamp laTime; //实体表指标——最新用于分析的访问时间，只对积累表有意义
@@ -27,17 +26,17 @@ public class QuotaTable extends BaseObject {
 
     private List<QuotaColumn> colQuotaList; //列指标列表
 
-    public String getTqId() {
-        return tqId;
+    public String getId() {
+        return id;
     }
-    public void setTqId(String tqId) {
-        this.tqId = tqId;
+    public void setId(String id) {
+        this.id = id;
     }
-    public String getTmId() {
-        return tmId;
+    public String getMdMId() {
+        return mdMId;
     }
-    public void setTmId(String tmId) {
-        this.tmId = tmId;
+    public void setMdMId(String mdMId) {
+        this.mdMId = mdMId;
     }
     public String getTmoId() {
         return tmoId;
@@ -50,12 +49,6 @@ public class QuotaTable extends BaseObject {
     }
     public void setTableName(String tableName) {
         this.tableName = tableName;
-    }
-    public String getOwnerId() {
-        return ownerId;
-    }
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
     }
     public long getAllCount() {
         return allCount;
@@ -97,7 +90,7 @@ public class QuotaTable extends BaseObject {
      */
     public void addColumn(QuotaColumn cq) throws Exception{
         if (cq==null) return;
-        if (cq.getCqId().equals(null)) throw new Exception("列指标Id不能为空");
+        if (cq.getId().equals(null)) throw new Exception("列指标Id不能为空");
         if (cq.getColumn()==null) throw new Exception("列指标Id不能为空");
 
         MetadataColumn mdc=cq.getColumn();
@@ -154,7 +147,7 @@ public class QuotaTable extends BaseObject {
      */
     public QuotaColumn getColQuotaById(String cqId) {
         QuotaColumn param = new QuotaColumn(); 
-        param.setCqId(cqId);
+        param.setId(cqId);
         return getColQuota(param);
     }
 
@@ -163,7 +156,7 @@ public class QuotaTable extends BaseObject {
         QuotaColumn ret = null;
         MetadataColumn mdc=cq.getColumn();
         for (QuotaColumn c: this.colQuotaList) {
-            if (c.getColId().equals(cq.getColId())||c.getCqId().equals(cq.getCqId())) {
+            if (c.getColId().equals(cq.getColId())||c.getId().equals(cq.getId())) {
                 ret = c;
                 break;
             }

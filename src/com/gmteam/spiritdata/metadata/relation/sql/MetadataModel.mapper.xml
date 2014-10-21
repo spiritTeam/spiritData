@@ -31,7 +31,6 @@
       </trim>
     </where>
   </sql>
-
   <!-- 获得记录条数-->
   <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
     select count(*) from sa_md_tabmodel
@@ -51,11 +50,6 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" />
-    from sa_md_tabmodel
-    where id = #{id,jdbcType=VARCHAR}
-  </select>
 
   <!-- 获得一条数据 -->
   <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
@@ -64,6 +58,11 @@
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
+  </select>
+  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select <include refid="Base_Column_List" />
+    from sa_md_tabmodel
+    where id = #{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 新增数据 -->

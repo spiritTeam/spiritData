@@ -1,35 +1,79 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  元数据：实体列指标信息
+-->
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="quotaColumn" >
+  <!-- 对象定义:实体列指标 -->
   <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="cId" property="cId" jdbcType="VARCHAR" />
-    <result column="tqId" property="tqId" jdbcType="VARCHAR" />
-    <result column="max" property="max" jdbcType="VARCHAR" />
-    <result column="min" property="min" jdbcType="VARCHAR" />
-    <result column="nullCount" property="nullCount" jdbcType="INTEGER" />
+    <id     column="id"            property="id"            jdbcType="VARCHAR" />
+    <result column="cId"           property="cId"           jdbcType="VARCHAR" />
+    <result column="tqId"          property="tqId"          jdbcType="VARCHAR" />
+    <result column="max"           property="max"           jdbcType="VARCHAR" />
+    <result column="min"           property="min"           jdbcType="VARCHAR" />
+    <result column="nullCount"     property="nullCount"     jdbcType="INTEGER" />
     <result column="distinctCount" property="distinctCount" jdbcType="INTEGER" />
-    <result column="cTime" property="cTime" jdbcType="TIMESTAMP" />
-    <result column="lmTime" property="lmTime" jdbcType="TIMESTAMP" />
+    <result column="cTime"         property="cTime"         jdbcType="TIMESTAMP" />
+    <result column="lmTime"        property="lmTime"        jdbcType="TIMESTAMP" />
   </resultMap>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from sa_md_columnquota
+  <!-- 所有列 -->
+  <sql id="Base_Column_List" >
+    id, cId, tqId, max, min, nullCount, distinctCount, cTime, lmTime
+  </sql>
+  <!-- 条件子句 -->
+  <sql id="WhereClauseByEntiey" >
+    <where >
+      <trim prefix="(" suffix=")" prefixOverrides="and" >
+        <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
+        <if test="cId != null" > and cId = #{cId,jdbcType=VARCHAR} </if>
+        <if test="tqId != null" > and tqId = #{tqId,jdbcType=VARCHAR} </if>
+        <if test="max != null" > and max = #{max,jdbcType=VARCHAR} </if>
+        <if test="min != null" > and min = #{min,jdbcType=VARCHAR} </if>
+        <if test="nullCount != null" > and nullCount = #{nullCount,jdbcType=INTEGER} </if>
+        <if test="distinctCount != null" > and distinctCount = #{distinctCount,jdbcType=INTEGER} </if>
+        <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
+        <if test="lmTime != null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
+      </trim>
+    </where>
+  </sql>
+  <!-- 获得记录条数-->
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
+    select count(*) from sa_md_colquota
+    <if test="_parameter != null" >
+      <include refid="WhereClauseByEntiey" />
+    </if>
+  </select>
+
+  <!-- 获得列表 -->
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select <include refid="Base_Column_List" />
+    from sa_md_colquota
+    <if test="_parameter != null" >
+      <include refid="WhereClauseByEntiey" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+
+  <!-- 获得一条数据 -->
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select <include refid="Base_Column_List" />
+    from sa_md_colquota
+    <if test="_parameter != null" >
+      <include refid="WhereClauseByEntiey" />
+    </if>
+  </select>
+  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select <include refid="Base_Column_List" />
+    from sa_md_colquota
     where id = #{id,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from sa_md_columnquota
-    where id = #{id,jdbcType=VARCHAR}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" >
-    delete from sa_md_columnquota
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" >
-    insert into sa_md_columnquota
+
+  <!-- 新增数据 -->
+  <insert id="insert" parameterType="java.util.Map" >
+    insert into sa_md_colquota
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -89,14 +133,10 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" resultType="java.lang.Integer" >
-    select count(*) from sa_md_columnquota
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
-    update sa_md_columnquota
+
+  <!-- 修改 根据主键 -->
+  <update id="update" parameterType="java.util.Map" >
+    update sa_md_colquota
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
@@ -126,38 +166,17 @@
         lmTime = #{record.lmTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" >
-    update sa_md_columnquota
-    <set >
-      <if test="cId != null" >
-        cId = #{cId,jdbcType=VARCHAR},
-      </if>
-      <if test="tqId != null" >
-        tqId = #{tqId,jdbcType=VARCHAR},
-      </if>
-      <if test="max != null" >
-        max = #{max,jdbcType=VARCHAR},
-      </if>
-      <if test="min != null" >
-        min = #{min,jdbcType=VARCHAR},
-      </if>
-      <if test="nullCount != null" >
-        nullCount = #{nullCount,jdbcType=INTEGER},
-      </if>
-      <if test="distinctCount != null" >
-        distinctCount = #{distinctCount,jdbcType=INTEGER},
-      </if>
-      <if test="cTime != null" >
-        cTime = #{cTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="lmTime != null" >
-        lmTime = #{lmTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from sa_md_colquota where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByEntity" parameterType="java.util.Map" >
+    delete from sa_md_colquota
+    <if test="_parameter != null" >
+      <include refid="WhereClauseByEntiey" />
+    </if>
+  </delete>
 </mapper>

@@ -13,6 +13,9 @@
   <mappers>
     <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MetadataModel.mapper.xml"/>
     <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MetadataColumn.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MetadataColSemanteme.mapper.xml"/>
     <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabMapOrg.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaTable.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaColumn.mapper.xml"/>
   </mappers>
 </configuration>
