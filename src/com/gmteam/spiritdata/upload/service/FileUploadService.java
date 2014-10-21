@@ -14,9 +14,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
+import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
-import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.service.MetadataService;

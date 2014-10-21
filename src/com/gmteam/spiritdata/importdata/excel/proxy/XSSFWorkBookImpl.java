@@ -2,15 +2,14 @@ package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
+import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
-import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /** 

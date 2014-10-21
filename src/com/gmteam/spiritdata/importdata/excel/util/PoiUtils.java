@@ -19,8 +19,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
-import com.gmteam.spiritdata.importdata.excel.util.pmters.CellPmters;
-import com.gmteam.spiritdata.importdata.excel.util.pmters.DTPmters;
+import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
+import com.gmteam.spiritdata.importdata.excel.util.pmters.CellPrama;
+import com.gmteam.spiritdata.importdata.excel.util.pmters.DTPrama;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
@@ -147,17 +148,17 @@ public class PoiUtils {
      * 设定记录结构
      * @return
      */
-    public static Map<String,List<CellPmters>> getTypeMap() {
-        Map<String,List<CellPmters>> typeMap = new HashMap<String, List<CellPmters>>();
-        List<CellPmters> dateList = new ArrayList<CellPmters>();
+    public static Map<String,List<CellPrama>> getTypeMap() {
+        Map<String,List<CellPrama>> typeMap = new HashMap<String, List<CellPrama>>();
+        List<CellPrama> dateList = new ArrayList<CellPrama>();
         typeMap.put(ExcelConstants.DATA_TYPE_DATE,dateList );
-        List<CellPmters> stringList = new ArrayList<CellPmters>();
+        List<CellPrama> stringList = new ArrayList<CellPrama>();
         typeMap.put(ExcelConstants.DATA_TYPE_STRING,stringList );
-        List<CellPmters> booleanList = new ArrayList<CellPmters>();
+        List<CellPrama> booleanList = new ArrayList<CellPrama>();
         typeMap.put(ExcelConstants.DATA_TYPE_BOOLEAN, booleanList);
-        List<CellPmters> doubleList = new ArrayList<CellPmters>();
+        List<CellPrama> doubleList = new ArrayList<CellPrama>();
         typeMap.put(ExcelConstants.DATA_TYPE_DOUBLE, doubleList);
-        List<CellPmters> nullList = new ArrayList<CellPmters>();
+        List<CellPrama> nullList = new ArrayList<CellPrama>();
         typeMap.put(ExcelConstants.DATA_TYPE_NULL, nullList);
         return typeMap;
     }
@@ -173,22 +174,22 @@ public class PoiUtils {
         /**
          * 首先获得便于得到Md的结构
          */
-        Map<Integer,Map<String,List<CellPmters>>> recordMap = new HashMap<Integer,Map<String,List<CellPmters>>>();
+        Map<Integer,Map<String,List<CellPrama>>> recordMap = new HashMap<Integer,Map<String,List<CellPrama>>>();
         if(dataRows>2&&dataRows<101){
             /**小于100条数据的时候*/
             for(int x=0;x<dataRows-1;x++){
                 XSSFRow xRow = sheet.getRow(x);
                 for(int y=0;y<xRow.getLastCellNum();y++){
-                    Map<String,List<CellPmters>> typeMap = recordMap.get(y);
+                    Map<String,List<CellPrama>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
                     /**cp赋值*/
-                    CellPmters cp = new CellPmters();
+                    CellPrama cp = new CellPrama();
                     cp.setX(x);
                     cp.setY(y);
                     XSSFCell xCell = xRow.getCell(y);
                     String dataType= getCellValueType(xCell);
                     cp.setDataType(dataType);
-                    List<CellPmters> cpList = typeMap.get(dataType);
+                    List<CellPrama> cpList = typeMap.get(dataType);
                     cpList.add(cp);
                     recordMap.put(y, typeMap);
                 }
@@ -200,16 +201,16 @@ public class PoiUtils {
             for(int x=0;x<randoms.length;x++){
                 XSSFRow xRow = sheet.getRow(randoms[x]);
                 for(int y=0;y<xRow.getLastCellNum();y++){
-                    Map<String,List<CellPmters>> typeMap = recordMap.get(y);
+                    Map<String,List<CellPrama>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
                     /**cp赋值*/
-                    CellPmters cp = new CellPmters();
+                    CellPrama cp = new CellPrama();
                     cp.setX(randoms[x]);
                     cp.setY(y);
                     XSSFCell xCell = xRow.getCell(y);
                     String dataType= getCellValueType(xCell);
                     cp.setDataType(dataType);
-                    List<CellPmters> cpList = typeMap.get(dataType);
+                    List<CellPrama> cpList = typeMap.get(dataType);
                     cpList.add(cp);
                     recordMap.put(y, typeMap);
                 }
@@ -232,22 +233,22 @@ public class PoiUtils {
         /**
          * 首先获得便于得到Md的结构
          */
-        Map<Integer,Map<String,List<CellPmters>>> recordMap = new HashMap<Integer,Map<String,List<CellPmters>>>();
+        Map<Integer,Map<String,List<CellPrama>>> recordMap = new HashMap<Integer,Map<String,List<CellPrama>>>();
         if(dataRows>2&&dataRows<101){
             /**小于100条数据的时候*/
             for(int x=1;x<dataRows;x++){
                 HSSFRow hRow = sheet.getRow(x);
                 for(int y=0;y<hRow.getLastCellNum();y++){
-                    Map<String,List<CellPmters>> typeMap = recordMap.get(y);
+                    Map<String,List<CellPrama>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
                     /**cp赋值*/
-                    CellPmters cp = new CellPmters();
+                    CellPrama cp = new CellPrama();
                     cp.setX(x);
                     cp.setY(y);
                     HSSFCell hCell = hRow.getCell(y);
                     String dataType= getCellValueType(hCell);
                     cp.setDataType(dataType);
-                    List<CellPmters> cpList = typeMap.get(dataType);
+                    List<CellPrama> cpList = typeMap.get(dataType);
                     cpList.add(cp);
                     recordMap.put(y, typeMap);
                 }
@@ -259,16 +260,16 @@ public class PoiUtils {
             for(int x=0;x<randoms.length;x++){
                 HSSFRow hRow = sheet.getRow(randoms[x]);
                 for(int y=0;y<hRow.getLastCellNum();y++){
-                    Map<String,List<CellPmters>> typeMap = recordMap.get(y);
+                    Map<String,List<CellPrama>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
                     /**cp赋值*/
-                    CellPmters cp = new CellPmters();
+                    CellPrama cp = new CellPrama();
                     cp.setX(randoms[x]);
                     cp.setY(y);
                     HSSFCell hCell = hRow.getCell(y);
                     String dataType= getCellValueType(hCell);
                     cp.setDataType(dataType);
-                    List<CellPmters> cpList = typeMap.get(dataType);
+                    List<CellPrama> cpList = typeMap.get(dataType);
                     cpList.add(cp);
                     recordMap.put(y, typeMap);
                 }
@@ -285,7 +286,7 @@ public class PoiUtils {
      * @param dataRows 代表抽取的条数
      * @param titleAry 标题数组
      */
-    private static Map<String,Object> getDataTypes(Map<Integer, Map<String, List<CellPmters>>> recordMap, int dataRows, String[] titleAry) {
+    private static Map<String,Object> getDataTypes(Map<Integer, Map<String, List<CellPrama>>> recordMap, int dataRows, String[] titleAry) {
         Map<String,Object> retMap = new HashMap<String,Object>();
         MetadataModel metadataModel = new MetadataModel();
         List<MetadataColumn> mdColumnList = new ArrayList<MetadataColumn>();
@@ -293,8 +294,8 @@ public class PoiUtils {
         Map<Integer,Integer> delColInxMap = new HashMap<Integer,Integer>();
         while(recordIt.hasNext()){
             int columnIndex = recordIt.next();
-            Map<String, List<CellPmters>> typeMap = recordMap.get(columnIndex);
-            DTPmters dtPmters = getMainDataType(typeMap,dataRows);
+            Map<String, List<CellPrama>> typeMap = recordMap.get(columnIndex);
+            DTPrama dtPmters = getMainDataType(typeMap,dataRows);
             if(dtPmters.getProportion()>=ExcelConstants.DATA_TYPE_PROPORTION){
                 MetadataColumn mdColumn = new MetadataColumn();
                 mdColumn.setColumnIndex(columnIndex);
@@ -322,13 +323,13 @@ public class PoiUtils {
      * @param dataRows
      * @return
      */
-    private static DTPmters getMainDataType(Map<String, List<CellPmters>> typeMap, int dataRows) {
+    private static DTPrama getMainDataType(Map<String, List<CellPrama>> typeMap, int dataRows) {
         int doubleTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_DOUBLE).size();
         int dateTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_DATE).size();
         int stringTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_STRING).size();
         int booleanTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_BOOLEAN).size();
         int nullTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_NULL).size();
-        DTPmters dtPmters = new DTPmters();
+        DTPrama dtPmters = new DTPrama();
         if(nullTypeSize!=dataRows){
             dtPmters.setNullNum(nullTypeSize);
             String type="";

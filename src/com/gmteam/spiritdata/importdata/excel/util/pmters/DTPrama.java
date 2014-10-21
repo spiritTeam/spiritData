@@ -4,7 +4,7 @@ package com.gmteam.spiritdata.importdata.excel.util.pmters;
  * @version mht  
  * 类说明  包含最多的类型，空的个数，以及比重
  */
-public class DTPmters {
+public class DTPrama {
     /**type最多的类型*/
     private String dataType;
     /**比重*/
