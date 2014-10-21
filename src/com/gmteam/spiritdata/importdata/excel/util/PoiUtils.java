@@ -288,6 +288,10 @@ public class PoiUtils {
         return mdModel;
     }
     /**
+     * 用于记录要删除的列的序号
+     */
+    public static List<Integer> delColIndexList = new ArrayList<Integer>();
+    /**
      * 得到mD
      * @param recordMap 记录map
      * @param dataRows 代表抽取的条数
@@ -305,8 +309,11 @@ public class PoiUtils {
                 MetadataColumn mdColumn = new MetadataColumn();
                 mdColumn.setColumnIndex(columnIndex);
                 mdColumn.setColumnType(dtPmters.getDataType());
-                mdColumn.setColumnName(titleAry[columnIndex]);
+                mdColumn.setTitleName(titleAry[columnIndex]);
+                mdColumn.setColumnName("column"+columnIndex);
                 mdColumnList.add(mdColumn);
+            }else{
+                delColIndexList.add(columnIndex);
             }
         }
         try {
