@@ -3,14 +3,14 @@ package com.gmteam.spiritdata.upload.service;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
@@ -53,36 +53,54 @@ public class FileUploadService {
      * @param session 
      */
     @SuppressWarnings("unchecked")
-    public Object getFileMetaDate(String uploadFileName, int fileType, HttpSession session) throws Exception {
+    public Object getDealMetaDate(String uploadFileName, HttpSession session) throws Exception {
+        int fileType = getFileType(uploadFileName);
         this.session = session;
         /**文件类型，要用于表判断返回来的workbook类型*/
         File excelFile = new File(uploadFileName);
         Object workBook = null;
         Map<SheetInfo,MetadataModel> mdMap = new HashMap<SheetInfo,MetadataModel>();
-        if(fileType==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-            workBookProxy= new WorkBookProxy(excelFile,fileType);
-            workBook = (HSSFWorkbook) workBookProxy.getWorkBook();
-            mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
-        }else if(fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-            workBookProxy= new WorkBookProxy(excelFile,fileType);
-            workBook = (XSSFWorkbook) workBookProxy.getWorkBook();
-            mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
-        }
-        /**得到要删除列的indexList */
-        //List<Integer> delColIndexList = PoiUtils.delColIndexList;
-        getTabName(mdMap);
+        workBookProxy = new WorkBookProxy(excelFile,fileType);
+        workBook = (HSSFWorkbook) workBookProxy.getWorkBook();
+        mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
+
+        Map<SheetInfo,TableMapOrg[]> sheetTabOrgMap = getTabName(mdMap);
+        Map<SheetInfo,Map<Integer,Integer>> delColIndexMap = PoiUtils.delColIndexMap;
+        saveDate(sheetTabOrgMap,delColIndexMap);
         return workBook;
+    }
+    private void saveDate(Map<SheetInfo, TableMapOrg[]> sheetTabOrgMap, Map<SheetInfo, Map<Integer,Integer>> delColIndexMap) {
+        Iterator<SheetInfo> it = sheetTabOrgMap.keySet().iterator();
+        while(it.hasNext()){
+            SheetInfo sheetInfo = it.next();
+            TableMapOrg[] tabMapOrg = sheetTabOrgMap.get(sheetInfo);
+            Map<Integer,Integer> delColIndexList = delColIndexMap.get(sheetInfo);
+            saveInDB(tabMapOrg,sheetInfo,delColIndexList);
+        }
+    }
+    private void saveInDB(TableMapOrg[] tabMapOrg,SheetInfo sheetInfo, Map<Integer,Integer> delColIndexMap) {
+        try {
+            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
+                workBookProxy= new WorkBookProxy((XSSFSheet)sheetInfo.getSheet(),delColIndexMap);
+            }else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
+                workBookProxy= new WorkBookProxy((HSSFSheet)sheetInfo.getSheet(),delColIndexMap);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     @Resource
     MetadataService mdService;
-    private void getTabName(Map<SheetInfo, MetadataModel> mdMap) throws Exception {
+    private Map<SheetInfo,TableMapOrg[]> getTabName(Map<SheetInfo, MetadataModel> mdMap) throws Exception {
+        Map<SheetInfo,TableMapOrg[]> sheetTabOrgMap = new HashMap<SheetInfo, TableMapOrg[]>();
         mdService.setSession(session);
         Iterator<SheetInfo> it = mdMap.keySet().iterator();
         while(it.hasNext()){
             SheetInfo sheetInfo = it.next();
             MetadataModel md = mdMap.get(sheetInfo);
             TableMapOrg[] art =mdService.storeMdModel4Import(md);
-            System.out.println(art.length);
+            sheetTabOrgMap.put(sheetInfo, art);
         }
+        return sheetTabOrgMap;
     }
 }

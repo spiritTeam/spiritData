@@ -18,4 +18,9 @@ public interface IPoiUtils {
      * @throws Exception
      */
     public Object getMDList()throws Exception;
+    /**
+     * 返回抓取的数据
+     * @return
+     */
+    public Object getData();
 }
