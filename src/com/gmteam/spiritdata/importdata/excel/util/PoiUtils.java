@@ -290,7 +290,7 @@ public class PoiUtils {
     /**
      * 用于记录要删除的列的序号
      */
-    public static List<Integer> delColIndexList = new ArrayList<Integer>();
+    public static Map<SheetInfo,List<Integer>> delColIndexList = new HashMap<SheetInfo,List<Integer>>();
     /**
      * 得到mD
      * @param recordMap 记录map
@@ -301,6 +301,7 @@ public class PoiUtils {
         MetadataModel metadataModel = new MetadataModel();
         List<MetadataColumn> mdColumnList = new ArrayList<MetadataColumn>();
         Iterator<Integer> recordIt = recordMap.keySet().iterator();
+        List<Integer> delColIndexList = new ArrayList<Integer>();
         while(recordIt.hasNext()){
             int columnIndex = recordIt.next();
             Map<String, List<CellPmters>> typeMap = recordMap.get(columnIndex);

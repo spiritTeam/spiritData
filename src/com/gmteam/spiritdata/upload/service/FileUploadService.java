@@ -69,7 +69,7 @@ public class FileUploadService {
             mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
         }
         /**得到要删除列的indexList */
-        List<Integer> delColIndexList = PoiUtils.delColIndexList;
+        //List<Integer> delColIndexList = PoiUtils.delColIndexList;
         getTabName(mdMap);
         return workBook;
     }
