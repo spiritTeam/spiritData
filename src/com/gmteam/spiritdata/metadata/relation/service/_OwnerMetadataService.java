@@ -50,28 +50,28 @@ public class _OwnerMetadataService {
      * @param mm 元数据模式
      * @param session
      */
-    protected void addMetadataModelModel(MetadataModel mm, HttpSession session) {
+    protected void addMetadataModelModel(MetadataModel mm, HttpSession session) throws Exception {
         _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
-        try {
-            //新增数据库-主表
-            mdBasisService.addMetadataModel(mm);
-            //新增数据库-字表
-            List<MetadataColumn> mcList = mm.getColumnList();
-            if (mcList!=null&&mcList.size()>0) {
-                for (MetadataColumn mc: mcList) {
-                    if (mc.getId()==null||mc.getId().equals("")) mc.setId(SequenceUUID.getUUIDSubSegment(4));
-                    mdBasisService.addMetadataColumn(mc);
-                }
+        //新增数据库-主表
+        mdBasisService.addMetadataModel(mm);
+        //新增数据库-字表
+        List<MetadataColumn> mcList = mm.getColumnList();
+        if (mcList!=null&&mcList.size()>0) {
+            for (MetadataColumn mc: mcList) {
+                if (mc.getId()==null||mc.getId().equals("")) mc.setId(SequenceUUID.getUUIDSubSegment(4));
+                mdBasisService.addMetadataColumn(mc);
             }
-            //新增缓存
-            _om.mdModelMap.put(mm.getId(), mm);
-            _om.mmList.add(mm);
-            if (mcList!=null&&mcList.size()>0) {
-                for (MetadataColumn mc: mcList) {
-                    _om.mcList.add(mc);
-                }
+        }
+
+        //新增缓存
+        _om.mdModelMap.put(mm.getId(), mm);
+        if (_om.mmList==null) _om.mmList = new ArrayList<MetadataModel>(); 
+        _om.mmList.add(mm);
+        if (mcList!=null&&mcList.size()>0) {
+            if (_om.mcList==null) _om.mcList = new ArrayList<MetadataColumn>(); 
+            for (MetadataColumn mc: mcList) {
+                _om.mcList.add(mc);
             }
-        } catch(Exception e) {
         }
     }
 }

@@ -41,11 +41,13 @@ public class MetadataService {
     public TableMapOrg[] storeMdModel4Import(MetadataModel mm) throws Exception {
         if (session==null) throw new NullPointerException("session为空，请通过[setSession]方法设置！");
         TableMapOrg accumulationTable=null, tempTable=null;
-        if (!existMetadataModel(mm)) {
+        MetadataModel _existMm = getExistMetadataModel(mm);
+        if (_existMm==null) {
             //生成积累表名称
             String mdMId = mm.getId();
             if (mdMId==null||mdMId.equals("")) {
                 mdMId = SequenceUUID.getUUIDSubSegment(4);
+                mm.setId(mdMId);
             }
             String accumulationTabName = "tab_"+mdMId;
             //注册积累表
@@ -53,7 +55,8 @@ public class MetadataService {
             //添加模型
             _ownerMdService.addMetadataModelModel(mm, session);
         } else {
-            accumulationTable = mdTableOrgService.getAccumulationTableMapOrg(mm.getId());
+            accumulationTable = mdTableOrgService.getAccumulationTableMapOrg(_existMm.getId());
+            mm=_existMm;
         }
         //创建临时表
         String tempTabName = "tabt_"+SequenceUUID.getUUIDSubSegment(4);
@@ -70,37 +73,34 @@ public class MetadataService {
      * @param mm 被比较的元数据模型
      * @return 若存在返回true，否则返回false
      */
-    private boolean existMetadataModel(MetadataModel mm) throws Exception {
+    private MetadataModel getExistMetadataModel(MetadataModel mm) throws Exception {
+        String ownerId = mm.getOwnerId();
+        int ownerType = mm.getOwnerType();
+        if (ownerId==null||ownerId.equals("")) {
+            UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+            if (user!=null) {
+                ownerId = user.getUserId();
+                ownerType = 1;
+            } else {
+                ownerId = this.session.getId();
+                ownerType = 2;
+            }
+            mm.setOwnerId(ownerId);
+            mm.setOwnerType(ownerType);
+        }
         _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         if (_om==null) {
-            String ownerId = mm.getOwnerId();
-
-            int ownerType = mm.getOwnerType();
-            if (ownerType!=1&&ownerType!=2) ownerType=2; //ssion型
-            if (ownerType==2) ownerId = this.session.getId();
-            else {
-                if (ownerId==null||ownerId.equals("")) {//从Session取用户信息
-                    UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-                    if (user!=null) {
-                        ownerId = user.getUserId();
-                        ownerType = 1;
-                    } else {
-                        ownerId = this.session.getId();
-                        ownerType = 2;
-                    }
-                }
-            }
             _ownerMdService.loadData2Session(ownerId, ownerType, this.session);
+            _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         }
-        _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         if (_om==null) new Exception("从session中不能取得所有者数据模型，未知错误！");
         while (!_om.isLoadSuccess()) ; //等待执行，这个用线程间通信更好
         //比较是否存储在
         Map<String, MetadataModel> mmMap = _om.mdModelMap;
         
         for (String id: mmMap.keySet()) {
-            if ((mmMap.get(id).isSame(mm, 1)).get("flag").equals("1")) return true;
+            if ((mmMap.get(id).isSame(mm, 1)).get("type").equals("1")) return mmMap.get(id);
         }
-        return false;
+        return null;
     }
 }

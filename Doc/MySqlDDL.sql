@@ -67,7 +67,7 @@ CREATE TABLE  sa_md_tabmap_org (
   tmId              varchar(36) NOT NULL        COMMENT '元数据模式Id(表模式ID)',
   tableName         varchar(40) NOT NULL        COMMENT '表名称（此名称与业务数据表名称对应）',
   tableType         int(1) unsigned NOT NULL DEFAULT '1' COMMENT '表类型(1-积累表。2-临时表)',
-  tableDescn        varchar(400) NOT NULL       COMMENT '备注',
+  tableDescn        varchar(400) COMMENT '备注',
   cTime             timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时的系统时间',
   PRIMARY KEY (id)
 )
