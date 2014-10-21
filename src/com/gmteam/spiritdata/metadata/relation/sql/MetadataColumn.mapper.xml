@@ -8,7 +8,7 @@
   <!-- 对象定义:元数据列模式 -->
   <resultMap id="BaseResultMap" type="MdCol" >
     <id     column="id"          property="id"          jdbcType="VARCHAR" />
-    <result column="tmId"        property="mdMId"        jdbcType="VARCHAR" />
+    <result column="tmId"        property="mdMId"       jdbcType="VARCHAR" />
     <result column="columnName"  property="columnName"  jdbcType="VARCHAR" />
     <result column="columnType"  property="columnType"  jdbcType="VARCHAR" />
     <result column="columnIndex" property="columnIndex" jdbcType="INTEGER" />
@@ -76,7 +76,7 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="tmId != null" >
+      <if test="mdMId != null" >
         tmId,
       </if>
       <if test="columnName != null" >
@@ -99,7 +99,7 @@
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="tmId != null" >
+      <if test="mdMId != null" >
         #{mdMId,jdbcType=VARCHAR},
       </if>
       <if test="columnName != null" >
@@ -124,7 +124,7 @@
   <update id="update" parameterType="java.util.Map" >
     update sa_md_column
     <set >
-      <if test="tmId != null" >
+      <if test="mdMId != null" >
         tmId = #{mdMId,jdbcType=VARCHAR},
       </if>
       <if test="columnName != null" >

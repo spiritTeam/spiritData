@@ -11,9 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class _OwnerMetadata {
     public ConcurrentHashMap<String, MetadataModel> mdModelMap; //所有者元数据集合
-    public List<MetadataModel> mmList; //所有者元数据模式列表
-    public List<MetadataColumn> mcList; //所有者元数据列描述列表
-    public List<MetadataColSemanteme> mcsList; //所有者元数据列语义列表
+    public List<MetadataModel> mmList = null; //所有者元数据模式列表
+    public List<MetadataColumn> mcList = null; //所有者元数据列描述列表
+    public List<MetadataColSemanteme> mcsList = null; //所有者元数据列语义列表
 
     protected boolean loadSuccess=false; //加载数据是否完成
 

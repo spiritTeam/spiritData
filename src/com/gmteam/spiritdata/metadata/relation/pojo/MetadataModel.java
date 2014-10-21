@@ -30,8 +30,13 @@ public class MetadataModel extends BaseObject {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(String id) throws Exception {
         this.id = id;
+        if (this.columnList!=null||this.columnList.size()>0) {
+            for (MetadataColumn mc: this.columnList) {
+                mc.setMdMId(id);
+            }
+        }
     }
 
     public int getOwnerType() {

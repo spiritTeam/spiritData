@@ -46,6 +46,7 @@ public class MetadataService {
             String mdMId = mm.getId();
             if (mdMId==null||mdMId.equals("")) {
                 mdMId = SequenceUUID.getUUIDSubSegment(4);
+                mm.setId(mdMId);
             }
             String accumulationTabName = "tab_"+mdMId;
             //注册积累表

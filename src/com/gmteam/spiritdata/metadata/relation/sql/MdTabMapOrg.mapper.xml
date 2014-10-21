@@ -36,7 +36,7 @@
   </sql>
   <!-- 获得记录条数-->
   <select id="count" parameterType="TabOrgMap" resultType="java.lang.Integer" >
-    select count(*) from sa_md_tablemap_org
+    select count(*) from sa_md_tabmap_org
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
@@ -44,7 +44,7 @@
   <!-- 获得列表 -->
   <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select <include refid="Base_Column_List" />
-    from sa_md_tablemap_org
+    from sa_md_tabmap_org
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
@@ -56,14 +56,14 @@
   <!-- 获得一条数据 -->
   <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select <include refid="Base_Column_List" />
-    from sa_md_tablemap_org
+    from sa_md_tabmap_org
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
   </select>
   <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select <include refid="Base_Column_List" />
-    from sa_md_tablemap_org
+    from sa_md_tabmap_org
     where id = #{id,jdbcType=VARCHAR}
   </select>
 
