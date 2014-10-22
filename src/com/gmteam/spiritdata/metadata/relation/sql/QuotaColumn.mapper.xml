@@ -8,7 +8,7 @@
   <!-- 对象定义:实体列指标 -->
   <resultMap id="BaseResultMap" type="QuotaCol" >
     <id     column="id"            property="id"            jdbcType="VARCHAR" />
-    <result column="cId"           property="cId"           jdbcType="VARCHAR" />
+    <result column="cId"           property="colId"         jdbcType="VARCHAR" />
     <result column="tqId"          property="tqId"          jdbcType="VARCHAR" />
     <result column="max"           property="max"           jdbcType="VARCHAR" />
     <result column="min"           property="min"           jdbcType="VARCHAR" />
@@ -26,7 +26,7 @@
     <where >
       <trim prefix="(" suffix=")" prefixOverrides="and" >
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="cId != null" > and cId = #{cId,jdbcType=VARCHAR} </if>
+        <if test="colId != null" > and cId = #{colId,jdbcType=VARCHAR} </if>
         <if test="tqId != null" > and tqId = #{tqId,jdbcType=VARCHAR} </if>
         <if test="max != null" > and max = #{max,jdbcType=VARCHAR} </if>
         <if test="min != null" > and min = #{min,jdbcType=VARCHAR} </if>
@@ -78,7 +78,7 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="cId != null" >
+      <if test="colId != null" >
         cId,
       </if>
       <if test="tqId != null" >
@@ -107,8 +107,8 @@
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="cId != null" >
-        #{cId,jdbcType=VARCHAR},
+      <if test="colId != null" >
+        #{colId,jdbcType=VARCHAR},
       </if>
       <if test="tqId != null" >
         #{tqId,jdbcType=VARCHAR},
@@ -138,32 +138,32 @@
   <update id="update" parameterType="java.util.Map" >
     update sa_md_colquota
     <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+      <if test="id != null" >
+        id = #{id,jdbcType=VARCHAR},
       </if>
-      <if test="record.cId != null" >
-        cId = #{record.cId,jdbcType=VARCHAR},
+      <if test="colId != null" >
+        cId = #{colId,jdbcType=VARCHAR},
       </if>
-      <if test="record.tqId != null" >
-        tqId = #{record.tqId,jdbcType=VARCHAR},
+      <if test="tqId != null" >
+        tqId = #{tqId,jdbcType=VARCHAR},
       </if>
-      <if test="record.max != null" >
-        max = #{record.max,jdbcType=VARCHAR},
+      <if test="max != null" >
+        max = #{max,jdbcType=VARCHAR},
       </if>
-      <if test="record.min != null" >
-        min = #{record.min,jdbcType=VARCHAR},
+      <if test="min != null" >
+        min = #{min,jdbcType=VARCHAR},
       </if>
-      <if test="record.nullCount != null" >
-        nullCount = #{record.nullCount,jdbcType=INTEGER},
+      <if test="nullCount != null" >
+        nullCount = #{nullCount,jdbcType=INTEGER},
       </if>
-      <if test="record.distinctCount != null" >
-        distinctCount = #{record.distinctCount,jdbcType=INTEGER},
+      <if test="distinctCount != null" >
+        distinctCount = #{distinctCount,jdbcType=INTEGER},
       </if>
-      <if test="record.cTime != null" >
-        cTime = #{record.cTime,jdbcType=TIMESTAMP},
+      <if test="cTime != null" >
+        cTime = #{cTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.lmTime != null" >
-        lmTime = #{record.lmTime,jdbcType=TIMESTAMP},
+      <if test="lmTime != null" >
+        lmTime = #{lmTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}

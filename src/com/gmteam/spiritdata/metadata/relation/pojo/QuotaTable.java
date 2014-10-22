@@ -1,6 +1,7 @@
 package com.gmteam.spiritdata.metadata.relation.pojo;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gmteam.framework.core.model.BaseObject;
@@ -31,6 +32,11 @@ public class QuotaTable extends BaseObject {
     }
     public void setId(String id) {
         this.id = id;
+        if (this.colQuotaList!=null&&this.colQuotaList.size()>0) {
+            for (QuotaColumn qc: this.colQuotaList) {
+                qc.setTqId(id);
+            }
+        }
     }
     public String getMdMId() {
         return mdMId;
@@ -74,14 +80,13 @@ public class QuotaTable extends BaseObject {
     public void setLmTime(Timestamp lmTime) {
         this.lmTime = lmTime;
     }
-
-    public List<QuotaColumn> getColumnList() {
+    public List<QuotaColumn> getColQuotaList() {
         return colQuotaList;
     }
-
-    public void setColumnList(List<QuotaColumn> colQuotaList) {
+    public void setColQuotaList(List<QuotaColumn> colQuotaList) {
         this.colQuotaList = colQuotaList;
     }
+
 
     /**
      * 插入列指标对象到列指标列表
@@ -91,9 +96,10 @@ public class QuotaTable extends BaseObject {
     public void addColumn(QuotaColumn qc) throws Exception{
         if (qc==null) return;
         if (qc.getId().equals(null)) throw new Exception("列指标Id不能为空");
-        if (qc.getColumn()==null) throw new Exception("列指标Id不能为空");
+        if (qc.getColumn()==null) throw new Exception("列描述不能为空");
 
         MetadataColumn mdc=qc.getColumn();
+        if (this.colQuotaList==null) this.colQuotaList=new ArrayList<QuotaColumn>();
         for (QuotaColumn c: this.colQuotaList) {
             MetadataColumn _c=c.getColumn();
             if (_c.getId().equals(mdc.getId())) throw new Exception("在列指标列表中已经有与所添加对象[列Id]相同的列指标对象，不同重复添加！");

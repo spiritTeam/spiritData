@@ -107,7 +107,7 @@
         #{tmoId,jdbcType=VARCHAR},
       </if>
       <if test="mdMId != null" >
-        #{tmId,jdbcType=VARCHAR},
+        #{mdMId,jdbcType=VARCHAR},
       </if>
       <if test="tableName != null" >
         #{tableName,jdbcType=VARCHAR},
@@ -131,29 +131,29 @@
   <update id="update" parameterType="java.util.Map" >
     update sa_md_tabquota
     <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+      <if test="id != null" >
+        id = #{id,jdbcType=VARCHAR},
       </if>
-      <if test="record.tmoId != null" >
-        tmoId = #{record.tmoId,jdbcType=VARCHAR},
+      <if test="tmoId != null" >
+        tmoId = #{tmoId,jdbcType=VARCHAR},
       </if>
-      <if test="record.mdMId != null" >
-        tmId = #{record.mdMId,jdbcType=VARCHAR},
+      <if test="mdMId != null" >
+        tmId = #{mdMId,jdbcType=VARCHAR},
       </if>
-      <if test="record.tableName != null" >
-        tableName = #{record.tableName,jdbcType=VARCHAR},
+      <if test="tableName != null" >
+        tableName = #{tableName,jdbcType=VARCHAR},
       </if>
-      <if test="record.allCount != null" >
-        allCount = #{record.allCount,jdbcType=INTEGER},
+      <if test="allCount != null" >
+        allCount = #{allCount,jdbcType=INTEGER},
       </if>
-      <if test="record.cTime != null" >
-        cTime = #{record.cTime,jdbcType=TIMESTAMP},
+      <if test="cTime != null" >
+        cTime = #{cTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.lmTime != null" >
-        lmTime = #{record.lmTime,jdbcType=TIMESTAMP},
+      <if test="lmTime != null" >
+        lmTime = #{lmTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.laTime != null" >
-        laTime = #{record.laTime,jdbcType=TIMESTAMP},
+      <if test="laTime != null" >
+        laTime = #{laTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}

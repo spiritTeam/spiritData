@@ -110,26 +110,26 @@
   <update id="update" parameterType="java.util.Map" >
     update sa_md_colsemanteme
     <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+      <if test="id != null" >
+        id = #{id,jdbcType=VARCHAR},
       </if>
-      <if test="record.cid != null" >
-        cId = #{record.colId,jdbcType=VARCHAR},
+      <if test="cid != null" >
+        cId = #{colId,jdbcType=VARCHAR},
       </if>
-      <if test="record.tmid != null" >
-        tmId = #{record.mdMId,jdbcType=VARCHAR},
+      <if test="tmid != null" >
+        tmId = #{mdMId,jdbcType=VARCHAR},
       </if>
-      <if test="record.semantemecode != null" >
-        semantemeCode = #{record.semantemeCode,jdbcType=INTEGER},
+      <if test="semantemecode != null" >
+        semantemeCode = #{semantemeCode,jdbcType=INTEGER},
       </if>
-      <if test="record.semantemetype != null" >
-        semantemeType = #{record.semantemeType,jdbcType=INTEGER},
+      <if test="semantemetype != null" >
+        semantemeType = #{semantemeType,jdbcType=INTEGER},
       </if>
-      <if test="record.ctime != null" >
-        cTime = #{record.ctime,jdbcType=TIMESTAMP},
+      <if test="ctime != null" >
+        cTime = #{ctime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.lmtime != null" >
-        lmTime = #{record.lmtime,jdbcType=TIMESTAMP},
+      <if test="lmtime != null" >
+        lmTime = #{lmtime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}

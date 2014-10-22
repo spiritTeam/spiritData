@@ -76,7 +76,6 @@ public class MetadataModel extends BaseObject {
     }
 
     public void setColumnList(List<MetadataColumn> columnList) throws Exception {
-        this.columnList = new ArrayList<MetadataColumn>();
         for (MetadataColumn mc: columnList) {
             this.addColumn(mc);
         }
