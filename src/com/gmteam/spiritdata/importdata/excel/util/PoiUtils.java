@@ -532,4 +532,23 @@ public class PoiUtils {
         }  
         return type;  
     }
+
+    public Map<Integer, Object[][]> getPageList(HSSFSheet sheet) {
+        return null;
+    }
+    
+    public void test() {
+        Map<Integer, Object[][]> ddd = getPageList(null);
+        
+        Iterator< Integer> it = ddd.keySet().iterator();
+        int sum;
+        while(it.hasNext()){
+            int k =it.next();
+            sum = k;
+            Object[][] oo = ddd.get(k);
+        }
+        
+        
+                
+    }
 }

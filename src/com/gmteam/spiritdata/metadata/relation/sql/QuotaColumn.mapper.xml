@@ -6,7 +6,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="quotaColumn" >
   <!-- 对象定义:实体列指标 -->
-  <resultMap id="BaseResultMap" type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn" >
+  <resultMap id="BaseResultMap" type="QuotaCol" >
     <id     column="id"            property="id"            jdbcType="VARCHAR" />
     <result column="cId"           property="cId"           jdbcType="VARCHAR" />
     <result column="tqId"          property="tqId"          jdbcType="VARCHAR" />

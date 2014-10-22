@@ -88,19 +88,19 @@ public class QuotaTable extends BaseObject {
      * @param cq 被插入的列指标对象，其中tqId/tabQuota可以省略，本对象的tqId/tabQuota将填入参数cq
      * @throws Exception
      */
-    public void addColumn(QuotaColumn cq) throws Exception{
-        if (cq==null) return;
-        if (cq.getId().equals(null)) throw new Exception("列指标Id不能为空");
-        if (cq.getColumn()==null) throw new Exception("列指标Id不能为空");
+    public void addColumn(QuotaColumn qc) throws Exception{
+        if (qc==null) return;
+        if (qc.getId().equals(null)) throw new Exception("列指标Id不能为空");
+        if (qc.getColumn()==null) throw new Exception("列指标Id不能为空");
 
-        MetadataColumn mdc=cq.getColumn();
+        MetadataColumn mdc=qc.getColumn();
         for (QuotaColumn c: this.colQuotaList) {
             MetadataColumn _c=c.getColumn();
             if (_c.getId().equals(mdc.getId())) throw new Exception("在列指标列表中已经有与所添加对象[列Id]相同的列指标对象，不同重复添加！");
             if (_c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列指标对象，不同重复添加！");
             if (_c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列指标对象，不同重复添加！");
         }
-        this.colQuotaList.add(cq);
+        this.colQuotaList.add(qc);
     }
 
     /**

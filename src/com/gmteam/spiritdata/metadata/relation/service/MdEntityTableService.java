@@ -91,7 +91,7 @@ public class MdEntityTableService {
      * 得到积累表信息
      * @param mdMId 元数据模式Id
      * @param ownerId 元数据所有者
-     * @return 积累表信息
+     * @return 积累表映射信息信息
      * @throws Exception
      */
     public TableMapOrg getAccumulationTableMapOrg(String mdMId) throws Exception {
@@ -100,5 +100,31 @@ public class MdEntityTableService {
         paramTmo.setMdMId(mdMId);
         paramTmo.setTableType(1);
         return tmoDao.getInfoObject(paramTmo);
+    }
+
+    /**
+     * 根据模式Id和表名称获得表映射信息
+     * @param mdMId 元数据模式Id
+     * @param tableName 表名称
+     * @return 表映射信息
+     * @throws Exception
+     */
+    public TableMapOrg getTableMapOrg(String mdMId, String tableName) throws Exception {
+        if (tableName==null||tableName.equals("")) throw new IllegalArgumentException("表名称不能为空！");
+        if (mdMId==null||mdMId.equals("")) throw new IllegalArgumentException("元数据模式Id不能为空！");
+        TableMapOrg paramTmo = new TableMapOrg();
+        paramTmo.setMdMId(mdMId);
+        paramTmo.setTableName(tableName);
+        return tmoDao.getInfoObject(paramTmo);
+    }
+
+    /**
+     * 获得列表
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    public List<TableMapOrg> getList(Map<String, String> param) throws Exception {
+        return tmoDao.queryForList(param);
     }
 }
