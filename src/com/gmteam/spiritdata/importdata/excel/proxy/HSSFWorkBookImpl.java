@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
+import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
-import com.gmteam.spiritdata.importdata.excel.util.SheetInfo;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /** 
@@ -24,6 +25,9 @@ public class HSSFWorkBookImpl implements IPoiUtils{
     public HSSFWorkBookImpl(File execlFile) throws Exception{
         workbook = new HSSFWorkbook(new FileInputStream(execlFile)); 
     } 
+    public HSSFWorkBookImpl(HSSFSheet hSheet,Map<Integer,Integer> delColIndexMap) {
+        // TODO
+    }
     @Override
     public Object getWorkBook() throws Exception {
         return workbook;
@@ -31,26 +35,11 @@ public class HSSFWorkBookImpl implements IPoiUtils{
     @Override
     public Object getMDList() throws Exception {
         Map<SheetInfo,MetadataModel> mdMap =PoiUtils.getMdModelMap(workbook,fileType);
-//        List<Map<SheetInfo,MetadataModel>> mdModelMapList = new ArrayList<Map<SheetInfo,MetadataModel>>();
-//        int sheetSize = workbook.getNumberOfSheets();
-//        HSSFSheet sheet;
-//        boolean isActive;
-//        for(int i=0;i<sheetSize;i++ ){
-//            int sheetIndex = i;
-//            sheet = workbook.getSheetAt(sheetIndex);
-//            isActive = sheet.isActive();
-//            int rows = sheet.getLastRowNum()+1;
-//            if(isActive==false&&rows+1>=2){
-//                /**
-//                 * 根据条数分析MateData
-//                 */
-//                MdPmters mdPmters = new MdPmters();
-//                mdPmters.setFileType(1);
-//                mdPmters.setSheet(sheet);
-//                Map<SheetInfo,MetadataModel> mdModelMap =  PoiUtils.getMdModelMap(sheet,sheetIndex,fileType);
-//                mdModelMapList.add(mdModelMap);
-//            }
-//        }
         return mdMap;
+    }
+    @Override
+    public Object getData() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

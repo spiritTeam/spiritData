@@ -1,6 +1,10 @@
 package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
+import java.util.Map;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 /** 
@@ -19,6 +23,12 @@ public class WorkBookProxy implements IPoiUtils{
             this.iPoiUtils = new HSSFWorkBookImpl(execlFile);
         else throw new Exception("不是excel文件");
     }
+    public WorkBookProxy(XSSFSheet xSheet,Map<Integer,Integer> delColIndexMap) throws Exception {
+        this.iPoiUtils = new XSSFWorkBookImpl(xSheet,delColIndexMap);
+    }
+    public WorkBookProxy(HSSFSheet hSheet,Map<Integer,Integer> delColIndexMap) throws Exception {
+        this.iPoiUtils = new HSSFWorkBookImpl(hSheet,delColIndexMap);
+    }
     @Override
     public Object getWorkBook() throws Exception {
         excelWorkBook = iPoiUtils.getWorkBook();
@@ -27,5 +37,9 @@ public class WorkBookProxy implements IPoiUtils{
     @Override
     public Object getMDList() throws Exception {
         return iPoiUtils.getMDList();
+    }
+    @Override
+    public Object getData() {
+        return iPoiUtils.getData();
     }
 }

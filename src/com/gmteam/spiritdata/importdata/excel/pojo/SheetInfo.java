@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.importdata.excel.util;
+package com.gmteam.spiritdata.importdata.excel.pojo;
 /** 
  * @author 
  * @version  
@@ -7,7 +7,21 @@ package com.gmteam.spiritdata.importdata.excel.util;
  */
 public class SheetInfo {
     private String sheetName;
+    private Object sheet;
+    private int sheetType;
     private Integer sheetIndex;
+    public Object getSheet() {
+        return sheet;
+    }
+    public void setSheet(Object sheet) {
+        this.sheet = sheet;
+    }
+    public int getSheetType() {
+        return sheetType;
+    }
+    public void setSheetType(int sheetType) {
+        this.sheetType = sheetType;
+    }
     public String getSheetName() {
         return sheetName;
     }
