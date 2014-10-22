@@ -74,8 +74,8 @@ CREATE TABLE  sa_md_tabmap_org (
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据对照关系表';
 
 /**006 元数据表指标[SA_MD_TABLEQUOTA]*/
-DROP TABLE IF EXISTS sa_md_tablequota;
-CREATE TABLE  sa_md_tablequota (
+DROP TABLE IF EXISTS sa_md_tabquota;
+CREATE TABLE  sa_md_tabquota (
   id            varchar(36) NOT NULL         COMMENT '标指标Id(UUID)',
   tmoId         varchar(36) NOT NULL         COMMENT '对照表Id(元数据对照表Id，外键)',
   tmId          varchar(36) NOT NULL         COMMENT '元数据模式Id(模式Id，冗余外键)',
@@ -89,8 +89,8 @@ CREATE TABLE  sa_md_tablequota (
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据表指标';
 
 /**007 元数据列指标[SA_MD_COLUMNQUOTA]*/
-DROP TABLE IF EXISTS sa_md_columnquota;
-CREATE TABLE  sa_md_columnquota (
+DROP TABLE IF EXISTS sa_md_colquota;
+CREATE TABLE  sa_md_colquota (
   id            varchar(36) NOT NULL          COMMENT '列指标Id(UUID)',
   cId           varchar(36) NOT NULL          COMMENT '列描述Id(列描述Id外键）',
   tqId          varchar(36) NOT NULL          COMMENT '表指标Id(实体表指标Id外键)',

@@ -34,12 +34,13 @@
     </where>
   </sql>
   <!-- 获得记录条数-->
-  <select id="count" parameterType="TabOrgMap" resultType="java.lang.Integer" >
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
     select count(*) from sa_md_tabmap_org
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
   </select>
+
   <!-- 获得列表 -->
   <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select <include refid="Base_Column_List" />
@@ -67,7 +68,7 @@
   </select>
 
   <!-- 新增数据 -->
-  <insert id="insert" parameterType="TabOrgMap" >
+  <insert id="insert" parameterType="java.util.Map" >
     insert into sa_md_tabmap_org
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -115,26 +116,26 @@
   <update id="update" parameterType="java.util.Map" >
     update sa_md_tabmap_org
     <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+      <if test="id != null" >
+        id = #{id,jdbcType=VARCHAR},
       </if>
-      <if test="record.ownerId != null" >
-        ownerId = #{record.ownerId,jdbcType=VARCHAR},
+      <if test="ownerId != null" >
+        ownerId = #{ownerId,jdbcType=VARCHAR},
       </if>
-      <if test="record.mdMId != null" >
-        tmId = #{record.mdMId,jdbcType=VARCHAR},
+      <if test="mdMId != null" >
+        tmId = #{mdMId,jdbcType=VARCHAR},
       </if>
-      <if test="record.tableName != null" >
-        tableName = #{record.tableName,jdbcType=VARCHAR},
+      <if test="tableName != null" >
+        tableName = #{tableName,jdbcType=VARCHAR},
       </if>
-      <if test="record.tableType != null" >
-        tableType = #{record.tableType,jdbcType=INTEGER},
+      <if test="tableType != null" >
+        tableType = #{tableType,jdbcType=INTEGER},
       </if>
-      <if test="record.tableDescn != null" >
-        tableName = #{record.tableDescn,jdbcType=VARCHAR},
+      <if test="tableDescn != null" >
+        tableName = #{tableDescn,jdbcType=VARCHAR},
       </if>
-      <if test="record.cTime != null" >
-        cTime = #{record.cTime,jdbcType=TIMESTAMP},
+      <if test="cTime != null" >
+        cTime = #{cTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}

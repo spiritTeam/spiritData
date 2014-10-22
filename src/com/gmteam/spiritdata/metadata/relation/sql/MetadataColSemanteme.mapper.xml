@@ -25,7 +25,7 @@
       <trim prefix="(" suffix=")" prefixOverrides="and" >
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
         <if test="cId != null" > and cId = #{colId,jdbcType=VARCHAR} </if>
-        <if test="tmId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
+        <if test="mdMId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
         <if test="semantemeCode != null" > and semantemeCode = #{semantemeCode,jdbcType=INTEGER} </if>
         <if test="semantemeType != null" > and semantemeType = #{semantemeType,jdbcType=INTEGER} </if>
         <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
@@ -110,26 +110,26 @@
   <update id="update" parameterType="java.util.Map" >
     update sa_md_colsemanteme
     <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+      <if test="id != null" >
+        id = #{id,jdbcType=VARCHAR},
       </if>
-      <if test="record.cid != null" >
-        cId = #{record.colId,jdbcType=VARCHAR},
+      <if test="cid != null" >
+        cId = #{colId,jdbcType=VARCHAR},
       </if>
-      <if test="record.tmid != null" >
-        tmId = #{record.mdMId,jdbcType=VARCHAR},
+      <if test="tmid != null" >
+        tmId = #{mdMId,jdbcType=VARCHAR},
       </if>
-      <if test="record.semantemecode != null" >
-        semantemeCode = #{record.semantemeCode,jdbcType=INTEGER},
+      <if test="semantemecode != null" >
+        semantemeCode = #{semantemeCode,jdbcType=INTEGER},
       </if>
-      <if test="record.semantemetype != null" >
-        semantemeType = #{record.semantemeType,jdbcType=INTEGER},
+      <if test="semantemetype != null" >
+        semantemeType = #{semantemeType,jdbcType=INTEGER},
       </if>
-      <if test="record.ctime != null" >
-        cTime = #{record.ctime,jdbcType=TIMESTAMP},
+      <if test="ctime != null" >
+        cTime = #{ctime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.lmtime != null" >
-        lmTime = #{record.lmtime,jdbcType=TIMESTAMP},
+      <if test="lmtime != null" >
+        lmTime = #{lmtime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -142,7 +142,7 @@
   <delete id="deleteByEntity" parameterType="java.util.Map" >
     delete from sa_md_colsemanteme
     <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
+      <include refid="WhereClauseByEntiey" />
     </if>
   </delete>
 </mapper>

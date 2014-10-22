@@ -1,6 +1,8 @@
 package com.gmteam.spiritdata.metadata.relation.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -116,5 +118,27 @@ public class MdBasisService {
      */
     public void addMetadataColumn(MetadataColumn mc) throws Exception {
         mcDao.insert(mc);
+    }
+
+    /**
+     * 根据元数据Id，得到元数据信息
+     * @param id
+     * @return 该元数据信息
+     * @throws Exception 
+     */
+    public MetadataModel getMetadataMode(String id) throws Exception {
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("id", id);
+        MetadataModel ret = mmDao.getInfoObject(param);
+        if (ret==null) return ret;
+
+        param.clear();
+        param.put("mdMId", id);
+        List<MetadataColumn> clist = mcDao.queryForList(param);
+        if (clist==null||clist.size()==0) return null;
+        for (MetadataColumn mc: clist) {
+            ret.addColumn(mc);
+        }
+        return ret;
     }
 }

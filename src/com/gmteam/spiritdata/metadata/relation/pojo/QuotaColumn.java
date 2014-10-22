@@ -12,7 +12,7 @@ import com.gmteam.framework.core.model.BaseObject;
 public class QuotaColumn extends BaseObject {
     private static final long serialVersionUID = 7021542418630072318L;
 
-    private String cqId; //实体表指标Id
+    private String id; //实体表指标Id
     private String tqId; //实体表指标Id
     private String colId; //列描述Id
     private String max; //列指标——最大值
@@ -26,11 +26,11 @@ public class QuotaColumn extends BaseObject {
     private MetadataColumn column; //本列指标对应的列描述信息
     private QuotaTable tabQuota; //本列指标对应的表指标信息
 
-    public String getCqId() {
-        return cqId;
+    public String getId() {
+        return id;
     }
-    public void setCqId(String cqId) {
-        this.cqId = cqId;
+    public void setId(String id) {
+        this.id = id;
     }
     public String getTqId() {
         return tqId;
@@ -91,7 +91,7 @@ public class QuotaColumn extends BaseObject {
         return tabQuota;
     }
     public void setTabQuota(QuotaTable tabQuota) {
-        this.tqId = tabQuota.getTqId();
+        this.tqId = tabQuota.getId();
         this.tabQuota = tabQuota;
     }
 

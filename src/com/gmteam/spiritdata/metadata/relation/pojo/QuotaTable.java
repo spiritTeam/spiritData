@@ -1,6 +1,7 @@
 package com.gmteam.spiritdata.metadata.relation.pojo;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gmteam.framework.core.model.BaseObject;
@@ -13,11 +14,10 @@ import com.gmteam.framework.core.model.BaseObject;
 public class QuotaTable extends BaseObject {
     private static final long serialVersionUID = -6314845278741671296L;
 
-    private String tqId; //实体表指标Id
-    private String tmId; //元数据模式表Id
+    private String id; //实体表指标Id
+    private String mdMId; //元数据模式表Id
     private String tmoId; //实体表对应的对照表Id
     private String tableName; //实体表名称
-    private String ownerId; //实体表所有者标识（可能是用户id，也可能是SessionID）
 
     private long allCount; //实体表指标——表总行数
     private Timestamp laTime; //实体表指标——最新用于分析的访问时间，只对积累表有意义
@@ -27,17 +27,22 @@ public class QuotaTable extends BaseObject {
 
     private List<QuotaColumn> colQuotaList; //列指标列表
 
-    public String getTqId() {
-        return tqId;
+    public String getId() {
+        return id;
     }
-    public void setTqId(String tqId) {
-        this.tqId = tqId;
+    public void setId(String id) {
+        this.id = id;
+        if (this.colQuotaList!=null&&this.colQuotaList.size()>0) {
+            for (QuotaColumn qc: this.colQuotaList) {
+                qc.setTqId(id);
+            }
+        }
     }
-    public String getTmId() {
-        return tmId;
+    public String getMdMId() {
+        return mdMId;
     }
-    public void setTmId(String tmId) {
-        this.tmId = tmId;
+    public void setMdMId(String mdMId) {
+        this.mdMId = mdMId;
     }
     public String getTmoId() {
         return tmoId;
@@ -50,12 +55,6 @@ public class QuotaTable extends BaseObject {
     }
     public void setTableName(String tableName) {
         this.tableName = tableName;
-    }
-    public String getOwnerId() {
-        return ownerId;
-    }
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
     }
     public long getAllCount() {
         return allCount;
@@ -81,33 +80,33 @@ public class QuotaTable extends BaseObject {
     public void setLmTime(Timestamp lmTime) {
         this.lmTime = lmTime;
     }
-
-    public List<QuotaColumn> getColumnList() {
+    public List<QuotaColumn> getColQuotaList() {
         return colQuotaList;
     }
-
-    public void setColumnList(List<QuotaColumn> colQuotaList) {
+    public void setColQuotaList(List<QuotaColumn> colQuotaList) {
         this.colQuotaList = colQuotaList;
     }
+
 
     /**
      * 插入列指标对象到列指标列表
      * @param cq 被插入的列指标对象，其中tqId/tabQuota可以省略，本对象的tqId/tabQuota将填入参数cq
      * @throws Exception
      */
-    public void addColumn(QuotaColumn cq) throws Exception{
-        if (cq==null) return;
-        if (cq.getCqId().equals(null)) throw new Exception("列指标Id不能为空");
-        if (cq.getColumn()==null) throw new Exception("列指标Id不能为空");
+    public void addColumn(QuotaColumn qc) throws Exception{
+        if (qc==null) return;
+        if (qc.getId().equals(null)) throw new Exception("列指标Id不能为空");
+        if (qc.getColumn()==null) throw new Exception("列描述不能为空");
 
-        MetadataColumn mdc=cq.getColumn();
+        MetadataColumn mdc=qc.getColumn();
+        if (this.colQuotaList==null) this.colQuotaList=new ArrayList<QuotaColumn>();
         for (QuotaColumn c: this.colQuotaList) {
             MetadataColumn _c=c.getColumn();
             if (_c.getId().equals(mdc.getId())) throw new Exception("在列指标列表中已经有与所添加对象[列Id]相同的列指标对象，不同重复添加！");
             if (_c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列指标对象，不同重复添加！");
             if (_c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列指标对象，不同重复添加！");
         }
-        this.colQuotaList.add(cq);
+        this.colQuotaList.add(qc);
     }
 
     /**
@@ -154,7 +153,7 @@ public class QuotaTable extends BaseObject {
      */
     public QuotaColumn getColQuotaById(String cqId) {
         QuotaColumn param = new QuotaColumn(); 
-        param.setCqId(cqId);
+        param.setId(cqId);
         return getColQuota(param);
     }
 
@@ -163,7 +162,7 @@ public class QuotaTable extends BaseObject {
         QuotaColumn ret = null;
         MetadataColumn mdc=cq.getColumn();
         for (QuotaColumn c: this.colQuotaList) {
-            if (c.getColId().equals(cq.getColId())||c.getCqId().equals(cq.getCqId())) {
+            if (c.getColId().equals(cq.getColId())||c.getId().equals(cq.getId())) {
                 ret = c;
                 break;
             }
