@@ -2,8 +2,13 @@ package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -11,6 +16,7 @@ import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 
 /** 
  * @author mht
@@ -18,33 +24,43 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
  * 类说明  适用于2007之后版本的excel(包含2007)
  */
 public class XSSFWorkBookImpl implements IPoiUtils {
+    private Map<SheetInfo,MetadataModel> mdMap;
+    private TableMapOrg[] tabMapOrgAry;
     /**workbook*/
     private XSSFWorkbook workbook;
     /**文件类型，1代表2007+excel，2代表2007-*/
     private int fileType = ExcelConstants.EXCEL_FILE_TYPE_XSSF;
-    private XSSFSheet xSheet;
+    private SheetInfo sheetInfo;
     private Map<Integer,Integer> delColIndexMap;
-    public XSSFWorkBookImpl() {  
+    public XSSFWorkBookImpl(SheetInfo sheetInfo, Map<Integer, Integer> delColIndexMap, TableMapOrg[] tabMapOrgAry) {
+        this.sheetInfo=sheetInfo;
+        this.delColIndexMap = delColIndexMap;
+        this.tabMapOrgAry = tabMapOrgAry;
     }
     public XSSFWorkBookImpl(File execlFile) throws Exception{
         workbook = new XSSFWorkbook(new FileInputStream(execlFile));
     } 
-    public XSSFWorkBookImpl(XSSFSheet xSheet,Map<Integer,Integer> delColIndexMap) {
-        this.xSheet=xSheet;
-        this.delColIndexMap = delColIndexMap;
-    }
     @Override
     public Object getWorkBook() {
         return workbook;
     }
     @Override
-    public Object getMDList() throws Exception {
-        Map<SheetInfo,MetadataModel> mdMap = PoiUtils.getMdModelMap(workbook,fileType);
+    public  Map<SheetInfo,MetadataModel> getMDMap() throws Exception {
+        mdMap = PoiUtils.getMdModelMap(workbook,fileType);
         return mdMap;
     }
+    @Resource(name="dataSource")
+    private  BasicDataSource ds;
     @Override
-    public Object getData() {
-        Object object = PoiUtils.getSheetData(this.xSheet,this.delColIndexMap);
-        return null;
+    public Map<String,Object> getData() {
+        Map<String,Object> saveLogMap = null;
+        MetadataModel md = this.mdMap.get(this.sheetInfo);
+        try {
+            Connection conn = ds.getConnection();
+            PoiUtils.saveInDB(conn,(XSSFSheet)this.sheetInfo.getSheet(),this.delColIndexMap,this.tabMapOrgAry,md);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return saveLogMap;
     }
 }

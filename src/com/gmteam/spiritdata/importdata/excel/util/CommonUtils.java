@@ -48,7 +48,7 @@ public class CommonUtils {
     /**
      * 关闭数据库连接
      */
-    public void closeConn(Connection con,PreparedStatement ps,ResultSet rs){
+    public static void closeConn(Connection con, PreparedStatement ps, ResultSet rs) {
         if(rs!=null){
             try {
                 rs.close();
@@ -59,14 +59,14 @@ public class CommonUtils {
                 rs=null;
             }
         }else if(ps!=null){
-            try {
-                ps.close();
-                ps=null;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }finally{
-                ps=null;
-            }
+                try {
+                    ps.close();
+                    ps=null;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }finally{
+                    ps=null;
+                }
         }else if(con!=null){
             try {
                 con.close();

@@ -13,12 +13,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.stereotype.Component;
 
+import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
+import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
+import com.gmteam.spiritdata.metadata.relation.service.MdBasisService;
 import com.gmteam.spiritdata.metadata.relation.service.MetadataService;
 
 /** 
@@ -52,7 +55,6 @@ public class FileUploadService {
      * 获取workBook,和MdList
      * @param session 
      */
-    @SuppressWarnings("unchecked")
     public Object getDealMetaDate(String uploadFileName, HttpSession session) throws Exception {
         int fileType = getFileType(uploadFileName);
         this.session = session;
@@ -62,28 +64,28 @@ public class FileUploadService {
         Map<SheetInfo,MetadataModel> mdMap = new HashMap<SheetInfo,MetadataModel>();
         workBookProxy = new WorkBookProxy(excelFile,fileType);
         workBook = (HSSFWorkbook) workBookProxy.getWorkBook();
-        mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDList();
-
-        Map<SheetInfo,TableMapOrg[]> sheetTabOrgMap = getTabName(mdMap);
+        mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDMap();
         Map<SheetInfo,Map<Integer,Integer>> delColIndexMap = PoiUtils.delColIndexMap;
-        saveDate(sheetTabOrgMap,delColIndexMap);
+        Map<SheetInfo,TableMapOrg[]> sheetTabOrgMap = getTabName(mdMap);
+        saveDate(sheetTabOrgMap,delColIndexMap,mdMap);
         return workBook;
     }
-    private void saveDate(Map<SheetInfo, TableMapOrg[]> sheetTabOrgMap, Map<SheetInfo, Map<Integer,Integer>> delColIndexMap) {
+    private void saveDate(Map<SheetInfo, TableMapOrg[]> sheetTabOrgMap, Map<SheetInfo, Map<Integer,Integer>> delColIndexMap, Map<SheetInfo, MetadataModel> mdMap) {
         Iterator<SheetInfo> it = sheetTabOrgMap.keySet().iterator();
         while(it.hasNext()){
             SheetInfo sheetInfo = it.next();
             TableMapOrg[] tabMapOrg = sheetTabOrgMap.get(sheetInfo);
             Map<Integer,Integer> delColIndexList = delColIndexMap.get(sheetInfo);
-            saveInDB(tabMapOrg,sheetInfo,delColIndexList);
+            MetadataModel md = mdMap.get(sheetInfo);
+            saveInDB(tabMapOrg,sheetInfo,delColIndexList,md);
         }
     }
-    private void saveInDB(TableMapOrg[] tabMapOrg,SheetInfo sheetInfo, Map<Integer,Integer> delColIndexMap) {
+    private void saveInDB(TableMapOrg[] tabMapOrg,SheetInfo sheetInfo, Map<Integer,Integer> delColIndexMap, MetadataModel md) {
         try {
             if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-                workBookProxy= new WorkBookProxy((XSSFSheet)sheetInfo.getSheet(),delColIndexMap);
+                workBookProxy= new WorkBookProxy(sheetInfo,delColIndexMap,tabMapOrg);
             }else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-                workBookProxy= new WorkBookProxy((HSSFSheet)sheetInfo.getSheet(),delColIndexMap);
+                workBookProxy= new WorkBookProxy(sheetInfo,delColIndexMap,tabMapOrg);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,6 +101,8 @@ public class FileUploadService {
             SheetInfo sheetInfo = it.next();
             MetadataModel md = mdMap.get(sheetInfo);
             TableMapOrg[] art =mdService.storeMdModel4Import(md);
+            _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
+            md = _om.getMetadataById(art[0].getMdMId());
             sheetTabOrgMap.put(sheetInfo, art);
         }
         return sheetTabOrgMap;

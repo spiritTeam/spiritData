@@ -1,5 +1,8 @@
 package com.gmteam.spiritdata.importdata.excel.util;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +27,7 @@ import com.gmteam.spiritdata.importdata.excel.util.pmters.CellPrama;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.DTPrama;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
-
+import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 /** 
  * @author mht
  * @version  
@@ -33,34 +36,98 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 public class PoiUtils {
     /**
      * 得到Sheet中的数据
+     * @param conn2 
      * @param xSheet
+     * @param tabMapOrgAry 
+     * @param md 
      * @param delColIndexList
      * @return
      */
-    public static Object getSheetData(XSSFSheet xSheet,Map<Integer,Integer> delColIndexMap) {
+    public static Map<String,Object> saveInDB(Connection conn, XSSFSheet xSheet,Map<Integer,Integer> delColIndexMap, TableMapOrg[] tabMapOrgAry, MetadataModel md) {
+        //总表
+        String sumTabName = tabMapOrgAry[0].getTableName();
+        //临时表
+        String tempTabName = tabMapOrgAry[1].getTableName();
+        /**
+         * 得到sql
+         */
+        StringBuffer tempTabSql = new StringBuffer("insert into "+tempTabName+"(");
+        StringBuffer sumTabSql = new StringBuffer("insert into "+sumTabName+"(");
+        StringBuffer paramSql = new StringBuffer("values(");
+        List<MetadataColumn> mdColList = md.getColumnList();
+        for(int i=0;i<mdColList.size();i++){
+            if(i!=mdColList.size()-1){
+                tempTabSql.append(mdColList.get(i)+",");
+                sumTabSql.append(mdColList.get(i)+","); 
+                paramSql.append("?,");
+            }else{
+                tempTabSql.append(mdColList.get(i)+")");
+                sumTabSql.append(mdColList.get(i)+")"); 
+                paramSql.append("?)");
+            }
+        }
+        tempTabSql.append(paramSql);
+        sumTabSql.append(paramSql);
+        saveSumData(conn,xSheet,delColIndexMap,md,sumTabSql.toString());
+        savetempData(conn,xSheet,delColIndexMap,md,tempTabSql.toString());
+        return null;
+    }
+    private static void savetempData(Connection conn, XSSFSheet xSheet, Map<Integer, Integer> delColIndexMap, MetadataModel md,String tempSql) {
         //总行数
         int rowNum = xSheet.getLastRowNum()+1;
         XSSFRow xRow = xSheet.getRow(1);
         //每行的有多少个格子
         int celNum = xRow.getRowNum();
-        Object [][] allVal = new Object[rowNum][celNum-delColIndexMap.size()];
-        for(int i=1;i<rowNum;i++){
-            Object [] rowVal = new Object[celNum-delColIndexMap.size()];
-            for(int k=0;k<celNum;k++){
-                if(delColIndexMap.get(k)==null){
-                    XSSFCell xCell = xRow.getCell(k);
-                    Object celVal = getCellValue(xCell);
-                    rowVal[k] = celVal;
+        PreparedStatement tempPs = null;
+        try {
+            tempPs = conn.prepareStatement(tempSql);
+            for(int i=1;i<rowNum;i++){
+                Object [] rowVal = new Object[celNum-delColIndexMap.size()];
+                for(int k=0;k<celNum;k++){
+                    if(delColIndexMap.get(k)==null) {
+                        XSSFCell xCell = xRow.getCell(k);
+                        Object celVal = getCellValue(xCell);
+                        rowVal[k] = celVal;
+                    }
+                }
+                for(int k=0;k<celNum;k++){
+                    tempPs.setObject(k+1, rowVal[k]);
                 }
             }
-            allVal[i] = rowVal;
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }finally{
+            CommonUtils.closeConn(null, tempPs, null);
         }
-        return allVal;
     }
-    /**
-     * 用于记录要删除的列的序号
-     */
-    public static Map<SheetInfo,Map<Integer,Integer>> delColIndexMap = new HashMap<SheetInfo,Map<Integer,Integer>>();
+    private static void saveSumData(Connection conn, XSSFSheet xSheet, Map<Integer, Integer> delColIndexMap, MetadataModel md,String sumSql) {
+        //总行数
+        int rowNum = xSheet.getLastRowNum()+1;
+        XSSFRow xRow = xSheet.getRow(1);
+        //每行的有多少个格子
+        int celNum = xRow.getRowNum();
+        PreparedStatement sumPs = null;;
+        try {
+            sumPs = conn.prepareStatement(sumSql);
+            for(int i=1;i<rowNum;i++){
+                Object [] rowVal = new Object[celNum-delColIndexMap.size()];
+                for(int k=0;k<celNum;k++){
+                    if(delColIndexMap.get(k)==null) {
+                        XSSFCell xCell = xRow.getCell(k);
+                        Object celVal = getCellValue(xCell);
+                        rowVal[k] = celVal;
+                    }
+                }
+                for(int k=0;k<celNum;k++){
+                    sumPs.setObject(k+1, rowVal[k]);
+                }
+            }
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }finally{
+            CommonUtils.closeConn(null, sumPs, null);
+        }
+    }
     /**
      * 得到md，并且 对delColIndexMap初始化
      * @param workbook
@@ -81,7 +148,7 @@ public class PoiUtils {
                 int sheetIndex = i;
                 sheet = ((XSSFWorkbook) workbook).getSheetAt(sheetIndex);
                 int rows = sheet.getLastRowNum()+1;
-                Map<String,Object> retMap;
+                Map<SheetInfo,Object> retMap;
                 if(rows+1>=2){
                     XSSFSheet xSheet = (XSSFSheet) sheet;
                     XSSFRow xRow = xSheet.getRow(0);
@@ -526,3 +593,22 @@ public class PoiUtils {
         return type;  
     }
 }
+class SaveTempData implements Runnable{
+    public SaveTempData(Connection conn){
+        
+    }
+    @Override
+    public void run() {
+    }
+}
+class SaveSumData implements Runnable{
+    public SaveSumData(Connection conn){
+        
+    }
+    @Override
+    public void run() {
+        
+    }
+    
+}
+

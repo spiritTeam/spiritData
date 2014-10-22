@@ -33,7 +33,7 @@ public class HSSFWorkBookImpl implements IPoiUtils{
         return workbook;
     }
     @Override
-    public Object getMDList() throws Exception {
+    public Map<SheetInfo,MetadataModel> getMDMap() throws Exception {
         Map<SheetInfo,MetadataModel> mdMap =PoiUtils.getMdModelMap(workbook,fileType);
         return mdMap;
     }
