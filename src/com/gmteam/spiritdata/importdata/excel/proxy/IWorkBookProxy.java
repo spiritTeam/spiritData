@@ -21,9 +21,4 @@ public interface IWorkBookProxy {
      * @throws Exception
      */
     public Map<SheetInfo, Object> getMDMap()throws Exception;
-    /**
-     * 返回抓取的数据
-     * @return
-     */
-    public Object getData();
 }

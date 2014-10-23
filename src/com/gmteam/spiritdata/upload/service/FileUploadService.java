@@ -1,6 +1,7 @@
 package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,12 +9,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
+import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
@@ -75,6 +78,8 @@ public class FileUploadService {
     }
     @Resource
     MetadataService mdService;
+    @Resource(name="dataSource")
+    private  BasicDataSource ds;
     /**
      * 得到比对之后的表名，和新的MD
      * @param sheetInfo
@@ -84,10 +89,11 @@ public class FileUploadService {
     private void saveData(SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD) {
         TableMapOrg[] tabMapOrgAry;
         try {
+            Connection conn = ds.getConnection();
             tabMapOrgAry = mdService.storeMdModel4Import(oldMD);
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
             MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
-            workBookProxy.saveInDB(sheetInfo,delIndexMap,oldMD,newMD,tabMapOrgAry);
+            PoiUtils.saveInDB(conn,sheetInfo,delIndexMap,oldMD,newMD,tabMapOrgAry);
         } catch (Exception e) {
             e.printStackTrace();
         }
