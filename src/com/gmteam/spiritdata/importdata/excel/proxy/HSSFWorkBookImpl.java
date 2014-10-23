@@ -26,20 +26,18 @@ public class HSSFWorkBookImpl implements IPoiUtils{
         workbook = new HSSFWorkbook(new FileInputStream(execlFile)); 
     } 
     public HSSFWorkBookImpl(HSSFSheet hSheet,Map<Integer,Integer> delColIndexMap) {
-        // TODO
     }
     @Override
     public Object getWorkBook() throws Exception {
         return workbook;
     }
     @Override
-    public Map<SheetInfo,MetadataModel> getMDMap() throws Exception {
-        Map<SheetInfo,MetadataModel> mdMap =PoiUtils.getMdModelMap(workbook,fileType);
+    public Map<SheetInfo,Object> getMDMap() throws Exception {
+        Map<SheetInfo,Object> mdMap =PoiUtils.getMdModelMap(workbook,fileType);
         return mdMap;
     }
     @Override
     public Object getData() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

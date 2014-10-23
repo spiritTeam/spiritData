@@ -10,7 +10,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 
 import com.gmteam.framework.core.web.AbstractFileUploadController;
-import com.gmteam.spiritdata.metadata.relation.service.MdQuotaService;
 import com.gmteam.spiritdata.upload.service.FileUploadService;
 
 /** 
@@ -24,23 +23,12 @@ public class FileUpLoadController extends AbstractFileUploadController {
     private FileUploadService fileUploadService;
     @Resource
     HttpServletRequest request;
-    @Resource
-    MdQuotaService mqService;
-
     @Override
     public Map<String, Object> afterUploadOneFileOnSuccess(Map<String, Object> uploadInfoMap, Map<String, Object> arg1,Map<String, Object> arg2) {
-        //test
-        try {
-            mqService.caculateQuota("tab_bcaab1cdf43f");
-        } catch (Exception e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        //test
         HttpSession session = request.getSession();
-        String uploadFileName = (String) uploadInfoMap.get("storeFilename");
+        String uploadFileName = (String) uploadInfoMap.get("");
         try {
-            fileUploadService.getDealMetaDate(uploadFileName,session);
+            fileUploadService.getDealFile(uploadFileName, session);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,9 +1,7 @@
 package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.util.Map;
-
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /** 
  * @author mht
@@ -22,7 +20,7 @@ public interface IPoiUtils {
      * @return
      * @throws Exception
      */
-    public Map<SheetInfo, MetadataModel> getMDMap()throws Exception;
+    public Map<SheetInfo, Object> getMDMap()throws Exception;
     /**
      * 返回抓取的数据
      * @return

@@ -2,20 +2,16 @@ package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 
 /** 
@@ -24,7 +20,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
  * 类说明  适用于2007之后版本的excel(包含2007)
  */
 public class XSSFWorkBookImpl implements IPoiUtils {
-    private Map<SheetInfo,MetadataModel> mdMap;
+    private Map<SheetInfo,Object> mdMap;
     private TableMapOrg[] tabMapOrgAry;
     /**workbook*/
     private XSSFWorkbook workbook;
@@ -45,7 +41,7 @@ public class XSSFWorkBookImpl implements IPoiUtils {
         return workbook;
     }
     @Override
-    public  Map<SheetInfo,MetadataModel> getMDMap() throws Exception {
+    public  Map<SheetInfo,Object> getMDMap() throws Exception {
         mdMap = PoiUtils.getMdModelMap(workbook,fileType);
         return mdMap;
     }
@@ -53,14 +49,14 @@ public class XSSFWorkBookImpl implements IPoiUtils {
     private  BasicDataSource ds;
     @Override
     public Map<String,Object> getData() {
-        Map<String,Object> saveLogMap = null;
-        MetadataModel md = this.mdMap.get(this.sheetInfo);
-        try {
-            Connection conn = ds.getConnection();
-            PoiUtils.saveInDB(conn,(XSSFSheet)this.sheetInfo.getSheet(),this.delColIndexMap,this.tabMapOrgAry,md);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return saveLogMap;
+//        Map<String,Object> saveLogMap = null;
+//        MetadataModel md = this.mdMap.get(this.sheetInfo);
+//        try {
+//            Connection conn = ds.getConnection();
+//            PoiUtils.saveInDB(conn,(XSSFSheet)this.sheetInfo.getSheet(),this.delColIndexMap,this.tabMapOrgAry,md);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+        return null;
     }
 }

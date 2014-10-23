@@ -55,44 +55,41 @@ public class FileUploadService {
      * 获取workBook,和MdList
      * @param session 
      */
-    public Object getDealMetaDate(String uploadFileName, HttpSession session) throws Exception {
+    @SuppressWarnings("unchecked")
+    public Object getDealFile(String uploadFileName, HttpSession session) throws Exception {
         int fileType = getFileType(uploadFileName);
         this.session = session;
         /**文件类型，要用于表判断返回来的workbook类型*/
         File excelFile = new File(uploadFileName);
-        Object workBook = null;
-        Map<SheetInfo,MetadataModel> mdMap = new HashMap<SheetInfo,MetadataModel>();
+        /**得到md和delIndex构成的map*/
+        Map<SheetInfo,Object> rstMap = new HashMap<SheetInfo,Object>();
         workBookProxy = new WorkBookProxy(excelFile,fileType);
-        workBook = (HSSFWorkbook) workBookProxy.getWorkBook();
-        mdMap = (Map<SheetInfo, MetadataModel>) workBookProxy.getMDMap();
-        Map<SheetInfo,Map<Integer,Integer>> delColIndexMap = PoiUtils.delColIndexMap;
-        Map<SheetInfo,TableMapOrg[]> sheetTabOrgMap = getTabName(mdMap);
-        saveDate(sheetTabOrgMap,delColIndexMap,mdMap);
-        return workBook;
-    }
-    private void saveDate(Map<SheetInfo, TableMapOrg[]> sheetTabOrgMap, Map<SheetInfo, Map<Integer,Integer>> delColIndexMap, Map<SheetInfo, MetadataModel> mdMap) {
-        Iterator<SheetInfo> it = sheetTabOrgMap.keySet().iterator();
+        rstMap = (Map<SheetInfo, Object>) workBookProxy.getMDMap();
+        //分别取出delIndex和metadata
+        Iterator<SheetInfo> it = rstMap.keySet().iterator();
         while(it.hasNext()){
             SheetInfo sheetInfo = it.next();
-            TableMapOrg[] tabMapOrg = sheetTabOrgMap.get(sheetInfo);
-            Map<Integer,Integer> delColIndexList = delColIndexMap.get(sheetInfo);
-            MetadataModel md = mdMap.get(sheetInfo);
-            saveInDB(tabMapOrg,sheetInfo,delColIndexList,md);
+            Map<String,Object> valMap = (Map<String, Object>) rstMap.get(sheetInfo);
+            //delIndex
+            Map<Integer,Integer> delIndexMap = (Map<Integer, Integer>) valMap.get("delIndexMap");
+            //md
+            MetadataModel oldMD = (MetadataModel) valMap.get("metadataModel");
+            saveData(sheetInfo,delIndexMap,oldMD);
         }
+        return null;
     }
-    private void saveInDB(TableMapOrg[] tabMapOrg,SheetInfo sheetInfo, Map<Integer,Integer> delColIndexMap, MetadataModel md) {
+    @Resource
+    MetadataService mdService;
+    private void saveData(SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD) {
+        TableMapOrg[] art;
         try {
-            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-                workBookProxy= new WorkBookProxy(sheetInfo,delColIndexMap,tabMapOrg);
-            }else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-                workBookProxy= new WorkBookProxy(sheetInfo,delColIndexMap,tabMapOrg);
-            }
+            art = mdService.storeMdModel4Import(oldMD);
+            _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
+            MetadataModel newMD = _om.getMetadataById(art[0].getMdMId());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    @Resource
-    MetadataService mdService;
     private Map<SheetInfo,TableMapOrg[]> getTabName(Map<SheetInfo, MetadataModel> mdMap) throws Exception {
         Map<SheetInfo,TableMapOrg[]> sheetTabOrgMap = new HashMap<SheetInfo, TableMapOrg[]>();
         mdService.setSession(session);
@@ -106,5 +103,26 @@ public class FileUploadService {
             sheetTabOrgMap.put(sheetInfo, art);
         }
         return sheetTabOrgMap;
+    }
+    private void saveDate(Map<SheetInfo, TableMapOrg[]> sheetTabOrgMap, Map<SheetInfo, Map<Integer,Integer>> delColIndexMap, Map<SheetInfo, Object> mdMap) {
+        Iterator<SheetInfo> it = sheetTabOrgMap.keySet().iterator();
+        while(it.hasNext()){
+            SheetInfo sheetInfo = it.next();
+            TableMapOrg[] tabMapOrg = sheetTabOrgMap.get(sheetInfo);
+            Map<Integer,Integer> delColIndexList = delColIndexMap.get(sheetInfo);
+//            MetadataModel md = mdMap.get(sheetInfo);
+//            saveInDB(tabMapOrg,sheetInfo,delColIndexList,md);
+        }
+    }
+    private void saveInDB(TableMapOrg[] tabMapOrg,SheetInfo sheetInfo, Map<Integer,Integer> delColIndexMap, MetadataModel md) {
+        try {
+            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
+                workBookProxy= new WorkBookProxy(sheetInfo,delColIndexMap,tabMapOrg);
+            }else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
+                workBookProxy= new WorkBookProxy(sheetInfo,delColIndexMap,tabMapOrg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

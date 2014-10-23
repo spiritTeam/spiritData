@@ -7,7 +7,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 /** 
  * @author mht
@@ -18,7 +17,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 public class WorkBookProxy implements IPoiUtils{
     private Object excelWorkBook;
     private IPoiUtils iPoiUtils;
-    private Map<SheetInfo,MetadataModel> mdMap;
+    private Map<SheetInfo,Object> mdMap;
     public WorkBookProxy(File execlFile,int fileType) throws Exception {
         if (fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF)
             this.iPoiUtils = new XSSFWorkBookImpl(execlFile);
@@ -38,7 +37,7 @@ public class WorkBookProxy implements IPoiUtils{
         return excelWorkBook;
     }
     @Override
-    public Map<SheetInfo,MetadataModel> getMDMap() throws Exception {
+    public Map<SheetInfo,Object> getMDMap() throws Exception {
         this.mdMap = iPoiUtils.getMDMap();
         return this.mdMap;
     }

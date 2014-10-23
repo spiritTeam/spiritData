@@ -134,10 +134,8 @@ public class PoiUtils {
      * @param fileType
      * @return
      */
-    @SuppressWarnings("unchecked")
-    public static Map<SheetInfo,MetadataModel> getMdModelMap(Object workbook,int fileType) {
-        //List<Map<SheetInfo,MetadataModel>> mdModelMapList = new ArrayList<Map<SheetInfo,MetadataModel>>();
-        Map<SheetInfo,MetadataModel> mdModelMap = new HashMap<SheetInfo, MetadataModel>();
+    public static Map<SheetInfo,Object> getMdModelMap(Object workbook,int fileType) {
+        Map<SheetInfo,Object> mdModelMap = new HashMap<SheetInfo,Object>();
         int dataRows;
         if(fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
             int sheetSize = ((XSSFWorkbook) workbook).getNumberOfSheets();
@@ -148,7 +146,7 @@ public class PoiUtils {
                 int sheetIndex = i;
                 sheet = ((XSSFWorkbook) workbook).getSheetAt(sheetIndex);
                 int rows = sheet.getLastRowNum()+1;
-                Map<SheetInfo,Object> retMap;
+                Map<String, Object> retMap;
                 if(rows+1>=2){
                     XSSFSheet xSheet = (XSSFSheet) sheet;
                     XSSFRow xRow = xSheet.getRow(0);
@@ -169,8 +167,7 @@ public class PoiUtils {
                     retMap = getMetadata(xSheet,dataRows,rowLength,titleAry); 
                     sheetInfo.setSheet(xSheet);
                     sheetInfo.setSheetType(fileType);
-                    mdModelMap.put(sheetInfo, (MetadataModel)retMap.get("md"));
-                    delColIndexMap.put(sheetInfo, (Map<Integer,Integer>)retMap.get("delColIndMap"));
+                    mdModelMap.put(sheetInfo, retMap);
                 }
             }
         }else if(fileType==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
@@ -204,8 +201,7 @@ public class PoiUtils {
                     sheetInfo.setSheet(hSheet);
                     sheetInfo.setSheetType(fileType);
                     retMap = getMetadata(hSheet,dataRows,rowLength,titleAry); 
-                    mdModelMap.put(sheetInfo, (MetadataModel)retMap.get("md"));
-                    delColIndexMap.put(sheetInfo, (Map<Integer,Integer>)retMap.get("delColIndMap"));
+                    mdModelMap.put(sheetInfo, retMap);
                 }
             }
         }
@@ -376,8 +372,8 @@ public class PoiUtils {
         }
         try {
             metadataModel.setColumnList(mdColumnList);
-            retMap.put("md",metadataModel);
-            retMap.put("delColIndMap", delColInxMap);
+            retMap.put("metadataModel",metadataModel);
+            retMap.put("delIndexMap", delColInxMap);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -591,25 +587,6 @@ public class PoiUtils {
             }  
         }  
         return type;  
-    }
-
-    public Map<Integer, Object[][]> getPageList(HSSFSheet sheet) {
-        return null;
-    }
-    
-    public void test() {
-        Map<Integer, Object[][]> ddd = getPageList(null);
-        
-        Iterator< Integer> it = ddd.keySet().iterator();
-        int sum;
-        while(it.hasNext()){
-            int k =it.next();
-            sum = k;
-            Object[][] oo = ddd.get(k);
-        }
-        
-        
-                
     }
 }
 class SaveTempData implements Runnable{
