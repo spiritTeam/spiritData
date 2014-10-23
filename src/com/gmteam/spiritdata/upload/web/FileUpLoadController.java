@@ -28,7 +28,7 @@ public class FileUpLoadController extends AbstractFileUploadController {
         HttpSession session = request.getSession();
         String uploadFileName = (String) uploadInfoMap.get("");
         try {
-            fileUploadService.getDealFile(uploadFileName, session);
+            fileUploadService.dealUploadFile(uploadFileName, session);
         } catch (Exception e) {
             e.printStackTrace();
         }

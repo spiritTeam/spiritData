@@ -8,20 +8,15 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
-import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
-import com.gmteam.spiritdata.metadata.relation.service.MdBasisService;
 import com.gmteam.spiritdata.metadata.relation.service.MetadataService;
 
 /** 
@@ -56,7 +51,7 @@ public class FileUploadService {
      * @param session 
      */
     @SuppressWarnings("unchecked")
-    public Object getDealFile(String uploadFileName, HttpSession session) throws Exception {
+    public Object dealUploadFile(String uploadFileName, HttpSession session) throws Exception {
         int fileType = getFileType(uploadFileName);
         this.session = session;
         /**文件类型，要用于表判断返回来的workbook类型*/
@@ -80,47 +75,19 @@ public class FileUploadService {
     }
     @Resource
     MetadataService mdService;
+    /**
+     * 得到比对之后的表名，和新的MD
+     * @param sheetInfo
+     * @param delIndexMap
+     * @param oldMD
+     */
     private void saveData(SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD) {
-        TableMapOrg[] art;
+        TableMapOrg[] tabMapOrgAry;
         try {
-            art = mdService.storeMdModel4Import(oldMD);
+            tabMapOrgAry = mdService.storeMdModel4Import(oldMD);
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
-            MetadataModel newMD = _om.getMetadataById(art[0].getMdMId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    private Map<SheetInfo,TableMapOrg[]> getTabName(Map<SheetInfo, MetadataModel> mdMap) throws Exception {
-        Map<SheetInfo,TableMapOrg[]> sheetTabOrgMap = new HashMap<SheetInfo, TableMapOrg[]>();
-        mdService.setSession(session);
-        Iterator<SheetInfo> it = mdMap.keySet().iterator();
-        while(it.hasNext()){
-            SheetInfo sheetInfo = it.next();
-            MetadataModel md = mdMap.get(sheetInfo);
-            TableMapOrg[] art =mdService.storeMdModel4Import(md);
-            _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
-            md = _om.getMetadataById(art[0].getMdMId());
-            sheetTabOrgMap.put(sheetInfo, art);
-        }
-        return sheetTabOrgMap;
-    }
-    private void saveDate(Map<SheetInfo, TableMapOrg[]> sheetTabOrgMap, Map<SheetInfo, Map<Integer,Integer>> delColIndexMap, Map<SheetInfo, Object> mdMap) {
-        Iterator<SheetInfo> it = sheetTabOrgMap.keySet().iterator();
-        while(it.hasNext()){
-            SheetInfo sheetInfo = it.next();
-            TableMapOrg[] tabMapOrg = sheetTabOrgMap.get(sheetInfo);
-            Map<Integer,Integer> delColIndexList = delColIndexMap.get(sheetInfo);
-//            MetadataModel md = mdMap.get(sheetInfo);
-//            saveInDB(tabMapOrg,sheetInfo,delColIndexList,md);
-        }
-    }
-    private void saveInDB(TableMapOrg[] tabMapOrg,SheetInfo sheetInfo, Map<Integer,Integer> delColIndexMap, MetadataModel md) {
-        try {
-            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-                workBookProxy= new WorkBookProxy(sheetInfo,delColIndexMap,tabMapOrg);
-            }else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-                workBookProxy= new WorkBookProxy(sheetInfo,delColIndexMap,tabMapOrg);
-            }
+            MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
+            workBookProxy.saveInDB(sheetInfo,delIndexMap,oldMD,newMD,tabMapOrgAry);
         } catch (Exception e) {
             e.printStackTrace();
         }

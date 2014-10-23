@@ -17,7 +17,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
  * @version   
  * 类说明  适用于2007之前版本的excel(不包含2007)
  */
-public class HSSFWorkBookImpl implements IPoiUtils{
+public class HSSFWorkBookImpl implements IWorkBookProxy{
     private int fileType = ExcelConstants.EXCEL_FILE_TYPE_HSSF;
     private HSSFWorkbook workbook;
     public HSSFWorkBookImpl() {  

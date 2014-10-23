@@ -8,7 +8,7 @@ import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
  * @version  
  * 类说明 excel接口类
  */
-public interface IPoiUtils {
+public interface IWorkBookProxy {
     /**
      * 根据文件类型,文件,返回一个execlWorkBook
      * @param execlFile

@@ -19,7 +19,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
  * @version  
  * 类说明  适用于2007之后版本的excel(包含2007)
  */
-public class XSSFWorkBookImpl implements IPoiUtils {
+public class XSSFWorkBookImpl implements IWorkBookProxy {
     private Map<SheetInfo,Object> mdMap;
     private TableMapOrg[] tabMapOrgAry;
     /**workbook*/

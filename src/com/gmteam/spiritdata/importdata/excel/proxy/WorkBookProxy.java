@@ -1,12 +1,16 @@
 package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 /** 
  * @author mht
@@ -14,9 +18,9 @@ import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
  * 类说明 代理类，根据fileType类型，
  * 得到相应的workbook，
  */
-public class WorkBookProxy implements IPoiUtils{
+public class WorkBookProxy implements IWorkBookProxy{
     private Object excelWorkBook;
-    private IPoiUtils iPoiUtils;
+    private IWorkBookProxy iPoiUtils;
     private Map<SheetInfo,Object> mdMap;
     public WorkBookProxy(File execlFile,int fileType) throws Exception {
         if (fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF)
@@ -44,5 +48,18 @@ public class WorkBookProxy implements IPoiUtils{
     @Override
     public Object getData() {
         return iPoiUtils.getData();
+    }
+    public void saveInDB(SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
+//        iPoiUtils.save();
+//        List<MetadataColumn> oldMdColList = oldMD.getColumnList();
+//        List<MetadataColumn> newMdColList = newMD.getColumnList();
+//        /**k=newIndex,val=oldIndex*/
+//        Map<Integer,Integer> newOldIndexOrgMap = new HashMap<Integer,Integer>();
+//        int size = oldMdColList.size();
+//        int[] newIndexAry = new int[size];
+//        for(int i=0;i<size;i++){
+//            newIndexAry[i] = newMdColList.get(i).getColumnIndex();
+//            newOldIndexOrgMap.put(newMdColList.get(i).getColumnIndex(), oldMdColList.get(i).getColumnIndex());
+//        }
     }
 }
