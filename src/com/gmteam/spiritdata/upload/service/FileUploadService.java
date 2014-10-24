@@ -16,6 +16,7 @@ import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
+import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
@@ -88,14 +89,18 @@ public class FileUploadService {
      */
     private void saveData(SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD) {
         TableMapOrg[] tabMapOrgAry;
+        Connection conn = null;
         try {
-            Connection conn = ds.getConnection();
+            mdService.setSession(session);
+            conn = ds.getConnection();
             tabMapOrgAry = mdService.storeMdModel4Import(oldMD);
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
             MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
             PoiUtils.saveInDB(conn,sheetInfo,delIndexMap,oldMD,newMD,tabMapOrgAry);
         } catch (Exception e) {
             e.printStackTrace();
+        }finally{
+            CommonUtils.closeConn(conn, null, null);
         }
     }
 }

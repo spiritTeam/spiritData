@@ -26,7 +26,7 @@ public class FileUpLoadController extends AbstractFileUploadController {
     @Override
     public Map<String, Object> afterUploadOneFileOnSuccess(Map<String, Object> uploadInfoMap, Map<String, Object> arg1,Map<String, Object> arg2) {
         HttpSession session = request.getSession();
-        String uploadFileName = (String) uploadInfoMap.get("");
+        String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         try {
             fileUploadService.dealUploadFile(uploadFileName, session);
         } catch (Exception e) {

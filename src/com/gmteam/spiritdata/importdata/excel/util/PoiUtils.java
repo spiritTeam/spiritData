@@ -57,12 +57,12 @@ public class PoiUtils {
         StringBuffer paramSql = new StringBuffer("values(");
         for(int i=0;i<size;i++){
             if(i!=size-1){
-                tempTabSql.append(newMdColList.get(i)+",");
-                sumTabSql.append(newMdColList.get(i)+","); 
+                tempTabSql.append(newMdColList.get(i).getColumnName()+",");
+                sumTabSql.append(newMdColList.get(i).getColumnName()+","); 
                 paramSql.append("?,");
             }else{
-                tempTabSql.append(newMdColList.get(i)+")");
-                sumTabSql.append(newMdColList.get(i)+")"); 
+                tempTabSql.append(newMdColList.get(i).getColumnName()+")");
+                sumTabSql.append(newMdColList.get(i).getColumnName()+")"); 
                 paramSql.append("?)");
             }
         }
@@ -88,24 +88,25 @@ public class PoiUtils {
             int rowNum = ((XSSFSheet) sheet).getLastRowNum()+1;
             XSSFRow xRow = ((XSSFSheet) sheet).getRow(1);
             //每行的有多少个格子
-            int celNum = xRow.getRowNum();
-            PreparedStatement sumPs = null;;
+            int cellNum = xRow.getRowNum()-delIndexMap.size();
+            PreparedStatement sumPs = null;
             try {
                 sumPs = conn.prepareStatement(sumSql);
                 for(int i=1;i<rowNum;i++){
-                    Object [] rowVal = new Object[celNum-delIndexMap.size()];
-                    for(int k=0;k<celNum;k++){
+                    Object [] rowVal = new Object[cellNum-delIndexMap.size()];
+                    for(int k=0;k<cellNum;k++){
                         if(delIndexMap.get(k)==null) {
                             XSSFCell xCell = xRow.getCell(k);
                             Object celVal = getCellValue(xCell);
                             rowVal[k] = celVal;
                         }
                     }
-                    for(int k=0;k<celNum;k++){
+                    for(int k=0;k<cellNum;k++){
                         int key = newIndexAry[i];
                         int val = newOldIndexOrgMap.get(key);
                         sumPs.setObject(k+1, rowVal[val]);
                     }
+                    sumPs.execute();
                 }
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -118,24 +119,25 @@ public class PoiUtils {
             int rowNum = ((HSSFSheet) sheet).getLastRowNum()+1;
             HSSFRow xRow = ((HSSFSheet) sheet).getRow(1);
             //每行的有多少个格子
-            int celNum = xRow.getRowNum();
+            int cellNum = xRow.getRowNum()-delIndexMap.size();
             PreparedStatement sumPs = null;;
             try {
                 sumPs = conn.prepareStatement(sumSql);
                 for(int i=1;i<rowNum;i++){
-                    Object [] rowVal = new Object[celNum-delIndexMap.size()];
-                    for(int k=0;k<celNum;k++){
+                    Object [] rowVal = new Object[cellNum];
+                    for(int k=0;k<cellNum;k++){
                         if(delIndexMap.get(k)==null) {
                             HSSFCell hCell = xRow.getCell(k);
                             Object celVal = getCellValue(hCell);
                             rowVal[k] = celVal;
                         }
                     }
-                    for(int k=0;k<celNum;k++){
+                    for(int k=0;k<cellNum;k++){
                         int key = newIndexAry[i];
                         int val = newOldIndexOrgMap.get(key);
                         sumPs.setObject(k+1, rowVal[val]);
                     }
+                    sumPs.execute();
                 }
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -172,6 +174,7 @@ public class PoiUtils {
                         int val = newOldIndexOrgMap.get(key);
                         tempPs.setObject(k+1, rowVal[val]);
                     }
+                    tempPs.execute();
                 }
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -202,6 +205,7 @@ public class PoiUtils {
                         int val = newOldIndexOrgMap.get(key);
                         tempPs.setObject(k+1, rowVal[val]);
                     }
+                    tempPs.execute();
                 }
             } catch (SQLException e1) {
                 e1.printStackTrace();
