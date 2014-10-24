@@ -45,6 +45,16 @@ public class PoiUtils {
             newIndexAry[i] = newMdColList.get(i).getColumnIndex();
             newOldIndexOrgMap.put(newMdColList.get(i).getColumnIndex(), oldMdColList.get(i).getColumnIndex());
         }
+        //计算对应表
+        List<Integer> l = new ArrayList<Integer>();
+        for (MetadataColumn mcN: newMdColList) {
+            for (MetadataColumn mcS: oldMdColList) {
+                if (mcN.getTitleName().equals(mcS.getTitleName())&&mcN.getColumnType().equals(mcS.getColumnType())) {
+                    l.add(mcS.getColumnIndex());
+                }
+            }
+        }
+        if (l.size()==newMdColList.size()) ;//才能继续处理
         //总表
         String sumTabName = tabMapOrgAry[0].getTableName();
         //临时表
@@ -52,24 +62,20 @@ public class PoiUtils {
         /**
          * 得到sql
          */
-        StringBuffer tempTabSql = new StringBuffer("insert into "+tempTabName+"(");
-        StringBuffer sumTabSql = new StringBuffer("insert into "+sumTabName+"(");
-        StringBuffer paramSql = new StringBuffer("values(");
-        for(int i=0;i<size;i++){
-            if(i!=size-1){
-                tempTabSql.append(newMdColList.get(i).getColumnName()+",");
-                sumTabSql.append(newMdColList.get(i).getColumnName()+","); 
-                paramSql.append("?,");
-            }else{
-                tempTabSql.append(newMdColList.get(i).getColumnName()+")");
-                sumTabSql.append(newMdColList.get(i).getColumnName()+")"); 
-                paramSql.append("?)");
-            }
+        StringBuffer fieldStr = new StringBuffer(), valueStr=new StringBuffer();
+        for (MetadataColumn mc: newMdColList) {
+            fieldStr.append(","+mc.getColumnName());
+            valueStr.append(",?");
         }
-        tempTabSql.append(paramSql);
-        sumTabSql.append(paramSql);
+        fieldStr.substring(1);
+        valueStr.substring(1);
+        StringBuffer tempTabSql=new StringBuffer().append("insert into "+tempTabName+"(").append(fieldStr+") values(").append(valueStr+")");
+        StringBuffer sumTabSql=new StringBuffer().append("insert into "+sumTabName+"(").append(fieldStr+") values(").append(valueStr+")");
+
         saveSumData(conn,sheetInfo,delIndexMap,newOldIndexOrgMap,newIndexAry,sumTabSql.toString());
         savetempData(conn,sheetInfo,delIndexMap,newOldIndexOrgMap,newIndexAry,tempTabSql.toString());
+
+        saveTempData1(conn, sheetInfo, l, tempTabSql.toString());
     }
     /**
      * 
@@ -145,9 +151,37 @@ public class PoiUtils {
                 CommonUtils.closeConn(null, sumPs, null);
             }
         }
-            
-        
     }
+
+    private static void saveTempData1(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String tempSql) {
+        PreparedStatement tempPs = null;
+        Object sheet = null;
+        try {
+            tempPs = conn.prepareStatement(tempSql);
+            
+            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
+                sheet = (XSSFSheet)sheetInfo.getSheet();
+                int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
+                for(int i=1;i<rowNum;i++){
+                    XSSFRow xRow = ((XSSFSheet)sheet).getRow(1);
+                    int j=1;
+                    for (Integer integer :mapL) {
+                        XSSFCell cell = xRow.getCell(integer);
+                        tempPs.setObject(j, getCellValue(cell));
+                        j++;
+                    }
+                    tempPs.execute();
+                }
+            } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
+                
+            }
+        } catch(SQLException se) {
+            
+        } finally {
+            CommonUtils.closeConn(null, tempPs, null);
+        }
+    }
+
     private static void savetempData(Connection conn, SheetInfo sheetInfo,Map<Integer,Integer> delIndexMap,Map<Integer,Integer> newOldIndexOrgMap,int[] newIndexAry,String tempSql) {
         Object sheet;
         if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
@@ -218,7 +252,7 @@ public class PoiUtils {
      * 得到md，并且 对delColIndexMap初始化
      * @param workbook
      * @param fileType
-     * @return
+     * @return sheetinfo:{"del":dellist; "md": md}
      */
     public static Map<SheetInfo,Object> getMdModelMap(Object workbook,int fileType) {
         Map<SheetInfo,Object> mdModelMap = new HashMap<SheetInfo,Object>();
