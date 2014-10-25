@@ -72,8 +72,8 @@ public class FileUploadService {
             //delIndex
             Map<Integer,Integer> delIndexMap = (Map<Integer, Integer>) valMap.get("delIndexMap");
             //md
-            MetadataModel oldMD = (MetadataModel) valMap.get("metadataModel");
-            saveData(sheetInfo,delIndexMap,oldMD);
+            MetadataModel sheetMd = (MetadataModel) valMap.get("metadataModel");
+            saveData(sheetInfo,delIndexMap,sheetMd);
         }
         return null;
     }
