@@ -34,17 +34,10 @@ import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
  * 类说明 用于得到Md
  */
 public class PoiUtils {
-    public static Map<String,Object> saveInDB(Connection conn, SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
+    public static Map<String,Object> saveInDB(Connection conn, SheetInfo sheetInfo, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
         List<MetadataColumn> oldMdColList = oldMD.getColumnList();
         List<MetadataColumn> newMdColList = newMD.getColumnList();
         /**k=newIndex,val=oldIndex*/
-        Map<Integer,Integer> newOldIndexOrgMap = new HashMap<Integer,Integer>();
-        int size = oldMdColList.size();
-        int[] newIndexAry = new int[size];
-        for(int i=0;i<size;i++){
-            newIndexAry[i] = newMdColList.get(i).getColumnIndex();
-            newOldIndexOrgMap.put(newMdColList.get(i).getColumnIndex(), oldMdColList.get(i).getColumnIndex());
-        }
         //计算对应表
         List<Integer> l = new ArrayList<Integer>();
         for (MetadataColumn mcN: newMdColList) {
@@ -67,10 +60,8 @@ public class PoiUtils {
             fieldStr.append(","+mc.getColumnName());
             valueStr.append(",?");
         }
-        fieldStr.substring(1);
-        valueStr.substring(1);
-        StringBuffer tempTabSql=new StringBuffer().append("insert into "+tempTabName+"(").append(fieldStr+") values(").append(valueStr+")");
-        StringBuffer sumTabSql=new StringBuffer().append("insert into "+sumTabName+"(").append(fieldStr+") values(").append(valueStr+")");
+        StringBuffer tempTabSql=new StringBuffer().append("insert into "+tempTabName+"(").append(fieldStr.substring(1)+") values(").append(valueStr.substring(1)+")");
+        StringBuffer sumTabSql=new StringBuffer().append("insert into "+sumTabName+"(").append(fieldStr.substring(1)+") values(").append(valueStr.substring(1)+")");
         saveSumData(conn, sheetInfo, l, sumTabSql.toString());
         saveTempData(conn, sheetInfo, l, tempTabSql.toString());
         return null;
@@ -80,8 +71,6 @@ public class PoiUtils {
      * @param conn
      * @param sheetInfo
      * @param delIndexMap
-     * @param newOldIndexOrgMap
-     * @param newIndexAry
      * @param sumSql
      */
     private static void saveSumData(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String sumTabSql) {
@@ -96,18 +85,16 @@ public class PoiUtils {
                     try {
                         XSSFRow xRow = ((XSSFSheet)sheet).getRow(1);
                         int j=1;
-                        boolean a=false;
                         for (Integer integer :mapL) {
                             XSSFCell cell = xRow.getCell(integer);
                             sumPs.setObject(j, getCellValue(cell));
-                            //erro; bool=true;breka;
                             j++;
                         }
-                        //a==true continue;
                         sumPs.execute();
                     } catch(Exception e) {
-                        //log
+                        e.printStackTrace();
                     }
+                    continue;
                 }
             } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
                 sheet = (HSSFSheet)sheetInfo.getSheet();
@@ -140,22 +127,15 @@ public class PoiUtils {
                 for(int i=1;i<rowNum;i++){
                     XSSFRow xRow = ((XSSFSheet)sheet).getRow(i);
                     try{
-                    int j=1;
-                    for (Integer integer :mapL) {
-                        XSSFCell cell = xRow.getCell(integer);
-                        tempPs.setObject(j, getCellValue(cell));
-                        j++;
-                    }
-                    tempPs.execute();
+                        int j=1;
+                        for (Integer integer :mapL) {
+                            XSSFCell cell = xRow.getCell(integer);
+                            tempPs.setObject(j, getCellValue(cell));
+                            j++;
+                        }
+                        tempPs.execute();
                     }catch(Exception eX){
                         eX.printStackTrace();
-                    }finally{
-                        if(i!=rowNum){
-                            for(int k=i+1;i<rowNum;k++){
-                                
-                            }
-                            
-                        }
                     }
                 }
             } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
@@ -198,9 +178,10 @@ public class PoiUtils {
                 sheet = ((XSSFWorkbook) workbook).getSheetAt(sheetIndex);
                 int rows = sheet.getLastRowNum()+1;
                 Map<String, Object> retMap;
-                if(rows+1>=2){
+                if(rows>=1){
                     XSSFSheet xSheet = (XSSFSheet) sheet;
                     XSSFRow xRow = xSheet.getRow(0);
+                    if (xRow==null) continue;
                     /**init sheetInfo*/
                     sheetInfo.setSheetIndex(sheetIndex);
                     sheetInfo.setSheetName(xSheet.getSheetName());
@@ -231,7 +212,7 @@ public class PoiUtils {
                 sheet = ((HSSFWorkbook) workbook).getSheetAt(sheetIndex);
                 isActive = sheet.isActive();
                 int rows = sheet.getLastRowNum()+1;
-                if(isActive==false&&rows+1>=2){
+                if(isActive!=false&&rows+1>=2){
                     Map<String,Object> retMap;
                     HSSFSheet hSheet = (HSSFSheet) sheet;
                     HSSFRow hRow = hSheet.getRow(0);

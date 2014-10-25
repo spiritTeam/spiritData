@@ -2,7 +2,6 @@ package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -78,11 +77,9 @@ public class FileUploadService {
         while(it.hasNext()){
             SheetInfo sheetInfo = it.next();
             Map<String,Object> valMap = (Map<String, Object>) rstMap.get(sheetInfo);
-            //delIndex
-            Map<Integer,Integer> delIndexMap = (Map<Integer, Integer>) valMap.get("delIndexMap");
             //md
             MetadataModel oldMD = (MetadataModel) valMap.get("metadataModel");
-            saveData(sheetInfo,delIndexMap,oldMD);
+            saveData(sheetInfo,oldMD);
         }
         /**logTabOrg*/
         return null;
@@ -97,7 +94,7 @@ public class FileUploadService {
      * @param delIndexMap
      * @param oldMD
      */
-    private void saveData(SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD) {
+    private void saveData(SheetInfo sheetInfo, MetadataModel oldMD) {
         TableMapOrg[] tabMapOrgAry;
         Connection conn = null;
         try {
@@ -106,24 +103,23 @@ public class FileUploadService {
             tabMapOrgAry = mdService.storeMdModel4Import(oldMD);
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
             MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
-            PoiUtils.saveInDB(conn,sheetInfo,delIndexMap,oldMD,newMD,tabMapOrgAry);
+            PoiUtils.saveInDB(conn,sheetInfo,oldMD,newMD,tabMapOrgAry);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
             CommonUtils.closeConn(conn, null, null);
         }
     }
-    @Resource(name="defaultDAO")
+    @Resource
     private MybatisDAO<FileUploadLog> fulDao;
-    public void saveUploadFileInfo(Map<String, Object> uploadInfoMap) {
+    private void saveUploadFileInfo(Map<String, Object> uploadInfoMap) {
         fulDao.setNamespace("fileUploadLog");
         try {
             FileUploadLog ful = new FileUploadLog();
             UgaUser  user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
             if(user==null)ful.setOwnerId(session.getId());
             ful.setsFileName((String)uploadInfoMap.get("storeFilename"));
-            ful.setcFileName("AAAAAA");
-            ful.setcTime(new Date());
+            ful.setcFileName((String)uploadInfoMap.get("orglFilename"));
             ful.setFileSize((Long)uploadInfoMap.get("size"));
             ful.setId(SequenceUUID.getUUID());
             fulDao.insert(ful);
