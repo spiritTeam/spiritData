@@ -15,10 +15,8 @@
     <if test="distinct" >
       distinct
     </if>
-    <include refid="Base_Column_List" />
     from sa_imp_tablog_org
     <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
     </if>
     <if test="orderByClause != null" >
       order by ${orderByClause}
@@ -26,7 +24,6 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
-    <include refid="Base_Column_List" />
     from sa_imp_tablog_org
     where id = #{id,jdbcType=VARCHAR}
   </select>
@@ -86,7 +83,6 @@
   <select id="countByExample" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg" resultType="java.lang.Integer" >
     select count(*) from sa_imp_tablog_org
     <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
@@ -115,7 +111,6 @@
       </if>
     </set>
     <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg" >

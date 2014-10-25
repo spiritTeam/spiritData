@@ -61,8 +61,11 @@ public class FileUploadService {
      * @param session 
      */
     @SuppressWarnings("unchecked")
-    public Object dealUploadFile(String uploadFileName, HttpSession session) throws Exception {
+    public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
         this.session=session;
+        /** fileInfo*/
+        saveUploadFileInfo(uploadInfoMap);
+        String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         int fileType = getFileType(uploadFileName);
         /**文件类型，要用于表判断返回来的workbook类型*/
         File excelFile = new File(uploadFileName);
@@ -81,6 +84,7 @@ public class FileUploadService {
             MetadataModel sheetMd = (MetadataModel) valMap.get("metadataModel");
             saveData(sheetInfo,delIndexMap,sheetMd);
         }
+        /**logTabOrg*/
         return null;
     }
     @Resource
@@ -110,18 +114,19 @@ public class FileUploadService {
         }
     }
     @Resource(name="defaultDAO")
-    private MybatisDAO<TableMapOrg> tmoDao;
+    private MybatisDAO<FileUploadLog> fulDao;
     public void saveUploadFileInfo(Map<String, Object> uploadInfoMap) {
-        tmoDao.setNamespace("fileUploadLog");
+        fulDao.setNamespace("fileUploadLog");
         try {
-            UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
             FileUploadLog ful = new FileUploadLog();
-            ful.setcFileName((String)uploadInfoMap.get("storeFilename"));
+            UgaUser  user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+            if(user==null)ful.setOwnerId(session.getId());
+            ful.setsFileName((String)uploadInfoMap.get("storeFilename"));
+            ful.setcFileName("AAAAAA");
             ful.setcTime(new Date());
-            ful.setOwnerId(user.getUserId());
-            ful.setFileSize((Integer)uploadInfoMap.get("size"));
+            ful.setFileSize((Long)uploadInfoMap.get("size"));
             ful.setId(SequenceUUID.getUUID());
-            tmoDao.insert(ful);
+            fulDao.insert(ful);
         } catch (Exception e) {
             e.printStackTrace();
         }

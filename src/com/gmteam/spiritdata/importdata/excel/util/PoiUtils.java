@@ -92,15 +92,22 @@ public class PoiUtils {
             if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
                 sheet = (XSSFSheet)sheetInfo.getSheet();
                 int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
-                for(int i=1;i<rowNum;i++){
-                    XSSFRow xRow = ((XSSFSheet)sheet).getRow(1);
-                    int j=1;
-                    for (Integer integer :mapL) {
-                        XSSFCell cell = xRow.getCell(integer);
-                        sumPs.setObject(j, getCellValue(cell));
-                        j++;
+                for(int i=1;i<rowNum;i++) {
+                    try {
+                        XSSFRow xRow = ((XSSFSheet)sheet).getRow(1);
+                        int j=1;
+                        boolean a=false;
+                        for (Integer integer :mapL) {
+                            XSSFCell cell = xRow.getCell(integer);
+                            sumPs.setObject(j, getCellValue(cell));
+                            //erro; bool=true;breka;
+                            j++;
+                        }
+                        //a==true continue;
+                        sumPs.execute();
+                    } catch(Exception e) {
+                        //log
                     }
-                    sumPs.execute();
                 }
             } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
                 sheet = (HSSFSheet)sheetInfo.getSheet();
@@ -236,7 +243,7 @@ public class PoiUtils {
                     int rowLength = hRow.getLastCellNum();
                     /**得到TitleAry*/
                     String [] titleAry = new String[rowLength];
-                    for(int k=0;k<rowLength;i++){
+                    for(int k=0;k<rowLength;k++){
                         HSSFCell hCell = hRow.getCell(k);
                         String columnName = ""+ getCellValue(hCell);
                         titleAry[k] = columnName;

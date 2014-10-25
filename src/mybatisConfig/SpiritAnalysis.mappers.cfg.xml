@@ -3,23 +3,11 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="MetadataColSemanteme" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme"/>
     <typeAlias alias="FileUploadLog" type="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog"/>
-    <typeAlias alias="TableMapOrg" type="com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg"/>
     <typeAlias alias="UploadLogTableOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg"/> 
-    <typeAlias alias="QuotaColumn" type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn"/>
-    <typeAlias alias="MetadataColumn" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn"/>
-    <typeAlias alias="MetadataModel" type="com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel"/>
-    <typeAlias alias="QuotaTable" type="com.gmteam.spiritdata.metadata.relation.pojo.QuotaTable"/>
   </typeAliases>
   <mappers>
-	  <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdColSemanteme.mapper.xml"/>
     <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/FileUploadLog.mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabMapOrg.mapper.xml"/>
     <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/UploadLogTableOrg.mapper.xml"/> 
-    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaColumn.mapper.xml"/>
-     <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdColumnInfo.mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/MdTabModel.mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/metadata/relation/sql/QuotaTable.mapper.xml"/>
   </mappers>
 </configuration>
