@@ -243,7 +243,7 @@ public class PoiUtils {
                     int rowLength = hRow.getLastCellNum();
                     /**得到TitleAry*/
                     String [] titleAry = new String[rowLength];
-                    for(int k=0;k<rowLength;i++){
+                    for(int k=0;k<rowLength;k++){
                         HSSFCell hCell = hRow.getCell(k);
                         String columnName = ""+ getCellValue(hCell);
                         titleAry[k] = columnName;
