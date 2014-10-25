@@ -37,7 +37,6 @@ public class PoiUtils {
     public static Map<String,Object> saveInDB(Connection conn, SheetInfo sheetInfo, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
         List<MetadataColumn> oldMdColList = oldMD.getColumnList();
         List<MetadataColumn> newMdColList = newMD.getColumnList();
-        /**k=newIndex,val=oldIndex*/
         //计算对应表
         List<Integer> l = new ArrayList<Integer>();
         for (MetadataColumn mcN: newMdColList) {
@@ -52,9 +51,8 @@ public class PoiUtils {
         String sumTabName = tabMapOrgAry[0].getTableName();
         //临时表
         String tempTabName = tabMapOrgAry[1].getTableName();
-        /**
-         * 得到sql
-         */
+
+        //得到sql
         StringBuffer fieldStr = new StringBuffer(), valueStr=new StringBuffer();
         for (MetadataColumn mc: newMdColList) {
             fieldStr.append(","+mc.getColumnName());
@@ -82,8 +80,8 @@ public class PoiUtils {
                 sheet = (XSSFSheet)sheetInfo.getSheet();
                 int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
                 for(int i=1;i<rowNum;i++) {
+                    XSSFRow xRow = ((XSSFSheet)sheet).getRow(i);
                     try {
-                        XSSFRow xRow = ((XSSFSheet)sheet).getRow(1);
                         int j=1;
                         for (Integer integer :mapL) {
                             XSSFCell cell = xRow.getCell(integer);
@@ -94,18 +92,22 @@ public class PoiUtils {
                     } catch(Exception e) {
                         e.printStackTrace();
                     }
-                    continue;
                 }
             } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
                 sheet = (HSSFSheet)sheetInfo.getSheet();
                 int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
                 for(int i=1;i<rowNum;i++){
                     HSSFRow xRow = ((HSSFSheet)sheet).getRow(i);
-                    int j=1;
-                    for (Integer integer :mapL) {
-                        HSSFCell cell = xRow.getCell(integer);
-                        sumPs.setObject(j, getCellValue(cell));
-                        j++;
+                    try {
+                        int j=1;
+                        for (Integer integer :mapL) {
+                            HSSFCell cell = xRow.getCell(integer);
+                            sumPs.setObject(j, getCellValue(cell));
+                            j++;
+                        }
+                        sumPs.execute();
+                    } catch(Exception e) {
+                        e.printStackTrace();
                     }
                     sumPs.execute();
                 }
@@ -143,13 +145,17 @@ public class PoiUtils {
                 int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
                 for(int i=1;i<rowNum;i++){
                     HSSFRow xRow = ((HSSFSheet)sheet).getRow(1);
-                    int j=1;
-                    for (Integer integer :mapL) {
-                        HSSFCell cell = xRow.getCell(integer);
-                        tempPs.setObject(j, getCellValue(cell));
-                        j++;
+                    try{
+                        int j=1;
+                        for (Integer integer :mapL) {
+                            HSSFCell cell = xRow.getCell(integer);
+                            tempPs.setObject(j, getCellValue(cell));
+                            j++;
+                        }
+                        tempPs.execute();
+                    }catch(Exception eX){
+                        eX.printStackTrace();
                     }
-                    tempPs.execute();
                 }
             }
         } catch(SQLException e) {
@@ -178,7 +184,7 @@ public class PoiUtils {
                 sheet = ((XSSFWorkbook) workbook).getSheetAt(sheetIndex);
                 int rows = sheet.getLastRowNum()+1;
                 Map<String, Object> retMap;
-                if(rows>=1){
+                if(rows>1){
                     XSSFSheet xSheet = (XSSFSheet) sheet;
                     XSSFRow xRow = xSheet.getRow(0);
                     if (xRow==null) continue;
@@ -211,8 +217,9 @@ public class PoiUtils {
                 int sheetIndex = i;
                 sheet = ((HSSFWorkbook) workbook).getSheetAt(sheetIndex);
                 isActive = sheet.isActive();
+                if (!isActive) continue;
                 int rows = sheet.getLastRowNum()+1;
-                if(isActive!=false&&rows+1>=2){
+                if(rows>1){
                     Map<String,Object> retMap;
                     HSSFSheet hSheet = (HSSFSheet) sheet;
                     HSSFRow hRow = hSheet.getRow(0);

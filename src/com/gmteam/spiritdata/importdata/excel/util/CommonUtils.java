@@ -59,14 +59,14 @@ public class CommonUtils {
                 rs=null;
             }
         }else if(ps!=null){
-                try {
-                    ps.close();
-                    ps=null;
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }finally{
-                    ps=null;
-                }
+            try {
+                ps.close();
+                ps=null;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }finally{
+                ps=null;
+            }
         }else if(con!=null){
             try {
                 con.close();
