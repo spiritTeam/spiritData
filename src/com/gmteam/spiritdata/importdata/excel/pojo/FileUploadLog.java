@@ -6,11 +6,11 @@ public class FileUploadLog {
     private String id;
 
     private String ownerId;
-
+    /**服务端文件路径*/
     private String sFileName;
 
     private Integer fileSize;
-
+    /**客户端文件路径*/
     private String cFileName;
 
     private Date cTime;
@@ -63,5 +63,4 @@ public class FileUploadLog {
         this.cTime = cTime;
     }
     
-    
-}
+}   

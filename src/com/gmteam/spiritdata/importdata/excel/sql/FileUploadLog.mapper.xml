@@ -25,7 +25,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog" >
+  <insert id="insert" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog" >
     insert into sa_imp_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

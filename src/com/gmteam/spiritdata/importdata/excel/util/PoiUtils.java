@@ -34,7 +34,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
  * 类说明 用于得到Md
  */
 public class PoiUtils {
-    public static void saveInDB(Connection conn, SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
+    public static Map<String,Object> saveInDB(Connection conn, SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
         List<MetadataColumn> oldMdColList = oldMD.getColumnList();
         List<MetadataColumn> newMdColList = newMD.getColumnList();
         /**k=newIndex,val=oldIndex*/
@@ -73,6 +73,7 @@ public class PoiUtils {
         StringBuffer sumTabSql=new StringBuffer().append("insert into "+sumTabName+"(").append(fieldStr+") values(").append(valueStr+")");
         saveSumData(conn, sheetInfo, l, sumTabSql.toString());
         saveTempData(conn, sheetInfo, l, tempTabSql.toString());
+        return null;
     }
     /**
      * 
@@ -105,7 +106,7 @@ public class PoiUtils {
                 sheet = (HSSFSheet)sheetInfo.getSheet();
                 int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
                 for(int i=1;i<rowNum;i++){
-                    HSSFRow xRow = ((HSSFSheet)sheet).getRow(1);
+                    HSSFRow xRow = ((HSSFSheet)sheet).getRow(i);
                     int j=1;
                     for (Integer integer :mapL) {
                         HSSFCell cell = xRow.getCell(integer);
@@ -126,12 +127,12 @@ public class PoiUtils {
         Object sheet = null;
         try {
             tempPs = conn.prepareStatement(tempSql);
-            
             if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
                 sheet = (XSSFSheet)sheetInfo.getSheet();
                 int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
                 for(int i=1;i<rowNum;i++){
-                    XSSFRow xRow = ((XSSFSheet)sheet).getRow(1);
+                    XSSFRow xRow = ((XSSFSheet)sheet).getRow(i);
+                    try{
                     int j=1;
                     for (Integer integer :mapL) {
                         XSSFCell cell = xRow.getCell(integer);
@@ -139,6 +140,16 @@ public class PoiUtils {
                         j++;
                     }
                     tempPs.execute();
+                    }catch(Exception eX){
+                        eX.printStackTrace();
+                    }finally{
+                        if(i!=rowNum){
+                            for(int k=i+1;i<rowNum;k++){
+                                
+                            }
+                            
+                        }
+                    }
                 }
             } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
                 sheet = (HSSFSheet)sheetInfo.getSheet();
