@@ -34,7 +34,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
  * 类说明 用于得到Md
  */
 public class PoiUtils {
-    public static void saveInDB(Connection conn, SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
+    public static Map<String,Object> saveInDB(Connection conn, SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
         List<MetadataColumn> oldMdColList = oldMD.getColumnList();
         List<MetadataColumn> newMdColList = newMD.getColumnList();
         /**k=newIndex,val=oldIndex*/
@@ -71,11 +71,9 @@ public class PoiUtils {
         valueStr.substring(1);
         StringBuffer tempTabSql=new StringBuffer().append("insert into "+tempTabName+"(").append(fieldStr+") values(").append(valueStr+")");
         StringBuffer sumTabSql=new StringBuffer().append("insert into "+sumTabName+"(").append(fieldStr+") values(").append(valueStr+")");
-
-        saveSumData(conn,sheetInfo,delIndexMap,newOldIndexOrgMap,newIndexAry,sumTabSql.toString());
-        savetempData(conn,sheetInfo,delIndexMap,newOldIndexOrgMap,newIndexAry,tempTabSql.toString());
-
-        saveTempData1(conn, sheetInfo, l, tempTabSql.toString());
+        saveSumData(conn, sheetInfo, l, sumTabSql.toString());
+        saveTempData(conn, sheetInfo, l, tempTabSql.toString());
+        return null;
     }
     /**
      * 
@@ -86,79 +84,11 @@ public class PoiUtils {
      * @param newIndexAry
      * @param sumSql
      */
-    private static void saveSumData(Connection conn, SheetInfo sheetInfo,Map<Integer,Integer> delIndexMap,Map<Integer,Integer> newOldIndexOrgMap,int[] newIndexAry,String sumSql) {
-        Object sheet;
-        if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-            sheet = (XSSFSheet)sheetInfo.getSheet();
-            //总行数
-            int rowNum = ((XSSFSheet) sheet).getLastRowNum()+1;
-            XSSFRow xRow = ((XSSFSheet) sheet).getRow(1);
-            //每行的有多少个格子
-            int cellNum = xRow.getRowNum()-delIndexMap.size();
-            PreparedStatement sumPs = null;
-            try {
-                sumPs = conn.prepareStatement(sumSql);
-                for(int i=1;i<rowNum;i++){
-                    Object [] rowVal = new Object[cellNum-delIndexMap.size()];
-                    for(int k=0;k<cellNum;k++){
-                        if(delIndexMap.get(k)==null) {
-                            XSSFCell xCell = xRow.getCell(k);
-                            Object celVal = getCellValue(xCell);
-                            rowVal[k] = celVal;
-                        }
-                    }
-                    for(int k=0;k<cellNum;k++){
-                        int key = newIndexAry[i];
-                        int val = newOldIndexOrgMap.get(key);
-                        sumPs.setObject(k+1, rowVal[val]);
-                    }
-                    sumPs.execute();
-                }
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }finally{
-                CommonUtils.closeConn(null, sumPs, null);
-            }
-        }else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-            sheet = (HSSFSheet)sheetInfo.getSheet();
-            //总行数
-            int rowNum = ((HSSFSheet) sheet).getLastRowNum()+1;
-            HSSFRow xRow = ((HSSFSheet) sheet).getRow(1);
-            //每行的有多少个格子
-            int cellNum = xRow.getRowNum()-delIndexMap.size();
-            PreparedStatement sumPs = null;;
-            try {
-                sumPs = conn.prepareStatement(sumSql);
-                for(int i=1;i<rowNum;i++){
-                    Object [] rowVal = new Object[cellNum];
-                    for(int k=0;k<cellNum;k++){
-                        if(delIndexMap.get(k)==null) {
-                            HSSFCell hCell = xRow.getCell(k);
-                            Object celVal = getCellValue(hCell);
-                            rowVal[k] = celVal;
-                        }
-                    }
-                    for(int k=0;k<cellNum;k++){
-                        int key = newIndexAry[i];
-                        int val = newOldIndexOrgMap.get(key);
-                        sumPs.setObject(k+1, rowVal[val]);
-                    }
-                    sumPs.execute();
-                }
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }finally{
-                CommonUtils.closeConn(null, sumPs, null);
-            }
-        }
-    }
-
-    private static void saveTempData1(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String tempSql) {
-        PreparedStatement tempPs = null;
+    private static void saveSumData(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String sumTabSql) {
         Object sheet = null;
+        PreparedStatement sumPs = null;
         try {
-            tempPs = conn.prepareStatement(tempSql);
-            
+            sumPs = conn.prepareStatement(sumTabSql);
             if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
                 sheet = (XSSFSheet)sheetInfo.getSheet();
                 int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
@@ -167,87 +97,81 @@ public class PoiUtils {
                     int j=1;
                     for (Integer integer :mapL) {
                         XSSFCell cell = xRow.getCell(integer);
+                        sumPs.setObject(j, getCellValue(cell));
+                        j++;
+                    }
+                    sumPs.execute();
+                }
+            } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
+                sheet = (HSSFSheet)sheetInfo.getSheet();
+                int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
+                for(int i=1;i<rowNum;i++){
+                    HSSFRow xRow = ((HSSFSheet)sheet).getRow(i);
+                    int j=1;
+                    for (Integer integer :mapL) {
+                        HSSFCell cell = xRow.getCell(integer);
+                        sumPs.setObject(j, getCellValue(cell));
+                        j++;
+                    }
+                    sumPs.execute();
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        } finally {
+            CommonUtils.closeConn(null, sumPs, null);
+        }
+    }
+    private static void saveTempData(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String tempSql) {
+        PreparedStatement tempPs = null;
+        Object sheet = null;
+        try {
+            tempPs = conn.prepareStatement(tempSql);
+            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
+                sheet = (XSSFSheet)sheetInfo.getSheet();
+                int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
+                for(int i=1;i<rowNum;i++){
+                    XSSFRow xRow = ((XSSFSheet)sheet).getRow(i);
+                    try{
+                    int j=1;
+                    for (Integer integer :mapL) {
+                        XSSFCell cell = xRow.getCell(integer);
+                        tempPs.setObject(j, getCellValue(cell));
+                        j++;
+                    }
+                    tempPs.execute();
+                    }catch(Exception eX){
+                        eX.printStackTrace();
+                    }finally{
+                        if(i!=rowNum){
+                            for(int k=i+1;i<rowNum;k++){
+                                
+                            }
+                            
+                        }
+                    }
+                }
+            } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
+                sheet = (HSSFSheet)sheetInfo.getSheet();
+                int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
+                for(int i=1;i<rowNum;i++){
+                    HSSFRow xRow = ((HSSFSheet)sheet).getRow(1);
+                    int j=1;
+                    for (Integer integer :mapL) {
+                        HSSFCell cell = xRow.getCell(integer);
                         tempPs.setObject(j, getCellValue(cell));
                         j++;
                     }
                     tempPs.execute();
                 }
-            } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-                
             }
-        } catch(SQLException se) {
-            
+        } catch(SQLException e) {
+            e.printStackTrace();
         } finally {
             CommonUtils.closeConn(null, tempPs, null);
         }
     }
 
-    private static void savetempData(Connection conn, SheetInfo sheetInfo,Map<Integer,Integer> delIndexMap,Map<Integer,Integer> newOldIndexOrgMap,int[] newIndexAry,String tempSql) {
-        Object sheet;
-        if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-            sheet = (XSSFSheet)sheetInfo.getSheet();
-            //总行数
-            int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
-            XSSFRow xRow = ((XSSFSheet)sheet).getRow(1);
-            //每行的有多少个格子
-            int celNum = xRow.getRowNum();
-            PreparedStatement tempPs = null;
-            try {
-                tempPs = conn.prepareStatement(tempSql);
-                for(int i=1;i<rowNum;i++){
-                    Object [] rowVal = new Object[celNum-delIndexMap.size()];
-                    for(int k=0;k<celNum;k++){
-                        if(delIndexMap.get(k)==null) {
-                            XSSFCell xCell = xRow.getCell(k);
-                            Object celVal = getCellValue(xCell);
-                            rowVal[k] = celVal;
-                        }
-                    }
-                    for(int k=0;k<celNum;k++){
-                        int key = newIndexAry[i];
-                        int val = newOldIndexOrgMap.get(key);
-                        tempPs.setObject(k+1, rowVal[val]);
-                    }
-                    tempPs.execute();
-                }
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }finally{
-                CommonUtils.closeConn(null, tempPs, null);
-            }
-        }else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-            sheet = sheetInfo.getSheet();
-          //总行数
-            int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
-            HSSFRow hRow = ((HSSFSheet)sheet).getRow(1);
-            //每行的有多少个格子
-            int celNum = hRow.getRowNum();
-            PreparedStatement tempPs = null;
-            try {
-                tempPs = conn.prepareStatement(tempSql);
-                for(int i=1;i<rowNum;i++){
-                    Object [] rowVal = new Object[celNum-delIndexMap.size()];
-                    for(int k=0;k<celNum;k++){
-                        if(delIndexMap.get(k)==null) {
-                            HSSFCell hCell = hRow.getCell(k);
-                            Object celVal = getCellValue(hCell);
-                            rowVal[k] = celVal;
-                        }
-                    }
-                    for(int k=0;k<celNum;k++){
-                        int key = newIndexAry[i];
-                        int val = newOldIndexOrgMap.get(key);
-                        tempPs.setObject(k+1, rowVal[val]);
-                    }
-                    tempPs.execute();
-                }
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }finally{
-                CommonUtils.closeConn(null, tempPs, null);
-            }
-        }
-    }
     /**
      * 得到md，并且 对delColIndexMap初始化
      * @param workbook

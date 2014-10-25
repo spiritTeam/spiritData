@@ -2,6 +2,7 @@ package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,8 +13,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
+import com.gmteam.framework.FConstants;
+import com.gmteam.framework.UGA.UgaUser;
+import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
+import com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
@@ -22,6 +27,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
 import com.gmteam.spiritdata.metadata.relation.service.MetadataService;
+import com.gmteam.spiritdata.util.SequenceUUID;
 
 /** 
  * @author mht
@@ -56,8 +62,8 @@ public class FileUploadService {
      */
     @SuppressWarnings("unchecked")
     public Object dealUploadFile(String uploadFileName, HttpSession session) throws Exception {
+        this.session=session;
         int fileType = getFileType(uploadFileName);
-        this.session = session;
         /**文件类型，要用于表判断返回来的workbook类型*/
         File excelFile = new File(uploadFileName);
         /**得到md和delIndex构成的map*/
@@ -101,6 +107,23 @@ public class FileUploadService {
             e.printStackTrace();
         }finally{
             CommonUtils.closeConn(conn, null, null);
+        }
+    }
+    @Resource(name="defaultDAO")
+    private MybatisDAO<TableMapOrg> tmoDao;
+    public void saveUploadFileInfo(Map<String, Object> uploadInfoMap) {
+        tmoDao.setNamespace("fileUploadLog");
+        try {
+            UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+            FileUploadLog ful = new FileUploadLog();
+            ful.setcFileName((String)uploadInfoMap.get("storeFilename"));
+            ful.setcTime(new Date());
+            ful.setOwnerId(user.getUserId());
+            ful.setFileSize((Integer)uploadInfoMap.get("size"));
+            ful.setId(SequenceUUID.getUUID());
+            tmoDao.insert(ful);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
