@@ -34,8 +34,7 @@
     <property name="configLocations">
       <list merge="default">
         <value>classpath*:mybatisConfig/frameworkMybatis.xml</value>
-        <value>classpath*:mybatisConfig/UGA.mappers.cfg.xml</value>
-        <value>classpath*:mybatisConfig/SpiritAnalysis.mappers.cfg.xml</value>
+        <value>classpath*:mybatisConfig/*.mappers.cfg.xml</value>
       </list>
     </property>
     <!--备选方案

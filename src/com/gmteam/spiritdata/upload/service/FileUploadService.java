@@ -122,8 +122,7 @@ public class FileUploadService {
             UgaUser  user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
             if(user==null)ful.setOwnerId(session.getId());
             ful.setsFileName((String)uploadInfoMap.get("storeFilename"));
-            ful.setcFileName("AAAAAA");
-            ful.setcTime(new Date());
+            ful.setcFileName((String)uploadInfoMap.get("orglFilename"));
             ful.setFileSize((Long)uploadInfoMap.get("size"));
             ful.setId(SequenceUUID.getUUID());
             fulDao.insert(ful);
