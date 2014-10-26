@@ -77,11 +77,9 @@ public class FileUploadService {
         while(it.hasNext()){
             SheetInfo sheetInfo = it.next();
             Map<String,Object> valMap = (Map<String, Object>) rstMap.get(sheetInfo);
-            //delIndex
-            Map<Integer,Integer> delIndexMap = (Map<Integer, Integer>) valMap.get("delIndexMap");
             //md
-            MetadataModel sheetMd = (MetadataModel) valMap.get("metadataModel");
-            saveData(sheetInfo,delIndexMap,sheetMd);
+            MetadataModel oldMD = (MetadataModel) valMap.get("metadataModel");
+            saveData(sheetInfo,oldMD);
         }
         /**logTabOrg*/
         return null;
@@ -96,7 +94,7 @@ public class FileUploadService {
      * @param delIndexMap
      * @param oldMD
      */
-    private void saveData(SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD) {
+    private void saveData(SheetInfo sheetInfo, MetadataModel oldMD) {
         TableMapOrg[] tabMapOrgAry;
         Connection conn = null;
         try {
@@ -105,16 +103,16 @@ public class FileUploadService {
             tabMapOrgAry = mdService.storeMdModel4Import(oldMD);
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
             MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
-            PoiUtils.saveInDB(conn,sheetInfo,delIndexMap,oldMD,newMD,tabMapOrgAry);
+            PoiUtils.saveInDB(conn,sheetInfo,oldMD,newMD,tabMapOrgAry);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
             CommonUtils.closeConn(conn, null, null);
         }
     }
-    @Resource(name="defaultDAO")
+    @Resource
     private MybatisDAO<FileUploadLog> fulDao;
-    public void saveUploadFileInfo(Map<String, Object> uploadInfoMap) {
+    private void saveUploadFileInfo(Map<String, Object> uploadInfoMap) {
         fulDao.setNamespace("fileUploadLog");
         try {
             FileUploadLog ful = new FileUploadLog();

@@ -34,17 +34,9 @@ import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
  * 类说明 用于得到Md
  */
 public class PoiUtils {
-    public static Map<String,Object> saveInDB(Connection conn, SheetInfo sheetInfo,Map<Integer, Integer> delIndexMap, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
+    public static Map<String,Object> saveInDB(Connection conn, SheetInfo sheetInfo, MetadataModel oldMD,MetadataModel newMD, TableMapOrg[] tabMapOrgAry) {
         List<MetadataColumn> oldMdColList = oldMD.getColumnList();
         List<MetadataColumn> newMdColList = newMD.getColumnList();
-        //k=newIndex,val=oldIndex
-        Map<Integer,Integer> newOldIndexOrgMap = new HashMap<Integer,Integer>();
-        int size = oldMdColList.size();
-        int[] newIndexAry = new int[size];
-        for(int i=0;i<size;i++){
-            newIndexAry[i] = newMdColList.get(i).getColumnIndex();
-            newOldIndexOrgMap.put(newMdColList.get(i).getColumnIndex(), oldMdColList.get(i).getColumnIndex());
-        }
         //计算对应表
         List<Integer> l = new ArrayList<Integer>();
         for (MetadataColumn mcN: newMdColList) {
@@ -77,8 +69,6 @@ public class PoiUtils {
      * @param conn
      * @param sheetInfo
      * @param delIndexMap
-     * @param newOldIndexOrgMap
-     * @param newIndexAry
      * @param sumSql
      */
     private static void saveSumData(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String sumTabSql) {
@@ -197,6 +187,7 @@ public class PoiUtils {
                 if(rows>1){
                     XSSFSheet xSheet = (XSSFSheet) sheet;
                     XSSFRow xRow = xSheet.getRow(0);
+                    if (xRow==null) continue;
                     /**init sheetInfo*/
                     sheetInfo.setSheetIndex(sheetIndex);
                     sheetInfo.setSheetName(xSheet.getSheetName());
