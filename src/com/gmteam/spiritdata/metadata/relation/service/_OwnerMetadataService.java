@@ -40,9 +40,10 @@ public class _OwnerMetadataService {
         _OwnerMetadata _om = new _OwnerMetadata(ownerId, ownerType);
         session.setAttribute(SDConstants.SESSION_OWNERRMDUNIT, _om);
         //启动加载线程
-        //loadDataThread lm = new loadDataThread(session, this);
-        //Thread t = new Thread(lm);
-        //t.start();
+        loadDataThread lm = new loadDataThread(session, this);
+        Thread t = new Thread(lm);
+        t.start();
+        /**
         {
             _om.mdModelMap = new ConcurrentHashMap<String, MetadataModel>();
             
@@ -94,8 +95,7 @@ public class _OwnerMetadataService {
             } catch(Exception e) {
                 e.printStackTrace();
             }
-            
-        }
+        }*/
     }
 
     /**
@@ -191,6 +191,7 @@ class loadDataThread implements Runnable {
             _om.mcsList = mcsList;
 
             _om.setLoadSuccess();
+            System.out.println("ddddd==================================ddd");
         } catch(Exception e) {
             e.printStackTrace();
         }
