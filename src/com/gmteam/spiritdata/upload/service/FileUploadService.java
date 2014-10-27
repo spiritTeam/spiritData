@@ -84,11 +84,7 @@ public class FileUploadService {
             //md
             MetadataModel oldMD = (MetadataModel) valMap.get("metadataModel");
             saveData(sheetInfo,oldMD);
-            /**logTabOrg*/
-            
         }
-        /**logTabOrg*/
-        System.out.println("003============================"+(new Date()).getTime());
         return null;
     }
     @Resource
@@ -110,9 +106,9 @@ public class FileUploadService {
             tabMapOrgAry = mdService.storeMdModel4Import(oldMD);
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
             MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
+            //logTabOrg
             saveLogTabOrg(newMD,sheetInfo,tabMapOrgAry);
             PoiUtils.saveInDB(conn,sheetInfo,oldMD,newMD,tabMapOrgAry);
-            //logTabOrg
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
@@ -147,11 +143,9 @@ public class FileUploadService {
         fulDao.setNamespace("fileUploadLog");
         try {
             FileUploadLog ful = new FileUploadLog();
-
             ful.setOwnerId(session.getId());
             UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
             if(user==null) ful.setOwnerId(session.getId());
-
             ful.setsFileName((String)uploadInfoMap.get("storeFilename"));
             ful.setcFileName((String)uploadInfoMap.get("orglFilename"));
             ful.setFileSize((Long)uploadInfoMap.get("size"));
