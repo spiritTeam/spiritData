@@ -60,13 +60,8 @@ public class PoiUtils {
         }
         StringBuffer tempTabSql=new StringBuffer().append("insert into "+tempTabName+"(").append(fieldStr.substring(1)+") values(").append(valueStr.substring(1)+")");
         StringBuffer sumTabSql=new StringBuffer().append("insert into "+sumTabName+"(").append(fieldStr.substring(1)+") values(").append(valueStr.substring(1)+")");
-        Date dS = new Date();
         //先插临时表，在插积累表，要通过积累表来分析主键
-        System.out.println("start save temp");
         saveTempData(conn, sheetInfo, l, tempTabSql.toString());
-        Date dE = new Date();
-        System.out.println("end save temp");
-        System.out.println("DS=="+dS+"---"+"DE=="+dE);
         saveSumData(conn, sheetInfo, l, sumTabSql.toString());
         return null;
     }
@@ -141,8 +136,7 @@ public class PoiUtils {
                             tempPs.setObject(j, getCellValue(cell));
                             j++;
                         }
-                        tempPs.addBatch();
-                        //tempPs.execute();
+                        tempPs.execute();
                     }catch(Exception eX){
                         eX.printStackTrace();
                     }
