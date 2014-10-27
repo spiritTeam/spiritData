@@ -19,6 +19,7 @@ import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
+import com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
@@ -80,8 +81,9 @@ public class FileUploadService {
             //md
             MetadataModel oldMD = (MetadataModel) valMap.get("metadataModel");
             saveData(sheetInfo,oldMD);
+            /**logTabOrg*/
+            
         }
-        /**logTabOrg*/
         return null;
     }
     @Resource
@@ -103,11 +105,35 @@ public class FileUploadService {
             tabMapOrgAry = mdService.storeMdModel4Import(oldMD);
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
             MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
+            saveLogTabOrg(newMD,sheetInfo,tabMapOrgAry);
             PoiUtils.saveInDB(conn,sheetInfo,oldMD,newMD,tabMapOrgAry);
+            //logTabOrg
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
             CommonUtils.closeConn(conn, null, null);
+        }
+    }
+    @Resource
+    private MybatisDAO<UploadLogTableOrg> ultoDao;
+    private void saveLogTabOrg(MetadataModel newMD, SheetInfo sheetInfo, TableMapOrg[] tabMapOrgAry) {
+        ultoDao.setNamespace("uploadLogTableOrg");
+        String ownerId = newMD.getOwnerId();
+        int sheetIndex = sheetInfo.getSheetIndex();
+        String sheetName = sheetInfo.getSheetName();
+        for(TableMapOrg tmo :tabMapOrgAry){
+            try {
+                UploadLogTableOrg ulto = new UploadLogTableOrg();
+                ulto.setId(SequenceUUID.getUUID());
+                ulto.setSheetIndex(sheetIndex);
+                ulto.setSheetName(sheetName);
+                ulto.setUfId(ownerId);
+                ulto.setTmoId(tmo.getId());
+                ulto.setTmId(tmo.getMdMId());
+                ultoDao.insert(ulto);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     @Resource

@@ -2,20 +2,24 @@ package com.gmteam.spiritdata.importdata.excel.pojo;
 
 import java.util.Date;
 
-public class UploadLogTableOrg {
+import com.gmteam.framework.core.model.BaseObject;
+
+public class UploadLogTableOrg extends BaseObject{
+    private static final long serialVersionUID = 1L;
+
     private String id;
 
-    private String ufid;
+    private String ufId;
 
-    private String tmoid;
+    private String tmoId;
 
-    private String tmid;
+    private String tmId;
 
-    private String sheetname;
+    private String sheetName;
 
-    private Integer sheetindex;
+    private Integer sheetIndex;
 
-    private Date ctime;
+    private Date cTime;
 
     public String getId() {
         return id;
@@ -25,51 +29,52 @@ public class UploadLogTableOrg {
         this.id = id;
     }
 
-    public String getUfid() {
-        return ufid;
+    public String getUfId() {
+        return ufId;
     }
 
-    public void setUfid(String ufid) {
-        this.ufid = ufid;
+    public void setUfId(String ufId) {
+        this.ufId = ufId;
     }
 
-    public String getTmoid() {
-        return tmoid;
+    public String getTmoId() {
+        return tmoId;
     }
 
-    public void setTmoid(String tmoid) {
-        this.tmoid = tmoid;
+    public void setTmoId(String tmoId) {
+        this.tmoId = tmoId;
     }
 
-    public String getTmid() {
-        return tmid;
+    public String getTmId() {
+        return tmId;
     }
 
-    public void setTmid(String tmid) {
-        this.tmid = tmid;
+    public void setTmId(String tmId) {
+        this.tmId = tmId;
     }
 
-    public String getSheetname() {
-        return sheetname;
+    public String getSheetName() {
+        return sheetName;
     }
 
-    public void setSheetname(String sheetname) {
-        this.sheetname = sheetname;
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
     }
 
-    public Integer getSheetindex() {
-        return sheetindex;
+    public Integer getSheetIndex() {
+        return sheetIndex;
     }
 
-    public void setSheetindex(Integer sheetindex) {
-        this.sheetindex = sheetindex;
+    public void setSheetIndex(Integer sheetIndex) {
+        this.sheetIndex = sheetIndex;
     }
 
-    public Date getCtime() {
-        return ctime;
+    public Date getcTime() {
+        return cTime;
     }
 
-    public void setCtime(Date ctime) {
-        this.ctime = ctime;
+    public void setcTime(Date cTime) {
+        this.cTime = cTime;
     }
+    
 }

@@ -51,7 +51,7 @@ public class PoiUtils {
         String sumTabName = tabMapOrgAry[0].getTableName();
         //临时表
         String tempTabName = tabMapOrgAry[1].getTableName();
-
+        System.out.println("sumTabName=="+sumTabName+"tempTabName=="+tempTabName);
         //得到sql
         StringBuffer fieldStr = new StringBuffer(), valueStr=new StringBuffer();
         for (MetadataColumn mc: newMdColList) {
@@ -60,8 +60,14 @@ public class PoiUtils {
         }
         StringBuffer tempTabSql=new StringBuffer().append("insert into "+tempTabName+"(").append(fieldStr.substring(1)+") values(").append(valueStr.substring(1)+")");
         StringBuffer sumTabSql=new StringBuffer().append("insert into "+sumTabName+"(").append(fieldStr.substring(1)+") values(").append(valueStr.substring(1)+")");
-        saveSumData(conn, sheetInfo, l, sumTabSql.toString());
+        Date dS = new Date();
+        //先插临时表，在插积累表，要通过积累表来分析主键
+        System.out.println("start save temp");
         saveTempData(conn, sheetInfo, l, tempTabSql.toString());
+        Date dE = new Date();
+        System.out.println("end save temp");
+        System.out.println("DS=="+dS+"---"+"DE=="+dE);
+        saveSumData(conn, sheetInfo, l, sumTabSql.toString());
         return null;
     }
     /**
@@ -135,10 +141,13 @@ public class PoiUtils {
                             tempPs.setObject(j, getCellValue(cell));
                             j++;
                         }
+                        tempPs.addBatch();
                         tempPs.execute();
                     }catch(Exception eX){
                         eX.printStackTrace();
                     }
+                    tempPs.executeBatch();
+                    tempPs.clearBatch();
                 }
             } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
                 sheet = (HSSFSheet)sheetInfo.getSheet();
@@ -277,7 +286,7 @@ public class PoiUtils {
          * 首先获得便于得到Md的结构
          */
         Map<Integer,Map<String,List<CellPrama>>> recordMap = new HashMap<Integer,Map<String,List<CellPrama>>>();
-        if(dataRows>2&&dataRows<101){
+        if(dataRows>2&&dataRows<=101){
             /**小于100条数据的时候*/
             for(int x=0;x<dataRows-1;x++){
                 XSSFRow xRow = sheet.getRow(x);
