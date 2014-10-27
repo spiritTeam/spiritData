@@ -36,66 +36,13 @@ public class _OwnerMetadataService {
      * @param ownerType 所有者类型
      * @param session session
      */
-    public synchronized void loadData2Session(String ownerId, int ownerType, HttpSession session) {
+    public void loadData2Session(String ownerId, int ownerType, HttpSession session) {
         _OwnerMetadata _om = new _OwnerMetadata(ownerId, ownerType);
         session.setAttribute(SDConstants.SESSION_OWNERRMDUNIT, _om);
         //启动加载线程
         loadDataThread lm = new loadDataThread(session, this);
         Thread t = new Thread(lm);
         t.start();
-        /**
-        {
-            _om.mdModelMap = new ConcurrentHashMap<String, MetadataModel>();
-            
-            try {
-                List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId(ownerId);
-                List<MetadataColumn> mcList = null;
-                List<MetadataColSemanteme> mcsList = null;
-                
-                if (mmList!=null&&mmList.size()>0) {
-                    mcList = mdBasisService.getMdColListByOwnerId(ownerId);
-                    mcsList = mdBasisService.getMdColSemantemeListByOwnerId(ownerId);
-                    for (int i=mmList.size()-1; i>=0; i--) {
-                        MetadataModel mm = mmList.get(i);
-                        if (mm.getOwnerType()!=ownerType) {
-                            mmList.remove(i);
-                            continue;
-                        }
-                        if (mcList!=null&&mcList.size()>0) {
-                            for (MetadataColumn mdc: mcList) {
-                                if (mdc.getMdMId().equals(mm.getId())) {
-                                    mm.addColumn(mdc);
-                                    if (mcsList!=null&&mcsList.size()>0) {
-                                        for (MetadataColSemanteme mcs: mcsList) {
-                                            if (mcs.getColId().equals(mdc.getId())) mdc.setColSem(mcs);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        _om.mdModelMap.put(mm.getId(), mm);
-                    }
-                    mcList = new ArrayList<MetadataColumn>();
-                    mcsList = new ArrayList<MetadataColSemanteme>();
-                    for (String mdMId: _om.mdModelMap.keySet()) {
-                        List<MetadataColumn> _mcl = ((MetadataModel)_om.mdModelMap.get(mdMId)).getColumnList();
-                        if (_mcl!=null&&_mcl.size()>0) {
-                            mcList.addAll(((MetadataModel)_om.mdModelMap.get(mdMId)).getColumnList());
-                            for (MetadataColumn mc: mcList) {
-                                if (mc.getColSem()!=null)  mcsList.add(mc.getColSem());
-                            }
-                        }
-                    }
-                }
-                _om.mmList = mmList;
-                _om.mcList = mcList;
-                _om.mcsList = mcsList;
-
-                _om.setLoadSuccess();
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }*/
     }
 
     /**

@@ -2,6 +2,7 @@ package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -63,6 +64,7 @@ public class FileUploadService {
     public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
         this.session=session;
         /** fileInfo*/
+        System.out.println("001============================"+(new Date()).getTime());
         saveUploadFileInfo(uploadInfoMap);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         int fileType = getFileType(uploadFileName);
@@ -72,6 +74,7 @@ public class FileUploadService {
         Map<SheetInfo,Object> rstMap = new HashMap<SheetInfo,Object>();
         workBookProxy = new WorkBookProxy(excelFile,fileType);
         rstMap = (Map<SheetInfo, Object>) workBookProxy.getMDMap();
+        System.out.println("002============================"+(new Date()).getTime());
         //分别取出delIndex和metadata
         Iterator<SheetInfo> it = rstMap.keySet().iterator();
         while(it.hasNext()){
@@ -82,6 +85,7 @@ public class FileUploadService {
             saveData(sheetInfo,oldMD);
         }
         /**logTabOrg*/
+        System.out.println("003============================"+(new Date()).getTime());
         return null;
     }
     @Resource
@@ -116,8 +120,11 @@ public class FileUploadService {
         fulDao.setNamespace("fileUploadLog");
         try {
             FileUploadLog ful = new FileUploadLog();
-            UgaUser  user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-            if(user==null)ful.setOwnerId(session.getId());
+
+            ful.setOwnerId(session.getId());
+            UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+            if(user==null) ful.setOwnerId(session.getId());
+
             ful.setsFileName((String)uploadInfoMap.get("storeFilename"));
             ful.setcFileName((String)uploadInfoMap.get("orglFilename"));
             ful.setFileSize((Long)uploadInfoMap.get("size"));

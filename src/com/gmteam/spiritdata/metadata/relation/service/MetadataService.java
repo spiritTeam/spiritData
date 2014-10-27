@@ -1,5 +1,6 @@
 package com.gmteam.spiritdata.metadata.relation.service;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -94,7 +95,9 @@ public class MetadataService {
             _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
         }
         if (_om==null) new Exception("从session中不能取得所有者数据模型，未知错误！");
-        while (!_om.isLoadSuccess()) ; //等待执行，这个用线程间通信更好
+        while (!_om.isLoadSuccess()) {
+            Thread.sleep(100);
+        }
         //比较是否存储在
         Map<String, MetadataModel> mmMap = _om.mdModelMap;
         
