@@ -31,7 +31,7 @@
     delete from sa_imp_tablog_org
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insertSelective" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg" >
+  <insert id="insert" parameterType="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg" >
     insert into sa_imp_tablog_org
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

@@ -31,5 +31,9 @@ public class ExcelConstants extends BaseObject{
     public final static int EXCEL_FILE_TYPE_XSSF = 1;
     /**Excel文件类型，HSSF，对应2003版本*/
     public final static int EXCEL_FILE_TYPE_HSSF = 2;
+    /**数据抽取数量常量*/
+    public final static int DATA_ = 100;
+    //TODO
+    
 }
  
