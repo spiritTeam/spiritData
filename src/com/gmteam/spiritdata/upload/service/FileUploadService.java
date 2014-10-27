@@ -65,7 +65,7 @@ public class FileUploadService {
     public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
         this.session=session;
         /** fileInfo*/
-        System.out.println("001============================"+(new Date()).getTime());
+//        System.out.println("001============================"+(new Date()).getTime());
         saveUploadFileInfo(uploadInfoMap);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         int fileType = getFileType(uploadFileName);
@@ -75,7 +75,7 @@ public class FileUploadService {
         Map<SheetInfo,Object> rstMap = new HashMap<SheetInfo,Object>();
         workBookProxy = new WorkBookProxy(excelFile,fileType);
         rstMap = (Map<SheetInfo, Object>) workBookProxy.getMDMap();
-        System.out.println("002============================"+(new Date()).getTime());
+//        System.out.println("002============================"+(new Date()).getTime());
         //分别取出delIndex和metadata
         Iterator<SheetInfo> it = rstMap.keySet().iterator();
         while(it.hasNext()){
@@ -88,7 +88,7 @@ public class FileUploadService {
             
         }
         /**logTabOrg*/
-        System.out.println("003============================"+(new Date()).getTime());
+//        System.out.println("003============================"+(new Date()).getTime());
         return null;
     }
     @Resource

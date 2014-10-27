@@ -142,13 +142,13 @@ public class PoiUtils {
                             j++;
                         }
                         tempPs.addBatch();
-                        tempPs.execute();
+                        //tempPs.execute();
                     }catch(Exception eX){
                         eX.printStackTrace();
                     }
-                    tempPs.executeBatch();
-                    tempPs.clearBatch();
                 }
+                tempPs.executeBatch();
+                tempPs.clearBatch();
             } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
                 sheet = (HSSFSheet)sheetInfo.getSheet();
                 int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;

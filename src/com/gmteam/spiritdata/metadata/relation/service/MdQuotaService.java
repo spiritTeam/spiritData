@@ -232,4 +232,13 @@ public class MdQuotaService {
         return qt;
     }
 
+    /**
+     * 根据表名，得到该表的指标信息
+     * @param tableName
+     * @return
+     */
+    public QuotaTable getQuotaInfo(String tableName) {
+        
+        return null;
+    }
 }
