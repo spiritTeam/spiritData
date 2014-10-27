@@ -19,6 +19,8 @@
   <context:component-scan base-package="com.gmteam.spiritdata" use-default-filters="false">
     <context:include-filter type="regex" expression=".*.service.*Service"/>
   </context:component-scan>
+  <context:component-scan base-package="com.gmteam.spiritdata.metadata.relation.semanteme.func" use-default-filters="true">
+  </context:component-scan>
 
   <!--业务缓存
   <bean id="dataToolsCacheManager" class="com.gmteam.datatools.dtcache.DataToolsCacheLifecycleUnit"/>-->

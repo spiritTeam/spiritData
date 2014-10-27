@@ -477,10 +477,10 @@ public class PoiUtils {
         Random r = new Random();
         for(int i=0;i<randomSize;i++){
             int k = r.nextInt(randomRange-1)+1;
-            if(randomMap.get(k)==null&&k<randomRange){
-                randomMap.put(k, k);
-                rdmAry[i] = k;
+            while (randomMap.get(k)!=null||k>randomRange) {
+                k = r.nextInt(randomRange-1)+1; 
             }
+            rdmAry[i] = k;
         }
         return rdmAry;
     }
@@ -561,7 +561,7 @@ public class PoiUtils {
     /** 得到单元格类型为XSSFCELL的valType,*/  
     private static String getCellValueType(XSSFCell xCell) { 
         if (xCell == null)
-            return "null";
+            return "Null";
         String type = null;  
         if (xCell != null) {  
             int cellType = xCell.getCellType();  
@@ -597,7 +597,7 @@ public class PoiUtils {
     /** 得到单元格类型为HSSFCELL的valType,*/  
     private static String getCellValueType(HSSFCell hCell) { 
         if (hCell == null)
-            return "null";
+            return "Null";
         String type = null;  
         if (hCell != null) {  
             int cellType = hCell.getCellType();  

@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.stereotype.Component;
 
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
@@ -27,6 +28,8 @@ import com.gmteam.spiritdata.util.SequenceUUID;
  * 计算表指标的服务，此服务直接从数据库中读取信息，而不从session中读取数据
  * @author wh
  */
+
+@Component
 public class MdQuotaService {
     @Resource
     private BasicDataSource dataSource;
@@ -101,7 +104,7 @@ public class MdQuotaService {
     private QuotaTable caculateQuota(MetadataModel mm, String tableName, String tmoId) throws SQLException, Exception {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
 
-        QuotaTable qt = new QuotaTable();
+        QuotaTable qt = null;
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -234,11 +237,21 @@ public class MdQuotaService {
 
     /**
      * 根据表名，得到该表的指标信息
-     * @param tableName
-     * @return
+     * @param tableName 表名
+     * @param mdMId 元数据模式Id 
+     * @return 指标信息
      */
-    public QuotaTable getQuotaInfo(String tableName) {
-        
-        return null;
+    public QuotaTable getQuotaInfo(String tableName, String mdMId) throws Exception {
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("tmId", mdMId);
+        param.put("tableName", tableName);
+        QuotaTable ret = qtDao.getInfoObject(param);
+        if (ret!=null) {
+            param.clear();
+            param.put("tqId", ret.getId());
+            List<QuotaColumn> qcl = qcDao.queryForList(param);
+            ret.setColQuotaList(qcl);
+        }
+        return ret;
     }
 }

@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.metadata.semanteme;
+package com.gmteam.spiritdata.metadata.relation.semanteme;
 
 import java.util.Map;
 

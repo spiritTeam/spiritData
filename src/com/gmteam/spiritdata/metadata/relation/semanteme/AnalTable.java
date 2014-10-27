@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.metadata.semanteme;
+package com.gmteam.spiritdata.metadata.relation.semanteme;
 
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
@@ -14,6 +14,7 @@ public interface AnalTable {
      * @param tableName 表名
      * @param md 元数据
      * @return Map<Integer, Float>，此返回值只能是一行，key为语义编号，float是相似度
+     * @throws Exception 
      */
-    public Object scanOneTable(String tableName, MetadataModel md);
+    public Object scanOneTable(String tableName, MetadataModel mm) throws Exception;
 }

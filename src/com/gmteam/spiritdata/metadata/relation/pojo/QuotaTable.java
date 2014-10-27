@@ -83,17 +83,18 @@ public class QuotaTable extends BaseObject {
     public List<QuotaColumn> getColQuotaList() {
         return colQuotaList;
     }
-    public void setColQuotaList(List<QuotaColumn> colQuotaList) {
-        this.colQuotaList = colQuotaList;
+    public void setColQuotaList(List<QuotaColumn> colQuotaList) throws Exception {
+        if (colQuotaList!=null&&colQuotaList.size()>0) {
+            for (QuotaColumn qc: colQuotaList) this.addColumn(qc);
+        }
     }
-
 
     /**
      * 插入列指标对象到列指标列表
      * @param cq 被插入的列指标对象，其中tqId/tabQuota可以省略，本对象的tqId/tabQuota将填入参数cq
      * @throws Exception
      */
-    public void addColumn(QuotaColumn qc) throws Exception{
+    public void addColumn(QuotaColumn qc) throws Exception {
         if (qc==null) return;
         if (qc.getId().equals(null)) throw new Exception("列指标Id不能为空");
         if (qc.getColumn()==null) throw new Exception("列描述不能为空");

@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.metadata.semanteme;
+package com.gmteam.spiritdata.metadata.relation.semanteme;
 
 public class SemantemeType {
      public static int DICT=1; //字典类型
