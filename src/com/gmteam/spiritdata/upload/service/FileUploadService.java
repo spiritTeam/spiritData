@@ -65,18 +65,28 @@ public class FileUploadService {
         this.session=session;
         /** fileInfo*/
 //        System.out.println("001============================"+(new Date()).getTime());
+        //001记录文件上传日志
         saveUploadFileInfo(uploadInfoMap);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         int fileType = getFileType(uploadFileName);
-        /**文件类型，要用于表判断返回来的workbook类型*/
+        //文件类型，要用于表判断返回来的workbook类型*/
         File excelFile = new File(uploadFileName);
-        /**得到md和delIndex构成的map*/
+        //得到md和delIndex构成的map*/
         Map<SheetInfo,Object> rstMap = new HashMap<SheetInfo,Object>();
         workBookProxy = new WorkBookProxy(excelFile,fileType);
+        //002分析metadata
         rstMap = (Map<SheetInfo, Object>) workBookProxy.getMDMap();
 //        System.out.println("002============================"+(new Date()).getTime());
         //分别取出delIndex和metadata
         Iterator<SheetInfo> it = rstMap.keySet().iterator();
+        //003存储临时表
+        //004分析临时表指标
+        //005分析主键
+        //006存储积累表{根据上面的结果设置主键}
+        //007分析积累表指标
+        //008分析元数据语义
+        
+        //003存数据
         while(it.hasNext()){
             SheetInfo sheetInfo = it.next();
             Map<String,Object> valMap = (Map<String, Object>) rstMap.get(sheetInfo);
