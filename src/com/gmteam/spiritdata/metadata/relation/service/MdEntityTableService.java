@@ -59,7 +59,7 @@ public class MdEntityTableService {
                 columnStr += mc.getColumnName()+" "+mc.getColumnType();
             }
             if (mc.getTitleName()!=null&&!mc.getTitleName().equals("")) columnStr += " COMMENT '"+mc.getTitleName()+"'";
-            if (mc.getIsPk()==1) pks.add(mc);
+            if (mc.isPk()) pks.add(mc);
         }
         columnStr = columnStr.substring(1);
         if (pks.size()>0) {

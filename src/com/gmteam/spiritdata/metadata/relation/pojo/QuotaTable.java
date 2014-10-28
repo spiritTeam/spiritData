@@ -107,6 +107,7 @@ public class QuotaTable extends BaseObject {
             if (_c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列指标对象，不同重复添加！");
             if (_c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列指标对象，不同重复添加！");
         }
+        qc.setTabQuota(this);
         this.colQuotaList.add(qc);
     }
 
