@@ -116,7 +116,7 @@ public class FileUploadService {
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
             MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
             //logTabOrg
-            saveLogTabOrg(newMD,sheetInfo,tabMapOrgAry);
+            saveLogTabOrg(newMD,sheetInfo,tabMapOrgAry[1]);
             PoiUtils.saveInDB(conn,sheetInfo,oldMD,newMD,tabMapOrgAry);
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,24 +126,22 @@ public class FileUploadService {
     }
     @Resource
     private MybatisDAO<UploadLogTableOrg> ultoDao;
-    private void saveLogTabOrg(MetadataModel newMD, SheetInfo sheetInfo, TableMapOrg[] tabMapOrgAry) {
+    private void saveLogTabOrg(MetadataModel newMD, SheetInfo sheetInfo, TableMapOrg tabMapOrg) {
         ultoDao.setNamespace("uploadLogTableOrg");
         String ownerId = newMD.getOwnerId();
         int sheetIndex = sheetInfo.getSheetIndex();
         String sheetName = sheetInfo.getSheetName();
-        for(TableMapOrg tmo :tabMapOrgAry){
-            try {
-                UploadLogTableOrg ulto = new UploadLogTableOrg();
-                ulto.setId(SequenceUUID.getUUID());
-                ulto.setSheetIndex(sheetIndex);
-                ulto.setSheetName(sheetName);
-                ulto.setUfId(ownerId);
-                ulto.setTmoId(tmo.getId());
-                ulto.setTmId(tmo.getMdMId());
-                ultoDao.insert(ulto);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            UploadLogTableOrg ulto = new UploadLogTableOrg();
+            ulto.setId(SequenceUUID.getUUID());
+            ulto.setSheetIndex(sheetIndex);
+            ulto.setSheetName(sheetName);
+            ulto.setUfId(ownerId);
+            ulto.setTmoId(tabMapOrg.getId());
+            ulto.setTmId(tabMapOrg.getMdMId());
+            ultoDao.insert(ulto);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     @Resource

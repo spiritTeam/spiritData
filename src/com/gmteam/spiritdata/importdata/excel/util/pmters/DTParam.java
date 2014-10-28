@@ -4,13 +4,22 @@ package com.gmteam.spiritdata.importdata.excel.util.pmters;
  * @version mht  
  * 类说明  包含最多的类型，空的个数，以及比重
  */
-public class DTPrama {
-    /**type最多的类型*/
+public class DTParam {
+    //错误类型的
+    private int errorNum;
+    //type最多的类型
     private String dataType;
-    /**比重*/
-    private int proportion;
-    /**空的个数*/
+    //比重
+    private double proportion;
+    //空的个数
     private int nullNum;
+    
+    public int getErrorNum() {
+        return errorNum;
+    }
+    public void setErrorNum(int errorNum) {
+        this.errorNum = errorNum;
+    }
     public String getDataType() {
         return dataType;
     }
@@ -23,11 +32,10 @@ public class DTPrama {
     public void setNullNum(int nullNum) {
         this.nullNum = nullNum;
     }
-    public int getProportion() {
+    public double getProportion() {
         return proportion;
     }
-    public void setProportion(int proportion) {
+    public void setProportion(double proportion) {
         this.proportion = proportion;
     }
-    
 }
