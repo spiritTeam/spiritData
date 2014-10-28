@@ -7,7 +7,7 @@ package com.gmteam.spiritdata.importdata.excel.util.pmters;
  * 左上为原点，x为对应行对应顺序，
  * y为列对应顺序
  */
-public class CellPrama {
+public class CellParam {
     /**横坐标*/
     private int x;
     /**纵坐标*/

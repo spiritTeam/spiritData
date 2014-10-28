@@ -23,8 +23,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
-import com.gmteam.spiritdata.importdata.excel.util.pmters.CellPrama;
-import com.gmteam.spiritdata.importdata.excel.util.pmters.DTPrama;
+import com.gmteam.spiritdata.importdata.excel.util.pmters.CellParam;
+import com.gmteam.spiritdata.importdata.excel.util.pmters.DTParam;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
@@ -253,18 +253,20 @@ public class PoiUtils {
      * 设定记录结构
      * @return
      */
-    public static Map<String,List<CellPrama>> getTypeMap() {
-        Map<String,List<CellPrama>> typeMap = new HashMap<String, List<CellPrama>>();
-        List<CellPrama> dateList = new ArrayList<CellPrama>();
+    public static Map<String,List<CellParam>> getTypeMap() {
+        Map<String,List<CellParam>> typeMap = new HashMap<String, List<CellParam>>();
+        List<CellParam> dateList = new ArrayList<CellParam>();
         typeMap.put(ExcelConstants.DATA_TYPE_DATE,dateList );
-        List<CellPrama> stringList = new ArrayList<CellPrama>();
+        List<CellParam> stringList = new ArrayList<CellParam>();
         typeMap.put(ExcelConstants.DATA_TYPE_STRING,stringList );
-        List<CellPrama> booleanList = new ArrayList<CellPrama>();
+        List<CellParam> booleanList = new ArrayList<CellParam>();
         typeMap.put(ExcelConstants.DATA_TYPE_BOOLEAN, booleanList);
-        List<CellPrama> doubleList = new ArrayList<CellPrama>();
+        List<CellParam> doubleList = new ArrayList<CellParam>();
         typeMap.put(ExcelConstants.DATA_TYPE_DOUBLE, doubleList);
-        List<CellPrama> nullList = new ArrayList<CellPrama>();
+        List<CellParam> nullList = new ArrayList<CellParam>();
         typeMap.put(ExcelConstants.DATA_TYPE_NULL, nullList);
+        List<CellParam> errorList = new ArrayList<CellParam>();
+        typeMap.put(ExcelConstants.DATA_TYPE_ERROR, errorList);
         return typeMap;
     }
     /**
@@ -279,45 +281,43 @@ public class PoiUtils {
         /**
          * 首先获得便于得到Md的结构
          */
-        Map<Integer,Map<String,List<CellPrama>>> recordMap = new HashMap<Integer,Map<String,List<CellPrama>>>();
-        if(dataRows>2&&dataRows<=101){
+        Map<Integer,Map<String,List<CellParam>>> recordMap = new HashMap<Integer,Map<String,List<CellParam>>>();
+        if(dataRows>2&&dataRows<=ExcelConstants.DATA_ROWS_CRITICAL_POINT){
             /**小于100条数据的时候*/
             for(int x=0;x<dataRows-1;x++){
                 XSSFRow xRow = sheet.getRow(x);
                 for(int y=0;y<xRow.getLastCellNum();y++){
-                    Map<String,List<CellPrama>> typeMap = recordMap.get(y);
+                    Map<String,List<CellParam>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
                     /**cp赋值*/
-                    CellPrama cp = new CellPrama();
+                    CellParam cp = new CellParam();
                     cp.setX(x);
                     cp.setY(y);
                     XSSFCell xCell = xRow.getCell(y);
                     String dataType= getCellValueType(xCell);
                     cp.setDataType(dataType);
-                    List<CellPrama> cpList = typeMap.get(dataType);
+                    List<CellParam> cpList = typeMap.get(dataType);
                     cpList.add(cp);
                     recordMap.put(y, typeMap);
                 }
             }
             retMap = getDataTypes(recordMap,dataRows-1,titleAry);
-        }else if(dataRows>101){
+        }else if(dataRows>ExcelConstants.DATA_ROWS_CRITICAL_POINT){
             /**大于100条数据的时候*/
             int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE);
             for(int x=0;x<randoms.length;x++){
                 XSSFRow xRow = sheet.getRow(randoms[x]);
                 for(int y=0;y<xRow.getLastCellNum();y++){
-                    System.out.println("x=="+randoms[x]+"---y==="+y);
-                    Map<String,List<CellPrama>> typeMap = recordMap.get(y);
+                    Map<String,List<CellParam>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
                     /**cp赋值*/
-                    CellPrama cp = new CellPrama();
+                    CellParam cp = new CellParam();
                     cp.setX(randoms[x]);
                     cp.setY(y);
                     XSSFCell xCell = xRow.getCell(y);
                     String dataType= getCellValueType(xCell);
                     cp.setDataType(dataType);
-                    System.out.println("dataType = "+dataType);
-                    List<CellPrama> cpList = typeMap.get(dataType);
+                    List<CellParam> cpList = typeMap.get(dataType);
                     cpList.add(cp);
                     recordMap.put(y, typeMap);
                 }
@@ -340,43 +340,43 @@ public class PoiUtils {
         /**
          * 首先获得便于得到Md的结构
          */
-        Map<Integer,Map<String,List<CellPrama>>> recordMap = new HashMap<Integer,Map<String,List<CellPrama>>>();
-        if(dataRows>2&&dataRows<101){
+        Map<Integer,Map<String,List<CellParam>>> recordMap = new HashMap<Integer,Map<String,List<CellParam>>>();
+        if(dataRows>2&&dataRows<=ExcelConstants.DATA_ROWS_CRITICAL_POINT){
             /**小于100条数据的时候*/
             for(int x=1;x<dataRows;x++){
                 HSSFRow hRow = sheet.getRow(x);
                 for(int y=0;y<hRow.getLastCellNum();y++){
-                    Map<String,List<CellPrama>> typeMap = recordMap.get(y);
+                    Map<String,List<CellParam>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
                     /**cp赋值*/
-                    CellPrama cp = new CellPrama();
+                    CellParam cp = new CellParam();
                     cp.setX(x);
                     cp.setY(y);
                     HSSFCell hCell = hRow.getCell(y);
                     String dataType= getCellValueType(hCell);
                     cp.setDataType(dataType);
-                    List<CellPrama> cpList = typeMap.get(dataType);
+                    List<CellParam> cpList = typeMap.get(dataType);
                     cpList.add(cp);
                     recordMap.put(y, typeMap);
                 }
             }
             retMap = getDataTypes(recordMap,dataRows-1,titleAry);
-        }else if(dataRows>101){
+        }else if(dataRows>ExcelConstants.DATA_ROWS_CRITICAL_POINT){
             /**大于100条数据的时候*/
             int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE);
             for(int x=0;x<randoms.length;x++){
                 HSSFRow hRow = sheet.getRow(randoms[x]);
                 for(int y=0;y<hRow.getLastCellNum();y++){
-                    Map<String,List<CellPrama>> typeMap = recordMap.get(y);
+                    Map<String,List<CellParam>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
                     /**cp赋值*/
-                    CellPrama cp = new CellPrama();
+                    CellParam cp = new CellParam();
                     cp.setX(randoms[x]);
                     cp.setY(y);
                     HSSFCell hCell = hRow.getCell(y);
                     String dataType= getCellValueType(hCell);
                     cp.setDataType(dataType);
-                    List<CellPrama> cpList = typeMap.get(dataType);
+                    List<CellParam> cpList = typeMap.get(dataType);
                     cpList.add(cp);
                     recordMap.put(y, typeMap);
                 }
@@ -393,7 +393,7 @@ public class PoiUtils {
      * @param dataRows 代表抽取的条数
      * @param titleAry 标题数组
      */
-    private static Map<String,Object> getDataTypes(Map<Integer, Map<String, List<CellPrama>>> recordMap, int dataRows, String[] titleAry) {
+    private static Map<String,Object> getDataTypes(Map<Integer, Map<String, List<CellParam>>> recordMap, int dataRows, String[] titleAry) {
         Map<String,Object> retMap = new HashMap<String,Object>();
         MetadataModel metadataModel = new MetadataModel();
         List<MetadataColumn> mdColumnList = new ArrayList<MetadataColumn>();
@@ -401,8 +401,8 @@ public class PoiUtils {
         Map<Integer,Integer> delColInxMap = new HashMap<Integer,Integer>();
         while(recordIt.hasNext()){
             int columnIndex = recordIt.next();
-            Map<String, List<CellPrama>> typeMap = recordMap.get(columnIndex);
-            DTPrama dtPmters = getMainDataType(typeMap,dataRows);
+            Map<String, List<CellParam>> typeMap = recordMap.get(columnIndex);
+            DTParam dtPmters = getMainDataType(typeMap,dataRows);
             if(dtPmters.getProportion()>=ExcelConstants.DATA_TYPE_PROPORTION){
                 MetadataColumn mdColumn = new MetadataColumn();
                 mdColumn.setColumnIndex(columnIndex);
@@ -430,17 +430,18 @@ public class PoiUtils {
      * @param dataRows
      * @return
      */
-    private static DTPrama getMainDataType(Map<String, List<CellPrama>> typeMap, int dataRows) {
+    private static DTParam getMainDataType(Map<String, List<CellParam>> typeMap, int dataRows) {
         int doubleTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_DOUBLE).size();
         int dateTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_DATE).size();
         int stringTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_STRING).size();
         int booleanTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_BOOLEAN).size();
         int nullTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_NULL).size();
-        DTPrama dtPmters = new DTPrama();
-        if(nullTypeSize!=dataRows){
+        int errorTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_ERROR).size();
+        DTParam dtPmters = new DTParam();
+        if((nullTypeSize+errorTypeSize)!=dataRows){
             dtPmters.setNullNum(nullTypeSize);
             String type="";
-            int max=0;
+            double max=0;
             max = doubleTypeSize;
             type = ExcelConstants.DATA_TYPE_DOUBLE;
             if(max<dateTypeSize) {
@@ -455,7 +456,7 @@ public class PoiUtils {
                 max=booleanTypeSize;
                 type = ExcelConstants.DATA_TYPE_BOOLEAN;
             }
-            int proportion = (100*max)/(dataRows-dtPmters.getNullNum());
+            double proportion = max/(dataRows-nullTypeSize+errorTypeSize);
             dtPmters.setDataType(type);
             dtPmters.setProportion(proportion);
         }else{
@@ -582,7 +583,7 @@ public class PoiUtils {
                 type = "Double";  
                 break;  
             case XSSFCell.CELL_TYPE_ERROR:  
-                type = "null------------"+xCell.getErrorCellValue();  
+                type = "Error";
                 break;  
             case XSSFCell.CELL_TYPE_BOOLEAN:  
                 type = "Boolean";  
@@ -618,7 +619,7 @@ public class PoiUtils {
                 type = "Double";  
                 break;  
             case XSSFCell.CELL_TYPE_ERROR:  
-                type = null;  
+                type = "Error";  
                 break;  
             case XSSFCell.CELL_TYPE_BOOLEAN:  
                 type = "Boolean";  
@@ -649,6 +650,5 @@ class SaveSumData implements Runnable{
     public void run() {
         
     }
-    
 }
 
