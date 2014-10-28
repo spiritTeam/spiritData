@@ -306,6 +306,7 @@ public class PoiUtils {
             for(int x=0;x<randoms.length;x++){
                 XSSFRow xRow = sheet.getRow(randoms[x]);
                 for(int y=0;y<xRow.getLastCellNum();y++){
+                    System.out.println("x=="+randoms[x]+"---y==="+y);
                     Map<String,List<CellPrama>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
                     /**cp赋值*/
@@ -315,6 +316,7 @@ public class PoiUtils {
                     XSSFCell xCell = xRow.getCell(y);
                     String dataType= getCellValueType(xCell);
                     cp.setDataType(dataType);
+                    System.out.println("dataType = "+dataType);
                     List<CellPrama> cpList = typeMap.get(dataType);
                     cpList.add(cp);
                     recordMap.put(y, typeMap);
@@ -580,7 +582,7 @@ public class PoiUtils {
                 type = "Double";  
                 break;  
             case XSSFCell.CELL_TYPE_ERROR:  
-                type = null;  
+                type = "null------------"+xCell.getErrorCellValue();  
                 break;  
             case XSSFCell.CELL_TYPE_BOOLEAN:  
                 type = "Boolean";  
