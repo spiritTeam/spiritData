@@ -200,15 +200,4 @@ public class AnalKey implements AnalTable {
         }
         return ret;
     }
-
-    /**
-     * 分析元数据的key
-     * @param mm 元数据信息
-     * @return 最有可能作为key的列组合，用列名称(String类型)的数组来表示
-     * @throws Exception
-     */
-    public String[] analMdKey(MetadataModel mm) throws Exception {
-        //读取元数据信息，看是否
-        return null;
-    }
 }
