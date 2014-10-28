@@ -1,7 +1,8 @@
 package com.gmteam.spiritdata.importdata.excel.proxy;
 
 import java.io.File;
-import java.util.Map;
+import java.util.List;
+
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 /** 
@@ -12,23 +13,21 @@ import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
  */
 public class WorkBookProxy implements IWorkBookProxy{
     private Object excelWorkBook;
-    private IWorkBookProxy iPoiUtils;
-    private Map<SheetInfo,Object> mdMap;
+    private IWorkBookProxy iWorkBookProxy;
     public WorkBookProxy(File execlFile,int fileType) throws Exception {
         if (fileType==ExcelConstants.EXCEL_FILE_TYPE_XSSF)
-            this.iPoiUtils = new XSSFWorkBookImpl(execlFile);
+            this.iWorkBookProxy = new XSSFWorkBookImpl(execlFile);
         else if (fileType==ExcelConstants.EXCEL_FILE_TYPE_HSSF)
-            this.iPoiUtils = new HSSFWorkBookImpl(execlFile);
+            this.iWorkBookProxy = new HSSFWorkBookImpl(execlFile);
         else throw new Exception("不是excel文件");
     }
     @Override
     public Object getWorkBook() throws Exception {
-        excelWorkBook = iPoiUtils.getWorkBook();
+        excelWorkBook = iWorkBookProxy.getWorkBook();
         return excelWorkBook;
     }
     @Override
-    public Map<SheetInfo,Object> getMDMap() throws Exception {
-        this.mdMap = iPoiUtils.getMDMap();
-        return this.mdMap;
+    public List<SheetInfo> getSheetList() {
+        return iWorkBookProxy.getSheetList();
     }
 }

@@ -1,6 +1,6 @@
 package com.gmteam.spiritdata.importdata.excel.proxy;
 
-import java.util.Map;
+import java.util.List;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 
 /** 
@@ -16,9 +16,7 @@ public interface IWorkBookProxy {
      */
     public Object getWorkBook()throws Exception;
     /**
-     * 返回一个MateDate的集合
-     * @return
-     * @throws Exception
+     * 得到一个sheetInfo的List
      */
-    public Map<SheetInfo, Object> getMDMap()throws Exception;
+    public List<SheetInfo> getSheetList();
 }
