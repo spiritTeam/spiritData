@@ -2,8 +2,7 @@ package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -59,65 +58,80 @@ public class FileUploadService {
     /**
      * 获取workBook,和MdList
      * @param session 
+     * //分sheet处理
+     *  //for(sheet: sheetList){
+     *   //002分析metadata
+     *  //003存储临时表
+     *   //004分析临时表指标
+     *   //005分析主键
+     **   //006存储积累表{根据上面的结果设置主键}
+     *  //007分析积累表指标
+     *   //008分析元数据语义
+     * }
      */
-    @SuppressWarnings("unchecked")
-    public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
-        this.session=session;
-        /** fileInfo*/
-//        System.out.println("001============================"+(new Date()).getTime());
-        //001记录文件上传日志
-        saveUploadFileInfo(uploadInfoMap);
-        String uploadFileName = (String) uploadInfoMap.get("storeFilename");
-        int fileType = getFileType(uploadFileName);
-        //文件类型，要用于表判断返回来的workbook类型*/
-        File excelFile = new File(uploadFileName);
-        //得到md和delIndex构成的map*/
-        Map<SheetInfo,Object> rstMap = new HashMap<SheetInfo,Object>();
-        workBookProxy = new WorkBookProxy(excelFile,fileType);
-        //002分析metadata
-        rstMap = (Map<SheetInfo, Object>) workBookProxy.getMDMap();
-//        System.out.println("002============================"+(new Date()).getTime());
-        //分别取出delIndex和metadata
-        Iterator<SheetInfo> it = rstMap.keySet().iterator();
-        //003存储临时表
-        //004分析临时表指标
-        //005分析主键
-        //006存储积累表{根据上面的结果设置主键}
-        //007分析积累表指标
-        //008分析元数据语义
-        
-        //003存数据
-        while(it.hasNext()){
-            SheetInfo sheetInfo = it.next();
-            Map<String,Object> valMap = (Map<String, Object>) rstMap.get(sheetInfo);
-            //md
-            MetadataModel oldMD = (MetadataModel) valMap.get("metadataModel");
-            saveData(sheetInfo,oldMD);
-        }
-        return null;
-    }
     @Resource
     MetadataService mdService;
     @Resource(name="dataSource")
     private  BasicDataSource ds;
-    /**
-     * 得到比对之后的表名，和新的MD
-     * @param sheetInfo
-     * @param delIndexMap
-     * @param oldMD
-     */
-    private void saveData(SheetInfo sheetInfo, MetadataModel oldMD) {
+    public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
+        this.session=session;
+        // 1、uploadFile
+        saveUploadFileInfo(uploadInfoMap);
+        String uploadFileName = (String) uploadInfoMap.get("storeFilename");
+        int fileType = getFileType(uploadFileName);
+        File excelFile = new File(uploadFileName);
+        workBookProxy = new WorkBookProxy(excelFile,fileType);
+        List<SheetInfo> sheetInfoList = workBookProxy.getSheetList();
+        for(SheetInfo sheetInfo:sheetInfoList){
+            // 2、分析
+            MetadataModel metadataModul = PoiUtils.getMdModelMap(sheetInfo);
+            // 3、储存临时表
+            saveDataInTmepTab(sheetInfo,metadataModul);
+            // 4、分析临时表指标
+            analTempQuota(tempTabName);
+            // 5、分析主键
+            String pk = analPK(tempTabName);
+            // 6、存储积累表{根据上面的结果设置主键}
+            saveDataInTmepTab(sumTabName,pk,sheetInfo,metadataModul);
+            // 7、分析积累表指标
+            analSumTabQuota(sumTabName);
+            // 8、分析元数据语义
+            analMDSemantic(sumTabName);
+            
+        }
+        return null;
+    }
+    private void analMDSemantic(String sumTabName2) {
+        
+    }
+    private void analSumTabQuota(String sumTabName2) {
+    }
+    private void saveDataInTmepTab(String sumTabName, String pk, SheetInfo sheetInfo,MetadataModel metadataModul) {
+    }
+    private String analPK(String tempTabName2) {
+        return null;
+    }
+    private void analTempQuota(String tempTabName) {
+        
+    }
+    /**临时表名称*/
+    private String tempTabName;
+    /**积累表名称*/
+    private String sumTabName;
+    private void saveDataInTmepTab(SheetInfo sheetInfo,MetadataModel excelMd) {
         TableMapOrg[] tabMapOrgAry;
         Connection conn = null;
         try {
             mdService.setSession(session);
             conn = ds.getConnection();
-            tabMapOrgAry = mdService.storeMdModel4Import(oldMD);
+            tabMapOrgAry = mdService.storeMdModel4Import(excelMd);
+            tempTabName = tabMapOrgAry[1].getTableName();
+            sumTabName = tabMapOrgAry[0].getTableName();
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
             MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
             //logTabOrg
             saveLogTabOrg(newMD,sheetInfo,tabMapOrgAry[1]);
-            PoiUtils.saveInDB(conn,sheetInfo,oldMD,newMD,tabMapOrgAry);
+            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD,tempTabName);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
