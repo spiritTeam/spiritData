@@ -58,6 +58,7 @@ public class FileUploadService {
     @Resource(name="dataSource")
     private  BasicDataSource ds;
     public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
+        this.session = session;
         // 1、uploadFile
         saveUploadFileInfo(uploadInfoMap);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
@@ -66,9 +67,9 @@ public class FileUploadService {
         WorkBookProxy workBookProxy = new WorkBookProxy(excelFile,fileType);
         List<SheetInfo> sheetInfoList = workBookProxy.getSheetList();
         for(SheetInfo sheetInfo:sheetInfoList){
-            // 2、分析
+            // 2、分析MetadataColumn
             MetadataModel excelMd = PoiUtils.getMdModelMap(sheetInfo);
-            mdService.setSession(session);
+            mdService.setSession(this.session);
             TableMapOrg [] tabMapOrgAry = mdService.storeMdModel4Import(excelMd);
             TableMapOrg tempTabMapOrg = tabMapOrgAry[1];
             String ownerId = tempTabMapOrg.getOwnerId();
