@@ -1,6 +1,5 @@
 package com.gmteam.spiritdata.metadata.relation.service;
 
-import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -24,15 +23,14 @@ import com.gmteam.spiritdata.util.SequenceUUID;
 @Component
 public class MetadataService {
     private HttpSession session;
+    public void setSession(HttpSession session) {
+        this.session = session;
+    }
 
     @Resource
     private _OwnerMetadataService _ownerMdService;
     @Resource
     private MdEntityTableService mdTableOrgService;
-
-    public void setSession(HttpSession session) {
-        this.session = session;
-    }
 
     /**
      * 为导入数据存储元数据信息，并生成相应的数据表

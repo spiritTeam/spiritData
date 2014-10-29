@@ -137,6 +137,7 @@ public class AnalKey implements AnalTable {
                     else if (title.indexOf("编号")!=-1)  ret.put(cName, d*1.8);
                     else if (title.indexOf("编码")!=-1)  ret.put(cName, d*1.8);
                     else if (title.indexOf("号")!=-1)    ret.put(cName, d*1.3);
+                    else if (title.indexOf("序号")!=-1)  ret.remove(cName);//若是序号，则一定不能作为主键
                 }
             }
         }
@@ -159,8 +160,8 @@ public class AnalKey implements AnalTable {
         jsonMap.put("_DATA", _DATA_Map);
         //写文件
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-        //文件格式：analData\{用户名}\MM_{模式Id}\tab_{TABId}\keyAnal.json
-        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+mm.getOwnerId()+File.separator+"MM_"+mm.getId()+File.separator+"tab_"+tableName+File.separator+"keyAnal.json");
+        //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
+        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+mm.getOwnerId()+File.separator+"MM_"+mm.getId()+File.separator+"keyAnal"+File.separator+tableName+".json");
         jsonMap.put("_file", storeFile);
         FileOutputStream fileOutputStream = null;
         try {
@@ -181,7 +182,6 @@ public class AnalKey implements AnalTable {
                 try {fileOutputStream.close();}catch(IOException e) {e.printStackTrace();}
             }
         }
-
         return ret;
     }
 

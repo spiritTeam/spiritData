@@ -85,8 +85,9 @@ public class FileUploadService {
         for(SheetInfo sheetInfo:sheetInfoList){
             // 2、分析
             MetadataModel metadataModul = PoiUtils.getMdModelMap(sheetInfo);
+            TableMapOrg[] tabMapOrgAry = mdService.storeMdModel4Import(metadataModul);
             // 3、储存临时表
-            saveDataInTmepTab(sheetInfo,metadataModul);
+            saveDataInTmepTab(sheetInfo,metadataModul, tabMapOrgAry[1]);
             // 4、分析临时表指标
             analTempQuota(tempTabName);
             // 5、分析主键
@@ -118,20 +119,15 @@ public class FileUploadService {
     private String tempTabName;
     /**积累表名称*/
     private String sumTabName;
-    private void saveDataInTmepTab(SheetInfo sheetInfo,MetadataModel excelMd) {
-        TableMapOrg[] tabMapOrgAry;
+    private void saveDataInTmepTab(SheetInfo sheetInfo,MetadataModel excelMd, TableMapOrg tempTabObj) {
         Connection conn = null;
         try {
             mdService.setSession(session);
             conn = ds.getConnection();
-            tabMapOrgAry = mdService.storeMdModel4Import(excelMd);
-            tempTabName = tabMapOrgAry[1].getTableName();
-            sumTabName = tabMapOrgAry[0].getTableName();
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
-            MetadataModel newMD = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
-            //logTabOrg
-            saveLogTabOrg(newMD,sheetInfo,tabMapOrgAry[1]);
-            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD,tempTabName);
+            MetadataModel newMD = _om.getMetadataById(tempTabObj.getMdMId());
+            saveLogTabOrg(newMD,sheetInfo,tempTabObj);
+            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD, tempTabObj.getTableName());
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
