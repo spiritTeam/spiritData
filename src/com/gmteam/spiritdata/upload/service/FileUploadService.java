@@ -52,48 +52,36 @@ public class FileUploadService {
         }
         return fileType;
     }
-    /**workBook代理类*/
-    private WorkBookProxy workBookProxy;
     private HttpSession session;
-    /**
-     * 获取workBook,和MdList
-     * @param session 
-     * //分sheet处理
-     *  //for(sheet: sheetList){
-     *   //002分析metadata
-     *  //003存储临时表
-     *   //004分析临时表指标
-     *   //005分析主键
-     **   //006存储积累表{根据上面的结果设置主键}
-     *  //007分析积累表指标
-     *   //008分析元数据语义
-     * }
-     */
     @Resource
     MetadataService mdService;
     @Resource(name="dataSource")
     private  BasicDataSource ds;
     public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
-        this.session=session;
+        this.session = session;
         // 1、uploadFile
         saveUploadFileInfo(uploadInfoMap);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         int fileType = getFileType(uploadFileName);
         File excelFile = new File(uploadFileName);
-        workBookProxy = new WorkBookProxy(excelFile,fileType);
+        WorkBookProxy workBookProxy = new WorkBookProxy(excelFile,fileType);
         List<SheetInfo> sheetInfoList = workBookProxy.getSheetList();
         for(SheetInfo sheetInfo:sheetInfoList){
-            // 2、分析
-            MetadataModel metadataModul = PoiUtils.getMdModelMap(sheetInfo);
-            TableMapOrg[] tabMapOrgAry = mdService.storeMdModel4Import(metadataModul);
+            // 2、分析MetadataColumn
+            MetadataModel excelMd = PoiUtils.getMdModelMap(sheetInfo);
+            mdService.setSession(this.session);
+            TableMapOrg [] tabMapOrgAry = mdService.storeMdModel4Import(excelMd);
+            TableMapOrg tempTabMapOrg = tabMapOrgAry[1];
+            String ownerId = tempTabMapOrg.getOwnerId();
+            String sumTabName = tabMapOrgAry[0].getTableName();
             // 3、储存临时表
-            saveDataInTmepTab(sheetInfo,metadataModul, tabMapOrgAry[1]);
+            saveDataInTempTab(sheetInfo,excelMd,tempTabMapOrg);
             // 4、分析临时表指标
-            analTempQuota(tempTabName);
+            analTempQuota(tempTabMapOrg.getTableName());
             // 5、分析主键
-            String pk = analPK(tempTabName);
+            String pk = analPK(tempTabMapOrg.getTableName());
             // 6、存储积累表{根据上面的结果设置主键}
-            saveDataInTmepTab(sumTabName,pk,sheetInfo,metadataModul);
+            saveDataInSumTab(sumTabName,pk,sheetInfo,excelMd,ownerId);
             // 7、分析积累表指标
             analSumTabQuota(sumTabName);
             // 8、分析元数据语义
@@ -107,7 +95,7 @@ public class FileUploadService {
     }
     private void analSumTabQuota(String sumTabName2) {
     }
-    private void saveDataInTmepTab(String sumTabName, String pk, SheetInfo sheetInfo,MetadataModel metadataModul) {
+    private void saveDataInSumTab(String sumTabName, String pk, SheetInfo sheetInfo,MetadataModel metadataModul, String ownerId) {
     }
     private String analPK(String tempTabName2) {
         return null;
@@ -115,19 +103,15 @@ public class FileUploadService {
     private void analTempQuota(String tempTabName) {
         
     }
-    /**临时表名称*/
-    private String tempTabName;
-    /**积累表名称*/
-    private String sumTabName;
-    private void saveDataInTmepTab(SheetInfo sheetInfo,MetadataModel excelMd, TableMapOrg tempTabObj) {
+    private void saveDataInTempTab(SheetInfo sheetInfo,MetadataModel excelMd, TableMapOrg tempTableMapOrg) {
         Connection conn = null;
         try {
-            mdService.setSession(session);
             conn = ds.getConnection();
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
-            MetadataModel newMD = _om.getMetadataById(tempTabObj.getMdMId());
-            saveLogTabOrg(newMD,sheetInfo,tempTabObj);
-            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD, tempTabObj.getTableName());
+            MetadataModel newMD = _om.getMetadataById(tempTableMapOrg.getMdMId());
+            //logTabOrg
+            saveLogTabOrg(newMD,sheetInfo,tempTableMapOrg);
+            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD,tempTableMapOrg.getTableName());
         } catch (Exception e) {
             e.printStackTrace();
         }finally{

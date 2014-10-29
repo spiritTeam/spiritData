@@ -66,63 +66,6 @@ public class PoiUtils {
        // saveSumData(conn, sheetInfo, l, sumTabSql.toString());
         return null;
     }
-    /**
-     * 
-     * @param conn
-     * @param sheetInfo
-     * @param mapL
-     * @param sumTabSql
-     */
-    private static void saveSumData(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String sumTabSql) {
-        Object sheet = null;
-        PreparedStatement sumPs = null;
-        try {
-            sumPs = conn.prepareStatement(sumTabSql);
-            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-                sheet = (XSSFSheet)sheetInfo.getSheet();
-                int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
-                for(int i=1;i<rowNum;i++) {
-                    XSSFRow xRow = ((XSSFSheet)sheet).getRow(i);
-                    if(xRow!=null){
-                        try {
-                            int j=1;
-                            for (Integer integer :mapL) {
-                                XSSFCell cell = xRow.getCell(integer);
-                                sumPs.setObject(j, getCellValue(cell));
-                                j++;
-                            }
-                            sumPs.execute();
-                        } catch(Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-                sheet = (HSSFSheet)sheetInfo.getSheet();
-                int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
-                for(int i=1;i<rowNum;i++){
-                    HSSFRow hRow = ((HSSFSheet)sheet).getRow(i);
-                    if(hRow!=null){
-                        try {
-                            int j=1;
-                            for (Integer integer :mapL) {
-                                HSSFCell cell = hRow.getCell(integer);
-                                sumPs.setObject(j, getCellValue(cell));
-                                j++;
-                            }
-                            sumPs.execute();
-                        } catch(Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
-        } finally {
-            CommonUtils.closeConn(null, sumPs, null);
-        }
-    }
     private static void saveTempData(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String tempSql) {
         PreparedStatement tempPs = null;
         Object sheet = null;
@@ -183,21 +126,33 @@ public class PoiUtils {
             XSSFSheet xSheet = (XSSFSheet) sheetInfo.getSheet();
             int rows = xSheet.getLastRowNum()+1;
             if(rows>=2){
-                XSSFRow xRow = xSheet.getRow(0);
                 dataRows = xSheet.getLastRowNum()+1;
-                /**每行长度*/
-                int rowLength = xRow.getLastCellNum();
-                /**得到TitleAry*/
-                String [] titleAry = new String[rowLength];
-                for(int k=0;k<rowLength;k++){
-                    if (xRow==null) continue;
-                    XSSFCell xCell = xRow.getCell(k);
-                    String columnName = (String) getCellValue(xCell);
-                    titleAry[k] = columnName;
+                int rowLength = 0;
+                //标题行
+                XSSFRow titleRow = null;
+                //标题所在行
+                int titleRowIndex = 0;
+                Map<Integer,String> titleMap = new HashMap<Integer,String>();
+                for(int i=0;i<dataRows;i++){
+                    titleRow= xSheet.getRow(i);
+                    if(titleRow==null) continue;
+                    /**每行长度*/
+                    rowLength = titleRow.getLastCellNum();
+                    titleRowIndex = i;
+                    /**得到TitleAry*/
+                    for(int k=0;k<rowLength;k++){
+                        XSSFCell xCell = titleRow.getCell(k);
+                        if(xCell==null)continue;
+                        String columnName = (String) getCellValue(xCell);
+                        titleMap.put(k, columnName);
+                    }
+                    break;
                 }
                 /**得到dataType*/
-                metadataModel = getMetadata(xSheet,dataRows,rowLength,titleAry); 
-                return metadataModel;
+                if(titleMap.size()>0){
+                    metadataModel = getMetadata(xSheet,dataRows,rowLength,titleMap,titleRowIndex); 
+                    return metadataModel;
+                }
             }else{
                 return null;
             }
@@ -205,21 +160,33 @@ public class PoiUtils {
             HSSFSheet hSheet = (HSSFSheet) sheetInfo.getSheet();
             int rows = hSheet.getLastRowNum()+1;
             if(rows>=2){
-                HSSFRow hRow = hSheet.getRow(0);
                 dataRows = hSheet.getLastRowNum()+1;
-                /**每行长度*/
-                int rowLength = hRow.getLastCellNum();
-                /**得到TitleAry*/
-                String [] titleAry = new String[rowLength];
-                for(int k=0;k<rowLength;k++){
-                    if (hRow==null) continue;
-                    HSSFCell hCell = hRow.getCell(k);
-                    String columnName = (String) getCellValue(hCell);
-                    titleAry[k] = columnName;
+                int rowLength = 0;
+                //标题行
+                HSSFRow titleRow = null;
+                //标题所在行
+                int titleRowIndex = 0;
+                Map<Integer,String> titleMap = new HashMap<Integer,String>();
+                for(int i=0;i<dataRows;i++){
+                    titleRow= hSheet.getRow(i);
+                    if(titleRow==null) continue;
+                    /**每行长度*/
+                    rowLength = titleRow.getLastCellNum();
+                    titleRowIndex = i;
+                    /**得到TitleAry*/
+                    for(int k=0;k<rowLength;k++){
+                        HSSFCell hCell = titleRow.getCell(k);
+                        if(hCell==null)continue;
+                        String columnName = (String) getCellValue(hCell);
+                        titleMap.put(k, columnName);
+                    }
+                    break;
                 }
                 /**得到dataType*/
-                metadataModel = getMetadata(hSheet,dataRows,rowLength,titleAry); 
-                return metadataModel;
+                if(titleMap.size()>0){
+                    metadataModel = getMetadata(hSheet,dataRows,rowLength,titleMap,titleRowIndex); 
+                    return metadataModel; 
+                }
             }else{
                 return null;
             }
@@ -253,21 +220,20 @@ public class PoiUtils {
      * @param rowLength 每行长度
      * @param titleAry 标题数组
      */
-    private static MetadataModel getMetadata(XSSFSheet sheet, int dataRows, int rowLength, String[] titleAry) {
+    private static MetadataModel getMetadata(XSSFSheet sheet, int dataRows, int rowLength, Map<Integer,String> titleMap,int titleRowIndex) {
         MetadataModel metadataModel = null;
-        /**
-         * 首先获得便于得到Md的结构
-         */
         Map<Integer,Map<String,List<CellParam>>> recordMap = new HashMap<Integer,Map<String,List<CellParam>>>();
-        if(dataRows>2&&dataRows<=ExcelConstants.DATA_ROWS_CRITICAL_POINT){
-            /**小于100条数据的时候*/
-            for(int x=0;x<dataRows-1;x++){
+        //当行数小于等于criticalPoint的时候
+        if(dataRows-titleRowIndex>2&&dataRows-titleRowIndex<=ExcelConstants.DATA_ROWS_CRITICAL_POINT){
+            for(int x=titleRowIndex+1;x<dataRows;x++){
                 XSSFRow xRow = sheet.getRow(x);
                 if(xRow!=null){
-                    for(int y=0;y<xRow.getLastCellNum();y++){
+                    Iterator<Integer> yIt = titleMap.keySet().iterator();
+                    while(yIt.hasNext()){
+                        int y = yIt.next();
                         Map<String,List<CellParam>> typeMap = recordMap.get(y);
                         if(typeMap==null) typeMap = getTypeMap();
-                        /**cp赋值*/
+                        //cp赋值
                         CellParam cp = new CellParam();
                         cp.setX(x);
                         cp.setY(y);
@@ -280,17 +246,17 @@ public class PoiUtils {
                     }
                 }
             }
-            metadataModel = getDataTypes(recordMap,dataRows-1,titleAry);
-        }else if(dataRows>ExcelConstants.DATA_ROWS_CRITICAL_POINT){
-            /**大于100条数据的时候*/
-            int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE);
+            metadataModel = getDataTypes(recordMap,dataRows = dataRows-titleRowIndex-1,titleMap);
+          //当行数大于criticalPoint的时候
+        }else if(dataRows-titleRowIndex>ExcelConstants.DATA_ROWS_CRITICAL_POINT){
+            int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE,titleRowIndex);
             for(int x=0;x<randoms.length;x++){
                 XSSFRow xRow = sheet.getRow(randoms[x]);
                 if(xRow!=null){
                     for(int y=0;y<xRow.getLastCellNum();y++){
                         Map<String,List<CellParam>> typeMap = recordMap.get(y);
                         if(typeMap==null) typeMap = getTypeMap();
-                        /**cp赋值*/
+                        //cp赋值
                         CellParam cp = new CellParam();
                         cp.setX(randoms[x]);
                         cp.setY(y);
@@ -303,7 +269,7 @@ public class PoiUtils {
                     }
                 }
             }
-            metadataModel = getDataTypes(recordMap,randoms.length,titleAry);
+            metadataModel = getDataTypes(recordMap,randoms.length,titleMap);
         }else if(dataRows<2){
             return null;
         }
@@ -314,23 +280,21 @@ public class PoiUtils {
      * @param sheet 为HSSFSheet
      * @param dataRows 数据行数
      * @param rowLength 每行长度
+     * @param titleRowIndex 
      * @param titleAry 标题数组
      */
-    private static MetadataModel getMetadata(HSSFSheet sheet, int dataRows, int rowLength, String[] titleAry) {
+    private static MetadataModel getMetadata(HSSFSheet sheet, int dataRows, int rowLength, Map<Integer,String> titleMap, int titleRowIndex) {
         MetadataModel metadataModel = null;
-        /**
-         * 首先获得便于得到Md的结构
-         */
+        //首先获得便于得到Md的结构
         Map<Integer,Map<String,List<CellParam>>> recordMap = new HashMap<Integer,Map<String,List<CellParam>>>();
         if(dataRows>2&&dataRows<=ExcelConstants.DATA_ROWS_CRITICAL_POINT){
-            /**小于100条数据的时候*/
+            //小于100条数据的时候
             for(int x=1;x<dataRows;x++){
                 HSSFRow hRow = sheet.getRow(x);
-                if(hRow!=null)
                 for(int y=0;y<hRow.getLastCellNum();y++){
                     Map<String,List<CellParam>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
-                    /**cp赋值*/
+                    //cp赋值
                     CellParam cp = new CellParam();
                     cp.setX(x);
                     cp.setY(y);
@@ -342,17 +306,16 @@ public class PoiUtils {
                     recordMap.put(y, typeMap);
                 }
             }
-            metadataModel = getDataTypes(recordMap,dataRows-1,titleAry);
+            metadataModel = getDataTypes(recordMap,dataRows-1,titleMap);
         }else if(dataRows>ExcelConstants.DATA_ROWS_CRITICAL_POINT){
-            /**大于100条数据的时候*/
-            int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE);
+            //大于100条数据的时候
+            int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE,titleRowIndex);
             for(int x=0;x<randoms.length;x++){
                 HSSFRow hRow = sheet.getRow(randoms[x]);
-                if(hRow!=null)
                 for(int y=0;y<hRow.getLastCellNum();y++){
                     Map<String,List<CellParam>> typeMap = recordMap.get(y);
                     if(typeMap==null) typeMap = getTypeMap();
-                    /**cp赋值*/
+                    //cp赋值
                     CellParam cp = new CellParam();
                     cp.setX(randoms[x]);
                     cp.setY(y);
@@ -364,7 +327,7 @@ public class PoiUtils {
                     recordMap.put(y, typeMap);
                 }
             }
-            metadataModel = getDataTypes(recordMap,randoms.length,titleAry);
+            metadataModel = getDataTypes(recordMap,randoms.length,titleMap);
         }else if(dataRows<2){
             return null;
         }
@@ -376,7 +339,7 @@ public class PoiUtils {
      * @param dataRows 代表抽取的条数
      * @param titleAry 标题数组
      */
-    private static MetadataModel getDataTypes(Map<Integer, Map<String, List<CellParam>>> recordMap, int dataRows, String[] titleAry) {
+    private static MetadataModel getDataTypes(Map<Integer, Map<String, List<CellParam>>> recordMap, int dataRows, Map<Integer,String> titleMap) {
         MetadataModel metadataModel = new MetadataModel();
         List<MetadataColumn> mdColumnList = new ArrayList<MetadataColumn>();
         Iterator<Integer> recordIt = recordMap.keySet().iterator();
@@ -388,7 +351,7 @@ public class PoiUtils {
                 MetadataColumn mdColumn = new MetadataColumn();
                 mdColumn.setColumnIndex(columnIndex);
                 mdColumn.setColumnType(dtPmters.getDataType());
-                mdColumn.setTitleName(titleAry[columnIndex]);
+                mdColumn.setTitleName(titleMap.get(columnIndex));
                 mdColumn.setColumnName("column"+columnIndex);
                 mdColumnList.add(mdColumn);
             }
@@ -448,15 +411,16 @@ public class PoiUtils {
      * 获取随机数（不包括0）
      * @param randomRange 随机范围
      * @param randomSize  随机个数
+     * @param titleRowIndex 
      * @return
      */
-    public static int [] getRandoms(int randomRange,int randomSize){
-        if(randomSize>=randomRange-1)return null;
+    public static int [] getRandoms(int randomRange,int randomSize, int titleRowIndex){
+        if(randomSize>=randomRange-titleRowIndex-1)return null;
         int [] rdmAry = new int[randomSize];
         Map<Integer,Integer> randomMap = new HashMap<Integer,Integer>(); 
         Random r = new Random();
         for(int i=0;i<randomSize;i++){
-            int k = r.nextInt(randomRange-1)+1;
+            int k = r.nextInt(randomRange-titleRowIndex-1)+1+titleRowIndex;
             while (randomMap.get(k)!=null||k>randomRange) {
                 k = r.nextInt(randomRange-1)+1; 
             }
@@ -611,21 +575,3 @@ public class PoiUtils {
         return type;  
     }
 }
-class SaveTempData implements Runnable{
-    public SaveTempData(Connection conn){
-        
-    }
-    @Override
-    public void run() {
-    }
-}
-class SaveSumData implements Runnable{
-    public SaveSumData(Connection conn){
-        
-    }
-    @Override
-    public void run() {
-        
-    }
-}
-

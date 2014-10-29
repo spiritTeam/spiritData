@@ -42,6 +42,10 @@ public class FileUpLoadController extends AbstractFileUploadController {
             //analKey.scanOneTable("tab_f75e75ad1890", mm);
             return null;
             //fileUploadService.dealUploadFile(uploadInfoMap,session);
+//            MetadataModel mm = mdBasisService.getMetadataMode("f75e75ad1890");
+//            analKey.scanOneTable("tab_f75e75ad1890", mm);
+//            return null;
+//            fileUploadService.dealUploadFile(uploadInfoMap,session);
         } catch (Exception e) {
             e.printStackTrace();
         }
