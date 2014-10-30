@@ -68,14 +68,16 @@ public class FileUploadService {
         List<SheetInfo> sheetInfoList = workBookProxy.getSheetList();
         for(SheetInfo sheetInfo:sheetInfoList){
             // 2、分析MetadataColumn
-            MetadataModel excelMd = PoiUtils.getMdModelMap(sheetInfo);
+            Map<String,Object> retMap = PoiUtils.getMdModelMap(sheetInfo);
+            MetadataModel excelMd = (MetadataModel) retMap.get("md");
+            int titleRowIndex = (Integer) retMap.get("titleRowIndex");
             mdService.setSession(this.session);
             TableMapOrg [] tabMapOrgAry = mdService.storeMdModel4Import(excelMd);
             TableMapOrg tempTabMapOrg = tabMapOrgAry[1];
             String ownerId = tempTabMapOrg.getOwnerId();
             String sumTabName = tabMapOrgAry[0].getTableName();
             // 3、储存临时表
-            saveDataInTempTab(sheetInfo,excelMd,tempTabMapOrg);
+            saveDataInTempTab(sheetInfo,excelMd,tempTabMapOrg,titleRowIndex);
             // 4、分析临时表指标
             analTempQuota(tempTabMapOrg.getTableName());
             // 5、分析主键
@@ -90,20 +92,18 @@ public class FileUploadService {
         }
         return null;
     }
+    private void saveDataInSumTab(String sumTabName, String pk,SheetInfo sheetInfo, MetadataModel excelMd, String ownerId) {
+    }
     private void analMDSemantic(String sumTabName2) {
-        
     }
     private void analSumTabQuota(String sumTabName2) {
-    }
-    private void saveDataInSumTab(String sumTabName, String pk, SheetInfo sheetInfo,MetadataModel metadataModul, String ownerId) {
     }
     private String analPK(String tempTabName2) {
         return null;
     }
     private void analTempQuota(String tempTabName) {
-        
     }
-    private void saveDataInTempTab(SheetInfo sheetInfo,MetadataModel excelMd, TableMapOrg tempTableMapOrg) {
+    private void saveDataInTempTab(SheetInfo sheetInfo,MetadataModel excelMd, TableMapOrg tempTableMapOrg, int titleRowIndex) {
         Connection conn = null;
         try {
             conn = ds.getConnection();
@@ -111,7 +111,7 @@ public class FileUploadService {
             MetadataModel newMD = _om.getMetadataById(tempTableMapOrg.getMdMId());
             //logTabOrg
             saveLogTabOrg(newMD,sheetInfo,tempTableMapOrg);
-            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD,tempTableMapOrg.getTableName());
+            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD,tempTableMapOrg.getTableName(),titleRowIndex);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
