@@ -1,16 +1,16 @@
-﻿/**001 PLAT_USER（用户）*/
+/**001 PLAT_USER（用户）*/
 DROP TABLE IF EXISTS plat_user;
 CREATE TABLE plat_user (
-  id         varchar(36) NOT NULL       COMMENT 'uuid（用户id）',
-  loginName  varchar(15) NOT NULL       COMMENT '登录账号',
-  userName   varchar(100) NOT NULL      COMMENT '登录账号',
-  password   varchar(30) DEFAULT NULL,
-  mailAdress varchar(100) NOT NULL      COMMENT '邮箱(非空为一索引)',
-  nickName   varchar(100) DEFAULT NULL  COMMENT '昵称：可空',
-  userType   int(1) unsigned NOT NULL   COMMENT '用户分类：1自然人用户，2机构用户',
-  descn      varchar(2000) DEFAULT NULL COMMENT '备注',
-  cTime      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间:创建时的系统时间',
-  lmTime     timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改：每次更新的时间',
+  id         varchar(36)     NOT NULL              COMMENT 'uuid（用户id）',
+  loginName  varchar(15)     NOT NULL              COMMENT '登录账号',
+  userName   varchar(100)    NOT NULL              COMMENT '登录账号',
+  password   varchar(30)              DEFAULT NULL,
+  mailAdress varchar(100)    NOT NULL              COMMENT '邮箱(非空为一索引)',
+  nickName   varchar(100)             DEFAULT NULL COMMENT '昵称：可空',
+  userType   int(1) unsigned NOT NULL DEFAULT 1    COMMENT '用户分类：1自然人用户，2机构用户',
+  descn      varchar(2000)         DEFAULT NULL COMMENT '备注',
+  cTime      timestamp       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间:创建时的系统时间',
+  lmTime     timestamp       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改：每次更新的时间',
   PRIMARY KEY (id),
   UNIQUE KEY loginName (loginName) USING BTREE,
   UNIQUE KEY mailAdress (mailAdress) USING BTREE
@@ -130,3 +130,46 @@ CREATE TABLE  sa_imp_tablog_org (
   PRIMARY KEY (id)
 )
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='数据文件/实体表对应关系表';
+
+/**011 字典组[PLAT_DICTM]*/
+DROP TABLE IF EXISTS plat_dictm;
+CREATE TABLE  plat_dictm (
+  id         varchar(36)     NOT NULL           COMMENT '字典组表ID(UUID)',
+  ownerId    varchar(36)     NOT NULL           COMMENT '所有者Id',
+  ownerType  int(1) unsigned NOT NULL DEFAULT 1 COMMENT '所有者类型(1-用户,2-session)',
+  dmName     varchar(200)    NOT NULL           COMMENT '字典组名称',
+  nPy        varchar(800)                       COMMENT '名称拼音',
+  sort       int(5) unsigned NOT NULL DEFAULT 0 COMMENT '字典组排序',
+  isValidate int(1) unsigned NOT NULL DEFAULT 1 COMMENT '是否生效(1-生效,2-无效)',
+  mType      int(1) unsigned NOT NULL DEFAULT 3 COMMENT '字典类型(1-系统保留,2-系统,3-自定义)',
+  mRef       varchar(4000)                      COMMENT '创建时间',
+  descn      varchar(500)                       COMMENT '说明',
+  cTime      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  lmTime     timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='字典组';
+
+/**012 字典项[PLAT_DICTD]*/
+DROP TABLE IF EXISTS plat_dictd;
+CREATE TABLE  plat_dictd (
+  id         varchar(36)     NOT NULL           COMMENT '字典项表ID(UUID)',
+  mId        varchar(36)     NOT NULL           COMMENT '字典组外键(UUID)',
+  pId        varchar(36)     NOT NULL           COMMENT '父结点ID(UUID)',
+  hasChild   int(1) unsigned NOT NULL DEFAULT 2 COMMENT '是否有子结点(1-有,2-没有)',
+  levels     int(1) unsigned NOT NULL DEFAULT 0 COMMENT '结点层数',
+  sort       int(5) unsigned NOT NULL DEFAULT 0 COMMENT '字典项排序,只在本级排序有意义',
+  isValidate int(1) unsigned NOT NULL DEFAULT 1 COMMENT '是否生效(1-生效,2-无效)',
+  ddName     varchar(200)    NOT NULL           COMMENT '字典项名称',
+  nPy        varchar(800)                       COMMENT '名称拼音',
+  aliasName  varchar(200)                       COMMENT '字典项别名',
+  anPy       varchar(800)                       COMMENT '别名拼音',
+  bCode      varchar(50)     NOT NULL           COMMENT '业务编码',
+  mType      int(1) unsigned NOT NULL DEFAULT 3 COMMENT '字典类型(1-系统保留,2-系统,3-自定义,4引用-其他字典项ID；)',
+  dRef       varchar(4000)                      COMMENT '创建时间',
+  descn      varchar(500)                       COMMENT '说明',
+  cTime      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  lmTime     timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='字典项';
