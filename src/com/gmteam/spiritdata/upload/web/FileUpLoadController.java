@@ -10,10 +10,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 
 import com.gmteam.framework.core.web.AbstractFileUploadController;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
-import com.gmteam.spiritdata.metadata.relation.semanteme.func.AnalKey;
-import com.gmteam.spiritdata.metadata.relation.service.MdBasisService;
-import com.gmteam.spiritdata.metadata.relation.service.MdKeyService;
 import com.gmteam.spiritdata.upload.service.FileUploadService;
 
 /** 
@@ -27,12 +23,6 @@ public class FileUpLoadController extends AbstractFileUploadController {
     private FileUploadService fileUploadService;
     @Resource
     HttpServletRequest request;
-    @Resource
-    AnalKey analKey;
-    @Resource
-    MdBasisService mdBasisService;
-    @Resource
-    MdKeyService mdKeyService;
     @Override
     public Map<String, Object> afterUploadOneFileOnSuccess(Map<String, Object> uploadInfoMap, Map<String, Object> arg1,Map<String, Object> arg2) {
         HttpSession session = request.getSession();
