@@ -1,6 +1,7 @@
 package com.gmteam.spiritdata.metadata.relation.service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -18,6 +19,8 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gmteam.framework.FConstants;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.framework.util.FileNameUtils;
@@ -65,60 +68,65 @@ public class MdKeyService {
             String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
             //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
             String dirStr = FileNameUtils.concatPath(root, "analData"+File.separator+mm.getOwnerId()+File.separator+"MM_"+mm.getId()+File.separator+"keyAnal"+File.separator);
-            dirStr = "c:\\";
             File dir = new File(dirStr);
             File[] fl = dir.listFiles();
-            Arrays.sort(fl, new Comparator<File>(){
-                @Override
-                public int compare(File f1, File f2) {
-                    long diff = f1.lastModified()-f2.lastModified();
-                    if(diff>0) return 1;  
-                    else if(diff==0) return 0;  
-                    else return -1;
-                }
-            });
-            for (int i=0; i<fl.length; i++) {
-                if (_maxFileCount==0) break;
-                File f = fl[i];
-                Map<String, Double> km = parseJsonFile(f, mm);
-                if (km!=null) keyList.add(km);
-                _maxFileCount--;
-            }
-
-            //根据这些分析结果，分析主键
-            Map<String, Integer> _cm = new HashMap<String, Integer>();//计数Map
-            if (keyList.size()>0) {
-                //做交集
-                Map<String, Double> intersectionKeyM = keyList.get(0);
-                for (int i=1; i<keyList.size(); i++) {
-                    Map<String, Double> _tempM = keyList.get(i);
-                    for (String _k: _tempM.keySet()) {
-                        if (intersectionKeyM.get(_k)!=null) {
-                            intersectionKeyM.put(_k, intersectionKeyM.get(_k)+_tempM.get(_k));
-                            if (_cm.get(_k)==null) _cm.put(_k, new Integer(0));
-                            else _cm.put(_k, _cm.get(_k)+1);
-                        } else {
-                            intersectionKeyM.remove(_k);
-                        }
+            if (fl!=null&&fl.length>0) {
+                Arrays.sort(fl, new Comparator<File>(){
+                    @Override
+                    public int compare(File f1, File f2) {
+                        long diff = f1.lastModified()-f2.lastModified();
+                        if(diff>0) return 1;  
+                        else if(diff==0) return 0;  
+                        else return -1;
                     }
-                    if (intersectionKeyM.size()==0) break;
+                });
+                for (int i=fl.length-1; i>=0; i--) {
+                    if (_maxFileCount==0) break;
+                    File f = fl[i];
+                    if (f.isFile()) {
+                        Map<String, Double> km = parseJsonFile(f, mm);
+                        if (km!=null) keyList.add(km);
+                        _maxFileCount--;
+                    }
                 }
-                //取最有可能的主键
-                Double f = new Double(0);
-                if (intersectionKeyM.size()>0) {
+                //根据这些分析结果，分析主键
+                Map<String, Integer> _cm = new HashMap<String, Integer>();//计数Map
+                if (keyList.size()>0) {
+                    //做交集
+                    Map<String, Double> intersectionKeyM = keyList.get(0);
                     for (String _k: intersectionKeyM.keySet()) {
-                        if (intersectionKeyM.get(_k)>f) {
-                            f = intersectionKeyM.get(_k);
-                            keyStr = _k;
-                        }
+                        _cm.put(_k, new Integer("1"));
                     }
-                    if (_cm.get(keyStr)!=null) {
-                        if (_cm.get(keyStr)>3&&((f/_cm.get(keyStr))>1.5)) pkSign = 1; 
+                    for (int i=1; i<keyList.size(); i++) {
+                        Map<String, Double> _tempM = keyList.get(i);
+                        for (String _k: _tempM.keySet()) {
+                            if (intersectionKeyM.get(_k)!=null) {
+                                intersectionKeyM.put(_k, intersectionKeyM.get(_k)+_tempM.get(_k));
+                                if (_cm.get(_k)==null) _cm.put(_k, new Integer(0));
+                                else _cm.put(_k, _cm.get(_k)+1);
+                            } else {
+                                intersectionKeyM.remove(_k);
+                            }
+                        }
+                        if (intersectionKeyM.size()==0) break;
+                    }
+                    //取最有可能的主键
+                    Double f = new Double(0);
+                    if (intersectionKeyM.size()>0) {
+                        for (String _k: intersectionKeyM.keySet()) {
+                            if (intersectionKeyM.get(_k)>f) {
+                                f = intersectionKeyM.get(_k);
+                                keyStr = _k;
+                            }
+                        }
+                        if (_cm.get(keyStr)!=null) {
+                            if (_cm.get(keyStr)>3&&((f/_cm.get(keyStr))>1.5)) pkSign = 1; 
+                        }
                     }
                 }
             }
         }
-        //修改mm和数据库
+        //修改mm
         String [] ret=null;
         List<MetadataColumn> updateList = new ArrayList<MetadataColumn>();
         if (keyStr!=null) {
@@ -140,6 +148,7 @@ public class MdKeyService {
             try {
                 conn = dataSource.getConnection();
                 autoCommit = conn.getAutoCommit();
+                conn.setAutoCommit(false);
                 ps = conn.prepareStatement("update sa_md_column set pkSign="+pkSign+" where id=?");
                 for (MetadataColumn mc: updateList) {
                     ps.setString(1, mc.getId());
@@ -155,7 +164,6 @@ public class MdKeyService {
                 try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
             }
         }
-
         //！！！由于修改了元数据，所有要通知session，修改相关的信息
         return ret;
     }
@@ -282,12 +290,44 @@ public class MdKeyService {
     }
 
     private Map<String, Double> parseJsonFile(File f, MetadataModel mm) {
+        Map<String, Double> ret = null;
+        FileInputStream fis = null;
         try {
-            
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> analKey = null;
+            fis = new FileInputStream(f);
+            byte[] b=new byte[fis.available()];
+            fis.read(b);
+            analKey = mapper.readValue((new String(b)).getBytes("utf-8"), Map.class);
+            String _code = (String)analKey.get("_code");
+            if (_code.equals("SD.TEAM-0001")) {
+                Map<String, Object> _data = (Map<String, Object>)analKey.get("_DATA");
+                Map<String, Object> _temp = (Map<String, Object>)_data.get("_mdMId");
+                String tempStr = (String)_temp.get("value");
+                if (!tempStr.equals(mm.getId())) return null;
+                List<Map<String, Object>> l = (List<Map<String, Object>>)_data.get("_keyAnals");
+                if (l!=null&&l.size()>0) {
+                    ret = new HashMap<String, Double>();
+                    for (Map<String, Object> elem: l) {
+                        _temp = (Map<String, Object>)elem.get("keyCols");
+                        tempStr = (String)_temp.get("value");
+                        _temp = (Map<String, Object>)elem.get("rate");
+                        Double d = (Double)_temp.get("value");
+                        ret.put(tempStr, d);
+                    }
+                    return ret;
+                }
+            }
             return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        } finally {
+            try {
+                if (fis!=null) fis.close();
+            } catch(Exception e) {
+            }
+
         }
     }
 }
