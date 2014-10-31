@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <!-- 类别名设置 -->
+  <typeAliases>
+    <typeAlias alias="dictMaster" type="com.gmteam.spiritdata.dictdata.pojo.DictMaster"/>
+    <typeAlias alias="dictDetail" type="com.gmteam.spiritdata.dictdata.pojo.DictDetail"/>
+  </typeAliases>
+  <mappers>
+    <mapper resource="com/gmteam/spiritdata/dictdata/sql/DictMaster.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/dictdata/sql/DictDetail.mapper.xml"/>
+  </mappers>
+</configuration>

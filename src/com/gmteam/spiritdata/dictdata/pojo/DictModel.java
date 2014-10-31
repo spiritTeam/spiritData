@@ -31,6 +31,7 @@ public class DictModel extends DictMaster{
         this.setOwnerId(dMaster.getOwnerId());
         this.setOwnerType(dMaster.getOwnerType());
         this.setcTime(dMaster.getcTime());
+        this.setLmTime(dMaster.getLmTime());
     }
 
     public DictMaster getDictMaster() {
@@ -46,6 +47,7 @@ public class DictModel extends DictMaster{
         dd.setOwnerId(this.getOwnerId());
         dd.setOwnerType(this.getOwnerType());
         dd.setcTime(this.getcTime());
+        dd.setLmTime(this.getLmTime());
         return dd;
     }
 
