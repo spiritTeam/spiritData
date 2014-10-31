@@ -18,9 +18,9 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
  * 元数据基本信息的服务类，主要功能是与关系型数据库交互，类似DAO。
  * 与Dao不同的是，此服务中的方法是按照基础业务逻辑来组合的，即对DAO功能的初步组合。
  * 主要涉及三个数据库表：SA_MD_TABMODULE/SA_MD_COLUMN/SA_MD_COLSEMANTEME，还涉及SA_MD_TABELMAP_ORG
+ * 
  * @author wh
  */
-
 @Component
 public class MdBasisService {
     @Resource(name="defaultDAO")
@@ -72,7 +72,7 @@ public class MdBasisService {
     }
 
     /**
-     * 获得元数据列描述列表
+     * 根据所有者Id获得元数据列描述列表
      * @param ownerId 所有者Id
      * @return 元数据列描述列表
      * @throws Exception
@@ -93,7 +93,7 @@ public class MdBasisService {
     }
 
     /**
-     * 获得元数据列语义列表
+     * 根据所有者Id获得元数据列语义列表
      * @param ownerId 所有者Id
      * @return 元数据列语义列表
      * @throws Exception

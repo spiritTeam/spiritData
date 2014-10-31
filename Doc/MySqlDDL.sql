@@ -156,8 +156,6 @@ CREATE TABLE  plat_dictd (
   id         varchar(36)     NOT NULL           COMMENT '字典项表ID(UUID)',
   mId        varchar(36)     NOT NULL           COMMENT '字典组外键(UUID)',
   pId        varchar(36)     NOT NULL           COMMENT '父结点ID(UUID)',
-  hasChild   int(1) unsigned NOT NULL DEFAULT 2 COMMENT '是否有子结点(1-有,2-没有)',
-  levels     int(1) unsigned NOT NULL DEFAULT 0 COMMENT '结点层数',
   sort       int(5) unsigned NOT NULL DEFAULT 0 COMMENT '字典项排序,只在本级排序有意义',
   isValidate int(1) unsigned NOT NULL DEFAULT 1 COMMENT '是否生效(1-生效,2-无效)',
   ddName     varchar(200)    NOT NULL           COMMENT '字典项名称',

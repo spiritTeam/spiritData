@@ -1,7 +1,9 @@
 package com.gmteam.spiritdata.metadata.relation.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
@@ -17,7 +19,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**
- * 对[所有者“关系型元数据”]的操作。
+ * 对[所有者“关系型元数据”的操作。
  * 通过线程方式进行加载，并放入缓存或Session。
  * 
  * @author wh
@@ -38,7 +40,7 @@ public class _OwnerMetadataService {
      */
     public void loadData2Session(String ownerId, int ownerType, HttpSession session) {
         _OwnerMetadata _om = new _OwnerMetadata(ownerId, ownerType);
-        session.setAttribute(SDConstants.SESSION_OWNERRMDUNIT, _om);
+        session.setAttribute(SDConstants.SESSION_OWNER_RMDUNIT, _om);
         //启动加载线程
         loadDataThread lm = new loadDataThread(session, this);
         Thread t = new Thread(lm);
@@ -51,7 +53,7 @@ public class _OwnerMetadataService {
      * @param session
      */
     protected void addMetadataModelModel(MetadataModel mm, HttpSession session) throws Exception {
-        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
+        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         //新增数据库-主表
         mdBasisService.addMetadataModel(mm);
         //新增数据库-字表
@@ -87,50 +89,75 @@ class loadDataThread implements Runnable {
 
     @Override
     public void run() {
-        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
+        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         String ownerId = _om.getOnwerId();
         int ownerType = _om.getOnwerType();
         _om.mdModelMap = new ConcurrentHashMap<String, MetadataModel>();
-        
         MdBasisService mdBasisService = caller.getMdBasisService();
+
         try {
+            //过滤元数据模式，把可疑数据删除
             List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId(ownerId);
-            List<MetadataColumn> mcList = null;
-            List<MetadataColSemanteme> mcsList = null;
-            
             if (mmList!=null&&mmList.size()>0) {
-                mcList = mdBasisService.getMdColListByOwnerId(ownerId);
-                mcsList = mdBasisService.getMdColSemantemeListByOwnerId(ownerId);
                 for (int i=mmList.size()-1; i>=0; i--) {
                     MetadataModel mm = mmList.get(i);
                     if (mm.getOwnerType()!=ownerType) {
                         mmList.remove(i);
                         continue;
                     }
-                    if (mcList!=null&&mcList.size()>0) {
-                        for (MetadataColumn mdc: mcList) {
-                            if (mdc.getMdMId().equals(mm.getId())) {
-                                mm.addColumn(mdc);
-                                if (mcsList!=null&&mcsList.size()>0) {
-                                    for (MetadataColSemanteme mcs: mcsList) {
-                                        if (mcs.getColId().equals(mdc.getId())) mdc.setColSem(mcs);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    _om.mdModelMap.put(mm.getId(), mm);
                 }
-                mcList = new ArrayList<MetadataColumn>();
-                mcsList = new ArrayList<MetadataColSemanteme>();
-                for (String mdMId: _om.mdModelMap.keySet()) {
-                    List<MetadataColumn> _mcl = ((MetadataModel)_om.mdModelMap.get(mdMId)).getColumnList();
-                    if (_mcl!=null&&_mcl.size()>0) {
-                        mcList.addAll(((MetadataModel)_om.mdModelMap.get(mdMId)).getColumnList());
-                        for (MetadataColumn mc: mcList) {
-                            if (mc.getColSem()!=null)  mcsList.add(mc.getColSem());
+            }
+            List<MetadataColumn> mcList = null;
+            List<MetadataColSemanteme> mcsList = null;
+            if (mmList!=null&&mmList.size()>0) {
+                //准备元数据模式信息
+                Map<String, MetadataModel> flagMap = new HashMap<String, MetadataModel>();
+                for (MetadataModel mm: mmList) {
+                    flagMap.put(mm.getId(), mm);
+                }
+                //准备语义信息
+                mcsList = mdBasisService.getMdColSemantemeListByOwnerId(ownerId);
+                Map<String, MetadataColSemanteme> _flagMap = new HashMap<String, MetadataColSemanteme>();
+                if (mcsList!=null&&mcsList.size()>0) {
+                    for (MetadataColSemanteme mcs: mcsList) {
+                        _flagMap.put(mcs.getColId(), mcs);
+                    }
+                }
+                //根据元数据列描述信息构造结构
+                boolean reStructMcs = false;//是否需要重构语义列表
+                mcList = mdBasisService.getMdColListByOwnerId(ownerId);
+                if (mcList!=null&&mcList.size()>0) {
+                    for (int i=mcList.size()-1; i>=0; i--) {
+                        MetadataColumn mc = mcList.get(i);
+                        if (flagMap.get(mc.getMdMId())!=null) {
+                            if (_flagMap.get(mc.getId())!=null) {
+                                mc.setColSem(_flagMap.get(mc.getId()));
+                            }
+                            (flagMap.get(mc.getMdMId())).addColumn(mc);
+                        } else {
+                            mcList.remove(i);
+                            reStructMcs = _flagMap.remove(mc.getId())!=null;
                         }
                     }
+                    //把元数据模式中没有列信息的元素去掉，并组装返回结构mdModelMap
+                    mmList.clear();
+                    for (String mmId: flagMap.keySet()) {
+                        MetadataModel mm = flagMap.get(mmId);
+                        if (mm.getColumnList()!=null&&mm.getColumnList().size()>0) {
+                            mmList.add(mm);
+                            _om.mdModelMap.put(mm.getId(), mm);
+                        }
+                    }
+                    //重构元数据列语义列表
+                    if (reStructMcs) {
+                        mcsList.clear();
+                        for (String mcsId: _flagMap.keySet()) {
+                            mcsList.add(_flagMap.get(mcsId));
+                        }
+                    }
+                } else {
+                    mmList = null;
+                    _om.mdModelMap.clear();
                 }
             }
             _om.mmList = mmList;
@@ -138,7 +165,6 @@ class loadDataThread implements Runnable {
             _om.mcsList = mcsList;
 
             _om.setLoadSuccess();
-            System.out.println("ddddd==================================ddd");
         } catch(Exception e) {
             e.printStackTrace();
         }
