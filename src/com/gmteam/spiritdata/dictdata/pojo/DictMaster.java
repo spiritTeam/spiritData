@@ -25,6 +25,7 @@ public class DictMaster extends BaseObject {
     private String mRef; //字典组引用，当mType=3
     private String descn; //说明
     private Timestamp cTime; //记录创建时间
+    private Timestamp lmTime; //最后修改时间
 
     public String getId() {
         return id;
@@ -91,5 +92,11 @@ public class DictMaster extends BaseObject {
     }
     public void setcTime(Timestamp cTime) {
         this.cTime = cTime;
+    }
+    public Timestamp getLmTime() {
+        return lmTime;
+    }
+    public void setLmTime(Timestamp lmTime) {
+        this.lmTime = lmTime;
     }
 }
