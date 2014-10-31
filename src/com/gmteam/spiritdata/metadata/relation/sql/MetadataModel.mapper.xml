@@ -24,7 +24,7 @@
       <trim prefix="(" suffix=")" prefixOverrides="and" >
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
         <if test="ownerId != null" > and ownerId = #{ownerId,jdbcType=VARCHAR} </if>
-        <if test="ownerType != null" > and ownerType = #{ownerType,jdbcType=INTEGER} </if>
+        <if test="ownerType!=null and ownerType!=0" > and ownerType = #{ownerType,jdbcType=INTEGER} </if>
         <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
         <if test="descn != null" > and descn = #{descn,jdbcType=VARCHAR} </if>
         <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>

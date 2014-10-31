@@ -33,6 +33,7 @@ public class _OwnerMetadata {
     public boolean isLoadSuccess() {
         return this.loadSuccess;
     }
+
     /**
      * 构造所有者处理单元
      * @param ownerId 所有者类型
@@ -42,6 +43,7 @@ public class _OwnerMetadata {
         this.onwerId = onwerId;
         this.onwerType = onwerType;
     }
+
     /**
      * 根据Id得某一元数据
      * @param mdMId 元数据Id

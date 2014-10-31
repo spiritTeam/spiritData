@@ -55,6 +55,12 @@
     </if>
   </select>
 
+  <!-- 按照所有者获得列表 -->
+  <select id="getListByOwnerId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select a.* from sa_md_column a, sa_md_tabmodel b where a.tmId=b.id and b.ownerId=#{ownerId,jdbcType=VARCHAR}
+    order by a.tmId, a.columnIndex
+  </select>
+
   <!-- 获得一条数据 -->
   <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select <include refid="Base_Column_List" />

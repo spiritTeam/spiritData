@@ -1,16 +1,9 @@
 package com.gmteam.spiritdata.cache;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.framework.core.cache.AbstractCacheLifecycleUnit;
-import com.gmteam.framework.core.cache.CacheEle;
-import com.gmteam.framework.core.cache.SystemCache;
-import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 
 /**
  * 精灵数据分析缓存生命周期
