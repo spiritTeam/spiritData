@@ -17,7 +17,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**
- * 对[所有者“关系型元数据”]的操作。
+ * 对[所有者“关系型元数据”的操作。
  * 通过线程方式进行加载，并放入缓存或Session。
  * 
  * @author wh
@@ -38,7 +38,7 @@ public class _OwnerMetadataService {
      */
     public void loadData2Session(String ownerId, int ownerType, HttpSession session) {
         _OwnerMetadata _om = new _OwnerMetadata(ownerId, ownerType);
-        session.setAttribute(SDConstants.SESSION_OWNERRMDUNIT, _om);
+        session.setAttribute(SDConstants.SESSION_OWNER_RMDUNIT, _om);
         //启动加载线程
         loadDataThread lm = new loadDataThread(session, this);
         Thread t = new Thread(lm);
@@ -51,7 +51,7 @@ public class _OwnerMetadataService {
      * @param session
      */
     protected void addMetadataModelModel(MetadataModel mm, HttpSession session) throws Exception {
-        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
+        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         //新增数据库-主表
         mdBasisService.addMetadataModel(mm);
         //新增数据库-字表
@@ -87,11 +87,11 @@ class loadDataThread implements Runnable {
 
     @Override
     public void run() {
-        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
+        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         String ownerId = _om.getOnwerId();
         int ownerType = _om.getOnwerType();
         _om.mdModelMap = new ConcurrentHashMap<String, MetadataModel>();
-        
+
         MdBasisService mdBasisService = caller.getMdBasisService();
         try {
             List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId(ownerId);
@@ -138,7 +138,6 @@ class loadDataThread implements Runnable {
             _om.mcsList = mcsList;
 
             _om.setLoadSuccess();
-            System.out.println("ddddd==================================ddd");
         } catch(Exception e) {
             e.printStackTrace();
         }

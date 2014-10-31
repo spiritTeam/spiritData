@@ -16,12 +16,14 @@ import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**
- * 元数据处理服务，所有关于元数据的操作都封装在这里。
- * 基本元数据信息存放在OwnerRmdMemeryUnit中，这个类中存放了登陆用户的基本元数据信息。
+ * 元数据处理服务，关于所有者元数据的操作都封装在这里。
+ * 所有者信息存储在Session中，本服务针对Session中的元数据进行处理。
+ * 包括Session和持久化存储同步的相关操作。
+ * 基本元数据信息存放在_OwnerMetadata中，这个类中存放了登陆用户的基本元数据信息。
  * @author wh
  */
 @Component
-public class MetadataService {
+public class MetadataSessionService {
     private HttpSession session;
     public void setSession(HttpSession session) {
         this.session = session;
@@ -87,10 +89,10 @@ public class MetadataService {
             mm.setOwnerId(ownerId);
             mm.setOwnerType(ownerType);
         }
-        _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
+        _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         if (_om==null) {
             _ownerMdService.loadData2Session(ownerId, ownerType, this.session);
-            _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
+            _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         }
         if (_om==null) new Exception("从session中不能取得所有者数据模型，未知错误！");
         while (!_om.isLoadSuccess()) {

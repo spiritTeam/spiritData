@@ -25,7 +25,7 @@ import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
-import com.gmteam.spiritdata.metadata.relation.service.MetadataService;
+import com.gmteam.spiritdata.metadata.relation.service.MetadataSessionService;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 /** 
@@ -54,7 +54,7 @@ public class FileUploadService {
     }
     private HttpSession session;
     @Resource
-    MetadataService mdService;
+    MetadataSessionService mdService;
     @Resource(name="dataSource")
     private  BasicDataSource ds;
     public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
@@ -107,7 +107,7 @@ public class FileUploadService {
         Connection conn = null;
         try {
             conn = ds.getConnection();
-            _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNERRMDUNIT);
+            _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
             MetadataModel newMD = _om.getMetadataById(tempTableMapOrg.getMdMId());
             //logTabOrg
             saveLogTabOrg(newMD,sheetInfo,tempTableMapOrg);
