@@ -14,7 +14,7 @@ public interface IWorkBookProxy {
      * @param execlFile
      * @return
      */
-    public Object getWorkBook()throws Exception;
+    public Object getWorkBook();
     /**
      * 得到一个sheetInfo的List
      */

@@ -24,7 +24,7 @@ public class HSSFWorkBookImpl implements IWorkBookProxy{
         workbook = new HSSFWorkbook(new FileInputStream(execlFile)); 
     } 
     @Override
-    public Object getWorkBook() throws Exception {
+    public Object getWorkBook(){
         return workbook;
     }
     @Override

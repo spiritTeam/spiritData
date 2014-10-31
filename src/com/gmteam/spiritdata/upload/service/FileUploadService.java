@@ -57,39 +57,46 @@ public class FileUploadService {
     MetadataSessionService mdService;
     @Resource(name="dataSource")
     private  BasicDataSource ds;
-    public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
+    public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session)  {
         this.session = session;
         // 1、uploadFile
         saveUploadFileInfo(uploadInfoMap);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");
         int fileType = getFileType(uploadFileName);
         File excelFile = new File(uploadFileName);
-        WorkBookProxy workBookProxy = new WorkBookProxy(excelFile,fileType);
-        List<SheetInfo> sheetInfoList = workBookProxy.getSheetList();
-        for(SheetInfo sheetInfo:sheetInfoList){
-            // 2、分析MetadataColumn
-            Map<String,Object> retMap = PoiUtils.getMdModelMap(sheetInfo);
-            MetadataModel excelMd = (MetadataModel) retMap.get("md");
-            int titleRowIndex = (Integer) retMap.get("titleRowIndex");
-            mdService.setSession(this.session);
-            TableMapOrg [] tabMapOrgAry = mdService.storeMdModel4Import(excelMd);
-            TableMapOrg tempTabMapOrg = tabMapOrgAry[1];
-            String ownerId = tempTabMapOrg.getOwnerId();
-            String sumTabName = tabMapOrgAry[0].getTableName();
-            // 3、储存临时表
-            saveDataInTempTab(sheetInfo,excelMd,tempTabMapOrg,titleRowIndex);
-            // 4、分析临时表指标
-            analTempQuota(tempTabMapOrg.getTableName());
-            // 5、分析主键
-            String pk = analPK(tempTabMapOrg.getTableName());
-            // 6、存储积累表{根据上面的结果设置主键}
-            saveDataInSumTab(sumTabName,pk,sheetInfo,excelMd,ownerId);
-            // 7、分析积累表指标
-            analSumTabQuota(sumTabName);
-            // 8、分析元数据语义
-            analMDSemantic(sumTabName);
-            
+        WorkBookProxy workBookProxy;
+        try {
+            workBookProxy = new WorkBookProxy(excelFile,fileType);
+            List<SheetInfo> sheetInfoList = workBookProxy.getSheetList();
+            for(SheetInfo sheetInfo:sheetInfoList){
+                // 2、分析MetadataColumn
+                Map<String,Object> retMap = PoiUtils.getMdModelMap(sheetInfo);
+                MetadataModel excelMd = (MetadataModel) retMap.get("md");
+                if(excelMd==null) continue;
+                int titleRowIndex = (Integer) retMap.get("titleRowIndex");
+                mdService.setSession(this.session);
+                TableMapOrg[] tabMapOrgAry;
+                tabMapOrgAry = mdService.storeMdModel4Import(excelMd);
+                TableMapOrg tempTabMapOrg = tabMapOrgAry[1];
+                String ownerId = tempTabMapOrg.getOwnerId();
+                String sumTabName = tabMapOrgAry[0].getTableName();
+                // 3、储存临时表
+                saveDataInTempTab(sheetInfo,excelMd,tempTabMapOrg,titleRowIndex);
+                // 4、分析临时表指标
+//                analTempQuota(tempTabMapOrg.getTableName());
+                // 5、分析主键
+//                String pk = analPK(tempTabMapOrg.getTableName());
+                // 6、存储积累表{根据上面的结果设置主键}
+//                saveDataInSumTab(sumTabName,pk,sheetInfo,excelMd,ownerId);
+                // 7、分析积累表指标
+//                analSumTabQuota(sumTabName);
+                // 8、分析元数据语义
+//                analMDSemantic(sumTabName);
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
         }
+        
         return null;
     }
     private void saveDataInSumTab(String sumTabName, String pk,SheetInfo sheetInfo, MetadataModel excelMd, String ownerId) {
@@ -111,7 +118,7 @@ public class FileUploadService {
             MetadataModel newMD = _om.getMetadataById(tempTableMapOrg.getMdMId());
             //logTabOrg
             saveLogTabOrg(newMD,sheetInfo,tempTableMapOrg);
-            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD,tempTableMapOrg.getTableName(),titleRowIndex);
+            StringBuffer saveInfo =PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD,tempTableMapOrg.getTableName(),titleRowIndex);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
@@ -140,20 +147,28 @@ public class FileUploadService {
     }
     @Resource
     private MybatisDAO<FileUploadLog> fulDao;
-    private void saveUploadFileInfo(Map<String, Object> uploadInfoMap) {
+    private StringBuffer saveUploadFileInfo(Map<String, Object> uploadInfoMap) {
         fulDao.setNamespace("fileUploadLog");
+        StringBuffer fileInfo = new StringBuffer();
         try {
             FileUploadLog ful = new FileUploadLog();
             ful.setOwnerId(session.getId());
             UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-            if(user==null) ful.setOwnerId(session.getId());
+            if(user==null){
+                ful.setOwnerId(session.getId());
+            }else{
+                ful.setOwnerId(user.getUserId());
+            }
             ful.setsFileName((String)uploadInfoMap.get("storeFilename"));
             ful.setcFileName((String)uploadInfoMap.get("orglFilename"));
             ful.setFileSize((Long)uploadInfoMap.get("size"));
             ful.setId(SequenceUUID.getUUID());
             fulDao.insert(ful);
+//            fileInfo.append("{log:{OwnerId:"+"");
+            return fileInfo;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 }

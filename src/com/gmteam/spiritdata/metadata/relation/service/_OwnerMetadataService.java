@@ -52,7 +52,7 @@ public class _OwnerMetadataService {
      * @param mm 元数据模式
      * @param session
      */
-    protected void addMetadataModelModel(MetadataModel mm, HttpSession session) throws Exception {
+    public void addMetadataModel(MetadataModel mm, HttpSession session) throws Exception {
         _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         //新增数据库-主表
         mdBasisService.addMetadataModel(mm);
@@ -96,29 +96,29 @@ class loadDataThread implements Runnable {
         MdBasisService mdBasisService = caller.getMdBasisService();
 
         try {
-            //过滤元数据模式，把可疑数据删除
             List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId(ownerId);
+            Map<String, MetadataModel> flagMap = null;
+            //过滤元数据模式，把可疑数据删除, 并准备元数据模式信息
             if (mmList!=null&&mmList.size()>0) {
+                flagMap = new HashMap<String, MetadataModel>();
                 for (int i=mmList.size()-1; i>=0; i--) {
                     MetadataModel mm = mmList.get(i);
                     if (mm.getOwnerType()!=ownerType) {
                         mmList.remove(i);
-                        continue;
+                    } else {
+                        flagMap.put(mm.getId(), mm);
                     }
                 }
             }
+
             List<MetadataColumn> mcList = null;
             List<MetadataColSemanteme> mcsList = null;
-            if (mmList!=null&&mmList.size()>0) {
-                //准备元数据模式信息
-                Map<String, MetadataModel> flagMap = new HashMap<String, MetadataModel>();
-                for (MetadataModel mm: mmList) {
-                    flagMap.put(mm.getId(), mm);
-                }
+            if (mmList!=null&&mmList.size()>0) {//这也保证了flagMap有内容
                 //准备语义信息
                 mcsList = mdBasisService.getMdColSemantemeListByOwnerId(ownerId);
-                Map<String, MetadataColSemanteme> _flagMap = new HashMap<String, MetadataColSemanteme>();
+                Map<String, MetadataColSemanteme> _flagMap = null;
                 if (mcsList!=null&&mcsList.size()>0) {
+                    _flagMap = new HashMap<String, MetadataColSemanteme>();
                     for (MetadataColSemanteme mcs: mcsList) {
                         _flagMap.put(mcs.getColId(), mcs);
                     }
@@ -130,7 +130,7 @@ class loadDataThread implements Runnable {
                     for (int i=mcList.size()-1; i>=0; i--) {
                         MetadataColumn mc = mcList.get(i);
                         if (flagMap.get(mc.getMdMId())!=null) {
-                            if (_flagMap.get(mc.getId())!=null) {
+                            if (_flagMap!=null&&_flagMap.get(mc.getId())!=null) {
                                 mc.setColSem(_flagMap.get(mc.getId()));
                             }
                             (flagMap.get(mc.getMdMId())).addColumn(mc);
@@ -160,9 +160,9 @@ class loadDataThread implements Runnable {
                     _om.mdModelMap.clear();
                 }
             }
-            _om.mmList = mmList;
-            _om.mcList = mcList;
-            _om.mcsList = mcsList;
+            if (mmList!=null&&mmList.size()>0) _om.mmList = mmList; else _om.mmList=null;
+            if (mcList!=null&&mcList.size()>0) _om.mcList = mcList; else _om.mcList=null;
+            if (mcsList!=null&&mcsList.size()>0) _om.mcsList = mcsList; else _om.mcsList=null;
 
             _om.setLoadSuccess();
         } catch(Exception e) {

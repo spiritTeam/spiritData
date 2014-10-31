@@ -25,6 +25,7 @@ public class ExcelConstants extends BaseObject{
     public final static String DATA_TYPE_ERROR = "Error";
     /**Excel类型，string*/
     public final static String DATA_TYPE_STRING = "String";
+    public static final String DATA_TYPE_INTEGER = "Integer";
     
     /**比重常量*/
     public final static double DATA_TYPE_PROPORTION = 0.8;
@@ -35,6 +36,6 @@ public class ExcelConstants extends BaseObject{
     public final static int EXCEL_FILE_TYPE_HSSF = 2;
     /**数据抽取数量常量Critical_Point*/
     public final static int DATA_ROWS_CRITICAL_POINT = 101;
-    
+
 }
  

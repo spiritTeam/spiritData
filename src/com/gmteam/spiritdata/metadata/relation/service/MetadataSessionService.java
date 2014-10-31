@@ -54,7 +54,7 @@ public class MetadataSessionService {
             //注册积累表
             accumulationTable = mdTableOrgService.registTabOrgMap(accumulationTabName, mm, 1);
             //添加模型
-            _ownerMdService.addMetadataModelModel(mm, session);
+            _ownerMdService.addMetadataModel(mm, session);
         } else {
             accumulationTable = mdTableOrgService.getAccumulationTableMapOrg(_existMm.getId());
             mm=_existMm;
