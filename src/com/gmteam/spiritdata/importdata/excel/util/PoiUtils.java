@@ -104,7 +104,7 @@ public class PoiUtils {
                 int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
                 allRows = rowNum-titleRowIndex-1;
                 for(int i=titleRowIndex+1;i<rowNum;i++){
-                    HSSFRow hRow = ((HSSFSheet)sheet).getRow(1);
+                    HSSFRow hRow = ((HSSFSheet)sheet).getRow(i);
                     if(hRow!=null){
                         try{
                             int j=1;
@@ -328,7 +328,7 @@ public class PoiUtils {
         Map<Integer,Map<String,List<CellParam>>> recordMap = new HashMap<Integer,Map<String,List<CellParam>>>();
         if(dataRows-titleRowIndex>2&&dataRows-titleRowIndex<=ExcelConstants.DATA_ROWS_CRITICAL_POINT){
             //小于100条数据的时候
-            for(int x=1;x<dataRows;x++){
+            for(int x=1+titleRowIndex;x<dataRows;x++){
                 HSSFRow hRow = sheet.getRow(x);
                 if(hRow!=null){
                     Iterator<Integer> yIt = titleMap.keySet().iterator();
@@ -349,7 +349,7 @@ public class PoiUtils {
                     }
                 }
             }
-            metadataModel = getDataTypes(recordMap,dataRows-1,titleMap);
+            metadataModel = getDataTypes(recordMap,dataRows-1-titleRowIndex,titleMap);
         }else if(dataRows-titleRowIndex>ExcelConstants.DATA_ROWS_CRITICAL_POINT){
             int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE,titleRowIndex);
             for(int x=0;x<randoms.length;x++){
@@ -423,13 +423,19 @@ public class PoiUtils {
         int booleanTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_BOOLEAN).size();
         int nullTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_NULL).size();
         int errorTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_ERROR).size();
+        int intTypeSize = typeMap.get(ExcelConstants.DATA_TYPE_INTEGER).size();
         DTParam dtPmters = new DTParam();
         if((nullTypeSize+errorTypeSize)!=dataRows){
             dtPmters.setNullNum(nullTypeSize);
             String type="";
             double max=0;
-            max = doubleTypeSize;
-            type = ExcelConstants.DATA_TYPE_DOUBLE;
+            if(doubleTypeSize!=0){
+                max = doubleTypeSize+intTypeSize;
+                type = ExcelConstants.DATA_TYPE_DOUBLE;
+            }else{
+                max = intTypeSize;
+                type = ExcelConstants.DATA_TYPE_INTEGER;
+            }
             if(max<dateTypeSize) {
                 max = dateTypeSize;
                 type = ExcelConstants.DATA_TYPE_DATE;
@@ -478,23 +484,27 @@ public class PoiUtils {
     public static Object getCellValue(HSSFCell hCell) {
         if (hCell == null)
             return null;
-        Object result = null;  
+        Object result = null;
+        String type = null;
         if (hCell != null) {  
             int cellType = hCell.getCellType();  
             switch (cellType) {  
             case XSSFCell.CELL_TYPE_STRING:  
-                result = hCell.getRichStringCellValue().getString();  
+                type = "String";
+                result = getParseVal(type,hCell);
                 break;  
             case XSSFCell.CELL_TYPE_NUMERIC: 
                 if (DateUtil.isCellDateFormatted(hCell)) {  
                     Date d = hCell.getDateCellValue();
                     result = d;
                 } else {  
-                    result = hCell.getNumericCellValue();  
+                    type = "Double";
+                    result = getParseVal(type,hCell);  
                 }
                 break;  
             case XSSFCell.CELL_TYPE_FORMULA:  
-                result = hCell.getNumericCellValue();  
+                type = "Double";
+                result = getParseVal(type,hCell); 
                 break;  
             case XSSFCell.CELL_TYPE_ERROR:  
                 result = null;  
@@ -516,23 +526,26 @@ public class PoiUtils {
         if (xCell == null)
             return null;
         Object result = null;  
+        String type = null;
         if (xCell != null) {  
             int cellType = xCell.getCellType();  
             switch (cellType) {  
             case XSSFCell.CELL_TYPE_STRING:  
-                result = xCell.getRichStringCellValue().getString();  
+                type = "String";
+                result = getParseVal(type,xCell);
                 break;  
             case XSSFCell.CELL_TYPE_NUMERIC: 
                 if (DateUtil.isCellDateFormatted(xCell)) {  
                     Date d = xCell.getDateCellValue();
                     result = d;
                 } else {  
-                    result = xCell.getNumericCellValue();  
+                    type = "Double";
+                    result = getParseVal(type,xCell);  
                 }
                 break;  
             case XSSFCell.CELL_TYPE_FORMULA:  
-                result = xCell.getNumericCellValue();  
-                break;  
+                type = "Double";
+                result = getParseVal(type,xCell);   
             case XSSFCell.CELL_TYPE_ERROR:  
                 result = null;  
                 break;  
@@ -548,6 +561,62 @@ public class PoiUtils {
         }  
         return result;
     }
+    private static Object getParseVal(String type, XSSFCell xCell) {
+        Object result = null;
+        if(type.equals("String")){
+            String strVal = xCell.getRichStringCellValue().getString();
+            try{
+                double dVal = Double.parseDouble(strVal);
+                String intStr = ""+dVal;
+                intStr = intStr.substring(0,intStr.lastIndexOf("."));
+                if(Integer.parseInt(intStr)==dVal){
+                    result = Integer.parseInt(intStr);
+                }else{
+                    result = dVal;
+                }
+            }catch(Exception e){
+                result = strVal;
+            }
+        }else if(type.equals("Double")){
+            double dVal = xCell.getNumericCellValue();
+            String strD = ""+dVal;
+            strD = strD.substring(0,strD.lastIndexOf("."));
+            if(Integer.parseInt(strD)==dVal){
+                result = Integer.parseInt(strD);
+            } else{
+                result = dVal;
+            }
+        }
+        return result;
+    }
+    private static Object getParseVal(String type, HSSFCell hCell) {
+        Object result = null;
+        if(type.equals("String")){
+            String strVal = hCell.getRichStringCellValue().getString();
+            try{
+                double dVal = Double.parseDouble(strVal);
+                String intStr = ""+dVal;
+                intStr = intStr.substring(0,intStr.lastIndexOf("."));
+                if(Integer.parseInt(intStr)==dVal){
+                    result = Integer.parseInt(intStr);
+                }else{
+                    result = dVal;
+                }
+            }catch(Exception e){
+                result = strVal;
+            }
+        }else if(type.equals("Double")){
+            double dVal = hCell.getNumericCellValue();
+            String strD = ""+dVal;
+            strD = strD.substring(0,strD.lastIndexOf("."));
+            if(Integer.parseInt(strD)==dVal){
+                result = Integer.parseInt(strD);
+            } else{
+                result = dVal;
+            }
+        }
+        return result;
+    }
     /** 得到单元格类型为XSSFCELL的valType,*/  
     private static String getCellValueType(XSSFCell xCell) { 
         if (xCell == null)
@@ -558,19 +627,19 @@ public class PoiUtils {
             switch (cellType) {  
             case XSSFCell.CELL_TYPE_STRING:  
                 type = "String";
-                type = getType(type,xCell);
+                type = getParseType(type,xCell);
                 break;  
             case XSSFCell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(xCell)) {  
                     type = "Date";
                 } else {  
                     type = "Double";
-                    type = getType(type,xCell);
+                    type = getParseType(type,xCell);
                 }
                 break;  
             case XSSFCell.CELL_TYPE_FORMULA:  
                 type = "Double";
-                type = getType(type,xCell);
+                type = getParseType(type,xCell);
                 break;  
             case XSSFCell.CELL_TYPE_ERROR:  
                 type = "Error";
@@ -587,7 +656,7 @@ public class PoiUtils {
         }  
         return type;  
     }  
-    private static String getType(String type, XSSFCell xCell) {
+    private static String getParseType(String type, XSSFCell xCell) {
         if(type.equals("String")){
             String strVal = xCell.getStringCellValue();
             try{
@@ -611,7 +680,7 @@ public class PoiUtils {
         }
         return type;
     }
-    private static String getType(String type, HSSFCell hCell) {
+    private static String getParseType(String type, HSSFCell hCell) {
         if(type.equals("String")){
             String strVal = hCell.getStringCellValue();
             try{
@@ -645,19 +714,19 @@ public class PoiUtils {
             switch (cellType) {  
             case XSSFCell.CELL_TYPE_STRING:  
                 type = "String";  
-                type = getType(type,hCell);
+                type = getParseType(type,hCell);
                 break;  
             case XSSFCell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(hCell)) {  
                     type = "Date";
                 } else {  
                     type = "Double";  
-                    type = getType(type,hCell);
+                    type = getParseType(type,hCell);
                 }
                 break;  
             case XSSFCell.CELL_TYPE_FORMULA:  
                 type = "Double";  
-                type = getType(type,hCell);
+                type = getParseType(type,hCell);
                 break;  
             case XSSFCell.CELL_TYPE_ERROR:  
                 type = "Error";  
