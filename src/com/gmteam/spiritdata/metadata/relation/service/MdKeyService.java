@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gmteam.framework.FConstants;
 import com.gmteam.framework.core.cache.SystemCache;

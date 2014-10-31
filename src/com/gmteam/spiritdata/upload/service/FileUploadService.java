@@ -25,6 +25,9 @@ import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
+import com.gmteam.spiritdata.metadata.relation.semanteme.func.AnalKey;
+import com.gmteam.spiritdata.metadata.relation.service.MdKeyService;
+import com.gmteam.spiritdata.metadata.relation.service.MdQuotaService;
 import com.gmteam.spiritdata.metadata.relation.service.MetadataSessionService;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
@@ -81,22 +84,47 @@ public class FileUploadService {
                 String ownerId = tempTabMapOrg.getOwnerId();
                 String sumTabName = tabMapOrgAry[0].getTableName();
                 // 3、储存临时表
-                saveDataInTempTab(sheetInfo,excelMd,tempTabMapOrg,titleRowIndex);
+                MetadataModel newMd = saveDataInTempTab(sheetInfo,excelMd,tempTabMapOrg,titleRowIndex);
                 // 4、分析临时表指标
-//                analTempQuota(tempTabMapOrg.getTableName());
+                analTempQuota(tempTabMapOrg);
                 // 5、分析主键
-//                String pk = analPK(tempTabMapOrg.getTableName());
+                String pk = analPK(tempTabMapOrg.getTableName(),newMd);
                 // 6、存储积累表{根据上面的结果设置主键}
-//                saveDataInSumTab(sumTabName,pk,sheetInfo,excelMd,ownerId);
+                saveDataInSumTab(sumTabName,pk,sheetInfo,excelMd,ownerId);
                 // 7、分析积累表指标
-//                analSumTabQuota(sumTabName);
+                analSumTabQuota(sumTabName);
                 // 8、分析元数据语义
-//                analMDSemantic(sumTabName);
+                analMDSemantic(sumTabName);
             }
         } catch (Exception e1) {
             e1.printStackTrace();
         }
         
+        return null;
+    }
+    @Resource
+    MdQuotaService mdQutotaService ;
+    private void analTempQuota(TableMapOrg tempTabMapOrg) {
+        try {
+            mdQutotaService.caculateQuota(tempTabMapOrg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+    }
+    @Resource
+    private MdKeyService mdKeyService;
+    @Resource
+    private AnalKey analKey;
+    private String analPK(String tableName,MetadataModel newMd) {
+        try {
+            analKey.scanOneTable(tableName, newMd);
+            String [] pkAry = mdKeyService.analMdKey(newMd);
+            for(String str:pkAry){
+                System.out.println(str);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
     private void saveDataInSumTab(String sumTabName, String pk,SheetInfo sheetInfo, MetadataModel excelMd, String ownerId) {
@@ -105,22 +133,19 @@ public class FileUploadService {
     }
     private void analSumTabQuota(String sumTabName2) {
     }
-    private String analPK(String tempTabName2) {
-        return null;
-    }
-    private void analTempQuota(String tempTabName) {
-    }
-    private void saveDataInTempTab(SheetInfo sheetInfo,MetadataModel excelMd, TableMapOrg tempTableMapOrg, int titleRowIndex) {
+    private MetadataModel saveDataInTempTab(SheetInfo sheetInfo,MetadataModel excelMd, TableMapOrg tempTableMapOrg, int titleRowIndex) {
         Connection conn = null;
         try {
             conn = ds.getConnection();
             _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
-            MetadataModel newMD = _om.getMetadataById(tempTableMapOrg.getMdMId());
+            MetadataModel newMd = _om.getMetadataById(tempTableMapOrg.getMdMId());
             //logTabOrg
-            saveLogTabOrg(newMD,sheetInfo,tempTableMapOrg);
-            StringBuffer saveInfo =PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMD,tempTableMapOrg.getTableName(),titleRowIndex);
+            saveLogTabOrg(newMd,sheetInfo,tempTableMapOrg);
+            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMd,tempTableMapOrg.getTableName(),titleRowIndex);
+            return newMd;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }finally{
             CommonUtils.closeConn(conn, null, null);
         }
