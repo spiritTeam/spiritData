@@ -15,8 +15,8 @@ public class MetadataColSemanteme extends BaseObject {
     private String id; //列语义Id
     private String colId; //列Id
     private String mdMId; //元数据模式Id
-    private Integer semantemeCode; //语义代码
-    private Integer semantemeType; //语义类型
+    private String semantemeCode; //语义代码
+    private int semantemeType; //语义类型
     private Timestamp cTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间
     //以上对应数据库信息
@@ -46,19 +46,19 @@ public class MetadataColSemanteme extends BaseObject {
         this.mdMId = mdMId;
     }
 
-    public Integer getSemantemeCode() {
+    public String getSemantemeCode() {
         return semantemeCode;
     }
 
-    public void setSemantemeCode(Integer semantemeCode) {
+    public void setSemantemeCode(String semantemeCode) {
         this.semantemeCode = semantemeCode;
     }
 
-    public Integer getSemantemeType() {
+    public int getSemantemeType() {
         return semantemeType;
     }
 
-    public void setSemantemeType(Integer semantemeType) {
+    public void setSemantemeType(int semantemeType) {
         this.semantemeType = semantemeType;
     }
 

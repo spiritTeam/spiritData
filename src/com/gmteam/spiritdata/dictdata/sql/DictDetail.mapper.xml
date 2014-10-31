@@ -7,33 +7,51 @@
 <mapper namespace="dictDetail" >
   <!-- 对象定义:元数据模式 -->
   <resultMap id="BaseResultMap" type="dictDetail" >
-    <id     column="id"        property="id"        jdbcType="VARCHAR" />
-    <result column="ownerId"   property="ownerId"   jdbcType="VARCHAR" />
-    <result column="ownerType" property="ownerType" jdbcType="INTEGER" />
-    <result column="tableName" property="tableName" jdbcType="VARCHAR" />
-    <result column="descn"     property="descn"     jdbcType="VARCHAR" />
-    <result column="cTime"     property="cTime"     jdbcType="TIMESTAMP" />
+    <id     column="id"         property="id"         jdbcType="VARCHAR" />
+    <result column="mId"        property="mid"        jdbcType="VARCHAR" />
+    <result column="pId"        property="parentId"   jdbcType="VARCHAR" />
+    <result column="sort"       property="sort"       jdbcType="INTEGER" />
+    <result column="isValidate" property="isValidate" jdbcType="INTEGER" />
+    <result column="ddName"     property="nodeName"   jdbcType="VARCHAR" />
+    <result column="nPy"        property="nPy"        jdbcType="VARCHAR" />
+    <result column="aliasName"  property="aliasName"  jdbcType="VARCHAR" />
+    <result column="anPy"       property="anPy"       jdbcType="VARCHAR" />
+    <result column="bCode"      property="bCode"      jdbcType="VARCHAR" />
+    <result column="dType"      property="dType"      jdbcType="INTEGER" />
+    <result column="dRef"       property="dRef"       jdbcType="VARCHAR" />
+    <result column="descn"      property="descn"      jdbcType="VARCHAR" />
+    <result column="cTime"      property="cTime"      jdbcType="TIMESTAMP" />
+    <result column="lmTime"     property="lmTime"     jdbcType="TIMESTAMP" />
   </resultMap>
   <!-- 所有列 -->
   <sql id="Base_Column_List" >
-    id, ownerId, ownerType, tableName, descn, cTime
+    id, mId, pId, sort, isValidate, ddName, nPy, aliasName, anPy, bCode, dType, dRef, descn, cTime, lmTime 
   </sql>
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey" >
     <where >
       <trim prefix="(" suffix=")" prefixOverrides="and" >
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="ownerId != null" > and ownerId = #{ownerId,jdbcType=VARCHAR} </if>
-        <if test="ownerType!=null and ownerType!=0" > and ownerType = #{ownerType,jdbcType=INTEGER} </if>
-        <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
+        <if test="mId != null" > and mid = #{mid,jdbcType=VARCHAR} </if>
+        <if test="parentId != null" > and pId = #{parentId,jdbcType=VARCHAR} </if>
+        <if test="sort!=null and sort!=0" > and sort = #{sort,jdbcType=INTEGER} </if>
+        <if test="isValidate!=null and isValidate!=0" > and isValidate = #{isValidate,jdbcType=INTEGER} </if>
+        <if test="nodeName != null" > and ddName = #{nodeName,jdbcType=VARCHAR} </if>
+        <if test="nPy != null" > and nPy = #{nPy,jdbcType=VARCHAR} </if>
+        <if test="aliasName != null" > and aliasName = #{aliasName,jdbcType=VARCHAR} </if>
+        <if test="anPy != null" > and anPy = #{anPy,jdbcType=VARCHAR} </if>
+        <if test="bCode != null" > and bCode = #{bCode,jdbcType=VARCHAR} </if>
+        <if test="dType!=null and dType!=0" > and dType = #{dType,jdbcType=INTEGER} </if>
+        <if test="dRef != null" > and dRef = #{dRef,jdbcType=VARCHAR} </if>
         <if test="descn != null" > and descn = #{descn,jdbcType=VARCHAR} </if>
         <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
+        <if test="lmTime != null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
       </trim>
     </where>
   </sql>
   <!-- 获得记录条数-->
   <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
-    select count(*) from sa_md_tabmodel
+    select count(*) from plat_dictd
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
@@ -41,8 +59,7 @@
 
   <!-- 获得列表 -->
   <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" />
-    from sa_md_tabmodel
+    select <include refid="Base_Column_List" /> from plat_dictd
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
@@ -53,33 +70,54 @@
 
   <!-- 获得一条数据 -->
   <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" />
-    from sa_md_tabmodel
+    select <include refid="Base_Column_List" /> from plat_dictd
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
   </select>
   <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" />
-    from sa_md_tabmodel
-    where id = #{id,jdbcType=VARCHAR}
+    select <include refid="Base_Column_List" /> from plat_dictd where id = #{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 新增数据 -->
   <insert id="insert" parameterType="java.util.Map" >
-    insert into sa_md_tabmodel
+    insert into plat_dictd
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="ownerId != null" >
-        ownerId,
+      <if test="mId != null" >
+        mId,
       </if>
-      <if test="ownerType != null" >
-        ownerType,
+      <if test="parentId != null" >
+        pId,
       </if>
-      <if test="tableName != null" >
-        tableName,
+      <if test="sort!=null and sort!=0" >
+        sort,
+      </if>
+      <if test="isValidate!=null and isValidate!=0" >
+        isValidate,
+      </if>
+      <if test="nodeName != null" >
+        ddName,
+      </if>
+      <if test="nPy != null" >
+        nPy,
+      </if>
+      <if test="aliasName != null" >
+        aliasName,
+      </if>
+      <if test="anPy != null" >
+        anPy,
+      </if>
+      <if test="bCode != null" >
+        bCode,
+      </if>
+      <if test="dType!=null and dType!=0" >
+        dType,
+      </if>
+      <if test="dRef != null" >
+        dRef,
       </if>
       <if test="descn != null" >
         descn,
@@ -89,16 +127,40 @@
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="ownerId != null" >
-        #{ownerId,jdbcType=VARCHAR},
+      <if test="mId != null" >
+        #{mId,jdbcType=VARCHAR},
       </if>
-      <if test="ownerType != null" >
-        #{ownerType,jdbcType=INTEGER},
+      <if test="parentId != null" >
+        #{parentId,jdbcType=VARCHAR},
       </if>
-      <if test="tableName != null" >
-        #{tableName,jdbcType=VARCHAR},
+      <if test="sort!=null and sort!=0" >
+        #{sort,jdbcType=INTEGER},
       </if>
-      <if test="descn != null" >
+      <if test="isValidate!=null and isValidate!=0" >
+        #{isValidate,jdbcType=INTEGER},
+      </if>
+      <if test="nodeName != null" >
+        #{nodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="nPy != null" >
+        #{nPy,jdbcType=VARCHAR},
+      </if>
+      <if test="aliasName != null" >
+        #{aliasName,jdbcType=VARCHAR},
+      </if>
+      <if test="anPy != null" >
+        #{anPy,jdbcType=VARCHAR},
+      </if>
+      <if test="bCode != null" >
+        #{bCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dType!=null and mType!=0" >
+        #{dType,jdbcType=INTEGER},
+      </if>
+      <if test="dRef!=null" >
+        #{dRef,jdbcType=VARCHAR},
+      </if>
+      <if test="descn!=null" >
         #{descn,jdbcType=VARCHAR},
       </if>
     </trim>
@@ -106,22 +168,52 @@
 
   <!-- 修改 根据主键-->
   <update id="update" parameterType="java.util.Map" >
-    update sa_md_tabmodel
+    update plat_dictd
     <set >
-      <if test="ownerId != null" >
-        ownerId = #{ownerId,jdbcType=VARCHAR},
+      <if test="id != null" >
+        id = #{id,jdbcType=VARCHAR},
       </if>
-      <if test="ownerType != null" >
-        ownerType = #{ownerType,jdbcType=INTEGER},
+      <if test="mId != null" >
+        mId = #{mId,jdbcType=VARCHAR},
       </if>
-      <if test="tableName != null" >
-        tableName = #{tableName,jdbcType=VARCHAR},
+      <if test="parentId != null" >
+        pId = #{parentId,jdbcType=VARCHAR},
       </if>
-      <if test="descn != null" >
+      <if test="sort!=null and sort!=0" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="isValidate!=null and isValidate!=0" >
+        isValidate = #{isValidate,jdbcType=INTEGER},
+      </if>
+      <if test="nodeName != null" >
+        ddName = #{nodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="nPy != null" >
+        nPy = #{nPy,jdbcType=VARCHAR},
+      </if>
+      <if test="aliasName != null" >
+        aliasName = #{aliasName,jdbcType=VARCHAR},
+      </if>
+      <if test="anPy != null" >
+        anPy = #{anPy,jdbcType=VARCHAR},
+      </if>
+      <if test="bCode != null" >
+        bCode = #{bCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dType!=null and mType!=0" >
+        dType = #{dType,jdbcType=INTEGER},
+      </if>
+      <if test="dRef!=null" >
+        dRef = #{dRef,jdbcType=VARCHAR},
+      </if>
+      <if test="descn!=null" >
         descn = #{descn,jdbcType=VARCHAR},
       </if>
       <if test="cTime != null" >
         cTime = #{cTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lmTime != null" >
+        lmTime = #{lmTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -129,10 +221,10 @@
 
   <!-- 删除数据 -->
   <delete id="delete" parameterType="java.lang.String" >
-    delete from sa_md_tabmodel where id = #{id,jdbcType=VARCHAR}
+    delete from plat_dictd where id = #{id,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByEntity" parameterType="java.util.Map" >
-    delete from sa_md_tabmodel
+    delete from plat_dictd
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
