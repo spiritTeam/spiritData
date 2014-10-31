@@ -22,7 +22,7 @@ public class WorkBookProxy implements IWorkBookProxy{
         else throw new Exception("不是excel文件");
     }
     @Override
-    public Object getWorkBook() throws Exception {
+    public Object getWorkBook() {
         excelWorkBook = iWorkBookProxy.getWorkBook();
         return excelWorkBook;
     }

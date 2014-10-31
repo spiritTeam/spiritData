@@ -41,8 +41,8 @@ public class PoiUtils {
      * @param tabMapOrgAry
      * @return
      */
-    public static Map<String,Object> saveInDB(Connection conn, SheetInfo sheetInfo, MetadataModel oldMD,MetadataModel newMD, String tempTabName, int titleRowIndex) {
-        List<MetadataColumn> oldMdColList = oldMD.getColumnList();
+    public static StringBuffer saveInDB(Connection conn, SheetInfo sheetInfo, MetadataModel excelMD,MetadataModel newMD, String tempTabName, int titleRowIndex) {
+        List<MetadataColumn> oldMdColList = excelMD.getColumnList();
         List<MetadataColumn> newMdColList = newMD.getColumnList();
         //计算对应表
         List<Integer> l = new ArrayList<Integer>();
@@ -62,17 +62,23 @@ public class PoiUtils {
         }
         StringBuffer tempTabSql=new StringBuffer().append("insert into "+tempTabName+"(").append(fieldStr.substring(1)+") values(").append(valueStr.substring(1)+")");
         //先插临时表，在插积累表，要通过积累表来分析主键
-        saveTempData(conn, sheetInfo, l, tempTabSql.toString(),titleRowIndex);
-        return null;
+        StringBuffer saveInfo = saveTempData(conn, sheetInfo, l, tempTabSql.toString(),titleRowIndex,tempTabName);
+        return saveInfo;
     }
-    private static void saveTempData(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String tempSql, int titleRowIndex) {
+    private static StringBuffer saveTempData(Connection conn, SheetInfo sheetInfo, List<Integer> mapL,String tempSql, int titleRowIndex, String tempTabName) {
         PreparedStatement tempPs = null;
         Object sheet = null;
+        StringBuffer saveInfo = new StringBuffer("sheetInfo:[{sheetName:"+sheetInfo.getSheetName()+",targetTab:"+tempTabName+",dataRows:");
+        StringBuffer errorInfo = new StringBuffer("{rowIndex:");
+        int allRows = 0;
+        int inertRows = 0;
+        int errorRows = 0;
         try {
             tempPs = conn.prepareStatement(tempSql);
             if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
                 sheet = (XSSFSheet)sheetInfo.getSheet();
                 int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
+                allRows = rowNum-titleRowIndex-1;
                 for(int i=1+titleRowIndex;i<rowNum;i++){
                     XSSFRow xRow = ((XSSFSheet)sheet).getRow(i);
                     if(xRow!=null){
@@ -85,14 +91,18 @@ public class PoiUtils {
                             }
                             tempPs.execute();
                         }catch(Exception eX){
+                            errorInfo.append(""+i+",errorMessage:"+eX.getMessage()+"},");
+                            errorRows++;
                             eX.printStackTrace();
                         }
                     }else{
                     }
                 }
+                inertRows = allRows-errorRows;
             } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
                 sheet = (HSSFSheet)sheetInfo.getSheet();
                 int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
+                allRows = rowNum-titleRowIndex-1;
                 for(int i=titleRowIndex+1;i<rowNum;i++){
                     HSSFRow hRow = ((HSSFSheet)sheet).getRow(1);
                     if(hRow!=null){
@@ -105,13 +115,20 @@ public class PoiUtils {
                             }
                             tempPs.execute();
                         }catch(Exception eX){
+                            errorInfo.append(""+i+",errorMessage:"+eX.getMessage()+"},");
+                            errorRows++;
                             eX.printStackTrace();
                         }
                     }
                 }
+                inertRows = allRows-errorRows;
             }
+            errorInfo.substring(0,errorInfo.lastIndexOf(","));
+            saveInfo.append(""+allRows+",inertRows:"+inertRows+",updateRows:0,errorRows:+"+errorRows+",errorInfo:[").append(errorInfo+"]}]}}");
+            return errorInfo;
         } catch(SQLException e) {
             e.printStackTrace();
+            return null;
         } finally {
             CommonUtils.closeConn(null, tempPs, null);
         }
@@ -130,23 +147,31 @@ public class PoiUtils {
                 XSSFRow titleRow = null;
                 //标题所在行
                 int titleRowIndex = 0;
-                Map<Integer,String> titleMap = new HashMap<Integer,String>();
+                Map<Integer,String> titleMap = null;
                 for(int i=0;i<dataRows;i++){
                     titleRow= xSheet.getRow(i);
                     if(titleRow==null) continue;
-                    /**每行长度*/
+                    //每行长度
                     rowLength = titleRow.getLastCellNum();
                     titleRowIndex = i;
-                    /**得到TitleAry*/
+                    //得到TitleAry
+                    int nu = 0;
+                    titleMap = new HashMap<Integer,String>();
                     for(int k=0;k<rowLength;k++){
                         XSSFCell xCell = titleRow.getCell(k);
-                        if(xCell==null)continue;
-                        String columnName = (String) getCellValue(xCell);
-                        titleMap.put(k, columnName);
+                        if(xCell==null){
+                            nu++;
+                            continue;
+                        }
+                        if(xCell.getCellType()==XSSFCell.CELL_TYPE_STRING){
+                            String columnName = xCell.getStringCellValue();
+                            titleMap.put(k, columnName); 
+                        }
                     }
+                    if(rowLength-nu==titleMap.size())
                     break;
                 }
-                /**得到dataType*/
+                //得到dataType
                 if(titleMap.size()>0){
                     metadataModel = getMetadata(xSheet,dataRows,rowLength,titleMap,titleRowIndex); 
                     retMap.put("md", metadataModel);
@@ -166,23 +191,31 @@ public class PoiUtils {
                 HSSFRow titleRow = null;
                 //标题所在行
                 int titleRowIndex = 0;
-                Map<Integer,String> titleMap = new HashMap<Integer,String>();
+                Map<Integer,String> titleMap = null;
                 for(int i=0;i<dataRows;i++){
+                    titleMap = new HashMap<Integer,String>();
                     titleRow= hSheet.getRow(i);
                     if(titleRow==null) continue;
-                    /**每行长度*/
+                    //每行长度
                     rowLength = titleRow.getLastCellNum();
                     titleRowIndex = i;
-                    /**得到TitleAry*/
+                    //得到TitleAry
+                    int nu = 0;
                     for(int k=0;k<rowLength;k++){
                         HSSFCell hCell = titleRow.getCell(k);
-                        if(hCell==null)continue;
-                        String columnName = (String) getCellValue(hCell);
-                        titleMap.put(k, columnName);
+                        if(hCell==null){
+                            nu++;
+                            continue;
+                        }
+                        if(hCell.getCellType()==XSSFCell.CELL_TYPE_STRING){
+                            String columnName = hCell.getStringCellValue();
+                            titleMap.put(k, columnName); 
+                        }
                     }
+                    if(rowLength-nu==titleMap.size())
                     break;
                 }
-                /**得到dataType*/
+                //得到dataType
                 if(titleMap.size()>0){
                     metadataModel = getMetadata(hSheet,dataRows,rowLength,titleMap,titleRowIndex); 
                     retMap.put("md", metadataModel);
@@ -213,6 +246,8 @@ public class PoiUtils {
         typeMap.put(ExcelConstants.DATA_TYPE_NULL, nullList);
         List<CellParam> errorList = new ArrayList<CellParam>();
         typeMap.put(ExcelConstants.DATA_TYPE_ERROR, errorList);
+        List<CellParam> intList = new ArrayList<CellParam>();
+        typeMap.put(ExcelConstants.DATA_TYPE_INTEGER, intList);
         return typeMap;
     }
     /**
@@ -316,23 +351,26 @@ public class PoiUtils {
             }
             metadataModel = getDataTypes(recordMap,dataRows-1,titleMap);
         }else if(dataRows-titleRowIndex>ExcelConstants.DATA_ROWS_CRITICAL_POINT){
-            //大于100条数据的时候
             int [] randoms = getRandoms(dataRows,ExcelConstants.EXCEL_MD_RANDOM_ROWSIZE,titleRowIndex);
             for(int x=0;x<randoms.length;x++){
                 HSSFRow hRow = sheet.getRow(randoms[x]);
-                for(int y=0;y<hRow.getLastCellNum();y++){
-                    Map<String,List<CellParam>> typeMap = recordMap.get(y);
-                    if(typeMap==null) typeMap = getTypeMap();
-                    //cp赋值
-                    CellParam cp = new CellParam();
-                    cp.setX(randoms[x]);
-                    cp.setY(y);
-                    HSSFCell hCell = hRow.getCell(y);
-                    String dataType= getCellValueType(hCell);
-                    cp.setDataType(dataType);
-                    List<CellParam> cpList = typeMap.get(dataType);
-                    cpList.add(cp);
-                    recordMap.put(y, typeMap);
+                if(hRow!=null){
+                    Iterator<Integer> yIt = titleMap.keySet().iterator();
+                    while(yIt.hasNext()){
+                        int y = yIt.next();
+                        Map<String,List<CellParam>> typeMap = recordMap.get(y);
+                        if(typeMap==null) typeMap = getTypeMap();
+                        //cp赋值
+                        CellParam cp = new CellParam();
+                        cp.setX(x);
+                        cp.setY(y);
+                        HSSFCell hCell = hRow.getCell(y);
+                        String dataType= getCellValueType(hCell);
+                        cp.setDataType(dataType);
+                        List<CellParam> cpList = typeMap.get(dataType);
+                        cpList.add(cp);
+                        recordMap.put(y, typeMap);
+                    }
                 }
             }
             metadataModel = getDataTypes(recordMap,randoms.length,titleMap);
@@ -519,17 +557,20 @@ public class PoiUtils {
             int cellType = xCell.getCellType();  
             switch (cellType) {  
             case XSSFCell.CELL_TYPE_STRING:  
-                type = "String";  
+                type = "String";
+                type = getType(type,xCell);
                 break;  
             case XSSFCell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(xCell)) {  
                     type = "Date";
                 } else {  
-                    type = "Double";  
+                    type = "Double";
+                    type = getType(type,xCell);
                 }
                 break;  
             case XSSFCell.CELL_TYPE_FORMULA:  
-                type = "Double";  
+                type = "Double";
+                type = getType(type,xCell);
                 break;  
             case XSSFCell.CELL_TYPE_ERROR:  
                 type = "Error";
@@ -546,6 +587,54 @@ public class PoiUtils {
         }  
         return type;  
     }  
+    private static String getType(String type, XSSFCell xCell) {
+        if(type.equals("String")){
+            String strVal = xCell.getStringCellValue();
+            try{
+                double dVal = Double.parseDouble(strVal);
+                type = "Double";
+                String strD = ""+dVal;
+                strD = strD.substring(0,strD.lastIndexOf("."));
+                if(Integer.parseInt(strD)==dVal){
+                    type = "Integer";
+                }
+            }catch(Exception e){
+                type = "String";
+            }
+        }else if(type.equals("Double")){
+            double dVal = xCell.getNumericCellValue();
+            String strD = ""+dVal;
+            strD = strD.substring(0,strD.lastIndexOf("."));
+            if(Integer.parseInt(strD)==dVal){
+                type = "Integer";
+            }
+        }
+        return type;
+    }
+    private static String getType(String type, HSSFCell hCell) {
+        if(type.equals("String")){
+            String strVal = hCell.getStringCellValue();
+            try{
+                double dVal = Double.parseDouble(strVal);
+                type = "Double";
+                String strD = ""+dVal;
+                strD = strD.substring(0,strD.lastIndexOf("."));
+                if(Integer.parseInt(strD)==dVal){
+                    type = "Integer";
+                }
+            }catch(Exception e){
+                type = "String";
+            }
+        }else if(type.equals("Double")){
+            double dVal = hCell.getNumericCellValue();
+            String strD = ""+dVal;
+            strD = strD.substring(0,strD.lastIndexOf("."));
+            if(Integer.parseInt(strD)==dVal){
+                type = "Integer";
+            }
+        }
+        return type;
+    }
     /** 得到单元格类型为HSSFCELL的valType,*/  
     private static String getCellValueType(HSSFCell hCell) { 
         if (hCell == null)
@@ -556,16 +645,19 @@ public class PoiUtils {
             switch (cellType) {  
             case XSSFCell.CELL_TYPE_STRING:  
                 type = "String";  
+                type = getType(type,hCell);
                 break;  
             case XSSFCell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(hCell)) {  
                     type = "Date";
                 } else {  
                     type = "Double";  
+                    type = getType(type,hCell);
                 }
                 break;  
             case XSSFCell.CELL_TYPE_FORMULA:  
                 type = "Double";  
+                type = getType(type,hCell);
                 break;  
             case XSSFCell.CELL_TYPE_ERROR:  
                 type = "Error";  
