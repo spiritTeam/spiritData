@@ -123,9 +123,9 @@ public class PoiUtils {
                 }
                 inertRows = allRows-errorRows;
             }
-            errorInfo.substring(0,errorInfo.lastIndexOf(","));
-            saveInfo.append(""+allRows+",inertRows:"+inertRows+",updateRows:0,errorRows:+"+errorRows+",errorInfo:[").append(errorInfo+"]}]}}");
-            return errorInfo;
+            //errorInfo.substring(0,errorInfo.lastIndexOf(","));
+            //saveInfo.append(""+allRows+",inertRows:"+inertRows+",updateRows:0,errorRows:+"+errorRows+",errorInfo:[").append(errorInfo+"]}]}}");
+            return null;
         } catch(SQLException e) {
             e.printStackTrace();
             return null;

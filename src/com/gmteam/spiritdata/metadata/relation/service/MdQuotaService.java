@@ -245,16 +245,25 @@ public class MdQuotaService {
      * @param mdMId 元数据模式Id 
      * @return 指标信息
      */
-    public QuotaTable getQuotaInfo(String tableName, String mdMId) throws Exception {
+    public QuotaTable getQuotaInfo(String tableName, MetadataModel mm) throws Exception {
         Map<String, Object> param = new HashMap<String, Object>();
-        param.put("tmId", mdMId);
+        param.put("tmId", mm.getId());
         param.put("tableName", tableName);
         QuotaTable ret = qtDao.getInfoObject(param);
         if (ret!=null) {
             param.clear();
             param.put("tqId", ret.getId());
             List<QuotaColumn> qcl = qcDao.queryForList(param);
-            ret.setColQuotaList(qcl);
+            if (qcl!=null&&qcl.size()>0) {
+                for (int i=qcl.size()-1; i>=0; i--) {
+                    QuotaColumn qc = qcl.get(i);
+                    MetadataColumn mc = mm.getColumnByColId(qc.getColId());
+                    if (mc==null) qcl.remove(i);
+                    else qc.setColumn(mc);
+                }
+            }
+            if (qcl!=null&&qcl.size()>0) ret.setColQuotaList(qcl);
+            else ret = null;
         }
         return ret;
     }

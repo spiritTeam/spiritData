@@ -56,7 +56,7 @@ public class AnalKey implements AnalTable {
     public Map<String, Double> scanOneTable(String tableName, MetadataModel mm) throws Exception {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
         //先分析指标表
-        QuotaTable qt = mdQuotaService.getQuotaInfo(tableName, mm.getId());
+        QuotaTable qt = mdQuotaService.getQuotaInfo(tableName, mm);
         if (qt==null) {//为空，则重新计算主键
             Connection conn = null;
             PreparedStatement ps = null;
@@ -119,7 +119,7 @@ public class AnalKey implements AnalTable {
             if (one==qc.getCompressRate()) {
                 if (cType.equalsIgnoreCase("String")) {
                     ret.put(cName, one);
-                } else if (cType.equalsIgnoreCase("Number")) {
+                } else if (cType.equalsIgnoreCase("Integer")) {
                     ret.put(cName, one);
                 } else if (cType.equalsIgnoreCase("Double")) {
                     ret.put(cName, one*0.5);

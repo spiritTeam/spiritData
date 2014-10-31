@@ -129,7 +129,9 @@ public class QuotaColumn extends BaseObject {
      */
     public float getNullRate() {
         if (this.tabQuota.getAllCount()==0) return -1;
-        return this.nullCount/this.tabQuota.getAllCount();
+        float a = Float.valueOf(this.nullCount+"");
+        float b = Float.valueOf(this.tabQuota.getAllCount()+"");
+        return a/b;
     }
 
     /**
@@ -138,6 +140,8 @@ public class QuotaColumn extends BaseObject {
      */
     public float getCompressRate() {
         if (this.tabQuota.getAllCount()==0) return -1;
-        return this.distinctCount/this.tabQuota.getAllCount();
+        float a = Float.valueOf(this.distinctCount+"");
+        float b = Float.valueOf(this.tabQuota.getAllCount()+"");
+        return a/b;
     }
 }
