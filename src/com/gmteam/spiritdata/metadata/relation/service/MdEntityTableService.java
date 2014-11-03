@@ -62,12 +62,23 @@ public class MdEntityTableService {
             if (mc.isPk()) pks.add(mc);
         }
         columnStr = columnStr.substring(1);
-        if (pks.size()>0) {
+        if (pks.size()>0&&tableType==1) { //只有积累表创建主键
             columnStr += ", PRIMARY KEY (";
             for (MetadataColumn mc : pks) {
                 columnStr += mc.getColumnName()+",";
             }
             columnStr = columnStr.substring(0, columnStr.length()-1)+") USING BTREE";
+        }
+        //临时表只创建确认主键
+        String _tempS = "";
+        if (tableType==2&&pks.size()>0) {
+            for (MetadataColumn mc : pks) {
+                if (mc.isCertainPk()) _tempS += ","+mc.getColumnName();
+            }
+            if (_tempS.length()>0) _tempS.substring(1);
+            if (_tempS.length()>0) {
+                columnStr += ", PRIMARY KEY ("+_tempS+") USING BTREE";
+            }
         }
         btm.put("columnStr", columnStr);
         btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDescn());
