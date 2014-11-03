@@ -24,7 +24,6 @@ import com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.QuotaTable;
 import com.gmteam.spiritdata.metadata.relation.semanteme.AnalTable;
 import com.gmteam.spiritdata.metadata.relation.service.MdQuotaService;
-import com.gmteam.spiritdata.util.Arithmetic;
 import com.gmteam.spiritdata.util.SequenceUUID;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.framework.util.FileNameUtils;
