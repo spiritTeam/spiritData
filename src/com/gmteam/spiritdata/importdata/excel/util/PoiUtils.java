@@ -76,7 +76,11 @@ public class PoiUtils {
                     u_keyList = "";
                     i_insertColList = "";
                     i_valueList = "";
-
+                    
+                    List<Integer> pkIndexList = new ArrayList<Integer>();
+                    List<Integer> updateColIndexList = new ArrayList<Integer>();
+                    List<Integer> insertIndexList = new ArrayList<Integer>();
+                    
                     for (MetadataColumn mc: excelMd.getColumnList()) {
                         int colIndex = mc.getColumnIndex();
                         _col = newMd.getColumnByTName(mc.getTitleName());
@@ -90,13 +94,16 @@ public class PoiUtils {
                         }
                         if (value!=null) {
                             if (_col.isPk()) {
-                                u_keyList = "and "+_col.getColumnName()+"="+value;
+                                u_keyList += " and "+_col.getColumnName()+"=?";
                                 _pkCount++;
+                                pkIndexList.add(_col.getColumnIndex());
                             } else {
-                                u_setList += ","+_col.getColumnName()+"="+value;
+                                u_setList += ","+_col.getColumnName()+"=?";
+                                updateColIndexList.add(_col.getColumnIndex());
                             }
                             i_insertColList += "," +_col.getColumnName();
-                            i_valueList += "," +value;
+                            insertIndexList.add(_col.getColumnIndex());
+                            i_valueList += ",?";
                         }
                     }
                     if (_pkCount!=pkCount) {
@@ -109,7 +116,7 @@ public class PoiUtils {
                         if (u_keyList!=null&&u_keyList.length()>0) {
                             u_keyList = u_keyList.substring(4);
                             u_setList = u_setList.substring(1);
-                            updateSql = "update sumTabName set #u_setList where #u_keyList";
+                            updateSql = "update "+sumTabName+" set #u_setList where #u_keyList";
                             updateSql = updateSql.replaceAll("#u_keyList", u_keyList);
                             updateSql = updateSql.replaceAll("#u_setList", u_setList);
                             ps = conn.prepareStatement(updateSql);
@@ -121,12 +128,28 @@ public class PoiUtils {
                     if (uc==0) {
                         i_insertColList = i_insertColList.substring(1);
                         i_valueList = i_valueList.substring(1);
-                        insertSql = "insert into sumTabName(#i_insertColList) values(#i_valueList) ";
+                        insertSql = "insert into "+sumTabName+"(#i_insertColList) values(#i_valueList) ";
                         insertSql = insertSql.replaceAll("#i_insertColList", i_insertColList);
                         insertSql = insertSql.replaceAll("#i_valueList", i_valueList);
                         ps = conn.prepareStatement(insertSql);
                         uc = ps.executeUpdate();
                     }
+                    //先update
+                    if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
+                        row = ((XSSFSheet)sheet).getRow(i);
+                        for(int k = 0;k< updateColIndexList.size();k++){
+                            XSSFCell xcell = ((XSSFRow)row).getCell(k);
+                            ps.setObject(k, getCellValue(xcell));
+                        }
+                    }
+                    else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF) {
+                        row = ((HSSFSheet)sheet).getRow(i);
+                        for(int k = 0;k< updateColIndexList.size();k++){
+                            HSSFCell hcell = ((HSSFRow)row).getCell(k);
+                            ps.setObject(k, getCellValue(hcell));
+                        }
+                    }
+                    
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -136,135 +159,6 @@ public class PoiUtils {
         } catch(Exception e) {
             
         }
-        //Map<String, Object> sqlMap = getSumTabSql(newMdColList,oldMdColList,sumTabName,pkColList);
-        //saveSumData(conn, sheetInfo, sqlMap,titleRowIndex);
-    }
-    @SuppressWarnings("unchecked")
-    private static void saveSumData(Connection conn, SheetInfo sheetInfo,Map<String, Object> sqlMap,int titleRowIndex) {
-        String updateSql = (String) sqlMap.get("updateSql");
-        String insertSql = (String) sqlMap.get("insertSql");
-        PreparedStatement sumInsertPs = null;
-        PreparedStatement sumUpdatePs = null;
-        Object sheet = null;
-        List<Integer> pkIndexList = (List<Integer>) sqlMap.get("pkIndexList");
-        List<Integer> updateIndexList = (List<Integer>) sqlMap.get("updateIndexList");
-        List<Integer> insertColIndex = (List<Integer>) sqlMap.get("insertColIndex");
-
-        try {
-            sumUpdatePs = conn.prepareStatement(updateSql);
-            sumInsertPs = conn.prepareStatement(insertSql);
-            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-                sheet = (XSSFSheet)sheetInfo.getSheet();
-                int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
-                for(int i=1+titleRowIndex;i<rowNum;i++){
-                    XSSFRow xRow = ((XSSFSheet)sheet).getRow(i);
-                    if(xRow!=null){
-                        int j=1;
-                        for (Integer integer :updateIndexList) {
-                            XSSFCell cell = xRow.getCell(integer);
-                            sumUpdatePs.setObject(j, getCellValue(cell));
-                            j++;
-                        }
-                        for (Integer integer :pkIndexList) {
-                            XSSFCell cell = xRow.getCell(integer);
-                            sumUpdatePs.setObject(j, getCellValue(cell));
-                            j++;
-                        }
-                        int updateRow = sumUpdatePs.executeUpdate();
-                        if(updateRow==0){
-                            int k = 1;
-                            for (Integer integer :insertColIndex) {
-                                XSSFCell cell = xRow.getCell(integer);
-                                sumUpdatePs.setObject(k, getCellValue(cell));
-                                k++;
-                            }
-                        }
-                    }
-                }
-            } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-                sheet = (HSSFSheet)sheetInfo.getSheet();
-                int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
-                for(int i=1+titleRowIndex;i<rowNum;i++){
-                    HSSFRow hRow = ((HSSFSheet)sheet).getRow(i);
-                    if(hRow!=null){
-                        int j=1;
-                        for (Integer integer :updateIndexList) {
-                            HSSFCell cell = hRow.getCell(integer);
-                            sumUpdatePs.setObject(j, getCellValue(cell));
-                            j++;
-                        }
-                        for (Integer integer :pkIndexList) {
-                            HSSFCell cell = hRow.getCell(integer);
-                            sumUpdatePs.setObject(j, getCellValue(cell));
-                            j++;
-                        }
-                        int updateRow = sumUpdatePs.executeUpdate();
-                        if(updateRow==0){
-                            int k = 1;
-                            for (Integer integer :insertColIndex) {
-                                HSSFCell cell = hRow.getCell(integer);
-                                sumUpdatePs.setObject(k, getCellValue(cell));
-                                k++;
-                            }
-                        }
-                    }
-                }
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
-        } finally {
-            CommonUtils.closeConn(null, sumUpdatePs, null);
-            CommonUtils.closeConn(null, sumInsertPs, null);
-        }
-    }
-    private static Map<String, Object> getSumTabSql(List<MetadataColumn> newMdColList, List<MetadataColumn> oldMdColList, String sumTabName, List<MetadataColumn> pkColList) {
-        Map<String, Object> sqlMap = new HashMap<String, Object>();
-        //更新sql
-        StringBuffer updateSql = new StringBuffer("");
-        StringBuffer pkColSb = new StringBuffer();
-        StringBuffer updateColSb = new StringBuffer("update "+sumTabName +" set ");     
-        List<Integer> pkIndexList = new ArrayList<Integer>();
-        List<Integer> updateIndexList = new ArrayList<Integer>();
-        Map<Integer,String> updateMdMap = new HashMap<Integer,String>();
-        for(MetadataColumn mcPk :pkColList){
-            pkColSb.append(","+mcPk.getColumnName()+"=?");
-            pkIndexList.add(mcPk.getColumnIndex());
-        }
-        for(MetadataColumn mcUpdate:newMdColList){
-            for(int i:pkIndexList){
-                if(i!=mcUpdate.getColumnIndex())
-                updateMdMap.put(mcUpdate.getColumnIndex(), mcUpdate.getColumnName());
-            }
-        }
-        Iterator<Integer> updateIt = updateMdMap.keySet().iterator();
-        while(updateIt.hasNext()){
-            updateColSb.append(","+updateMdMap.get(updateIt.next())+"=?");
-            updateIndexList.add(updateIt.next());
-        }
-        updateSql.append(updateColSb.substring(1)).append("where ").append(pkColSb.substring(1));
-        sqlMap.put("updateSql", updateSql.toString());
-        sqlMap.put("pkIndexList", pkIndexList);
-        sqlMap.put("updateIndexList", updateIndexList);
-        //计算对应表
-        List<Integer> insertColIndex = new ArrayList<Integer>();
-        for (MetadataColumn mcN: newMdColList) {
-            for (MetadataColumn mcS: oldMdColList) {
-                if (mcN.getTitleName().equals(mcS.getTitleName())&&mcN.getColumnType().equals(mcS.getColumnType())) {
-                    insertColIndex.add(mcS.getColumnIndex());
-                }
-            }
-        }
-        if (insertColIndex.size()==newMdColList.size()) ;//才能继续处理
-        //得到sql
-        StringBuffer fieldStr = new StringBuffer(), valueStr=new StringBuffer();
-        for (MetadataColumn mc: newMdColList) {
-            fieldStr.append(","+mc.getColumnName());
-            valueStr.append(",?");
-        }
-        StringBuffer insertSql=new StringBuffer().append("insert into "+sumTabName+"(").append(fieldStr.substring(1)+") values(").append(valueStr.substring(1)+")");
-        sqlMap.put("insertSumTabSql", insertSql);
-        sqlMap.put("insertColIndex", insertColIndex);
-        return sqlMap;
     }
     public static StringBuffer saveInDB(Connection conn, SheetInfo sheetInfo, MetadataModel excelMD,MetadataModel newMD, String tempTabName, int titleRowIndex) {
         List<MetadataColumn> oldMdColList = excelMD.getColumnList();
