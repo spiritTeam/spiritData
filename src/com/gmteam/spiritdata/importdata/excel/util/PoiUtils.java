@@ -31,11 +31,113 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
  * 类说明 poi工具类
  */
 public class PoiUtils {
-    public static void saveInDB(Connection conn, SheetInfo sheetInfo,MetadataModel excelMd, MetadataModel newMd, String sumTabName,int titleRowIndex, List<MetadataColumn> pkColList) {
-        List<MetadataColumn> oldMdColList = excelMd.getColumnList();
-        List<MetadataColumn> newMdColList = newMd.getColumnList();
-        Map<String, Object> sqlMap = getSumTabSql(newMdColList,oldMdColList,sumTabName,pkColList);
-        saveSumData(conn, sheetInfo, sqlMap,titleRowIndex);
+    /**
+     * 
+     * @param conn
+     * @param sheetInfo
+     * @param excelMd
+     * @param newMd
+     * @param sumTabName
+     * @param titleRowIndex
+     * @param pkColList
+     */
+    public static void saveSubTabInDB(Connection conn, SheetInfo sheetInfo,MetadataModel excelMd, MetadataModel newMd, String sumTabName,int titleRowIndex, List<MetadataColumn> pkColList) {
+        String updateSql = "update sumTabName set #u_setList where #u_keyList";
+        String insertSql = "insert into sumTabName(#i_insertColList) values(#i_valueList) ";
+        Object sheet = null;
+        Object row = null;
+        Object cell = null;
+        int rowNum = 0;
+        try {
+            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF) {
+                sheet = (XSSFSheet)sheetInfo.getSheet();
+                rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
+            } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF) {
+                sheet = (HSSFSheet)sheetInfo.getSheet();
+                rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
+            }
+            if (sheet==null) return ;
+            String u_setList = null, u_keyList = null, i_insertColList = null, i_valueList = null;
+            Object value = null;
+            MetadataColumn _col = null;
+            int pkCount = 0, _pkCount = 0;
+            for (MetadataColumn mc: newMd.getColumnList()) {
+                if (mc.isPk()) pkCount++;
+            }
+
+            PreparedStatement ps = null;
+            try {
+                for(int i=1+titleRowIndex;i<rowNum;i++) {
+                    if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF) row = ((XSSFSheet)sheet).getRow(i);
+                    else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF)  row = ((HSSFSheet)sheet).getRow(i);
+                    if (row==null) continue;
+                    _pkCount = 0;
+                    u_setList = "";
+                    u_keyList = "";
+                    i_insertColList = "";
+                    i_valueList = "";
+
+                    for (MetadataColumn mc: excelMd.getColumnList()) {
+                        int colIndex = mc.getColumnIndex();
+                        _col = newMd.getColumnByTName(mc.getTitleName());
+                        if (_col==null) continue;
+                        if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF) {
+                            cell = ((XSSFRow)row).getCell(colIndex);
+                            value = getCellValue((XSSFCell)cell);
+                        } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF) {
+                            cell = ((HSSFRow)row).getCell(colIndex);
+                            value = getCellValue((HSSFCell)cell);
+                        }
+                        if (value!=null) {
+                            if (_col.isPk()) {
+                                u_keyList = "and "+_col.getColumnName()+"="+value;
+                                _pkCount++;
+                            } else {
+                                u_setList += ","+_col.getColumnName()+"="+value;
+                            }
+                            i_insertColList += "," +_col.getColumnName();
+                            i_valueList += "," +value;
+                        }
+                    }
+                    if (_pkCount!=pkCount) {
+                        //处理日志
+                        continue;
+                    }
+                    int uc = 0;
+                    //先update
+                    try {
+                        if (u_keyList!=null&&u_keyList.length()>0) {
+                            u_keyList = u_keyList.substring(4);
+                            u_setList = u_setList.substring(1);
+                            updateSql = "update sumTabName set #u_setList where #u_keyList";
+                            updateSql = updateSql.replaceAll("#u_keyList", u_keyList);
+                            updateSql = updateSql.replaceAll("#u_setList", u_setList);
+                            ps = conn.prepareStatement(updateSql);
+                            uc = ps.executeUpdate();
+                        }
+                    } catch(Exception e) {
+                    }
+                    //再insert
+                    if (uc==0) {
+                        i_insertColList = i_insertColList.substring(1);
+                        i_valueList = i_valueList.substring(1);
+                        insertSql = "insert into sumTabName(#i_insertColList) values(#i_valueList) ";
+                        insertSql = insertSql.replaceAll("#i_insertColList", i_insertColList);
+                        insertSql = insertSql.replaceAll("#i_valueList", i_valueList);
+                        ps = conn.prepareStatement(insertSql);
+                        uc = ps.executeUpdate();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
+            }
+        } catch(Exception e) {
+            
+        }
+        //Map<String, Object> sqlMap = getSumTabSql(newMdColList,oldMdColList,sumTabName,pkColList);
+        //saveSumData(conn, sheetInfo, sqlMap,titleRowIndex);
     }
     @SuppressWarnings("unchecked")
     private static void saveSumData(Connection conn, SheetInfo sheetInfo,Map<String, Object> sqlMap,int titleRowIndex) {
@@ -123,16 +225,21 @@ public class PoiUtils {
         StringBuffer updateColSb = new StringBuffer("update "+sumTabName +" set ");     
         List<Integer> pkIndexList = new ArrayList<Integer>();
         List<Integer> updateIndexList = new ArrayList<Integer>();
-        for(MetadataColumn mcUpdate :newMdColList){
-            for(MetadataColumn mcPk :pkColList){
-                if(mcUpdate.getTitleName().equals(mcPk.getTitleName())){
-                    pkColSb.append(","+mcUpdate.getColumnName()+"=?");
-                    pkIndexList.add(mcUpdate.getColumnIndex());
-                }else{
-                    updateColSb.append(","+mcUpdate.getColumnName()+"=?");
-                    updateIndexList.add(mcUpdate.getColumnIndex());
-                }
+        Map<Integer,String> updateMdMap = new HashMap<Integer,String>();
+        for(MetadataColumn mcPk :pkColList){
+            pkColSb.append(","+mcPk.getColumnName()+"=?");
+            pkIndexList.add(mcPk.getColumnIndex());
+        }
+        for(MetadataColumn mcUpdate:newMdColList){
+            for(int i:pkIndexList){
+                if(i!=mcUpdate.getColumnIndex())
+                updateMdMap.put(mcUpdate.getColumnIndex(), mcUpdate.getColumnName());
             }
+        }
+        Iterator<Integer> updateIt = updateMdMap.keySet().iterator();
+        while(updateIt.hasNext()){
+            updateColSb.append(","+updateMdMap.get(updateIt.next())+"=?");
+            updateIndexList.add(updateIt.next());
         }
         updateSql.append(updateColSb.substring(1)).append("where ").append(pkColSb.substring(1));
         sqlMap.put("updateSql", updateSql.toString());
