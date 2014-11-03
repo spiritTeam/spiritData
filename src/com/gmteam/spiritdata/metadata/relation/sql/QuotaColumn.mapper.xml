@@ -47,8 +47,7 @@
 
   <!-- 获得列表 -->
   <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" />
-    from sa_md_colquota
+    select <include refid="Base_Column_List" /> from sa_md_colquota
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
@@ -59,16 +58,13 @@
 
   <!-- 获得一条数据 -->
   <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" />
-    from sa_md_colquota
+    select <include refid="Base_Column_List" /> from sa_md_colquota
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
   </select>
   <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" />
-    from sa_md_colquota
-    where id = #{id,jdbcType=VARCHAR}
+    select <include refid="Base_Column_List" /> from sa_md_colquota where id = #{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 新增数据 -->

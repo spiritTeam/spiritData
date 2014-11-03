@@ -116,11 +116,16 @@ class loadDataThread implements Runnable {
             if (mmList!=null&&mmList.size()>0) {//这也保证了flagMap有内容
                 //准备语义信息
                 mcsList = mdBasisService.getMdColSemantemeListByOwnerId(ownerId);
-                Map<String, MetadataColSemanteme> _flagMap = null;
+                Map<String, List<MetadataColSemanteme>> _flagMap = null;
                 if (mcsList!=null&&mcsList.size()>0) {
-                    _flagMap = new HashMap<String, MetadataColSemanteme>();
+                    _flagMap = new HashMap<String, List<MetadataColSemanteme>>();
                     for (MetadataColSemanteme mcs: mcsList) {
-                        _flagMap.put(mcs.getColId(), mcs);
+                        List<MetadataColSemanteme> _l = _flagMap.get(mcs.getColId());
+                        if (_l==null) {
+                            _l = new ArrayList<MetadataColSemanteme>();
+                            _flagMap.put(mcs.getColId(), _l);
+                        }
+                        _l.add(mcs);
                     }
                 }
                 //根据元数据列描述信息构造结构
@@ -131,7 +136,7 @@ class loadDataThread implements Runnable {
                         MetadataColumn mc = mcList.get(i);
                         if (flagMap.get(mc.getMdMId())!=null) {
                             if (_flagMap!=null&&_flagMap.get(mc.getId())!=null) {
-                                mc.setColSem(_flagMap.get(mc.getId()));
+                                mc.setColSemList(_flagMap.get(mc.getId()));
                             }
                             (flagMap.get(mc.getMdMId())).addColumn(mc);
                         } else {
@@ -152,7 +157,7 @@ class loadDataThread implements Runnable {
                     if (reStructMcs) {
                         mcsList.clear();
                         for (String mcsId: _flagMap.keySet()) {
-                            mcsList.add(_flagMap.get(mcsId));
+                            mcsList.addAll(_flagMap.get(mcsId));
                         }
                     }
                 } else {

@@ -41,8 +41,7 @@
 
   <!-- 获得列表 -->
   <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" />
-    from sa_md_tabmodel
+    select <include refid="Base_Column_List" /> from sa_md_tabmodel
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
@@ -53,16 +52,13 @@
 
   <!-- 获得一条数据 -->
   <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" />
-    from sa_md_tabmodel
+    select <include refid="Base_Column_List" /> from sa_md_tabmodel
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
   </select>
   <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" />
-    from sa_md_tabmodel
-    where id = #{id,jdbcType=VARCHAR}
+    select <include refid="Base_Column_List" /> from sa_md_tabmodel where id = #{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 新增数据 -->
@@ -75,7 +71,7 @@
       <if test="ownerId != null" >
         ownerId,
       </if>
-      <if test="ownerType != null" >
+      <if test="ownerType != null and ownerType!=0" >
         ownerType,
       </if>
       <if test="tableName != null" >
@@ -92,7 +88,7 @@
       <if test="ownerId != null" >
         #{ownerId,jdbcType=VARCHAR},
       </if>
-      <if test="ownerType != null" >
+      <if test="ownerType != null and ownerType!=0" >
         #{ownerType,jdbcType=INTEGER},
       </if>
       <if test="tableName != null" >
@@ -111,7 +107,7 @@
       <if test="ownerId != null" >
         ownerId = #{ownerId,jdbcType=VARCHAR},
       </if>
-      <if test="ownerType != null" >
+      <if test="ownerType != null and ownerType!=0" >
         ownerType = #{ownerType,jdbcType=INTEGER},
       </if>
       <if test="tableName != null" >

@@ -10,7 +10,7 @@
     <id     column="id"            property="id"            jdbcType="VARCHAR" />
     <result column="cId"           property="colId"         jdbcType="VARCHAR" />
     <result column="tmId"          property="mdMId"         jdbcType="VARCHAR" />
-    <result column="semantemeCode" property="semantemeCode" jdbcType="INTEGER" />
+    <result column="semantemeCode" property="semantemeCode" jdbcType="VARCHAR" />
     <result column="semantemeType" property="semantemeType" jdbcType="INTEGER" />
     <result column="cTime"         property="cTime"         jdbcType="TIMESTAMP" />
     <result column="lmTime"        property="lmTime"        jdbcType="TIMESTAMP" />
@@ -26,8 +26,8 @@
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
         <if test="cId != null" > and cId = #{colId,jdbcType=VARCHAR} </if>
         <if test="mdMId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
-        <if test="semantemeCode != null" > and semantemeCode = #{semantemeCode,jdbcType=INTEGER} </if>
-        <if test="semantemeType != null" > and semantemeType = #{semantemeType,jdbcType=INTEGER} </if>
+        <if test="semantemeCode != null" > and semantemeCode = #{semantemeCode,jdbcType=VARCHAR} </if>
+        <if test="semantemeType!=null and semantemeType!=1" > and semantemeType = #{semantemeType,jdbcType=INTEGER} </if>
         <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
         <if test="lmTime != null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
       </trim>
@@ -43,8 +43,7 @@
 
   <!-- 获得列表 -->
   <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" />
-    from sa_md_colsemanteme
+    select <include refid="Base_Column_List" /> from sa_md_colsemanteme
     <if test="_parameter != null" >
       <include refid="WhereClauseByEntiey" />
     </if>
@@ -53,9 +52,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" />
-    from sa_md_colsemanteme
-    where id = #{id,jdbcType=VARCHAR}
+    select <include refid="Base_Column_List" /> from sa_md_colsemanteme where id = #{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 按照所有者获得列表 -->
@@ -89,7 +86,7 @@
       <if test="semantemeCode != null" >
         semantemeCode,
       </if>
-      <if test="semantemeType != null" >
+      <if test="semantemeType!=null and semantemeType!=1" >
         semantemeType,
       </if>
     </trim>
@@ -104,9 +101,9 @@
         #{mdMId,jdbcType=VARCHAR},
       </if>
       <if test="semantemecode != null" >
-        #{semantemeCode,jdbcType=INTEGER},
+        #{semantemeCode,jdbcType=VARCHAR},
       </if>
-      <if test="semantemetype != null" >
+      <if test="semantemeType!=null and semantemeType!=1" >
         #{semantemeType,jdbcType=INTEGER},
       </if>
     </trim>
@@ -126,9 +123,9 @@
         tmId = #{mdMId,jdbcType=VARCHAR},
       </if>
       <if test="semantemecode != null" >
-        semantemeCode = #{semantemeCode,jdbcType=INTEGER},
+        semantemeCode = #{semantemeCode,jdbcType=VARCHAR},
       </if>
-      <if test="semantemetype != null" >
+      <if test="semantemeType!=null and semantemeType!=1" >
         semantemeType = #{semantemeType,jdbcType=INTEGER},
       </if>
       <if test="ctime != null" >
