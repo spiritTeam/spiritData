@@ -186,23 +186,21 @@ public class MdKeyService {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return ;
         
         //读取元数据信息，看主键是否是确定的
-        String[] keys = null;
-        if (needAnalKey(mm)) { //若不是确定的，分析元数据主键，调用analMdKey
-            keys = analMdKey(mm);
-        }
+        String[] keys = (needAnalKey(mm))?analMdKey(mm):null;
         //不管主键是否确定，下面都对主键进行调整
         String keyStr = "";
         if (keys==null) {
             for (MetadataColumn mc : mm.getColumnList()) {
                 if (mc.isPk()) keyStr += ","+mc.getColumnName();
             }
-            if (keyStr.equals("")) {
-                keys=null;
-            } else {
-                keyStr = keyStr.substring(1);
-                keys = StringUtils.splitString(keyStr, ",");
+            if (keyStr.equals("")) keys=null;
+            else keys = StringUtils.splitString(keyStr, ",");
+        } else {
+            for (int i=0; i<keys.length; i++) {
+                keyStr +="," + keys[i];
             }
         }
+        keyStr = keyStr.substring(1);
         if (keys==null||keys[0].equals("")) return ;
         //看目前元数据积累表是否有主键，若有取出(注意这里是从关系型数据库的系统管理信息[metadata]中得到主键)
         String sumTableName = mm.getTableName();

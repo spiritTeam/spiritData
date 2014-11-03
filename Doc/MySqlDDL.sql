@@ -39,7 +39,7 @@ CREATE TABLE sa_md_column (
   titleName   varchar(100)    NOT NULL DEFAULT NULL     COMMENT '列意义名称(中文名称，若为excel，则为表头名称，若为DB会比较复杂)',
   columnType  varchar(10)     NOT NULL DEFAULT 'String' COMMENT '列数据类型',
   columnIndex int(3) unsigned NOT NULL DEFAULT '1'      COMMENT '列排序',
-  pkSign      int(1) unsigned NOT NULL DEFAULT '2'      COMMENT '是否是主键(0-不是主键,1-确定主键,2-不确定主键)',
+  pkSign      int(1) unsigned NOT NULL DEFAULT '0'      COMMENT '是否是主键(0-不是主键,1-确定主键,2-不确定主键)',
   cTime       timestamp       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时的系统时间',
   PRIMARY KEY (id)
 )

@@ -24,6 +24,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.QuotaTable;
 import com.gmteam.spiritdata.metadata.relation.semanteme.AnalTable;
 import com.gmteam.spiritdata.metadata.relation.service.MdQuotaService;
+import com.gmteam.spiritdata.util.Arithmetic;
 import com.gmteam.spiritdata.util.SequenceUUID;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.framework.util.FileNameUtils;
@@ -108,22 +109,66 @@ public class AnalKey implements AnalTable {
                 if (isWaitKeyCol(qc)>0) l.add(qc);
             }
             //找出列组合
-//            Map<Integer, List<Object[]>> CompagesMap = Arithmetic.AllCompages(l.toArray());
-//            while (ret.size()==0&&n<=_nLimit) {
-//                List<Object[]> _keyL = CompagesMap.get(new Integer(n));
-//                if (_keyL!=null&&_keyL.size()>0) {
-//                    for (Object[] o :_keyL) {
-//                        String keyComp = ",";
-//                        for (int t=0; t<o.length; t++) {
-//                            keyComp +=((QuotaColumn)o[t]).getColumn().getColumnName();
-//                        }
-//                        keyComp = keyComp.substring(1);
-//                        System.out.println("=============="+keyComp+"");
-//                        
-//                    }
-//                } else break;
-//                n++;
-//            }
+            Connection conn = null;
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            Map<Integer, List<Object[]>> CompagesMap = Arithmetic.AllCompages(l.toArray());
+            try {
+                conn = dataSource.getConnection();
+                String countSql = "select count(distinct #colList) from "+tableName;
+                long count = 0;
+                while (ret.size()==0&&n<=_nLimit) {
+                    List<Object[]> _keyL = CompagesMap.get(new Integer(n));
+                    if (_keyL!=null&&_keyL.size()>0) {
+                        for (Object[] o :_keyL) {
+                            String keyComp = ",";
+                            for (int t=0; t<o.length; t++) {
+                                keyComp +=((QuotaColumn)o[t]).getColumn().getColumnName();
+                            }
+                            keyComp = keyComp.substring(1);
+                            countSql.replaceAll("#colList", keyComp);
+                            ps = conn.prepareStatement(countSql);
+                            rs = ps.executeQuery();
+                            if (rs.next()) {
+                                count = rs.getLong(1);
+                            } else {
+                                count = -1;
+                            }
+                            if (count/qt.getAllCount()==1) {
+                                ret.put(keyComp, one);
+                                //再根据列情况进行权重的调整
+                            }
+                            rs.close();
+                            ps.close();
+                            System.out.println("=============="+keyComp+"");
+                            
+                        }
+                    } else break;
+                    n++;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
+                try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
+                try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
+            }
+
+            while (ret.size()==0&&n<=_nLimit) {
+                List<Object[]> _keyL = CompagesMap.get(new Integer(n));
+                if (_keyL!=null&&_keyL.size()>0) {
+                    for (Object[] o :_keyL) {
+                        String keyComp = ",";
+                        for (int t=0; t<o.length; t++) {
+                            keyComp +=((QuotaColumn)o[t]).getColumn().getColumnName();
+                        }
+                        keyComp = keyComp.substring(1);
+                        System.out.println("=============="+keyComp+"");
+                        
+                    }
+                } else break;
+                n++;
+            }
         }
         //写json文件，此方法目前为测试方法，今后把他变为一个更好用的包
         Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -194,8 +239,7 @@ public class AnalKey implements AnalTable {
             if (qc.getColumn().getColumnType().equalsIgnoreCase("Double")&&Integer.parseInt(qc.getMax())>128) return 0f;
         } catch(Exception e) {}
         if (qc.getColumn().getColumnType().equalsIgnoreCase("Date")) return 0.5f;
-        
-        
+
         return 1f;
     }
 }

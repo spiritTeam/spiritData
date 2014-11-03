@@ -2,7 +2,6 @@ package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -119,20 +118,9 @@ public class FileUploadService {
     private AnalKey analKey;
     private List<MetadataColumn> analPK(String tableName,MetadataModel newMd) {
         try {
-//            analKey.scanOneTable(tableName, newMd,null);
-//            mdKeyService.adjustMdKey(newMd);
-            List<MetadataColumn> mdColList = newMd.getColumnList();
-            List<MetadataColumn> pkColList = new ArrayList<MetadataColumn>();
-            for(MetadataColumn mdC :mdColList){
-               if(mdC.getColumnIndex()==0||mdC.getColumnIndex()==4){
-                   mdC.setPkSign(1);
-                   pkColList.add(mdC);
-               }
-//                if(mdC.isPk()){
-//                    pkColList.add(mdC);
-//                }
-            }
-            return pkColList;
+            analKey.scanOneTable(tableName, newMd, null);
+            mdKeyService.adjustMdKey(newMd);
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
