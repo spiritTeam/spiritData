@@ -2,6 +2,7 @@ package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
@@ -88,9 +90,9 @@ public class FileUploadService {
                 // 4、分析临时表指标
                 analTempQuota(tempTabMapOrg);
                 // 5、分析主键
-                String pk = analPK(tempTabMapOrg.getTableName(),newMd);
+                List<MetadataColumn> pkColList = analPK(tempTabMapOrg.getTableName(),newMd);
                 // 6、存储积累表{根据上面的结果设置主键}
-                saveDataInSumTab(sumTabName,pk,sheetInfo,excelMd,ownerId);
+                saveDataInSumTab(sumTabName,pkColList,sheetInfo,excelMd,ownerId,newMd,titleRowIndex);
                 // 7、分析积累表指标
                 analSumTabQuota(sumTabName);
                 // 8、分析元数据语义
@@ -115,19 +117,33 @@ public class FileUploadService {
     private MdKeyService mdKeyService;
     @Resource
     private AnalKey analKey;
-    private String analPK(String tableName,MetadataModel newMd) {
+    private List<MetadataColumn> analPK(String tableName,MetadataModel newMd) {
         try {
             analKey.scanOneTable(tableName, newMd);
-            String [] pkAry = mdKeyService.analMdKey(newMd);
-            for(String str:pkAry){
-                System.out.println(str);
+            mdKeyService.adjustMdKey(newMd);
+            List<MetadataColumn> mdColList = newMd.getColumnList();
+            List<MetadataColumn> pkColList = new ArrayList<MetadataColumn>();
+            for(MetadataColumn mdC :mdColList){
+                if(mdC.isPk()){
+                    pkColList.add(mdC);
+                }
             }
+            return pkColList;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
-    private void saveDataInSumTab(String sumTabName, String pk,SheetInfo sheetInfo, MetadataModel excelMd, String ownerId) {
+    private void saveDataInSumTab(String sumTabName, List<MetadataColumn> pkColList,SheetInfo sheetInfo, MetadataModel excelMd, String ownerId, MetadataModel newMd, int titleRowIndex) {
+        Connection conn = null;
+        try {
+            conn = ds.getConnection();
+            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMd,sumTabName,titleRowIndex,pkColList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            CommonUtils.closeConn(conn, null, null);
+        }
     }
     private void analMDSemantic(String sumTabName2) {
     }
