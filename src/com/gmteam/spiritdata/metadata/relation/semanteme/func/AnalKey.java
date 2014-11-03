@@ -19,12 +19,12 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.framework.FConstants;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.QuotaTable;
 import com.gmteam.spiritdata.metadata.relation.semanteme.AnalTable;
 import com.gmteam.spiritdata.metadata.relation.service.MdQuotaService;
+import com.gmteam.spiritdata.util.Arithmetic;
 import com.gmteam.spiritdata.util.SequenceUUID;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.framework.util.FileNameUtils;
@@ -53,65 +53,17 @@ public class AnalKey implements AnalTable {
      * @return 是一个Map<String, Float>，其中String是列名，float是主键可能性
      */
     @Override
-    public Map<String, Double> scanOneTable(String tableName, MetadataModel mm) throws Exception {
+    public Map<String, Float> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Exception {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
         //先分析指标表
         QuotaTable qt = mdQuotaService.getQuotaInfo(tableName, mm);
-        if (qt==null) {//为空，则重新计算主键
-            Connection conn = null;
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-            try {
-                conn = dataSource.getConnection();
-                //对表进行指标统计
-                ps = conn.prepareStatement("select count(*) from "+tableName);
-                rs = ps.executeQuery();
-                qt = new QuotaTable();
-                qt.setMdMId(mm.getId());
-                qt.setTmoId("_tempAnalKey");
-                qt.setTableName(tableName);
-                if (rs.next()) {
-                    qt.setAllCount(rs.getLong(1));
-                } else {
-                    qt.setAllCount(-1);
-                }
-                qt.setId(SequenceUUID.getUUIDSubSegment(4));
-                rs.close();rs=null;
-                ps.close();ps=null;
-                //对列进行指标统计
-                for (MetadataColumn mc: mm.getColumnList()) {
-                    String fieldName = mc.getColumnName();
-                    QuotaColumn qc = new QuotaColumn();
-                    qc.setColId(mc.getId());
-                    qc.setTqId(qt.getId());
-                    qc.setId(SequenceUUID.getUUIDSubSegment(4));
-                    qc.setColumn(mc);
-                    //distinct
-                    String sql = "select count(distinct "+fieldName+") from "+tableName;
-                    ps = conn.prepareStatement(sql);
-                    rs = ps.executeQuery();
-                    if (rs.next()) {
-                        qc.setDistinctCount(rs.getLong(1));
-                    } else {
-                        qc.setDistinctCount(-1);
-                    }
-                    rs.close();rs=null;
-                    ps.close();ps=null;
-
-                    qt.addColumn(qc);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
-                try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
-                try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
-            }
+        if (qt==null) {//为空，则重新计算指标
+            qt = mdQuotaService.caculateQuota(mm, tableName);
         }
         //按指标分析
         if (qt.getColQuotaList()==null||qt.getColQuotaList().size()==0) return null;
-        Map<String, Double> ret  = new HashMap<String, Double>();
-        Double one = new Double("1");
+        Map<String, Float> ret  = new HashMap<String, Float>();
+        Float one = new Float("1");
         for (QuotaColumn qc: qt.getColQuotaList()) {
             String cType = mm.getColumnByColId(qc.getColId()).getColumnType();
             String cName = mm.getColumnByColId(qc.getColId()).getColumnName();
@@ -122,27 +74,57 @@ public class AnalKey implements AnalTable {
                 } else if (cType.equalsIgnoreCase("Integer")) {
                     ret.put(cName, one);
                 } else if (cType.equalsIgnoreCase("Double")) {
-                    ret.put(cName, one*0.5);
+                    ret.put(cName, new Float(one*0.5));
                 } else if (cType.equalsIgnoreCase("Date")) {
-                    ret.put(cName, one*0.1);
+                    ret.put(cName, new Float(one*0.1));
                 }
-                Double d = ret.get(cName);
-                if (d!=null) {
-                    if (title.indexOf("id")!=-1) ret.put(cName, d*2);
-                    else if (title.indexOf("ident")!=-1) ret.put(cName, d*1.5);
-                    else if (title.indexOf("num")!=-1)   ret.put(cName, d*1.2);
-                    else if (title.indexOf("key")!=-1)   ret.put(cName, d*1.1);
-                    else if (title.indexOf("主键")!=-1)  ret.put(cName, d*2);
-                    else if (title.indexOf("键")!=-1)    ret.put(cName, d*1.6);
-                    else if (title.indexOf("编号")!=-1)  ret.put(cName, d*1.8);
-                    else if (title.indexOf("编码")!=-1)  ret.put(cName, d*1.8);
-                    else if (title.indexOf("号")!=-1)    ret.put(cName, d*1.3);
+                Float f = ret.get(cName);
+                if (f!=null) {
+                    if (title.indexOf("id")!=-1) ret.put(cName, new Float(f*2));
+                    else if (title.indexOf("ident")!=-1) ret.put(cName, new Float(f*1.5));
+                    else if (title.indexOf("num")!=-1)   ret.put(cName, new Float(f*1.2));
+                    else if (title.indexOf("key")!=-1)   ret.put(cName, new Float(f*1.1));
+                    else if (title.indexOf("主键")!=-1)  ret.put(cName, new Float(f*2));
+                    else if (title.indexOf("键")!=-1)    ret.put(cName, new Float(f*1.6));
+                    else if (title.indexOf("编号")!=-1)  ret.put(cName, new Float(f*1.8));
+                    else if (title.indexOf("编码")!=-1)  ret.put(cName, new Float(f*1.8));
+                    else if (title.indexOf("号")!=-1)    ret.put(cName, new Float(f*1.3));
                     else if (title.indexOf("序号")!=-1)  ret.remove(cName);//若是序号，则一定不能作为主键
                 }
             }
         }
-        if (ret.size()==0) { //说明一列不能满足要求，主键可能是多列，这个以后再加
-            
+        if (ret.size()==0) {//说明一列不能满足要求，主键可能是多列
+            int n = 2;//列组合个数
+            int _nLimit = 3;//列组和限制，最多查找到多少列的组合
+            if (param!=null) {
+                if (param.get("maxKeyColumnsCount")!=null) {//参数中给出组合数
+                    try {
+                        _nLimit = Integer.parseInt((String)param.get("maxKeyColumnsCount"));
+                    } catch(Exception e) {}
+                }
+            }
+            //找出可能的列，不包括浮点列，URL列，若是字符串，长度大于128的字符串列;URL列不处理
+            List<QuotaColumn> l = new ArrayList<QuotaColumn>();
+            for (QuotaColumn qc: qt.getColQuotaList()) {
+                if (isWaitKeyCol(qc)>0) l.add(qc);
+            }
+            //找出列组合
+            Map<Integer, List<Object[]>> CompagesMap = Arithmetic.AllCompages(l.toArray());
+            while (ret.size()==0&&n<=_nLimit) {
+                List<Object[]> _keyL = CompagesMap.get(new Integer(n));
+                if (_keyL!=null&&_keyL.size()>0) {
+                    for (Object[] o :_keyL) {
+                        String keyComp = ",";
+                        for (int t=0; t<o.length; t++) {
+                            keyComp +=((QuotaColumn)o[t]).getColumn().getColumnName();
+                        }
+                        keyComp = keyComp.substring(1);
+                        System.out.println("=============="+keyComp+"");
+                        
+                    }
+                } else break;
+                n++;
+            }
         }
         //写json文件，此方法目前为测试方法，今后把他变为一个更好用的包
         Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -185,7 +167,7 @@ public class AnalKey implements AnalTable {
         return ret;
     }
 
-    private List<Map<String, Object>> convertToList(Map<String, Double> keyAnalResultMap) {
+    private List<Map<String, Object>> convertToList(Map<String, Float> keyAnalResultMap) {
         if (keyAnalResultMap==null||keyAnalResultMap.size()==0) return null;
 
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
@@ -199,5 +181,22 @@ public class AnalKey implements AnalTable {
             ret.add(oneEle);
         }
         return ret;
+    }
+
+    /*
+     * 根据列指标信息，判断其是否可能是多列Key组合中的列。
+     * 不包括浮点列，URL列，若是字符串，长度大于128的字符串列;URL列不处理
+     * @param qc 列指标信息
+     * @return 是key列的可能性
+     */
+    private float isWaitKeyCol(QuotaColumn qc) {
+        if (qc.getColumn().getColumnType().equalsIgnoreCase("Double")) return 0f;
+        try {
+            if (qc.getColumn().getColumnType().equalsIgnoreCase("Double")&&Integer.parseInt(qc.getMax())>128) return 0f;
+        } catch(Exception e) {}
+        if (qc.getColumn().getColumnType().equalsIgnoreCase("Date")) return 0.5f;
+        
+        
+        return 1f;
     }
 }

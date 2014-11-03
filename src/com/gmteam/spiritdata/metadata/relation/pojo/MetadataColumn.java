@@ -1,6 +1,8 @@
 package com.gmteam.spiritdata.metadata.relation.pojo;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.gmteam.framework.core.model.BaseObject;
 
@@ -22,7 +24,7 @@ public class MetadataColumn extends BaseObject {
     private Timestamp cTime; //记录创建时间
     //以上信息对应数据库中的信息
     private MetadataModel mdModel; //本列描述对应的元数据模式
-    private MetadataColSemanteme colSem; //本列对应的语义信息
+    private List<MetadataColSemanteme> colSemList; //本列对应的语义信息，由于可能有多个语义，所以，这应该是一个list
 
     public MetadataModel getMdModel() {
         return mdModel;
@@ -96,11 +98,19 @@ public class MetadataColumn extends BaseObject {
     public void setcTime(Timestamp cTime) {
         this.cTime = cTime;
     }
-    public MetadataColSemanteme getColSem() {
-        return colSem;
+    public List<MetadataColSemanteme> getColSemList() {
+        return colSemList;
     }
-    public void setColSem(MetadataColSemanteme colSem) {
-        colSem.setColumn(this);
-        this.colSem = colSem;
+    public void setColSemList(List<MetadataColSemanteme> colSemList) {
+        if (colSemList!=null&&colSemList.size()>0) {
+            for (MetadataColSemanteme mcs: colSemList) this.addColSem(mcs);
+        }
+    }
+    public void addColSem(MetadataColSemanteme mcs) {
+        mcs.setColumn(this);
+        if (this.colSemList==null) {
+            this.colSemList = new ArrayList<MetadataColSemanteme>();
+        }
+        this.colSemList.add(mcs);
     }
 }

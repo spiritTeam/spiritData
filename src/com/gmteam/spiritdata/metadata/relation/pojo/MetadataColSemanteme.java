@@ -17,8 +17,10 @@ public class MetadataColSemanteme extends BaseObject {
     private String mdMId; //元数据模式Id
     private String semantemeCode; //语义代码
     private int semantemeType; //语义类型
+    private float semantemeWeight; //语义权重
     private Timestamp cTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间
+
     //以上对应数据库信息
     private MetadataColumn column; //本列语义对应的列描述信息
 
@@ -60,6 +62,14 @@ public class MetadataColSemanteme extends BaseObject {
 
     public void setSemantemeType(int semantemeType) {
         this.semantemeType = semantemeType;
+    }
+
+    public float getSemantemeWeight() {
+        return semantemeWeight;
+    }
+
+    public void setSemantemeWeight(float semantemeWeight) {
+        this.semantemeWeight = semantemeWeight;
     }
 
     public Timestamp getcTime() {

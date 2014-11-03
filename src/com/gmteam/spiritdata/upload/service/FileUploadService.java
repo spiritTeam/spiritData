@@ -117,7 +117,7 @@ public class FileUploadService {
     private AnalKey analKey;
     private String analPK(String tableName,MetadataModel newMd) {
         try {
-            analKey.scanOneTable(tableName, newMd);
+            analKey.scanOneTable(tableName, newMd, null);
             String [] pkAry = mdKeyService.analMdKey(newMd);
             for(String str:pkAry){
                 System.out.println(str);

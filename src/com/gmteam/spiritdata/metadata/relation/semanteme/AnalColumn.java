@@ -15,7 +15,8 @@ public interface AnalColumn {
      * @param tableName 表名
      * @param md 元数据
      * @param columnName 列名
-     * @return Map<Integer, Float>，此返回值只能是一行，key为列语义编号，float是相似度
+     * @param param 扩展参数，若分析需要其他参数，可通过这个参数传入
+     * @return Map<Integer, Float>，此返回值只能是一行，key{Integer}为列语义编号，float是可能性
      */
-    public Map<Integer, Float> scanOneField(String tableName, MetadataModel md, String columnName);
+    public Float scanOneField(String tableName, MetadataModel md, String columnName, Map<String, Object> param) throws Exception;
 }

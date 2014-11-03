@@ -96,34 +96,6 @@ public class QuotaColumn extends BaseObject {
     }
 
     /**
-     * 根据元数据列信息，计算最大值，主要是用于数据格式转换
-     * @return 最大值
-     */
-    public Object getMaxValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * 根据元数据列信息，计算最小值，主要是用于数据格式转换
-     * @return 最小值
-     */
-    public Object getMinValue() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * 得到数据范围描述的字符串
-     * @return 数据范围描述字符串，如果找不到对应的数据类型，则返回null
-     */
-    public String getValueRange() {
-        if (column==null) return null;
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
      * 得到列稀疏率
      * @return 列稀疏率
      */
