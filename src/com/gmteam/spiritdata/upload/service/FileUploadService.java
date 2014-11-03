@@ -119,6 +119,7 @@ public class FileUploadService {
     private AnalKey analKey;
     private List<MetadataColumn> analPK(String tableName,MetadataModel newMd) {
         try {
+            analKey.scanOneTable(tableName, newMd, null);
             mdKeyService.adjustMdKey(newMd);
             List<MetadataColumn> mdColList = newMd.getColumnList();
             List<MetadataColumn> pkColList = new ArrayList<MetadataColumn>();
@@ -126,7 +127,6 @@ public class FileUploadService {
                 if(mdC.isPk()){
                     pkColList.add(mdC);
                 }
-            analKey.scanOneTable(tableName, newMd, null);
             }
             return pkColList;
         } catch (Exception e) {
