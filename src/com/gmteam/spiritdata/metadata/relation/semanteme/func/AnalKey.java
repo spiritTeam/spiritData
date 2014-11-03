@@ -153,6 +153,22 @@ public class AnalKey implements AnalTable {
                 try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
                 try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
             }
+
+            while (ret.size()==0&&n<=_nLimit) {
+                List<Object[]> _keyL = CompagesMap.get(new Integer(n));
+                if (_keyL!=null&&_keyL.size()>0) {
+                    for (Object[] o :_keyL) {
+                        String keyComp = ",";
+                        for (int t=0; t<o.length; t++) {
+                            keyComp +=((QuotaColumn)o[t]).getColumn().getColumnName();
+                        }
+                        keyComp = keyComp.substring(1);
+                        System.out.println("=============="+keyComp+"");
+                        
+                    }
+                } else break;
+                n++;
+            }
         }
         //写json文件，此方法目前为测试方法，今后把他变为一个更好用的包
         Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -223,8 +239,7 @@ public class AnalKey implements AnalTable {
             if (qc.getColumn().getColumnType().equalsIgnoreCase("Double")&&Integer.parseInt(qc.getMax())>128) return 0f;
         } catch(Exception e) {}
         if (qc.getColumn().getColumnType().equalsIgnoreCase("Date")) return 0.5f;
-        
-        
+
         return 1f;
     }
 }

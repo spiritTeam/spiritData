@@ -121,14 +121,7 @@ public class FileUploadService {
         try {
             analKey.scanOneTable(tableName, newMd, null);
             mdKeyService.adjustMdKey(newMd);
-            List<MetadataColumn> mdColList = newMd.getColumnList();
-            List<MetadataColumn> pkColList = new ArrayList<MetadataColumn>();
-            for(MetadataColumn mdC :mdColList){
-                if(mdC.isPk()){
-                    pkColList.add(mdC);
-                }
-            }
-            return pkColList;
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -138,7 +131,7 @@ public class FileUploadService {
         Connection conn = null;
         try {
             conn = ds.getConnection();
-            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMd,sumTabName,titleRowIndex,pkColList);
+            PoiUtils.saveSubTabInDB(conn,sheetInfo,excelMd,newMd,sumTabName,titleRowIndex,pkColList);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
