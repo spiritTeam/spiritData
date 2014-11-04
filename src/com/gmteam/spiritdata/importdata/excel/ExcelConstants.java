@@ -9,7 +9,6 @@ import com.gmteam.framework.core.model.BaseObject;
  */
 public class ExcelConstants extends BaseObject{
     private static final long serialVersionUID = 1L;
-    
     /**抽取随机数的个数,用于得到随机的行数*/
     public final static int EXCEL_MD_RANDOM_ROWSIZE=100;
     
