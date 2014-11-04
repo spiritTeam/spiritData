@@ -107,11 +107,12 @@ ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据列指标表';
 /**008 数据导入日志[SA_IMP_LOG]*/
 DROP TABLE IF EXISTS sa_imp_log;
 CREATE TABLE  sa_imp_log (
-  id        varchar(36)      NOT NULL              COMMENT '日志id(UUID)',
-  ownerId   varchar(36)      NOT NULL              COMMENT '用户Id或SessionID(或指向用户表)',
-  sFileName varchar(500)     NOT NULL              COMMENT '服务端文件名(包含文件路径',
-  fileSize  int(10) unsigned NOT NULL              COMMENT '文件大小',
-  cFileName varchar(500)     NOT NULL DEFAULT NULL COMMENT '客户端文件名(包含文件路径)',
+  id        varchar(36)      NOT NULL COMMENT '日志id(UUID)',
+  ownerId   varchar(36)      NOT NULL COMMENT '用户Id或SessionID(或指向用户表)',
+  ownerType int(1) unsigned  NOT NULL COMMENT '用户类型(1-用户，2-session)',
+  sFileName varchar(500)     NOT NULL COMMENT '服务端文件名(包含文件路径',
+  fileSize  int(10) unsigned NOT NULL COMMENT '文件大小',
+  cFileName varchar(500)     NOT NULL COMMENT '客户端文件名(包含文件路径)',
   cTime     timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间(也可以作为上传时间)',
   PRIMARY KEY (id)
 )

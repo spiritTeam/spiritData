@@ -28,7 +28,6 @@ import com.gmteam.spiritdata.util.SequenceUUID;
  * 计算表指标的服务，此服务直接从数据库中读取信息，而不从session中读取数据
  * @author wh
  */
-
 @Component
 public class MdQuotaService {
     @Resource

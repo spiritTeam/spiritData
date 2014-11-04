@@ -34,9 +34,8 @@ import com.gmteam.spiritdata.metadata.relation.service.MetadataSessionService;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 /** 
+ * 文件处理
  * @author mht
- * @version  
- * 类说明 
  */
 @Component
 public class FileUploadService {
