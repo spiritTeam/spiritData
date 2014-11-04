@@ -13,7 +13,7 @@ public class SheetInfor extends BaseObject {
     private static final long serialVersionUID = 7206180301875759481L;
 
     private String fileName; //所在文件名称
-    private int excelType; //excel文件的类型，参看DealExcelFileService.EXECL2007_FLAG,DealExcelFileService.EXECL2003_FLAG
+    private int excelType; //excel文件的类型，参看ExcelConstants.EXECL2007_FLAG,ExcelConstants.EXECL2003_FLAG
     private String sheetName; //sheet名称
     private int sheetIndex; //sheet的编号
     private Object sheet; //sheet对象

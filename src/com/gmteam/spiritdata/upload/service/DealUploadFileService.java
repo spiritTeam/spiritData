@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.gmteam.framework.FConstants;
 import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.framework.util.FileNameUtils;
+import com.gmteam.spiritdata.importdata.excel.service.DealExcelFileService;
 import com.gmteam.spiritdata.importdata.pojo.ImportFileLog;
 import com.gmteam.spiritdata.importdata.service.ImportFileService;
 import com.gmteam.spiritdata.util.SequenceUUID;
@@ -22,6 +23,8 @@ import com.gmteam.spiritdata.util.SequenceUUID;
 public class DealUploadFileService {
     @Resource
     private ImportFileService importFileService;
+    @Resource
+    private DealExcelFileService dealExcelService;
 
     /**
      * 处理上传文件
@@ -33,11 +36,13 @@ public class DealUploadFileService {
         //记录日志
         ImportFileLog ful = getIfsFromUploadInfoMap(uploadInfoMap, session);
         importFileService.addImportFile(ful);
-        // TODO 些文件日志
+        // TODO 写文件日志
         //得到文件扩展名
         String extName = FileNameUtils.getExt(ful.getsFileName());
         if (extName.toUpperCase().indexOf(".XLS")==0||extName.toUpperCase().indexOf(".XLSX")==0) {
             //对excel进行处理
+            dealExcelService.process(ful.getsFileName(), session);
+        } else { //处理其他文件类型的文件
             
         }
     }

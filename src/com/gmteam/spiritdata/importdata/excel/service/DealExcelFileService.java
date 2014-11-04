@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.SDConstants;
+import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.ExcelMetadata;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfor;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
@@ -30,9 +31,6 @@ import com.gmteam.spiritdata.metadata.relation.service.MetadataSessionService;
  */
 @Component
 public class DealExcelFileService {
-    private static int EXECL2007_FLAG = 1;//2007及以后版本，用XSSFWorkbook
-    private static int EXECL2003_FLAG = 2;//2003及以前版本，用HSSFWorkbook
-
     @Resource
     MetadataSessionService mdSessionService;
     @Resource
@@ -53,19 +51,24 @@ public class DealExcelFileService {
 
         try {
             //获得处理excel的workbook
-            fis = new FileInputStream(excelFile);
             try {
-                book = new XSSFWorkbook(fis);
-                excelType = DealExcelFileService.EXECL2007_FLAG;
-            } catch (Exception ex) {
+                fis = new FileInputStream(excelFile);
+                book = new HSSFWorkbook(fis);
+                excelType = ExcelConstants.EXECL2003_FLAG;
+            } catch (Exception e) {
+                //TODO 记录日志
+            }
+            if (book==null) {
                 try {
-                    book = new HSSFWorkbook(fis);
-                    excelType = DealExcelFileService.EXECL2003_FLAG;
+                    fis = new FileInputStream(excelFile);
+                    book = new XSSFWorkbook(fis);
+                    excelType = ExcelConstants.EXECL2007_FLAG;
                 } catch (Exception e) {
-                    
+                    //TODO 记录日志
                 }
             }
-            if (excelType==0) {//
+
+            if (excelType==0) {
                 // TODO 记录日志 
                 return;
             }
@@ -87,7 +90,7 @@ public class DealExcelFileService {
                             TableMapOrg[] tabMapOrgAry = mdSessionService.storeMdModel4Import(em.getMm());
 
                             // TODO 为了有更好的处理响应时间，以下逻辑可以采用多线程处理
-                            
+
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                             _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
                             MetadataModel sysMd = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
@@ -134,9 +137,9 @@ public class DealExcelFileService {
         SheetInfor ret = new SheetInfor();
         ret.setExcelType(excelType);
         ret.setSheet(sheet);
-        if (excelType==DealExcelFileService.EXECL2003_FLAG) {
+        if (excelType==ExcelConstants.EXECL2003_FLAG) {
             ret.setSheetName(((HSSFSheet)sheet).getSheetName());
-        } else if (excelType==DealExcelFileService.EXECL2007_FLAG) {
+        } else if (excelType==ExcelConstants.EXECL2007_FLAG) {
             ret.setSheetName(((XSSFSheet)sheet).getSheetName());
         }
         return ret;
@@ -148,6 +151,17 @@ public class DealExcelFileService {
      */
     private void analSheetMetadata(SheetInfor si) {
         //首先分析表头
+        Object sheet = si.getSheet();
+        int rows = 0, firstRowNum = 0;
+        if (si.getExcelType()==ExcelConstants.EXECL2003_FLAG) {
+            rows = ((HSSFSheet)sheet).getLastRowNum();
+            firstRowNum = ((HSSFSheet)sheet).getFirstRowNum();
+        } else if (si.getExcelType()==ExcelConstants.EXECL2007_FLAG){
+            rows = ((XSSFSheet)sheet).getLastRowNum();
+            firstRowNum = ((XSSFSheet)sheet).getFirstRowNum();
+        }
+        if (rows==firstRowNum&&rows==0) return; //说明是空sheet
+        int dataRowBegin = firstRowNum;
         
         //之后分析元数据模型
     }

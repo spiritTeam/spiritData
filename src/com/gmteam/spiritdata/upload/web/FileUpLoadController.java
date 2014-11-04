@@ -14,10 +14,10 @@ import com.gmteam.spiritdata.upload.service.DealUploadFileService;
 import com.gmteam.spiritdata.upload.service.FileUploadService;
 
 /** 
- * @author mht
- * @version  
- * 类说明 
+ * 上传文件处理，是数据分析的入口
+ * @author mht, wh
  */
+
 @Controller
 public class FileUpLoadController extends AbstractFileUploadController {
     @Resource

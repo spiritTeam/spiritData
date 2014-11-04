@@ -12,10 +12,10 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 public class ExcelMetadata extends BaseObject{
     private static final long serialVersionUID = 4360018605351620147L;
 
-    private int bigenX;//开始列
-    private int endX;//结束列
-    private int bigenY;//开始行
-    private int endY;//结束行
+    private int bigenX;//数据开始列
+    private int endX;//数据结束列
+    private int bigenY;//数据开始行
+    private int endY;//数据结束行
     /**
      * 标题信息，包括，标题称，即对应的列属性包括:标题开始列X,结束列X,上级列(对于分集的情况)
      */
