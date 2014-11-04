@@ -41,7 +41,7 @@ public class PoiUtils {
      * @param titleRowIndex
      * @param pkColList
      */
-    public static void saveSubTabInDB(Connection conn, SheetInfo sheetInfo,MetadataModel excelMd, MetadataModel newMd, String sumTabName,int titleRowIndex, List<MetadataColumn> pkColList) {
+    public static void saveSubTabInDB(Connection conn, SheetInfo sheetInfo,MetadataModel excelMd, MetadataModel andlMd, String sumTabName,int titleRowIndex) {
         String updateSql = "", insertSql = "";
         Object sheet = null, row = null, cell = null;
         int rowNum = 0;
@@ -59,7 +59,7 @@ public class PoiUtils {
             Object value = null;
             MetadataColumn _col = null;
             int pkCount = 0, _pkCount = 0;
-            for (MetadataColumn mc: newMd.getColumnList()) if (mc.isPk()) pkCount++;
+            for (MetadataColumn mc: andlMd.getColumnList()) if (mc.isPk()) pkCount++;
 
             PreparedStatement ps = null;
             try {
@@ -79,7 +79,7 @@ public class PoiUtils {
 
                     for (MetadataColumn mc: excelMd.getColumnList()) {
                         int colIndex = mc.getColumnIndex();
-                        _col = newMd.getColumnByTName(mc.getTitleName());
+                        _col = andlMd.getColumnByTName(mc.getTitleName());
                         if (_col==null) continue;
                         if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF) {
                             cell = ((XSSFRow)row).getCell(colIndex);
@@ -150,7 +150,7 @@ public class PoiUtils {
         }
     }
 
-    public static StringBuffer saveInDB(Connection conn, SheetInfo sheetInfo, MetadataModel excelMD,MetadataModel newMD, String tempTabName, int titleRowIndex) {
+    public static StringBuffer saveTempTabInDB(Connection conn, SheetInfo sheetInfo, MetadataModel excelMD,MetadataModel newMD, String tempTabName, int titleRowIndex) {
         List<MetadataColumn> oldMdColList = excelMD.getColumnList();
         List<MetadataColumn> newMdColList = newMD.getColumnList();
         //计算对应表

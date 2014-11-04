@@ -85,15 +85,13 @@ public class FileUploadService {
                 String ownerId = tempTabMapOrg.getOwnerId();
                 String sumTabName = tabMapOrgAry[0].getTableName();
                 // 3、储存临时表
-                MetadataModel newMd = saveDataInTempTab(sheetInfo,excelMd,tempTabMapOrg,titleRowIndex);
-                // 4、分析临时表指标
-                analTempQuota(tempTabMapOrg);
+                _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
+                MetadataModel andlMd = _om.getMetadataById(tempTabMapOrg.getMdMId());
+                saveDataInTempTab(sheetInfo,excelMd,tempTabMapOrg,titleRowIndex,andlMd);
                 // 5、分析主键
-                List<MetadataColumn> pkColList = analPK(tempTabMapOrg.getTableName(),newMd);
+                analTempTab(tempTabMapOrg.getTableName(),andlMd,tempTabMapOrg);
                 // 6、存储积累表{根据上面的结果设置主键}
-                saveDataInSumTab(sumTabName,pkColList,sheetInfo,excelMd,ownerId,newMd,titleRowIndex);
-                // 7、分析积累表指标
-                analSumTabQuota(sumTabName);
+                saveDataInSumTab(sumTabName,sheetInfo,excelMd,ownerId,andlMd,titleRowIndex);
                 // 8、分析元数据语义
                 analMDSemantic(sumTabName);
             }
@@ -105,55 +103,60 @@ public class FileUploadService {
     }
     @Resource
     MdQuotaService mdQutotaService ;
-    private void analTempQuota(TableMapOrg tempTabMapOrg) {
-        try {
-            mdQutotaService.caculateQuota(tempTabMapOrg);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-    }
     @Resource
     private MdKeyService mdKeyService;
     @Resource
     private AnalKey analKey;
-    private List<MetadataColumn> analPK(String tableName,MetadataModel newMd) {
+    /**
+     * 通过分析临时表，计算临时表指标计信息
+     * 分析主键
+     * 调整元数据主键
+     * @param tableName
+     * @param andlMd
+     * @param tempTabMapOrg
+     * @return
+     */
+    private void analTempTab(String tableName,MetadataModel andlMd, TableMapOrg tempTabMapOrg) {
         try {
-            analKey.scanOneTable(tableName, newMd, null);
-            mdKeyService.adjustMdKey(newMd);
-            return null;
+            mdQutotaService.caculateQuota(tempTabMapOrg);
+            analKey.scanOneTable(tableName, andlMd, null);
+            mdKeyService.adjustMdKey(andlMd);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
     }
-    private void saveDataInSumTab(String sumTabName, List<MetadataColumn> pkColList,SheetInfo sheetInfo, MetadataModel excelMd, String ownerId, MetadataModel newMd, int titleRowIndex) {
+    /**
+     * 保存数据到积累表，并且分析积累表
+     * @param sumTabName 积累表名称
+     * @param sheetInfo sheetInfo
+     * @param excelMd excel分析出的md
+     * @param ownerId
+     * @param andlMd
+     * @param titleRowIndex title的起始行
+     */
+    private void saveDataInSumTab(String sumTabName,SheetInfo sheetInfo, MetadataModel excelMd, String ownerId, MetadataModel andlMd, int titleRowIndex) {
         Connection conn = null;
         try {
             conn = ds.getConnection();
-            PoiUtils.saveSubTabInDB(conn,sheetInfo,excelMd,newMd,sumTabName,titleRowIndex,pkColList);
+            PoiUtils.saveSubTabInDB(conn,sheetInfo,excelMd,andlMd,sumTabName,titleRowIndex);
+            mdQutotaService.caculateQuota(ownerId,sumTabName);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
             CommonUtils.closeConn(conn, null, null);
         }
     }
-    private void analMDSemantic(String sumTabName2) {
+    private void analMDSemantic(String sumTabName) {
     }
-    private void analSumTabQuota(String sumTabName2) {
-    }
-    private MetadataModel saveDataInTempTab(SheetInfo sheetInfo,MetadataModel excelMd, TableMapOrg tempTableMapOrg, int titleRowIndex) {
+    private void saveDataInTempTab(SheetInfo sheetInfo,MetadataModel excelMd, TableMapOrg tempTableMapOrg, int titleRowIndex, MetadataModel newMd) {
         Connection conn = null;
         try {
-            conn = ds.getConnection();
-            _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
-            MetadataModel newMd = _om.getMetadataById(tempTableMapOrg.getMdMId());
             //logTabOrg
             saveLogTabOrg(newMd,sheetInfo,tempTableMapOrg);
-            PoiUtils.saveInDB(conn,sheetInfo,excelMd,newMd,tempTableMapOrg.getTableName(),titleRowIndex);
-            return newMd;
+            //保存数据到临时表
+            PoiUtils.saveTempTabInDB(conn,sheetInfo,excelMd,newMd,tempTableMapOrg.getTableName(),titleRowIndex);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }finally{
             CommonUtils.closeConn(conn, null, null);
         }
@@ -197,7 +200,6 @@ public class FileUploadService {
             ful.setFileSize((Long)uploadInfoMap.get("size"));
             ful.setId(SequenceUUID.getUUID());
             fulDao.insert(ful);
-//            fileInfo.append("{log:{OwnerId:"+"");
             return fileInfo;
         } catch (Exception e) {
             e.printStackTrace();
