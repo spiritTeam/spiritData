@@ -9,7 +9,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
  * Excel中的Metadata
  * @author wh
  */
-public class ExeclMetadata extends BaseObject{
+public class ExcelMetadata extends BaseObject{
     private static final long serialVersionUID = 4360018605351620147L;
 
     private int bigenX;//开始列
@@ -20,7 +20,7 @@ public class ExeclMetadata extends BaseObject{
      * 标题信息，包括，标题称，即对应的列属性包括:标题开始列X,结束列X,上级列(对于分集的情况)
      */
     private Map<String, Map<String, Object>> titleInfo;
-    private SheetInfor si; //所在的sheet信息
+    private SheetInfor sheetInfor; //所在的sheet信息
     private MetadataModel mm; //对应的元数据模式
 
     public int getBigenX() {
@@ -53,11 +53,11 @@ public class ExeclMetadata extends BaseObject{
     public void setTitleInfo(Map<String, Map<String, Object>> titleInfo) {
         this.titleInfo = titleInfo;
     }
-    public SheetInfor getSi() {
-        return si;
+    public SheetInfor getSheetInfor() {
+        return sheetInfor;
     }
-    public void setSi(SheetInfor si) {
-        this.si = si;
+    public void setSheetInfor(SheetInfor sheetInfor) {
+        this.sheetInfor = sheetInfor;
     }
     public MetadataModel getMm() {
         return mm;

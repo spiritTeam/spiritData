@@ -39,7 +39,8 @@ public class MdKeyService {
     private MdBasisService mdBasisService;
 
     /**
-     * 分析元数据的key，并返回最有可能作为key的列组合，同时修改mm和mm对应的数据库中的MetadataModel/MetadataColume表。
+     * 分析元数据的key，并返回最有可能作为key的列组合。
+     * 同时，此方法还修改了元数据的主键信息，包括传入的参数MM和数据库的持久化信息，但注意，不调整主键信息
      * @param mdMId 元数据模式Id
      * @return 最有可能作为key的列组合，用列名称(String类型)的数组来表示
      * @throws Exception
@@ -51,6 +52,7 @@ public class MdKeyService {
 
     /**
      * 分析元数据的key，并返回最有可能作为key的列组合。
+     * 同时，此方法还修改了元数据的主键信息，包括传入的参数MM和数据库的持久化信息，但注意，不调整主键信息
      * @param mm 元数据信息
      * @return 最有可能作为key的列组合，用列名称(String类型)的数组来表示
      * @throws Exception
@@ -169,6 +171,7 @@ public class MdKeyService {
 
     /**
      * 调整元数据主键
+     * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
      * @param mdMId 元数据模式Id
      * @throws Exception
      */
@@ -178,7 +181,8 @@ public class MdKeyService {
     }
 
     /**
-     * 调整元数据主键
+     * 调整元数据主键。
+     * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
      * @param mm 元数据信息
      * @throws Exception
      */
