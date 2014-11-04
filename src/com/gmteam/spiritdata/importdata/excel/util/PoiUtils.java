@@ -41,7 +41,7 @@ public class PoiUtils {
      * @param titleRowIndex
      * @param pkColList
      */
-    public static void saveSubTabInDB(Connection conn, SheetInfo sheetInfo,MetadataModel excelMd, MetadataModel newMd, String sumTabName,int titleRowIndex, List<MetadataColumn> pkColList) {
+    public static void saveSubTabInDB(Connection conn, SheetInfo sheetInfo,MetadataModel excelMd, MetadataModel andlMd, String sumTabName,int titleRowIndex) {
         String updateSql = "", insertSql = "";
         Object sheet = null, row = null, cell = null;
         int rowNum = 0;
@@ -59,7 +59,7 @@ public class PoiUtils {
             Object value = null;
             MetadataColumn _col = null;
             int pkCount = 0, _pkCount = 0;
-            for (MetadataColumn mc: newMd.getColumnList()) if (mc.isPk()) pkCount++;
+            for (MetadataColumn mc: andlMd.getColumnList()) if (mc.isPk()) pkCount++;
 
             PreparedStatement ps = null;
             try {
@@ -79,7 +79,7 @@ public class PoiUtils {
 
                     for (MetadataColumn mc: excelMd.getColumnList()) {
                         int colIndex = mc.getColumnIndex();
-                        _col = newMd.getColumnByTName(mc.getTitleName());
+                        _col = andlMd.getColumnByTName(mc.getTitleName());
                         if (_col==null) continue;
                         if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF) {
                             cell = ((XSSFRow)row).getCell(colIndex);
@@ -150,134 +150,7 @@ public class PoiUtils {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static void saveSumData(Connection conn, SheetInfo sheetInfo,Map<String, Object> sqlMap,int titleRowIndex) {
-        String updateSql = (String) sqlMap.get("updateSql");
-        String insertSql = (String) sqlMap.get("insertSql");
-        PreparedStatement sumInsertPs = null;
-        PreparedStatement sumUpdatePs = null;
-        Object sheet = null;
-        List<Integer> pkIndexList = (List<Integer>) sqlMap.get("pkIndexList");
-        List<Integer> updateIndexList = (List<Integer>) sqlMap.get("updateIndexList");
-        List<Integer> insertColIndex = (List<Integer>) sqlMap.get("insertColIndex");
-
-        try {
-            sumUpdatePs = conn.prepareStatement(updateSql);
-            sumInsertPs = conn.prepareStatement(insertSql);
-            if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_XSSF){
-                sheet = (XSSFSheet)sheetInfo.getSheet();
-                int rowNum = ((XSSFSheet)sheet).getLastRowNum()+1;
-                for(int i=1+titleRowIndex;i<rowNum;i++){
-                    XSSFRow xRow = ((XSSFSheet)sheet).getRow(i);
-                    if(xRow!=null){
-                        int j=1;
-                        for (Integer integer :updateIndexList) {
-                            XSSFCell cell = xRow.getCell(integer);
-                            sumUpdatePs.setObject(j, getCellValue(cell));
-                            j++;
-                        }
-                        for (Integer integer :pkIndexList) {
-                            XSSFCell cell = xRow.getCell(integer);
-                            sumUpdatePs.setObject(j, getCellValue(cell));
-                            j++;
-                        }
-                        int updateRow = sumUpdatePs.executeUpdate();
-                        if(updateRow==0){
-                            int k = 1;
-                            for (Integer integer :insertColIndex) {
-                                XSSFCell cell = xRow.getCell(integer);
-                                sumUpdatePs.setObject(k, getCellValue(cell));
-                                k++;
-                            }
-                        }
-                    }
-                }
-            } else if(sheetInfo.getSheetType()==ExcelConstants.EXCEL_FILE_TYPE_HSSF){
-                sheet = (HSSFSheet)sheetInfo.getSheet();
-                int rowNum = ((HSSFSheet)sheet).getLastRowNum()+1;
-                for(int i=1+titleRowIndex;i<rowNum;i++){
-                    HSSFRow hRow = ((HSSFSheet)sheet).getRow(i);
-                    if(hRow!=null){
-                        int j=1;
-                        for (Integer integer :updateIndexList) {
-                            HSSFCell cell = hRow.getCell(integer);
-                            sumUpdatePs.setObject(j, getCellValue(cell));
-                            j++;
-                        }
-                        for (Integer integer :pkIndexList) {
-                            HSSFCell cell = hRow.getCell(integer);
-                            sumUpdatePs.setObject(j, getCellValue(cell));
-                            j++;
-                        }
-                        int updateRow = sumUpdatePs.executeUpdate();
-                        if(updateRow==0){
-                            int k = 1;
-                            for (Integer integer :insertColIndex) {
-                                HSSFCell cell = hRow.getCell(integer);
-                                sumUpdatePs.setObject(k, getCellValue(cell));
-                                k++;
-                            }
-                        }
-                    }
-                }
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
-        } finally {
-            CommonUtils.closeConn(null, sumUpdatePs, null);
-            CommonUtils.closeConn(null, sumInsertPs, null);
-        }
-    }
-    private static Map<String, Object> getSumTabSql(List<MetadataColumn> newMdColList, List<MetadataColumn> oldMdColList, String sumTabName, List<MetadataColumn> pkColList) {
-        Map<String, Object> sqlMap = new HashMap<String, Object>();
-        //更新sql
-        StringBuffer updateSql = new StringBuffer("");
-        StringBuffer pkColSb = new StringBuffer();
-        StringBuffer updateColSb = new StringBuffer("update "+sumTabName +" set ");     
-        List<Integer> pkIndexList = new ArrayList<Integer>();
-        List<Integer> updateIndexList = new ArrayList<Integer>();
-        Map<Integer,String> updateMdMap = new HashMap<Integer,String>();
-        for(MetadataColumn mcPk :pkColList){
-            pkColSb.append(","+mcPk.getColumnName()+"=?");
-            pkIndexList.add(mcPk.getColumnIndex());
-        }
-        for(MetadataColumn mcUpdate:newMdColList){
-            for(int i:pkIndexList){
-                if(i!=mcUpdate.getColumnIndex())
-                updateMdMap.put(mcUpdate.getColumnIndex(), mcUpdate.getColumnName());
-            }
-        }
-        Iterator<Integer> updateIt = updateMdMap.keySet().iterator();
-        while(updateIt.hasNext()){
-            updateColSb.append(","+updateMdMap.get(updateIt.next())+"=?");
-            updateIndexList.add(updateIt.next());
-        }
-        updateSql.append(updateColSb.substring(1)).append("where ").append(pkColSb.substring(1));
-        sqlMap.put("updateSql", updateSql.toString());
-        sqlMap.put("pkIndexList", pkIndexList);
-        sqlMap.put("updateIndexList", updateIndexList);
-        //计算对应表
-        List<Integer> insertColIndex = new ArrayList<Integer>();
-        for (MetadataColumn mcN: newMdColList) {
-            for (MetadataColumn mcS: oldMdColList) {
-                if (mcN.getTitleName().equals(mcS.getTitleName())&&mcN.getColumnType().equals(mcS.getColumnType())) {
-                    insertColIndex.add(mcS.getColumnIndex());
-                }
-            }
-        }
-        if (insertColIndex.size()==newMdColList.size()) ;//才能继续处理
-        //得到sql
-        StringBuffer fieldStr = new StringBuffer(), valueStr=new StringBuffer();
-        for (MetadataColumn mc: newMdColList) {
-            fieldStr.append(","+mc.getColumnName());
-            valueStr.append(",?");
-        }
-        StringBuffer insertSql=new StringBuffer().append("insert into "+sumTabName+"(").append(fieldStr.substring(1)+") values(").append(valueStr.substring(1)+")");
-        sqlMap.put("insertSumTabSql", insertSql);
-        sqlMap.put("insertColIndex", insertColIndex);
-        return sqlMap;
-    }
-    public static StringBuffer saveInDB(Connection conn, SheetInfo sheetInfo, MetadataModel excelMD,MetadataModel newMD, String tempTabName, int titleRowIndex) {
+    public static StringBuffer saveTempTabInDB(Connection conn, SheetInfo sheetInfo, MetadataModel excelMD,MetadataModel newMD, String tempTabName, int titleRowIndex) {
         List<MetadataColumn> oldMdColList = excelMD.getColumnList();
         List<MetadataColumn> newMdColList = newMD.getColumnList();
         //计算对应表

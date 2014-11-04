@@ -78,7 +78,7 @@ public class CommonUtils {
             }
         }
     }
-    public String getFormatDate(Date oo) {
+    public static String getFormatDate(Date oo) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return df.format(oo);
     }
