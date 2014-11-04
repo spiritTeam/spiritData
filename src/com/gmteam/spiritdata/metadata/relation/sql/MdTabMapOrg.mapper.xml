@@ -64,7 +64,7 @@
   </select>
 
   <!-- 新增数据 -->
-  <insert id="insert" parameterType="java.util.Map" >
+  <insert id="insert" parameterType="java.util.Map">
     insert into sa_md_tabmap_org
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

@@ -10,26 +10,26 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 
 import com.gmteam.framework.core.web.AbstractFileUploadController;
+import com.gmteam.spiritdata.upload.service.DealUploadFileService;
 import com.gmteam.spiritdata.upload.service.FileUploadService;
 
+/** 
+ * 上传文件处理，是数据分析的入口
+ * @author mht, wh
+ */
 @Controller
 public class FileUpLoadController extends AbstractFileUploadController {
     @Resource
     private FileUploadService fileUploadService;
+    @Resource
+    private DealUploadFileService dealUploadFileService;
     @Resource
     HttpServletRequest request;
     @Override
     public Map<String, Object> afterUploadOneFileOnSuccess(Map<String, Object> uploadInfoMap, Map<String, Object> arg1,Map<String, Object> arg2) {
         HttpSession session = request.getSession();
         try {
-//            MetadataModel mm = mdBasisService.getMetadataMode("f75e75ad1890");
-//            mdKeyService.adjustMdKey(mm);
-            //analKey.scanOneTable("tab_f75e75ad1890", mm);
-//            return null;
-            //fileUploadService.dealUploadFile(uploadInfoMap,session);
-//            MetadataModel mm = mdBasisService.getMetadataMode("f75e75ad1890");
-//            analKey.scanOneTable("tab_f75e75ad1890", mm);
-//            return null;
+            dealUploadFileService.dealUploadFile(uploadInfoMap, session);
             fileUploadService.dealUploadFile(uploadInfoMap,session);
         } catch (Exception e) {
             e.printStackTrace();

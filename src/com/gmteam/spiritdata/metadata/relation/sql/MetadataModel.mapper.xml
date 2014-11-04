@@ -71,7 +71,7 @@
       <if test="ownerId != null" >
         ownerId,
       </if>
-      <if test="ownerType != null and ownerType!=0" >
+      <if test="ownerType!=null and ownerType!=0" >
         ownerType,
       </if>
       <if test="tableName != null" >
@@ -88,7 +88,7 @@
       <if test="ownerId != null" >
         #{ownerId,jdbcType=VARCHAR},
       </if>
-      <if test="ownerType != null and ownerType!=0" >
+      <if test="ownerType!=null and ownerType!=0" >
         #{ownerType,jdbcType=INTEGER},
       </if>
       <if test="tableName != null" >
