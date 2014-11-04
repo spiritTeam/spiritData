@@ -12,11 +12,6 @@ import org.springframework.stereotype.Controller;
 import com.gmteam.framework.core.web.AbstractFileUploadController;
 import com.gmteam.spiritdata.upload.service.FileUploadService;
 
-/** 
- * @author mht
- * @version  
- * 类说明 
- */
 @Controller
 public class FileUpLoadController extends AbstractFileUploadController {
     @Resource

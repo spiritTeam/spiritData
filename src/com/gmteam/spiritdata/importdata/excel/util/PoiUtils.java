@@ -250,14 +250,13 @@ public class PoiUtils {
             XSSFSheet xSheet = (XSSFSheet) sheetInfo.getSheet();
             int rows = xSheet.getLastRowNum()+1;
             if(rows>=2){
-                dataRows = xSheet.getLastRowNum()+1;
                 int rowLength = 0;
                 //标题行
                 XSSFRow titleRow = null;
                 //标题所在行
                 int titleRowIndex = 0;
                 Map<Integer,String> titleMap = null;
-                for(int i=0;i<dataRows;i++){
+                for(int i=0;i<rows;i++){
                     titleRow= xSheet.getRow(i);
                     if(titleRow==null) continue;
                     //每行长度
@@ -282,7 +281,7 @@ public class PoiUtils {
                 }
                 //得到dataType
                 if(titleMap.size()>0){
-                    metadataModel = getMetadata(xSheet,dataRows,rowLength,titleMap,titleRowIndex); 
+                    metadataModel = getMetadata(xSheet,rows,rowLength,titleMap,titleRowIndex); 
                     retMap.put("md", metadataModel);
                     retMap.put("titleRowIndex", titleRowIndex);
                     return retMap;
@@ -294,14 +293,13 @@ public class PoiUtils {
             HSSFSheet hSheet = (HSSFSheet) sheetInfo.getSheet();
             int rows = hSheet.getLastRowNum()+1;
             if(rows>=2){
-                dataRows = hSheet.getLastRowNum()+1;
                 int rowLength = 0;
                 //标题行
                 HSSFRow titleRow = null;
                 //标题所在行
                 int titleRowIndex = 0;
                 Map<Integer,String> titleMap = null;
-                for(int i=0;i<dataRows;i++){
+                for(int i=0;i<rows;i++){
                     titleMap = new HashMap<Integer,String>();
                     titleRow= hSheet.getRow(i);
                     if(titleRow==null) continue;
@@ -326,7 +324,7 @@ public class PoiUtils {
                 }
                 //得到dataType
                 if(titleMap.size()>0){
-                    metadataModel = getMetadata(hSheet,dataRows,rowLength,titleMap,titleRowIndex); 
+                    metadataModel = getMetadata(hSheet,rows,rowLength,titleMap,titleRowIndex); 
                     retMap.put("md", metadataModel);
                     retMap.put("titleRowIndex", titleRowIndex);
                     return retMap; 
