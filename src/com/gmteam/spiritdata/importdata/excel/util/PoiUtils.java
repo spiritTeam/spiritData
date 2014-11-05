@@ -25,12 +25,11 @@ import com.gmteam.spiritdata.importdata.excel.util.pmters.CellParam;
 import com.gmteam.spiritdata.importdata.excel.util.pmters.DTParam;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
-/** 
- * @author mht
- * @version  
- * 类说明 poi工具类
+/**
+ * poi工具类
+ * @author mht,wh
  */
-public class PoiUtils {
+public abstract class PoiUtils {
     /**
      * 
      * @param conn
@@ -241,6 +240,48 @@ public class PoiUtils {
         } finally {
             CommonUtils.closeConn(null, tempPs, null);
         }
+    }
+    public static void readOneRowData(Object sheet, int rowNum, int excelType) {
+        Object rowData = null; //行信息
+        Object cell = null; //单元格信息
+        Object cellValue = null; //单元格值
+        int lastCellNum = 0;
+
+        if (excelType==ExcelConstants.EXECL2003_FLAG) {
+            rowData = ((HSSFSheet)sheet).getRow(rowNum);
+            lastCellNum = ((HSSFRow)rowData).getLastCellNum();
+        } else if (excelType==ExcelConstants.EXECL2007_FLAG){
+            rowData = ((XSSFSheet)sheet).getRow(rowNum);
+            lastCellNum = ((XSSFRow)rowData).getLastCellNum();
+        }
+        if (rowData==null) return;
+
+        for (int i=0; i<lastCellNum; i++) {
+            cell = PoiUtils.getCell(rowData, i, excelType);
+            if (cell==null) continue;
+            if (excelType==ExcelConstants.EXECL2003_FLAG) {
+                cell = ((HSSFRow)rowData).getCell(i);
+            } else if (excelType==ExcelConstants.EXECL2007_FLAG){
+                cell = ((XSSFRow)rowData).getCell(i);
+            }
+            
+        }
+    }
+    /**
+     * 得到某一行的单元格信息
+     * @param rowData 行数据
+     * @param cellNum 单元格标号
+     * @param excelType excel文件类型
+     * @return
+     */
+    private static Object getCell(Object rowData, int cellNum, int excelType) {
+        Object cell = null;
+        if (excelType==ExcelConstants.EXECL2003_FLAG) {
+            cell = ((HSSFRow)rowData).getCell(cellNum);
+        } else if (excelType==ExcelConstants.EXECL2007_FLAG){
+            cell = ((XSSFRow)rowData).getCell(cellNum);
+        }
+        return cell;
     }
     public static Map<String,Object> getMdModelMap(SheetInfo sheetInfo) {
         Map<String,Object> retMap = new HashMap<String,Object>();
@@ -852,5 +893,16 @@ public class PoiUtils {
             }  
         }  
         return type;  
+    }
+
+    /**
+     * 分析sheet的结构，得到结构表的信息。
+     * 注意，一个sheet内部，可能会有多个结构表信息。
+     * 每个表信息，包括：表头(名称，列范围，上级表头信息)，表体范围（从那行那列到那行那列的对象）
+     * @param sheet sheet对象
+     * @return 表信息
+     */
+    public static List<Map<String, Object>> getTableInfo(Object sheet) {
+        return null;
     }
 }

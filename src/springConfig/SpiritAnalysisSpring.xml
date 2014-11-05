@@ -27,4 +27,7 @@
 
   <!--分析缓存-->
   <bean id="excelCacheLifecycleUnit" class="com.gmteam.spiritdata.cache.ExcelCacheLifecycleUnit"/>
+
+  <!-- 登陆 -->
+  <bean id="loginService" class="com.gmteam.spiritdata.login.LoginServiceImpl"/>
 </beans>

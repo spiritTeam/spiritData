@@ -1,5 +1,6 @@
 package com.gmteam.spiritdata.upload.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,19 +27,24 @@ public class FileUpLoadController extends AbstractFileUploadController {
     private DealUploadFileService dealUploadFileService;
     @Resource
     HttpServletRequest request;
+
     @Override
     public Map<String, Object> afterUploadOneFileOnSuccess(Map<String, Object> uploadInfoMap, Map<String, Object> arg1,Map<String, Object> arg2) {
+        Map<String, Object> ret = new HashMap<String, Object>();
+        
         HttpSession session = request.getSession();
         try {
             dealUploadFileService.dealUploadFile(uploadInfoMap, session);
-            fileUploadService.dealUploadFile(uploadInfoMap,session);
+ //           fileUploadService.dealUploadFile(uploadInfoMap,session);
+            ret.put("success", "TRUE");
         } catch (Exception e) {
+            ret.put("exception", e.getMessage());
             e.printStackTrace();
         }
-        return null;
+        return ret;
     }
+
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {
     }
-    
 }

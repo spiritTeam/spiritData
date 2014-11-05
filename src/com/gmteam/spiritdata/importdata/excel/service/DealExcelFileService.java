@@ -15,8 +15,9 @@ import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
-import com.gmteam.spiritdata.importdata.excel.pojo.ExcelMetadata;
+import com.gmteam.spiritdata.importdata.excel.pojo.ExcelTableInfo;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfor;
+import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
@@ -80,14 +81,15 @@ public class DealExcelFileService {
                     si.setSheetIndex(i);
                     //1-分析文件，得到元数据信息，并把分析结果存入si
                     analSheetMetadata(si);
-                    if (si.getEmList()==null||si.getEmList().size()==0) continue;
-                    for (ExcelMetadata em: si.getEmList()) {
+                    //把si发到json文件队列，处理具体的逻辑
+                    if (si.getEtiList()==null||si.getEtiList().size()==0) continue;
+                    for (ExcelTableInfo eti: si.getEtiList()) {
                         try {//--处理sheet中的每个元数据
                             //--保存分析后的元数据信息，包括数据表的注册与创建
                             //-- 若元数据信息在系统中已经存在，则只生成临时表
                             //-- 否则，创建新的元数据，并生成积累表和临时表
                             mdSessionService.setSession(session);
-                            TableMapOrg[] tabMapOrgAry = mdSessionService.storeMdModel4Import(em.getMm());
+                            TableMapOrg[] tabMapOrgAry = mdSessionService.storeMdModel4Import(eti.getMm());
 
                             // TODO 为了有更好的处理响应时间，以下逻辑可以采用多线程处理
 
@@ -95,13 +97,13 @@ public class DealExcelFileService {
                             _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
                             MetadataModel sysMd = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
                             //2-储存临时表
-                            saveDataToTempTab(em, sysMd, tabMapOrgAry[1].getTableName());
+                            saveDataToTempTab(eti, sysMd, tabMapOrgAry[1].getTableName());
                             //3-临时表分析
                             mdQutotaService.caculateQuota(tabMapOrgAry[1]); //分析临时表指标
                             mdKeyService.adjustMdKey(sysMd); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
                             //4-存储积累表
                             if (sysMd.getTableName().equalsIgnoreCase(tabMapOrgAry[0].getTableName())) {
-                                saveDataToAccumulationTab(em, sysMd);
+                                saveDataToAccumulationTab(eti, sysMd);
                                 //5-积累表分析
                                 mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析临时表指标
                                 //6-元数据语义分析
@@ -153,15 +155,27 @@ public class DealExcelFileService {
         //首先分析表头
         Object sheet = si.getSheet();
         int rows = 0, firstRowNum = 0;
-        if (si.getExcelType()==ExcelConstants.EXECL2003_FLAG) {
+        int excelType = si.getExcelType();
+
+        if (excelType==ExcelConstants.EXECL2003_FLAG) {
             rows = ((HSSFSheet)sheet).getLastRowNum();
             firstRowNum = ((HSSFSheet)sheet).getFirstRowNum();
-        } else if (si.getExcelType()==ExcelConstants.EXECL2007_FLAG){
+        } else if (excelType==ExcelConstants.EXECL2007_FLAG){
             rows = ((XSSFSheet)sheet).getLastRowNum();
             firstRowNum = ((XSSFSheet)sheet).getFirstRowNum();
         }
-        if (rows==firstRowNum&&rows==0) return; //说明是空sheet
+        if (rows==firstRowNum&&rows==0) { //说明是空sheet
+            // TODO 写日志
+            return;
+        }
+        if (rows==firstRowNum) { //说明是只有一行的数据，没有分析价值
+            // TODO 写日志
+            return;
+        }
         int dataRowBegin = firstRowNum;
+        
+        //读取一行数据
+        PoiUtils.readOneRowData(sheet, dataRowBegin, excelType);
         
         //之后分析元数据模型
     }
@@ -172,7 +186,7 @@ public class DealExcelFileService {
      * @param sysMm 元数据信息（已在系统注册过的）
      * @param tempTableName 临时表名称
      */
-    private void saveDataToTempTab(ExcelMetadata em, MetadataModel sysMm, String tempTableName) {
+    private void saveDataToTempTab(ExcelTableInfo eti, MetadataModel sysMm, String tempTableName) {
         
     }
 
@@ -181,7 +195,7 @@ public class DealExcelFileService {
      * @param em 从Excel中分析出来的元数据信息，注意，这里包括sheet信息
      * @param sysMm 元数据信息（已在系统注册过的），这其中包括积累表信息
      */
-    private void saveDataToAccumulationTab(ExcelMetadata em, MetadataModel sysMm) {
+    private void saveDataToAccumulationTab(ExcelTableInfo eti, MetadataModel sysMm) {
         
     }
 }
