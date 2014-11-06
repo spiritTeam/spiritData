@@ -17,7 +17,7 @@ public class SheetInfor extends BaseObject {
     private String sheetName; //sheet名称
     private int sheetIndex; //sheet的编号
     private Object sheet; //sheet对象
-    private List<ExcelMetadata> emList; //本SheetInfor对应的Excel元数据信息
+    private List<ExcelTableInfo> emList; //本SheetInfor对应的Excel元数据信息
 
     public String getFileName() {
         return fileName;
@@ -54,12 +54,12 @@ public class SheetInfor extends BaseObject {
      * 新增元数据信息。
      * @param mm 元数据信息
      */
-    public void addExcelMetadata(ExcelMetadata em) {
-        if (this.emList==null) this.emList = new ArrayList<ExcelMetadata>();
+    public void addExcelMetadata(ExcelTableInfo em) {
+        if (this.emList==null) this.emList = new ArrayList<ExcelTableInfo>();
         this.emList.add(em);
     }
 
-    public List<ExcelMetadata> getEmList() {
+    public List<ExcelTableInfo> getEmList() {
         return emList;
     }
 }

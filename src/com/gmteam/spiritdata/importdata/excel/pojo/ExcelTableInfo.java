@@ -6,10 +6,10 @@ import com.gmteam.framework.core.model.BaseObject;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /**
- * Excel中的Metadata
+ * Excel中的结构表信息
  * @author wh
  */
-public class ExcelMetadata extends BaseObject{
+public class ExcelTableInfo extends BaseObject{
     private static final long serialVersionUID = 4360018605351620147L;
 
     private int bigenX;//数据开始列

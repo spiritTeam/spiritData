@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
-import com.gmteam.spiritdata.importdata.excel.pojo.ExcelMetadata;
+import com.gmteam.spiritdata.importdata.excel.pojo.ExcelTableInfo;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfor;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
@@ -81,7 +81,7 @@ public class DealExcelFileService {
                     //1-分析文件，得到元数据信息，并把分析结果存入si
                     analSheetMetadata(si);
                     if (si.getEmList()==null||si.getEmList().size()==0) continue;
-                    for (ExcelMetadata em: si.getEmList()) {
+                    for (ExcelTableInfo em: si.getEmList()) {
                         try {//--处理sheet中的每个元数据
                             //--保存分析后的元数据信息，包括数据表的注册与创建
                             //-- 若元数据信息在系统中已经存在，则只生成临时表
@@ -172,7 +172,7 @@ public class DealExcelFileService {
      * @param sysMm 元数据信息（已在系统注册过的）
      * @param tempTableName 临时表名称
      */
-    private void saveDataToTempTab(ExcelMetadata em, MetadataModel sysMm, String tempTableName) {
+    private void saveDataToTempTab(ExcelTableInfo em, MetadataModel sysMm, String tempTableName) {
         
     }
 
@@ -181,7 +181,7 @@ public class DealExcelFileService {
      * @param em 从Excel中分析出来的元数据信息，注意，这里包括sheet信息
      * @param sysMm 元数据信息（已在系统注册过的），这其中包括积累表信息
      */
-    private void saveDataToAccumulationTab(ExcelMetadata em, MetadataModel sysMm) {
+    private void saveDataToAccumulationTab(ExcelTableInfo em, MetadataModel sysMm) {
         
     }
 }
