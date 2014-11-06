@@ -9,7 +9,7 @@ import com.gmteam.framework.core.model.BaseObject;
  * Sheet信息
  * @author wh
  */
-public class SheetInfor extends BaseObject {
+public class SheetInfo extends BaseObject {
     private static final long serialVersionUID = 7206180301875759481L;
 
     private String fileName; //所在文件名称

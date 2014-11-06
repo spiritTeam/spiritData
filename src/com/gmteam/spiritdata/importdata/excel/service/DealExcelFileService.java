@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.ExcelTableInfo;
-import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfor;
+import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
@@ -34,7 +34,7 @@ public class DealExcelFileService {
     @Resource
     MetadataSessionService mdSessionService;
     @Resource
-    MdQuotaService mdQutotaService ;
+    MdQuotaService mdQutotaService;
     @Resource
     MdKeyService mdKeyService ;
 
@@ -67,7 +67,6 @@ public class DealExcelFileService {
                     //TODO 记录日志
                 }
             }
-
             if (excelType==0) {
                 // TODO 记录日志 
                 return;
@@ -76,7 +75,7 @@ public class DealExcelFileService {
             for (int i=0; i<book.getNumberOfSheets(); i++) {
                 try {//处理每个Sheet，并保证某个Sheet处理失败后，继续处理后续Sheet
                     Object sheet = book.getSheetAt(i);
-                    SheetInfor si = getSheetInfor(sheet, excelType);
+                    SheetInfo si = getSheetInfor(sheet, excelType);
                     si.setSheetIndex(i);
                     //1-分析文件，得到元数据信息，并把分析结果存入si
                     analSheetMetadata(si);
@@ -133,8 +132,8 @@ public class DealExcelFileService {
      * @param excelType
      * @return
      */
-    private SheetInfor getSheetInfor(Object sheet, int excelType) {
-        SheetInfor ret = new SheetInfor();
+    private SheetInfo getSheetInfor(Object sheet, int excelType) {
+        SheetInfo ret = new SheetInfo();
         ret.setExcelType(excelType);
         ret.setSheet(sheet);
         if (excelType==ExcelConstants.EXECL2003_FLAG) {
@@ -149,7 +148,7 @@ public class DealExcelFileService {
      * 分析sheet，得到元数据信息，并把分析结果存入si
      * @param si sheetInfo
      */
-    private void analSheetMetadata(SheetInfor si) {
+    private void analSheetMetadata(SheetInfo si) {
         //首先分析表头
         Object sheet = si.getSheet();
         int rows = 0, firstRowNum = 0;

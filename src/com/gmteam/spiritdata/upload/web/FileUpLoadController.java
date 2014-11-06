@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 
 import com.gmteam.framework.core.web.AbstractFileUploadController;
 import com.gmteam.spiritdata.upload.service.DealUploadFileService;
-import com.gmteam.spiritdata.upload.service.FileUploadService;
 
 /** 
  * 上传文件处理，是数据分析的入口
@@ -20,8 +19,6 @@ import com.gmteam.spiritdata.upload.service.FileUploadService;
  */
 @Controller
 public class FileUpLoadController extends AbstractFileUploadController {
-    @Resource
-    private FileUploadService fileUploadService;
     @Resource
     private DealUploadFileService dealUploadFileService;
     @Resource

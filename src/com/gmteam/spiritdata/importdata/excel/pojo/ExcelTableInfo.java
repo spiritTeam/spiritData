@@ -20,7 +20,7 @@ public class ExcelTableInfo extends BaseObject{
      * 标题信息，包括，标题称，即对应的列属性包括:标题开始列X,结束列X,上级列(对于分集的情况)
      */
     private Map<String, Map<String, Object>> titleInfo;
-    private SheetInfor sheetInfor; //所在的sheet信息
+    private SheetInfo sheetInfor; //所在的sheet信息
     private MetadataModel mm; //对应的元数据模式
 
     public int getBigenX() {
@@ -53,10 +53,10 @@ public class ExcelTableInfo extends BaseObject{
     public void setTitleInfo(Map<String, Map<String, Object>> titleInfo) {
         this.titleInfo = titleInfo;
     }
-    public SheetInfor getSheetInfor() {
+    public SheetInfo getSheetInfor() {
         return sheetInfor;
     }
-    public void setSheetInfor(SheetInfor sheetInfor) {
+    public void setSheetInfor(SheetInfo sheetInfor) {
         this.sheetInfor = sheetInfor;
     }
     public MetadataModel getMm() {
