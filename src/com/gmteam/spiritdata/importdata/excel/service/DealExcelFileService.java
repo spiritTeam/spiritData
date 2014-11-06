@@ -77,16 +77,18 @@ public class DealExcelFileService {
                     Object sheet = book.getSheetAt(i);
                     SheetInfo si = getSheetInfor(sheet, excelType);
                     si.setSheetIndex(i);
+                    PoiParseExcelService parseExcel = new PoiParseExcelService(excelType, si);
+
                     //1-分析文件，得到元数据信息，并把分析结果存入si
                     analSheetMetadata(si);
-                    if (si.getEmList()==null||si.getEmList().size()==0) continue;
-                    for (ExcelTableInfo em: si.getEmList()) {
+                    if (si.getEtiList()==null||si.getEtiList().size()==0) continue;
+                    for (ExcelTableInfo eti: si.getEtiList()) {
                         try {//--处理sheet中的每个元数据
                             //--保存分析后的元数据信息，包括数据表的注册与创建
                             //-- 若元数据信息在系统中已经存在，则只生成临时表
                             //-- 否则，创建新的元数据，并生成积累表和临时表
                             mdSessionService.setSession(session);
-                            TableMapOrg[] tabMapOrgAry = mdSessionService.storeMdModel4Import(em.getMm());
+                            TableMapOrg[] tabMapOrgAry = mdSessionService.storeMdModel4Import(eti.getMm());
 
                             // TODO 为了有更好的处理响应时间，以下逻辑可以采用多线程处理
 
@@ -94,13 +96,13 @@ public class DealExcelFileService {
                             _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
                             MetadataModel sysMd = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
                             //2-储存临时表
-                            saveDataToTempTab(em, sysMd, tabMapOrgAry[1].getTableName());
+                            saveDataToTempTab(eti, sysMd, tabMapOrgAry[1].getTableName());
                             //3-临时表分析
                             mdQutotaService.caculateQuota(tabMapOrgAry[1]); //分析临时表指标
                             mdKeyService.adjustMdKey(sysMd); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
                             //4-存储积累表
                             if (sysMd.getTableName().equalsIgnoreCase(tabMapOrgAry[0].getTableName())) {
-                                saveDataToAccumulationTab(em, sysMd);
+                                saveDataToAccumulationTab(eti, sysMd);
                                 //5-积累表分析
                                 mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析临时表指标
                                 //6-元数据语义分析

@@ -27,11 +27,10 @@ public class FileUpLoadController extends AbstractFileUploadController {
     @Override
     public Map<String, Object> afterUploadOneFileOnSuccess(Map<String, Object> uploadInfoMap, Map<String, Object> arg1,Map<String, Object> arg2) {
         Map<String, Object> ret = new HashMap<String, Object>();
-        
+
         HttpSession session = request.getSession();
         try {
             dealUploadFileService.dealUploadFile(uploadInfoMap, session);
- //           fileUploadService.dealUploadFile(uploadInfoMap,session);
             ret.put("success", "TRUE");
         } catch (Exception e) {
             ret.put("exception", e.getMessage());
