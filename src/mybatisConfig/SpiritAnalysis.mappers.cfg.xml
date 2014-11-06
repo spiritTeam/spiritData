@@ -3,11 +3,7 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="FileUploadLog" type="com.gmteam.spiritdata.importdata.excel.pojo.FileUploadLog"/>
-    <typeAlias alias="UploadLogTableOrg" type="com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg"/> 
   </typeAliases>
   <mappers>
-    <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/FileUploadLog.mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/importdata/excel/sql/UploadLogTableOrg.mapper.xml"/> 
   </mappers>
 </configuration>

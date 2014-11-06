@@ -58,7 +58,7 @@
           <td align="right"><span style="width: 150px;font-size: 20px;">验证码:</span></td>
           <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 20px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码"
             onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="onBlur(checkCode);" /></td>
-              <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="check.do"></td><td><div id="checkCodeCheck"></div></td></tr>
+              <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="checkCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
           <tr><td ><div style="height: 20px;"></div></td><td></td><td></td></tr>
           <tr><td colspan="4" align="center" ><img id="register" name="register" src="register.png" onclick="saveRegisterInfo();"></td></tr>
       </table>

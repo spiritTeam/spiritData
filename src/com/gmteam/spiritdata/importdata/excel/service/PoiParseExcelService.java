@@ -35,4 +35,9 @@ public class PoiParseExcelService {
     public void analSheetMetadata() {
         
     }
+
+    public PoiParseExcelService() {
+        super();
+    }
+    
 }

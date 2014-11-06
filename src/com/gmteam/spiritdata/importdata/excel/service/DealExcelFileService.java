@@ -77,7 +77,7 @@ public class DealExcelFileService {
                     Object sheet = book.getSheetAt(i);
                     SheetInfo si = getSheetInfor(sheet, excelType);
                     si.setSheetIndex(i);
-                    PoiParseExcelService parseExcel = new PoiParseExcelService(excelType, si);
+                    //PoiParseExcelService parseExcel = new PoiParseExcelService(excelType, si);
 
                     //1-分析文件，得到元数据信息，并把分析结果存入si
                     analSheetMetadata(si);
