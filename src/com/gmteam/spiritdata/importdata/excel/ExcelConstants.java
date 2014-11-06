@@ -7,14 +7,14 @@ package com.gmteam.spiritdata.importdata.excel;
  */
 public class ExcelConstants {
     /**
-     *2007及以后版本，用XSSFWorkbook
+     * excel版本标识，2007及以后版本，用XSSFWorkbook
      */
     public static int EXECL2007_FLAG = 1;
     /**
-     * 2003及以前版本，用HSSFWorkbook
+     * excel版本标识，2003及以前版本，用HSSFWorkbook
      */
     public static int EXECL2003_FLAG = 2;
-    
+
     /**抽取随机数的个数,用于得到随机的行数*/
     public final static int EXCEL_MD_RANDOM_ROWSIZE=100;
     

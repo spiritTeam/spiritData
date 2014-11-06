@@ -6,10 +6,10 @@ import com.gmteam.framework.core.model.BaseObject;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /**
- * Excel中的Metadata
+ * Excel中的结构表信息
  * @author wh
  */
-public class ExcelMetadata extends BaseObject{
+public class ExcelTableInfo extends BaseObject{
     private static final long serialVersionUID = 4360018605351620147L;
 
     private int bigenX;//数据开始列
@@ -20,7 +20,7 @@ public class ExcelMetadata extends BaseObject{
      * 标题信息，包括，标题称，即对应的列属性包括:标题开始列X,结束列X,上级列(对于分集的情况)
      */
     private Map<String, Map<String, Object>> titleInfo;
-    private SheetInfor sheetInfor; //所在的sheet信息
+    private SheetInfo sheetInfo; //所在的sheet信息
     private MetadataModel mm; //对应的元数据模式
 
     public int getBigenX() {
@@ -53,11 +53,11 @@ public class ExcelMetadata extends BaseObject{
     public void setTitleInfo(Map<String, Map<String, Object>> titleInfo) {
         this.titleInfo = titleInfo;
     }
-    public SheetInfor getSheetInfor() {
-        return sheetInfor;
+    public SheetInfo getSheetInfo() {
+        return sheetInfo;
     }
-    public void setSheetInfor(SheetInfor sheetInfor) {
-        this.sheetInfor = sheetInfor;
+    public void setSheetInfo(SheetInfo sheetInfo) {
+        this.sheetInfo = sheetInfo;
     }
     public MetadataModel getMm() {
         return mm;

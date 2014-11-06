@@ -1,5 +1,6 @@
 package com.gmteam.spiritdata.upload.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Controller;
 
 import com.gmteam.framework.core.web.AbstractFileUploadController;
 import com.gmteam.spiritdata.upload.service.DealUploadFileService;
-import com.gmteam.spiritdata.upload.service.FileUploadService;
 
 /** 
  * 上传文件处理，是数据分析的入口
@@ -20,24 +20,26 @@ import com.gmteam.spiritdata.upload.service.FileUploadService;
 @Controller
 public class FileUpLoadController extends AbstractFileUploadController {
     @Resource
-    private FileUploadService fileUploadService;
-    @Resource
     private DealUploadFileService dealUploadFileService;
     @Resource
     HttpServletRequest request;
+
     @Override
     public Map<String, Object> afterUploadOneFileOnSuccess(Map<String, Object> uploadInfoMap, Map<String, Object> arg1,Map<String, Object> arg2) {
+        Map<String, Object> ret = new HashMap<String, Object>();
+
         HttpSession session = request.getSession();
         try {
-            //dealUploadFileService.dealUploadFile(uploadInfoMap, session);
-            fileUploadService.dealUploadFile(uploadInfoMap,session);
+            dealUploadFileService.dealUploadFile(uploadInfoMap, session);
+            ret.put("success", "TRUE");
         } catch (Exception e) {
+            ret.put("exception", e.getMessage());
             e.printStackTrace();
         }
-        return null;
+        return ret;
     }
+
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {
     }
-    
 }
