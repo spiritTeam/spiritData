@@ -20,42 +20,42 @@
     <form action="">
       <table width="480px;" >
         <tr>
-          <td align="right" width="100px;" ><span style="width: 150px;">登录名:</span></td>
+          <td align="right" width="100px;" ><span style="width: 150px;font-size: 20px;">登录名:</span></td>
           <td colspan="2" width="230px;" >
           <input style="width:230px;height:35px;color:#999;font-size: 20px;" class="input_1 required" id="loginName" name="loginName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
                 onclick="onClick(loginName);" onBlur="onBlur(loginName);"/>
           </td><td width="150px;"><div id="loginNameCheck"></div></td></tr>
          <tr><td ><div style="height: 20px;"></div></td></tr>
           <tr>
-          <td align="right">用户名:</td>
+          <td align="right"><span style="width: 150px;font-size: 20px;">用户名:</span></td>
           <td colspan="2" rowspan="1">
           <input style="width:230px;height:35px;color:#999;font-size: 20px;" class="input_1 required" id="userName" name="userName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
                 onclick="onClick(userName);" onBlur="onBlur(userName);"/>
           </td><td><div id="userNameCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr >
-          <td align="right">密码:</td>
+          <td align="right"><span style="width: 150px;font-size: 20px;">密码:</span></td>
           <td colspan="2" rowspan="1">
             <input style="width:230px;height:35px;color:#999;font-size: 20px" class="input_1 required" id="password" name="password"  tabindex="2" type="text" value="" onmouseover=this.focus();this.select();
                 onclick="onClick(password);" onBlur="onBlur(password);" />
           </td><td><div id="passwordCheck"></div></td></tr>
           <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr >
-          <td align="right">确认密码:</td>
+          <td align="right"><span style="width: 150px;font-size: 20px;">确认密码:</span></td>
           <td colspan="2" rowspan="1">
             <input style="width:230px;height:35px;color:#999;font-size: 20px" class="input_1 required" id="confirmPassword" name="confirmPassword"  tabindex="2" type="text" value="" onmouseover=this.focus();this.select();
                 onclick="onClick(confirmPassword);" onBlur="onBlur(confirmPassword);" />
           </td><td><div id="confirmPasswordCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
           <tr>
-            <td align="right">邮箱:</td>
+            <td align="right"><span style="width: 150px;font-size: 20px;">邮箱:</span></td>
             <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 20px;"  id="mail" name="mail"  tabindex="3" type="text"  onmouseover=this.focus();this.select(); onclick="onClick(mail);" onBlur="onBlur(mail);"/></td>
-            <td  align="left"><input style="width: 100px;" id="mailEndStr" name="mailEndStr" ></td>
+            <td  align="left"><input style="width: 100px;height: 30px;font-size: 20px;" id="mailEndStr" name="mailEndStr" ></td>
             <td><div id="mailCheck"></div></td>
           </tr>
               <tr><td ><div style="height: 20px;"></div></td></tr>
           <tr>
-          <td align="right">验证码:</td>
+          <td align="right"><span style="width: 150px;font-size: 20px;">验证码:</span></td>
           <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 20px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码"
             onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="onBlur(checkCode);" /></td>
               <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="check.do"></td><td><div id="checkCodeCheck"></div></td></tr>

@@ -22,7 +22,6 @@ import com.gmteam.spiritdata.importdata.excel.pojo.UploadLogTableOrg;
 import com.gmteam.spiritdata.importdata.excel.proxy.WorkBookProxy;
 import com.gmteam.spiritdata.importdata.excel.util.CommonUtils;
 import com.gmteam.spiritdata.importdata.excel.util.PoiUtils;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
@@ -62,6 +61,12 @@ public class FileUploadService {
     private  BasicDataSource ds;
     public Object dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session)  {
         this.session = session;
+        DealUploadFileService dufs = new DealUploadFileService();
+        try {
+            dufs.dealUploadFile(uploadInfoMap, session);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
         // 1、uploadFile
         saveUploadFileInfo(uploadInfoMap);
         String uploadFileName = (String) uploadInfoMap.get("storeFilename");

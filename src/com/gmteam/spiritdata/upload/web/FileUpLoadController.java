@@ -29,7 +29,7 @@ public class FileUpLoadController extends AbstractFileUploadController {
     public Map<String, Object> afterUploadOneFileOnSuccess(Map<String, Object> uploadInfoMap, Map<String, Object> arg1,Map<String, Object> arg2) {
         HttpSession session = request.getSession();
         try {
-            dealUploadFileService.dealUploadFile(uploadInfoMap, session);
+            //dealUploadFileService.dealUploadFile(uploadInfoMap, session);
             fileUploadService.dealUploadFile(uploadInfoMap,session);
         } catch (Exception e) {
             e.printStackTrace();
