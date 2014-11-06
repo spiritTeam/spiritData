@@ -1,14 +1,21 @@
 package com.gmteam.spiritdata.login.web;
 
 import java.io.IOException;
+import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.junit.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.gmteam.spiritdata.UGA.pojo.User;
+import com.gmteam.spiritdata.UGA.service.UserService;
 import com.gmteam.spiritdata.login.util.RandomValidateCode;
 
 @Controller
@@ -33,6 +40,8 @@ public class CheckRegisterInfoController {
             e.printStackTrace();
         }
     }
+    @Resource
+    private UserService userService;
     /**
      * 验证登录名
      * @param request
@@ -41,17 +50,13 @@ public class CheckRegisterInfoController {
      * @throws IOException
      */
     @RequestMapping("verificationLoginName.do")
-    public void verificationLoginName(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("image/jpeg");//设置相应类型,告诉浏览器输出的内容为图片
-        response.setHeader("Pragma", "No-cache");//设置响应头信息，告诉浏览器不要缓存此内容
-        response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expire", 0);
-        RandomValidateCode randomValidateCode = new RandomValidateCode();
-        try {
-            randomValidateCode.getRandcode(request, response);//输出图片方法
-        } catch (Exception e) {
-            e.printStackTrace();
+    public @ResponseBody boolean verificationLoginName(HttpServletRequest request, HttpServletResponse response) {
+        String loginName = request.getParameter("loginName");
+        User user  = userService.getUserByLoginName(loginName);
+        if(user!=null){
+            return false;
+        }else{
+            return true;
         }
     }
     /**
@@ -62,17 +67,13 @@ public class CheckRegisterInfoController {
      * @throws IOException
      */
     @RequestMapping("verificationMail.do")
-    public void verificationMail(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("image/jpeg");//设置相应类型,告诉浏览器输出的内容为图片
-        response.setHeader("Pragma", "No-cache");//设置响应头信息，告诉浏览器不要缓存此内容
-        response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expire", 0);
-        RandomValidateCode randomValidateCode = new RandomValidateCode();
-        try {
-            randomValidateCode.getRandcode(request, response);//输出图片方法
-        } catch (Exception e) {
-            e.printStackTrace();
+    public @ResponseBody boolean verificationMail(HttpServletRequest request, HttpServletResponse response) {
+        String mail = request.getParameter("mail");
+        User user  = userService.getUserByMail(mail);
+        if(user!=null){
+            return false;
+        }else{
+            return true;
         }
     }
     /**
@@ -83,17 +84,14 @@ public class CheckRegisterInfoController {
      * @throws IOException
      */
     @RequestMapping("verificationCheckCode.do")
-    public void verificationCheckCode(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("image/jpeg");//设置相应类型,告诉浏览器输出的内容为图片
-        response.setHeader("Pragma", "No-cache");//设置响应头信息，告诉浏览器不要缓存此内容
-        response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expire", 0);
-        RandomValidateCode randomValidateCode = new RandomValidateCode();
-        try {
-            randomValidateCode.getRandcode(request, response);//输出图片方法
-        } catch (Exception e) {
-            e.printStackTrace();
+    public @ResponseBody boolean verificationCheckCode(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        String sessionCC = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
+        String registerCC = request.getParameter("checkCode");
+        if(sessionCC.equals(registerCC.toUpperCase())){
+            return true;
+        }else{
+            return false;  
         }
     }
 }

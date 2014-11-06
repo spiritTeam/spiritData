@@ -61,8 +61,7 @@ public class RandomValidateCode {
             randomString=drowString(g,randomString,i);
         }
         session.removeAttribute(RANDOMCODEKEY);
-        session.setAttribute(RANDOMCODEKEY, randomString);
-        System.out.println(randomString);
+        session.setAttribute(RANDOMCODEKEY, randomString.toUpperCase());
         g.dispose();
         try {
             ImageIO.write(image, "JPEG", response.getOutputStream());//将内存中的图片通过流动形式输出到客户端

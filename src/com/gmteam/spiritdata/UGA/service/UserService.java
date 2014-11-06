@@ -40,4 +40,8 @@ public class UserService implements UgaUserService {
         }
         return null;
     }
+
+    public User getUserByMail(String mail) {
+        return null;
+    }
 }
