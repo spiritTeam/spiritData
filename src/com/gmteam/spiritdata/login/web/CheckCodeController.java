@@ -11,11 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 //import com.gmteam.spiritdata.login.util.RandomValidateCode;
 
-/** 
- * @author 
- * @version  
- * 类说明 
- */
 @Controller
 public class CheckCodeController {
     @RequestMapping("check.do")

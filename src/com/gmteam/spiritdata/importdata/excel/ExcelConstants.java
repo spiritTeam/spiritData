@@ -1,9 +1,9 @@
 package com.gmteam.spiritdata.importdata.excel;
 
 /** 
+ * 处理excel中的常量
  * @author mht
  * @version  
- * 类说明 处理excel中的常量
  */
 public class ExcelConstants {
     /**
