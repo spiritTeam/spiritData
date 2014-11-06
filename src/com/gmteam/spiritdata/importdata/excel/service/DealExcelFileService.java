@@ -17,6 +17,7 @@ import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.ExcelTableInfo;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
+import com.gmteam.spiritdata.importdata.excel.util.PoiParseUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
@@ -75,12 +76,12 @@ public class DealExcelFileService {
             for (int i=0; i<book.getNumberOfSheets(); i++) {
                 try {//处理每个Sheet，并保证某个Sheet处理失败后，继续处理后续Sheet
                     Object sheet = book.getSheetAt(i);
-                    SheetInfo si = getSheetInfor(sheet, excelType);
-                    si.setSheetIndex(i);
-                    PoiParseExcelService parseExcel = new PoiParseExcelService(excelType, si);
+                    SheetInfo si = initSheetInfo(sheet, excelType, i);
+
+                    PoiParseUtils parseExcel = new PoiParseUtils(excelType, si);
 
                     //1-分析文件，得到元数据信息，并把分析结果存入si
-                    analSheetMetadata(si);
+                    parseExcel.analSheetMetadata();
                     if (si.getEtiList()==null||si.getEtiList().size()==0) continue;
                     for (ExcelTableInfo eti: si.getEtiList()) {
                         try {//--处理sheet中的每个元数据
@@ -134,37 +135,17 @@ public class DealExcelFileService {
      * @param excelType
      * @return
      */
-    private SheetInfo getSheetInfor(Object sheet, int excelType) {
+    private SheetInfo initSheetInfo(Object sheet, int excelType, int sheetIndex) {
         SheetInfo ret = new SheetInfo();
         ret.setExcelType(excelType);
         ret.setSheet(sheet);
+        ret.setSheetIndex(sheetIndex);
         if (excelType==ExcelConstants.EXECL2003_FLAG) {
             ret.setSheetName(((HSSFSheet)sheet).getSheetName());
         } else if (excelType==ExcelConstants.EXECL2007_FLAG) {
             ret.setSheetName(((XSSFSheet)sheet).getSheetName());
         }
         return ret;
-    }
-
-    /*
-     * 分析sheet，得到元数据信息，并把分析结果存入si
-     * @param si sheetInfo
-     */
-    private void analSheetMetadata(SheetInfo si) {
-        //首先分析表头
-        Object sheet = si.getSheet();
-        int rows = 0, firstRowNum = 0;
-        if (si.getExcelType()==ExcelConstants.EXECL2003_FLAG) {
-            rows = ((HSSFSheet)sheet).getLastRowNum();
-            firstRowNum = ((HSSFSheet)sheet).getFirstRowNum();
-        } else if (si.getExcelType()==ExcelConstants.EXECL2007_FLAG){
-            rows = ((XSSFSheet)sheet).getLastRowNum();
-            firstRowNum = ((XSSFSheet)sheet).getFirstRowNum();
-        }
-        if (rows==firstRowNum&&rows==0) return; //说明是空sheet
-        int dataRowBegin = firstRowNum;
-        
-        //之后分析元数据模型
     }
 
     /*
