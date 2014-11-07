@@ -18,7 +18,7 @@ import com.gmteam.spiritdata.login.util.RandomValidateCode;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 @Controller
-public class CheckRegisterInfoController {
+public class RegisterInfoController {
     /**
      * 得到验证码
      * @param request
@@ -26,8 +26,8 @@ public class CheckRegisterInfoController {
      * @throws ServletException
      * @throws IOException
      */
-    @RequestMapping("getCheckCode.do")
-    public void getCheckCode(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+    @RequestMapping("getValidateCode.do")
+    public void getValidateCode(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
         response.setContentType("image/jpeg");//设置相应类型,告诉浏览器输出的内容为图片
         response.setHeader("Pragma", "No-cache");//设置响应头信息，告诉浏览器不要缓存此内容
         response.setHeader("Cache-Control", "no-cache");
@@ -48,8 +48,8 @@ public class CheckRegisterInfoController {
      * @throws ServletException
      * @throws IOException
      */
-    @RequestMapping("verificationLoginName.do")
-    public @ResponseBody boolean verificationLoginName(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping("validateLoginName.do")
+    public @ResponseBody boolean validateLoginName(HttpServletRequest request, HttpServletResponse response) {
         String loginName = request.getParameter("loginName");
         User user  = userService.getUserByLoginName(loginName);
         if(user!=null){
@@ -65,8 +65,8 @@ public class CheckRegisterInfoController {
      * @throws ServletException
      * @throws IOException
      */
-    @RequestMapping("verificationMail.do")
-    public @ResponseBody boolean verificationMail(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping("validateMail.do")
+    public @ResponseBody boolean validateMail(HttpServletRequest request, HttpServletResponse response) {
         String mail = request.getParameter("mail");
         User user  = userService.getUserByMailAdress(mail);
         if(user!=null){
@@ -82,8 +82,8 @@ public class CheckRegisterInfoController {
      * @throws ServletException
      * @throws IOException
      */
-    @RequestMapping("verificationCheckCode.do")
-    public @ResponseBody boolean verificationCheckCode(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping("validateValidateCode.do")
+    public @ResponseBody boolean validateValidateCode(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         String sessionCC = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
         String registerCC = request.getParameter("checkCode");

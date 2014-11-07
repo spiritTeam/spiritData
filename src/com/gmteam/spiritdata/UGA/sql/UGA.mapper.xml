@@ -15,8 +15,8 @@
   <result column="userState"  property="userState"  jdbcType="INTEGER" />
   <result column="verificationCode" property="verificationCode" jdbcType="VARCHAR" />
 </resultMap>
-<insert id="insertUser" parameterType="com.gmteam.spiritdata.UGA.pojo.User">
-  insert into sa_md_tabmap_org
+<insert id="insertUser" parameterType="java.util.Map">
+  insert into plat_user
   <trim prefix="(" suffix=")" suffixOverrides="," >
     <if test="userId != null" >
       id,
