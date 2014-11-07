@@ -19,6 +19,7 @@ CREATE TABLE `plat_user` (
   UNIQUE KEY mailAdress (mailAdress) USING BTREE
 ) 
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='用户表';
+
 /**002 元数据模式[SA_MD_TABMODEL]*/
 DROP TABLE IF EXISTS sa_md_tabmodel;
 CREATE TABLE sa_md_tabmodel (
@@ -134,7 +135,7 @@ CREATE TABLE  sa_imp_tablog_org (
 )
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='数据文件/实体表对应关系表';
 
-/**011 字典组[PLAT_DICTM]*/
+/**010 字典组[PLAT_DICTM]*/
 DROP TABLE IF EXISTS plat_dictm;
 CREATE TABLE  plat_dictm (
   id         varchar(36)     NOT NULL           COMMENT '字典组表ID(UUID)',
@@ -153,7 +154,7 @@ CREATE TABLE  plat_dictm (
 )
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='字典组';
 
-/**012 字典项[PLAT_DICTD]*/
+/**011 字典项[PLAT_DICTD]*/
 DROP TABLE IF EXISTS plat_dictd;
 CREATE TABLE  plat_dictd (
   id         varchar(36)     NOT NULL           COMMENT '字典项表ID(UUID)',
