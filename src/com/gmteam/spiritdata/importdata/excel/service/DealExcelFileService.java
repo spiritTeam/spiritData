@@ -6,11 +6,10 @@ import java.io.FileInputStream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.spiritdata.SDConstants;
@@ -75,10 +74,10 @@ public class DealExcelFileService {
             //根据sheet进行处理
             for (int i=0; i<book.getNumberOfSheets(); i++) {
                 try {//处理每个Sheet，并保证某个Sheet处理失败后，继续处理后续Sheet
-                    Object sheet = book.getSheetAt(i);
+                    Sheet sheet = book.getSheetAt(i);
                     SheetInfo si = initSheetInfo(sheet, excelType, i);
 
-                    PoiParseUtils parseExcel = new PoiParseUtils(excelType, si);
+                    PoiParseUtils parseExcel = new PoiParseUtils(si);
 
                     //1-分析文件，得到元数据信息，并把分析结果存入si
                     parseExcel.analSheetMetadata();
@@ -135,16 +134,12 @@ public class DealExcelFileService {
      * @param excelType
      * @return
      */
-    private SheetInfo initSheetInfo(Object sheet, int excelType, int sheetIndex) {
+    private SheetInfo initSheetInfo(Sheet sheet, int excelType, int sheetIndex) {
         SheetInfo ret = new SheetInfo();
         ret.setExcelType(excelType);
         ret.setSheet(sheet);
         ret.setSheetIndex(sheetIndex);
-        if (excelType==ExcelConstants.EXECL2003_FLAG) {
-            ret.setSheetName(((HSSFSheet)sheet).getSheetName());
-        } else if (excelType==ExcelConstants.EXECL2007_FLAG) {
-            ret.setSheetName(((XSSFSheet)sheet).getSheetName());
-        }
+        ret.setSheetName(sheet.getSheetName());
         return ret;
     }
 

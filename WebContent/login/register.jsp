@@ -27,7 +27,7 @@
           </td><td width="150px;"><div id="loginNameCheck"></div></td></tr>
          <tr><td ><div style="height: 20px;"></div></td></tr>
           <tr>
-          <td align="right"><span style="width: 150px;font-size: 20px;">用户名:</span></td>
+          <td align="right"><span style="width: 150px;font-size: 20px;">姓名:</span></td>
           <td colspan="2" rowspan="1">
           <input style="width:230px;height:35px;color:#999;font-size: 20px;" class="input_1 required" id="userName" name="userName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
              onclick="onClick(userName);" onBlur="onBlur('userName');"/>
@@ -59,9 +59,9 @@
           <td align="right"><span style="width: 150px;font-size: 20px;">验证码:</span></td>
           <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 20px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码"
             onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="onBlur('checkCode');" /></td>
-              <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/checkCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
+              <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getCheckCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
           <tr><td ><div style="height: 20px;"></div></td><td></td><td></td></tr>
-          <tr><td colspan="4" align="center" ><img id="register" name="register" src="register.png" onclick="saveRegisterInfo();"></td></tr>
+          <tr><td colspan="4" align="center" ><img id="register" name="register" src="register.png" onclick="saveRegister();"></td></tr>
       </table>
     </form>
   </div>
@@ -71,6 +71,20 @@
 </center>
 </body>
 <script type="text/javascript">
+function saveRegister(){
+  var pData={
+	  "loginName":$("#loginName").val(),
+    "password":$("#password").val(),
+    "userName":$("#userName").val(),
+    "mailAdress":$("#mail").val()+$('#mailEndStr').combobox('getText'),
+  };
+  var url="<%=path%>/saveRegisterInfo.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+    success: function(json) {
+      vfMsg = json;
+    }
+  });
+}
 function checkVal(obj){
 	obj.focus();obj.select();
 	if(""+obj=="checkCode"){
@@ -86,97 +100,128 @@ $(function() {
 	});  
 });
 function refresh(obj) {
-  obj.src = "<%=path%>/checkCode.do?"+Math.random();
+  obj.src = "<%=path%>/getCheckCode.do?"+Math.random();
 }
 function onBlur(id){
 	var nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;';
 	var ele = $('#'+id);
 	if(id=="loginName"){
 		if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<span style="font-size: 12px;color:red;">'+nbsp+'登录名不能为空!</span>');
+      $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名不能为空!</span>');
 		}else{
-			checkLoginName();
+			if(checkStr(ele.val())){
+				var vsMsg = checkLoginName(ele.val());
+				if(vsMsg==true){
+					$('#'+id+'Check').html(nbsp+'<img src="accept.png">');
+				}else{
+					$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该登录名已被使用!</span>');
+				}
+			}else{
+				$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名应由5~12位的字母数字下划线组成,且首字母不为数字!</span>');
+			}
 		}
 	}else if(id=="userName"){
-		if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<span style="font-size: 12px;color:red;">'+nbsp+'用户名不能为空!</span>');
-    }else{
-      checkLoginName();
-    }
   }else if(id=="password"){
 	  if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<span style="font-size: 12px;color:red;">'+nbsp+'密码不能为空!</span>');
+      $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不能为空!</span>');
     }else{
-      checkLoginName();
+    	if(!checkStr(ele.val())){
+    		$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码应由5~12位的字母数字下划线组成!</span>');
+    	}else{
+    		$('#'+id+'Check').html('<img src="accept.png">');
+    	}
     }
   }else if(id=="confirmPassword"){
 	  if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<span style="font-size: 12px;color:red;">'+nbsp+'请确认密码!</span>');
+      $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">请确认密码!</span>');
     }else{
-      checkLoginName();
+    	if($('#password').val()!=ele.val()){
+    		$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不一致!</span>');
+    	}else{
+    		$('#'+id+'Check').html('<img src="accept.png">');
+    	}
     }
   }else if(id=="mail"){
 	  if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<span style="font-size: 12px;color:red;">'+nbsp+'邮箱不能为空!</span>');
+      $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱不能为空!</span>');
     }else{
-      checkLoginName();
+    	if(checkStr(ele.val())){
+    		var mailStr = ele.val() +$('#mailEndStr').combobox('getText');
+    		alert(mailStr);
+        var vsMsg = checkMail(mailStr);
+        if(vsMsg==true){
+          $('#'+id+'Check').html(nbsp+'<img src="accept.png">');
+        }else{
+          $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该邮箱已被使用!</span>');
+        }
+      }else{
+        $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱应由5~12位的字母数字下划线组成,且首字母不为数字!</span>');
+      }
     }
   }else if(id=="checkCode"){
 	  if(ele.val()==''||ele.val()==null){
       $('#'+id+'Check').html('<span style="font-size: 12px;color:red;">'+nbsp+'验证码不能为空!</span>');
     }else{
-      checkLoginName();
+    	var vsMsg = verificationCheckCode(ele.val());
+    	if(vsMsg==true){
+        $('#'+id+'Check').html(nbsp+'<img src="accept.png">');
+      }else{
+        $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码错误!</span>');
+      }
     }
   }
 }
-function checkLoginName(){
-	var url="<%=path%>/login.do";
+function verificationCheckCode(val){
+	var vfMsg =null;
+	  var pData={
+	    "checkCode":val
+	  };
+	  var url="<%=path%>/verificationCheckCode.do";
+	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+	    success: function(json) {
+	      vfMsg = json;
+	    }
+	  });
+	  return vfMsg;
+}
+function checkMail(val){
+	var vfMsg =null;
+  var pData={
+    "mail":val
+  };
+  var url="<%=path%>/verificationMail.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+    success: function(json) {
+      vfMsg = json;
+    }
+  });
+  return vfMsg;
+}
+function checkStr(str){
+  var re = /^[a-zA-z]\w{4,11}$/;
+  if(re.test(str)){
+    return true;
+  }else{
+	  return false;
+  }       
+}
+function checkLoginName(val){
+	var vfMsg =null;
+	var pData={
+    "loginName":val
+  };
+	var url="<%=path%>/verificationLoginName.do";
+	$.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+     success: function(json) {
+    	 vfMsg = json;
+     }
+	});
+	return vfMsg;
 }
 function onClick(obj){
   if(obj.value==obj.defaultValue){
     obj.value='';obj.style.color='#000';
   }
 }
-function loginF() {
-    var url="<%=path%>/login.do";
-    var pData={
-      "loginName":$("#loginName").val(),
-      "password":$("#password").val(),
-      "checkCode":$("#checkCode").val(),
-      "browser":getBrowserVersion()
-    };
-    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success: function(json) {
-        if (json.type==1) {
-          alert("loginOk");
-          return;
-        } else if (json.type==2) {
-          $.messager.alert("错误", "登录失败："+json.data, "error", function(){
-            $("#loginname").focus();
-            $("#mask").hide();
-            //setBodyEnter(true);
-          });
-        } else {
-          $.messager.alert("错误", "登录异常："+json.data, "error", function(){
-            $("#loginname").focus();
-            $("#mask").hide();
-            setBodyEnter(true);
-          });
-        }
-      },
-      error: function(errorData) {
-        if (errorData) {
-          $.messager.alert("错误", "登录异常：未知！", "error", function(){
-            $("#loginname").focus();
-            $("#mask").hide();
-            setBodyEnter(true);
-          });
-        } else {
-          $("#mask").hide();
-          setBodyEnter(true);
-        }
-      }
-    });
-  }
 </script>
 </html>

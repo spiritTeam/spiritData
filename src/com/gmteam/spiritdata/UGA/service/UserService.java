@@ -40,4 +40,22 @@ public class UserService implements UgaUserService {
         }
         return null;
     }
+
+    public User getUserByMailAdress(String mail) {
+        try {
+            return userDao.getInfoObject("getUserByMailAdress", mail);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public int insertUser(User user) {
+        try {
+            return userDao.insert("insertUser", user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

@@ -3,6 +3,8 @@ package com.gmteam.spiritdata.importdata.excel.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Sheet;
+
 import com.gmteam.framework.core.model.BaseObject;
 
 /**
@@ -16,7 +18,7 @@ public class SheetInfo extends BaseObject {
     private int excelType; //excel文件的类型，参看ExcelConstants.EXECL2007_FLAG,ExcelConstants.EXECL2003_FLAG
     private String sheetName; //sheet名称
     private int sheetIndex; //sheet的编号
-    private Object sheet; //sheet对象
+    private Sheet sheet; //sheet对象
     private List<ExcelTableInfo> etiList; //本sheet对应的Excel表结构数据信息列表（一个sheet）
 
     public String getFileName() {
@@ -43,10 +45,10 @@ public class SheetInfo extends BaseObject {
     public void setSheetIndex(int sheetIndex) {
         this.sheetIndex = sheetIndex;
     }
-    public Object getSheet() {
+    public Sheet getSheet() {
         return sheet;
     }
-    public void setSheet(Object sheet) {
+    public void setSheet(Sheet sheet) {
         this.sheet = sheet;
     }
 
