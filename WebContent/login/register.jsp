@@ -61,7 +61,7 @@
             onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="onBlur('checkCode');" /></td>
               <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getCheckCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
           <tr><td ><div style="height: 20px;"></div></td><td></td><td></td></tr>
-          <tr><td colspan="4" align="center" ><img id="register" name="register" src="register.png" onclick="saveRegisterInfo();"></td></tr>
+          <tr><td colspan="4" align="center" ><img id="register" name="register" src="register.png" onclick="saveRegister();"></td></tr>
       </table>
     </form>
   </div>
@@ -71,6 +71,20 @@
 </center>
 </body>
 <script type="text/javascript">
+function saveRegister(){
+  var pData={
+	  "loginName":$("#loginName").val(),
+    "password":$("#password").val(),
+    "userName":$("#userName").val(),
+    "mailAdress":$("#mail").val()+$('#mailEndStr').combobox('getText'),
+  };
+  var url="<%=path%>/saveRegisterInfo.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+    success: function(json) {
+      vfMsg = json;
+    }
+  });
+}
 function checkVal(obj){
 	obj.focus();obj.select();
 	if(""+obj=="checkCode"){
@@ -114,17 +128,17 @@ function onBlur(id){
     	if(!checkStr(ele.val())){
     		$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码应由5~12位的字母数字下划线组成!</span>');
     	}else{
-    		$('#'+id+'Check').html(nbsp+'<img src="accept.png">');
+    		$('#'+id+'Check').html('<img src="accept.png">');
     	}
     }
   }else if(id=="confirmPassword"){
 	  if(ele.val()==''||ele.val()==null){
       $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">请确认密码!</span>');
     }else{
-    	if($('password').val()!=ele.val()){
+    	if($('#password').val()!=ele.val()){
     		$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不一致!</span>');
     	}else{
-    		$('#'+id+'Check').html('<img src="accept.png"><span style="font-size: 12px;color:red;">密码不一致!</span>');
+    		$('#'+id+'Check').html('<img src="accept.png">');
     	}
     }
   }else if(id=="mail"){
@@ -132,7 +146,9 @@ function onBlur(id){
       $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱不能为空!</span>');
     }else{
     	if(checkStr(ele.val())){
-        var vsMsg = checkMail(ele.val());;
+    		var mailStr = ele.val() +$('#mailEndStr').combobox('getText');
+    		alert(mailStr);
+        var vsMsg = checkMail(mailStr);
         if(vsMsg==true){
           $('#'+id+'Check').html(nbsp+'<img src="accept.png">');
         }else{
@@ -146,9 +162,27 @@ function onBlur(id){
 	  if(ele.val()==''||ele.val()==null){
       $('#'+id+'Check').html('<span style="font-size: 12px;color:red;">'+nbsp+'验证码不能为空!</span>');
     }else{
-      checkLoginName();
+    	var vsMsg = verificationCheckCode(ele.val());
+    	if(vsMsg==true){
+        $('#'+id+'Check').html(nbsp+'<img src="accept.png">');
+      }else{
+        $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码错误!</span>');
+      }
     }
   }
+}
+function verificationCheckCode(val){
+	var vfMsg =null;
+	  var pData={
+	    "checkCode":val
+	  };
+	  var url="<%=path%>/verificationCheckCode.do";
+	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+	    success: function(json) {
+	      vfMsg = json;
+	    }
+	  });
+	  return vfMsg;
 }
 function checkMail(val){
 	var vfMsg =null;
@@ -188,47 +222,6 @@ function onClick(obj){
   if(obj.value==obj.defaultValue){
     obj.value='';obj.style.color='#000';
   }
-}
-function loginF() {
-  var url="<%=path%>/login.do";
-  var pData={
-    "loginName":$("#loginName").val(),
-    "password":$("#password").val(),
-    "checkCode":$("#checkCode").val(),
-    "browser":getBrowserVersion()
-  };
-  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-    success: function(json) {
-      if (json.type==1) {
-        alert("loginOk");
-        return;
-      } else if (json.type==2) {
-        $.messager.alert("错误", "登录失败："+json.data, "error", function(){
-          $("#loginname").focus();
-          $("#mask").hide();
-          //setBodyEnter(true);
-        });
-      } else {
-        $.messager.alert("错误", "登录异常："+json.data, "error", function(){
-          $("#loginname").focus();
-          $("#mask").hide();
-          setBodyEnter(true);
-        });
-      }
-    },
-    error: function(errorData) {
-      if (errorData) {
-        $.messager.alert("错误", "登录异常：未知！", "error", function(){
-          $("#loginname").focus();
-          $("#mask").hide();
-          setBodyEnter(true);
-        });
-      } else {
-        $("#mask").hide();
-        setBodyEnter(true);
-      }
-    }
-  });
 }
 </script>
 </html>

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="SA_UGA">
 <resultMap id="userMap" type="WebUser">
-  <id     column="id"         property="userId"     jdbcType="VARCHAR" />
+  <id     column="Id"         property="userId"     jdbcType="VARCHAR" />
   <result column="loginName"  property="loginName"  jdbcType="VARCHAR" />
   <result column="userName"   property="userName"   jdbcType="VARCHAR" />
   <result column="password"   property="password"   jdbcType="VARCHAR" />
@@ -12,10 +12,83 @@
   <result column="descn"      property="descn"      jdbcType="VARCHAR" />
   <result column="cTime"      property="cTime"      jdbcType="TIMESTAMP" />
   <result column="lmTime"     property="lmTime"     jdbcType="TIMESTAMP" />
+  <result column="userState"  property="userState"  jdbcType="INTEGER" />
+  <result column="verificationCode" property="verificationCode" jdbcType="VARCHAR" />
 </resultMap>
-
+<insert id="insertUser" parameterType="com.gmteam.spiritdata.UGA.pojo.User">
+  insert into sa_md_tabmap_org
+  <trim prefix="(" suffix=")" suffixOverrides="," >
+    <if test="userId != null" >
+      id,
+    </if>
+    <if test="loginName != null" >
+      loginName,
+    </if>
+    <if test="userName != null" >
+      userName,
+    </if>
+    <if test="password != null" >
+      password,
+    </if>
+    <if test="mailAdress!=null" >
+      mailAdress,
+    </if>
+    <if test="nickName != null" >
+      nickName,
+    </if>
+    <if test="descn != null" >
+      descn,
+    </if>
+     <if test="userState != null" >
+      userState,
+    </if>
+    <if test="userType!=null" >
+      userType,
+    </if>
+    <if test="verificationCode != null" >
+      verificationCode,
+    </if>
+  </trim>
+  <trim prefix="values (" suffix=")" suffixOverrides="," >
+    <if test="userId != null" >
+      #{userId,jdbcType=VARCHAR},
+    </if>
+    <if test="loginName != null" >
+      #{loginName,jdbcType=VARCHAR},
+    </if>
+    <if test="userName != null" >
+      #{userName,jdbcType=VARCHAR},
+    </if>
+    <if test="password != null" >
+      #{password,jdbcType=VARCHAR},
+    </if>
+    <if test="mailAdress !=null " >
+      #{mailAdress,jdbcType=INTEGER},
+    </if>
+    <if test="nickName != null" >
+      #{nickName,jdbcType=VARCHAR},
+    </if>
+    <if test="descn != null" >
+      #{descn,jdbcType=VARCHAR},
+    </if>
+    <if test="userState != null" >
+      #{userState,jdbcType=INTEGER},
+    </if>
+    <if test="userType != null" >
+      #{userType,jdbcType=INTEGER},
+    </if>
+    <if test="verificationCode != null" >
+      #{verificationCode,jdbcType=VARCHAR},
+    </if>
+  </trim>
+</insert>
+  
 <select id="getUserByLoginName" resultMap="userMap" parameterType="java.lang.String">
 select * from plat_user where loginName=#{loginName,jdbcType=VARCHAR}
+</select>
+
+<select id="getUserByMailAdress" resultMap="userMap" parameterType="java.lang.String">
+select * from plat_user where mailAdress=#{mailAdress,jdbcType=VARCHAR}
 </select>
 
 <select id="getUserById" resultMap="userMap" parameterType="java.lang.String">
