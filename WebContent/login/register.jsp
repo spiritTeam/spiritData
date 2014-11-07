@@ -18,48 +18,48 @@
   <div style="float: left;border:1px solid #ABCDEF;width: 700px;height: 500px;">
   <div style="margin-top: 50px;"></div>
     <form action="">
-      <table width="480px;" >
-        <tr>
-          <td align="right" width="100px;" ><span style="width: 150px;font-size: 20px;">登录名:</span></td>
+      <table width="580px;" >
+        <tr >
+          <td align="right" width="100px;" ><span style="width: 150px;font-size: 16px;">登录名&nbsp;&nbsp;</span></td>
           <td colspan="2" width="230px;" >
-          <input style="width:230px;height:35px;color:#999;font-size: 20px;" class="input_1 required" id="loginName" name="loginName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
-            onclick="onClick(loginName);" onBlur="onBlur('loginName');"/>
-          </td><td width="150px;"><div id="loginNameCheck"></div></td></tr>
+          <input style="width:235px;height:35px;color:#999;font-size: 12px;" id="loginName" name="loginName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
+            onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
+          </td><td width="250px;"><div id="loginNameCheck"></div></td></tr>
          <tr><td ><div style="height: 20px;"></div></td></tr>
           <tr>
-          <td align="right"><span style="width: 150px;font-size: 20px;">姓名:</span></td>
+          <td align="right"><span style="width: 150px;font-size: 16px;">姓名&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
-          <input style="width:230px;height:35px;color:#999;font-size: 20px;" class="input_1 required" id="userName" name="userName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
-             onclick="onClick(userName);" onBlur="onBlur('userName');"/>
+          <input style="width:235px;height:35px;color:#999;font-size: 12px;" id="userName" name="userName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
+             onclick="onClick(userName);" onBlur="validateUserName('userName');"/>
           </td><td><div id="userNameCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr >
-          <td align="right"><span style="width: 150px;font-size: 20px;">密码:</span></td>
+          <td align="right"><span style="width: 150px;font-size: 16px;">密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
-            <input style="width:230px;height:35px;color:#999;font-size: 20px" class="input_1 required" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
-              onclick="onClick(password);" onBlur="onBlur('password');" />
+            <input style="width:235px;height:35px;color:#999;font-size: 12px" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
+              onclick="onClick(password);" onBlur="validatePassword('password');" />
           </td><td><div id="passwordCheck"></div></td></tr>
           <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr >
-          <td align="right"><span style="width: 150px;font-size: 20px;">确认密码:</span></td>
+          <td align="right"><span style="width: 150px;font-size: 16px;">确认密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
-            <input style="width:230px;height:35px;color:#999;font-size: 20px" class="input_1 required" id="confirmPassword" name="confirmPassword"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
-              onclick="onClick(confirmPassword);" onBlur="onBlur('confirmPassword');" />
+            <input style="width:235px;height:35px;color:#999;font-size: 12px" id="confirmPassword" name="confirmPassword"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
+              onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" />
           </td><td><div id="confirmPasswordCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
           <tr>
-            <td align="right"><span style="width: 150px;font-size: 20px;">邮箱:</span></td>
-            <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 20px;"  id="mail" name="mail"  tabindex="3" type="text"  onmouseover=this.focus();this.select(); 
-               onclick="onClick(mail);" onBlur="onBlur('mail');"/></td>
-            <td  align="left"><input style="width: 100px;height: 30px;font-size: 20px;" id="mailEndStr" name="mailEndStr" ></td>
+            <td align="right"><span style="width: 150px;font-size: 16px;">邮箱&nbsp;&nbsp;</span></td>
+            <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 16px;"  id="mail" name="mail"  tabindex="3" type="text"  onmouseover=this.focus();this.select(); 
+               onclick="onClick(mail);" onBlur="validateMail('mail');"/></td>
+            <td  align="left"><input style="width: 100px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" ></td>
             <td><div id="mailCheck"></div></td>
           </tr>
-              <tr><td ><div style="height: 20px;"></div></td></tr>
+             <tr><td ><div style="height: 20px;"></div></td></tr>
           <tr>
-          <td align="right"><span style="width: 150px;font-size: 20px;">验证码:</span></td>
-          <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 20px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码"
-            onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="onBlur('checkCode');" /></td>
-              <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getCheckCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
+          <td align="right"><span style="width: 150px;font-size: 16px;">验证码&nbsp;&nbsp;</span></td>
+          <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 16px;"  id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码"
+            onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
+              <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
           <tr><td ><div style="height: 20px;"></div></td><td></td><td></td></tr>
           <tr><td colspan="4" align="center" ><img id="register" name="register" src="register.png" onclick="saveRegister();"></td></tr>
       </table>
@@ -100,83 +100,88 @@ $(function() {
 	});  
 });
 function refresh(obj) {
-  obj.src = "<%=path%>/getCheckCode.do?"+Math.random();
+  obj.src = "<%=path%>/getValidateCode.do?"+Math.random();
 }
-function onBlur(id){
-	var nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;';
-	var ele = $('#'+id);
-	if(id=="loginName"){
-		if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名不能为空!</span>');
-		}else{
-			if(checkStr(ele.val())){
-				var vsMsg = checkLoginName(ele.val());
-				if(vsMsg==true){
-					$('#'+id+'Check').html(nbsp+'<img src="accept.png">');
-				}else{
-					$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该登录名已被使用!</span>');
-				}
-			}else{
-				$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名应由5~12位的字母数字下划线组成,且首字母不为数字!</span>');
-			}
-		}
-	}else if(id=="userName"){
-  }else if(id=="password"){
-	  if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不能为空!</span>');
-    }else{
-    	if(!checkStr(ele.val())){
-    		$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码应由5~12位的字母数字下划线组成!</span>');
-    	}else{
-    		$('#'+id+'Check').html('<img src="accept.png">');
-    	}
-    }
-  }else if(id=="confirmPassword"){
-	  if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">请确认密码!</span>');
-    }else{
-    	if($('#password').val()!=ele.val()){
-    		$('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不一致!</span>');
-    	}else{
-    		$('#'+id+'Check').html('<img src="accept.png">');
-    	}
-    }
-  }else if(id=="mail"){
-	  if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱不能为空!</span>');
-    }else{
-    	if(checkStr(ele.val())){
-    		var mailStr = ele.val() +$('#mailEndStr').combobox('getText');
-    		alert(mailStr);
-        var vsMsg = checkMail(mailStr);
-        if(vsMsg==true){
-          $('#'+id+'Check').html(nbsp+'<img src="accept.png">');
-        }else{
-          $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该邮箱已被使用!</span>');
-        }
+function validatePassword(eleId){
+	var ele = $('#'+eleId);
+	if(ele.val()==''||ele.val()==null){
+	   $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不能为空!</span>');
+	 }else{
+	   if(!checkStr(ele.val())){
+	     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
+	   }else{
+	     $('#'+eleId+'Check').html('<img src="accept.png">');
+	   }
+	 }
+}
+function validateLoginName(eleId){
+	var ele = $('#'+eleId);
+	if(ele.val()==''||ele.val()==null){
+    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名不能为空!</span>');
+  }else{
+    if(checkStr(ele.val())){
+      var vsMsg = checkLoginName(ele.val());
+      if(vsMsg==true){
+        $('#'+eleId+'Check').html('<img src="accept.png">');
       }else{
-        $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱应由5~12位的字母数字下划线组成,且首字母不为数字!</span>');
+        $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该登录名已被使用!</span>');
       }
-    }
-  }else if(id=="checkCode"){
-	  if(ele.val()==''||ele.val()==null){
-      $('#'+id+'Check').html('<span style="font-size: 12px;color:red;">'+nbsp+'验证码不能为空!</span>');
     }else{
-    	var vsMsg = verificationCheckCode(ele.val());
-    	if(vsMsg==true){
-        $('#'+id+'Check').html(nbsp+'<img src="accept.png">');
-      }else{
-        $('#'+id+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码错误!</span>');
-      }
+      $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
     }
   }
+}
+function validateConfirmPassword(eleId){
+	var ele = $('#'+eleId);
+	if(ele.val()==''||ele.val()==null){
+    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">请确认密码!</span>');
+  }else{
+    if($('#password').val()!=ele.val()){
+      $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不一致!</span>');
+    }else{
+      $('#'+eleId+'Check').html('<img src="accept.png">');
+    }
+  }
+}
+function validateMail(eleId){
+	var ele = $('#'+eleId);
+	if(ele.val()==''||ele.val()==null){
+	  $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱不能为空!</span>');
+	}else{
+	  if(checkStr(ele.val())){
+	    var mailStr = ele.val() +$('#mailEndStr').combobox('getText');
+	    var vsMsg = checkMail(mailStr);
+	    if(vsMsg==true){
+	      $('#'+eleId+'Check').html('<img src="accept.png">');
+	    }else{
+	      $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该邮箱已被使用!</span>');
+	    }
+	  }else{
+	    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
+	  }
+	}
+}
+function validateValidateCode(eleId){
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null){
+    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码不能为空!</span>');
+  }else{
+    var vsMsg = verificationCheckCode(ele.val());
+    if(vsMsg==true){
+      $('#'+eleId+'Check').html('<img src="accept.png">');
+    }else{
+      $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码错误!</span>');
+    }
+  }
+}
+function validateUserName(eleId){
 }
 function verificationCheckCode(val){
 	var vfMsg =null;
 	  var pData={
 	    "checkCode":val
 	  };
-	  var url="<%=path%>/verificationCheckCode.do";
+	  var url="<%=path%>/validateValidateCode.do";
 	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
 	    success: function(json) {
 	      vfMsg = json;
@@ -189,7 +194,7 @@ function checkMail(val){
   var pData={
     "mail":val
   };
-  var url="<%=path%>/verificationMail.do";
+  var url="<%=path%>/validateMail.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
     success: function(json) {
       vfMsg = json;
@@ -210,7 +215,7 @@ function checkLoginName(val){
 	var pData={
     "loginName":val
   };
-	var url="<%=path%>/verificationLoginName.do";
+	var url="<%=path%>/validateLoginName.do";
 	$.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
      success: function(json) {
     	 vfMsg = json;
