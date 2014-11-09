@@ -32,7 +32,7 @@
           <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
           <tr><td colspan="1" width="170px;"><input style="width:140px;height:40px;color:#999;font-size: 20px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="onBlur(checkCode);" /></td>
-              <td  align="left"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getCheckCode.do"></td></tr>
+              <td  align="left"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td></tr>
           <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
           <tr><td ><input type="button" value="登录" onclick="loginF()" /></td><td></td></tr>
       </table>
@@ -45,7 +45,7 @@
 </body>
 <script type="text/javascript">
 function refresh(obj) {
-  obj.src = "<%=path%>/getCheckCode.do?"+Math.random();
+  obj.src = "<%=path%>/getValidateCode.do?"+Math.random();
 }
 function onBlur(obj){
 	if(obj.value==""){

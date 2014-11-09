@@ -73,21 +73,30 @@
 <script type="text/javascript">
 var psV=false,cpsV=false,lnV=false,maV=false,vcV=false;
 function saveRegister(){
-  var pData={
-    "loginName":$("#loginName").val(),
-    "password":$("#password").val(),
-    "userName":$("#userName").val(),
-    "mailAdress":$("#mail").val()+$('#mailEndStr').combobox('getText'),
-  };
-  var url="<%=path%>/Register.do";
-  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-    success: function(json) {
-      vfMsg = json;
-      if(vfMsg){
-    	  alert('注册成功!');
-      }
-    }
-  });
+	if(psV&&cpsV&&lnV&&maV&&vcV){
+		var pData={
+	    "loginName":$("#loginName").val(),
+	    "password":$("#password").val(),
+	    "userName":$("#userName").val(),
+	    "mailAdress":$("#mail").val()+$('#mailEndStr').combobox('getText'),
+	  };
+	  var url="<%=path%>/Register.do";
+	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+	    success: function(json) {
+	      vfMsg = json;
+	      if(vfMsg){
+	    	  alert('注册成功3秒后跳转到登录页面');
+	    	  setTimeout("jumpLogin();", 3000 );
+	      }
+	    }
+	  });
+	}else{
+		alert("您的注册信息某些地方有误，请完善您的注册信息");
+		return ;
+	}
+}
+function jumpLogin(){
+	window.location.href="http://localhost:8080/sa/login/login.jsp";
 }
 function checkVal(obj){
   obj.focus();obj.select();
@@ -146,11 +155,14 @@ function validateConfirmPassword(eleId){
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null){
     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">请确认密码!</span>');
+    cpsV =false;
   }else{
     if($('#password').val()!=ele.val()){
       $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不一致!</span>');
+      cpsV =false;
     }else{
       $('#'+eleId+'Check').html('<img src="accept.png">');
+      cpsV =true;
     }
   }
 }
@@ -158,17 +170,21 @@ function validateMail(eleId){
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null){
     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱不能为空!</span>');
+    maV = false;
   }else{
     if(checkStr(ele.val())){
       var mailStr = ele.val() +$('#mailEndStr').combobox('getText');
       var vsMsg = checkMail(mailStr);
       if(vsMsg==true){
         $('#'+eleId+'Check').html('<img src="accept.png">');
+        maV = true;
       }else{
         $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该邮箱已被使用!</span>');
+        maV = false;
       }
     }else{
       $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
+      maV = false;
     }
   }
 }
@@ -176,12 +192,15 @@ function validateValidateCode(eleId){
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null){
     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码不能为空!</span>');
+    vcV = false;
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
       $('#'+eleId+'Check').html('<img src="accept.png">');
+      vcV = true;
     }else{
       $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码错误!</span>');
+      vcV = false;
     }
   }
 }

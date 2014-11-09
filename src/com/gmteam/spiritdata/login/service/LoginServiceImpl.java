@@ -16,14 +16,12 @@ public class LoginServiceImpl implements LoginService {
         String requestCC = request.getParameter("checkCode");
         HttpSession session = request.getSession();
         String checkCode = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
-        System.out.println(requestCC+checkCode);
         if(requestCC.equals(checkCode)){
             retMap.put("success", "success");
             return retMap;
         }
         return null;
     }
-
     @Override
     public Map<String, Object> afterUserLoginOk(UgaUser user, HttpServletRequest req) {
         return null;
