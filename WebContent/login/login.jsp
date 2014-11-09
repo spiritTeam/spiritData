@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%
+<%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
 %>
@@ -17,24 +17,30 @@
   <div style="float: left;border:1px solid #ABCDEF;width: 500px;height: 500px;">
   <div style="margin-top: 50px;"></div>
     <form action="">
-      <table width="450px;">
+      <table width="450px;" border="1px;" bordercolor="red">
         <tr>
           <td colspan="2" rowspan="1">
 	        <input style="width:280px;height:40px;color:#999;font-size: 20px;" class="input_1 required" id="loginName" name="loginName"  tabindex="1" type="text" value="支持邮箱/企鹅/手机号" onmouseover=this.focus();this.select();
 	              onclick="onClick(loginName);" onBlur="onBlur(loginName);"/>
-					</td><td></td></tr>
+					</td><td></td>
+				</tr>
         <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
         <tr >
           <td colspan="2" rowspan="1">
             <input style="width:280px;height:40px;color:#999;font-size: 20px" class="input_1 required" id="password" name="password"  tabindex="2" type="text" value="密码" onmouseover=this.focus();this.select();
                 onclick="onClick(password);" onBlur="onBlur(password);" />
-          </td><td></td></tr>
-          <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
-          <tr><td colspan="1" width="170px;"><input style="width:140px;height:40px;color:#999;font-size: 20px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select();
+          </td><td></td>
+        </tr>
+        <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
+        <tr>
+          <td colspan="1" width="170px;"><input style="width:140px;height:40px;color:#999;font-size: 20px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="onBlur(checkCode);" /></td>
-              <td  align="left"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td></tr>
-          <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
-          <tr><td ><input type="button" value="登录" onclick="loginF()" /></td><td></td></tr>
+          <td  align="left"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td>
+        </tr>
+        <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
+        <tr>
+          <td colspan="2"><input type="button" value="登录" onclick="loginF()" /><input type="button" value="注册" onclick="" /><input type="button" value="忘记密码" onclick="" /><input type="button" value="从新发送验证信息" onclick="" /></td><td></td>
+        </tr>
       </table>
     </form>
   </div>

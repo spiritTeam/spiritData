@@ -38,6 +38,12 @@
       <artifactId>spring-webmvc</artifactId>
       <version>4.0.0.RELEASE</version>
     </dependency>
+    <!-- Spring Jdbc -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>4.0.1.RELEASE</version>
+    </dependency>
     <!-- MyBatis组件 --><!-- Spring+MyBatis对接插件 -->
     <dependency>
       <groupId>org.mybatis</groupId>
@@ -60,18 +66,6 @@
       <artifactId>jackson-databind</artifactId>
       <version>2.3.0</version>
     </dependency>
-    <!-- servlet-api 否则，用Maven install报错 -->
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>6.0.39</version>
-    </dependency>
-    <!-- dbcp连接池 -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <version>4.0.1.RELEASE</version>
-    </dependency>
     <!-- commons-fileupload -->
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -83,6 +77,12 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.4</version>
+    </dependency>
+    <!-- servlet-api 否则，用Maven install报错 -->
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>6.0.39</version>
     </dependency>
   </dependencies>
   <build>

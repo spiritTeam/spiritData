@@ -3,6 +3,10 @@
 /WebContent/WEB-INF/lib
 /WebContent/WEB-INF/classes
 /
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/origin/new
 /.classpath
 /.project
 /target

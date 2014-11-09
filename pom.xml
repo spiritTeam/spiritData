@@ -7,7 +7,7 @@
   
   <!-- 配置编码格式，与eclpse的IDE环境编码格式匹配 -->
   <properties>
-    <build.webProjectDir>D:/Users/admi/git/SpiritAnalysis</build.webProjectDir>
+     <build.webProjectDir>D:/Users/admi/git/SpiritAnalysis</build.webProjectDir>
   </properties>
   <parent>
     <groupId>team.gm</groupId>
@@ -50,58 +50,28 @@
     <dependency>
       <groupId>com.basicplat</groupId>
       <artifactId>BasicPlat</artifactId>
-      <version>0.0.1.1</version>
+      <version>0.0.1.2</version>
       <scope>system</scope>
       <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/BasicPlat-0.0.1.2.jar</systemPath>
     </dependency>
-    <dependency>
-      <groupId>xmlbeans</groupId>
-      <artifactId>xmlbeans</artifactId>
-      <version>2.6.0</version>
-      <scope>system</scope>
-      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/xmlbeans-2.6.0.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
-      <scope>system</scope>
-      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/dom4j-1.6.1.jar</systemPath>
-    </dependency>
+    <!-- mail 包 -->
     <dependency>
       <groupId>mail</groupId>
       <artifactId>mail</artifactId>
       <version>1.5.0</version>
-      <scope>system</scope>
+       <scope>system</scope>
       <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/mail-1.5.0-b01.jar</systemPath>
     </dependency>
+    <!-- Poi 包 -->
     <dependency>
-      <groupId>poi-FINAL</groupId>
-      <artifactId>poi-3.10-FINAL</artifactId>
-      <version>poi-3.10-FINAL</version>
-      <scope>system</scope>
-      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/poi-3.10-FINAL.jar</systemPath>
+      <groupId>org.apache.poi</groupId><!-- 2003 -->
+      <artifactId>poi</artifactId>
+      <version>3.10.1</version>
     </dependency>
     <dependency>
-      <groupId>poi-ooxml-FINAL</groupId>
-      <artifactId>poi-ooxml-3.10-FINAL</artifactId>
-      <version>poi-ooxml-3.10-FINAL</version>
-      <scope>system</scope>
-      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/poi-ooxml-3.10-FINAL.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>poi-ooxml-schemas-FINAL</groupId>
-      <artifactId>poi-ooxml-schemas-3.10-FINAL</artifactId>
-      <version>poi-ooxml-schemas-3.10-FINAL</version>
-      <scope>system</scope>
-      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/poi-ooxml-schemas-3.10-FINAL.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>poi-scratchpad-beta1</groupId>
-      <artifactId>poi-scratchpad-3.11-beta1</artifactId>
-      <version>poi-scratchpad-3.11-beta1</version>
-      <scope>system</scope>
-      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/poi-scratchpad-3.11-beta1.jar</systemPath>
+      <groupId>org.apache.poi</groupId><!-- 2007 -->
+      <artifactId>poi-ooxml</artifactId>
+      <version>3.10.1</version>
     </dependency>
     <!-- dbcp连接池 -->
     <dependency>
@@ -120,14 +90,13 @@
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.29</version>
     </dependency>
-    <!-- 加解密包 -->
+    <!-- 加解密包
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.9</version>
-    </dependency>
+    </dependency> -->
   </dependencies>
-
   <build>
     <!-- 设置源代码的根目录 -->
     <sourceDirectory>${build.webProjectDir}\src</sourceDirectory>
