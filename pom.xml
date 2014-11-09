@@ -1,0 +1,161 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>SpiritAnalysis</groupId>
+  <artifactId>SpiritAnalysis</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  
+  <!-- 配置编码格式，与eclpse的IDE环境编码格式匹配 -->
+  <properties>
+    <build.webProjectDir>D:/Users/admi/git/SpiritAnalysis</build.webProjectDir>
+  </properties>
+  <parent>
+    <groupId>team.gm</groupId>
+    <artifactId>framework</artifactId>
+    <version>0.1.0.1</version>
+    <relativePath>pom.framework.xml</relativePath>
+  </parent>
+  <dependencies>
+    <!-- 把html转成word的包 
+    1、org.apache.commons
+    2、org.apache.httpcomponents
+    3、org.apache.httpcomponents
+    4、jstl
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcomponents-core</artifactId>
+      <version>4.2.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcomponents-client</artifactId>
+      <version>4.2.6</version>
+    </dependency>
+    <dependency>
+      <groupId>jstl</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>-->
+    <!-- <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+    </dependency> -->
+    <!-- 引入基本包 -->
+    <dependency>
+      <groupId>com.basicplat</groupId>
+      <artifactId>BasicPlat</artifactId>
+      <version>0.0.1.1</version>
+      <scope>system</scope>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/BasicPlat-0.0.1.2.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xmlbeans</artifactId>
+      <version>2.6.0</version>
+      <scope>system</scope>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/xmlbeans-2.6.0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+      <scope>system</scope>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/dom4j-1.6.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.5.0</version>
+      <scope>system</scope>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/mail-1.5.0-b01.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>poi-FINAL</groupId>
+      <artifactId>poi-3.10-FINAL</artifactId>
+      <version>poi-3.10-FINAL</version>
+      <scope>system</scope>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/poi-3.10-FINAL.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>poi-ooxml-FINAL</groupId>
+      <artifactId>poi-ooxml-3.10-FINAL</artifactId>
+      <version>poi-ooxml-3.10-FINAL</version>
+      <scope>system</scope>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/poi-ooxml-3.10-FINAL.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>poi-ooxml-schemas-FINAL</groupId>
+      <artifactId>poi-ooxml-schemas-3.10-FINAL</artifactId>
+      <version>poi-ooxml-schemas-3.10-FINAL</version>
+      <scope>system</scope>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/poi-ooxml-schemas-3.10-FINAL.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>poi-scratchpad-beta1</groupId>
+      <artifactId>poi-scratchpad-3.11-beta1</artifactId>
+      <version>poi-scratchpad-3.11-beta1</version>
+      <scope>system</scope>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/poi-scratchpad-3.11-beta1.jar</systemPath>
+    </dependency>
+    <!-- dbcp连接池 -->
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
+      <version>1.6</version>
+    </dependency>
+    <!-- 数据库连接驱动mysql -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.29</version>
+    </dependency>
+    <!-- 加解密包 -->
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.9</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- 设置源代码的根目录 -->
+    <sourceDirectory>${build.webProjectDir}\src</sourceDirectory>
+    <!-- 设置测试代码的根目录 -->
+    <testSourceDirectory>${build.webProjectDir}\test</testSourceDirectory>
+    <!-- 设置源代码编译后的字节代码的目录 -->
+    <outputDirectory>${build.webProjectDir}\WebContent\WEB-INF\classes</outputDirectory>
+    <!-- 设置测试代码编译后的字节代码的目录 -->
+    <testOutputDirectory>${build.webProjectDir}\target\test-classes</testOutputDirectory>
+    <!-- 这里定义的资源将作为资源拷贝或打包到目标中。所有的配置文件(xml,propertis)都会按目录进行打包了 -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <warSourceDirectory>WebContent</warSourceDirectory>
+          <webResources>
+            <resource>
+              <directory>WebContent</directory>
+              <targetPath>WEB-INF</targetPath>
+              <includes>
+                <include>web.xml</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
