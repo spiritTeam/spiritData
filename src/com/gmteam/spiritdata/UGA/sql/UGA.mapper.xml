@@ -13,8 +13,44 @@
   <result column="cTime"      property="cTime"      jdbcType="TIMESTAMP" />
   <result column="lmTime"     property="lmTime"     jdbcType="TIMESTAMP" />
   <result column="userState"  property="userState"  jdbcType="INTEGER" />
-  <result column="verificationCode" property="verificationCode" jdbcType="VARCHAR" />
+  <result column="validataSequence" property="validataSequence" jdbcType="VARCHAR" />
 </resultMap>
+<update id="updateUser" parameterType="java.util.Map" >
+  update plat_user
+  <set >
+    <if test="userId != null" >
+      id = #{userId,jdbcType=VARCHAR},
+    </if>
+    <if test="password != null" >
+      password = #{password,jdbcType=VARCHAR},
+    </if>
+    <if test="mailAdress != null" >
+      mailAdress = #{mailAdress,jdbcType=VARCHAR},
+    </if>
+    <if test="nickName !=null" >
+      nickName = #{nickName,jdbcType=INTEGER},
+    </if>
+    <if test="userType !=null" >
+      userType = #{userType,jdbcType=INTEGER},
+    </if>
+    <if test="descn != null" >
+      descn = #{descn,jdbcType=VARCHAR},
+    </if>
+    <if test="cTime != null" >
+      cTime = #{cTime,jdbcType=TIMESTAMP},
+    </if>
+    <if test="lmTime != null" >
+      lmTime = #{lmTime,jdbcType=TIMESTAMP},
+    </if>
+    <if test="userState != null" >
+      userState = #{userState,jdbcType=INTEGER},
+    </if>
+    <if test="validataSequence != null" >
+      validataSequence = #{validataSequence,jdbcType=VARCHAR},
+    </if>
+  </set>
+  where id = #{userId,jdbcType=VARCHAR}
+</update>
 <insert id="insertUser" parameterType="java.util.Map">
   insert into plat_user
   <trim prefix="(" suffix=")" suffixOverrides="," >

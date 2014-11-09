@@ -13,12 +13,13 @@ CREATE TABLE `plat_user` (
   cTime             timestamp       NOT NULL DEFAULT  CURRENT_TIMESTAMP COMMENT '创建时间:创建时的系统时间',
   lmTime            timestamp       NOT NULL DEFAULT  CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改：每次更新的时间',
   userState         int(1)          NOT NULL DEFAULT '0' COMMENT '用户状态，0-2,0代表未激活的用户，1代表已激活邮箱的活跃用户，2代表已激活的非活跃用户',
-  verificationCode varchar(36)      DEFAULT NULL      COMMENT '验证信息，用于存储验证邮箱时的验证码，uuid',
+  validataSequence varchar(36)      DEFAULT NULL      COMMENT '验证信息，用于存储验证邮箱时的验证码，uuid',
   PRIMARY KEY (id),
   UNIQUE KEY loginName (loginName) USING BTREE,
   UNIQUE KEY mailAdress (mailAdress) USING BTREE
 ) 
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='用户表';
+
 /**002 元数据模式[SA_MD_TABMODEL]*/
 DROP TABLE IF EXISTS sa_md_tabmodel;
 CREATE TABLE sa_md_tabmodel (
@@ -134,7 +135,7 @@ CREATE TABLE  sa_imp_tablog_org (
 )
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='数据文件/实体表对应关系表';
 
-/**011 字典组[PLAT_DICTM]*/
+/**010 字典组[PLAT_DICTM]*/
 DROP TABLE IF EXISTS plat_dictm;
 CREATE TABLE  plat_dictm (
   id         varchar(36)     NOT NULL           COMMENT '字典组表ID(UUID)',
@@ -153,7 +154,7 @@ CREATE TABLE  plat_dictm (
 )
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='字典组';
 
-/**012 字典项[PLAT_DICTD]*/
+/**011 字典项[PLAT_DICTD]*/
 DROP TABLE IF EXISTS plat_dictd;
 CREATE TABLE  plat_dictd (
   id         varchar(36)     NOT NULL           COMMENT '字典项表ID(UUID)',

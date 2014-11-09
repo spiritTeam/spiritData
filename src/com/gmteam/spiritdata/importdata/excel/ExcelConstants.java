@@ -15,32 +15,25 @@ public class ExcelConstants {
      */
     public static int EXECL2003_FLAG = 2;
 
-    /**抽取随机数的个数,用于得到随机的行数*/
-    public final static int EXCEL_MD_RANDOM_ROWSIZE=100;
-    
-    /**Excel类型，double*/
-    public final static String DATA_TYPE_DOUBLE = "Double";
-    /**Excel类型，date*/
-    public final static String DATA_TYPE_DATE = "Date";
-    /**Excel类型，boolean*/
-    public final static String DATA_TYPE_BOOLEAN = "Boolean";
-    /**Excel类型，null*/
-    public final static String DATA_TYPE_NULL = "Null";
-    /**Excel类型，error*/
-    public final static String DATA_TYPE_ERROR = "Error";
     /**Excel类型，string*/
-    public final static String DATA_TYPE_STRING = "String";
-    public static final String DATA_TYPE_INTEGER = "Integer";
+    public final static int DATA_TYPE_STRING = 1;
+    /**Excel类型，numeric*/
+    public final static int DATA_TYPE_NUMERIC = 0;
+    /**Excel类型，double*/
+    public final static int DATA_TYPE_DOUBLE = 6;
+    /**Excel类型，integer*/
+    public final static int DATA_TYPE_INTEGER = 7;
+    /**Excel类型，date*/
+    public final static int DATA_TYPE_DATE = 8;
+    /**Excel类型，boolean*/
+    public final static int DATA_TYPE_BOOLEAN = 4;
+    /**Excel类型，null*/
+    public final static int DATA_TYPE_NULL = 3;
+    /**Excel类型，error*/
+    public final static int DATA_TYPE_ERROR = 5;
+    /**Excel类型，formula 公式*/
+    public final static int DATA_TYPE_FORMULA = 2;
     
     /**比重常量*/
     public final static double DATA_TYPE_PROPORTION = 0.8;
-    /**Excel文件类型，XSSF，对应2007以上版本包括2007*/
-    
-    public final static int EXCEL_FILE_TYPE_XSSF = 1;
-    /**Excel文件类型，HSSF，对应2003版本*/
-    public final static int EXCEL_FILE_TYPE_HSSF = 2;
-    /**数据抽取数量常量Critical_Point*/
-    public final static int DATA_ROWS_CRITICAL_POINT = 101;
-
-}
- 
+} 

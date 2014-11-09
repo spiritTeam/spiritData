@@ -226,8 +226,12 @@ public class MdQuotaService {
             conn.setAutoCommit(autoCommitFlag);
         } catch (Exception e) {
             if (conn!=null) {
-                conn.rollback();
-                conn.setAutoCommit(autoCommitFlag);
+                try {
+                    conn.rollback();
+                    conn.setAutoCommit(autoCommitFlag);
+                } catch (SQLException sqlE) {
+                    sqlE.printStackTrace();
+                }
             }
             e.printStackTrace();
         } finally {

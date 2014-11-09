@@ -81,7 +81,7 @@ function loginF() {
 	        $.messager.alert("错误", "登录异常："+json.data, "error", function(){
 	          $("#loginname").focus();
 	          $("#mask").hide();
-	          setBodyEnter(true);
+	          //setBodyEnter(true);
 	        });
 	      }
 	    },

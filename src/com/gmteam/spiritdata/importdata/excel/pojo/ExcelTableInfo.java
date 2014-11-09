@@ -1,5 +1,6 @@
 package com.gmteam.spiritdata.importdata.excel.pojo;
 
+import java.util.List;
 import java.util.Map;
 
 import com.gmteam.framework.core.model.BaseObject;
@@ -17,9 +18,9 @@ public class ExcelTableInfo extends BaseObject{
     private int bigenY;//数据开始行
     private int endY;//数据结束行
     /**
-     * 标题信息，包括，标题称，即对应的列属性包括:标题开始列X,结束列X,上级列(对于分集的情况)
+     * 标题信息，包括——标题名称；对应的列属性:标题开始列X,结束列X,上级列(对于分集的情况)
      */
-    private Map<String, Map<String, Object>> titleInfo;
+    private List<Map<String, Object>> titleInfo;
     private SheetInfo sheetInfo; //所在的sheet信息
     private MetadataModel mm; //对应的元数据模式
 
@@ -47,10 +48,10 @@ public class ExcelTableInfo extends BaseObject{
     public void setEndY(int endY) {
         this.endY = endY;
     }
-    public Map<String, Map<String, Object>> getTitleInfo() {
+    public List<Map<String, Object>> getTitleInfo() {
         return titleInfo;
     }
-    public void setTitleInfo(Map<String, Map<String, Object>> titleInfo) {
+    public void setTitleInfo(List<Map<String, Object>> titleInfo) {
         this.titleInfo = titleInfo;
     }
     public SheetInfo getSheetInfo() {
