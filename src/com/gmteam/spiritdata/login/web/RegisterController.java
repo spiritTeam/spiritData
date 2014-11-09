@@ -15,10 +15,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.gmteam.spiritdata.UGA.pojo.User;
 import com.gmteam.spiritdata.UGA.service.UserService;
 import com.gmteam.spiritdata.login.util.RandomValidateCode;
+import com.gmteam.spiritdata.login.util.SendValidataUrlToMail;
 import com.gmteam.spiritdata.util.SequenceUUID;
-
 @Controller
-public class RegisterInfoController {
+public class RegisterController {
+    @RequestMapping("activeMail.do")
+    public void activeMail(){
+        //发送邮件
+        SendValidataUrlToMail svu = new SendValidataUrlToMail();
+        svu.send("jiao80496263@163.com", "测试BBB", "测试BBB");
+    }
     /**
      * 得到验证码
      * @param request
@@ -98,7 +104,7 @@ public class RegisterInfoController {
      * @param response
      * @return
      */
-    @RequestMapping("saveRegisterInfo.do")
+    @RequestMapping("Register.do")
     public @ResponseBody boolean saveRegisterInfo(HttpServletRequest request, HttpServletResponse response) {
         String loginName = request.getParameter("loginName");
         String password = request.getParameter("password");

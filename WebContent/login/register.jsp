@@ -71,69 +71,80 @@
 </center>
 </body>
 <script type="text/javascript">
+var psV=false,cpsV=false,lnV=false,maV=false,vcV=false;
 function saveRegister(){
   var pData={
-	  "loginName":$("#loginName").val(),
+    "loginName":$("#loginName").val(),
     "password":$("#password").val(),
     "userName":$("#userName").val(),
     "mailAdress":$("#mail").val()+$('#mailEndStr').combobox('getText'),
   };
-  var url="<%=path%>/saveRegisterInfo.do";
+  var url="<%=path%>/Register.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
     success: function(json) {
       vfMsg = json;
+      if(vfMsg){
+    	  alert('注册成功!');
+      }
     }
   });
 }
 function checkVal(obj){
-	obj.focus();obj.select();
-	if(""+obj=="checkCode"){
-		alert(true);
-	}
+  obj.focus();obj.select();
+  if(""+obj=="checkCode"){
+    alert(true);
+  }
 }
 $(function() {
-	$('#mailEndStr').combobox({    
+  $('#mailEndStr').combobox({    
     url:'mailEndStr.json',    
     valueField:'id',    
     textField:'text',   
     editable:false
-	});  
+  });  
 });
 function refresh(obj) {
   obj.src = "<%=path%>/getValidateCode.do?"+Math.random();
 }
 function validatePassword(eleId){
-	var ele = $('#'+eleId);
-	if(ele.val()==''||ele.val()==null){
-	   $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不能为空!</span>');
-	 }else{
-	   if(!checkStr(ele.val())){
-	     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
-	   }else{
-	     $('#'+eleId+'Check').html('<img src="accept.png">');
-	   }
-	 }
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null){
+     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码不能为空!</span>');
+     psV = false;
+   }else{
+     if(!checkStr(ele.val())){
+       $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
+       psV = false;
+     }else{
+       $('#'+eleId+'Check').html('<img src="accept.png"><span style="font-size: 12px;color:green;">该登录名可以使用!</span>');
+       psV = true;
+     }
+   }
 }
 function validateLoginName(eleId){
-	var ele = $('#'+eleId);
-	if(ele.val()==''||ele.val()==null){
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null){
     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名不能为空!</span>');
+    lnV = false;
   }else{
     if(checkStr(ele.val())){
       var vsMsg = checkLoginName(ele.val());
       if(vsMsg==true){
-        $('#'+eleId+'Check').html('<img src="accept.png">');
+        $('#'+eleId+'Check').html('<img src="accept.png"><span style="font-size: 12px;color:green;">该登录名可以使用!</span>');
+        lnV = true;
       }else{
         $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该登录名已被使用!</span>');
+        lnV = false;
       }
     }else{
       $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
+      lnV = false;
     }
   }
 }
 function validateConfirmPassword(eleId){
-	var ele = $('#'+eleId);
-	if(ele.val()==''||ele.val()==null){
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null){
     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">请确认密码!</span>');
   }else{
     if($('#password').val()!=ele.val()){
@@ -144,22 +155,22 @@ function validateConfirmPassword(eleId){
   }
 }
 function validateMail(eleId){
-	var ele = $('#'+eleId);
-	if(ele.val()==''||ele.val()==null){
-	  $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱不能为空!</span>');
-	}else{
-	  if(checkStr(ele.val())){
-	    var mailStr = ele.val() +$('#mailEndStr').combobox('getText');
-	    var vsMsg = checkMail(mailStr);
-	    if(vsMsg==true){
-	      $('#'+eleId+'Check').html('<img src="accept.png">');
-	    }else{
-	      $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该邮箱已被使用!</span>');
-	    }
-	  }else{
-	    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
-	  }
-	}
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null){
+    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱不能为空!</span>');
+  }else{
+    if(checkStr(ele.val())){
+      var mailStr = ele.val() +$('#mailEndStr').combobox('getText');
+      var vsMsg = checkMail(mailStr);
+      if(vsMsg==true){
+        $('#'+eleId+'Check').html('<img src="accept.png">');
+      }else{
+        $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">该邮箱已被使用!</span>');
+      }
+    }else{
+      $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
+    }
+  }
 }
 function validateValidateCode(eleId){
   var ele = $('#'+eleId);
@@ -177,20 +188,20 @@ function validateValidateCode(eleId){
 function validateUserName(eleId){
 }
 function verificationCheckCode(val){
-	var vfMsg =null;
-	  var pData={
-	    "checkCode":val
-	  };
-	  var url="<%=path%>/validateValidateCode.do";
-	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-	    success: function(json) {
-	      vfMsg = json;
-	    }
-	  });
-	  return vfMsg;
+  var vfMsg =null;
+    var pData={
+      "checkCode":val
+    };
+    var url="<%=path%>/validateValidateCode.do";
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success: function(json) {
+        vfMsg = json;
+      }
+    });
+    return vfMsg;
 }
 function checkMail(val){
-	var vfMsg =null;
+  var vfMsg =null;
   var pData={
     "mail":val
   };
@@ -207,21 +218,21 @@ function checkStr(str){
   if(re.test(str)){
     return true;
   }else{
-	  return false;
+    return false;
   }       
 }
 function checkLoginName(val){
-	var vfMsg =null;
-	var pData={
+  var vfMsg =null;
+  var pData={
     "loginName":val
   };
-	var url="<%=path%>/validateLoginName.do";
-	$.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+  var url="<%=path%>/validateLoginName.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
      success: function(json) {
-    	 vfMsg = json;
+       vfMsg = json;
      }
-	});
-	return vfMsg;
+  });
+  return vfMsg;
 }
 function onClick(obj){
   if(obj.value==obj.defaultValue){
