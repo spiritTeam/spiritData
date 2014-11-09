@@ -7,9 +7,11 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import com.gmteam.framework.util.DateUtils;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 
@@ -17,10 +19,13 @@ import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
  * 通过Poi包解析excel文件的公共方法集服务
  * @author wh
  */
+//TODO 目前此解释类，只完成了单表的解析，若一个sheet中包含多个表，则无法解析
+//TODO 目前此解释类，对表头只进行了一级处理，没有分析表头的结构
 public class PoiParseUtils {
     private SheetInfo sheetInfo = null; //要解析的Sheet对象
     private Sheet sheet = null; //sheet对象
-    private List<CellRangeAddress> mergedCellList = null; //合的单元格列表
+    private List<CellRangeAddress> mergedCellList = null; //合并单元格列表
+    private Map<String, Map<String, Object>> mainMergedCellList = null;//主合并单元格映射表，key是行号和列号的组合，如"23,12"
 
     /**
      * 构造方法
@@ -61,21 +66,28 @@ public class PoiParseUtils {
         if (rows==firstRowNum) return; //只有一行数据，没有分析的价值
 
         List<Map<String, Object>> rowData;
-        List<List<Map<String, Object>>> catchRows = new ArrayList<List<Map<String, Object>>>(); //行缓存
-        for (int i=firstRowNum; i<rows; i++) {
-            rowData = readOneRow(i, 1);
-            catchRows.add(rowData);
-            
+        //行缓存,key是行号
+        Map<Integer, List<Map<String, Object>>> catchRows = new HashMap<Integer, List<Map<String, Object>>>();
+        //行号缓存，用于快速索引行缓存
+        List<Integer> numList = new ArrayList<Integer>();
+        for (int i=firstRowNum; i<rows; i++) { //第一行必然不是空行
+            rowData = readOneRow(i);
+            if (rowData!=null) {//放弃空行
+                catchRows.put(i, rowData);
+                numList.add(i);
+            }
+            if (catchRows.size()>=2) {//至少读了两行，可以进行表头分析了
+                //看最后两行是否是相同的列
+            }
         }
     }
 
     /*
      * 按照表头方式读取一行数据。
      * @param rowNum 行号
-     * @param readType 类型 1:按表头读取，数据值不进行尝试转换；2:按数据读取，数据值不进行尝试转换
      * @return 标题的列表，每个元素是一个map包括{"name":"姓名", "firstRow":"范围-开始行", "lastRow":"范围-结束行", "firstCol":"范围-开始列", "lastCol":"范围-结束列", "dataType":"数据类型(此类型不经过转换)"}
      */
-    private List<Map<String, Object>> readOneRow(int rowNum, int readType) {
+    private List<Map<String, Object>> readOneRow(int rowNum) {
         Row rowData = this.sheet.getRow(rowNum); //行数据
         if (rowData==null) return null;
 
@@ -85,45 +97,61 @@ public class PoiParseUtils {
 
         for (int i=0; i<rowData.getLastCellNum(); i++) {
             cell = rowData.getCell(i);
-            cellMap = cellConvertToMap(cell, readType);
-            rd.add(cellMap);
+            if (cell!=null) {
+                cellMap = getCellMap(cell);
+                rd.add(cellMap);
+            }
         }
         
         return rd.size()==0?null:rd;
     }
 
     /*
-     * 把cell转换为Map，map包括{ "dType":"数据类型(此类型不经过转换)", "value":"值", "isMerged":"是否合并单元格", "firstRow":"范围-开始行", "lastRow":"范围-结束行", "firstCol":"范围-开始列", "lastCol":"范围-结束列"}
+     * 把cell转换为Map，map包括：
+     * {
+     *   "isMerged":"是否合并单元格",
+     *   "mainMergedLabel":"主合并单元格的标号",
+     *   "firstRow":"范围-开始行",
+     *   "lastRow":"范围-结束行",
+     *   "firstCol":"范围-开始列",
+     *   "lastCol":"范围-结束列",
+     *   "nativeDate":{ "dType":"数据类型", "value":"值"},//此类型不经过转换
+     *   "transDate":{ "dType":"数据类型", "value":"值"}  //此类型经过转换
+     * }
      * @param cell 单元格数据
-     * @param readType 类型 1:按表头读取，数据值不进行尝试转换；2:按数据读取，数据值不进行尝试转换
      * @return cell对应的Map
      */
-    private Map<String, Object> cellConvertToMap(Cell cell, int readType) {
+    private Map<String, Object> getCellMap(Cell cell) {
         Map<String, Object> ret = new HashMap<String, Object>();
+
+        //本单元格的行列号
+        int rowIndex = cell.getRowIndex();
+        int colIndex = cell.getColumnIndex();
+        //合并单元格处理
         CellRangeAddress cra = getMergedRange(cell);
         ret.put("isMerged", cra!=null);
         if (cra!=null) {
+            String mergedLabel = rowIndex+","+colIndex;
             ret.put("firstRow", cra.getFirstRow());
             ret.put("lastRow", cra.getLastRow());
-            ret.put("firstCol", cra.getFirstRow());
-            ret.put("lastCol", cra.getLastRow());
+            ret.put("firstCol", cra.getFirstColumn());
+            ret.put("lastCol", cra.getLastColumn());
+            if (cra.getFirstRow()==rowIndex||cra.getFirstColumn()==colIndex) {//是主合并单元格
+                if (mainMergedCellList==null) mainMergedCellList=new HashMap<String, Map<String, Object>>();
+                mainMergedCellList.put(mergedLabel, ret);
+            }
+            mergedLabel = cra.getFirstRow()+","+cra.getFirstColumn();
+            ret.put("mainMergedLabel", mergedLabel);
+            //关联主合并单元格
         } else {
-            int rowIndex = cell.getRowIndex();
-            int colIndex = cell.getColumnIndex();
             ret.put("firstRow", rowIndex);
             ret.put("lastRow", rowIndex);
             ret.put("firstCol", colIndex);
             ret.put("lastCol", colIndex);
         }
-        Map<String, Object> valueMap = null;
-        if (readType==1) {
-            valueMap = getCellNativeValueMap(cell);
-            valueMap = getCellTransValueMap(cell);  /**todo delete**/
-        } else if (readType==2) {
-            valueMap = getCellTransValueMap(cell);
-        }
-        if (valueMap==null) return null;
-        ret.putAll(valueMap);
+        //读取原始原始数据
+        ret.put("nativeDate", getCellNativeValueMap(cell));
+        ret.put("transDate", getCellTransValueMap(cell));
         return ret;
     }
 
@@ -173,7 +201,7 @@ public class PoiParseUtils {
     }
 
     /*
-     * 通过Poi获得单元原始数据类型，不进行尝试转换 
+     * 通过Poi获得单元原始数据，不进行尝试转换 
      * @param cell cell对象
      * @return valueMap:{"dType":"整数的数据类型", "value":"值的对象"}
      */
@@ -190,6 +218,7 @@ public class PoiParseUtils {
                 value = cell.getStringCellValue();
                 break;
             case 2://公式
+                //TODO 公式还要进行进一步处理
                 value = cell.getCellFormula();
                 break;
             case 3://空
@@ -209,16 +238,86 @@ public class PoiParseUtils {
     }
 
     /*
-     * 通过Poi获得单元原始数据类型，不进行尝试转换 
+     * 通过Poi获得单元转换数据，进行尝试转换 
      * @param cell cell对象
      * @return valueMap:{"dType":"整数的数据类型", "value":"值的对象"}
      */
     private Map<String, Object> getCellTransValueMap(Cell cell) {
         Map<String, Object> ret = getCellNativeValueMap(cell);
-        
+        if (ret!=null&&ret.size()==2) {
+            int _dtype = (Integer)ret.get("dType");
+            int __dtype = _dtype;
+            Object value = null;
+            if (_dtype==1) { //字符串
+                String sVal = cell.getStringCellValue();
+                //尝试转换为整形
+                try {
+                    value = Integer.parseInt(sVal);
+                    __dtype = ExcelConstants.DATA_TYPE_INTEGER;
+                } catch (Exception e) {
+                    //尝试转换为浮点
+                    try {
+                        value = Double.parseDouble(sVal);
+                        __dtype = ExcelConstants.DATA_TYPE_DOUBLE;
+                    } catch(Exception e1) {
+                        //尝试转换为日期
+                        try {
+                            value = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss S", sVal);
+                        } catch(Exception e2) {}
+                        if (value==null) {
+                            try {
+                                value = DateUtils.getDateTime("yyyy年MM月dd日 HH:mm:ss S", sVal);
+                            } catch(Exception e2) {}
+                        }
+                        if (value==null) {
+                            try {
+                                value = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss", sVal);
+                            } catch(Exception e2) {}
+                        }
+                        if (value==null) {
+                            try {
+                                value = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss S", sVal);
+                            } catch(Exception e2) {}
+                        }
+                        //可能还有其他的模式
+                        if (value!=null) {
+                            __dtype = ExcelConstants.DATA_TYPE_DATE;
+                        }
+                    }
+                }
+            } else if (_dtype==0) { //数值
+                //尝试转换为日期
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    value = cell.getDateCellValue();
+                    __dtype = ExcelConstants.DATA_TYPE_DATE;
+                } else { //尝试转换为整形
+                    Double _d = cell.getNumericCellValue();
+                    String _ts = _d.toString();
+                    try {
+                        if (_ts.indexOf('.')==-1) {
+                            value = Integer.parseInt(_ts);
+                            __dtype = ExcelConstants.DATA_TYPE_INTEGER;
+                        } else if ((Integer.parseInt(_ts.substring(_ts.indexOf('.')+1)))==0) {
+                            value = Integer.parseInt(_ts.substring(0, _ts.indexOf('.')));
+                            __dtype = ExcelConstants.DATA_TYPE_INTEGER;
+                        }
+                    } catch(Exception e ) {
+                        //尝试转换为浮点
+                        value = _d;
+                        __dtype = ExcelConstants.DATA_TYPE_DOUBLE;
+                    }
+                }
+            }
+            if (__dtype!=_dtype) {
+                ret.clear();
+                ret.put("dType", __dtype);
+                ret.put("value", value);
+            }
+        }
         return ret;
     }
 
+    //=============以下对单元格判断之间的关系
     /*
      * 判断两个单元格是为相同的列，主要用于合并单元格的处理
      * @param cell1 第一单元格
@@ -262,6 +361,17 @@ public class PoiParseUtils {
     private boolean containRows(Map<String, Object> cell1, Map<String, Object> cell2) {
         if ((Integer)cell1.get("firstCol")==(Integer)cell2.get("firstCol")&&(Integer)cell1.get("lastCol")==(Integer)cell2.get("lastCol")) return false;
         if ((Integer)cell1.get("firstCol")>=(Integer)cell2.get("firstCol")&&(Integer)cell1.get("lastCol")<=(Integer)cell2.get("lastCol")) return true;
+        return false;
+    }
+
+    //以下对行进行判断，包括行内，和行之间的关系
+    /*
+     * 判断行是否是由原始String类型列组成的行
+     * @param rowMap 行数据Map，这里的行数据是由原始数据类型组成的
+     * @return 若一样返回true，否则返回false
+     */
+    private boolean isNativeStingTypeRow(List<Map<String, Object>> rowMap) {
+        
         return false;
     }
 }

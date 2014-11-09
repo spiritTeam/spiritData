@@ -22,24 +22,28 @@
         <tr >
           <td align="right" width="100px;" ><span style="width: 150px;font-size: 16px;">登录名&nbsp;&nbsp;</span></td>
           <td colspan="2" width="230px;" >
-          <input style="width:235px;height:35px;color:#999;font-size: 12px;" id="loginName" name="loginName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
-            onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
-          </td><td width="250px;"><div id="loginNameCheck"></div></td></tr>
-         <tr><td ><div style="height: 20px;"></div></td></tr>
-          <tr>
+            <input style="width:235px;height:35px;color:#999;font-size: 12px;" id="loginName" name="loginName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
+              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
+          </td>
+          <td width="250px;"><div id="loginNameCheck"></div></td>
+        </tr>
+        <tr><td ><div style="height: 20px;"></div></td></tr>
+        <tr>
           <td align="right"><span style="width: 150px;font-size: 16px;">姓名&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
           <input style="width:235px;height:35px;color:#999;font-size: 12px;" id="userName" name="userName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
              onclick="onClick(userName);" onBlur="validateUserName('userName');"/>
-          </td><td><div id="userNameCheck"></div></td></tr>
+          </td>
+          <td><div id="userNameCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr >
           <td align="right"><span style="width: 150px;font-size: 16px;">密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
             <input style="width:235px;height:35px;color:#999;font-size: 12px" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
               onclick="onClick(password);" onBlur="validatePassword('password');" />
-          </td><td><div id="passwordCheck"></div></td></tr>
-          <tr><td ><div style="height: 20px;"></div></td></tr>
+          </td>
+          <td><div id="passwordCheck"></div></td></tr>
+        <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr >
           <td align="right"><span style="width: 150px;font-size: 16px;">确认密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
@@ -47,21 +51,20 @@
               onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" />
           </td><td><div id="confirmPasswordCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
-          <tr>
-            <td align="right"><span style="width: 150px;font-size: 16px;">邮箱&nbsp;&nbsp;</span></td>
-            <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 16px;"  id="mail" name="mail"  tabindex="3" type="text"  onmouseover=this.focus();this.select(); 
-               onclick="onClick(mail);" onBlur="validateMail('mail');"/></td>
-            <td  align="left"><input style="width: 100px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" ></td>
-            <td><div id="mailCheck"></div></td>
-          </tr>
-             <tr><td ><div style="height: 20px;"></div></td></tr>
-          <tr>
-          <td align="right"><span style="width: 150px;font-size: 16px;">验证码&nbsp;&nbsp;</span></td>
-          <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 16px;"  id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码"
-            onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
-              <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
-          <tr><td ><div style="height: 20px;"></div></td><td></td><td></td></tr>
-          <tr><td colspan="4" align="center" ><img id="register" name="register" src="register.png" onclick="saveRegister();"></td></tr>
+        <tr>
+          <td align="right"><span style="width: 150px;font-size: 16px;">邮箱&nbsp;&nbsp;</span></td>
+          <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 16px;"  id="mail" name="mail"  tabindex="3" type="text"  onmouseover=this.focus();this.select(); 
+             onclick="onClick(mail);" onBlur="validateMail('mail');"/></td>
+          <td  align="left"><input style="width: 100px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" ></td>
+          <td><div id="mailCheck"></div></td>
+        </tr>
+           <tr><td ><div style="height: 20px;"></div></td></tr>
+        <tr>
+        <td align="right"><span style="width: 150px;font-size: 16px;">验证码&nbsp;&nbsp;</span></td>
+        <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 16px;"  id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
+          <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
+        <tr><td ><div style="height: 20px;"></div></td><td></td><td></td></tr>
+        <tr><td colspan="4" align="center" ><img id="register" name="register" src="register.png" onclick="saveRegister();"></td></tr>
       </table>
     </form>
   </div>
@@ -73,7 +76,7 @@
 <script type="text/javascript">
 function saveRegister(){
   var pData={
-	  "loginName":$("#loginName").val(),
+    "loginName":$("#loginName").val(),
     "password":$("#password").val(),
     "userName":$("#userName").val(),
     "mailAdress":$("#mail").val()+$('#mailEndStr').combobox('getText'),
