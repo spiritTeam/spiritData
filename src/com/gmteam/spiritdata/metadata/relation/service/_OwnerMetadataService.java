@@ -42,7 +42,7 @@ public class _OwnerMetadataService {
         _OwnerMetadata _om = new _OwnerMetadata(ownerId, ownerType);
         session.setAttribute(SDConstants.SESSION_OWNER_RMDUNIT, _om);
         //启动加载线程
-        loadDataThread lm = new loadDataThread(session, this);
+        Thread_LoadData lm = new Thread_LoadData(session, this);
         Thread t = new Thread(lm);
         t.start();
     }
@@ -78,11 +78,11 @@ public class _OwnerMetadataService {
     }
 }
 
-class loadDataThread implements Runnable {
+class Thread_LoadData implements Runnable {
     private HttpSession session;
     private _OwnerMetadataService caller;
 
-    public loadDataThread(HttpSession session, _OwnerMetadataService caller) {
+    public Thread_LoadData(HttpSession session, _OwnerMetadataService caller) {
         this.caller = caller;
         this.session = session;
     }

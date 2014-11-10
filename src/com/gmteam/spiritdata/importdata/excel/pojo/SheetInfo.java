@@ -19,7 +19,7 @@ public class SheetInfo extends BaseObject {
     private String sheetName; //sheet名称
     private int sheetIndex; //sheet的编号
     private Sheet sheet; //sheet对象
-    private List<ExcelTableInfo> etiList; //本sheet对应的Excel表结构数据信息列表（一个sheet）
+    private List<SheetTableInfo> stiList; //本sheet对应的Excel表结构数据信息列表（一个sheet）
 
     public String getFileName() {
         return fileName;
@@ -56,12 +56,12 @@ public class SheetInfo extends BaseObject {
      * 新增元数据信息。
      * @param mm 元数据信息
      */
-    public void addExcelTableInfo(ExcelTableInfo eti) {
-        if (this.etiList==null) this.etiList = new ArrayList<ExcelTableInfo>();
-        this.etiList.add(eti);
+    public void addExcelTableInfo(SheetTableInfo sti) {
+        if (this.stiList==null) this.stiList = new ArrayList<SheetTableInfo>();
+        this.stiList.add(sti);
     }
 
-    public List<ExcelTableInfo> getEtiList() {
-        return etiList;
+    public List<SheetTableInfo> getStiList() {
+        return stiList;
     }
 }
