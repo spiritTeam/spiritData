@@ -81,8 +81,8 @@
     <if test="userType!=null" >
       userType,
     </if>
-    <if test="verificationCode != null" >
-      verificationCode,
+    <if test="validataSequence != null" >
+      validataSequence,
     </if>
   </trim>
   <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -113,8 +113,8 @@
     <if test="userType != null" >
       #{userType,jdbcType=INTEGER},
     </if>
-    <if test="verificationCode != null" >
-      #{verificationCode,jdbcType=VARCHAR},
+    <if test="validataSequence != null" >
+      #{validataSequence,jdbcType=VARCHAR},
     </if>
   </trim>
 </insert>

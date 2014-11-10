@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService {
         User u = (User)user;
         //==0,未发邮箱激活
         if(u.getUserState()==0){
-            retMap.put("errorInfo", "您未通过邮箱激活账号,请转至邮箱激活,如果邮箱丢失，请点击验证邮箱，我们将会从新发送一封验证邮件");
+            retMap.put("retInfo", "您未通过邮箱激活账号,请转至邮箱激活,如果邮箱丢失，请点击验证邮箱，我们将会从新发送一封验证邮件");
         }else{
             retMap.put("success", "success");
         }

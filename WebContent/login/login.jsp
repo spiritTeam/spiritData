@@ -14,50 +14,135 @@
 <body>
 <center>
  <div style="border:1px solid #ABCDEF;width: 800px;height: 500px;">
-  <div style="float: left;border:1px solid #ABCDEF;width: 500px;height: 500px;">
+  <div style="float: left;border:1px solid #ABCDEF;width: 600px;height: 500px;">
   <div style="margin-top: 50px;"></div>
     <form action="">
-      <table width="450px;" border="1px;" bordercolor="red">
+      <table width="430px;" >
         <tr>
-          <td colspan="2" rowspan="1">
-	        <input style="width:280px;height:40px;color:#999;font-size: 20px;" class="input_1 required" id="loginName" name="loginName"  tabindex="1" type="text" value="支持邮箱/企鹅/手机号" onmouseover=this.focus();this.select();
-	              onclick="onClick(loginName);" onBlur="onBlur(loginName);"/>
-					</td><td></td>
+          <td colspan="2" rowspan="1" width="280px;">
+	        <input style="width:280px;height:40px;color:#999;font-size: 20px;" id="loginName" name="loginName"  tabindex="1" type="text" value="支持邮箱/企鹅/手机号" onmouseover=this.focus();this.select();
+	              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
+					</td><td  width="150PX;"><div id="loginNameCheck"></div></td>
 				</tr>
         <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
         <tr >
-          <td colspan="2" rowspan="1">
-            <input style="width:280px;height:40px;color:#999;font-size: 20px" class="input_1 required" id="password" name="password"  tabindex="2" type="text" value="密码" onmouseover=this.focus();this.select();
-                onclick="onClick(password);" onBlur="onBlur(password);" />
-          </td><td></td>
+          <td colspan="2" rowspan="1" >
+            <input style="width:280px;height:40px;color:#999;font-size: 20px" id="password" name="password"  tabindex="2" type="text" value="密码" onmouseover=this.focus();this.select();
+                onclick="onClick(password);" onBlur="validatePassword('password');" />
+          </td><td><div id="passwordCheck"></div></td>
         </tr>
         <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
         <tr>
-          <td colspan="1" width="170px;"><input style="width:140px;height:40px;color:#999;font-size: 20px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select();
-                onclick="onClick(checkCode);" onBlur="onBlur(checkCode);" /></td>
-          <td  align="left"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td>
+          <td colspan="1" width="180px;"><input style="width:200px;height:40px;color:#999;font-size: 20px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select();
+                onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
+          <td  align="left"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td><td><div id="checkCodeCheck"></div></td>
         </tr>
-        <tr><td ><div style="height: 20px;"></div></td><td></td></tr>
+        <tr><td ><div style="height: 20px;"></div></td><td></td><td></td></tr>
         <tr>
-          <td colspan="2"><input type="button" value="登录" onclick="loginF()" /><input type="button" value="注册" onclick="" /><input type="button" value="忘记密码" onclick="" /><input type="button" value="从新发送验证信息" onclick="" /></td><td></td>
+          <td colspan="2"><input type="button" value="登录" onclick="loginF()" /><input type="button" value="注册" onclick="register();" /><input type="button" value="忘记密码" onclick="" /><input type="button" value="从新发送验证信息" onclick="activeAgain();" /></td><td></td><td></td>
         </tr>
       </table>
     </form>
   </div>
-  <div style="float: right;border:1px solid #ABCDEF;width: 296px;height: 500px;">
+  <div style="float: right;border:1px solid #ABCDEF;width: 196px;height: 500px;">
   </div>
  </div>
 </center>
 </body>
 <script type="text/javascript">
+var psV=false,lnV=false,vcV=false;
+function activeAgain(){
+	var url="<%=path%>/activeAgain.do";
+	var loginName = $("#loginName").val();
+	if(loginName==null||loginName==""){
+		alert("您必须填写用户名，以便于向您的绑定邮箱发送验证!");
+		return;
+	}else{
+		var pData={
+	    "loginName":$("#loginName").val()
+	  };
+	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+	    success: function(json) {
+	      if(json[0].success==true)
+	      alert("已经从新发送验证信息到邮箱，请登录邮箱验证!");
+	    }
+    });
+	}
+}
+function checkStr(str){
+  var re = /^[a-zA-z]\w{4,11}$/;
+  if(re.test(str)){
+    return true;
+  }else{
+    return false;
+  }       
+}
+function register(){
+	window.location.href="http://localhost:8080/sa/login/register.jsp";
+}
 function refresh(obj) {
   obj.src = "<%=path%>/getValidateCode.do?"+Math.random();
 }
-function onBlur(obj){
-	if(obj.value==""){
-		obj.value=obj.defaultValue;
-		obj.style.color='#999';
+function validateValidateCode(eleId){
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null){
+    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码不能为空!</span>');
+    vcV = false;
+  }else{
+    var vsMsg = verificationCheckCode(ele.val());
+    if(vsMsg==true){
+      $('#'+eleId+'Check').html('<img src="accept.png">');
+      vcV = true;
+    }else{
+      $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码错误!</span>');
+      vcV = false;
+    }
+  }
+}
+function verificationCheckCode(val){
+  var vfMsg =null;
+    var pData={
+      "checkCode":val
+    };
+    var url="<%=path%>/validateValidateCode.do";
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success: function(json) {
+        vfMsg = json;
+      }
+    });
+    return vfMsg;
+}
+function validatePassword(eleId){
+	var ele = $('#'+eleId);
+	if(ele.val()==''||ele.val()==null){
+		psV = false;
+		$('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码为空!</span>');
+	}else{
+		psV = true;
 	}
+}
+function validateLoginName(eleId){
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null){
+    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名不能为空!</span>');
+    lnV = false;
+  }else{
+    $('#'+eleId+'Check').html('<img src="accept.png">');
+    lnV = true;
+  }
+}
+function checkLoginName(val){
+  var vfMsg =null;
+  var pData={
+    "loginName":val
+  };
+  var url="<%=path%>/validateLoginName.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+     success: function(json) {
+       vfMsg = json;
+     }
+  });
+  return vfMsg;
 }
 function onClick(obj){
 	if(obj.value==obj.defaultValue){
@@ -65,7 +150,8 @@ function onClick(obj){
 	}
 }
 function loginF() {
-	  var url="<%=path%>/login.do";
+	if(psV&&lnV&&vcV){
+		var url="<%=path%>/login.do";
 	  var pData={
 	    "loginName":$("#loginName").val(),
 	    "password":$("#password").val(),
@@ -104,6 +190,10 @@ function loginF() {
 	      }
 	    }
 	  });
-	}
+	}else{
+	    alert("您的登录信息某些地方有误，请完善您的注册信息");
+	    return ;
+	  }
+}
 </script>
 </html>
