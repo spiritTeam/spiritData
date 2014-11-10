@@ -43,7 +43,7 @@ public class _OnwerDictionaryService {
         _OwnerDictionary _od = new _OwnerDictionary(ownerId, ownerType);
         session.setAttribute(SDConstants.SESSION_OWNER_DICT, _od);
         //启动加载线程
-        loadDataThread lm = new loadDataThread(session, this);
+        Thread_LoadData lm = new Thread_LoadData(session, this);
         Thread t = new Thread(lm);
         t.start();
     }
@@ -106,11 +106,11 @@ public class _OnwerDictionaryService {
     }
 }
 
-class loadDataThread implements Runnable {
+class Thread_LoadData implements Runnable {
     private HttpSession session;
     private _OnwerDictionaryService caller;
 
-    public loadDataThread(HttpSession session, _OnwerDictionaryService caller) {
+    public Thread_LoadData(HttpSession session, _OnwerDictionaryService caller) {
         this.caller = caller;
         this.session = session;
     }

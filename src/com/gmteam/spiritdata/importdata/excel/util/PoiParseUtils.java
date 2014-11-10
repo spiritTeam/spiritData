@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -12,8 +15,16 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.gmteam.framework.util.DateUtils;
+import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
+import com.gmteam.spiritdata.importdata.excel.pojo.SheetTableInfo;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
+import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
+import com.gmteam.spiritdata.metadata.relation.service.MdBasisService;
+import com.gmteam.spiritdata.metadata.relation.service._OwnerMetadataService;
 
 /**
  * 通过Poi包解析excel文件的公共方法集服务
@@ -56,8 +67,9 @@ public class PoiParseUtils {
 
     /**
      * 分析sheet的元数据信息，并把分析的结果存入对象的sheetInfo对象中
+     * @throws InterruptedException 
      */
-    public void analSheetMetadata() {
+    public void analSheetMetadata() throws InterruptedException {
         //首先分析表头
         int rows = this.sheet.getLastRowNum();
         int firstRowNum = this.sheet.getFirstRowNum();
@@ -65,22 +77,115 @@ public class PoiParseUtils {
         if (rows==firstRowNum&&rows==0) return; //说明是空sheet
         if (rows==firstRowNum) return; //只有一行数据，没有分析的价值
 
-        List<Map<String, Object>> rowData;
+        Map<String, Object> _colM;
+
+        //001-表结构分析，生成SheetTableInfo，即把sheet分成各个独立的表区域
+        //===以下最好能够分析出一个sheet中的多个表结构
+        List<Map<String, Object>> rowData, lastRow, lastButOneRow, perhapsSplitRow;
         //行缓存,key是行号
         Map<Integer, List<Map<String, Object>>> catchRows = new HashMap<Integer, List<Map<String, Object>>>();
         //行号缓存，用于快速索引行缓存
         List<Integer> numList = new ArrayList<Integer>();
-        for (int i=firstRowNum; i<rows; i++) { //第一行必然不是空行
+        int perhapsNum = -1;//表头和数据之间可能的分割行号
+        int splitRowNum = -1;//表头和数据的分割行号
+        for (int i=firstRowNum; i<rows; i++) {
+            //读取一行，并缓存
             rowData = readOneRow(i);
-            if (rowData!=null) {//放弃空行
+            if (rowData!=null&&!isEmptyRow(rowData)/*放弃空行*/) {
                 catchRows.put(i, rowData);
                 numList.add(i);
             }
-            if (catchRows.size()>=2) {//至少读了两行，可以进行表头分析了
-                //看最后两行是否是相同的列
+            if (perhapsNum==-1&&numList.size()>1) {//当还没有找到可能的分割行 并且 至少读取了两行
+                lastRow = catchRows.get(numList.get(numList.size()-1));
+                lastButOneRow = catchRows.get(numList.get(numList.size()-2));
+                
+                if (isAreaBottomRow(lastButOneRow)) perhapsNum=(numList.size()-2);//可能的表头行底行
+                if (perhapsNum>-1) {
+                    //如果最后两行列结构相同,splitRowNum就可能是表头分割行，否则不是
+                    if (!compareSameColumn2Row(lastButOneRow, lastRow)) perhapsNum=-1;
+                }
             }
+            if (perhapsNum!=-1&&splitRowNum==-1&&numList.size()>2&&perhapsNum==numList.get(numList.size()-3)) {
+                //再多判断一行
+                perhapsSplitRow = catchRows.get(numList.get(numList.size()-3));
+                lastRow = catchRows.get(numList.get(numList.size()-1));
+                if (!compareSameColumn2Row(perhapsSplitRow, lastRow)) splitRowNum=perhapsNum;
+                else perhapsNum=-1;
+            }
+            if (perhapsNum!=-1&&splitRowNum!=-1) break;//找到了分割行号
+        }
+        if (splitRowNum!=-1) {//未找到表头，无法进行元数据分析
+            //TODO 记录日志
+            return;
+        }
+        //得到表头信息
+        rowData = readOneRow(splitRowNum);//表头最后一行信息
+        SheetTableInfo oneSti = new SheetTableInfo();
+        //设置区域
+        _colM = rowData.get(0);
+        oneSti.setBigenX((Integer)_colM.get("firstCol"));
+        _colM = rowData.get(rowData.size()-1);
+        oneSti.setEndX((Integer)_colM.get("firstCol"));
+        oneSti.setBigenY(splitRowNum+1);
+        oneSti.setEndY(rows);
+        oneSti.setSheetInfo(sheetInfo);
+        oneSti.dataStructureAnalMap= new HashMap<String, Object>();
+        sheetInfo.addExcelTableInfo(oneSti);
+        //===以上最好能够分析出一个sheet中的多个数据表结构
+
+        //002-表数据结构分析
+        if (sheetInfo.getStiList()==null||sheetInfo.getStiList().size()==0) return; //没有任何表结构数据不进行处理
+
+        if (sheetInfo.getStiList().size()==1) {
+            _analSheetMetadata(sheetInfo.getStiList().get(0));
+        } else { //用多个线程处理
+            cleanThreadEnd();
+            for (int i=0; i<sheetInfo.getStiList().size(); i++) {
+                Thred_anay_MetadataTableInfo thread_a_m = new Thred_anay_MetadataTableInfo(sheetInfo.getStiList().get(i), this);
+                Thread t = new Thread(thread_a_m);
+                t.start();
+            }
+            while (!allProcessed()) {
+                Thread.sleep(100);
+            }
+            cleanThreadEnd();
+        }
+
+        //
+        //下面开始分析各列的数据类型
+        //首先读取前20行，之后判断行数，若大于200，则采取抽样方式进行分析，分析的结果同样放在
+    }
+
+    //===================以下为可功能化的分析方法以及线程处理的相关函数
+    /*
+     * 针对某一表结构区域进行分析，包括表头分析
+     */
+    protected void _analSheetMetadata(SheetTableInfo sti) {
+        //得到表头信息
+        sti.setThreadEnd();
+    }
+
+    /*
+     * 是否所有线程都已处理完，判断sheetInfo中的stiList中各元素，线程处理标志是否都已完成
+     */
+    private boolean allProcessed() {
+        if (this.sheetInfo.getStiList()==null||this.sheetInfo.getStiList().size()==0) return true;
+        for (SheetTableInfo sti: this.sheetInfo.getStiList()) {
+            if (!sti.threadIsEnd()) return false;
+        }
+        return true;
+    }
+
+    /*
+     * 清除线程处理标志，为下一次线程处理做准备 
+     */
+    private void cleanThreadEnd() {
+        if (this.sheetInfo.getStiList()==null||this.sheetInfo.getStiList().size()==0) return ;
+        for (SheetTableInfo sti: this.sheetInfo.getStiList()) {
+            sti.cleanThreadEnd();
         }
     }
+    //===================以上为可功能化的分析方法以及线程处理的相关函数
 
     /*
      * 按照表头方式读取一行数据。
@@ -115,8 +220,8 @@ public class PoiParseUtils {
      *   "lastRow":"范围-结束行",
      *   "firstCol":"范围-开始列",
      *   "lastCol":"范围-结束列",
-     *   "nativeDate":{ "dType":"数据类型", "value":"值"},//此类型不经过转换
-     *   "transDate":{ "dType":"数据类型", "value":"值"}  //此类型经过转换
+     *   "nativeData":{ "dType":"数据类型", "value":"值"},//此类型不经过转换
+     *   "transData":{ "dType":"数据类型", "value":"值"}  //此类型经过转换
      * }
      * @param cell 单元格数据
      * @return cell对应的Map
@@ -127,6 +232,8 @@ public class PoiParseUtils {
         //本单元格的行列号
         int rowIndex = cell.getRowIndex();
         int colIndex = cell.getColumnIndex();
+        ret.put("cellRow", rowIndex);
+        ret.put("cellCol", colIndex);
         //合并单元格处理
         CellRangeAddress cra = getMergedRange(cell);
         ret.put("isMerged", cra!=null);
@@ -136,13 +243,13 @@ public class PoiParseUtils {
             ret.put("lastRow", cra.getLastRow());
             ret.put("firstCol", cra.getFirstColumn());
             ret.put("lastCol", cra.getLastColumn());
+            //关联主合并单元格
             if (cra.getFirstRow()==rowIndex||cra.getFirstColumn()==colIndex) {//是主合并单元格
                 if (mainMergedCellList==null) mainMergedCellList=new HashMap<String, Map<String, Object>>();
                 mainMergedCellList.put(mergedLabel, ret);
             }
             mergedLabel = cra.getFirstRow()+","+cra.getFirstColumn();
             ret.put("mainMergedLabel", mergedLabel);
-            //关联主合并单元格
         } else {
             ret.put("firstRow", rowIndex);
             ret.put("lastRow", rowIndex);
@@ -150,8 +257,8 @@ public class PoiParseUtils {
             ret.put("lastCol", colIndex);
         }
         //读取原始原始数据
-        ret.put("nativeDate", getCellNativeValueMap(cell));
-        ret.put("transDate", getCellTransValueMap(cell));
+        ret.put("nativeData", getCellNativeValueMap(cell));
+        ret.put("transData", getCellTransValueMap(cell));
         return ret;
     }
 
@@ -324,7 +431,7 @@ public class PoiParseUtils {
      * @param cell2 第二单元格
      * @return 若是相同的列，返回true，否则返回false
      */
-    private boolean sameColumns(Map<String, Object> cell1, Map<String, Object> cell2) {
+    private boolean sameColumn(Map<String, Object> cell1, Map<String, Object> cell2) {
         if ((Integer)cell1.get("firstRow")==(Integer)cell2.get("firstRow")&&(Integer)cell1.get("lastRow")==(Integer)cell2.get("lastRow")) return true;
         return false;
     }
@@ -335,7 +442,7 @@ public class PoiParseUtils {
      * @param cell2 第二单元格
      * @return 若是相同的行，返回true，否则返回false
      */
-    private boolean sameRows(Map<String, Object> cell1, Map<String, Object> cell2) {
+    private boolean sameRow(Map<String, Object> cell1, Map<String, Object> cell2) {
         if ((Integer)cell1.get("firstCol")==(Integer)cell2.get("firstCol")&&(Integer)cell1.get("lastCol")==(Integer)cell2.get("lastCol")) return true;
         return false;
     }
@@ -364,14 +471,108 @@ public class PoiParseUtils {
         return false;
     }
 
-    //以下对行进行判断，包括行内，和行之间的关系
+    /*
+     * 判断第一个单元格是否和第二个单元格是否相同的列结构，主要用于合并单元格的处理
+     * @param cell1 第一单元格
+     * @param cell2 第二单元格
+     * @return 若是包含的行，返回true，否则返回false
+     */
+    private boolean sameColumnStruct(Map<String, Object> cell1, Map<String, Object> cell2) {
+        //TODO 还没有判断结构
+        if ((Integer)cell1.get("firstCol")==(Integer)cell2.get("firstCol")&&(Integer)cell1.get("lastCol")==(Integer)cell2.get("lastCol")) return false;
+        if ((Integer)cell1.get("firstCol")>=(Integer)cell2.get("firstCol")&&(Integer)cell1.get("lastCol")<=(Integer)cell2.get("lastCol")) return true;
+        return false;
+    }
+
+    //=============以下对行进行判断，包括行内，和行之间的关系
+    /*
+     * 判断某一行是否为空，其单元格内的信息都为空
+     * @param rowList 行数据，以cellMap为list中的元素
+     * @return
+     */
+    private boolean isEmptyRow(List<Map<String, Object>> rowList) {
+        if (rowList==null||rowList.size()==0) return true;
+        for(Map<String, Object> cellMap: rowList) {
+            Map<String, Object> nativeData = (Map<String, Object>)cellMap.get("nativeData");
+            if (nativeData.get("value")!=null) return false;
+        }
+        return true;
+    }
+
     /*
      * 判断行是否是由原始String类型列组成的行
-     * @param rowMap 行数据Map，这里的行数据是由原始数据类型组成的
+     * @param row 行数据，以cellMap为list中的元素
      * @return 若一样返回true，否则返回false
      */
-    private boolean isNativeStingTypeRow(List<Map<String, Object>> rowMap) {
-        
-        return false;
+    private boolean isNativeStingTypeRow(List<Map<String, Object>> row) {
+        if (row==null||row.size()==0) return false;
+        Map<String, Object> compareCellMap = null;//用于判断的map
+        for(Map<String, Object> cellMap: row) {
+            compareCellMap = cellMap;
+            if (((Boolean)cellMap.get("isMerged"))==Boolean.TRUE) {
+                compareCellMap = mainMergedCellList.get(cellMap.get("mainMergedLabel"));
+            }
+            Map<String, Object> nativeData = (Map<String, Object>)compareCellMap.get("nativeData");
+            int dType = (Integer)nativeData.get("dType");
+            if (dType!=ExcelConstants.DATA_TYPE_STRING&&dType!=ExcelConstants.DATA_TYPE_NULL) return false;
+        }
+        return true;
+    }
+
+    /*
+     * 判断行是否为某一区域的最后一行，用于判断是否是表头
+     * @param row 行数据，以cellMap为list中的元素
+     * @return 若是最后一行返回true，否则返回false
+     */
+    private boolean isAreaBottomRow(List<Map<String, Object>> row) {
+        if (row==null||row.size()==0) return false;
+        for(Map<String, Object> cellMap: row) {
+            if (((Boolean)cellMap.get("isMerged"))==Boolean.TRUE) {
+                int cellRow = (Integer)cellMap.get("cellRow");
+                int mergedLastRow = (Integer)cellMap.get("lastRow");
+                if (cellRow!=mergedLastRow) return false;
+            }
+        }
+        return true;
+    }
+    /*
+     * 比较两行是否列结构相同
+     * @param firstRow 第一行数据，以cellMap为list中的元素
+     * @param secondRow 第二行数据，以cellMap为list中的元素
+     * @return 若一样返回true，否则返回false
+     */
+    private boolean compareSameColumn2Row(List<Map<String, Object>> firstRow, List<Map<String, Object>> secondRow) {
+        if (firstRow==null||firstRow.size()==0) return false;
+        if (secondRow==null||secondRow.size()==0) return false;
+        if (firstRow.size()!=secondRow.size()) return false;
+        for (int i=0; i<firstRow.size(); i++) {
+            Map<String, Object> cell1 = firstRow.get(i);
+            Map<String, Object> cell2 = secondRow.get(i);
+            if (!sameColumn(cell1, cell2)) return false;
+        }
+        return true;
+    }
+}
+
+/**
+ * 分析表结构，得到元数据信息
+ * @author wangxia
+ */
+class Thred_anay_MetadataTableInfo implements Runnable {
+    private PoiParseUtils caller;
+    private SheetTableInfo _anayData;
+
+    public Thred_anay_MetadataTableInfo(SheetTableInfo anayData, PoiParseUtils caller) {
+        this.caller = caller;
+        this._anayData = anayData;
+    }
+
+    @Override
+    public void run() {
+        try {
+            this.caller._analSheetMetadata(_anayData);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }
