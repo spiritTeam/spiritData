@@ -7,7 +7,7 @@
   
   <!-- 配置编码格式，与eclpse的IDE环境编码格式匹配 -->
   <properties>
-     <build.webProjectDir>D:/Users/admi/git/SpiritAnalysis</build.webProjectDir>
+     <build.webProjectDir>D:/workIDE/projects/SpiritAnalysis</build.webProjectDir>
   </properties>
   <parent>
     <groupId>team.gm</groupId>
@@ -46,13 +46,13 @@
       <artifactId>javax.servlet-api</artifactId>
       <version>3.1.0</version>
     </dependency> -->
-    <!-- 引入基本包 -->
+    <!-- 引入平台包 -->
     <dependency>
-      <groupId>com.basicplat</groupId>
+      <groupId>com.gmteam</groupId>
       <artifactId>BasicPlat</artifactId>
       <version>0.0.1.2</version>
       <scope>system</scope>
-      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/BasicPlat-0.0.1.2.jar</systemPath>
+      <systemPath>${build.webProjectDir}/lib/BasicPlat-0.0.1.2.jar</systemPath>
     </dependency>
     <!-- mail 包 -->
     <dependency>

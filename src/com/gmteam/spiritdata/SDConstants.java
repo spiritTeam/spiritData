@@ -1,6 +1,6 @@
 package com.gmteam.spiritdata;
 
-public class SDConstants {
+public abstract class SDConstants {
     //-用户及用户管理相关常量-----------------------------------------------------------
     //所有者元数据Session缓存
     public final static String SESSION_OWNER_RMDUNIT="OnwerRmdUnit";
