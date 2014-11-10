@@ -55,7 +55,7 @@ function activeAgain(){
 	var url="<%=path%>/activeAgain.do";
 	var loginName = $("#loginName").val();
 	if(loginName==null||loginName==""){
-		alert("您必须填写用户名，以便于向您的绑定邮箱发送验证!");
+		$.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
 		return;
 	}else{
 		var pData={
@@ -63,8 +63,11 @@ function activeAgain(){
 	  };
 	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
 	    success: function(json) {
-	      if(json[0].success==true)
-	      alert("已经从新发送验证信息到邮箱，请登录邮箱验证!");
+	      if(json.success==true){
+	    	  $.messager.alert('提示信息',json.retInfo);
+	      }else{
+	    	  $.messager.alert('提示信息',json.retInfo);
+	      }
 	    }
     });
 	}
@@ -160,8 +163,13 @@ function loginF() {
 	  };
 	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
 	    success: function(json) {
-	      if (json.type==1) {
-	        alert("loginOk");
+	    	alert(json.type);
+	    	if(json.type==-1){
+	    		var loginInfo = json.data;
+	    		var retInfo = loginInfo.retInfo;
+	    		$.messager.alert('登录信息',retInfo);
+	    	}else if (json.type==1) {
+	    		$.messager.alert('登录信息',json.data);
 	        return;
 	      } else if (json.type==2) {
 	        $.messager.alert("错误", "登录失败："+json.data, "error", function(){

@@ -134,7 +134,7 @@ function validatePassword(eleId){
        $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码应由5~12位的字母、数字、下划线组成,且首字母不为数字!</span>');
        psV = false;
      }else{
-       $('#'+eleId+'Check').html('<img src="accept.png"><span style="font-size: 12px;color:green;">该登录名可以使用!</span>');
+       $('#'+eleId+'Check').html('<img src="accept.png">');
        psV = true;
      }
    }

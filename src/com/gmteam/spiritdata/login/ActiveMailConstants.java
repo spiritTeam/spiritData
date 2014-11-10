@@ -10,10 +10,7 @@ public class ActiveMailConstants {
      * 则smtp就变为smtp.163.com
      */
     public final static String HOST_MAIL_SMTP="smtp.qq.com";
-    /*
-     * 发件箱用户名，不加@，后缀什么的
-     * 如邮箱名是wunaihh@qq.com,则邮箱名为wunaihh
-     */
+    //发件箱用户名
     public final static String HOST_MAIL_NAME="354650951@qq.com";
     //邮箱密码
     public final static String HOST_MAIL_PASSWORD="MHTloveLJJ1314";
