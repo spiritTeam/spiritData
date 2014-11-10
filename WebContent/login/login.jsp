@@ -10,6 +10,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>login</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
+<link rel="stylesheet" type="text/css" href="<%=path%>/login/login.css" />
 </head>
 <body>
 <center>
@@ -19,32 +20,33 @@
     <form action="">
       <table width="430px;" >
         <tr>
-          <td align="right">账号&nbsp;</td>
+          <td align="right"><span>账号&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" width="280px;">
-	        <input style="width:280px;height:35px;color:#999;font-size: 16px;" id="loginName" name="loginName"  tabindex="1" type="text" value="支持邮箱/企鹅/手机号" onmouseover=this.focus();this.select();
+	        <input id="loginName" name="loginName"  tabindex="1" type="text" value="支持邮箱/企鹅/手机号" onmouseover=this.focus();this.select();
 	              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
 					</td>
 				</tr>
         <tr><td></td><td align="left"><div style="height: 30px;" id="loginNameCheck"></div></td><td></td></tr>
         <tr >
-          <td align="right">密码&nbsp;</td>
+          <td align="right"><span>密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" >
-            <input style="width:280px;height:35px;color:#999;font-size: 16px" id="password" name="password"  tabindex="2" type="text" value="密码" onmouseover=this.focus();this.select();
+            <input style="width:280px;" id="password" name="password"  tabindex="2" type="text" value="密码" onmouseover=this.focus();this.select();
                 onclick="onClick(password);" onBlur="validatePassword('password');" />
           </td>
         </tr>
         <tr><td></td><td align="left"><div style="height: 25px;" id="passwordCheck"></div></td><td></td></tr>
         <tr>
-          <td align="right">验证码&nbsp;</td>
-          <td colspan="1" width="180px;"><input style="width:200px;height:35px;color:#999;font-size: 16px;" class="input_1 required" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select();
+          <td align="right"><span>验证码&nbsp;&nbsp;</span></td>
+          <td width="180px;"><input style="width:200px;" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
-          <td  align="left"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td>
+          <td align="left"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td>
         </tr>
         <tr><td></td><td align="left"><div style="height: 25px;" id="checkCodeCheck"></div></td><td></td><td></td></tr>
         <tr>
-          <td colspan="2"><input type="button" value="登录" onclick="loginF()" /><input type="button" value="注册" onclick="register();" /><input type="button" value="忘记密码" onclick="" /><input type="button" value="从新发送验证信息" onclick="activeAgain();" /></td><td></td><td></td>
+          <td colspan="2"></td><td></td><td></td>
         </tr>
       </table>
+      <div><input type="button" value="登录" onclick="loginF()" /><input type="button" value="注册" onclick="register();" /><input type="button" value="忘记密码" onclick="" /><input type="button" value="从新发送验证信息" onclick="activeAgain();" /></div>
     </form>
   </div>
   <div style="float: right;border:1px solid #ABCDEF;width: 196px;height: 500px;">
@@ -189,7 +191,7 @@ function loginF() {
 	    }
 	  });
 	}else{
-	    $message.alert("登录信息","您的登录信息某些地方有误，请完善您的注册信息");
+	    $.message.alert("登录信息","您的登录信息某些地方有误，请完善您的注册信息");
 	    return ;
 	  }
 }
