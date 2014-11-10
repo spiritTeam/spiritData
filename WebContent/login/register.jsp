@@ -28,14 +28,6 @@
           <td width="250px;"><div id="loginNameCheck"></div></td>
         </tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
-        <tr>
-          <td align="right"><span style="width: 150px;font-size: 16px;">姓名&nbsp;&nbsp;</span></td>
-          <td colspan="2" rowspan="1">
-          <input style="width:235px;height:35px;color:#999;font-size: 12px;" id="userName" name="userName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
-             onclick="onClick(userName);" onBlur="validateUserName('userName');"/>
-          </td>
-          <td><div id="userNameCheck"></div></td></tr>
-        <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr >
           <td align="right"><span style="width: 150px;font-size: 16px;">密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
@@ -55,7 +47,7 @@
           <td align="right"><span style="width: 150px;font-size: 16px;">邮箱&nbsp;&nbsp;</span></td>
           <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 16px;"  id="mail" name="mail"  tabindex="3" type="text"  onmouseover=this.focus();this.select(); 
              onclick="onClick(mail);" onBlur="validateMail('mail');"/></td>
-          <td  align="left"><input style="width: 100px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" ></td>
+          <td  align="left"><input style="width: 100px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" /></td>
           <td><div id="mailCheck"></div></td>
         </tr>
            <tr><td ><div style="height: 20px;"></div></td></tr>
@@ -88,36 +80,28 @@ function saveRegister(){
 	    success: function(json) {
 	      vfMsg = json;
 	      if(vfMsg){
-	    	  alert('注册成功3秒后跳转到登录页面');
+	    	  $message.alert('注册提示','注册成功，3秒后跳转到登录页面!');
 	    	  setTimeout("jumpLogin();", 3000 );
 	      }
 	    }
 	  });
 	}else{
-		alert("您的注册信息某些地方有误，请完善您的注册信息");
+		$message.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息");
 		return ;
-	}
-}
-function checkVal(obj){
-	obj.focus();obj.select();
-	if(""+obj=="checkCode"){
-		alert(true);
 	}
 }
 function jumpLogin(){
 	window.location.href="http://localhost:8080/sa/login/login.jsp";
 }
-function checkVal(obj){
-  obj.focus();obj.select();
-  if(""+obj=="checkCode"){
-    alert(true);
-  }
-}
 $(function() {
   $('#mailEndStr').combobox({    
     url:'mailEndStr.json',    
     valueField:'id',    
-    textField:'text',   
+    textField:'text',
+    onChange:function (index,o) {
+    	var eleId = 'mail';
+    	validateMail(eleId,index);
+    },
     editable:false
   });  
 });
@@ -175,14 +159,17 @@ function validateConfirmPassword(eleId){
     }
   }
 }
-function validateMail(eleId){
+function validateMail(eleId,index){
+  var a = $('#mailEndStr').combobox('getData');
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null){
     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱不能为空!</span>');
     maV = false;
   }else{
     if(checkStr(ele.val())){
-      var mailStr = ele.val() +$('#mailEndStr').combobox('getText');
+    	var mailStr;
+    	if(index!=null) mailStr = ele.val() +a[index-1].text;
+    	else  mailStr = ele.val() +$('#mailEndStr').combobox('getText');
       var vsMsg = checkMail(mailStr);
       if(vsMsg==true){
         $('#'+eleId+'Check').html('<img src="accept.png">');
