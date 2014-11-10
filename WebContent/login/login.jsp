@@ -46,7 +46,7 @@
           <td colspan="2"></td><td></td><td></td>
         </tr>
       </table>
-      <div><input type="button" value="登录" onclick="loginF()" /><input type="button" value="注册" onclick="register();" /><input type="button" value="忘记密码" onclick="" /><input type="button" value="从新发送验证信息" onclick="activeAgain();" /></div>
+      <div><input type="button" value="登录" onclick="loginF()"  /><input type="button" value="注册" onclick="register();" /><input type="button" value="忘记密码" onclick="" /><input type="button" value="从新发送验证信息" onclick="activeAgain();" /></div>
     </form>
   </div>
   <div style="float: right;border:1px solid #ABCDEF;width: 196px;height: 500px;">

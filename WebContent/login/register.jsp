@@ -28,19 +28,19 @@
           </td>
           <td width="250px;"><div id="loginNameCheck"></div></td>
         </tr>
-        <tr><td ><div style="height: 20px;"></div></td></tr>
+        <tr><td><div style="height: 20px;"></div></td></tr>
         <tr>
           <td align="right"><span >邮箱&nbsp;&nbsp;</span></td>
-          <td width="130px;"><input style="width:130px;"  id="mail" name="mail"  tabindex="3" type="text"  onmouseover=this.focus();this.select(); 
+          <td width="130px;"><input style="width:130px;"  id="mail" name="mail"  tabindex="2" type="text"  onmouseover=this.focus();this.select(); 
              onclick="onClick(mail);" onBlur="validateMail('mail');"/></td>
           <td  align="left"><input style="width: 100px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" /></td>
           <td><div id="mailCheck"></div></td>
         </tr>
-        <tr><td ><div style="height: 20px;"></div></td></tr>
-        <tr >
+        <tr><td><div style="height: 20px;"></div></td></tr>
+        <tr>
           <td align="right"><span>密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
-            <input style="width:235px;" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
+            <input style="width:235px;" id="password" name="password"  tabindex="3" type="password" value="" onmouseover=this.focus();this.select();
               onclick="onClick(password);" onBlur="validatePassword('password');" />
           </td>
           <td><div id="passwordCheck"></div></td></tr>
@@ -48,27 +48,26 @@
         <tr >
           <td align="right"><span >确认密码&nbsp;&nbsp;</span></td>
           <td colspan="2">
-            <input style="width:235px;" id="confirmPassword" name="confirmPassword"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
+            <input style="width:235px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" value="" onmouseover=this.focus();this.select();
               onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" />
           </td><td><div id="confirmPasswordCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr>
         <td align="right"><span >验证码&nbsp;&nbsp;</span></td>
-        <td width="130px;"><input style="width:130px;"  id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
+        <td width="130px;"><input style="width:130px;"  id="checkCode" name="checkCode"  tabindex="5" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
           <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td><td></td><td></td></tr>
         <tr>
           <td align="right"></td>
-          <td width="235px;" colspan="2" style="background-image:url(registerb.png); padding-left:32px;">
-            <img id="register" name="register" src="register.png" onclick="saveRegister();">
+          <td width="235px;" colspan="2" style="background-image:url(registerb.png); padding-left:32px;" >
+            <img id="register"  name="register" src="register.png" onclick="saveRegister();">
           </td>
           <td></td>
         </tr>
       </table>
     </form>
   </div>
-  <div style="float: right;border:1px solid #ABCDEF;width: 296px;height: 500px;">
-  </div>
+  <div style="float: right;border:1px solid #ABCDEF;width:296px;height:500px;"></div>
  </div>
 </center>
 </body>
@@ -87,8 +86,14 @@ function saveRegister(){
 	    success: function(json) {
 	      vfMsg = json;
 	      if(vfMsg){
-	    	  $.message.alert('注册提示','注册成功，3秒后跳转到登录页面!');
-	    	  setTimeout("jumpLogin();", 3000 );
+	    	  $.messager.show({
+	    		  title:'注册提示',
+	    		  msg:'消息将在3秒后跳转到登录页面!',
+	    		  timeout:3000,
+	    		  showType:'slide'
+	    		});
+	    	  jumpLogin();
+	    	  //setTimeout("jumpLogin();", 3000 );
 	      }
 	    }
 	  });
