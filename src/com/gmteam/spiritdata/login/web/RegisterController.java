@@ -39,7 +39,7 @@ public class RegisterController {
             }else{
                 String validatsaSequence = SequenceUUID.getPureUUID();
                 user.setValidataSequence(validatsaSequence);
-                String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问/n"
+                String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
                         + " http://localhost:8080/sa/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
                 SendValidataUrlToMail svu = new SendValidataUrlToMail();
                 svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
@@ -52,24 +52,31 @@ public class RegisterController {
         }
     }
     @RequestMapping("activeUser.do")
-    public Map<String,Object> activeMail(HttpServletRequest request, HttpServletResponse response){
+    public @ResponseBody Map<String,Object> activeMail(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String authCode = request.getParameter("authCode");
         if(authCode==null){
             retMap.put("success", false);
-            retMap.put("retInfo", "激活码");
+            retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
         }
         String userId = authCode.substring(0,authCode.lastIndexOf("~"));
         String code = authCode.substring(authCode.lastIndexOf("~")+1);
         User user  = userService.getUserById(userId);
-        if(user.getValidataSequence().equals(code)){
-            user.setUserState(1);
-            userService.updateUser(user);
-            System.out.println("激活成功");
+        if(user.getUserState()==0){
+            if(user.getValidataSequence().equals(code)){
+                user.setUserState(1);
+                userService.updateUser(user);
+                retMap.put("success", true);
+                retMap.put("retInfo", "激活成功!");
+            }else{
+                retMap.put("success", false);
+                retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
+            }
         }else{
-            System.out.println("激活不成功");
+            retMap.put("success", false);
+            retMap.put("retInfo", "您的账号已经激活。");
         }
-        return null;
+        return retMap;
     }
     /**
      * 得到验证码
@@ -160,7 +167,7 @@ public class RegisterController {
         user.setPassword(password);
         user.setMailAdress(mailAdress);
         user.setUserName(userName);
-        user.setUserId(SequenceUUID.getUUID());
+        user.setUserId(SequenceUUID.getPureUUID());
         user.setUserState(0);
         int rst = userService.insertUser(user);
         if(rst==1){
@@ -168,7 +175,7 @@ public class RegisterController {
             user.setValidataSequence(validatsaSequence);
             //1代表以发验证到邮箱验证，用户为验证
             user.setUserState(0);
-            String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\\n"
+            String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
                     + " http://localhost:8080/sa/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
             SendValidataUrlToMail svu = new SendValidataUrlToMail();
             svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);

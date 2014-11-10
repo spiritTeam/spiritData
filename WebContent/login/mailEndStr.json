@@ -1,18 +1,14 @@
 [{
 	"id":1,
-	"text":"@163.com",
-	"desc":"Write once, run anywhere"
+	"text":"@163.com"
 },{
 	"id":2,
-	"text":"@qq.com",
-	"desc":"One of the programming languages designed for the Common Language Infrastructure"
+	"text":"@qq.com"
 },{
 	"id":3,
 	"text":"@126.com",
-	"selected":true,
-	"desc":"A dynamic, reflective, general-purpose object-oriented programming language"
+	"selected":true
 },{
 	"id":4,
-	"text":"@139.com",
-	"desc":"A high-level, general-purpose, interpreted, dynamic programming language"
+	"text":"@139.com"
 }]

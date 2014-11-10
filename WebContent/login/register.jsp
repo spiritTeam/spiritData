@@ -11,6 +11,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>register</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
+<link rel="stylesheet" type="text/css" href="<%=path%>/login/login.css">
 </head>
 <body>
 <center>
@@ -20,56 +21,53 @@
     <form action="">
       <table width="580px;" >
         <tr >
-          <td align="right" width="100px;" ><span style="width: 150px;font-size: 16px;">登录名&nbsp;&nbsp;</span></td>
-          <td colspan="2" width="230px;" >
-            <input style="width:235px;height:35px;color:#999;font-size: 12px;" id="loginName" name="loginName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
+          <td align="right" width="100px;" ><span>登录名&nbsp;&nbsp;</span></td>
+          <td colspan="2" >
+            <input style="width:235px;" id="loginName" name="loginName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
               onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
           </td>
           <td width="250px;"><div id="loginNameCheck"></div></td>
         </tr>
-        <tr><td ><div style="height: 20px;"></div></td></tr>
+        <tr><td><div style="height: 20px;"></div></td></tr>
         <tr>
-          <td align="right"><span style="width: 150px;font-size: 16px;">姓名&nbsp;&nbsp;</span></td>
+          <td align="right"><span >邮箱&nbsp;&nbsp;</span></td>
+          <td width="130px;"><input style="width:130px;"  id="mail" name="mail"  tabindex="2" type="text"  onmouseover=this.focus();this.select(); 
+             onclick="onClick(mail);" onBlur="validateMail('mail');"/></td>
+          <td  align="left"><input style="width: 100px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" /></td>
+          <td><div id="mailCheck"></div></td>
+        </tr>
+        <tr><td><div style="height: 20px;"></div></td></tr>
+        <tr>
+          <td align="right"><span>密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
-          <input style="width:235px;height:35px;color:#999;font-size: 12px;" id="userName" name="userName"  tabindex="1" type="text" value="" onmouseover=this.focus();this.select();
-             onclick="onClick(userName);" onBlur="validateUserName('userName');"/>
-          </td>
-          <td><div id="userNameCheck"></div></td></tr>
-        <tr><td ><div style="height: 20px;"></div></td></tr>
-        <tr >
-          <td align="right"><span style="width: 150px;font-size: 16px;">密码&nbsp;&nbsp;</span></td>
-          <td colspan="2" rowspan="1">
-            <input style="width:235px;height:35px;color:#999;font-size: 12px" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
+            <input style="width:235px;" id="password" name="password"  tabindex="3" type="password" value="" onmouseover=this.focus();this.select();
               onclick="onClick(password);" onBlur="validatePassword('password');" />
           </td>
           <td><div id="passwordCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr >
-          <td align="right"><span style="width: 150px;font-size: 16px;">确认密码&nbsp;&nbsp;</span></td>
-          <td colspan="2" rowspan="1">
-            <input style="width:235px;height:35px;color:#999;font-size: 12px" id="confirmPassword" name="confirmPassword"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
+          <td align="right"><span >确认密码&nbsp;&nbsp;</span></td>
+          <td colspan="2">
+            <input style="width:235px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" value="" onmouseover=this.focus();this.select();
               onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" />
           </td><td><div id="confirmPasswordCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td></tr>
         <tr>
-          <td align="right"><span style="width: 150px;font-size: 16px;">邮箱&nbsp;&nbsp;</span></td>
-          <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 16px;"  id="mail" name="mail"  tabindex="3" type="text"  onmouseover=this.focus();this.select(); 
-             onclick="onClick(mail);" onBlur="validateMail('mail');"/></td>
-          <td  align="left"><input style="width: 100px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" ></td>
-          <td><div id="mailCheck"></div></td>
-        </tr>
-           <tr><td ><div style="height: 20px;"></div></td></tr>
-        <tr>
-        <td align="right"><span style="width: 150px;font-size: 16px;">验证码&nbsp;&nbsp;</span></td>
-        <td colspan="1" width="130px;"><input style="width:130px;height:35px;color:#999;font-size: 16px;"  id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
+        <td align="right"><span >验证码&nbsp;&nbsp;</span></td>
+        <td width="130px;"><input style="width:130px;"  id="checkCode" name="checkCode"  tabindex="5" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
           <td  align="left"><img style="width: 100px;" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td><td><div id="checkCodeCheck"></div></td></tr>
         <tr><td ><div style="height: 20px;"></div></td><td></td><td></td></tr>
-        <tr><td colspan="4" align="center" ><img id="register" name="register" src="register.png" onclick="saveRegister();"></td></tr>
+        <tr>
+          <td align="right"></td>
+          <td width="235px;" colspan="2" style="background-image:url(registerb.png); padding-left:32px;" >
+            <img id="register"  name="register" src="register.png" onclick="saveRegister();">
+          </td>
+          <td></td>
+        </tr>
       </table>
     </form>
   </div>
-  <div style="float: right;border:1px solid #ABCDEF;width: 296px;height: 500px;">
-  </div>
+  <div style="float: right;border:1px solid #ABCDEF;width:296px;height:500px;"></div>
  </div>
 </center>
 </body>
@@ -88,36 +86,34 @@ function saveRegister(){
 	    success: function(json) {
 	      vfMsg = json;
 	      if(vfMsg){
-	    	  alert('注册成功3秒后跳转到登录页面');
-	    	  setTimeout("jumpLogin();", 3000 );
+	    	  $.messager.show({
+	    		  title:'注册提示',
+	    		  msg:'消息将在3秒后跳转到登录页面!',
+	    		  timeout:3000,
+	    		  showType:'slide'
+	    		});
+	    	  jumpLogin();
+	    	  //setTimeout("jumpLogin();", 3000 );
 	      }
 	    }
 	  });
 	}else{
-		alert("您的注册信息某些地方有误，请完善您的注册信息");
+		$.message.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息");
 		return ;
-	}
-}
-function checkVal(obj){
-	obj.focus();obj.select();
-	if(""+obj=="checkCode"){
-		alert(true);
 	}
 }
 function jumpLogin(){
 	window.location.href="http://localhost:8080/sa/login/login.jsp";
 }
-function checkVal(obj){
-  obj.focus();obj.select();
-  if(""+obj=="checkCode"){
-    alert(true);
-  }
-}
 $(function() {
   $('#mailEndStr').combobox({    
     url:'mailEndStr.json',    
     valueField:'id',    
-    textField:'text',   
+    textField:'text',
+    onChange:function (index,o) {
+    	var eleId = 'mail';
+    	validateMail(eleId,index);
+    },
     editable:false
   });  
 });
@@ -175,14 +171,17 @@ function validateConfirmPassword(eleId){
     }
   }
 }
-function validateMail(eleId){
+function validateMail(eleId,index){
+  var a = $('#mailEndStr').combobox('getData');
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null){
     $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">邮箱不能为空!</span>');
     maV = false;
   }else{
     if(checkStr(ele.val())){
-      var mailStr = ele.val() +$('#mailEndStr').combobox('getText');
+    	var mailStr;
+    	if(index!=null) mailStr = ele.val() +a[index-1].text;
+    	else  mailStr = ele.val() +$('#mailEndStr').combobox('getText');
       var vsMsg = checkMail(mailStr);
       if(vsMsg==true){
         $('#'+eleId+'Check').html('<img src="accept.png">');
