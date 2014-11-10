@@ -17,19 +17,20 @@ public class User extends UgaUser {
     private Timestamp cTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间:last modify time
     private int userState;//用户状态，0~2
-    private String verificationCode;//存储邮箱验证码
+    private String validataSequence;//存储邮箱验证码
+    public String getValidataSequence() {
+        return validataSequence;
+    }
+    public void setValidataSequence(String validataSequence) {
+        this.validataSequence = validataSequence;
+    }
     public int getUserState() {
         return userState;
     }
     public void setUserState(int userState) {
         this.userState = userState;
     }
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
+    
     public String getMailAdress() {
         return mailAdress;
     }

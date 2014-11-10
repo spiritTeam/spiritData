@@ -1,14 +1,9 @@
 package com.gmteam.spiritdata.login.service;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -19,10 +14,8 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.framework.component.login.service.LoginService;
-import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
-import com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn;
-import com.gmteam.spiritdata.metadata.relation.pojo.QuotaTable;
-import com.gmteam.spiritdata.util.SequenceUUID;
+import com.gmteam.spiritdata.UGA.pojo.User;
+import com.gmteam.spiritdata.UGA.service.UserService;
 
 public class LoginServiceImpl implements LoginService {
     @Resource
@@ -32,23 +25,29 @@ public class LoginServiceImpl implements LoginService {
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
         String requestCC = request.getParameter("checkCode");
+        requestCC = requestCC.toUpperCase();
         HttpSession session = request.getSession();
         String checkCode = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
-        System.out.println(requestCC+checkCode);
         if(requestCC.equals(checkCode)){
             retMap.put("success", "success");
             return retMap;
         }
         return null;
     }
-
+    @Resource
+    private UserService userService;
     @Override
-    public Map<String, Object> afterUserLoginOk(UgaUser user, HttpServletRequest req) {
+    public Map<String, Object> afterUserLoginOk(UgaUser user, HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
-
-        changeOwnerId(req.getSession(), user.getUserId());
-
-        retMap.put("success", "success");
+        //changeOwnerId(request.getSession(), user.getUserId());
+        //激活邮箱
+        User u = (User)user;
+        //==0,未发邮箱激活
+        if(u.getUserState()==0){
+            retMap.put("retInfo", "您未通过邮箱激活账号,请转至邮箱激活,如果邮箱丢失，请点击验证邮箱，我们将会从新发送一封验证邮件");
+        }else{
+            retMap.put("success", "success");
+        }
         return retMap;
     }
 

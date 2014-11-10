@@ -13,7 +13,7 @@ CREATE TABLE `plat_user` (
   cTime             timestamp       NOT NULL DEFAULT  CURRENT_TIMESTAMP COMMENT '创建时间:创建时的系统时间',
   lmTime            timestamp       NOT NULL DEFAULT  CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改：每次更新的时间',
   userState         int(1)          NOT NULL DEFAULT '0' COMMENT '用户状态，0-2,0代表未激活的用户，1代表已激活邮箱的活跃用户，2代表已激活的非活跃用户',
-  verificationCode varchar(36)      DEFAULT NULL      COMMENT '验证信息，用于存储验证邮箱时的验证码，uuid',
+  validataSequence varchar(36)      DEFAULT NULL      COMMENT '验证信息，用于存储验证邮箱时的验证码，uuid',
   PRIMARY KEY (id),
   UNIQUE KEY loginName (loginName) USING BTREE,
   UNIQUE KEY mailAdress (mailAdress) USING BTREE

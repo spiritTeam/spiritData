@@ -7,24 +7,60 @@
   
   <!-- 配置编码格式，与eclpse的IDE环境编码格式匹配 -->
   <properties>
-    <build.webProjectDir>D:/workIDE/projects/SpiritAnalysis</build.webProjectDir>
+     <build.webProjectDir>D:/Users/admi/git/SpiritAnalysis</build.webProjectDir>
   </properties>
-
   <parent>
     <groupId>team.gm</groupId>
     <artifactId>framework</artifactId>
     <version>0.1.0.1</version>
     <relativePath>pom.framework.xml</relativePath>
   </parent>
-
   <dependencies>
+    <!-- 把html转成word的包 
+    1、org.apache.commons
+    2、org.apache.httpcomponents
+    3、org.apache.httpcomponents
+    4、jstl
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcomponents-core</artifactId>
+      <version>4.2.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcomponents-client</artifactId>
+      <version>4.2.6</version>
+    </dependency>
+    <dependency>
+      <groupId>jstl</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>-->
+    <!-- <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+    </dependency> -->
     <!-- 引入基本包 -->
     <dependency>
       <groupId>com.basicplat</groupId>
       <artifactId>BasicPlat</artifactId>
       <version>0.0.1.2</version>
       <scope>system</scope>
-      <systemPath>D:/workIDE/projects/SpiritAnalysis/lib/BasicPlat-0.0.1.2.jar</systemPath>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/BasicPlat-0.0.1.2.jar</systemPath>
+    </dependency>
+    <!-- mail 包 -->
+    <dependency>
+      <groupId>mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.5.0</version>
+       <scope>system</scope>
+      <systemPath>D:/Users/admi/git/SpiritAnalysis/lib/mail-1.5.0-b01.jar</systemPath>
     </dependency>
     <!-- Poi 包 -->
     <dependency>
@@ -61,7 +97,6 @@
       <version>1.9</version>
     </dependency> -->
   </dependencies>
-
   <build>
     <!-- 设置源代码的根目录 -->
     <sourceDirectory>${build.webProjectDir}\src</sourceDirectory>

@@ -85,7 +85,6 @@
       <version>6.0.39</version>
     </dependency>
   </dependencies>
-
   <build>
     <!-- 这里定义的资源将作为资源拷贝或打包到目标中。所有的配置文件(xml,propertis)都会按目录进行打包了 -->
     <resources>
