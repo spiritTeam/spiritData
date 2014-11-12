@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.gmteam.framework.core.model.BaseObject;
+import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 
 /**
@@ -15,9 +17,9 @@ public class SheetTableInfo extends BaseObject{
     
     private boolean threadEnd = false;//线程指标，说明处理线程是否结束了
 
-    private int bigenX;//数据开始列
+    private int beginX;//数据开始列
     private int endX;//数据结束列
-    private int bigenY;//数据开始行
+    private int beginY;//数据开始行
     private int endY;//数据结束行
     /**
      * 标题信息，包括——标题名称；对应的列属性:标题开始列X,结束列X,上级列(对于分级表头的情况)
@@ -27,15 +29,15 @@ public class SheetTableInfo extends BaseObject{
     private MetadataModel mm; //对应的元数据模式
     /**
      * 分析数据结构的map,其中key和columnTitle相互对应
-     * 值是一个Map，为key=数据类型，value=Map{有值计数:,空值行号，有值行号}
+     * 值是一个Map，为key=数据类型，value=Map{有值计数，有值行号}
      */
     public Map<String, Object> dataStructureAnalMap;
 
-    public int getBigenX() {
-        return bigenX;
+    public int getBeginX() {
+        return beginX;
     }
-    public void setBigenX(int bigenX) {
-        this.bigenX = bigenX;
+    public void setBeginX(int beginX) {
+        this.beginX = beginX;
     }
     public int getEndX() {
         return endX;
@@ -43,11 +45,11 @@ public class SheetTableInfo extends BaseObject{
     public void setEndX(int endX) {
         this.endX = endX;
     }
-    public int getBigenY() {
-        return bigenY;
+    public int getBeginY() {
+        return beginY;
     }
-    public void setBigenY(int bigenY) {
-        this.bigenY = bigenY;
+    public void setBeginY(int beginY) {
+        this.beginY = beginY;
     }
     public int getEndY() {
         return endY;
@@ -84,5 +86,52 @@ public class SheetTableInfo extends BaseObject{
 
     public boolean threadIsEnd() {
         return this.threadEnd;
+    }
+
+    /**
+     * 根据titleInfo，dataStructureAnalMap共同分析，并得出MetadataModel。
+     * 分析的结果存储在本对象的mm属性中。
+     * 注意，此时mm中的ownerId和ownerType不用关心，会在MetadataSessionService.storeMdModel4Import中进行处理
+     */
+    public void caculateMetadataModel() throws Exception {
+        int allCount;
+        MetadataModel mm = new MetadataModel();
+        //这里的只对mm的columnList进行处理
+        if (titleInfo==null||titleInfo.size()==0) return;
+        for (Map<String, Object> tc: titleInfo) {
+            String columnTitle = (String)tc.get("title");
+            Map<Integer, Object> _colDataTypeAnalData = (Map<Integer, Object>)dataStructureAnalMap.get(columnTitle);
+            if (_colDataTypeAnalData==null||_colDataTypeAnalData.size()==0) continue; //没有统计数据，不进行处理
+            int _thisColType = -1;
+            //计算总数
+            allCount = 0;
+            for (Integer dType: _colDataTypeAnalData.keySet()) {
+                allCount += (Integer)((Map<String, Object>)_colDataTypeAnalData.get(dType)).get("dCount");
+            }
+            double b = Double.valueOf(allCount+"");
+            int numberCount = 0;
+            for (Integer dType: _colDataTypeAnalData.keySet()) {
+                int thisCount = (Integer)((Map<String, Object>)_colDataTypeAnalData.get(dType)).get("dCount");
+                double a = Double.valueOf(thisCount+"");
+                if (a/b>=ExcelConstants.WEIGHT_OF_DATATYPE) {
+                    _thisColType = dType;
+                }
+                if (dType==ExcelConstants.DATA_TYPE_NUMERIC||dType==ExcelConstants.DATA_TYPE_DOUBLE||dType==ExcelConstants.DATA_TYPE_INTEGER) {
+                    numberCount+=thisCount;
+                }
+            }
+            if (_thisColType==-1&&(numberCount/b>=ExcelConstants.WEIGHT_OF_DATATYPE)) {
+                _thisColType = ExcelConstants.DATA_TYPE_DOUBLE;
+            }
+            if (_thisColType!=-1) {//说明已经分析出数据类型
+                MetadataColumn mc = new MetadataColumn();
+                mc.setTitleName(columnTitle);
+                mc.setColumnType(ExcelConstants.convert2DataTypeString(_thisColType));
+                mm.addColumn(mc);
+            }
+        }
+        if (mm!=null&&mm.getColumnList()!=null&&mm.getColumnList().size()>0) {
+            this.setMm(mm);
+        }
     }
 }
