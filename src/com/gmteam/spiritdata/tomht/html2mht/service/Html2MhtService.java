@@ -52,6 +52,7 @@ public class Html2MhtService {
           //生成Img文件
           String domId=String.valueOf(iterator.next());
           String imgStr=imgInfoMap.get(domId);
+          System.out.println("----");
           imgFileName = createImage(imgStr, cu.getJavaPath(osPath));
           //替换dom
           docStr = replaceIdByImg(docStr, domId, imgFileName,cu.getJavaPath(osPath));

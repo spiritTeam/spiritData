@@ -10,7 +10,7 @@
   <form action="">
     <input type="button" onclick="saveToMht();" value="点击保存成mht文件">
   </form>
-  <iframe id="briefIframe" name="briefIframe" height="99%" width="100%" scrolling="auto"  src="cc.jsp"></iframe>
+  <iframe id="briefIframe" name="briefIframe" height="99%" width="100%" scrolling="auto"  src="<%=path %>/demo/Rd/resultRd.jsp"></iframe>
 </body>
 <script type="text/javascript">
 //jquery获取iframe中所有dom
@@ -21,6 +21,7 @@ function getIframeDoms(){
 }
 function saveToMht(){
 	getIframeDoms();
+	alert("1111");
 	$(iframeDoms).find("#imgInfoForm").submit();
 }
 </script>

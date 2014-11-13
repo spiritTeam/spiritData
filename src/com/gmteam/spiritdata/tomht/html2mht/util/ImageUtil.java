@@ -82,7 +82,7 @@ public class ImageUtil {
             out.write(b);
             out.flush();
             out.close();
-            return "/bf/"+BriefConstants.HTML_PATH+fileName+".jpg";
+            return "/sa/"+BriefConstants.HTML_PATH+fileName+".jpg";
         } catch (Exception e) {
             e.printStackTrace();
             return "";

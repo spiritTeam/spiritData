@@ -10,7 +10,7 @@
 <html>
 <head>
 <title>简报模板(学年评定)</title>
-<script type="text/javascript" src="<%=path%>/resources/plugins/jquery/jquery1.83/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="<%=path%>/resources/plugins/jquery/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/jqplot/jquery.jqplot.min.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/jqplot/excanvas.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/jqplot/excanvas.min.js"></script>

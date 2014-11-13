@@ -14,7 +14,7 @@
   <link type="text/css" rel="stylesheet" href="<%=path %>/resources/plugins/jqplot/shCoreDefault.css"/>
   <link type="text/css" rel="stylesheet" href="<%=path %>/resources/plugins/jqplot/shThemejqPlot.css"/>
   <!-- jqplot2imgjs -->
-  <script type="text/javascript" src="<%=path %>/resources/js/brief/brief.jqplotToImg.js"></script>
+  <script type="text/javascript" src="<%=path %>/resources/js/brief.jqplotToImg.js"></script>
   <style type="text/css">
   .jqplot{
     height:300px; width:500px; border:1 solid blue;
@@ -144,7 +144,6 @@ function initForm(){
  */
 function initImg(){
 	jqplotDoms = $(".jqplot");
-	alert(jqplotDoms.length);
 	if(jqplotDoms.length>0){
 		for (var i=0;i<jqplotDoms.length;i++) {
 	    var jqpoltDom=$(jqplotDoms[i]);
