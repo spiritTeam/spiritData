@@ -7,7 +7,7 @@
   
   <!-- 配置编码格式，与eclpse的IDE环境编码格式匹配 -->
   <properties>
-     <build.webProjectDir>D:/workIDE/projects/SpiritAnalysis</build.webProjectDir>
+     <build.webProjectDir>D:/Users/admi/git/SpiritAnalysis</build.webProjectDir>
   </properties>
   <parent>
     <groupId>team.gm</groupId>
@@ -21,12 +21,7 @@
     2、org.apache.httpcomponents
     3、org.apache.httpcomponents
     4、jstl
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.3.2</version>
-    </dependency>
-    <dependency>
+     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcomponents-core</artifactId>
       <version>4.2.5</version>
@@ -36,11 +31,32 @@
       <artifactId>httpcomponents-client</artifactId>
       <version>4.2.6</version>
     </dependency>
+    -->
+    <dependency>
+	    <groupId>org.htmlparser</groupId>
+	    <artifactId>thumbelina</artifactId>
+	    <version>2.1</version>
+	   </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.3.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.3.6</version>
+    </dependency>
     <dependency>
       <groupId>jstl</groupId>
       <artifactId>jstl</artifactId>
       <version>1.2</version>
-    </dependency>-->
+    </dependency>
     <!-- <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
