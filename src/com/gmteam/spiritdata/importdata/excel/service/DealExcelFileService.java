@@ -2,9 +2,13 @@ package com.gmteam.spiritdata.importdata.excel.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -17,6 +21,7 @@ import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetTableInfo;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.util.PoiParseUtils;
+import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
@@ -37,6 +42,8 @@ public class DealExcelFileService {
     MdQuotaService mdQutotaService;
     @Resource
     MdKeyService mdKeyService ;
+    @Resource
+    DataSource dataSource ;
 
     /**
      * 处理Excel文件
@@ -116,7 +123,7 @@ public class DealExcelFileService {
                         }
                     }
                 } catch(Exception e) {
-                    // TODO 记录日志 
+                    // TODO 记录日志
                     e.printStackTrace();
                 }
             }
@@ -149,8 +156,24 @@ public class DealExcelFileService {
      * @param sysMm 元数据信息（已在系统注册过的）
      * @param tempTableName 临时表名称
      */
-    private void saveDataToTempTab(SheetTableInfo em, MetadataModel sysMm, String tempTableName) {
+    private void saveDataToTempTab(SheetTableInfo sti, MetadataModel sysMm, String tempTableName) {
+        String insertSql = "";
+
+        for (MetadataColumn mc: sysMm.getColumnList()) {
+        }
         
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
+            try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
+            try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
+        }
     }
 
     /*
@@ -158,7 +181,17 @@ public class DealExcelFileService {
      * @param em 从Excel中分析出来的元数据信息，注意，这里包括sheet信息
      * @param sysMm 元数据信息（已在系统注册过的），这其中包括积累表信息
      */
-    private void saveDataToAccumulationTab(SheetTableInfo em, MetadataModel sysMm) {
-        
+    private void saveDataToAccumulationTab(SheetTableInfo sti, MetadataModel sysMm) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
+            try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
+            try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
+        }
     }
 }

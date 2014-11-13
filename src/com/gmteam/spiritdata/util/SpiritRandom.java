@@ -8,13 +8,13 @@ import org.apache.log4j.Logger;
 
 /**
  * 随机数生成器。
- * 他能实现在一个自然数范围内(n~m)，随机挑选k个不重复的有用随机数的过程。
+ * 他能实现在一个整数范围内[n~m]（闭区间），随机挑选k个不重复的有用随机数的过程。
  * 注意：
- * 1-这个过程不是一次生成的，可以随用随生成。
- * 2-k个有用的随机数是指如下简单场景：list[1..100]中，存有0到30个自然数，从中随机取出10个非0的自然数。
- *   复杂的场景可能是，100万行记录的数据库表，其中有些行不符合要求，随机从中取出100行符合要求的数据。
+ * 1-这个过程不是一次生成的，是随用随生成。
+ * 2-k个有用的随机数是指如下场景：简单情况，list[1..100]中，存有0到30个自然数，从中随机取出10个非0的自然数。
+ *   复杂场景可能是，100万行记录的数据库表，其中有些行不符合要求，随机从中取出100行符合要求的数据。
  * 
- * 若k>=m-n则范围内的所有自然数都会被取到
+ * 若k>=m-n则范围内的所有数都会被取到
  * @author wh
  */
 public class SpiritRandom {
@@ -38,13 +38,8 @@ public class SpiritRandom {
     public int getRandomSize() {
         return randomSize;
     }
-    //随机缓存大小上限的默认值
+    //随机缓存大小，默认值
     private int _defaultRandomCachSize = 100;
-    private void caculateDefaultRandomCachSize() {
-        //计算范围的1/10
-        int _rangeCount = (this.endNum-this.beginNum+1)/10;
-        _defaultRandomCachSize = (_rangeCount<_defaultRandomCachSize)?_rangeCount:_defaultRandomCachSize;
-    }
     //随机数缓存大小
     private int randomCachSize = -1;
 
@@ -148,30 +143,6 @@ public class SpiritRandom {
     }
 
     /**
-     * 初始化随机数构造器
-     * @throws Exception
-     */
-    public void init() throws Exception {
-        if (beginNum==-1) throw new Exception("随机数范围下限未设置");
-        if (endNum==-1) throw new Exception("随机数范围上限未设置");
-        if (randomSize==-1) throw new Exception("随机数获取个数未设置");
-        if (isUsed()) throw new Exception("随机数生成器正在使用，不能初始化");
-
-        _rangeSize = (endNum-beginNum)+1;
-        _remainSize = _rangeSize;
-        _isUsed = false;
-        _currentRandom = null;
-        _randomCache = null;
-        _usedRandom = null;
-        _assistList = null;
-        _r1 = new Random();
-        _r2 = new Random();
-        caculateDefaultRandomCachSize();
-
-        buildRandamCache();
-    }
-
-    /**
      * 设置缓存大小
      */
     public void setRandamCachSize(int randomCachSize) throws Exception {
@@ -193,8 +164,8 @@ public class SpiritRandom {
      * @return
      */
     public int getRandamCacheSetSize() {
-        
-        return _randomCache==null?0:_randomCache.size();
+        if (this.randomCachSize!=-1) return this.randomCachSize;
+        else return _defaultRandomCachSize;
     }
 
     /**
@@ -208,7 +179,7 @@ public class SpiritRandom {
             if (_usedRandom!=null&&_usedRandom.size()==randomSize) throw new IndexOutOfBoundsException("有用随机数已经取到了上限["+randomSize+"]");
         }
         if (_randomCache==null||_randomCache.size()==0) buildRandamCache();
-        if (_randomCache.size()==1) _currentRandom = _randomCache.remove(0);
+        _currentRandom = _randomCache.remove(0);
         _remainSize--;
         _isUsed = true; //已经使用
         return _currentRandom;
@@ -264,6 +235,36 @@ public class SpiritRandom {
 
     //================以下为私有方法
     /*
+     * 初始化随机数构造器
+     * @throws Exception
+     */
+    private void init() throws Exception {
+        if (beginNum==-1) throw new Exception("随机数范围下限未设置");
+        if (endNum==-1) throw new Exception("随机数范围上限未设置");
+        if (randomSize==-1) throw new Exception("随机数获取个数未设置");
+        if (isUsed()) throw new Exception("随机数生成器正在使用，不能初始化");
+
+        _rangeSize = (endNum-beginNum)+1;
+        _remainSize = _rangeSize;
+        _isUsed = false;
+        _currentRandom = null;
+        _randomCache = null;
+        _usedRandom = null;
+        _assistList = null;
+        _r1 = new Random();
+        _r2 = new Random();
+        if (this.randomCachSize==-1) caculateDefaultRandomCachSize();
+
+        logger.info("初始化成功：数据范围为["+this.beginNum+".."+this.endNum+"],随机数个数为{"+this.randomSize+"},随机数缓存大小为{"+this.getRandamCacheSetSize()+"}");
+        buildRandamCache();
+    }
+    private void caculateDefaultRandomCachSize() {
+        //计算范围的1/10
+        _defaultRandomCachSize = ((this._rangeSize/10)<_defaultRandomCachSize)?(this._rangeSize/10):_defaultRandomCachSize;
+        if (_defaultRandomCachSize==0) _defaultRandomCachSize=this._rangeSize;
+    }
+
+    /*
      * 随机数生成器实例是否正在使用
      * @return 正在使用true，否则false
      */
@@ -280,7 +281,7 @@ public class SpiritRandom {
 
         List<int[]> l;
         int[] range;
-
+        int cacheSize = this.getRandamCacheSetSize();
         do {
             if (_assistList==null) {
                 _assistList = new ArrayList<int[]>();
@@ -294,7 +295,7 @@ public class SpiritRandom {
                     else _assistList.add(l.get(i));
                 }
             } else {
-                int index = SpiritRandom.getRandom(this._r2, 0, _assistList.size());
+                int index = SpiritRandom.getRandom(this._r2, 0, _assistList.size()-1);
                 range= _assistList.remove(index);
                 l = getRandom(range);
 
@@ -303,7 +304,7 @@ public class SpiritRandom {
                     else _assistList.add(l.get(i));
                 }
             }
-        } while(_randomCache.size()<this.randomCachSize);
+        } while(_randomCache.size()<cacheSize);
     }
 
     /*
@@ -318,18 +319,19 @@ public class SpiritRandom {
         
         int[] random={newR};
         ret.add(random);
-
-        if (newR==b) {
-            int[] retRang1 = {b+1, e};
-            ret.add(retRang1);
-        } else if (newR==e) {
-            int[] retRang2 = {b, e-1};
-            ret.add(retRang2);
-        } else {
-            int[] retRang1 = {b, newR-1};
-            ret.add(retRang1);
-            int[] retRang2 = {newR+1, e};
-            ret.add(retRang2);
+        if (b!=e) {
+            if (newR==b) {
+                int[] retRang1 = {b+1, e};
+                ret.add(retRang1);
+            } else if (newR==e) {
+                int[] retRang2 = {b, e-1};
+                ret.add(retRang2);
+            } else {
+                int[] retRang1 = {b, newR-1};
+                ret.add(retRang1);
+                int[] retRang2 = {newR+1, e};
+                ret.add(retRang2);
+            }
         }
         return ret;
     }
@@ -355,12 +357,5 @@ public class SpiritRandom {
             ret=f.intValue();
         }
         return ret;
-    }
-
-    public static void main(String[] args) throws Exception {
-        Random r = new Random();
-        SpiritRandom sr = new SpiritRandom(1, 100, 10);
-        int a = SpiritRandom.getRandom(r, 1, 100);
-        System.out.println(a);
     }
 }
