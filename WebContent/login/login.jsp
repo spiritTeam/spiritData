@@ -98,6 +98,7 @@ function checkStr(str){
   }       
 }
 function register(){
+	alert("<%=path%>/login/register.jsp");
 	window.location.href="<%=path%>/login/register.jsp";
 }
 function refresh(obj) {

@@ -37,7 +37,7 @@ public abstract class ExcelConstants {
     /**比重常量*/
     public final static double WEIGHT_OF_DATATYPE = 0.8d;
 
-    /**采样临界行，总行数大于此行数，则进行采样抽取*/
+    /**采样临界行，总行数大于此行数，则进行采样抽取，同时也是随机采样样本的个数*/
     public final static int SAMPLING_CRITICAL_COUNT = 200;
 
     /**顺序采样临界行，大于此行数，则进行采样抽取*/

@@ -56,7 +56,7 @@ public class SheetInfo extends BaseObject {
      * 新增元数据信息。
      * @param mm 元数据信息
      */
-    public void addExcelTableInfo(SheetTableInfo sti) {
+    public void addSheetTableInfo(SheetTableInfo sti) {
         if (this.stiList==null) this.stiList = new ArrayList<SheetTableInfo>();
         this.stiList.add(sti);
     }
