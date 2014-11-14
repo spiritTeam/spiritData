@@ -79,7 +79,7 @@ public class PoiParseUtils {
         List<Integer> numList = new ArrayList<Integer>();
         int perhapsNum = -1;//表头和数据之间可能的分割行号
         int splitRowNum = -1;//表头和数据的分割行号
-        for (int i=firstRowNum; i<rows; i++) {
+        for (int i=firstRowNum; i<=rows; i++) {
             //读取一行，并缓存
             rowData = readOneRow(i);
             if (rowData!=null&&!isEmptyRow(rowData)/*放弃空行*/) {
@@ -100,12 +100,12 @@ public class PoiParseUtils {
                 //再多判断一行
                 perhapsSplitRow = catchRows.get(numList.get(numList.size()-3));
                 lastRow = catchRows.get(numList.get(numList.size()-1));
-                if (!compareSameColumn2Row(perhapsSplitRow, lastRow)) splitRowNum=perhapsNum;
-                else perhapsNum=-1;
+                if (!compareSameColumn2Row(perhapsSplitRow, lastRow)) perhapsNum=-1;
+                else splitRowNum=perhapsNum;
             }
             if (perhapsNum!=-1&&splitRowNum!=-1) break;//找到了分割行号
         }
-        if (splitRowNum!=-1) {//未找到表头，无法进行元数据分析
+        if (splitRowNum==-1) {//未找到表头，无法进行元数据分析
             //TODO 记录日志
             return;
         }
@@ -118,7 +118,7 @@ public class PoiParseUtils {
         _colM = rowData.get(rowData.size()-1);
         oneSti.setEndX((Integer)_colM.get("firstCol"));
         oneSti.setBeginY(splitRowNum+1);
-        oneSti.setEndY(rows-1);
+        oneSti.setEndY(rows);
         oneSti.setSheetInfo(sheetInfo);
         oneSti.dataStructureAnalMap= new HashMap<String, Object>();
         sheetInfo.addSheetTableInfo(oneSti);
@@ -128,11 +128,11 @@ public class PoiParseUtils {
         if (sheetInfo.getStiList()==null||sheetInfo.getStiList().size()==0) return; //没有任何表结构数据不进行处理
 
         if (sheetInfo.getStiList().size()==1) {
-            _analSheetMetadata(sheetInfo.getStiList().get(0));
+            _analSheetMetadata(sheetInfo.getStiList().get(0), numList);
         } else { //用多个线程处理
             cleanThreadEnd();
             for (int i=0; i<sheetInfo.getStiList().size(); i++) {
-                Thred_anay_MetadataTableInfo thread_a_m = new Thred_anay_MetadataTableInfo(sheetInfo.getStiList().get(i), this);
+                Thred_anay_MetadataTableInfo thread_a_m = new Thred_anay_MetadataTableInfo(sheetInfo.getStiList().get(i), this, numList);
                 Thread t = new Thread(thread_a_m);
                 t.start();
             }
@@ -143,13 +143,15 @@ public class PoiParseUtils {
         }
     }
 
-    //===================以下为可功能化的分析方法以及线程处理的相关函数，若一个sheet只能分析出一个表结构区域，则线程无用
+    //===================以下为可功能化的分析方法以及线程处理的相关函数
+    //若一个sheet只能分析出一个表结构区域，则线程无用
     /*
      * 针对某一表结构区域进行分析，包括表头分析
      * @param sti Sheet中的表结构区域信息
+     * @param numList 行号记录
      * @throws Exception
      */
-    protected void _analSheetMetadata(SheetTableInfo sti) throws Exception {
+    protected void _analSheetMetadata(SheetTableInfo sti, List<Integer> numList) throws Exception {
         sti.cleanThreadEnd();
         try {
             //得到表头信息
@@ -168,8 +170,8 @@ public class PoiParseUtils {
 
                     if (_mergedCellM!=null) _cellMap = _mergedCellM;
                     titleCol.put("title", ((Map<String, Object>)_cellMap.get("nativeData")).get("value"));//标题
-                    titleCol.put("firstCol", (Map<String, Object>)_cellMap.get("firstCol"));//开始列
-                    titleCol.put("lastCol", (Map<String, Object>)_cellMap.get("lastCol"));//结束列
+                    titleCol.put("firstCol", _cellMap.get("firstCol"));//开始列
+                    titleCol.put("lastCol", _cellMap.get("lastCol"));//结束列
                     titleCol.put("parentTitle", null);//目前不分析这部分
 
                     titleInfo.add(titleCol);
@@ -186,24 +188,31 @@ public class PoiParseUtils {
                 //读取一行，并处理
                 rowData = readOneRow(i);
                 boolean isDeal = dealOneRowData4DataStructureAnal(rowData, sti, i);
-                if (isDeal) _count++;
+                if (isDeal) {
+                    _count++;
+                    numList.add(i);
+                }
                 if (_count>ExcelConstants.LIMIT_SEQUENCE_COUNT&&_flag) break;
             }
             if (i==sti.getEndY()) return; //已经处理完了
 
             //随机采样
-            SpiritRandom random = new SpiritRandom(i, sti.getEndY(), ExcelConstants.SAMPLING_CRITICAL_COUNT-_count);
+            SpiritRandom random = new SpiritRandom(i, sti.getEndY(), ExcelConstants.SAMPLING_CRITICAL_COUNT-ExcelConstants.LIMIT_SEQUENCE_COUNT);
             do {//随机读取一行，并处理
                 i = random.getNextRandom();
                 rowData = readOneRow(i);
                 boolean isDeal = dealOneRowData4DataStructureAnal(rowData, sti, i);
-                if (isDeal) random.setCurrentRandomUsed();
+                if (isDeal) {
+                    random.setCurrentRandomUsed();
+                    numList.add(i);
+                }
             } while (!random.isComplete());
         } finally {
             sti.caculateMetadataModel();
             sti.setThreadEnd();
         }
     }
+
     /*
      * 为数据结构分析处理一航数据，若进行了处理，返回true，否则返回false
      * @param rowData 行数据
@@ -220,11 +229,15 @@ public class PoiParseUtils {
                         Map<String, Object> _cellMap = _rowData.get(j);
                         Map<String, Object> titleColumnMap = sti.getTitleInfo().get(j);
                         Map<Integer, Object> colAnalData = (Map<Integer, Object>)sti.dataStructureAnalMap.get((String)titleColumnMap.get("title"));
+                        String titleName = (String)titleColumnMap.get("title");
                         if (colAnalData==null) {
                             colAnalData = new HashMap<Integer, Object>();
-                            sti.dataStructureAnalMap.put((String)titleColumnMap.get("title"), colAnalData);
+                            sti.dataStructureAnalMap.put(titleName, colAnalData);
                         }
-                        int dType = (Integer)((Map<String, Object>)_cellMap.get("trandData")).get("dType");
+                        int dType = (Integer)((Map<String, Object>)_cellMap.get("transData")).get("dType");
+                        if (titleName.indexOf("号")!=-1||titleName.indexOf("证")!=-1||titleName.indexOf("码")!=-1) {
+                            dType = (Integer)((Map<String, Object>)_cellMap.get("nativeData")).get("dType");
+                        }
                         Map<String, Object> colDtypeAnalData = (Map<String, Object>)colAnalData.get(dType);
                         if (colDtypeAnalData==null) {
                             colDtypeAnalData = new HashMap<String, Object>();
@@ -241,6 +254,7 @@ public class PoiParseUtils {
                 }
             }
         } catch(Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -267,12 +281,12 @@ public class PoiParseUtils {
     }
     //===================以上为可功能化的分析方法以及线程处理的相关函数
 
-    /*
+    /**
      * 读取一行数据
      * @param rowNum 行号
      * @return 标题的列表，每个元素是一个map包括{"name":"姓名", "firstRow":"范围-开始行", "lastRow":"范围-结束行", "firstCol":"范围-开始列", "lastCol":"范围-结束列", "dataType":"数据类型(此类型不经过转换)"}
      */
-    private List<Map<String, Object>> readOneRow(int rowNum) {
+    public List<Map<String, Object>> readOneRow(int rowNum) {
         Row rowData = this.sheet.getRow(rowNum); //行数据
         if (rowData==null) return null;
 
@@ -504,12 +518,12 @@ public class PoiParseUtils {
         return ret;
     }
 
-    /*
+    /**
      * 把现有的行转换为数据处理的行，主要是处理合并单元格，若行合并，则合并数据列，若列合并，看主合并单元格的数据类型，若是字符串则该列值同主单元格，若是数值，则为空
      * @param rowData 某一行数据
      * @return 数据处理的行信息
      */
-    private List<Map<String, Object>> convert2DataRow(List<Map<String, Object>> rowData) {
+    public List<Map<String, Object>> convert2DataRow(List<Map<String, Object>> rowData) {
         if (rowData==null||rowData.size()==0) return null;
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         Map<String, Object> mainMergedCellMap = null;
@@ -540,7 +554,7 @@ public class PoiParseUtils {
      * @return 若是相同的列，返回true，否则返回false
      */
     private boolean sameColumn(Map<String, Object> cell1, Map<String, Object> cell2) {
-        if ((Integer)cell1.get("firstRow")==(Integer)cell2.get("firstRow")&&(Integer)cell1.get("lastRow")==(Integer)cell2.get("lastRow")) return true;
+        if ((Integer)cell1.get("firstCol")==(Integer)cell2.get("firstCol")&&(Integer)cell1.get("lastCol")==(Integer)cell2.get("lastCol")) return true;
         return false;
     }
 
@@ -551,7 +565,7 @@ public class PoiParseUtils {
      * @return 若是相同的行，返回true，否则返回false
      */
     private boolean sameRow(Map<String, Object> cell1, Map<String, Object> cell2) {
-        if ((Integer)cell1.get("firstCol")==(Integer)cell2.get("firstCol")&&(Integer)cell1.get("lastCol")==(Integer)cell2.get("lastCol")) return true;
+        if ((Integer)cell1.get("firstRow")==(Integer)cell2.get("firstRow")&&(Integer)cell1.get("lastRow")==(Integer)cell2.get("lastRow")) return true;
         return false;
     }
 
@@ -592,12 +606,12 @@ public class PoiParseUtils {
     }
 
     //=============以下对行进行判断，包括行内，和行之间的关系
-    /*
+    /**
      * 判断某一行是否为空，其单元格内的信息都为空
      * @param rowList 行数据，以cellMap为list中的元素
      * @return
      */
-    private boolean isEmptyRow(List<Map<String, Object>> rowList) {
+    public boolean isEmptyRow(List<Map<String, Object>> rowList) {
         if (rowList==null||rowList.size()==0) return true;
         for(Map<String, Object> _cellMap: rowList) {
             Map<String, Object> nativeData = (Map<String, Object>)_cellMap.get("nativeData");
@@ -659,6 +673,32 @@ public class PoiParseUtils {
         }
         return true;
     }
+
+    /**
+     * 找到匹配的列表头信息
+     * @param cell 单元格信息
+     * @param sti Sheet中的表结构区域信息
+     * @return 匹配的列表头信息
+     */
+    public Map<String, Object> findMatchTitle(Map<String, Object> cellMap, SheetTableInfo sti) {
+        if (sti==null||sti.getTitleInfo()==null||sti.getTitleInfo().size()==0) throw new IllegalArgumentException("Sheet中的表结构区域信息必须设置，且表头信息不能为空");
+        if (this.getSheetInfo()==null||this.getSheetInfo().getStiList()==null) return null;
+        else {
+            boolean isMate = false;
+            for (SheetTableInfo _sti: this.getSheetInfo().getStiList()) {
+                if (_sti.equals(sti)) {
+                    isMate=true;
+                    break;
+                }
+            }
+            if (!isMate) throw new IllegalArgumentException("参数：sti(表结构区域信息)必须与本解析器表结构区域信息列表相匹配");
+        }
+        for (Map<String, Object> titleCol: sti.getTitleInfo()) {
+            if ((Integer)titleCol.get("firstCol")==(Integer)cellMap.get("firstCol")) return titleCol;
+        }
+
+        return null;
+    }
 }
 
 /**
@@ -668,16 +708,18 @@ public class PoiParseUtils {
 class Thred_anay_MetadataTableInfo implements Runnable {
     private PoiParseUtils caller;
     private SheetTableInfo _anayData;
+    private List<Integer> numList;
 
-    public Thred_anay_MetadataTableInfo(SheetTableInfo anayData, PoiParseUtils caller) {
+    public Thred_anay_MetadataTableInfo(SheetTableInfo anayData, PoiParseUtils caller, List<Integer> numList) {
         this.caller = caller;
         this._anayData = anayData;
+        this.numList = numList;
     }
 
     @Override
     public void run() {
         try {
-            this.caller._analSheetMetadata(_anayData);
+            this.caller._analSheetMetadata(_anayData, this.numList);
         } catch(Exception e) {
             e.printStackTrace();
         }

@@ -1,17 +1,17 @@
-﻿/**001 PLAT_USER（用户）*/
+/**001 PLAT_USER（用户）*/
 DROP TABLE IF EXISTS plat_user;
 ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='用户表';
 CREATE TABLE `plat_user` (
-  id                varchar(36)     NOT NULL          COMMENT 'uuid（用户id）',
-  loginName         varchar(15)     NOT NULL          COMMENT '登录账号',
-  userName          varchar(100)    NOT NULL          COMMENT '登录账号',
-  password          varchar(30)     DEFAULT NULL,
-  mailAdress        varchar(100)    NOT NULL          COMMENT '邮箱(非空为一索引)',
-  nickName          varchar(100)    DEFAULT NULL      COMMENT '昵称：可空',
-  userType          int(1) unsigned  NOT NULL         COMMENT '用户分类：1自然人用户，2机构用户',
-  descn             varchar(2000)   DEFAULT NULL      COMMENT '备注',
-  cTime             timestamp       NOT NULL DEFAULT  CURRENT_TIMESTAMP COMMENT '创建时间:创建时的系统时间',
-  lmTime            timestamp       NOT NULL DEFAULT  CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改：每次更新的时间',
+  id                varchar(36)     NOT NULL              COMMENT 'uuid（用户id）',
+  loginName         varchar(15)     NOT NULL              COMMENT '登录账号',
+  userName          varchar(100)             DEFAULT NULL COMMENT '登录账号',
+  password          varchar(30)              DEFAULT NULL,
+  mailAdress        varchar(100)    NOT NULL              COMMENT '邮箱(非空为一索引)',
+  nickName          varchar(100)             DEFAULT NULL COMMENT '昵称：可空',
+  userType          int(1) unsigned NOT NULL              COMMENT '用户分类：1自然人用户，2机构用户',
+  descn             varchar(2000)            DEFAULT NULL COMMENT '备注',
+  cTime             timestamp       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间:创建时的系统时间',
+  lmTime            timestamp       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改：每次更新的时间',
   userState         int(1)          NOT NULL DEFAULT '0' COMMENT '用户状态，0-2,0代表未激活的用户，1代表已激活邮箱的活跃用户，2代表已激活的非活跃用户',
   validataSequence varchar(36)      DEFAULT NULL      COMMENT '验证信息，用于存储验证邮箱时的验证码，uuid',
   PRIMARY KEY (id),
@@ -65,12 +65,12 @@ ENGINE=InnoDB DEFAULT CHARSET=gbk COMMENT='元数据语义表';
 /**005 元数据表对照[SA_MD_TABMAP_ORG]*/
 DROP TABLE IF EXISTS sa_md_tabmap_org;
 CREATE TABLE  sa_md_tabmap_org (
-  id         varchar(36)     NOT NULL             COMMENT 'uuid(对照表id)',
-  ownerId    varchar(36)     NOT NULL             COMMENT '用户Id或者sessionId',
-  tmId       varchar(36)     NOT NULL             COMMENT '元数据模式Id(表模式ID)',
-  tableName  varchar(40)     NOT NULL             COMMENT '表名称（此名称与业务数据表名称对应）',
-  tableType  int(1) unsigned NOT NULL DEFAULT '1' COMMENT '表类型(1-积累表。2-临时表)',
-  tableDescn varchar(400)                         COMMENT '备注',
+  id         varchar(36)     NOT NULL              COMMENT 'uuid(对照表id)',
+  ownerId    varchar(36)     NOT NULL              COMMENT '用户Id或者sessionId',
+  tmId       varchar(36)     NOT NULL              COMMENT '元数据模式Id(表模式ID)',
+  tableName  varchar(40)     NOT NULL              COMMENT '表名称（此名称与业务数据表名称对应）',
+  tableType  int(1) unsigned NOT NULL DEFAULT '1'  COMMENT '表类型(1-积累表。2-临时表)',
+  tableDescn varchar(400)             DEFAULT NULL COMMENT '备注',
   cTime      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时的系统时间',
   PRIMARY KEY (id)
 )

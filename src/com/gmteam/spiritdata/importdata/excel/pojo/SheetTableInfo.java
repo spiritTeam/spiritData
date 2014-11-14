@@ -27,6 +27,7 @@ public class SheetTableInfo extends BaseObject{
     private List<Map<String, Object>> titleInfo;
     private SheetInfo sheetInfo; //所在的sheet信息
     private MetadataModel mm; //对应的元数据模式
+
     /**
      * 分析数据结构的map,其中key和columnTitle相互对应
      * 值是一个Map，为key=数据类型，value=Map{有值计数，有值行号}
@@ -106,11 +107,14 @@ public class SheetTableInfo extends BaseObject{
             //计算总数
             allCount = 0;
             for (Integer dType: _colDataTypeAnalData.keySet()) {
-                allCount += (Integer)((Map<String, Object>)_colDataTypeAnalData.get(dType)).get("dCount");
+                if (dType!=ExcelConstants.DATA_TYPE_ERROR&&dType!=ExcelConstants.DATA_TYPE_NULL&&dType!=ExcelConstants.DATA_TYPE_FORMULA) {
+                    allCount += (Integer)((Map<String, Object>)_colDataTypeAnalData.get(dType)).get("dCount");
+                }
             }
             double b = Double.valueOf(allCount+"");
             int numberCount = 0;
             for (Integer dType: _colDataTypeAnalData.keySet()) {
+                if (dType==ExcelConstants.DATA_TYPE_ERROR||dType==ExcelConstants.DATA_TYPE_NULL||dType==ExcelConstants.DATA_TYPE_FORMULA) continue;
                 int thisCount = (Integer)((Map<String, Object>)_colDataTypeAnalData.get(dType)).get("dCount");
                 double a = Double.valueOf(thisCount+"");
                 if (a/b>=ExcelConstants.WEIGHT_OF_DATATYPE) {
@@ -127,6 +131,7 @@ public class SheetTableInfo extends BaseObject{
                 MetadataColumn mc = new MetadataColumn();
                 mc.setTitleName(columnTitle);
                 mc.setColumnType(ExcelConstants.convert2DataTypeString(_thisColType));
+                mc.setColumnIndex((Integer)tc.get("firstCol"));
                 mm.addColumn(mc);
             }
         }

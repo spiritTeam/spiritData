@@ -86,7 +86,8 @@ function checkStr(str){
   }       
 }
 function register(){
-	window.location.href="http://localhost:8080/sa/login/register.jsp";
+	alert("<%=path%>/login/register.jsp");
+	window.location.href="<%=path%>/login/register.jsp";
 }
 function refresh(obj) {
   obj.src = "<%=path%>/getValidateCode.do?"+Math.random();

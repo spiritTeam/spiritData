@@ -254,6 +254,7 @@ function loginF() {
   };
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
     success: function(json) {
+    	alert(allFields(json));
       if (json.type==1) {
         alert("loginOk");
         return;
