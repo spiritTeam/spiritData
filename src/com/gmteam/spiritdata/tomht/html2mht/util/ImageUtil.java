@@ -6,13 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 /**
  * 处理图片，
  * @author mht
- *
  */
 public class ImageUtil {
     public static String GetImageStr() {
