@@ -12,7 +12,6 @@ import sun.misc.BASE64Encoder;
 /**
  * 处理图片，
  * @author mht
- *
  */
 public class ImageUtil {
     public static String GetImageStr() {

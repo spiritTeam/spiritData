@@ -10,14 +10,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>login</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
-<link rel="stylesheet" type="text/css" href="<%=path%>/login/login.css" />
+<link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
 </head>
 <body>
 <center>
- <div style="border:1px solid #ABCDEF;width: 800px;height: 500px;">
-  <div style="float: left;border:1px solid #ABCDEF;width: 600px;height: 500px;">
-  <div style="margin-top: 50px;"></div>
-    <form action="">
+ <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
+  <div style="float: left;border:1px solid #ABCDEF;width: 450px;height: 500px;">
+    <div style="margin-top: 25px;"><span >账号密码登录</span></div>
+    <form style="margin-top: 25px;" action="">
       <table width="430px;" >
         <tr>
           <td align="right"><span>账号&nbsp;&nbsp;</span></td>
@@ -34,22 +34,20 @@
                 onclick="onClick(password);" onBlur="validatePassword('password');" />
           </td>
         </tr>
-        <tr><td></td><td align="left"><div style="height: 25px;" id="passwordCheck"></div></td><td></td></tr>
+        <tr><td></td><td align="left"><div style="height: 30px;" id="passwordCheck"></div></td><td></td></tr>
         <tr>
           <td align="right"><span>验证码&nbsp;&nbsp;</span></td>
           <td width="180px;"><input style="width:200px;" id="checkCode" name="checkCode"  tabindex="3" type="text" value="请输入验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
-          <td align="left"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></td>
+          <td align="left"><div style="border: 1px solid  #999999;width: 80px;"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/getValidateCode.do"></div></td>
         </tr>
-        <tr><td></td><td align="left"><div style="height: 25px;" id="checkCodeCheck"></div></td><td></td><td></td></tr>
+        <tr><td></td><td align="left"><div style="height: 30px;" id="checkCodeCheck"></div></td><td></td><td></td></tr>
         <tr>
           <td colspan="2"></td><td></td><td></td>
         </tr>
       </table>
       <div><input type="button" value="登录" onclick="loginF()"  /><input type="button" value="注册" onclick="register();" /><input type="button" value="忘记密码" onclick="" /><input type="button" value="从新发送验证信息" onclick="activeAgain();" /></div>
     </form>
-  </div>
-  <div style="float: right;border:1px solid #ABCDEF;width: 196px;height: 500px;">
   </div>
  </div>
 </center>
@@ -86,23 +84,23 @@ function checkStr(str){
   }       
 }
 function register(){
-	window.location.href="http://localhost:8080/sa/login/register.jsp";
+	window.location.href="<%=path%>/login/register.jsp";
 }
 function refresh(obj) {
   obj.src = "<%=path%>/getValidateCode.do?"+Math.random();
 }
 function validateValidateCode(eleId){
   var ele = $('#'+eleId);
-  if(ele.val()==''||ele.val()==null){
-    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码不能为空!</span>');
+  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
+    $('#'+eleId+'Check').html('<img src="img/cross.png"><span style="font-size: 12px;color:red;">验证码不能为空!</span>');
     vcV = false;
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
-      $('#'+eleId+'Check').html('<img src="accept.png">');
+      $('#'+eleId+'Check').html('<img src="img/accept.png">');
       vcV = true;
     }else{
-      $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">验证码错误!</span>');
+      $('#'+eleId+'Check').html('<img src="img/cross.png"><span style="font-size: 12px;color:red;">验证码错误!</span>');
       vcV = false;
     }
   }
@@ -122,20 +120,20 @@ function verificationCheckCode(val){
 }
 function validatePassword(eleId){
 	var ele = $('#'+eleId);
-	if(ele.val()==''||ele.val()==null){
+	if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
 		psV = false;
-		$('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">密码为空!</span>');
+		$('#'+eleId+'Check').html('<img src="img/cross.png"><span style="font-size: 12px;color:red;">密码为空!</span>');
 	}else{
 		psV = true;
 	}
 }
 function validateLoginName(eleId){
   var ele = $('#'+eleId);
-  if(ele.val()==''||ele.val()==null){
-    $('#'+eleId+'Check').html('<img src="cross.png"><span style="font-size: 12px;color:red;">登录名不能为空!</span>');
+  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
+    $('#'+eleId+'Check').html('<img src="img/cross.png"><span style="font-size: 12px;color:red;">登录名不能为空!</span>');
     lnV = false;
   }else{
-    $('#'+eleId+'Check').html('<img src="accept.png">');
+    $('#'+eleId+'Check').html('<img src="img/accept.png">');
     lnV = true;
   }
 }

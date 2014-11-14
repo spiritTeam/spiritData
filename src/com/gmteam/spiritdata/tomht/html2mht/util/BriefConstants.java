@@ -2,7 +2,6 @@ package com.gmteam.spiritdata.tomht.html2mht.util;
 /** 
  * @author 
  * @version  
- * 类说明 
  */
 public class BriefConstants {
     //-缓存常量------------------------------------------------------------------------

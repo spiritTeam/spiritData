@@ -141,12 +141,11 @@
   <div style="background-image:resources/images/waiting_circle.gif; width:85px; height:81px;"></div>
   <span style="font-weight:bold;" id="maskTitle">正在分析，请稍候...</span>
 </div>
-
 <!-- 头部:悬浮 -->
 <div id="topSegment">
-  <div>
-  <label for="loginName"><%=sid %>||登录名：</label><input type="text" id='loginName' tabindex="1"/><label for="password">密　码：</label><input type="password" id='password' tabindex="2"/>
-  <div id="commitButton" style="height:16px; width:16px; background-color:green;"></div>
+  <div style="float:right;">
+	  <!-- <label for="loginName"><%=sid %>||登录名：</label><input type="text" id='loginName' tabindex="1"/><label for="password">密　码：</label><input type="password" id='password' tabindex="2"/><div id="commitButton" style="height:16px; width:16px; background-color:green;"></div> -->
+	  <div ><%=sid %>||<span onclick="login();">登录</span></div>
   </div>
 </div>
 
@@ -570,9 +569,11 @@ function showDemo() {
     }
   }
 }
-
+function login(){
+	openSWin({"title":"欢迎登录", "url":"<%=path%>/login/login.jsp", "width":1000, "height":600, modal:true});
+}
 function showResult() {
-  //openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
+  openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
 }
 </script>
 </body>

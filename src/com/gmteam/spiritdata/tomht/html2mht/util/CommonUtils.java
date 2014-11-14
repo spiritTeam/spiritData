@@ -2,9 +2,9 @@ package com.gmteam.spiritdata.tomht.html2mht.util;
 
 import java.util.UUID;
 /** 
+ * 常用工具类，获得uuid,截取uuid
  * @author mht
  * @version  
- * 类说明 :常用工具类，获得uuid,截取uuid
  */
 public class CommonUtils {
     /**

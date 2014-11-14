@@ -12,9 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 /** 
+ *  用于分析数据，返回到显示页面
  * @author 
  * @version  
- * 类说明 用于分析数据，返回到显示页面
  */
 @Controller
 public class GetAnalysisDataController {

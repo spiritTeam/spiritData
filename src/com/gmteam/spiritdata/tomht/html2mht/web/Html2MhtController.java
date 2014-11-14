@@ -13,10 +13,9 @@ import com.gmteam.framework.core.cache.CacheEle;
 import com.gmteam.framework.core.cache.SystemCache;
 import com.gmteam.spiritdata.tomht.html2mht.service.Html2MhtService;
 /** 
+ * 这个controller用于吧jqplot保存成图片生成图片，
  * @author mht
  * @version  
- * 类说明 这个controller用于吧jqplot
- * 保存成图片生成图片，
  */
 @Controller
 public class Html2MhtController {

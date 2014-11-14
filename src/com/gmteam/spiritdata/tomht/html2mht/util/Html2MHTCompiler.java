@@ -44,7 +44,6 @@ import org.htmlparser.util.ParserException;
 /** 
  * @author 
  * @version  
- * 类说明 
  */
 public class Html2MHTCompiler {
     private URL strWeb = null; /**网页地址*/
