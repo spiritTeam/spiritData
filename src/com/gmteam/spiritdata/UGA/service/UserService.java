@@ -51,21 +51,25 @@ public class UserService implements UgaUserService {
     }
 
     public int insertUser(User user) {
+        int i=0;
         try {
-            return userDao.insert("insertUser", user);
+            userDao.insert("insertUser", user);
+            i=1;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
+        return i;
     }
 
     public int updateUser(User user) {
+        int i = 0;
         try {
-            return userDao.update("updateUser", user);
+            userDao.update("updateUser", user);
+            i=1;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
+        return i;
     }
 
 }

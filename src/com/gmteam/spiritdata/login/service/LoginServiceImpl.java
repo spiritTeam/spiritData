@@ -25,14 +25,19 @@ public class LoginServiceImpl implements LoginService {
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
         String requestCC = request.getParameter("checkCode");
-        requestCC = requestCC.toUpperCase();
         HttpSession session = request.getSession();
         String checkCode = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
-        if(requestCC.equals(checkCode)){
+        if(checkCode!=null&&checkCode!=""){
+            requestCC = requestCC.toUpperCase();
+            if(requestCC.equals(checkCode)){
+                retMap.put("success", "success");
+            }else{
+                retMap.put("retInfo", "验证码填写错误，请重新填写");
+            } 
+        }else{
             retMap.put("success", "success");
-            return retMap;
         }
-        return null;
+        return retMap;
     }
     @Resource
     private UserService userService;
@@ -44,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
         User u = (User)user;
         //==0,未发邮箱激活
         if(u.getUserState()==0){
-            retMap.put("retInfo", "您未通过邮箱激活账号,请转至邮箱激活,如果验证信息误删，请点击验证邮箱，我们将会从新发送一封验证邮件");
+            retMap.put("retInfo", "您未通过邮箱激活账号,请转至邮箱激活,如果验证信息误删，请点击验证邮箱，我们将会重新发送一封验证邮件");
         }else{
             retMap.put("success", "success");
         }
