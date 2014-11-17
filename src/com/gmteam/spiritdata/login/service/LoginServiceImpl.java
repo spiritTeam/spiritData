@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Map<String, Object> afterUserLoginOk(UgaUser user, HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
-        //changeOwnerId(request.getSession(), user.getUserId());
+        changeOwnerId(request.getSession(), user.getUserId());
         //激活邮箱
         User u = (User)user;
         //==0,未发邮箱激活

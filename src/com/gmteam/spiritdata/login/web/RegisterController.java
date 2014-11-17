@@ -39,14 +39,13 @@ public class RegisterController {
             }else{
                 String validatsaSequence = SequenceUUID.getPureUUID();
                 user.setValidataSequence(validatsaSequence);
-                String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
-                        + " http://localhost:8080/sa/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+                String url = "请前往以下地址激活账号\n"
+                        + " http://localhost:8080/sa/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
                 SendValidataUrlToMail svu = new SendValidataUrlToMail();
                 svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
                 userService.updateUser(user);
                 retMap.put("success", true);
                 retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请激活账号");
-                
             }
             return retMap;
         }
@@ -149,7 +148,7 @@ public class RegisterController {
         HttpSession session = request.getSession();
         String sessionCC = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
         String registerCC = request.getParameter("checkCode");
-        if(sessionCC==null||sessionCC!=""||registerCC==null||registerCC=="")return false;
+        if(sessionCC==null||sessionCC==""||registerCC==null||registerCC=="")return false;
         if(sessionCC.equals(registerCC.toUpperCase())){
             return true;
         }else{
