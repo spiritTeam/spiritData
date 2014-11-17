@@ -23,7 +23,7 @@ import com.gmteam.spiritdata.util.SequenceUUID;
 public class RegisterController {
     @Resource
     private UserService userService;
-    @RequestMapping("activeAgain.do")
+    @RequestMapping("login/activeAgain.do")
     public @ResponseBody Map<String,Object> sendAgain(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
@@ -51,30 +51,35 @@ public class RegisterController {
             return retMap;
         }
     }
-    @RequestMapping("activeUser.do")
+    @RequestMapping("login/activeUser.do")
     public @ResponseBody Map<String,Object> activeMail(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String authCode = request.getParameter("authCode");
         if(authCode==null){
             retMap.put("success", false);
-            retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
+            retMap.put("retInfo", "激活码不完整!请重新新点击激活链接或从登录页面再次发送激活邮件!");
         }
         String userId = authCode.substring(0,authCode.lastIndexOf("~"));
         String code = authCode.substring(authCode.lastIndexOf("~")+1);
         User user  = userService.getUserById(userId);
-        if(user.getUserState()==0){
-            if(user.getValidataSequence().equals(code)){
-                user.setUserState(1);
-                userService.updateUser(user);
-                retMap.put("success", true);
-                retMap.put("retInfo", "激活成功!");
+        if(user==null){
+            retMap.put("success", false);
+            retMap.put("retInfo", "该用户不存在!");
+        }else{
+            if(user.getUserState()==0){
+                if(user.getValidataSequence().equals(code)){
+                    user.setUserState(1);
+                    userService.updateUser(user);
+                    retMap.put("success", true);
+                    retMap.put("retInfo", "激活成功!");
+                }else{
+                    retMap.put("success", false);
+                    retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
+                }
             }else{
                 retMap.put("success", false);
-                retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
+                retMap.put("retInfo", "您的账号已经激活。");
             }
-        }else{
-            retMap.put("success", false);
-            retMap.put("retInfo", "您的账号已经激活。");
         }
         return retMap;
     }
@@ -85,7 +90,7 @@ public class RegisterController {
      * @throws ServletException
      * @throws IOException
      */
-    @RequestMapping("getValidateCode.do")
+    @RequestMapping("login/getValidateCode.do")
     public void getValidateCode(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
         response.setContentType("image/jpeg");//设置相应类型,告诉浏览器输出的内容为图片
         response.setHeader("Pragma", "No-cache");//设置响应头信息，告诉浏览器不要缓存此内容
@@ -105,7 +110,7 @@ public class RegisterController {
      * @throws ServletException
      * @throws IOException
      */
-    @RequestMapping("validateLoginName.do")
+    @RequestMapping("login/validateLoginName.do")
     public @ResponseBody boolean validateLoginName(HttpServletRequest request, HttpServletResponse response) {
         String loginName = request.getParameter("loginName");
         User user  = userService.getUserByLoginName(loginName);
@@ -122,7 +127,7 @@ public class RegisterController {
      * @throws ServletException
      * @throws IOException
      */
-    @RequestMapping("validateMail.do")
+    @RequestMapping("login/validateMail.do")
     public @ResponseBody boolean validateMail(HttpServletRequest request, HttpServletResponse response) {
         String mail = request.getParameter("mail");
         User user  = userService.getUserByMailAdress(mail);
@@ -139,11 +144,12 @@ public class RegisterController {
      * @throws ServletException
      * @throws IOException
      */
-    @RequestMapping("validateValidateCode.do")
+    @RequestMapping("login/validateValidateCode.do")
     public @ResponseBody boolean validateValidateCode(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         String sessionCC = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
         String registerCC = request.getParameter("checkCode");
+        if(sessionCC==null||sessionCC==""||registerCC==null||registerCC=="") return false;
         if(sessionCC.equals(registerCC.toUpperCase())){
             return true;
         }else{
@@ -155,7 +161,7 @@ public class RegisterController {
      * @param response
      * @return
      */
-    @RequestMapping("Register.do")
+    @RequestMapping("login/register.do")
     public @ResponseBody Map<String,Object> saveRegisterInfo(HttpServletRequest request, HttpServletResponse response) {
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
@@ -179,10 +185,16 @@ public class RegisterController {
                     + " http://localhost:8080/sa/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
             SendValidataUrlToMail svu = new SendValidataUrlToMail();
             svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
-            userService.updateUser(user);
-            retMap.put("success", true);
-            retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请激活账号");
-            return retMap;
+            int r = userService.updateUser(user);
+            if(r==1){
+                retMap.put("success", true);
+                retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请激活账号");
+                return retMap; 
+            }else{
+                retMap.put("success", false);
+                retMap.put("retInfo", "发送不成功，请重试");
+                return retMap; 
+            }
         }else{
             retMap.put("success", false);
             retMap.put("retInfo", "注册不成功，请重试");

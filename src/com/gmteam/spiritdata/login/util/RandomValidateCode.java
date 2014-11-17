@@ -17,8 +17,8 @@ public class RandomValidateCode {
     private String randString = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";//随机产生的字符串
     
     private int width = 80;//图片宽
-    private int height = 26;//图片高
-    private int lineSize = 40;//干扰线数量
+    private int height = 35;//图片高
+    private int lineSize = 38;//干扰线数量
     private int stringNum = 4;//随机产生字符数量
     //获得字体
     private Font getFont(){
@@ -70,7 +70,7 @@ public class RandomValidateCode {
         String rand = String.valueOf(getRandomString(random.nextInt(randString.length())));
         randomString +=rand;
         g.translate(random.nextInt(3), random.nextInt(3));
-        g.drawString(rand, 13*i, 16);
+        g.drawString(rand, 15*i, 20);
         return randomString;
     }
     // 绘制干扰线

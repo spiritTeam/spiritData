@@ -21,7 +21,6 @@ function getIframeDoms(){
 }
 function saveToMht(){
 	getIframeDoms();
-	alert("1111");
 	$(iframeDoms).find("#imgInfoForm").submit();
 }
 </script>

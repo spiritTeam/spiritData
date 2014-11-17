@@ -74,13 +74,14 @@ public class DealExcelFileService {
      */
     public void process(String fileName, HttpSession session) {
         FileAppender myLogAppender = new FileAppender();
-        File f = new File("c:\\test.log");
+        File f = new File("d:\\test.log");
         try {
-            f.createNewFile();
+            boolean b= f.createNewFile();
+            System.out.println(b);
         } catch(Exception e) {
-            
+            e.printStackTrace();
         }
-        myLogAppender.setFile("c:\\test.log");
+        myLogAppender.setFile("d:\\test.log");
         myLogAppender.activateOptions();
         logger.addAppender(myLogAppender);
         logger.info("abcd");

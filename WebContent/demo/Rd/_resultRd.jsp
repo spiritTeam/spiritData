@@ -12,6 +12,7 @@
 <meta http-equiv="pragma" content="no-cache"/>
 <meta http-equiv="expires" content="0"/>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
+<link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mySpiritUi/pageFrame.css"/>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.utils.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/js/mainPage.utils.js"></script>
@@ -21,9 +22,8 @@
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.pie.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.categories.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/Chart.min.js"></script>
-
-<link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mySpiritUi/pageFrame.css"/>
 <script type="text/javascript" src="<%=path %>/resources/js/brief.jqplotToImg.js"></script>
+<!-- 测试 -->
 <title>分析报告</title>
 </head>
 <style>
@@ -420,7 +420,7 @@ body {
             </tr>
           </thead>
         </table>
-        <form id="imgInfoForm" hidden="true" action="<%=path %>/getImage.do" method="post">
+        <form id="imgInfoForm" hidden="true" action="<%=path %>/getImage.do" method="post" onsubmit="initForm();">
 		      <input type="hidden" id="u1" value="" name="chartA1_2_a">
 		      <input type="hidden" id="u1" value="" name="chartA1_2_b">
 		      <input type="hidden" id="u1" value="" name="chartA1_2_c">
@@ -465,7 +465,6 @@ function initImg(){
     for (var i=0;i<jqplotDoms.length;i++) {
       var jqpoltDom=$(jqplotDoms[i]);
       var id = jqpoltDom.attr('id');
-      alert(id);
       var image = jqplotToImg($('#'+id));
       var arr=image.split(',');
       $("input[name='"+id+"']").val(arr[arr.length-1]);
@@ -906,7 +905,6 @@ $(function() {
   var myRadar = new Chart(document.getElementById("chartA4_1_a").getContext("2d")).Radar(radarChartData, {
     responsive: true
   });
-  initForm();
 });
 
 function detail1(value,row,index) {

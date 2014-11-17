@@ -14,7 +14,6 @@ import org.apache.http.util.EntityUtils;
 /** 
  * @author 
  * @version  
- * 类说明 
  */
 public class CharsetHandler implements ResponseHandler<String> {  
     private String charset;  

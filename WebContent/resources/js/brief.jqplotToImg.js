@@ -5,7 +5,8 @@ function jqplotToImg(obj) {
   var newCanvas = document.createElement("canvas");
   newCanvas.width = obj.find("canvas.jqplot-base-canvas").width()+20;
   newCanvas.height = obj.find("canvas.jqplot-base-canvas").height()+10;
-  var baseOffset = obj.find("canvas.jqplot-base-canvas").offset();
+  var baseOffset = "";
+  baseOffset = obj.find("canvas.jqplot-base-canvas").offset();
   // make white background for pasting
   var context = newCanvas.getContext("2d");
   context.fillStyle = "rgba(255,255,255,1)";
