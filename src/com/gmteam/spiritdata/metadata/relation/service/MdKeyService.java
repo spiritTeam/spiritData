@@ -165,7 +165,7 @@ public class MdKeyService {
                 try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
             }
         }
-        //！！！由于修改了元数据，所有要通知session，修改相关的信息
+        //TODO 由于修改了元数据，所有要通知session，修改相关的信息
         return ret;
     }
 
@@ -204,7 +204,7 @@ public class MdKeyService {
                 keyStr +="," + keys[i];
             }
         }
-        keyStr = keyStr.substring(1);
+        keyStr = keys==null?"":keyStr.substring(1);
         if (keys==null||keys[0].equals("")) return ;
         //看目前元数据积累表是否有主键，若有取出(注意这里是从关系型数据库的系统管理信息[metadata]中得到主键)
         String sumTableName = mm.getTableName();
@@ -301,7 +301,7 @@ public class MdKeyService {
             fis.read(b);
             analKey = mapper.readValue((new String(b)).getBytes("utf-8"), Map.class);
             String _code = (String)analKey.get("_code");
-            if (_code.equals("SD.TEAM-0001")) {
+            if (_code.equals("SD.TEAM.ANAL-0001")) {
                 Map<String, Object> _data = (Map<String, Object>)analKey.get("_DATA");
                 Map<String, Object> _temp = (Map<String, Object>)_data.get("_mdMId");
                 String tempStr = (String)_temp.get("value");

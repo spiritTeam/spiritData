@@ -20,7 +20,7 @@ public class MetadataColumn extends BaseObject {
     private String titleName; //列显示/标题名称，此名称为数据源中列的标题(中文/英文)
     private int columnIndex; //列顺序名称
     private String columnType; //列字段类型，目前可以为字符串[String]，数字型[Double(为兼容excel)]，日期型[timestamp]（类似数据库中字段的数据类型）
-    private int pkSign; //是否是主键，1=是；2=不是
+    private int pkSign; //是否是主键，0-不是主键,1-确定主键,2-不确定主键
     private Timestamp cTime; //记录创建时间
     //以上信息对应数据库中的信息
     private MetadataModel mdModel; //本列描述对应的元数据模式

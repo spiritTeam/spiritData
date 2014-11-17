@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -12,9 +13,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.gmteam.framework.util.DateUtils;
+import com.gmteam.framework.util.StringUtils;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetTableInfo;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
+import com.gmteam.spiritdata.importdata.excel.service.DealExcelFileService;
 import com.gmteam.spiritdata.util.SpiritRandom;
 
 /**
@@ -24,6 +27,8 @@ import com.gmteam.spiritdata.util.SpiritRandom;
 //TODO 目前此解释类，只完成了单表的解析，若一个sheet中包含多个表，则无法解析
 //TODO 目前此解释类，对表头只进行了一级处理，没有分析表头的结构
 public class PoiParseUtils {
+    Logger logger = Logger.getLogger(PoiParseUtils.class);
+
     private SheetInfo sheetInfo = null; //要解析的Sheet对象
     private Sheet sheet = null; //sheet对象
     protected List<CellRangeAddress> mergedCellList = null; //合并单元格列表
@@ -58,15 +63,23 @@ public class PoiParseUtils {
 
     /**
      * 分析sheet的元数据信息，并把分析的结果存入对象的sheetInfo对象中
+     * @param excelType excel文件类型
      * @throws InterruptedException 
      */
-    public void analSheetMetadata() throws InterruptedException, Exception {
+    public List<String> analSheetMetadata() throws InterruptedException, Exception {
+        List<String> logl = new ArrayList<String>();
         //首先分析表头
         int rows = this.sheet.getLastRowNum();
         int firstRowNum = this.sheet.getFirstRowNum();
 
-        if (rows==firstRowNum&&rows==0) return; //说明是空sheet
-        if (rows==firstRowNum) return; //只有一行数据，没有分析的价值
+        if (rows==firstRowNum&&rows==0) {//说明是空sheet
+            logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])为空，无法分析"));
+            return logl;
+        }
+        if (rows==firstRowNum) {//只有一行数据，没有分析的价值
+            logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])只有一行有效数据，不具备分析价值"));
+            return logl;
+        }
 
         Map<String, Object> _colM;
 
@@ -79,6 +92,7 @@ public class PoiParseUtils {
         List<Integer> numList = new ArrayList<Integer>();
         int perhapsNum = -1;//表头和数据之间可能的分割行号
         int splitRowNum = -1;//表头和数据的分割行号
+        logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])开始分析表头和数据的分割行"));
         for (int i=firstRowNum; i<=rows; i++) {
             //读取一行，并缓存
             rowData = readOneRow(i);
@@ -106,8 +120,8 @@ public class PoiParseUtils {
             if (perhapsNum!=-1&&splitRowNum!=-1) break;//找到了分割行号
         }
         if (splitRowNum==-1) {//未找到表头，无法进行元数据分析
-            //TODO 记录日志
-            return;
+            logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])无法分析出表头分割行。"));
+            return logl;
         }
         //得到表头信息
         rowData = readOneRow(splitRowNum);//表头最后一行信息
@@ -122,17 +136,25 @@ public class PoiParseUtils {
         oneSti.setSheetInfo(sheetInfo);
         oneSti.dataStructureAnalMap= new HashMap<String, Object>();
         sheetInfo.addSheetTableInfo(oneSti);
+
+        String tempStr = "页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])分析出表头分割行，并确定表区域范围[{"+oneSti.getBeginX()+","+oneSti.getBeginY()+"}->{{"+oneSti.getEndX()+","+oneSti.getEndY()+"}]";
+        logl.add(StringUtils.convertLogStr(tempStr));
         //===以上最好能够分析出一个sheet中的多个数据表结构
 
         //002-表数据结构分析
-        if (sheetInfo.getStiList()==null||sheetInfo.getStiList().size()==0) return; //没有任何表结构数据不进行处理
+        if (sheetInfo.getStiList()==null||sheetInfo.getStiList().size()==0) {//没有任何表结构数据不进行处理
+            logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])数据不包含表头信息，无法分析表结构。"));
+            return logl;
+        }
 
+        logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])开始分析表结构的列数据类型"));
         if (sheetInfo.getStiList().size()==1) {
-            _analSheetMetadata(sheetInfo.getStiList().get(0), numList);
+            _analSheetMetadata(sheetInfo.getStiList().get(0), numList, logl);
         } else { //用多个线程处理
+            //TODO 多线程处理，日志和numlist都需要修改！！！！！
             cleanThreadEnd();
             for (int i=0; i<sheetInfo.getStiList().size(); i++) {
-                Thred_anay_MetadataTableInfo thread_a_m = new Thred_anay_MetadataTableInfo(sheetInfo.getStiList().get(i), this, numList);
+                Thred_anay_MetadataTableInfo thread_a_m = new Thred_anay_MetadataTableInfo(sheetInfo.getStiList().get(i), this, numList, logl);
                 Thread t = new Thread(thread_a_m);
                 t.start();
             }
@@ -141,6 +163,7 @@ public class PoiParseUtils {
             }
             cleanThreadEnd();
         }
+        return logl;//TODO 若是多线程，这个需要修改
     }
 
     //===================以下为可功能化的分析方法以及线程处理的相关函数
@@ -151,9 +174,10 @@ public class PoiParseUtils {
      * @param numList 行号记录
      * @throws Exception
      */
-    protected void _analSheetMetadata(SheetTableInfo sti, List<Integer> numList) throws Exception {
+    protected void _analSheetMetadata(SheetTableInfo sti, List<Integer> numList, List<String> logl) throws Exception {
         sti.cleanThreadEnd();
         try {
+            logl.add(StringUtils.convertLogStr("/t页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])获取表头信息"));
             //得到表头信息
             int _num = sti.getBeginY()-1; //表头的最后一行标号
             List<Map<String, Object>> rowData = readOneRow(_num);//表头最后一行信息
@@ -181,6 +205,7 @@ public class PoiParseUtils {
 
             //分析数据类型，若小于200行，全部读取，否则，采用随机取样的方式
             //采样率应该可以更多规则，目前只采用平均采样，而且，只有一种取样方式，若大于200行，则取样1000行数据（按列取样）
+            logl.add(StringUtils.convertLogStr("/t页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])分析列数据类型，顺序采样"));
             boolean _flag = (sti.getEndY()-sti.getBeginY()>ExcelConstants.SAMPLING_CRITICAL_COUNT);//是否需要随机采样，=true(需随机采样)
             int _count=0;
             int i=sti.getBeginY();
@@ -194,9 +219,12 @@ public class PoiParseUtils {
                 }
                 if (_count>ExcelConstants.LIMIT_SEQUENCE_COUNT&&_flag) break;
             }
-            if (i==sti.getEndY()) return; //已经处理完了
-
+            if (i==sti.getEndY()) {
+                logl.add(StringUtils.convertLogStr("/t页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])分析列数据类型，采样结束"));
+                return; //已经处理完了
+            }
             //随机采样
+            logl.add(StringUtils.convertLogStr("/t页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])分析列数据类型，顺序采样不充分，开始随机采样"));
             SpiritRandom random = new SpiritRandom(i, sti.getEndY(), ExcelConstants.SAMPLING_CRITICAL_COUNT-ExcelConstants.LIMIT_SEQUENCE_COUNT);
             do {//随机读取一行，并处理
                 i = random.getNextRandom();
@@ -207,9 +235,13 @@ public class PoiParseUtils {
                     numList.add(i);
                 }
             } while (!random.isComplete());
+            logl.add(StringUtils.convertLogStr("/t页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])分析列数据类型，采样结束"));
         } finally {
+            logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])开始计算元数据"));
             sti.caculateMetadataModel();
+            logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])元数据计算结束"));
             sti.setThreadEnd();
+            logl.add("");
         }
     }
 
@@ -709,17 +741,19 @@ class Thred_anay_MetadataTableInfo implements Runnable {
     private PoiParseUtils caller;
     private SheetTableInfo _anayData;
     private List<Integer> numList;
+    private List<String> logl;
 
-    public Thred_anay_MetadataTableInfo(SheetTableInfo anayData, PoiParseUtils caller, List<Integer> numList) {
+    public Thred_anay_MetadataTableInfo(SheetTableInfo anayData, PoiParseUtils caller, List<Integer> numList, List<String> logl) {
         this.caller = caller;
         this._anayData = anayData;
         this.numList = numList;
+        this.logl = logl;
     }
 
     @Override
     public void run() {
         try {
-            this.caller._analSheetMetadata(_anayData, this.numList);
+            this.caller._analSheetMetadata(_anayData, this.numList, this.logl);
         } catch(Exception e) {
             e.printStackTrace();
         }

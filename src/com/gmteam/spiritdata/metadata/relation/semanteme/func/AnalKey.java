@@ -173,7 +173,7 @@ public class AnalKey implements AnalTable {
         //写json文件，此方法目前为测试方法，今后把他变为一个更好用的包
         Map<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("_id", SequenceUUID.getUUID());
-        jsonMap.put("_code", "SD.TEAM-0001");
+        jsonMap.put("_code", "SD.TEAM.ANAL-0001");
         jsonMap.put("_cTime", (new Date()).getTime());
         jsonMap.put("desc", "分析表["+tableName+"]那列或那些列可作为主键的记录文件");
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();

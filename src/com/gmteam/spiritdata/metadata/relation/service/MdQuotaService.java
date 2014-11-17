@@ -78,11 +78,11 @@ public class MdQuotaService {
         if (mm==null) return null;
         if (mm.getOwnerId()==null||mm.getOwnerId().equals("")) throw new IllegalArgumentException("参数中映射表元数据模式mdMId所对应的元数据信息中没有所有者信息，无法处理");
 
-        return caculateQuota(mm, tmo.getTableName(), tmo.getMdMId());
+        return caculateQuota(mm, tmo.getTableName(), tmo.getId());
     }
 
     /**
-     * 根据元数据模似和数据表，得到表指标信息
+     * 根据元数据模型和数据表，得到表指标信息
      * @param mm 元数据模式
      * @param tableName 表名称
      * @return 表指标信息
@@ -199,7 +199,7 @@ public class MdQuotaService {
             //计算一次存储一次，首先检查是否已经存在
             Map<String, Object> param = new HashMap<String, Object>();
             param.put("tmoId", qt.getTmoId());
-            List<QuotaTable> l =qtDao.queryForList(param);
+            List<QuotaTable> l = qtDao.queryForList(param);
             if (l==null||l.size()==0) {//新增
                 qtDao.insert(qt);
             } else if (l.size()==1) {//修改
@@ -211,15 +211,8 @@ public class MdQuotaService {
             List<QuotaColumn> lc = null;
             if (qcl!=null&&qcl.size()>0) {
                 for (QuotaColumn qc: qt.getColQuotaList()) {
-                    param.clear();
-                    param.put("tqId", qc.getTqId());
-                    param.put("colId", qc.getColId());
-                    lc = qcDao.queryForList(param);
-                    if (lc==null||lc.size()==0) {//新增
-                        qcDao.insert(qc);
-                    } else if (lc.size()==1) {//修改
-                        qcDao.update(qc);
-                    }
+                    int updateSize = qcDao.update(qc);
+                    if (updateSize<1) qcDao.insert(qc);
                 }
             }
             conn.commit();

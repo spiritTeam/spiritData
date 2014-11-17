@@ -2,10 +2,14 @@ package com.gmteam.spiritdata.importdata.excel.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +18,20 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
+import com.gmteam.framework.FConstants;
+import com.gmteam.framework.core.cache.SystemCache;
+import com.gmteam.framework.util.FileNameUtils;
+import com.gmteam.framework.util.JsonUtils;
+import com.gmteam.jsonD.model.AtomData;
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetTableInfo;
@@ -29,9 +41,11 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
+import com.gmteam.spiritdata.metadata.relation.semanteme.func.AnalKey;
 import com.gmteam.spiritdata.metadata.relation.service.MdKeyService;
 import com.gmteam.spiritdata.metadata.relation.service.MdQuotaService;
 import com.gmteam.spiritdata.metadata.relation.service.MetadataSessionService;
+import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**
  * 处理excel文件。
@@ -40,14 +54,18 @@ import com.gmteam.spiritdata.metadata.relation.service.MetadataSessionService;
  */
 @Component
 public class DealExcelFileService {
+    private Logger logger = Logger.getLogger(DealExcelFileService.class);
+
     @Resource
-    MetadataSessionService mdSessionService;
+    private MetadataSessionService mdSessionService;
     @Resource
-    MdQuotaService mdQutotaService;
+    private MdQuotaService mdQutotaService;
     @Resource
-    MdKeyService mdKeyService ;
+    private MdKeyService mdKeyService ;
     @Resource
-    DataSource dataSource ;
+    private AnalKey analKey;
+    @Resource
+    private DataSource dataSource ;
 
     /**
      * 处理Excel文件
@@ -55,6 +73,18 @@ public class DealExcelFileService {
      * @param session 用户Session
      */
     public void process(String fileName, HttpSession session) {
+        FileAppender myLogAppender = new FileAppender();
+        File f = new File("c:\\test.log");
+        try {
+            f.createNewFile();
+        } catch(Exception e) {
+            
+        }
+        myLogAppender.setFile("c:\\test.log");
+        myLogAppender.activateOptions();
+        logger.addAppender(myLogAppender);
+        logger.info("abcd");
+
         File excelFile = new File(fileName);
         Workbook book = null;
         int excelType = 0;
@@ -67,7 +97,6 @@ public class DealExcelFileService {
                 book = new HSSFWorkbook(fis);
                 excelType = ExcelConstants.EXECL2003_FLAG;
             } catch (Exception e) {
-                //TODO 记录日志
             }
             if (book==null) {
                 try {
@@ -75,23 +104,79 @@ public class DealExcelFileService {
                     book = new XSSFWorkbook(fis);
                     excelType = ExcelConstants.EXECL2007_FLAG;
                 } catch (Exception e) {
-                    //TODO 记录日志
                 }
             }
             if (excelType==0) {
-                // TODO 记录日志 
+                logger.info("以excel格式读取文件["+fileName+"]失败");
                 return;
             }
+
             //根据sheet进行处理
-            for (int i=0; i<book.getNumberOfSheets(); i++) {
+            int i=0;
+            PoiParseUtils parseExcel;
+            SheetInfo si;
+
+            //1-分析文件，得到元数据信息，并把分析结果存入si
+            List<PoiParseUtils> excelParseList = new ArrayList<PoiParseUtils>();
+
+            Map<SheetInfo, Object> sheetLogMap = new HashMap<SheetInfo, Object>();
+            for (; i<book.getNumberOfSheets(); i++) {
                 try {//处理每个Sheet，并保证某个Sheet处理失败后，继续处理后续Sheet
                     Sheet sheet = book.getSheetAt(i);
-                    SheetInfo si = initSheetInfo(sheet, excelType, i);
-
-                    PoiParseUtils parseExcel = new PoiParseUtils(si);
-
-                    //1-分析文件，得到元数据信息，并把分析结果存入si
-                    parseExcel.analSheetMetadata();
+                    si = initSheetInfo(sheet, excelType, i);
+                    parseExcel = new PoiParseUtils(si);
+                    List<String> logl = parseExcel.analSheetMetadata();
+                    excelParseList.add(parseExcel);
+                } catch(Exception e) {
+                    
+                }
+            }
+            //记录日志
+            /**
+            //写json文件，此方法目前为测试方法，今后把他变为一个更好用的包
+            Map<String, Object> jsonMap = new HashMap<String, Object>();
+            jsonMap.put("_id", SequenceUUID.getUUID());
+            jsonMap.put("_code", "SD.TEAM.LOG-0001");
+            jsonMap.put("_cTime", (new Date()).getTime());
+            jsonMap.put("desc", "分析文件["+fileName+"]元数据结构的日志文件");
+            Map<String, Object> _DATA_Map = new HashMap<String, Object>();
+            AtomData _dataElement = new AtomData("string", fileName);
+            _DATA_Map.put("_tableName", _dataElement.toJsonMap());
+            _dataElement.clean();
+            _dataElement.setAtomData("string", mm.getId());
+            _DATA_Map.put("_mdMId", _dataElement.toJsonMap());
+            _DATA_Map.put("_keyAnals", convertToList(ret));
+            jsonMap.put("_DATA", _DATA_Map);
+            //写文件
+            String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
+            //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
+            String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+mm.getOwnerId()+File.separator+"MM_"+mm.getId()+File.separator+"keyAnal"+File.separator+tableName+".json");
+            jsonMap.put("_file", storeFile);
+            FileOutputStream fileOutputStream = null;
+            try {
+                File file = new File(storeFile);
+                if (!file.exists()) {
+                    File dirs = new File(FileNameUtils.getFilePath(storeFile));
+                    if (!dirs.exists()) dirs.mkdirs();
+                    file.createNewFile();
+                }
+                fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write((JsonUtils.formatJsonStr(JsonUtils.beanToJson(jsonMap), null)).getBytes()); 
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fileOutputStream!=null) {
+                    try {fileOutputStream.close();}catch(IOException e) {e.printStackTrace();}
+                }
+            }
+*/
+            //2-获得元数据后，数据存储及语义分析功能
+            if (excelParseList.size()>0) {
+                for (i=0; i<excelParseList.size(); i++) {
+                    parseExcel = excelParseList.get(i);
+                    si = parseExcel.getSheetInfo();
                     if (si.getStiList()==null||si.getStiList().size()==0) continue;
                     for (SheetTableInfo sti: si.getStiList()) {
                         try {//--处理sheet中的每个元数据
@@ -110,12 +195,13 @@ public class DealExcelFileService {
                             saveDataToTempTab(sti, sysMd, tabMapOrgAry[1].getTableName(), parseExcel);
                             //3-临时表分析
                             mdQutotaService.caculateQuota(tabMapOrgAry[1]); //分析临时表指标
+                            analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
                             mdKeyService.adjustMdKey(sysMd); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
                             //4-存储积累表
                             if (sysMd.getTableName().equalsIgnoreCase(tabMapOrgAry[0].getTableName())) {
                                 saveDataToAccumulationTab(sti, sysMd, parseExcel);
                                 //5-积累表分析
-                                mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析临时表指标
+                                mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析积累表指标
                                 //6-元数据语义分析
                                 // TODO 分析元数据语义，目前想到——字典项/身份证/经纬度/URL分析/mail地址分析/姓名分析；另外（列之间关系，如数值的比例等）
                             } else {
@@ -126,9 +212,6 @@ public class DealExcelFileService {
                             e.printStackTrace();
                         }
                     }
-                } catch(Exception e) {
-                    // TODO 记录日志
-                    e.printStackTrace();
                 }
             }
         } catch(Exception e) {
