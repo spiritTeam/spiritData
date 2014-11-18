@@ -142,7 +142,7 @@
 <div id="topSegment">
   <div style="float:right;">
 	  <!-- <label for="loginName"><%=sid %>||登录名：</label><input type="text" id='loginName' tabindex="1"/><label for="password">密　码：</label><input type="password" id='password' tabindex="2"/><div id="commitButton" style="height:16px; width:16px; background-color:green;"></div> -->
-	  <div ><%=sid %>||<span onclick="login();">登录</span><input value="注销" type="button" onclick="logout();"></div>
+	  <div ><%=sid %>||<span onclick="login();">登录</span><input value="注销" type="button" onclick="logout();"><input value="修改密码" type="button" onclick="modPwd();"></div>
   </div>
 </div>
 
@@ -602,6 +602,9 @@ function logout() {
     }
   });
 };
+function modPwd(){
+	openSWin({"title":"修改密码", "url":"<%=path%>/login/modPwd.jsp?modType=1", "width":1000, "height":600, modal:true});
+}
 </script>
 </body>
 </html>
