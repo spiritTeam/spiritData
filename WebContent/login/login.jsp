@@ -79,11 +79,14 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         </tr>
       </table>
     </form>
-    <div align="right" style="width: 400px;margin-top: 50px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">&nbsp;注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="tregister()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
+    <div align="right" style="width: 400px;margin-top: 50px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">&nbsp;注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
   </div>
 </center>
 </body>
 <script type="text/javascript">
+function modPwd(){
+	window.location.href="<%=path%>/login/modPwd.jsp?modType=2";
+}
 $(function(){
   if($('#loginName').val()==$('#loginName')[0].defaultValue){
     $('#loginName').css('color','#ABCDEF');

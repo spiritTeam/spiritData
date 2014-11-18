@@ -20,7 +20,7 @@
       <table  width="380px;">
         <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
         <tr >
-          <td align="right" width="100px;" ><span>登录名&nbsp;&nbsp;</span></td>
+          <td align="right" width="100px;" ><span class="myspan">登录名&nbsp;&nbsp;</span></td>
           <td colspan="2" width="280px;" >
             <input style="width:280px;" id="loginName" name="loginName"  tabindex="1" type="text" onmouseover=this.focus();this.select();
               onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" value="登录名" />
@@ -28,27 +28,27 @@
         </tr>
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="loginNameCheck"></div></td></tr>
         <tr>
-          <td align="right"><span >邮箱&nbsp;&nbsp;</span></td>
+          <td align="right"><span class="myspan">邮箱&nbsp;&nbsp;</span></td>
           <td colspan="2" width="130px;"><input style="width:150px;"  id="mail" name="mail"  tabindex="2" type="text"  onmouseover=this.focus();this.select(); 
              onclick="onClick(mail);" onBlur="validateMail('mail');" value="绑定邮箱,用于激活账号" /><input style="width: 125px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" /></td>
         </tr>
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="mailCheck"></div></td></tr>
         <tr>
-          <td align="right"><span>密码&nbsp;&nbsp;</span></td>
+          <td align="right"><span class="myspan">密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
             <input style="width:280px;" id="password" name="password"  tabindex="3" type="password" onmouseover=this.focus();this.select();
               onclick="onClick(password);" onBlur="validatePassword('password');" />
           </td>
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="passwordCheck"></div></td></tr>
         <tr >
-          <td align="right"><span >确认密码&nbsp;&nbsp;</span></td>
+          <td align="right"><span class="myspan">确认密码&nbsp;&nbsp;</span></td>
           <td colspan="2">
             <input style="width:280px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
               onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" />
           </td></tr>
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="confirmPasswordCheck"></div></td></tr>
         <tr>
-          <td align="right"><span >验证码&nbsp;&nbsp;</span></td>
+          <td align="right"><span class="myspan">验证码&nbsp;&nbsp;</span></td>
           <td width="130px;"><input style="width:195px;"  id="checkCode" name="checkCode"  tabindex="5" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
           <td  align="left"><div style="border: 1px solid  #999999;width: 80px;"><img  title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div></td>
           </tr>
@@ -135,7 +135,7 @@ function validatePassword(eleId){
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
     psV = false;
   }else{
-    if(!checkStr(ele.val())){
+    if(!checkPasswordStr(ele.val())){
       $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码应由5~12位的字母、数字、下划线组成,且首字母不为数字!</div>');
       psV = false;
     }else{
@@ -188,20 +188,15 @@ function validateMail(eleId,index){
     ele.css('color','#ABCDEF');
     maV = false;
   }else{
-    if(checkStr(ele.val())){
-    	var mailStr;
-    	if(index!=null) mailStr = ele.val() +a[index-1].text;
-    	else  mailStr = ele.val() +$('#mailEndStr').combobox('getText');
-      var vsMsg = checkMail(mailStr);
-      if(vsMsg==true){
-        $('#checkResult').html('<div style="width:370;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">邮箱可以使用!</div>');
-        maV = true;
-      }else{
-        $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">该邮箱已被使用!</div>');
-        maV = false;
-      }
+   	var mailStr;
+   	if(index!=null) mailStr = ele.val() +a[index-1].text;
+   	else  mailStr = ele.val() +$('#mailEndStr').combobox('getText');
+    var vsMsg = checkMail(mailStr);
+    if(vsMsg==true){
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">邮箱可以使用!</div>');
+      maV = true;
     }else{
-      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">邮箱应由5~12位的字母、数字、下划线组成,且首字母不为数字!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">该邮箱已被使用!</div>');
       maV = false;
     }
   }
@@ -253,6 +248,14 @@ function checkMail(val){
 }
 function checkStr(str){
   var re = /^[a-zA-z]\w{4,11}$/;
+  if(re.test(str)){
+    return true;
+  }else{
+    return false;
+  }       
+}
+function checkPasswordStr(str){
+  var re = /[0-9a-zA-z]\w{5,11}$/;
   if(re.test(str)){
     return true;
   }else{

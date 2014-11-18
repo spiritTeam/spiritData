@@ -1,0 +1,142 @@
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="com.gmteam.framework.FConstants"%>
+<%@page import="com.gmteam.framework.UGA.UgaUser"%>
+<%
+  String path = request.getContextPath();
+  String sid = request.getSession().getId();
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>login</title>
+<jsp:include page="/common/sysInclude.jsp" flush="true"/>
+<link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
+</head>
+<body>
+<center>
+  <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
+    <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">修改密码</span></div>
+    <div style="height:2px; width:400px;border-top: 1px solid  #999999;"></div>
+    <form  style="margin-top: 15px;" action="">
+      <table width="430px;" >
+        <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
+        <tr style="height:50px; valign:top;">
+          <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
+          <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
+          <input id="loginName" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
+                onclick="onClick(loginName);" />
+          </td>
+        </tr>
+        <tr style="height:50px; valign:top;">
+          <td align="right"><span class="myspan">新密码&nbsp;&nbsp;</span></td>
+          <td colspan="2" style="text-align:left;">
+            <input style="width:280px;" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
+                onclick="onClick(password);" onBlur="validatePassword('password');" />
+          </td>
+        </tr>
+        <tr >
+          <td align="right"><span class="myspan">确认密码&nbsp;&nbsp;</span></td>
+          <td colspan="2">
+            <input style="width:280px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
+              onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" />
+          </td></tr>
+        <tr><td><input type="button" value="确认修改" onclick="modPwd();"/></td></tr>
+      </table>
+    </form>
+  </div>
+</center>
+</body>
+<script type="text/javascript">
+var modType = '',psV=false,lnV=false,vcV=false;
+var loginName = '';
+function modPwd(){
+	
+}
+$(function(){
+	<%
+	    String modType = request.getParameter("modType");
+  %>
+  modType = '<%=modType%>';
+  alert(modType);
+  
+  if($('#loginName').val()==$('#loginName')[0].defaultValue){
+    $('#loginName').css('color','#ABCDEF');
+  }
+  if($('#password').val()==$('#password')[0].defaultValue){
+    $('#password').css('color','#ABCDEF');
+  }
+});
+function validateConfirmPassword(eleId){
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
+    cpsV =false;
+  }else{
+    if($('#password').val()!=ele.val()){
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码不一致!</div>');
+      cpsV =false;
+    }else{
+      $('#checkResult').html("");
+      cpsV =true;
+    }
+  }
+}
+function checkPasswordStr(str){
+  var re = /[0-9a-zA-z]\w{4,11}$/;
+  if(re.test(str)){
+    return true;
+  }else{
+    return false;
+  }       
+}
+function validatePassword(eleId){
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
+    psV = false;
+  }else{
+    if(!checkPasswordStr(ele.val())){
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码应由6~12位的字母、数字、下划线组成!</div>');
+      psV = false;
+    }else{
+      $('#checkResult').html("");
+      psV = true;
+    }
+  }
+}
+function validateLoginName(eleId){
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
+    ele.val(ele[0].defaultValue);
+    ele.css('color','#ABCDEF');
+    lnV = false;
+  }else{
+    var vsMsg = checkLoginName(ele.val());
+    if(vsMsg==true){
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">登录名错误!</div>');
+      lnV = false;
+    }else{
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png"></div>');
+      lnV = true;
+    }
+  }
+}
+function checkLoginName(val){
+  var vfMsg =null;
+  var pData={
+    "loginName":val
+  };
+  var url="<%=path%>/login/validateLoginName.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+     success: function(json) {
+       vfMsg = json;
+     }
+  });
+  return vfMsg;
+}
+function onClick(obj){
+  if(obj.value==obj.defaultValue){
+    obj.value='';obj.style.color='#000';
+  }
+}
+</script>
+</html>
