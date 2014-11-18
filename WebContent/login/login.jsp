@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
@@ -23,10 +22,10 @@
         <tr>
           <td align="right"><span>账号&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" width="280px;">
-	        <input id="loginName" name="loginName"  tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
-	              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
-					</td>
-				</tr>
+          <input id="loginName" name="loginName"  tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
+                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
+          </td>
+        </tr>
         <tr><td></td><td align="left"><div style="height: 30px;" id="loginNameCheck"></div></td><td></td></tr>
         <tr >
           <td align="right"><span>密码&nbsp;&nbsp;</span></td>
@@ -40,7 +39,9 @@
           <td align="right"><span>验证码&nbsp;&nbsp;</span></td>
           <td width="180px;"><input style="width:195px;" id="checkCode" name="checkCode"  tabindex="3" type="text" value="验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
-          <td align="left"><div style="border: 1px solid  #999999;width: 80px;"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div></td>
+          <td align="left">
+            <div style="border: 1px solid  #999999;width: 80px;"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
+          </td>
         </tr>
         <tr><td></td><td align="left"><div style="height: 30px;" id="checkCodeCheck"></div></td><td></td><td></td></tr>
         <tr>
@@ -58,37 +59,37 @@
 </body>
 <script type="text/javascript">
 $(function(){
-	if($('#loginName').val()==$('#loginName')[0].defaultValue){
-		$('#loginName').css('color','#ABCDEF');
-	}
-	if($('#password').val()==$('#password')[0].defaultValue){
+  if($('#loginName').val()==$('#loginName')[0].defaultValue){
+    $('#loginName').css('color','#ABCDEF');
+  }
+  if($('#password').val()==$('#password')[0].defaultValue){
     $('#password').css('color','#ABCDEF');
   }
-	if($('#checkCode').val()==$('#checkCode')[0].defaultValue){
+  if($('#checkCode').val()==$('#checkCode')[0].defaultValue){
     $('#checkCode').css('color','#ABCDEF');
   }
 });
 var psV=false,lnV=false,vcV=false;
 function activeAgain(){
-	var url="<%=path%>/login/activeAgain.do";
-	var loginName = $("#loginName").val();
-	if(loginName==null||loginName==""){
-		$.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
-		return;
-	}else{
-		var pData={
-	    "loginName":$("#loginName").val()
-	  };
-	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-	    success: function(json) {
-	      if(json.success==true){
-	    	  $.messager.alert('提示信息',json.retInfo);
-	      }else{
-	    	  $.messager.alert('提示信息',json.retInfo);
-	      }
-	    }
+  var url="<%=path%>/login/activeAgain.do";
+  var loginName = $("#loginName").val();
+  if(loginName==null||loginName==""){
+    $.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
+    return;
+  }else{
+    var pData={
+      "loginName":$("#loginName").val()
+    };
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success: function(json) {
+        if(json.success==true){
+          $.messager.alert('提示信息',json.retInfo);
+        }else{
+          $.messager.alert('提示信息',json.retInfo);
+        }
+      }
     });
-	}
+  }
 }
 function checkStr(str){
   var re = /^[a-zA-z]\w{4,11}$/;
@@ -99,7 +100,7 @@ function checkStr(str){
   }       
 }
 function tregister(){
-	window.location.href="<%=path%>/login/register.jsp";
+  window.location.href="<%=path%>/login/register.jsp";
 }
 function refresh(obj) {
   obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
@@ -107,13 +108,13 @@ function refresh(obj) {
 function validateValidateCode(eleId){
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-	  ele.val(ele[0].defaultValue);
-	  ele.css('color','#ABCDEF');
+    ele.val(ele[0].defaultValue);
+    ele.css('color','#ABCDEF');
     vcV = false;
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
-    	$('#checkResult').html('<div style="width:275px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">验证码正确!</div>');
+      $('#checkResult').html('<div style="width:275px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">验证码正确!</div>');
       vcV = true;
     }else{
       $('#checkResult').html('<div style="font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">验证码错误!</div>');
@@ -135,19 +136,19 @@ function verificationCheckCode(val){
     return vfMsg;
 }
 function validatePassword(eleId){
-	var ele = $('#'+eleId);
-	if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-		ele.val(ele[0].defaultValue);
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
+    ele.val(ele[0].defaultValue);
     ele.css('color','#ABCDEF');
-		psV = false;
-	}else{
-		psV = true;
-	}
+    psV = false;
+  }else{
+    psV = true;
+  }
 }
 function validateLoginName(eleId){
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-	  ele.val(ele[0].defaultValue);
+    ele.val(ele[0].defaultValue);
     ele.css('color','#ABCDEF');
     lnV = false;
   }else{
@@ -169,46 +170,46 @@ function checkLoginName(val){
   return vfMsg;
 }
 function onClick(obj){
-	if(obj.value==obj.defaultValue){
-		obj.value='';obj.style.color='#000';
-	}
+  if(obj.value==obj.defaultValue){
+    obj.value='';obj.style.color='#000';
+  }
 }
 function loginF() {
-	if(psV&&lnV&&vcV){
-		var url="<%=path%>/login/login.do";
-	  var pData={
-	    "loginName":$("#loginName").val(),
-	    "password":$("#password").val(),
-	    "checkCode":$("#checkCode").val(),
-	    "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
- 	    "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
- 	    "browser":getBrowserVersion()
-	  };
-	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-	    success: function(json) {
-	    	if(json.type==-1){
-	    		var loginInfo = json.data;
-	    		var retInfo = loginInfo.retInfo;
-	    		$.messager.alert('登录信息',retInfo);
-	    	}else if (json.type==1) {
-	    		$.messager.alert('登录信息',json.data);
-	        return;
-	      } else if (json.type==2) {
-	        $.messager.alert("登录信息", "登录失败："+json.data, "error");
-	      } else {
-	        $.messager.alert("登录信息", "登录异常："+json.data, "error");
-	      }
-	    },
-	    error: function(errorData) {
-	      if (errorData) {
-	        $.messager.alert("登录信息", "登录异常：未知！", "error");
-	      } else {
-	        $("#mask").hide();
-	        setBodyEnter(true);
-	      }
-	    }
-	  });
-	}else{
+  if(psV&&lnV&&vcV){
+    var url="<%=path%>/login/login.do";
+    var pData={
+      "loginName":$("#loginName").val(),
+      "password":$("#password").val(),
+      "checkCode":$("#checkCode").val(),
+      "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
+       "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
+       "browser":getBrowserVersion()
+    };
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success: function(json) {
+        if(json.type==-1){
+          var loginInfo = json.data;
+          var retInfo = loginInfo.retInfo;
+          $.messager.alert('登录信息',retInfo);
+        }else if (json.type==1) {
+          $.messager.alert('登录信息',json.data);
+          return;
+        } else if (json.type==2) {
+          $.messager.alert("登录信息", "登录失败："+json.data, "error");
+        } else {
+          $.messager.alert("登录信息", "登录异常："+json.data, "error");
+        }
+      },
+      error: function(errorData) {
+        if (errorData) {
+          $.messager.alert("登录信息", "登录异常：未知！", "error");
+        } else {
+          $("#mask").hide();
+          setBodyEnter(true);
+        }
+      }
+    });
+  }else{
     $.messager.alert("登录信息","您的登录信息某些地方有误，请完善您的注册信息");
     return ;
   }
