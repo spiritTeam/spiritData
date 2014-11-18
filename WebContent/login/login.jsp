@@ -12,48 +12,74 @@
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
 </head>
 <body>
+<object id="locator" classid="CLSID:76A64158-CB41-11D1-8B02-00600806D9B6" style="display:none;visibility:hidden"></object>
+<object id="foo" classid="CLSID:75718C9A-F029-11d1-A1AC-00C04FB6C223" style="display:none;visibility:hidden"></object>
+<form id="fooform" name="fooForm" style="display:none">
+  <input type="hidden" name="txtMACAddr"/>
+  <input type="hidden" name="txtIPAddr"/>
+  <input type="hidden" name="txtDNSName"/>
+</form>
+<script>
+var service = locator.ConnectServer();
+var MACAddr;
+var IPAddr;
+var DomainAddr;
+var sDNSName;
+service.Security_.ImpersonationLevel=3;
+service.InstancesOfAsync(foo, 'Win32_NetworkAdapterConfiguration');
+</script>
+
+<script language="JScript" event="OnCompleted(hResult,pErrorObject, pAsyncContext)" for="foo">
+fooForm.txtMACAddr.value=unescape(MACAddr);
+fooForm.txtIPAddr.value=unescape(IPAddr);
+fooForm.txtDNSName.value=unescape(sDNSName);
+</script>
+<script language="JScript" event="OnObjectReady(objObject,objAsyncContext)" for="foo">
+if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObject.IPEnabled == true) {
+  if(objObject.MACAddress != null && objObject.MACAddress != "undefined") MACAddr = objObject.MACAddress;
+  if(objObject.IPEnabled && objObject.IPAddress(0) != null && objObject.IPAddress(0) != "undefined") IPAddr = objObject.IPAddress(0);
+  if(objObject.DNSHostName != null && objObject.DNSHostName != "undefined") sDNSName = objObject.DNSHostName;
+}
+</script>
 <center>
   <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">账号登录</span></div>
-    <div style="height:10px; width:400px;border-top: 1px solid  #999999;"></div>
+    <div style="height:2px; width:400px;border-top: 1px solid  #999999;"></div>
     <form  style="margin-top: 15px;" action="">
       <table width="430px;" >
-        <tr><td></td><td colspan="2"><div style="height: 20px;" id="checkResult"></div></td></tr>
-        <tr>
-          <td align="right"><span>账号&nbsp;&nbsp;</span></td>
-          <td colspan="2" rowspan="1" width="280px;">
-          <input id="loginName" name="loginName"  tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
-          </td>
-        </tr>
-        <tr><td></td><td align="left"><div style="height: 30px;" id="loginNameCheck"></div></td><td></td></tr>
-        <tr >
-          <td align="right"><span>密码&nbsp;&nbsp;</span></td>
-          <td colspan="2" rowspan="1" >
-            <input style="width:280px;" id="password" name="password"  tabindex="2" type="text" value="密码" onmouseover=this.focus();this.select();
+        <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
+        <tr style="height:50px; valign:top;">
+          <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
+          <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
+	        <input id="loginName" name="loginName"  tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
+	              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
+					</td>
+				</tr>
+        <tr style="height:50px; valign:top;">
+          <td align="right"><span class="myspan">密码&nbsp;&nbsp;</span></td>
+          <td colspan="2" style="text-align:left;">
+            <input style="width:280px;" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
                 onclick="onClick(password);" onBlur="validatePassword('password');" />
           </td>
         </tr>
-        <tr><td></td><td align="left"><div style="height: 30px;" id="passwordCheck"></div></td><td></td></tr>
-        <tr>
-          <td align="right"><span>验证码&nbsp;&nbsp;</span></td>
+        <tr style="height:50px; valign:top;">
+          <td align="right"><span class="myspan">验证码&nbsp;&nbsp;</span></td>
           <td width="180px;"><input style="width:195px;" id="checkCode" name="checkCode"  tabindex="3" type="text" value="验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
           <td align="left">
             <div style="border: 1px solid  #999999;width: 80px;"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
           </td>
         </tr>
-        <tr><td></td><td align="left"><div style="height: 30px;" id="checkCodeCheck"></div></td><td></td><td></td></tr>
-        <tr>
+        <tr style="height:70px; valign:top;">
           <td colspan="3" align="center" >
-            <div style="width:280px; background-image:url(img/loginb.png); padding-left:2px;">
-              <img id="register" name="register" src="img/login.png" onclick="loginF();"/>
+            <div tabindex="4" style="width:280px; background-image:url(img/loginb.png); padding-left:2px;">
+              <img id="register" name="register"  src="img/login.png" onclick="loginF();" />
             </div>
           </td>
         </tr>
       </table>
     </form>
-    <div align="right" style="width: 400px;margin-top: 10px;" ><span style="font-size: 12px;" onclick="tregister()">&nbsp;注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="tregister()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
+    <div align="right" style="width: 400px;margin-top: 50px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">&nbsp;注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="tregister()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
   </div>
 </center>
 </body>
@@ -114,7 +140,7 @@ function validateValidateCode(eleId){
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
-      $('#checkResult').html('<div style="width:275px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">验证码正确!</div>');
+      $('#checkResult').html('<div style="width:370px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">验证码正确!</div>');
       vcV = true;
     }else{
       $('#checkResult').html('<div style="font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">验证码错误!</div>');
@@ -175,41 +201,43 @@ function onClick(obj){
   }
 }
 function loginF() {
-  if(psV&&lnV&&vcV){
-    var url="<%=path%>/login/login.do";
-    var pData={
-      "loginName":$("#loginName").val(),
-      "password":$("#password").val(),
-      "checkCode":$("#checkCode").val(),
-      "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
-       "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
-       "browser":getBrowserVersion()
-    };
-    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success: function(json) {
-        if(json.type==-1){
-          var loginInfo = json.data;
-          var retInfo = loginInfo.retInfo;
-          $.messager.alert('登录信息',retInfo);
-        }else if (json.type==1) {
-          $.messager.alert('登录信息',json.data);
-          return;
-        } else if (json.type==2) {
-          $.messager.alert("登录信息", "登录失败："+json.data, "error");
-        } else {
-          $.messager.alert("登录信息", "登录异常："+json.data, "error");
-        }
-      },
-      error: function(errorData) {
-        if (errorData) {
-          $.messager.alert("登录信息", "登录异常：未知！", "error");
-        } else {
-          $("#mask").hide();
-          setBodyEnter(true);
-        }
-      }
-    });
-  }else{
+	if(psV&&lnV&&vcV){
+		var url="<%=path%>/login.do";
+	  var pData={
+	    "loginName":$("#loginName").val(),
+	    "password":$("#password").val(),
+	    "checkCode":$("#checkCode").val(),
+	    "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
+ 	    "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
+ 	    "browser":getBrowserVersion()
+	  };
+	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+	    success: function(json) {
+	    	if(json.type==-1){
+	    		var loginInfo = json.data;
+	    		var retInfo = loginInfo.retInfo;
+	    		$.messager.alert('登录信息',retInfo);
+	    	}else if (json.type==1) {
+	    		$.messager.alert('登录信息',json.data,"info",function(){
+   	          window.location.href="<%=path%>/asIndexTemp.jsp";
+           });
+	        return;
+	      } else if (json.type==2) {
+	        $.messager.alert("登录信息", "登录失败："+json.data, "error");
+	      } else {
+	        $.messager.alert("登录信息", "登录异常："+json.data, "error");
+	      }
+	    },
+	    error: function(errorData) {
+	      if (errorData) {
+	        $.messager.alert("登录信息", "登录异常：未知！", "error");
+	      } else {
+	        $("#mask").hide();
+	        setBodyEnter(true);
+	      }
+	    }
+	  });
+	}else{
     $.messager.alert("登录信息","您的登录信息某些地方有误，请完善您的注册信息");
     return ;
   }

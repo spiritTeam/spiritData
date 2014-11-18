@@ -1,6 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
-<%@page import="java.io.Writer"%>
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
@@ -18,9 +16,9 @@
   <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">注册账号</span></div>
     <div style="height:10px; width:400px;border-top: 1px solid  #999999;"></div>
-    <form  style="margin-top: 15px;" action="">
+    <form  style="" action="">
       <table  width="380px;">
-        <tr><td></td><td colspan="2"><div style="height: 20px;" id="checkResult"></div></td></tr>
+        <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
         <tr >
           <td align="right" width="100px;" ><span>登录名&nbsp;&nbsp;</span></td>
           <td colspan="2" width="280px;" >
@@ -57,7 +55,7 @@
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="checkCodeCheck"></div></td></tr>
         <tr>
           <td colspan="3" align="center" >
-            <div style="width:150px; background-image:url(img/registerb.png); padding-left:2px;">
+            <div tabindex="6" style="width:150px; background-image:url(img/registerb.png); padding-left:2px;">
               <img id="register" name="register" src="img/register.png" onclick="saveRegister();"/>
             </div>
           </td>
@@ -138,7 +136,7 @@ function validatePassword(eleId){
     psV = false;
   }else{
     if(!checkStr(ele.val())){
-      $('#checkResult').html('<div style="width:275px;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码应由5~12位的字母、数字、下划线组成,且首字母不为数字!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码应由5~12位的字母、数字、下划线组成,且首字母不为数字!</div>');
       psV = false;
     }else{
     	$('#checkResult').html("");
@@ -156,14 +154,14 @@ function validateLoginName(eleId){
     if(checkStr(ele.val())){
       var vsMsg = checkLoginName(ele.val());
       if(vsMsg==true){
-        $('#checkResult').html('<div style="width:275px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">该登录名可以使用!</div>');
+        $('#checkResult').html('<div style="width:370;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">该登录名可以使用!</div>');
         lnV = true;
       }else{
-        $('#checkResult').html('<div style="width:275px;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">该登录名已被使用!</div>');
+        $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">该登录名已被使用!</div>');
         lnV = false;
       }
     }else{
-      $('#checkResult').html('<div style="width:275px; font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">登录名应由5~12位的字母、数字、下划线组成,且首字母不为数字!</div>');
+      $('#checkResult').html('<div style="width:370; font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">登录名应由5~12位的字母、数字、下划线组成,且首字母不为数字!</div>');
       lnV = false;
     }
   }
@@ -174,7 +172,7 @@ function validateConfirmPassword(eleId){
     cpsV =false;
   }else{
     if($('#password').val()!=ele.val()){
-      $('#checkResult').html('<div style="width:275px;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码不一致!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码不一致!</div>');
       cpsV =false;
     }else{
     	$('#checkResult').html("");
@@ -196,14 +194,14 @@ function validateMail(eleId,index){
     	else  mailStr = ele.val() +$('#mailEndStr').combobox('getText');
       var vsMsg = checkMail(mailStr);
       if(vsMsg==true){
-        $('#checkResult').html('<div style="width:275px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">邮箱可以使用!</div>');
+        $('#checkResult').html('<div style="width:370;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">邮箱可以使用!</div>');
         maV = true;
       }else{
-        $('#checkResult').html('<div style="width:275px;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">该邮箱已被使用!</div>');
+        $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">该邮箱已被使用!</div>');
         maV = false;
       }
     }else{
-      $('#checkResult').html('<div style="width:275px;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">邮箱应由5~12位的字母、数字、下划线组成,且首字母不为数字!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">邮箱应由5~12位的字母、数字、下划线组成,且首字母不为数字!</div>');
       maV = false;
     }
   }
@@ -217,10 +215,10 @@ function validateValidateCode(eleId){
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
-      $('#checkResult').html('<div style="width:275px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">验证码正确!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">验证码正确!</div>');
       vcV = true;
     }else{
-      $('#checkResult').html('<div style="width:275px;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">验证码错误!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">验证码错误!</div>');
       vcV = false;
     }
   }

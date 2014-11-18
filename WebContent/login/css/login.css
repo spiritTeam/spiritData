@@ -1,4 +1,4 @@
-span { width:150px; font-size: 16px;}
+.myspan { width:150px; font-size: 16px;}
 
 input[type="text"], input[type="password"] { font-size: 12px; height:35px; color:#999; width:280px;}
 
