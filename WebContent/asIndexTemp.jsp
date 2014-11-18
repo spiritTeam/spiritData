@@ -12,10 +12,13 @@
 <meta http-equiv="pragma" content="no-cache"/>
 <meta http-equiv="expires" content="0"/>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
+
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.utils.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.tabs.js"></script>
+
 <script type="text/javascript" src="<%=path%>/resources/js/mainPage.utils.js"></script>
+
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/spiritui/themes/default/all.css"/>
 <style>
@@ -571,6 +574,7 @@ function showDemo() {
 function showResult() {
   //openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
 }
+
 function onlyLogout(ip, mac, browser) {
   var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
