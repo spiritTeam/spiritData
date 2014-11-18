@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.gmteam.framework.FConstants;
 import com.gmteam.spiritdata.UGA.pojo.User;
 import com.gmteam.spiritdata.UGA.service.UserService;
 import com.gmteam.spiritdata.login.util.RandomValidateCode;
@@ -68,6 +69,10 @@ public class RegisterController {
             if(user.getUserState()==0){
                 if(user.getValidataSequence().equals(code)){
                     user.setUserState(1);
+                    user.setUserType(1);
+                    HttpSession session = request.getSession();
+                    session.removeAttribute(FConstants.SESSION_USER);
+                    session.setAttribute(FConstants.SESSION_USER, user);
                     userService.updateUser(user);
                     retMap.put("success", true);
                     retMap.put("retInfo", "激活成功!");

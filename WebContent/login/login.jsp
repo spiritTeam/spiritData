@@ -216,14 +216,19 @@ function loginF() {
 	  };
 	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
 	    success: function(json) {
+	    	var loginInfo = json.data;
+	      var retInfo = loginInfo.retInfo;
 	    	if(json.type==-1){
-	    		var loginInfo = json.data;
-	    		var retInfo = loginInfo.retInfo;
 	    		$.messager.alert('登录信息',retInfo);
 	    	}else if (json.type==1) {
-	    		$.messager.alert('登录信息',json.data,"info",function(){
-   	          window.location.href="<%=path%>/asIndexTemp.jsp";
-           });
+	    		var activeType = loginInfo.activeType;
+	    		if(activeType==1){
+	    			$.messager.alert('登录信息',retInfo);
+	    		}else if(activeType==2){
+	    			$.messager.alert('登录信息',retInfo,"info",function(){
+              window.location.href="<%=path%>/asIndexTemp.jsp";
+            });
+	    		}
 	        return;
 	      } else if (json.type==2) {
 	        $.messager.alert("登录信息", "登录失败："+json.data, "error");
