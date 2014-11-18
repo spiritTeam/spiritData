@@ -117,16 +117,17 @@ public class SheetTableInfo extends BaseObject{
                 if (dType==ExcelConstants.DATA_TYPE_ERROR||dType==ExcelConstants.DATA_TYPE_NULL||dType==ExcelConstants.DATA_TYPE_FORMULA) continue;
                 int thisCount = (Integer)((Map<String, Object>)_colDataTypeAnalData.get(dType)).get("dCount");
                 double a = Double.valueOf(thisCount+"");
-                if (a/b>=ExcelConstants.WEIGHT_OF_DATATYPE) {
-                    _thisColType = dType;
-                }
-                if (dType==ExcelConstants.DATA_TYPE_NUMERIC||dType==ExcelConstants.DATA_TYPE_DOUBLE||dType==ExcelConstants.DATA_TYPE_INTEGER) {
-                    numberCount+=thisCount;
-                }
+
+                if (a/b>=ExcelConstants.WEIGHT_OF_DATATYPE) _thisColType = dType;
+
+                if (dType==ExcelConstants.DATA_TYPE_NUMERIC||dType==ExcelConstants.DATA_TYPE_DOUBLE||dType==ExcelConstants.DATA_TYPE_INTEGER) numberCount+=thisCount;
             }
-            if (_thisColType==-1&&(numberCount/b>=ExcelConstants.WEIGHT_OF_DATATYPE)) {
+
+            if ((_thisColType==-1||_thisColType==ExcelConstants.DATA_TYPE_NUMERIC||_thisColType==ExcelConstants.DATA_TYPE_DOUBLE||_thisColType==ExcelConstants.DATA_TYPE_INTEGER)
+              &&(numberCount/b>=ExcelConstants.WEIGHT_OF_DATATYPE)) {
                 _thisColType = ExcelConstants.DATA_TYPE_DOUBLE;
             }
+
             if (_thisColType!=-1) {//说明已经分析出数据类型
                 MetadataColumn mc = new MetadataColumn();
                 mc.setTitleName(columnTitle);

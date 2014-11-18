@@ -66,7 +66,9 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <td align="right"><span class="myspan">验证码&nbsp;&nbsp;</span></td>
           <td width="180px;"><input style="width:195px;" id="checkCode" name="checkCode"  tabindex="3" type="text" value="验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
-          <td align="left"><div style="border: 1px solid  #999999;width: 80px;"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div></td>
+          <td align="left">
+            <div style="border: 1px solid  #999999;width: 80px;"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
+          </td>
         </tr>
         <tr style="height:70px; valign:top;">
           <td colspan="3" align="center" >
@@ -86,37 +88,37 @@ function modPwd(){
 	window.location.href="<%=path%>/login/modPwd.jsp?modType=2";
 }
 $(function(){
-	if($('#loginName').val()==$('#loginName')[0].defaultValue){
-		$('#loginName').css('color','#ABCDEF');
-	}
-	if($('#password').val()==$('#password')[0].defaultValue){
+  if($('#loginName').val()==$('#loginName')[0].defaultValue){
+    $('#loginName').css('color','#ABCDEF');
+  }
+  if($('#password').val()==$('#password')[0].defaultValue){
     $('#password').css('color','#ABCDEF');
   }
-	if($('#checkCode').val()==$('#checkCode')[0].defaultValue){
+  if($('#checkCode').val()==$('#checkCode')[0].defaultValue){
     $('#checkCode').css('color','#ABCDEF');
   }
 });
 var psV=false,lnV=false,vcV=false;
 function activeAgain(){
-	var url="<%=path%>/login/activeAgain.do";
-	var loginName = $("#loginName").val();
-	if(loginName==null||loginName==""){
-		$.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
-		return;
-	}else{
-		var pData={
-	    "loginName":$("#loginName").val()
-	  };
-	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-	    success: function(json) {
-	      if(json.success==true){
-	    	  $.messager.alert('提示信息',json.retInfo);
-	      }else{
-	    	  $.messager.alert('提示信息',json.retInfo);
-	      }
-	    }
+  var url="<%=path%>/login/activeAgain.do";
+  var loginName = $("#loginName").val();
+  if(loginName==null||loginName==""){
+    $.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
+    return;
+  }else{
+    var pData={
+      "loginName":$("#loginName").val()
+    };
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success: function(json) {
+        if(json.success==true){
+          $.messager.alert('提示信息',json.retInfo);
+        }else{
+          $.messager.alert('提示信息',json.retInfo);
+        }
+      }
     });
-	}
+  }
 }
 function checkStr(str){
   var re = /^[a-zA-z]\w{4,11}$/;
@@ -127,7 +129,7 @@ function checkStr(str){
   }       
 }
 function tregister(){
-	window.location.href="<%=path%>/login/register.jsp";
+  window.location.href="<%=path%>/login/register.jsp";
 }
 function refresh(obj) {
   obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
@@ -135,13 +137,13 @@ function refresh(obj) {
 function validateValidateCode(eleId){
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-	  ele.val(ele[0].defaultValue);
-	  ele.css('color','#ABCDEF');
+    ele.val(ele[0].defaultValue);
+    ele.css('color','#ABCDEF');
     vcV = false;
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
-    	$('#checkResult').html('<div style="width:370px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">验证码正确!</div>');
+      $('#checkResult').html('<div style="width:370px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">验证码正确!</div>');
       vcV = true;
     }else{
       $('#checkResult').html('<div style="font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">验证码错误!</div>');
@@ -163,19 +165,19 @@ function verificationCheckCode(val){
     return vfMsg;
 }
 function validatePassword(eleId){
-	var ele = $('#'+eleId);
-	if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-		ele.val(ele[0].defaultValue);
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
+    ele.val(ele[0].defaultValue);
     ele.css('color','#ABCDEF');
-		psV = false;
-	}else{
-		psV = true;
-	}
+    psV = false;
+  }else{
+    psV = true;
+  }
 }
 function validateLoginName(eleId){
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-	  ele.val(ele[0].defaultValue);
+    ele.val(ele[0].defaultValue);
     ele.css('color','#ABCDEF');
     lnV = false;
   }else{
@@ -197,9 +199,9 @@ function checkLoginName(val){
   return vfMsg;
 }
 function onClick(obj){
-	if(obj.value==obj.defaultValue){
-		obj.value='';obj.style.color='#000';
-	}
+  if(obj.value==obj.defaultValue){
+    obj.value='';obj.style.color='#000';
+  }
 }
 function loginF() {
 	if(psV&&lnV&&vcV){

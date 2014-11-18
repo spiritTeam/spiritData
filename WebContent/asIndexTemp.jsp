@@ -138,6 +138,7 @@
   <div style="background-image:resources/images/waiting_circle.gif; width:85px; height:81px;"></div>
   <span style="font-weight:bold;" id="maskTitle">正在分析，请稍候...</span>
 </div>
+
 <!-- 头部:悬浮 -->
 <div id="topSegment">
   <div style="float:right;">
@@ -250,7 +251,6 @@ function loginF() {
   };
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
     success: function(json) {
-    	alert(allFields(json));
       if (json.type==1) {
         alert("loginOk");
         return;
@@ -567,11 +567,9 @@ function showDemo() {
     }
   }
 }
-function login(){
-	openSWin({"title":"欢迎登录", "url":"<%=path%>/login/login.jsp", "width":1000, "height":600, modal:true});
-}
+
 function showResult() {
-  openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
+  //openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
 }
 function onlyLogout(ip, mac, browser) {
   var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";

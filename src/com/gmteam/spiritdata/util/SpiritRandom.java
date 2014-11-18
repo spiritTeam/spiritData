@@ -243,6 +243,7 @@ public class SpiritRandom {
         if (endNum==-1) throw new Exception("随机数范围上限未设置");
         if (randomSize==-1) throw new Exception("随机数获取个数未设置");
         if (isUsed()) throw new Exception("随机数生成器正在使用，不能初始化");
+        if (beginNum>endNum) throw new Exception("随机数下限beginNum必须小于等于上限endNum，当前输入的值为[beginNum="+beginNum+"][endNum="+endNum+"]");
 
         _rangeSize = (endNum-beginNum)+1;
         _remainSize = _rangeSize;

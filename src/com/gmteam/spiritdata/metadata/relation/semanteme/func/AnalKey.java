@@ -68,7 +68,7 @@ public class AnalKey implements AnalTable {
             String cType = mm.getColumnByColId(qc.getColId()).getColumnType();
             String cName = mm.getColumnByColId(qc.getColId()).getColumnName();
             String title = mm.getColumnByColId(qc.getColId()).getTitleName().toLowerCase();
-            if (one==qc.getCompressRate()) {
+            if (one==qc.getCompressRate()&&qc.getNullCount()<2) {
                 if (cType.equalsIgnoreCase("String")) {
                     ret.put(cName, one);
                 } else if (cType.equalsIgnoreCase("Integer")) {
@@ -140,7 +140,6 @@ public class AnalKey implements AnalTable {
                             }
                             rs.close();
                             ps.close();
-                            System.out.println("=============="+keyComp+"");
                             
                         }
                     } else break;
@@ -163,8 +162,6 @@ public class AnalKey implements AnalTable {
                             keyComp +=((QuotaColumn)o[t]).getColumn().getColumnName();
                         }
                         keyComp = keyComp.substring(1);
-                        System.out.println("=============="+keyComp+"");
-                        
                     }
                 } else break;
                 n++;

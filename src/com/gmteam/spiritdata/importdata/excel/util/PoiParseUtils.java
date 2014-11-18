@@ -17,7 +17,6 @@ import com.gmteam.framework.util.StringUtils;
 import com.gmteam.spiritdata.importdata.excel.ExcelConstants;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetTableInfo;
 import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
-import com.gmteam.spiritdata.importdata.excel.service.DealExcelFileService;
 import com.gmteam.spiritdata.util.SpiritRandom;
 
 /**
@@ -104,7 +103,7 @@ public class PoiParseUtils {
                 lastRow = catchRows.get(numList.get(numList.size()-1));
                 lastButOneRow = catchRows.get(numList.get(numList.size()-2));
                 
-                if (isAreaBottomRow(lastButOneRow)) perhapsNum=(numList.size()-2);//可能的表头行底行
+                if (isAreaBottomRow(lastButOneRow)) perhapsNum=numList.get(numList.size()-2);//可能的表头行底行
                 if (perhapsNum>-1) {
                     //如果最后两行列结构相同,splitRowNum就可能是表头分割行，否则不是
                     if (!compareSameColumn2Row(lastButOneRow, lastRow)) perhapsNum=-1;
@@ -193,7 +192,7 @@ public class PoiParseUtils {
                     if (_mergedCellM!=null&&(Integer)_mergedCellM.get("firstCol")<(Integer)_cellMap.get("cellCol")) continue;
 
                     if (_mergedCellM!=null) _cellMap = _mergedCellM;
-                    titleCol.put("title", ((Map<String, Object>)_cellMap.get("nativeData")).get("value"));//标题
+                    titleCol.put("title", ((Map<String, Object>)_cellMap.get("nativeData")).get("value")+"");//标题
                     titleCol.put("firstCol", _cellMap.get("firstCol"));//开始列
                     titleCol.put("lastCol", _cellMap.get("lastCol"));//结束列
                     titleCol.put("parentTitle", null);//目前不分析这部分
@@ -219,7 +218,7 @@ public class PoiParseUtils {
                 }
                 if (_count>ExcelConstants.LIMIT_SEQUENCE_COUNT&&_flag) break;
             }
-            if (i==sti.getEndY()) {
+            if (i>=sti.getEndY()) {
                 logl.add(StringUtils.convertLogStr("/t页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])分析列数据类型，采样结束"));
                 return; //已经处理完了
             }
@@ -260,8 +259,8 @@ public class PoiParseUtils {
                     for (int j=0; j<_rowData.size(); j++) {
                         Map<String, Object> _cellMap = _rowData.get(j);
                         Map<String, Object> titleColumnMap = sti.getTitleInfo().get(j);
-                        Map<Integer, Object> colAnalData = (Map<Integer, Object>)sti.dataStructureAnalMap.get((String)titleColumnMap.get("title"));
                         String titleName = (String)titleColumnMap.get("title");
+                        Map<Integer, Object> colAnalData = (Map<Integer, Object>)sti.dataStructureAnalMap.get(titleName);
                         if (colAnalData==null) {
                             colAnalData = new HashMap<Integer, Object>();
                             sti.dataStructureAnalMap.put(titleName, colAnalData);
@@ -269,6 +268,7 @@ public class PoiParseUtils {
                         int dType = (Integer)((Map<String, Object>)_cellMap.get("transData")).get("dType");
                         if (titleName.indexOf("号")!=-1||titleName.indexOf("证")!=-1||titleName.indexOf("码")!=-1) {
                             dType = (Integer)((Map<String, Object>)_cellMap.get("nativeData")).get("dType");
+                            if (dType==ExcelConstants.DATA_TYPE_NUMERIC) dType = (Integer)((Map<String, Object>)_cellMap.get("transData")).get("dType");
                         }
                         Map<String, Object> colDtypeAnalData = (Map<String, Object>)colAnalData.get(dType);
                         if (colDtypeAnalData==null) {

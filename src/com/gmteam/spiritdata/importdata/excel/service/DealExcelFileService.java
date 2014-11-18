@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,17 +74,18 @@ public class DealExcelFileService {
      * @param session 用户Session
      */
     public void process(String fileName, HttpSession session) {
+        Enumeration ea = logger.getAllAppenders();
+        Logger l = logger.getRootLogger();
+        ea = l.getAllAppenders();
         FileAppender myLogAppender = new FileAppender();
-        File f = new File("d:\\test.log");
-        try {
-            boolean b= f.createNewFile();
-            System.out.println(b);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        myLogAppender.setName("test");
         myLogAppender.setFile("d:\\test.log");
-        myLogAppender.activateOptions();
+        org.apache.log4j.PatternLayout lay = new org.apache.log4j.PatternLayout();
+        lay.setConversionPattern("%d{yyyy-MM-dd HH:mm:ss} %5p %c{1}:%L : %m%n");
+        myLogAppender.setLayout(lay);
         logger.addAppender(myLogAppender);
+        ea = logger.getAllAppenders();
+        myLogAppender.activateOptions();
         logger.info("abcd");
 
         File excelFile = new File(fileName);

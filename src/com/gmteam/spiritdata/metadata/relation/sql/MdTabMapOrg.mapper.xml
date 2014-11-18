@@ -150,9 +150,9 @@
 
   <!-- 创建数据表 只对mySql起作用 -->
   <update id="createTable" parameterType="java.util.Map" >
-    create table ${tableName} (  ${columnStr} ) ENGINE=InnoDB
-    <if test="tableComment != null" >
-    COMMENT=#{tableComment,jdbcType=VARCHAR};
+    create table ${tableName} (${columnStr}) ENGINE=InnoDB
+    <if test="tableComment!=null and tableComment!=''" >
+    COMMENT=${tableComment,jdbcType=VARCHAR};
     </if>
   </update>
 </mapper>
