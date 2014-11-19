@@ -21,7 +21,7 @@
 <center>
   <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">修改密码</span></div>
-    <div style="height:2px; width:400px;border-top: 1px solid  #999999;"></div>
+    <div style="height:1px; width:400px;border-top: 1px solid  #999999;"></div>
     <form  style="margin-top: 15px;" action="">
       <table width="430px;" >
         <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
@@ -53,18 +53,19 @@
 </body>
 <script type="text/javascript">
 var modType=<%=modType%>,psV=false,lnV=false,cpsV=false;
-var loginName = '<%=loginName%>//modPwd.do';
+var loginName = '<%=loginName%>';
 function modPwd(){
 	if(psV&&lnV&&cpsV){
 		var pData = {
 			loginName:$('#loginName').val(),
 			password:$('#password').val()
-		}
-		var url = '<%=path%>/';
+		};
+		var url = '<%=path%>/login/modifyPwd.do';
 		$.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
 		  success: function(json) {
-			  
-		  })
+			  if(json) $.messager.alert('提示','修改成功!');
+			  else $.messager.alert('提示','修改失败!');
+		  }
 	  });
 	}else{
 		$.messager.alert("提示","您还有未完善的信息!");
