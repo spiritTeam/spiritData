@@ -51,10 +51,10 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
-	        <input id="loginName" name="loginName"  tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
-	              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
-					</td>
-				</tr>
+          <input id="loginName" name="loginName"  tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
+                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
+          </td>
+        </tr>
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">密码&nbsp;&nbsp;</span></td>
           <td colspan="2" style="text-align:left;">
@@ -85,7 +85,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 </body>
 <script type="text/javascript">
 function modPwd(){
-	window.location.href="<%=path%>/login/modPwd.jsp?modType=2";
+  window.location.href="<%=path%>/login/modPwd.jsp?modType=2";
 }
 $(function(){
   if($('#loginName').val()==$('#loginName')[0].defaultValue){
@@ -153,16 +153,16 @@ function validateValidateCode(eleId){
 }
 function verificationCheckCode(val){
   var vfMsg =null;
-    var pData={
-      "checkCode":val
-    };
-    var url="<%=path%>/login/validateValidateCode.do";
-    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success: function(json) {
-        vfMsg = json;
-      }
-    });
-    return vfMsg;
+  var pData={
+    "checkCode":val
+  };
+  var url="<%=path%>/login/validateValidateCode.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+    success: function(json) {
+      vfMsg = json;
+    }
+  });
+  return vfMsg;
 }
 function validatePassword(eleId){
   var ele = $('#'+eleId);
@@ -204,43 +204,48 @@ function onClick(obj){
   }
 }
 function loginF() {
-	if(psV&&lnV&&vcV){
-		var url="<%=path%>/login.do";
-	  var pData={
-	    "loginName":$("#loginName").val(),
-	    "password":$("#password").val(),
-	    "checkCode":$("#checkCode").val(),
-	    "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
- 	    "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
- 	    "browser":getBrowserVersion()
-	  };
-	  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-	    success: function(json) {
-	    	if(json.type==-1){
-	    		var loginInfo = json.data;
-	    		var retInfo = loginInfo.retInfo;
-	    		$.messager.alert('登录信息',retInfo);
-	    	}else if (json.type==1) {
-	    		$.messager.alert('登录信息',json.data.retInfo,"info",function(){
-   	          window.location.href="<%=path%>/asIndexTemp.jsp";
-           });
-	        return;
-	      } else if (json.type==2) {
-	        $.messager.alert("登录信息", "登录失败："+json.data, "error");
-	      } else {
-	        $.messager.alert("登录信息", "登录异常："+json.data, "error");
-	      }
-	    },
-	    error: function(errorData) {
-	      if (errorData) {
-	        $.messager.alert("登录信息", "登录异常：未知！", "error");
-	      } else {
-	        $("#mask").hide();
-	        setBodyEnter(true);
-	      }
-	    }
-	  });
-	}else{
+  if(psV&&lnV&&vcV){
+    var url="<%=path%>/login.do";
+    var pData={
+      "loginName":$("#loginName").val(),
+      "password":$("#password").val(),
+      "checkCode":$("#checkCode").val(),
+      "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
+       "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
+       "browser":getBrowserVersion()
+    };
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success: function(json) {
+        var loginInfo = json.data;
+        var retInfo = loginInfo.retInfo;
+        if(json.type==-1){
+          $.messager.alert('登录信息',retInfo);
+        }else if (json.type==1) {
+          var activeType = loginInfo.activeType;
+          if(activeType==1){
+            $.messager.alert('登录信息',retInfo);
+          }else if(activeType==2){
+            $.messager.alert('登录信息',retInfo,"info",function(){
+              window.location.href="<%=path%>/asIndexTemp.jsp";
+            });
+          }
+          return;
+        } else if (json.type==2) {
+          $.messager.alert("登录信息", "登录失败："+json.data, "error");
+        } else {
+          $.messager.alert("登录信息", "登录异常："+json.data, "error");
+        }
+      },
+      error: function(errorData) {
+        if (errorData) {
+          $.messager.alert("登录信息", "登录异常：未知！", "error");
+        } else {
+          $("#mask").hide();
+          setBodyEnter(true);
+        }
+      }
+    });
+  }else{
     $.messager.alert("登录信息","您的登录信息某些地方有误，请完善您的注册信息");
     return ;
   }
