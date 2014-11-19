@@ -221,7 +221,7 @@ function loginF() {
 	    		var retInfo = loginInfo.retInfo;
 	    		$.messager.alert('登录信息',retInfo);
 	    	}else if (json.type==1) {
-	    		$.messager.alert('登录信息',json.data,"info",function(){
+	    		$.messager.alert('登录信息',json.data.retInfo,"info",function(){
    	          window.location.href="<%=path%>/asIndexTemp.jsp";
            });
 	        return;

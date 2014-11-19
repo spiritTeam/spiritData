@@ -112,11 +112,12 @@ public class SheetTableInfo extends BaseObject{
                 }
             }
             double b = Double.valueOf(allCount+"");
+            double a = 0;
             int numberCount = 0;
             for (Integer dType: _colDataTypeAnalData.keySet()) {
                 if (dType==ExcelConstants.DATA_TYPE_ERROR||dType==ExcelConstants.DATA_TYPE_NULL||dType==ExcelConstants.DATA_TYPE_FORMULA) continue;
                 int thisCount = (Integer)((Map<String, Object>)_colDataTypeAnalData.get(dType)).get("dCount");
-                double a = Double.valueOf(thisCount+"");
+                a = Double.valueOf(thisCount+"");
 
                 if (a/b>=ExcelConstants.WEIGHT_OF_DATATYPE) _thisColType = dType;
 
@@ -124,7 +125,7 @@ public class SheetTableInfo extends BaseObject{
             }
 
             if ((_thisColType==-1||_thisColType==ExcelConstants.DATA_TYPE_NUMERIC||_thisColType==ExcelConstants.DATA_TYPE_DOUBLE||_thisColType==ExcelConstants.DATA_TYPE_INTEGER)
-              &&(numberCount/b>=ExcelConstants.WEIGHT_OF_DATATYPE)) {
+              &&(numberCount/b>=ExcelConstants.WEIGHT_OF_DATATYPE&&numberCount>a)) {
                 _thisColType = ExcelConstants.DATA_TYPE_DOUBLE;
             }
 

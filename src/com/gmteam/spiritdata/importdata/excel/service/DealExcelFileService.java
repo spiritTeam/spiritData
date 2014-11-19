@@ -305,21 +305,32 @@ public class DealExcelFileService {
                     continue;
                 }
                 for (int j=0; j<paramArray.length; j++) paramArray[j]=null;
+
+                int _mmDType, _infoDType;
+                Object v;
                 for (Map<String, Object> cell: rowData) {
                     titleCol = parse.findMatchTitle(cell, sti);
                     if (titleCol!=null) {
                         for (int k=0; k<sysMm.getColumnList().size(); k++) {
                             MetadataColumn mc = sysMm.getColumnList().get(k);
+                            _mmDType = ExcelConstants.convert2DataType(mc.getColumnType());
+                            _infoDType = -1;
                             if (mc.getTitleName().equals((String)titleCol.get("title"))) {
                                 Map<String, Object> kv = (Map<String, Object>)cell.get("transData");
-                                if ((Integer)kv.get("dType")==ExcelConstants.convert2DataType(mc.getColumnType())) {
-                                    paramArray[k] = kv.get("value");
-                                } else {
+                                _infoDType = (Integer)kv.get("dType");
+                                v = null;
+                                if (_infoDType==_mmDType) v = kv.get("value");
+                                else {
                                     kv = (Map<String, Object>)cell.get("nativeData");
-                                    if ((Integer)kv.get("dType")==ExcelConstants.convert2DataType(mc.getColumnType())) {
-                                        paramArray[k] = kv.get("value");
+                                    _infoDType = (Integer)kv.get("dType");
+                                    if (_infoDType==_mmDType) v = kv.get("value");
+                                    else if (_mmDType==ExcelConstants.DATA_TYPE_DOUBLE) {
+                                        if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
+                                            v = kv.get("value");
+                                        }
                                     }
                                 }
+                                paramArray[k]=v;
                             }
                         }
                     }
@@ -383,7 +394,7 @@ public class DealExcelFileService {
         }
 
         Object[] paramArray = new Object[sysMm.getColumnList().size()];
-        List<Object> updateSetParam = new ArrayList<Object>(), updateKeyParam = new ArrayList<Object>();
+        Object[] paramArray4Update = new Object[sysMm.getColumnList().size()];
 
         String insertSql = "insert into "+mainTableName+"(#columnSql) values(#valueSql)", columnSql="", valueSql="";
         String updateSql = "update "+mainTableName+" set #updateSet where #updateKey", updateSet="", updateKey="";
@@ -436,28 +447,45 @@ public class DealExcelFileService {
                     _log_ignoreMap.put(i, "第"+i+"行数据，列个数与元数据列个数不匹配，行数据为<<>>，元数据为<<>>。");
                     continue;
                 }
-                for (int j=0; j<paramArray.length; j++) paramArray[j]=null;
-                updateSetParam.clear();
-                updateKeyParam.clear();
+                for (int j=0; j<paramArray.length; j++) {
+                    paramArray[j]=null;
+                    paramArray4Update[j]=null;
+                }
 
+                int keyCount=0;
+                int _mmDType, _infoDType;
+                Object v;
                 for (Map<String, Object> cell: rowData) {
                     titleCol = parse.findMatchTitle(cell, sti);
                     if (titleCol!=null) {
                         for (int k=0; k<sysMm.getColumnList().size(); k++) {
                             MetadataColumn mc = sysMm.getColumnList().get(k);
+                            _mmDType = ExcelConstants.convert2DataType(mc.getColumnType());
+                            _infoDType = -1;
                             if (mc.getTitleName().equals((String)titleCol.get("title"))) {
                                 Map<String, Object> kv = (Map<String, Object>)cell.get("transData");
-                                if ((Integer)kv.get("dType")==ExcelConstants.convert2DataType(mc.getColumnType())) {
-                                    paramArray[k] = kv.get("value");
-                                    if (mc.isPk()) updateKeyParam.add(kv.get("value"));
-                                    else updateSetParam.add(kv.get("value"));
-                                } else {
+                                _infoDType = (Integer)kv.get("dType");
+                                v = null;
+                                if (_infoDType==_mmDType) v = kv.get("value");
+                                else {
                                     kv = (Map<String, Object>)cell.get("nativeData");
-                                    if ((Integer)kv.get("dType")==ExcelConstants.convert2DataType(mc.getColumnType())) {
-                                        paramArray[k] = kv.get("value");
-                                        if (mc.isPk()) updateKeyParam.add(kv.get("value"));
-                                        else updateSetParam.add(kv.get("value"));
+                                    _infoDType = (Integer)kv.get("dType");
+                                    if (_infoDType==_mmDType) v = kv.get("value");
+                                    else if (_mmDType==ExcelConstants.DATA_TYPE_DOUBLE) {
+                                        if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
+                                            v = kv.get("value");
+                                        }
                                     }
+                                }
+                                paramArray[k] = v;
+                                if (mc.isPk()) {
+                                    for (int p=keyCount; p>0; p--) {
+                                        paramArray4Update[paramArray4Update.length-p-1] = paramArray4Update[paramArray4Update.length-p-2];
+                                    }
+                                    paramArray4Update[paramArray4Update.length-1] = v;
+                                    keyCount++;
+                                } else {
+                                    paramArray4Update[k-keyCount] = v;
                                 }
                             }
                         }
@@ -477,12 +505,10 @@ public class DealExcelFileService {
                 }
                 boolean canInsert = true;
                 int j=0;
+                psUpdate.clearParameters();
                 try{
-                    for (Object v: updateSetParam) {
-                        psUpdate.setObject(++j, v);
-                    }
-                    for (Object v: updateKeyParam) {
-                        psUpdate.setObject(++j, v);
+                    for (j=0; j<paramArray4Update.length; j++) {
+                        psUpdate.setObject(j+1, paramArray4Update[j]);
                     }
                     int updateOk = psUpdate.executeUpdate();
                     if (updateOk>0) {
@@ -497,6 +523,7 @@ public class DealExcelFileService {
                     canInsert=true;
                 }
                 if (canInsert) {
+                    psInsert.clearParameters();
                     try {
                         for (j=0; j<paramArray.length; j++) {
                             psInsert.setObject(j+1, paramArray[j]);
