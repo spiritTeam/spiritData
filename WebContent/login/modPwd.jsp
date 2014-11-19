@@ -1,9 +1,13 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="com.gmteam.framework.FConstants"%>
-<%@page import="com.gmteam.framework.UGA.UgaUser"%>
+<%@page import="com.gmteam.spiritdata.UGA.pojo.User"%>
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
+  String modType = request.getParameter("modType");
+  User user = ((User)session.getAttribute(FConstants.SESSION_USER));
+  String loginName = "";
+  if (user!=null) loginName = user.getLoginName();
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -25,7 +29,7 @@
           <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
           <input id="loginName" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" />
+                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" />
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -48,18 +52,32 @@
 </center>
 </body>
 <script type="text/javascript">
-var modType = '',psV=false,lnV=false,vcV=false;
-var loginName = '';
+var modType=<%=modType%>,psV=false,lnV=false,cpsV=false;
+var loginName = '<%=loginName%>//modPwd.do';
 function modPwd(){
-	
+	if(psV&&lnV&&cpsV){
+		var pData = {
+			loginName:$('#loginName').val(),
+			password:$('#password').val()
+		}
+		var url = '<%=path%>/';
+		$.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+		  success: function(json) {
+			  
+		  })
+	  });
+	}else{
+		$.messager.alert("提示","您还有未完善的信息!");
+	}
 }
 $(function(){
-	<%
-	    String modType = request.getParameter("modType");
-  %>
-  modType = '<%=modType%>';
-  alert(modType);
-  
+  if(modType==1){
+	  $('#loginName').val(loginName);
+	  $('#loginName').attr('disabled',true);
+	  lnV = true;
+  }else if(modType==2){
+	  //$('#loginName').attr(validateLoginName('loginName'));
+  }
   if($('#loginName').val()==$('#loginName')[0].defaultValue){
     $('#loginName').css('color','#ABCDEF');
   }
@@ -67,6 +85,20 @@ $(function(){
     $('#password').css('color','#ABCDEF');
   }
 });
+function validateConfirmPassword(eleId){
+  var ele = $('#'+eleId);
+  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
+    cpsV =false;
+  }else{
+    if($('#password').val()!=ele.val()){
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码不一致!</div>');
+      cpsV =false;
+    }else{
+      $('#checkResult').html("");
+      cpsV =true;
+    }
+  }
+}
 function validateConfirmPassword(eleId){
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){

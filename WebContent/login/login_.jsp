@@ -137,7 +137,6 @@ $(function() {
     });
     loginF();
   });
-
   var url = window.location.href;
   if (url.indexOf("?noAuth")>0) $("#loginDiv").show();
   else if (url.indexOf("?nolog")>0) {
