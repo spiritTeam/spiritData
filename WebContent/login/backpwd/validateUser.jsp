@@ -15,7 +15,7 @@
   <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">找回密码</span></div>
     <div style="height:1px; width:400px;border-top: 1px solid  #999999;"></div>
-    <form  style="margin-top: 15px;" action="">
+    <form style="margin-top: 15px;" action="">
       <table width="430px;" >
         <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
         <tr style="height:50px; valign:top;">
@@ -34,23 +34,24 @@
 <script type="text/javascript">
 var lnV =false;
 function sendBackPwdMail(){
-	if(lnV){
-		$('#loginName')
-		var url = '<%=path%>/login/sendBackPwdMail.do';
-		var pData = {
-			loginName:$('#loginName').val()
-		};
-		alert($('#loginName').val());
-		$.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-		  success: function(json) {
-			  if(json){
-				  $.messager.alert('提示','已发送验证信息到注册邮箱,请登录到邮箱查看!');
-			  }else{
-				  $.messager.alert('提示','发送失败,请重试!');
-			  }
-		  }
-	  });
-	}
+  
+  if(lnV){
+    $('#loginName')
+    var url = '<%=path%>/login/sendBackPwdMail.do';
+    var pData = {
+      loginName:$('#loginName').val()
+    };
+    alert($('#loginName').val());
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success: function(json) {
+        if(json){
+          $.messager.alert('提示','已发送验证信息到注册邮箱,请登录到邮箱查看!');
+        }else{
+          $.messager.alert('提示','发送失败,请重试!');
+        }
+      }
+    });
+  }
 }
 function onClick(obj){
   if(obj.value==obj.defaultValue){
@@ -69,7 +70,7 @@ function validateLoginName(eleId){
       $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="../img/cross.png">登录名错误!</div>');
       lnV = false;
     }else{
-    	$('#logRImg').attr('src','../img/accept.png');
+      $('#logRImg').attr('src','../img/accept.png');
       lnV = true;
     }
   }

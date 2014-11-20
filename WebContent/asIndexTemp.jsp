@@ -607,6 +607,9 @@ function logout() {
 function modPwd(){
 	openSWin({"title":"修改密码", "url":"<%=path%>/login/modPwd.jsp?modType=1", "width":1000, "height":600, modal:true});
 }
+function login(){
+	openSWin({"title":"登录", "url":"<%=path%>/login/login.jsp", "width":1000, "height":600, modal:true});
+}
 </script>
 </body>
 </html>

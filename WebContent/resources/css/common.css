@@ -20,7 +20,7 @@ select, input, button, textarea, button { font:'arial', '宋体', 'helvetica', '
 table { font-size:inherit; font:100%; }
 /* reset end */
 
-/* common begin */
+/* common begin 
 /*
 html { overflow-x:hidden; overflow-y:hidden; }
 html { overflow-x:auto; overflow-y:auto; }

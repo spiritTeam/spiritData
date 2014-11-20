@@ -55,29 +55,29 @@
 var modType=<%=modType%>,psV=false,lnV=false,cpsV=false;
 var loginName = '<%=loginName%>';
 function modPwd(){
-	if(psV&&lnV&&cpsV){
-		var pData = {
-			loginName:$('#loginName').val(),
-			password:$('#password').val()
-		};
-		var url = '<%=path%>/login/modifyPwd.do';
-		$.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-		  success: function(json) {
-			  if(json) $.messager.alert('提示','修改成功!');
-			  else $.messager.alert('提示','修改失败!');
-		  }
-	  });
-	}else{
-		$.messager.alert("提示","您还有未完善的信息!");
-	}
+  if(psV&&lnV&&cpsV){
+    var pData = {
+      loginName:$('#loginName').val(),
+      password:$('#password').val()
+    };
+    var url = '<%=path%>/login/modifyPwd.do';
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success: function(json) {
+        if(json) $.messager.alert('提示','修改成功!');
+        else $.messager.alert('提示','修改失败!');
+      }
+    });
+  }else{
+    $.messager.alert("提示","您还有未完善的信息!");
+  }
 }
 $(function(){
   if(modType==1){
-	  $('#loginName').val(loginName);
-	  $('#loginName').attr('disabled',true);
-	  lnV = true;
+    $('#loginName').val(loginName);
+    $('#loginName').attr('disabled',true);
+    lnV = true;
   }else if(modType==2){
-	  //$('#loginName').attr(validateLoginName('loginName'));
+    //$('#loginName').attr(validateLoginName('loginName'));
   }
   if($('#loginName').val()==$('#loginName')[0].defaultValue){
     $('#loginName').css('color','#ABCDEF');

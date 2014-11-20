@@ -20,7 +20,6 @@ import com.gmteam.spiritdata.UGA.service.UserService;
 public class LoginServiceImpl implements LoginService {
     @Resource
     private BasicDataSource dataSource;
-
     @Override
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
