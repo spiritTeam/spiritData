@@ -276,7 +276,7 @@ public class PoiParseUtils {
                             colAnalData.put(dType, colDtypeAnalData);
                         }
                         Object o = (Integer)colDtypeAnalData.get("dCount");
-                        o = (o==null?new Integer(0):(Integer)o+1);
+                        o = (o==null?new Integer(1):(Integer)o+1);
                         colDtypeAnalData.put("dCount", o);
                         o = (String)colDtypeAnalData.get("rowIndex");
                         o = (o==null?rowNum+"":(String)o+","+rowNum);

@@ -53,6 +53,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     <form  style="margin-top: 15px;" action="">
       <table width="370px;" border="1px;">
         <tr style="height:50px; valign:top;">
+<<<<<<< HEAD
           <td align="right" width="100px;"><span class="myspan">账号&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" width="200px;" style="text-align:left;">
             <div style="float: left;">
@@ -60,6 +61,12 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
                 onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
             </div>
             <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
+=======
+          <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
+          <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
+          <input id="loginName" name="loginName"  tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
+                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
+>>>>>>> refs/remotes/origin/master
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -120,6 +127,7 @@ function setInputCss() {
 }
 function pwdMouseOver(){
 	 $("#pwdSpan").toggleClass("addSelect");
+  window.location.href="<%=path%>/login/modPwd.jsp?modType=2";
 }
 $(function(){
 	$("#maskPwd").css({"position":"absolute", "border":"solid red 1px","top":"100px", "left":"100px","color":"#ABCDEF"})
@@ -187,16 +195,16 @@ function validateValidateCode(eleId){
 }
 function verificationCheckCode(val){
   var vfMsg =null;
-    var pData={
-      "checkCode":val
-    };
-    var url="<%=path%>/login/validateValidateCode.do";
-    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success: function(json) {
-        vfMsg = json;
-      }
-    });
-    return vfMsg;
+  var pData={
+    "checkCode":val
+  };
+  var url="<%=path%>/login/validateValidateCode.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+    success: function(json) {
+      vfMsg = json;
+    }
+  });
+  return vfMsg;
 }
 function validatePassword(eleId){
   $('#pWImg').remove();
