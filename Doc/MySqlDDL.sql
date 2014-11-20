@@ -106,8 +106,9 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据语义表';
 DROP TABLE IF EXISTS sa_md_tabmap_org;
 CREATE TABLE sa_md_tabmap_org (
   id         varchar(36)      NOT NULL                COMMENT 'uuid(对照表id)',
-  ownerId    varchar(36)      NOT NULL                COMMENT '用户Id或者sessionId',
   tmId       varchar(36)      NOT NULL                COMMENT '元数据模式Id(表模式ID)',
+  ownerId    varchar(36)      NOT NULL                COMMENT '用户Id或者sessionId',
+  ownerType  int(1) unsigned  NOT NULL                COMMENT '用户类型(1-用户，2-session)',
   tableName  varchar(40)      NOT NULL                COMMENT '表名称（此名称与业务数据表名称对应）',
   tableType  int(1) unsigned  NOT NULL  DEFAULT '1'   COMMENT '表类型(1-积累表。2-临时表)',
   tableDescn varchar(400)               DEFAULT NULL  COMMENT '备注',
