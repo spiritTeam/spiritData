@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
-import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
+import com.gmteam.spiritdata.metadata.relation.pojo.TableMapRel;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**
@@ -25,7 +25,7 @@ import com.gmteam.spiritdata.util.SequenceUUID;
 @Component
 public class MdEntityTableService {
     @Resource(name="defaultDAO")
-    private MybatisDAO<TableMapOrg> tmoDao;
+    private MybatisDAO<TableMapRel> tmoDao;
 
     @PostConstruct
     public void initParam() {
@@ -40,7 +40,7 @@ public class MdEntityTableService {
      * @return 映射关系表信息
      * @throws Exception
      */
-    public TableMapOrg registTabOrgMap(String tableName, MetadataModel mm, int tableType)  throws Exception {
+    public TableMapRel registTabOrgMap(String tableName, MetadataModel mm, int tableType)  throws Exception {
         if (tableName==null||tableName.equals("")) throw new IllegalArgumentException("实体表名称不能为空！");
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new IllegalArgumentException("元数据模式没有任何列描述信息！");
         //创建相应的表
@@ -88,7 +88,7 @@ public class MdEntityTableService {
         //修改mm中的积累表名称
         if (tableType==1) mm.setTableName(tableName);
         //写入注册信息
-        TableMapOrg insertTmo = new TableMapOrg();
+        TableMapRel insertTmo = new TableMapRel();
         String newkey = SequenceUUID.getUUIDSubSegment(4);
         insertTmo.setId(newkey);
         insertTmo.setOwnerId(mm.getOwnerId());
@@ -107,9 +107,9 @@ public class MdEntityTableService {
      * @return 积累表映射信息信息
      * @throws Exception
      */
-    public TableMapOrg getAccumulationTableMapOrg(String mdMId) throws Exception {
+    public TableMapRel getAccumulationTableMapOrg(String mdMId) throws Exception {
         if (mdMId==null||mdMId.equals("")) throw new IllegalArgumentException("元数据模式Id不能为空！");
-        TableMapOrg paramTmo = new TableMapOrg();
+        TableMapRel paramTmo = new TableMapRel();
         paramTmo.setMdMId(mdMId);
         paramTmo.setTableType(1);
         return tmoDao.getInfoObject(paramTmo);
@@ -122,10 +122,10 @@ public class MdEntityTableService {
      * @return 表映射信息
      * @throws Exception
      */
-    public TableMapOrg getTableMapOrg(String mdMId, String tableName) throws Exception {
+    public TableMapRel getTableMapOrg(String mdMId, String tableName) throws Exception {
         if (tableName==null||tableName.equals("")) throw new IllegalArgumentException("表名称不能为空！");
         if (mdMId==null||mdMId.equals("")) throw new IllegalArgumentException("元数据模式Id不能为空！");
-        TableMapOrg paramTmo = new TableMapOrg();
+        TableMapRel paramTmo = new TableMapRel();
         paramTmo.setMdMId(mdMId);
         paramTmo.setTableName(tableName);
         return tmoDao.getInfoObject(paramTmo);
@@ -137,7 +137,7 @@ public class MdEntityTableService {
      * @return
      * @throws Exception
      */
-    public List<TableMapOrg> getList(Map<String, String> param) throws Exception {
+    public List<TableMapRel> getList(Map<String, String> param) throws Exception {
         return tmoDao.queryForList(param);
     }
 }

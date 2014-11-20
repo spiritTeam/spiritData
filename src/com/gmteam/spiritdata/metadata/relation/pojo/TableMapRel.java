@@ -5,10 +5,10 @@ import com.gmteam.framework.core.model.BaseObject;
 
 /**
  * 实体表|元数据映射关联信息
- * 对应持久化中数据库的表为SA_MD_TABMAP_ORG
+ * 对应持久化中数据库的表为SA_MD_TABMAP_REL
  * @author mht, wh
  */
-public class TableMapOrg extends BaseObject {
+public class TableMapRel extends BaseObject {
     private static final long serialVersionUID = 6654644065903338171L;
 
     private String id; //对照表Id

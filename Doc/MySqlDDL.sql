@@ -102,9 +102,9 @@ CREATE TABLE sa_md_colsemanteme (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据语义表';
 
-/**007 元数据表对照[SA_MD_TABMAP_ORG]*/
-DROP TABLE IF EXISTS sa_md_tabmap_org;
-CREATE TABLE sa_md_tabmap_org (
+/**007 元数据表对照[SA_MD_TABMAP_REL]*/
+DROP TABLE IF EXISTS sa_md_tabmap_rel;
+CREATE TABLE sa_md_tabmap_rel (
   id         varchar(36)      NOT NULL                COMMENT 'uuid(对照表id)',
   tmId       varchar(36)      NOT NULL                COMMENT '元数据模式Id(表模式ID)',
   ownerId    varchar(36)      NOT NULL                COMMENT '用户Id或者sessionId',
@@ -164,9 +164,9 @@ CREATE TABLE sa_imp_log (
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据导入日志';
 *//**废弃掉*/
 
-/**011 数据文件/实体表对应[SA_IMP_TABLOG_ORG]*/
-DROP TABLE IF EXISTS sa_imp_tablog_org;
-CREATE TABLE sa_imp_tablog_org (
+/**011 数据文件/实体表对应[SA_IMP_TABLOG_REL]*/
+DROP TABLE IF EXISTS sa_imp_tablog_rel;
+CREATE TABLE sa_imp_tablog_rel (
   id         varchar(36)      NOT NULL  COMMENT '文件/实体对应关系ID(UUID)',
   fId        varchar(36)      NOT NULL  COMMENT '文件日志ID(文件表外键)',
   tmoId      varchar(36)      NOT NULL  COMMENT '对照表Id(元数据实体表对照Id，外键)',
@@ -211,10 +211,10 @@ CREATE TABLE sa_file_class (
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件分类(文件语义)';
 
 
-/**014 文件关系[SA_FILE_ORG]*/
+/**014 文件关系[SA_FILE_REL]*/
 /**目前先不实现*/
-DROP TABLE IF EXISTS sa_file_org;
-CREATE TABLE sa_file_org (
+DROP TABLE IF EXISTS sa_file_rel;
+CREATE TABLE sa_file_rel (
   id     varchar(36)      NOT NULL  COMMENT '文件关系表ID(UUID)',
   aType  int(1) unsigned  NOT NULL  COMMENT '第一文件类型：=1是对原生态表的关联关系；=2是文件关联表',
   aId    varchar(36)      NOT NULL  COMMENT '第一文件类Id',
@@ -233,7 +233,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vsa_file_antiorg AS
   select id, bId AS aId, bType AS aType, aId AS bId, aType AS bType, 
   (0-rType1) AS rType1, rType2, descn, cTime
-  from sa_file_org;
+  from sa_file_rel;
 
 /**016 视图*/
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER

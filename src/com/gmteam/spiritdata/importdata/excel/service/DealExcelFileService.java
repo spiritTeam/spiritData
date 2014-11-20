@@ -40,7 +40,7 @@ import com.gmteam.spiritdata.importdata.excel.pojo.SheetInfo;
 import com.gmteam.spiritdata.importdata.excel.util.PoiParseUtils;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
-import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
+import com.gmteam.spiritdata.metadata.relation.pojo.TableMapRel;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
 import com.gmteam.spiritdata.metadata.relation.semanteme.func.AnalKey;
 import com.gmteam.spiritdata.metadata.relation.service.MdKeyService;
@@ -187,7 +187,7 @@ public class DealExcelFileService {
                             //-- 若元数据信息在系统中已经存在，则只生成临时表
                             //-- 否则，创建新的元数据，并生成积累表和临时表
                             mdSessionService.setSession(session);
-                            TableMapOrg[] tabMapOrgAry = mdSessionService.storeMdModel4Import(sti.getMm());
+                            TableMapRel[] tabMapOrgAry = mdSessionService.storeMdModel4Import(sti.getMm());
 
                             // TODO 为了有更好的处理响应时间，以下逻辑可以采用多线程处理
 
