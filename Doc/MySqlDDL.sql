@@ -30,8 +30,8 @@ CREATE TABLE plat_dictm (
   sort       int(5) unsigned  NOT NULL  DEFAULT 0  COMMENT '字典组排序',
   isValidate int(1) unsigned  NOT NULL  DEFAULT 1  COMMENT '是否生效(1-生效,2-无效)',
   mType      int(1) unsigned  NOT NULL  DEFAULT 3  COMMENT '字典类型(1-系统保留,2-系统,3-自定义)',
-  mRef       varchar(4000)                        COMMENT '创建时间',
-  descn      varchar(500)                         COMMENT '说明',
+  mRef       varchar(4000)                         COMMENT '创建时间',
+  descn      varchar(500)                          COMMENT '说明',
   cTime      timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
   lmTime     timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '最后修改时间',
   PRIMARY KEY (id)
