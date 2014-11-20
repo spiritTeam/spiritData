@@ -69,7 +69,6 @@ public class LoginServiceImpl implements LoginService {
         Statement st = null;
         boolean autoCommitFlag = true;
         String sessionId = session.getId();
-
         try {
             conn = dataSource.getConnection();
             autoCommitFlag = conn.getAutoCommit();
