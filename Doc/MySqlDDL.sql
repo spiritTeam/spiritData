@@ -21,7 +21,7 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 /**002 字典组[PLAT_DICTM]*/
 DROP TABLE IF EXISTS plat_dictm;
-CREATE TABLE  plat_dictm (
+CREATE TABLE plat_dictm (
   id         varchar(36)      NOT NULL             COMMENT '字典组表ID(UUID)',
   ownerId    varchar(36)      NOT NULL             COMMENT '所有者Id',
   ownerType  int(1) unsigned  NOT NULL  DEFAULT 1  COMMENT '所有者类型(1-用户,2-session)',
@@ -40,7 +40,7 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='字典组';
 
 /**003 字典项[PLAT_DICTD]*/
 DROP TABLE IF EXISTS plat_dictd;
-CREATE TABLE  plat_dictd (
+CREATE TABLE plat_dictd (
   id         varchar(36)      NOT NULL             COMMENT '字典项表ID(UUID)',
   mId        varchar(36)      NOT NULL             COMMENT '字典组外键(UUID)',
   pId        varchar(36)      NOT NULL             COMMENT '父结点ID(UUID)',
@@ -90,7 +90,7 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据列描述';
 
 /**006元数据列语义[SA_MD_COLSEMANTEME]*/
 DROP TABLE IF EXISTS sa_md_colsemanteme;
-CREATE TABLE  sa_md_colsemanteme (
+CREATE TABLE sa_md_colsemanteme (
   id            varchar(36)      NOT NULL  COMMENT 'uuid',
   cId           varchar(36)      NOT NULL  COMMENT '列描述Id(外键)',
   tmId          varchar(36)      NOT NULL  COMMENT '元数据模式Id(模式id，冗余外键)',
@@ -104,7 +104,7 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据语义表';
 
 /**007 元数据表对照[SA_MD_TABMAP_ORG]*/
 DROP TABLE IF EXISTS sa_md_tabmap_org;
-CREATE TABLE  sa_md_tabmap_org (
+CREATE TABLE sa_md_tabmap_org (
   id         varchar(36)      NOT NULL                COMMENT 'uuid(对照表id)',
   ownerId    varchar(36)      NOT NULL                COMMENT '用户Id或者sessionId',
   tmId       varchar(36)      NOT NULL                COMMENT '元数据模式Id(表模式ID)',
@@ -118,7 +118,7 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据对照关系表';
 
 /**008 元数据表指标[SA_MD_TABLEQUOTA]*/
 DROP TABLE IF EXISTS sa_md_tabquota;
-CREATE TABLE  sa_md_tabquota (
+CREATE TABLE sa_md_tabquota (
   id        varchar(36)       NOT NULL               COMMENT '标指标Id(UUID)',
   tmoId     varchar(36)       NOT NULL               COMMENT '对照表Id(元数据对照表Id，外键)',
   tmId      varchar(36)       NOT NULL               COMMENT '元数据模式Id(模式Id，冗余外键)',
@@ -133,7 +133,7 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据表指标';
 
 /**009 元数据列指标[SA_MD_COLUMNQUOTA]*/
 DROP TABLE IF EXISTS sa_md_colquota;
-CREATE TABLE  sa_md_colquota (
+CREATE TABLE sa_md_colquota (
   id            varchar(36)       NOT NULL               COMMENT '列指标Id(UUID)',
   cId           varchar(36)       NOT NULL               COMMENT '列描述Id(列描述Id外键）',
   tqId          varchar(36)       NOT NULL               COMMENT '表指标Id(实体表指标Id外键)',
@@ -147,9 +147,10 @@ CREATE TABLE  sa_md_colquota (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据列指标表';
 
-/**010 数据导入日志[SA_IMP_LOG]*/
+/**010 数据导入日志[SA_IMP_LOG],这个废弃掉*/
 DROP TABLE IF EXISTS sa_imp_log;
-CREATE TABLE  sa_imp_log (
+/**
+CREATE TABLE sa_imp_log (
   id        varchar(36)       NOT NULL  COMMENT '日志id(UUID)',
   ownerId   varchar(36)       NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)',
   ownerType int(1) unsigned   NOT NULL  COMMENT '用户类型(1-用户，2-session)',
@@ -160,12 +161,13 @@ CREATE TABLE  sa_imp_log (
   PRIMARY KEY (id)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据导入日志';
+*//**废弃掉*/
 
 /**011 数据文件/实体表对应[SA_IMP_TABLOG_ORG]*/
 DROP TABLE IF EXISTS sa_imp_tablog_org;
-CREATE TABLE  sa_imp_tablog_org (
+CREATE TABLE sa_imp_tablog_org (
   id         varchar(36)      NOT NULL  COMMENT '文件/实体对应关系ID(UUID)',
-  ufId       varchar(36)      NOT NULL  COMMENT '文件日志ID(文件表外键)',
+  fId        varchar(36)      NOT NULL  COMMENT '文件日志ID(文件表外键)',
   tmoId      varchar(36)      NOT NULL  COMMENT '对照表Id(元数据实体表对照Id，外键)',
   tmId       varchar(36)      NOT NULL  COMMENT '元数据模式Id(表模式Id外键)',
   sheetName  varchar(100)     NOT NULL  COMMENT '页签名称',
@@ -175,54 +177,66 @@ CREATE TABLE  sa_imp_tablog_org (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据文件/实体表对应关系表';
 
-/**012 文件记录索引[SA_FILEI_NDEX]*/
+/**012 文件记录索引[SA_FILE_INDEX]*/
 DROP TABLE IF EXISTS sa_file_index;
-CREATE TABLE  sa_file_index (
+CREATE TABLE sa_file_index (
   id          varchar(36)       NOT NULL  COMMENT '文件记录索引表ID(UUID)',
   ownerId     varchar(36)       NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
   ownerType   int(1) unsigned   NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
+  accessType  int(1) unsigned   NOT NULL  COMMENT '文件访问类型，如ftp,操作系统文件等，目前只支持1=操作系统文件',
+  filePath    varchar(500)      NOT NULL  COMMENT '文件地址，实际就是文件存储的路径，不包括文件名称',
   fileName    varchar(100)      NOT NULL  COMMENT '文件名称，包括扩展名，注意只有文件名称，没有路径',
   fileExtName varchar(30)       NOT NULL  COMMENT '文件扩展名称',
-  filePath    varchar(500)      NOT NULL  COMMENT '文件地址，实际就是文件存储的路径，不包括文件名称',
   fileSize    int(10) unsigned  NOT NULL  COMMENT '文件大小，字节数',
-  accessType  int(1) unsigned   NOT NULL  COMMENT '文件访问类型，如ftp,操作系统文件等，目前只支持1=操作系统文件',
-  fileType1   varchar(10)       NOT NULL  COMMENT '文件大类型：目前支持持两种,LOG和ANAL，即日志和分析，日志是文本文件，分析是jsonD格式',
-  fileType2   varchar(20)       NOT NULL  COMMENT '文件中类型：文件的二级类型',
-  fileType3   varchar(30)                 COMMENT '文件子类型：文件的三级类型',
-  extInfo     varchar(200)                COMMENT '扩展信息，比如jsonD的一些说明',
   descn       varchar(500)                COMMENT '说明',
-  cTime       timestamp         NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
-  lmTime      timestamp         NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '最后修改时间',
+  cTime       timestamp         NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '文件创建时间',
+  lmTime      timestamp         NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '文件最后修改时间',
   PRIMARY KEY (id)
 )
-ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='主要是系统生成的log日志或分析结果，注意，这里不记录用户上传的数据文件。文件分类本来也可以采用字典的方式处理，但这样检索不方便';
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件记录索引';
 
-/**013 文件关系[SA_FILEI_ORG]*/
+/**013 文件分类[SA_FILE_CLASS]*/
+DROP TABLE IF EXISTS sa_file_class;
+CREATE TABLE sa_file_class (
+  id      varchar(36)  NOT NULL  COMMENT '文件分类表ID(UUID)',
+  fId     varchar(36)  NOT NULL  COMMENT '主文件id，指向文件表',
+  type1   varchar(10)  NOT NULL  COMMENT '文件大类型：目前支持持三种,IMP、LOG和ANAL，即导入文件、日志和分析，日志是文本文件，分析是jsonD格式',
+  type2   varchar(20)  NOT NULL  COMMENT '文件中类型：文件的二级类型,当时IMP时，可以是rdata（关系型数据）',
+  type3   varchar(30)            COMMENT '文件子类型：文件的三级类型',
+  extInfo varchar(200)           COMMENT '扩展信息，比如jsonD的一些说明',
+  cTime   timestamp    NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '文件创建时间',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件分类(文件语义)';
+
+
+/**014 文件关系[SA_FILE_ORG]*/
 /**目前先不实现*/
 DROP TABLE IF EXISTS sa_file_org;
-CREATE TABLE  sa_file_org (
-  id     varchar(36)   NOT NULL  COMMENT '文件关系表ID(UUID)',
-  fId    varchar(36)   NOT NULL  COMMENT '文件Id',
-  rfId   varchar(36)   NOT NULL  COMMENT '关联文件id',
-  rType1 int(1)        NOT NULL  COMMENT '关联类型1，目前有=1单向-说明rfid是fid的子（）；=0平等；=-1反向-说明fid是rfid的子(这个通过视图实现)',
-  rType2 varchar(36)             COMMENT '关联类型2',
-  descn  varchar(500)            COMMENT '说明',
-  cTime  timestamp     NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
-  lmTime timestamp     NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '最后修改时间',
+CREATE TABLE sa_file_org (
+  id     varchar(36)      NOT NULL  COMMENT '文件关系表ID(UUID)',
+  aType  int(1) unsigned  NOT NULL  COMMENT '第一文件类型：=1是对原生态表的关联关系；=2是文件关联表',
+  aId    varchar(36)      NOT NULL  COMMENT '第一文件类Id',
+  bType  int(1) unsigned  NOT NULL  COMMENT '第二文件类型：=1是对原生态表的关联关系；=2是文件关联表',
+  bId    varchar(36)      NOT NULL  COMMENT '第二文件类Id',
+  rType1 int(1)           NOT NULL  COMMENT '关联类型1:=1单向-说明rfid是fid的子；=0平等；=-1反向-说明fid是rfid的子(这个通过视图实现)',
+  rType2 varchar(200)               COMMENT '关联类型2',
+  descn  varchar(500)               COMMENT '说明',
+  cTime  timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
   PRIMARY KEY (id)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件之间的关系';
-/**013 视图*/
+
+/**015 视图[vSA_FILE_ANTIORG]*/
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
-VIEW vsa_file_antiorg AS 
-  select 
-    id,
-    rfid AS fId,
-    fid AS  rfId,
-    (0-rType1) AS rType1,
-    rType2,
-    descn,
-    cTime,
-    lmTime
+VIEW vsa_file_antiorg AS
+  select id, bId AS aId, bType AS aType, aId AS bId, aType AS bType, 
+  (0-rType1) AS rType1, rType2, descn, cTime
   from sa_file_org;
 
+/**016 视图*/
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
+VIEW vsa_imp_log AS
+  select a.id, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.extInfo AS cFileName, descn, a.cTime
+  from sa_file_index a, sa_file_class b
+  where a.id=b.fid and b.type1='IMP';
