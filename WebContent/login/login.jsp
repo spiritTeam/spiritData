@@ -53,7 +53,6 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     <form  style="margin-top: 15px;" action="">
       <table width="370px;" border="1px;">
         <tr style="height:50px; valign:top;">
-<<<<<<< HEAD
           <td align="right" width="100px;"><span class="myspan">账号&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" width="200px;" style="text-align:left;">
             <div style="float: left;">
@@ -61,12 +60,6 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
                 onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
             </div>
             <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
-=======
-          <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
-          <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
-          <input id="loginName" name="loginName"  tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
->>>>>>> refs/remotes/origin/master
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -105,8 +98,6 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     <div align="right" style="width: 400px;margin-top: 50px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">&nbsp;注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
   </div>
 </center>
-<div id="maskPwd">密码
-</div>
 </body>
 <script type="text/javascript">
 //全局变量，用于判断input
