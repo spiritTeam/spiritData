@@ -21,7 +21,7 @@ import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn;
 import com.gmteam.spiritdata.metadata.relation.pojo.QuotaTable;
-import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
+import com.gmteam.spiritdata.metadata.relation.pojo.TableMapRel;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**
@@ -58,7 +58,7 @@ public class MdQuotaService {
         Map<String, String> param = new HashMap<String, String>();
         param.put("tableName", tableName);
         param.put("ownerId", ownerId);
-        List<TableMapOrg> l = tmoService.getList(param);
+        List<TableMapRel> l = tmoService.getList(param);
         if (l==null) return null;
         if (l.size()>1) throw new Exception("此表名对应多个表映射关系，无法处理！");
 
@@ -70,7 +70,7 @@ public class MdQuotaService {
      * @param tmo 表映射关系
      * @return 表指标信息
      */
-    public QuotaTable caculateQuota(TableMapOrg tmo) throws Exception {
+    public QuotaTable caculateQuota(TableMapRel tmo) throws Exception {
         if (tmo.getId()==null||tmo.getId().equals("")) throw new IllegalArgumentException("参数中映射表Id字段为空，必须指定映射表Id");
         if (tmo.getMdMId()==null||tmo.getMdMId().equals("")) throw new IllegalArgumentException("参数中映射表元数据模式mdMId字段为空，必须指定元数据模式Id");
         if (tmo.getTableName()==null||tmo.getTableName().equals("")) throw new IllegalArgumentException("参数中映射表表名称字段tableName字段为空，必须指定表名称");
@@ -91,7 +91,7 @@ public class MdQuotaService {
     public QuotaTable caculateQuota(MetadataModel mm, String tableName) throws Exception {
         if (mm.getId()==null||mm.getId().equals("")) throw new IllegalArgumentException("必须指定元数据模式Id");
         if (mm.getOwnerId()==null||mm.getOwnerId().equals("")) throw new IllegalArgumentException("元数据信息中没有所有者信息，无法处理");
-        TableMapOrg tmo = tmoService.getTableMapOrg(mm.getId(), tableName);
+        TableMapRel tmo = tmoService.getTableMapOrg(mm.getId(), tableName);
         String tmoId = tmo.getId();
 
         return caculateQuota(mm, tableName, tmoId);

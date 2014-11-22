@@ -11,7 +11,7 @@ import com.gmteam.framework.FConstants;
 import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
-import com.gmteam.spiritdata.metadata.relation.pojo.TableMapOrg;
+import com.gmteam.spiritdata.metadata.relation.pojo.TableMapRel;
 import com.gmteam.spiritdata.metadata.relation.pojo._OwnerMetadata;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
@@ -39,9 +39,9 @@ public class MetadataSessionService {
      * @param mm 元数据信息，从Import文件中分析出的mm信息，此信息不必包含积累表名称
      * @return TableMapOrg数据的第一个元素是积累表，第二个元素是临时表
      */
-    public TableMapOrg[] storeMdModel4Import(MetadataModel mm) throws Exception {
+    public TableMapRel[] storeMdModel4Import(MetadataModel mm) throws Exception {
         if (session==null) throw new NullPointerException("session为空，请通过[setSession]方法设置！");
-        TableMapOrg accumulationTable=null, tempTable=null;
+        TableMapRel accumulationTable=null, tempTable=null;
         MetadataModel _existMm = getExistMetadataModel(mm);
         if (_existMm==null) {
             //生成积累表名称
@@ -63,7 +63,7 @@ public class MetadataSessionService {
         String tempTabName = "tabt_"+SequenceUUID.getUUIDSubSegment(4);
         tempTable = mdTableOrgService.registTabOrgMap(tempTabName, mm, 2);
         //获得积累表
-        TableMapOrg[] ret = new TableMapOrg[2];
+        TableMapRel[] ret = new TableMapRel[2];
         ret[0] = accumulationTable;
         ret[1] = tempTable;
         return ret;
