@@ -29,23 +29,28 @@
           <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" width="197px;" style="text-align:left;">
           <div style="float: left;">
-          <input id="loginName" style="height: 35px;" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
+            <input id="loginName" style="height: 35px;" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
                 onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" />
           </div>
+          <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">新密码&nbsp;&nbsp;</span></td>
           <td colspan="2" style="text-align:left;">
-            <input style="width:197px;height: 35px;" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
-                onclick="onClick(password);" onBlur="validatePassword('password');" />
+	          <div style="float: left;">
+	            <input style="width:197px;height: 35px;" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
+	                onclick="onClick(password);" onBlur="validatePassword('password');" /></div>
+	          <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr >
           <td align="right"><span class="myspan">确认密码&nbsp;&nbsp;</span></td>
           <td colspan="2">
-            <input style="width:197px;height: 35px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
-              onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" />
+            <div style="float: left;">
+              <input style="width:197px;height: 35px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
+                onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" /></div>
+            <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
           </td></tr>
         <tr><td colspan="3" align="right"><input style="margin-top: 50px;margin-right: 20px;" type="button" value="确认修改" onclick="modPwd();"/></td></tr>
       </table>
