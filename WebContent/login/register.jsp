@@ -17,39 +17,50 @@
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">注册账号</span></div>
     <div style="height:10px; width:400px;border-top: 1px solid  #999999;"></div>
     <form  style="" action="">
-      <table  width="380px;">
+      <table  width="370px;" border="1px;" bordercolor="red">
         <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
         <tr >
           <td align="right" width="100px;" ><span class="myspan">登录名&nbsp;&nbsp;</span></td>
-          <td colspan="2" width="280px;" >
-            <input style="width:280px;height: 35px;" id="loginName" name="loginName"  tabindex="1" type="text" onmouseover=this.focus();this.select();
-              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" value="登录名" />
+          <td colspan="2" width="200px;" >
+            <div style="float: left">
+	            <input style="width:197px;" id="loginName" name="loginName"  tabindex="1" type="text" onmouseover=this.focus();this.select();
+	              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" value="登录名" /></div>
           </td>
         </tr>
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="loginNameCheck"></div></td></tr>
         <tr>
           <td align="right"><span class="myspan">邮箱&nbsp;&nbsp;</span></td>
-          <td colspan="2" width="130px;"><input style="width:150px;height: 35px;"  id="mail" name="mail"  tabindex="2" type="text"  onmouseover=this.focus();this.select(); 
-             onclick="onClick(mail);" onBlur="validateMail('mail');" value="绑定邮箱,用于激活账号" /><input style="width: 125px;height: 37px;font-size: 12px;" id="mailEndStr" name="mailEndStr" /></td>
+          <td colspan="2" width="130px;">
+          <div style="float: left">
+	          <input  id="mail" name="mail"  tabindex="2" type="text"  onmouseover=this.focus();this.select(); 
+	             onclick="onClick(mail);" onBlur="validateMail('mail');" value="绑定邮箱,用于激活账号" /></div>
+          <div style="float: left;margin-left: -2px;">
+             <input id="mailEndStr" name="mailEndStr" /></div></td>
         </tr>
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="mailCheck"></div></td></tr>
         <tr>
           <td align="right"><span class="myspan">密码&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1">
-            <input style="width:280px;height: 35px;" id="password" name="password"  tabindex="3" type="password" onmouseover=this.focus();this.select();
-              onclick="onClick(password);" onBlur="validatePassword('password');" />
+            <div style="float: left">
+              <input id="password" name="password"  tabindex="3" type="password" onmouseover=this.focus();this.select();
+                onclick="onClick(password);" onBlur="validatePassword('password');" /></div>
           </td>
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="passwordCheck"></div></td></tr>
         <tr >
           <td align="right"><span class="myspan">确认密码&nbsp;&nbsp;</span></td>
           <td colspan="2">
-            <input style="width:280px;height: 35px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
-              onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" />
+            <div style="float: left"></div>
+              <input id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
+                onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" /></div>
           </td></tr>
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="confirmPasswordCheck"></div></td></tr>
         <tr>
           <td align="right"><span class="myspan">验证码&nbsp;&nbsp;</span></td>
-          <td width="130px;"><input style="width:195px;height: 35px;"  id="checkCode" name="checkCode"  tabindex="5" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
+          <td width="130px;">
+            <div style="float: left">
+              <input id="checkCode" name="checkCode"  tabindex="5" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" />
+            </div>
+          </td>
           <td  align="left"><div style="border: 1px solid  #999999;width: 80px;"><img  title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div></td>
           </tr>
         <tr><td></td><td colspan="2"><div style="height: 20px;" id="checkCodeCheck"></div></td></tr>
@@ -103,7 +114,18 @@ function returnLogin(){
 function jumpLogin(){
 	window.location.href="http://localhost:8080/sa/login/login.jsp";
 }
+//如果不是ie浏览器，从新初始化inputcsss
+function setInputCss() {
+  var browserType = getBrowserVersion();
+  browserType = browserType.substring(0,browserType.lastIndexOf(' '));
+  if(browserType!='msie'){
+    $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+  }
+}
 $(function() {
+	setInputCss();
 	if($('#mail').val()==$('#mail')[0].defaultValue){
     $('#mail').css('color','#ABCDEF');
   }
