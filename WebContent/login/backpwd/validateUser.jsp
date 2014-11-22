@@ -21,7 +21,7 @@
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
-          <input id="loginName" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
+          <input style="height: 35px;" id="loginName" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
                 onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" /><img id="logRImg" src=""/>
           </td>
         </tr>

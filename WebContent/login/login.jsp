@@ -51,7 +51,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">账号登录</span></div>
     <div style="height:2px; width:400px;border-top: 1px solid  #999999;"></div>
     <form  style="margin-top: 15px;" action="">
-      <table width="370px;" border="1px;">
+      <table width="370px;" >
         <tr style="height:50px; valign:top;">
           <td align="right" width="100px;"><span class="myspan">账号&nbsp;&nbsp;</span></td>
           <td colspan="2" rowspan="1" width="200px;" style="text-align:left;">
@@ -106,6 +106,13 @@ var psV=false,lnV=false,vcV=false;
 function modPwd(){
   window.location.href="<%=path%>/login/backpwd/validateUser.jsp?modType=2";
 }
+function pwdOnActive() {
+  //隐藏
+  $("#pwdSpan").hide();
+  //获得焦点和选择
+  $("#password")[0].focus();
+  $("#password")[0].select();
+}
 //如果不是ie浏览器，从新初始化inputcsss
 function setInputCss() {
 	var browserType = getBrowserVersion();
@@ -118,9 +125,15 @@ function setInputCss() {
 }
 function pwdMouseOver(){
 	 $("#pwdSpan").toggleClass("addSelect");
-  window.location.href="<%=path%>/login/modPwd.jsp?modType=2";
 }
 $(function(){
+	$("#pwdSpan").mouseover(function(){pwdOnActive();});
+	$("#password").focus(function(){pwdOnActive();});
+	$("#password").mouseover(function(){pwdOnActive();});
+	$("#password").blur(function(){
+		if ($(this).val()=="") $("#pwdSpan").show();
+  });
+
 	$("#maskPwd").css({"position":"absolute", "border":"solid red 1px","top":"100px", "left":"100px","color":"#ABCDEF"})
 	.click(function(){
 		$("#maskPwd").hide();

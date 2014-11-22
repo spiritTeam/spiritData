@@ -137,9 +137,6 @@ public class RegisterController {
                 if(user.getValidataSequence().equals(code)){
                     user.setUserState(1);
                     user.setUserType(1);
-                    HttpSession session = request.getSession();
-                    session.removeAttribute(FConstants.SESSION_USER);
-                    session.setAttribute(FConstants.SESSION_USER, user);
                     userService.updateUser(user);
                     retMap.put("success", true);
                     retMap.put("retInfo", "激活成功!");
@@ -253,7 +250,7 @@ public class RegisterController {
             //1代表以发验证到邮箱验证，用户为验证
             user.setUserState(0);
             String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
-                    + " http://localhost:8080/sa/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+                    + " http://localhost:8080/sa/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
             SendValidataUrlToMail svu = new SendValidataUrlToMail();
             svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
             int r = userService.updateUser(user);

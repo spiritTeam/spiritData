@@ -4,15 +4,19 @@
   <resultMap id="BaseResultMap" type="ImpFileLog" >
     <id     column="id"        property="id"        jdbcType="VARCHAR" />
     <result column="ownerId"   property="ownerId"   jdbcType="VARCHAR" />
-    <result column="ownerType" property="ownerId"   jdbcType="INTEGER" />
-    <result column="sFileName" property="sFileName" jdbcType="VARCHAR" />
-    <result column="cFileName" property="cFileName" jdbcType="VARCHAR" />
-    <result column="fileSize"  property="fileSize"  jdbcType="INTEGER" />
-    <result column="cTime"     property="cTime"     jdbcType="TIMESTAMP" />
+    <result column="ownerType" property="ownerType"   jdbcType="INTEGER" />
+    <result column="accessType" property="accessType"   jdbcType="INTEGER" />
+    <result column="filePath" property="filePath" jdbcType="VARCHAR" />
+    <result column="fileName" property="fileName" jdbcType="VARCHAR" />
+    <result column="fileExtName"  property="fileExtName" jdbcType="VARCHAR" />
+    <result column="fileSize"  property="fileSize" jdbcType="INTEGER" />
+    <result column="descn"  property="descn" jdbcType="VARCHAR" />
+    <result column="cTime"  property="cTime" jdbcType="TIMESTAMP" />
+    <result column="lmTime"  property="lmTime" jdbcType="TIMESTAMP" />
   </resultMap>
 
   <insert id="insert" parameterType="java.util.Map">
-    insert into sa_imp_log
+    insert into sa_file_index
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,

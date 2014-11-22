@@ -38,10 +38,10 @@ public class DealUploadFileService {
         importFileLogService.addImportFileLog(ifl);
         // TODO 写文件日志
         //得到文件扩展名
-        String extName = FileNameUtils.getExt(ifl.getsFileName());
+        String extName = FileNameUtils.getExt(ifl.getFilePath()+"/"+ifl.getFileName());
         if (extName.toUpperCase().indexOf(".XLS")==0||extName.toUpperCase().indexOf(".XLSX")==0) {
             //对excel进行处理
-            dealExcelService.process(ifl.getsFileName(), session);
+            dealExcelService.process(ifl.getFilePath()+"/"+ifl.getFileName(), session);
         } else { //处理其他文件类型的文件
             
         }
@@ -58,8 +58,8 @@ public class DealUploadFileService {
             ret.setOwnerId(user.getUserId());
             ret.setOwnerType(1);
         }
-        ret.setsFileName((String)uploadInfoMap.get("storeFilename"));
-        ret.setcFileName((String)uploadInfoMap.get("orglFilename"));
+//        ret.setsFileName((String)uploadInfoMap.get("storeFilename"));
+//        ret.setcFileName((String)uploadInfoMap.get("orglFilename"));
         ret.setFileSize((Long)uploadInfoMap.get("size"));
         return ret;
     }

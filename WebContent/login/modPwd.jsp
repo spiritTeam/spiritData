@@ -27,25 +27,27 @@
         <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
-          <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
-          <input id="loginName" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
+          <td colspan="2" rowspan="1" width="197px;" style="text-align:left;">
+          <div style="float: left;">
+          <input id="loginName" style="height: 35px;" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
                 onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" />
+          </div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">新密码&nbsp;&nbsp;</span></td>
           <td colspan="2" style="text-align:left;">
-            <input style="width:280px;" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
+            <input style="width:197px;height: 35px;" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
                 onclick="onClick(password);" onBlur="validatePassword('password');" />
           </td>
         </tr>
         <tr >
           <td align="right"><span class="myspan">确认密码&nbsp;&nbsp;</span></td>
           <td colspan="2">
-            <input style="width:280px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
+            <input style="width:197px;height: 35px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
               onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" />
           </td></tr>
-        <tr><td><input type="button" value="确认修改" onclick="modPwd();"/></td></tr>
+        <tr><td colspan="3" align="right"><input style="margin-top: 50px;margin-right: 20px;" type="button" value="确认修改" onclick="modPwd();"/></td></tr>
       </table>
     </form>
   </div>
