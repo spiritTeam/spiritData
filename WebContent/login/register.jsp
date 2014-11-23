@@ -80,6 +80,7 @@
 <script type="text/javascript">
 var psV=false,cpsV=false,lnV=false,maV=false,vcV=false;
 function saveRegister(){
+	$('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
 	if(psV&&cpsV&&lnV&&maV&&vcV){
 		var pData={
 	    "loginName":$("#loginName").val(),
@@ -104,6 +105,22 @@ function saveRegister(){
 	    }
 	  });
 	}else{
+		if(lnV==false) {
+      $('#lNImg').remove();
+      $('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
+    }
+		if(lnV==false) {
+      $('#lNImg').remove();
+      $('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
+    }
+    if(psV==false){
+      $('#pWImg').remove();
+      $('#vPW').append('<img id="pWImg" align="middle" src="img/cross.png">');
+    } 
+    if(vcV==false){
+      $('#vCImg').remove();
+      $('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
+    } 
 		$.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息");
 		return ;
 	}

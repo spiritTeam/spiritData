@@ -81,7 +81,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
                 onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" />
             </div>
             <div style="float: left;border: 1px solid #999999;width: 80px;margin-left: -3px;" >
-              <img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
+              <img title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
             </div>
             <div style="float: left;width: 25px;height: 25px;padding-top: 8px;" align="center" id='vVC'></div>
           </td>
@@ -255,6 +255,7 @@ function onClick(obj){
   }
 }
 function loginF() {
+	$('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
   if(psV&&lnV&&vcV){
     var url="<%=path%>/login.do";
     var pData={
@@ -297,9 +298,18 @@ function loginF() {
       }
     });
   }else{
-	  if(lnV==false)$('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
-    if(psV==false)$('#vPW').append('<img id="pWImg" align="middle" src="img/cross.png">'); 
-    if(vcV==false)$('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">'); 
+	  if(lnV==false) {
+		  $('#lNImg').remove();
+		  $('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
+	  }
+    if(psV==false){
+    	$('#pWImg').remove();
+    	$('#vPW').append('<img id="pWImg" align="middle" src="img/cross.png">');
+    } 
+    if(vcV==false){
+    	$('#vCImg').remove();
+    	$('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
+    } 
     $.messager.alert("登录信息","您的登录信息某些地方有误，请完善您的注册信息");
     return ;
   }
