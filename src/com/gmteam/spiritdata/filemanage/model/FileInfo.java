@@ -3,6 +3,7 @@ package com.gmteam.spiritdata.filemanage.model;
 import java.util.List;
 
 import com.gmteam.spiritdata.filemanage.persistence.pojo.FileIndexPo;
+import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**
  * 模型化文件信息对象，包括文件的索引信息，文件的分类信息，以及文件的关系信息。
@@ -19,4 +20,25 @@ public class FileInfo extends FileIndexPo {
     private List<FileRelation> positiveRelationFiles; //与本文件相关的正向关联关系
     private List<FileRelation> inverseRelationFiles; //与本文件相关的反向关联关系
     private List<FileRelation> equalRelationFiles; //与本文件相关的反向关联关系
+
+    /**
+     * 把当前对象转换为Po对象，为数据库操作做准备
+     * @throws Exception 
+     */
+    public FileIndexPo convert2Po() throws Exception {
+        FileIndexPo ret = new FileIndexPo();
+        //id处理
+        if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
+            SequenceUUID.getPureUUID();
+        } else {
+            ret.setId(this.id);
+        }
+        //所有者
+        ret.setOwnerId(this.ownerId);
+        ret.setOwnerType(this.ownerType);
+        //文件访问类型，现在不用枚举，这个属性的使用还是教复杂的
+        
+        ret.setOwnerId(this.ownerId);
+        return ret;
+    }
 }

@@ -13,17 +13,17 @@ import com.gmteam.framework.util.FileNameUtils;
 public class FileIndexPo extends BaseObject {
     private static final long serialVersionUID = 2308403169193332695L;
 
-    private String id; //文件id
-    private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session);3=系统生成）
-    private String ownerId; //所有者标识（可能是用户id，也可能是SessionID，也可能是'Sys'）
-    private int accessType; //文件访问类型，可通过这个类型转换为file:///；ftp:///等，可能需要再定义访问的一些属性没，如ftp的用户名/密码/端口等
-    private String path; //文件路径
-    private String fileName; //文件名称，包括扩展名
-    private String extName; //文件扩展名
-    private Long fileSize; //文件大小
-    private String desc; //文件说明
-    private Timestamp CTime; //文件创建时间
-    private Timestamp lmTime; //文件最后修改时间
+    protected String id; //文件id
+    protected int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session);3=系统生成）
+    protected String ownerId; //所有者标识（可能是用户id，也可能是SessionID，也可能是'Sys'）
+    protected int accessType; //文件访问类型，可通过这个类型转换为file:///；ftp:///等，可能需要再定义访问的一些属性没，如ftp的用户名/密码/端口等
+    protected String path; //文件路径
+    protected String fileName; //文件名称，包括扩展名
+    protected String extName; //文件扩展名
+    protected Long fileSize; //文件大小
+    protected String desc; //文件说明
+    protected Timestamp CTime; //文件创建时间
+    protected Timestamp lmTime; //文件最后修改时间
 
     public String getId() {
         return id;
