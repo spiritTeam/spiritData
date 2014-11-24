@@ -8,6 +8,10 @@ import com.gmteam.framework.core.model.BaseObject;
  * 对应持久化中数据库的表为SA_MD_TABMAP_REL
  * @author mht, wh
  */
+/**
+ * @author admi
+ *
+ */
 public class TableMapRel extends BaseObject {
     private static final long serialVersionUID = 6654644065903338171L;
 
@@ -17,62 +21,47 @@ public class TableMapRel extends BaseObject {
     private String tableName; //数据表名称
     private Integer tableType; //表类型：1=积累表；2=临时表
     private String tableDescn; //表说明
-    private Timestamp cTime; //本记录创建时间，也是表实体创建时间
-
+    private Timestamp CTime; //本记录创建时间，也是表实体创建时间
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
-
     public String getOwnerId() {
         return ownerId;
     }
-
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
-
     public String getMdMId() {
         return mdMId;
     }
-
     public void setMdMId(String mdMId) {
         this.mdMId = mdMId;
     }
-
     public String getTableName() {
         return tableName;
     }
-
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-
     public Integer getTableType() {
         return tableType;
     }
-
     public void setTableType(Integer tableType) {
         this.tableType = tableType;
     }
-
     public String getTableDescn() {
         return tableDescn;
     }
-
     public void setTableDescn(String tableDescn) {
         this.tableDescn = tableDescn;
     }
-
-    public Timestamp getcTime() {
-        return cTime;
+    public Timestamp getCTime() {
+        return CTime;
     }
-
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
-    
 }

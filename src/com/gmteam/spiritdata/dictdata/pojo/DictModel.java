@@ -22,15 +22,15 @@ public class DictModel extends DictMaster{
     public void setDictModelByMaster (DictMaster dMaster) {
         this.setId(dMaster.getId());
         this.setDmName(dMaster.getDmName());
-        this.setnPy(dMaster.getnPy());
+        this.setNPy(dMaster.getNPy());
         this.setSort(dMaster.getSort());
         this.setIsValidate(dMaster.getIsValidate());
-        this.setmType(dMaster.getmType());
-        this.setmRef(dMaster.getmRef());
+        this.setMType(dMaster.getMType());
+        this.setMRef(dMaster.getMRef());
         this.setDescn(dMaster.getDescn());
         this.setOwnerId(dMaster.getOwnerId());
         this.setOwnerType(dMaster.getOwnerType());
-        this.setcTime(dMaster.getcTime());
+        this.setCTime(dMaster.getCTime());
         this.setLmTime(dMaster.getLmTime());
     }
 
@@ -38,15 +38,15 @@ public class DictModel extends DictMaster{
         DictMaster dd = new DictMaster();
         dd.setId(this.getId());
         dd.setDmName(this.getDmName());
-        dd.setnPy(this.getnPy());
+        dd.setNPy(this.getNPy());
         dd.setSort(this.getSort());
         dd.setIsValidate(this.getIsValidate());
-        dd.setmType(this.getmType());
-        dd.setmRef(this.getmRef());
+        dd.setMType(this.getMType());
+        dd.setMRef(this.getMRef());
         dd.setDescn(this.getDescn());
         dd.setOwnerId(this.getOwnerId());
         dd.setOwnerType(this.getOwnerType());
-        dd.setcTime(this.getcTime());
+        dd.setCTime(this.getCTime());
         dd.setLmTime(this.getLmTime());
         return dd;
     }

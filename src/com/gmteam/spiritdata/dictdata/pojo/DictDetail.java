@@ -18,14 +18,14 @@ public class DictDetail extends TreeNodeBean {
     //int sort; //排序，在TreeNodeBean中对应sort
     private int isValidate; //字典组是否可用 1可用，2不可用
     //String ddName; //字典项名称，在TreeNodeBean中对应nodeName
-    private String nPy; //字典名称拼音
+    private String NPy; //字典名称拼音
     private String aliasName; //字典项别名
     private String anPy; //字典项别名拼音
-    private String bCode; //字典项业务编码
-    private int dType; //字典项类型：1系统保留；2系统；3定义；4引用：其他字典项ID
-    private String dRef; //字典项引用
+    private String BCode; //字典项业务编码
+    private int DType; //字典项类型：1系统保留；2系统；3定义；4引用：其他字典项ID
+    private String DRef; //字典项引用
     private String descn; //说明
-    private Timestamp cTime; //记录创建时间
+    private Timestamp CTime; //记录创建时间
     private Timestamp lmTime; //记录最后修改时间
 
     public String getMid() {
@@ -40,11 +40,17 @@ public class DictDetail extends TreeNodeBean {
     public void setIsValidate(int isValidate) {
         this.isValidate = isValidate;
     }
-    public String getnPy() {
-        return nPy;
+    public String getNPy() {
+        return NPy;
     }
-    public void setnPy(String nPy) {
-        this.nPy = nPy;
+    public void setNPy(String nPy) {
+        NPy = nPy;
+    }
+    public Timestamp getCTime() {
+        return CTime;
+    }
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
     public String getAliasName() {
         return aliasName;
@@ -58,35 +64,29 @@ public class DictDetail extends TreeNodeBean {
     public void setAnPy(String anPy) {
         this.anPy = anPy;
     }
-    public String getbCode() {
-        return bCode;
+    public String getBCode() {
+        return BCode;
     }
-    public void setbCode(String bCode) {
-        this.bCode = bCode;
+    public void setBCode(String bCode) {
+        BCode = bCode;
     }
-    public int getdType() {
-        return dType;
+    public int getDType() {
+        return DType;
     }
-    public void setdType(int dType) {
-        this.dType = dType;
+    public void setDType(int dType) {
+        DType = dType;
     }
-    public String getdRef() {
-        return dRef;
+    public String getDRef() {
+        return DRef;
     }
-    public void setdRef(String dRef) {
-        this.dRef = dRef;
+    public void setDRef(String dRef) {
+        DRef = dRef;
     }
     public String getDescn() {
         return descn;
     }
     public void setDescn(String descn) {
         this.descn = descn;
-    }
-    public Timestamp getcTime() {
-        return cTime;
-    }
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
     }
     public Timestamp getLmTime() {
         return lmTime;

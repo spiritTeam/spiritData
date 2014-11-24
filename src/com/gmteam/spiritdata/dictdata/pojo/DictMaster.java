@@ -18,13 +18,13 @@ public class DictMaster extends BaseObject {
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
     private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session)）
     private String dmName; //典组名称
-    private String nPy; //字典组名称拼音
+    private String NPy; //字典组名称拼音
     private int sort; //排序号，越大越靠前
     private int isValidate; //字典组是否可用 1可用，2不可用
-    private int mType; //字典组类型：1系统保留；2系统；3定义；
-    private String mRef; //字典组引用，当mType=3
+    private int MType; //字典组类型：1系统保留；2系统；3定义；
+    private String MRef; //字典组引用，当mType=3
     private String descn; //说明
-    private Timestamp cTime; //记录创建时间
+    private Timestamp CTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间
 
     public String getId() {
@@ -51,12 +51,6 @@ public class DictMaster extends BaseObject {
     public void setDmName(String dmName) {
         this.dmName = dmName;
     }
-    public String getnPy() {
-        return nPy;
-    }
-    public void setnPy(String nPy) {
-        this.nPy = nPy;
-    }
     public int getSort() {
         return sort;
     }
@@ -69,29 +63,35 @@ public class DictMaster extends BaseObject {
     public void setIsValidate(int isValidate) {
         this.isValidate = isValidate;
     }
-    public int getmType() {
-        return mType;
-    }
-    public void setmType(int mType) {
-        this.mType = mType;
-    }
-    public String getmRef() {
-        return mRef;
-    }
-    public void setmRef(String mRef) {
-        this.mRef = mRef;
-    }
     public String getDescn() {
         return descn;
     }
     public void setDescn(String descn) {
         this.descn = descn;
     }
-    public Timestamp getcTime() {
-        return cTime;
+    public String getNPy() {
+        return NPy;
     }
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setNPy(String nPy) {
+        NPy = nPy;
+    }
+    public int getMType() {
+        return MType;
+    }
+    public void setMType(int mType) {
+        MType = mType;
+    }
+    public String getMRef() {
+        return MRef;
+    }
+    public void setMRef(String mRef) {
+        MRef = mRef;
+    }
+    public Timestamp getCTime() {
+        return CTime;
+    }
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
     public Timestamp getLmTime() {
         return lmTime;

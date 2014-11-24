@@ -18,80 +18,61 @@ public class MetadataColSemanteme extends BaseObject {
     private String semantemeCode; //语义代码
     private int semantemeType; //语义类型
     private float semantemeWeight; //语义权重
-    private Timestamp cTime; //记录创建时间
+    private Timestamp CTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间
-
     //以上对应数据库信息
     private MetadataColumn column; //本列语义对应的列描述信息
-
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
-
     public String getColId() {
         return colId;
     }
-
     public void setColId(String colId) {
         this.colId = colId;
     }
-
     public String getMdMId() {
         return mdMId;
     }
-
     public void setMdMId(String mdMId) {
         this.mdMId = mdMId;
     }
-
     public String getSemantemeCode() {
         return semantemeCode;
     }
-
     public void setSemantemeCode(String semantemeCode) {
         this.semantemeCode = semantemeCode;
     }
-
     public int getSemantemeType() {
         return semantemeType;
     }
-
     public void setSemantemeType(int semantemeType) {
         this.semantemeType = semantemeType;
     }
-
     public float getSemantemeWeight() {
         return semantemeWeight;
     }
-
     public void setSemantemeWeight(float semantemeWeight) {
         this.semantemeWeight = semantemeWeight;
     }
-
-    public Timestamp getcTime() {
-        return cTime;
+    public Timestamp getCTime() {
+        return CTime;
     }
-
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
-
     public Timestamp getLmTime() {
         return lmTime;
     }
-
     public void setLmTime(Timestamp lmTime) {
         this.lmTime = lmTime;
     }
-
     public MetadataColumn getColumn() {
         return column;
     }
-
     public void setColumn(MetadataColumn column) {
         this.colId=column.getId();
         this.mdMId=column.getMdMId();

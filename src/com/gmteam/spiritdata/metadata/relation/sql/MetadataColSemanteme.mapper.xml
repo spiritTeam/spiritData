@@ -12,7 +12,7 @@
     <result column="tmId"          property="mdMId"         jdbcType="VARCHAR" />
     <result column="semantemeCode" property="semantemeCode" jdbcType="VARCHAR" />
     <result column="semantemeType" property="semantemeType" jdbcType="INTEGER" />
-    <result column="cTime"         property="cTime"         jdbcType="TIMESTAMP" />
+    <result column="cTime"         property="CTime"         jdbcType="TIMESTAMP" />
     <result column="lmTime"        property="lmTime"        jdbcType="TIMESTAMP" />
   </resultMap>
   <!-- 所有列 -->
@@ -28,7 +28,7 @@
         <if test="mdMId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
         <if test="semantemeCode != null" > and semantemeCode = #{semantemeCode,jdbcType=VARCHAR} </if>
         <if test="semantemeType!=null and semantemeType!=1" > and semantemeType = #{semantemeType,jdbcType=INTEGER} </if>
-        <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
+        <if test="CTime != null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
         <if test="lmTime != null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
       </trim>
     </where>
@@ -128,8 +128,8 @@
       <if test="semantemeType!=null and semantemeType!=1" >
         semantemeType = #{semantemeType,jdbcType=INTEGER},
       </if>
-      <if test="ctime != null" >
-        cTime = #{ctime,jdbcType=TIMESTAMP},
+      <if test="Ctime != null" >
+        cTime = #{Ctime,jdbcType=TIMESTAMP},
       </if>
       <if test="lmtime != null" >
         lmTime = #{lmtime,jdbcType=TIMESTAMP},
