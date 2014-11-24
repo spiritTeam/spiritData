@@ -48,12 +48,12 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 </script>
 <center>
   <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
-    <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">账号登录</span></div>
+    <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">账　号</span></div>
     <div style="height:2px; width:400px;border-top: 1px solid  #999999;"></div>
     <form  style="margin-top: 15px;" action="">
       <table width="370px;" >
         <tr style="height:50px; valign:top;">
-          <td align="right" width="100px;"><span class="myspan">账号&nbsp;&nbsp;</span></td>
+          <td align="right" width="100px;"><span class="myspan">账　号</span></td>
           <td colspan="2" rowspan="1" width="200px;" style="text-align:left;">
             <div style="float: left;">
               <input id="loginName" name="loginName" tabindex="1" type="text"  value="账号/QQ/手机号" 
@@ -63,7 +63,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="myspan">密码&nbsp;&nbsp;</span></td>
+          <td align="right"><span class="myspan">密　码</span></td>
           <td colspan="2" style="text-align:left;" id="pwTd">
 	          <div style="float: left;">
 	            <input id="password" name="password" tabindex="2" type="password" value=""  onselect="" onmouseover="pwdMouseOver();"
@@ -74,7 +74,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="myspan">验证码&nbsp;&nbsp;</span></td>
+          <td align="right"><span class="myspan">验证码</span></td>
           <td colspan="2">
             <div style="float: left;">
               <input type="text" id="checkCode" name="checkCode" tabindex="3" value="验证码" 
@@ -193,6 +193,7 @@ function validateValidateCode(eleId){
     	$('#vVC').append('<img id="vCImg" align="middle" src="img/accept.png">');
       vcV = true;
     }else{
+    	$('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
       vcV = false;
     }
   }

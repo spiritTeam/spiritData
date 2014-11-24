@@ -308,7 +308,7 @@ public class SpiritRandom {
         } while(_randomCache.size()<cacheSize);
     }
 
-    /*
+    /**
      * 把参数范围数组用生成数分割的两个范围数组， 
      * @param range 范围数组
      * @return List[0]=[r];List[1]=[b..r-1];List[2]=[r+1..e];分割后的两个范围数组
