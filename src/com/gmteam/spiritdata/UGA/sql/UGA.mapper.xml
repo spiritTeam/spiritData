@@ -10,7 +10,7 @@
   <result column="nickName"   property="nickName"   jdbcType="VARCHAR" />
   <result column="userType"   property="userType"   jdbcType="INTEGER" />
   <result column="descn"      property="descn"      jdbcType="VARCHAR" />
-  <result column="cTime"      property="cTime"      jdbcType="TIMESTAMP" />
+  <result column="cTime"      property="CTime"      jdbcType="TIMESTAMP" />
   <result column="lmTime"     property="lmTime"     jdbcType="TIMESTAMP" />
   <result column="userState"  property="userState"  jdbcType="INTEGER" />
   <result column="validataSequence" property="validataSequence" jdbcType="VARCHAR" />
@@ -36,8 +36,8 @@
     <if test="descn != null" >
       descn = #{descn,jdbcType=VARCHAR},
     </if>
-    <if test="cTime != null" >
-      cTime = #{cTime,jdbcType=TIMESTAMP},
+    <if test="CTime != null" >
+      cTime = #{CTime,jdbcType=TIMESTAMP},
     </if>
     <if test="lmTime != null" >
       lmTime = #{lmTime,jdbcType=TIMESTAMP},

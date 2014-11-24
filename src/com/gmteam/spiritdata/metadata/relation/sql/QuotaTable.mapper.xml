@@ -12,7 +12,7 @@
     <result column="tmId"      property="mdMId"     jdbcType="VARCHAR" />
     <result column="tableName" property="tableName" jdbcType="VARCHAR" />
     <result column="allCount"  property="allCount"  jdbcType="INTEGER" />
-    <result column="cTime"     property="cTime"     jdbcType="TIMESTAMP" />
+    <result column="cTime"     property="CTime"     jdbcType="TIMESTAMP" />
     <result column="lmTime"    property="lmTime"    jdbcType="TIMESTAMP" />
     <result column="laTime"    property="laTime"    jdbcType="TIMESTAMP" />
   </resultMap>
@@ -30,7 +30,7 @@
         <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
         <if test="allCount != null" > and allCount = #{allCount,jdbcType=INTEGER} </if>
         <if test="tableDescn != null" > and tableDescn = #{tableDescn,jdbcType=VARCHAR} </if>
-        <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
+        <if test="CTime != null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
         <if test="lmTime != null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
         <if test="laTime != null" > and laTime = #{laTime,jdbcType=TIMESTAMP} </if>
       </trim>
@@ -85,7 +85,7 @@
       <if test="allCount != null" >
         allCount,
       </if>
-      <if test="cTime != null" >
+      <if test="CTime != null" >
         cTime,
       </if>
       <if test="lmTime != null" >
@@ -111,8 +111,8 @@
       <if test="allCount != null" >
         #{allCount,jdbcType=INTEGER},
       </if>
-      <if test="cTime != null" >
-        #{cTime,jdbcType=TIMESTAMP},
+      <if test="CTime != null" >
+        #{CTime,jdbcType=TIMESTAMP},
       </if>
       <if test="lmTime != null" >
         #{lmTime,jdbcType=TIMESTAMP},
@@ -142,8 +142,8 @@
       <if test="allCount != null" >
         allCount = #{allCount,jdbcType=INTEGER},
       </if>
-      <if test="cTime != null" >
-        cTime = #{cTime,jdbcType=TIMESTAMP},
+      <if test="CTime != null" >
+        cTime = #{CTime,jdbcType=TIMESTAMP},
       </if>
       <if test="lmTime != null" >
         lmTime = #{lmTime,jdbcType=TIMESTAMP},

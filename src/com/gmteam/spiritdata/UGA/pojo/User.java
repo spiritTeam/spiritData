@@ -14,7 +14,7 @@ public class User extends UgaUser {
     private String nickName; //昵称
     private int userType; //用户分类：1=自然人用户;2=组织用户
     private String descn; //用户描述
-    private Timestamp cTime; //记录创建时间
+    private Timestamp CTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间:last modify time
     private int userState;//用户状态，0~2
     private String validataSequence;//存储邮箱验证码
@@ -55,11 +55,11 @@ public class User extends UgaUser {
     public void setUserType(int userType) {
         this.userType = userType;
     }
-    public Timestamp getcTime() {
-        return cTime;
+    public Timestamp getCTime() {
+        return CTime;
     }
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
     public Timestamp getLmTime() {
         return lmTime;

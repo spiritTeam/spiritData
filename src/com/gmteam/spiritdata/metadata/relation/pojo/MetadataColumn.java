@@ -21,7 +21,7 @@ public class MetadataColumn extends BaseObject {
     private int columnIndex; //列顺序名称
     private String columnType; //列字段类型，目前可以为字符串[String]，数字型[Double(为兼容excel)]，日期型[timestamp]（类似数据库中字段的数据类型）
     private int pkSign; //是否是主键，0-不是主键,1-确定主键,2-不确定主键
-    private Timestamp cTime; //记录创建时间
+    private Timestamp CTime; //记录创建时间
     //以上信息对应数据库中的信息
     private MetadataModel mdModel; //本列描述对应的元数据模式
     private List<MetadataColSemanteme> colSemList; //本列对应的语义信息，由于可能有多个语义，所以，这应该是一个list
@@ -92,11 +92,11 @@ public class MetadataColumn extends BaseObject {
     public boolean isDoubtPk() {
         return pkSign>1;
     }
-    public Timestamp getcTime() {
-        return cTime;
+    public Timestamp getCTime() {
+        return CTime;
     }
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
     public List<MetadataColSemanteme> getColSemList() {
         return colSemList;

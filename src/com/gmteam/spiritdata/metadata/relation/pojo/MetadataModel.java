@@ -19,17 +19,14 @@ public class MetadataModel extends BaseObject {
     private String id; //模式Id
     private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session)）
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
-    private Timestamp cTime; //记录创建时间
+    private Timestamp CTime; //记录创建时间
     private String tableName; //积累表名称
     private String descn; //模式说明
-
     //以上信息对应数据库中的信息
     private List<MetadataColumn> columnList; //列描述信息列表
-
     public String getId() {
         return id;
     }
-
     public void setId(String id) throws Exception {
         this.id = id;
         if (this.columnList!=null&&this.columnList.size()>0) {
@@ -38,57 +35,44 @@ public class MetadataModel extends BaseObject {
             }
         }
     }
-
     public int getOwnerType() {
         return ownerType;
     }
-
     public void setOwnerType(int ownerType) {
         this.ownerType = ownerType;
     }
-
     public String getOwnerId() {
         return ownerId;
     }
-
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
-
-    public Timestamp getcTime() {
-        return cTime;
+    public Timestamp getCTime() {
+        return CTime;
     }
-
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
-
     public String getTableName() {
         return tableName;
     }
-
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-
     public List<MetadataColumn> getColumnList() {
         return columnList;
     }
-
     public void setColumnList(List<MetadataColumn> columnList) throws Exception {
         if (columnList!=null&&columnList.size()>0) {
             for (MetadataColumn mc: columnList) this.addColumn(mc);
         }
     }
-
     public String getDescn() {
         return descn;
     }
-
     public void setDescn(String descn) {
         this.descn = descn;
     }
-
     /**
      * 插入列描述对象到列描述列表
      * @param mdc 被插入的对象，其中Mid可以省略，本对象的Mid将填入传来的参数mdc
@@ -108,7 +92,6 @@ public class MetadataModel extends BaseObject {
         mdc.setMdModel(this);
         this.columnList.add(mdc);
     }
-
     /**
      * 根据列意义名称得到列描述对象
      * @param titleName 意义名称
@@ -119,7 +102,6 @@ public class MetadataModel extends BaseObject {
         param.setTitleName(titleName);
         return getColumn(param);
     }
-
     /**
      * 根据列名称得到列描述对象
      * @param columnName 名称
@@ -130,7 +112,6 @@ public class MetadataModel extends BaseObject {
         param.setColumnName(columnName);
         return getColumn(param);
     }
-
     /**
      * 根据列Id得到列描述对象，此方法不常用
      * @param cId 列Id
@@ -141,7 +122,6 @@ public class MetadataModel extends BaseObject {
         param.setId(colId);
         return getColumn(param);
     }
-
     private MetadataColumn getColumn(MetadataColumn mdc) {
         if (this.columnList==null||this.columnList.size()==0||mdc==null) return null;
         MetadataColumn ret = null;
@@ -153,7 +133,6 @@ public class MetadataModel extends BaseObject {
         }
         return ret;
     }
-
     /**
      * 比较两个模式是否相同
      * @param mm 被比较模式

@@ -96,7 +96,7 @@ public class MdEntityTableService {
         insertTmo.setTableName(tableName);
         insertTmo.setTableType(tableType);
         tmoDao.insert(insertTmo);
-        insertTmo.setcTime(new Timestamp(new Date().getTime()));
+        insertTmo.setCTime(new Timestamp(new Date().getTime()));
         return insertTmo;
     }
 

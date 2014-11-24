@@ -14,7 +14,7 @@
     <result column="min"           property="min"           jdbcType="VARCHAR" />
     <result column="nullCount"     property="nullCount"     jdbcType="INTEGER" />
     <result column="distinctCount" property="distinctCount" jdbcType="INTEGER" />
-    <result column="cTime"         property="cTime"         jdbcType="TIMESTAMP" />
+    <result column="cTime"         property="CTime"         jdbcType="TIMESTAMP" />
     <result column="lmTime"        property="lmTime"        jdbcType="TIMESTAMP" />
   </resultMap>
   <!-- 所有列 -->
@@ -32,7 +32,7 @@
         <if test="min != null" > and min = #{min,jdbcType=VARCHAR} </if>
         <if test="nullCount != null" > and nullCount = #{nullCount,jdbcType=INTEGER} </if>
         <if test="distinctCount != null" > and distinctCount = #{distinctCount,jdbcType=INTEGER} </if>
-        <if test="cTime != null" > and cTime = #{cTime,jdbcType=TIMESTAMP} </if>
+        <if test="CTime != null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
         <if test="lmTime != null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
       </trim>
     </where>
@@ -92,7 +92,7 @@
       <if test="distinctCount != null" >
         distinctCount,
       </if>
-      <if test="cTime != null" >
+      <if test="CTime != null" >
         cTime,
       </if>
       <if test="lmTime != null" >
@@ -121,8 +121,8 @@
       <if test="distinctCount != null" >
         #{distinctCount,jdbcType=INTEGER},
       </if>
-      <if test="cTime != null" >
-        #{cTime,jdbcType=TIMESTAMP},
+      <if test="CTime != null" >
+        #{CTime,jdbcType=TIMESTAMP},
       </if>
       <if test="lmTime != null" >
         #{lmTime,jdbcType=TIMESTAMP},
@@ -155,8 +155,8 @@
       <if test="distinctCount != null" >
         distinctCount = #{distinctCount,jdbcType=INTEGER},
       </if>
-      <if test="cTime != null" >
-        cTime = #{cTime,jdbcType=TIMESTAMP},
+      <if test="CTime != null" >
+        cTime = #{CTime,jdbcType=TIMESTAMP},
       </if>
       <if test="lmTime != null" >
         lmTime = #{lmTime,jdbcType=TIMESTAMP},

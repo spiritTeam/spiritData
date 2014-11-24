@@ -19,8 +19,7 @@ public class QuotaColumn extends BaseObject {
     private String min; //列指标——最小值
     private long nullCount; //列指标——空值数
     private long distinctCount; //列指标——单值数
-
-    private Timestamp cTime; //记录创建时间
+    private Timestamp CTime; //记录创建时间
     private Timestamp lmTime; //本记录最后修改时间
     //以上信息对应数据库中的信息
     private MetadataColumn column; //本列指标对应的列描述信息
@@ -68,11 +67,11 @@ public class QuotaColumn extends BaseObject {
     public void setDistinctCount(long distinctCount) {
         this.distinctCount = distinctCount;
     }
-    public Timestamp getcTime() {
-        return cTime;
+    public Timestamp getCTime() {
+        return CTime;
     }
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
     public Timestamp getLmTime() {
         return lmTime;

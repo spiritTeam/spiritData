@@ -1,9 +1,10 @@
-.myspan { width:100px; font-size: 16px;}
-input[type="text"], input[type="password"] {color:#ABCDEF; width:197px;}
+.myspan { width:100px; font-size: 16px;padding-right: 5px;}
+input[type="text"], input[type="password"] {width:197px;}
 #loginName {padding-top:8px; height:25px; font-size:12px;}
-#mail {width: 115px;padding-top:8px; height:25px; font-size:12px;}
-#mailEndStr {width: 80px;padding-left:-10px; height:25px; font-size:12px;}
+#mail {width: 113px;padding-top:8px; height:25px; font-size:12px;}
+#mailEndStr {width: 80px;padding-left:-10px;font-size:12px;margin-left: -2px;}
 #password {padding-top:8px; height:25px; font-size:14px;}
-#confirmPassword {width: 115px; padding-top:8px; height:25px; font-size:12px;}
+#confirmPassword {width: 197px; padding-top:8px; height:25px; font-size:12px;}
 #checkCode {width: 115px; padding-top:8px; height:25px; font-size:12px;}
 #loginName{padding-top:8px; height:25px; font-size:12px;}
+#otherButCss {width:210px; background-image:url(img/registerb.png); padding-left:45px;border: 1px solid red;margin-left: 48px;}
