@@ -220,7 +220,7 @@ CREATE TABLE sa_file_rel (
   aId    varchar(36)      NOT NULL  COMMENT '第一文件类Id',
   bType  int(1) unsigned  NOT NULL  COMMENT '第二文件类型：=1是对原生态表的关联关系；=2是文件关联表',
   bId    varchar(36)      NOT NULL  COMMENT '第二文件类Id',
-  rType1 int(1)           NOT NULL  COMMENT '关联类型1:=1单向-说明rfid是fid的子；=0平等；=-1反向-说明fid是rfid的子(这个通过视图实现)',
+  rType1 int(1)           NOT NULL  COMMENT '关联类型1:=1单向-说明aid是bid的子；=0平等；=-1反向-说明bid是aid的子(这个通过视图实现)',
   rType2 varchar(200)               COMMENT '关联类型2',
   descn  varchar(500)               COMMENT '说明',
   cTime  timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',

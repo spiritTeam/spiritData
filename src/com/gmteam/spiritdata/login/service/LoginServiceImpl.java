@@ -1,7 +1,6 @@
 package com.gmteam.spiritdata.login.service;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.apache.commons.dbcp.BasicDataSource;
 import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.framework.component.login.service.LoginService;
 import com.gmteam.spiritdata.UGA.pojo.User;
-import com.gmteam.spiritdata.UGA.service.UserService;
 
 public class LoginServiceImpl implements LoginService {
     @Resource
@@ -39,8 +37,7 @@ public class LoginServiceImpl implements LoginService {
         }
         return retMap;
     }
-    @Resource
-    private UserService userService;
+
     @Override
     public Map<String, Object> afterUserLoginOk(UgaUser user, HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
@@ -65,12 +62,12 @@ public class LoginServiceImpl implements LoginService {
      * @param session 当前Session
      * @param userId 用户Id 用户的id
      */
-    public void changeOwnerId(HttpSession session, String userId) {
+    private void changeOwnerId(HttpSession session, String newOwnerId) {
         Connection conn = null;
         Statement st = null;
         boolean autoCommitFlag = true;
         String sessionId = session.getId();
-
+/*
         try {
             conn = dataSource.getConnection();
             autoCommitFlag = conn.getAutoCommit();
@@ -97,6 +94,6 @@ public class LoginServiceImpl implements LoginService {
         } finally {
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
             try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
-        }
+        }*/
     }
 }

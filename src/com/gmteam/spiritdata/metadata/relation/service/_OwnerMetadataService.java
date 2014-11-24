@@ -56,7 +56,7 @@ public class _OwnerMetadataService {
         _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         //新增数据库-主表
         mdBasisService.addMetadataModel(mm);
-        //新增数据库-字表
+        //新增数据库-子表
         List<MetadataColumn> mcList = mm.getColumnList();
         if (mcList!=null&&mcList.size()>0) {
             for (MetadataColumn mc: mcList) {
@@ -67,14 +67,6 @@ public class _OwnerMetadataService {
 
         //新增缓存
         _om.mdModelMap.put(mm.getId(), mm);
-        if (_om.mmList==null) _om.mmList = new ArrayList<MetadataModel>(); 
-        _om.mmList.add(mm);
-        if (mcList!=null&&mcList.size()>0) {
-            if (_om.mcList==null) _om.mcList = new ArrayList<MetadataColumn>(); 
-            for (MetadataColumn mc: mcList) {
-                _om.mcList.add(mc);
-            }
-        }
     }
 }
 
@@ -165,10 +157,6 @@ class Thread_LoadData implements Runnable {
                     _om.mdModelMap.clear();
                 }
             }
-            if (mmList!=null&&mmList.size()>0) _om.mmList = mmList; else _om.mmList=null;
-            if (mcList!=null&&mcList.size()>0) _om.mcList = mcList; else _om.mcList=null;
-            if (mcsList!=null&&mcsList.size()>0) _om.mcsList = mcsList; else _om.mcsList=null;
-
             _om.setLoadSuccess();
         } catch(Exception e) {
             e.printStackTrace();
