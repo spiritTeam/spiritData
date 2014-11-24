@@ -24,6 +24,73 @@ import com.gmteam.spiritdata.util.SequenceUUID;
 public class RegisterController {
     @Resource
     private UserService userService;
+    @RequestMapping(value="/login/sendBackPwdMail.do")
+    public @ResponseBody Map<String,Object> sendBackPwdMail(HttpServletRequest req){
+        Map<String,Object> retMap = new HashMap<String,Object>();
+        String loginName = req.getParameter("loginName");
+        User user = userService.getUserByLoginName(loginName);
+        String validatsaSequence = SequenceUUID.getPureUUID();
+        user.setValidataSequence(validatsaSequence);
+        String url = "请前往以下地址修改密码\n"
+                + " http://localhost:8080/sa/login/activePwdMail.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+        SendValidataUrlToMail svu = new SendValidataUrlToMail();
+        svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
+        userService.updateUser(user);
+        retMap.put("success", true);
+        retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请注意查看!");
+        return retMap;
+    }
+    @RequestMapping("login/activePwdMail.do")
+    public @ResponseBody Map<String,Object> activePwdMail(HttpServletRequest request, HttpServletResponse response){
+        String uri=request.getRequestURI();
+        //String path=uri.substring(uri.lastIndexOf("/"),uri.lastIndexOf("."));
+        System.out.println(uri);
+        Map<String,Object> retMap = new HashMap<String,Object>();
+        String authCode = request.getParameter("authCode");
+        if(authCode==null){
+            retMap.put("success", false);
+            retMap.put("retInfo", "激活码不完整!请重新新点击激活链接或从登录页面再次发送激活邮件!");
+        }
+        String userId = authCode.substring(0,authCode.lastIndexOf("~"));
+        String code = authCode.substring(authCode.lastIndexOf("~")+1);
+        User user  = userService.getUserById(userId);
+        if(user==null){
+            retMap.put("success", false);
+            retMap.put("retInfo", "验证码缺失!");
+        }else{
+            if(user.getValidataSequence().equals(code)){
+                user.setUserState(1);
+                user.setUserType(1);
+                HttpSession session = request.getSession();
+                session.removeAttribute(FConstants.SESSION_USER);
+                session.setAttribute(FConstants.SESSION_USER, user);
+                userService.updateUser(user);
+                response.setContentType("text/html; charset=gb2312");
+                try {
+                    response.sendRedirect("/sa/login/modPwd.jsp?modType=2");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                retMap.put("success", false);
+                retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
+            }
+        }
+        return retMap;
+    }
+    @RequestMapping(value="/login/modifyPwd.do")
+    public @ResponseBody boolean modifyPwd(HttpServletRequest req){
+        HttpSession session =req.getSession();
+        User user = (User) session.getAttribute(FConstants.SESSION_USER);
+        String pwd = req.getParameter("password");
+        user.setPassword(pwd);
+        int i = userService.updateUser(user); 
+        if(i==1){
+            return true;
+        }else{
+            return false;
+        }
+    }
     @RequestMapping("login/activeAgain.do")
     public @ResponseBody Map<String,Object> sendAgain(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
@@ -70,9 +137,6 @@ public class RegisterController {
                 if(user.getValidataSequence().equals(code)){
                     user.setUserState(1);
                     user.setUserType(1);
-                    HttpSession session = request.getSession();
-                    session.removeAttribute(FConstants.SESSION_USER);
-                    session.setAttribute(FConstants.SESSION_USER, user);
                     userService.updateUser(user);
                     retMap.put("success", true);
                     retMap.put("retInfo", "激活成功!");
@@ -186,7 +250,7 @@ public class RegisterController {
             //1代表以发验证到邮箱验证，用户为验证
             user.setUserState(0);
             String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
-                    + " http://localhost:8080/sa/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+                    + " http://localhost:8080/sa/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
             SendValidataUrlToMail svu = new SendValidataUrlToMail();
             svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
             int r = userService.updateUser(user);

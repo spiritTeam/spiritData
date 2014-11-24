@@ -32,6 +32,7 @@
       <version>4.2.6</version>
     </dependency>
     -->
+    <!-- commons-io -->
     <dependency>
 	    <groupId>org.htmlparser</groupId>
 	    <artifactId>thumbelina</artifactId>

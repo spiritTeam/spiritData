@@ -60,7 +60,7 @@ public class _OwnerMetadataService {
         List<MetadataColumn> mcList = mm.getColumnList();
         if (mcList!=null&&mcList.size()>0) {
             for (MetadataColumn mc: mcList) {
-                if (mc.getId()==null||mc.getId().equals("")) mc.setId(SequenceUUID.getUUIDSubSegment(4));
+                if (mc.getId()==null||mc.getId().equals("")) mc.setId(SequenceUUID.getPureUUID());
                 mdBasisService.addMetadataColumn(mc);
             }
         }

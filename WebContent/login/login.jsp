@@ -10,6 +10,11 @@
 <title>login</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
+<style type="text/css">
+#loginName{padding-top:8px; height:25px; font-size:14px;}
+#password{padding-top:8px; height:25px; font-size:14px;}
+#checkCode{width: 115px; padding-top:8px; height:25px; font-size:14px;}
+</style>
 </head>
 <body>
 <object id="locator" classid="CLSID:76A64158-CB41-11D1-8B02-00600806D9B6" style="display:none;visibility:hidden"></object>
@@ -46,28 +51,39 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">账号登录</span></div>
     <div style="height:2px; width:400px;border-top: 1px solid  #999999;"></div>
     <form  style="margin-top: 15px;" action="">
-      <table width="430px;" >
-        <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
+      <table width="370px;" >
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
-          <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
-          <input id="loginName" name="loginName"  tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
+          <td align="right" width="100px;"><span class="myspan">账号&nbsp;&nbsp;</span></td>
+          <td colspan="2" rowspan="1" width="200px;" style="text-align:left;">
+            <div style="float: left;">
+              <input id="loginName" name="loginName" tabindex="1" type="text"  value="账号/QQ/手机号" 
                 onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
+            </div>
+            <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">密码&nbsp;&nbsp;</span></td>
-          <td colspan="2" style="text-align:left;">
-            <input style="width:280px;" id="password" name="password"  tabindex="2" type="password" value="" onmouseover=this.focus();this.select();
-                onclick="onClick(password);" onBlur="validatePassword('password');" />
+          <td colspan="2" style="text-align:left;" id="pwTd">
+	          <div style="float: left;">
+	            <input id="password" name="password" tabindex="2" type="password" value=""  onselect="" onmouseover="pwdMouseOver();"
+	                onclick="onClick(password);" onBlur="validatePassword('password');" /></div>
+	          <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vPW'></div>
+	          <div id="pwDiv" style="float: left;width: 25px;height: 25px;padding-top: 10px;margin-left: -225px;" align="center" >
+	            <span id="pwdSpan" style="color: #ABCDEF;font-size: 12px;">密码</span></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">验证码&nbsp;&nbsp;</span></td>
-          <td width="180px;"><input style="width:195px;" id="checkCode" name="checkCode"  tabindex="3" type="text" value="验证码" onmouseover=this.focus();this.select();
-                onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" /></td>
-          <td align="left">
-            <div style="border: 1px solid  #999999;width: 80px;"><img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
+          <td colspan="2">
+            <div style="float: left;">
+              <input type="text" id="checkCode" name="checkCode" tabindex="3" value="验证码" 
+                onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" />
+            </div>
+            <div style="float: left;border: 1px solid #999999;width: 80px;margin-left: -3px;" >
+              <img title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
+            </div>
+            <div style="float: left;width: 25px;height: 25px;padding-top: 8px;" align="center" id='vVC'></div>
           </td>
         </tr>
         <tr style="height:70px; valign:top;">
@@ -84,10 +100,45 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 </center>
 </body>
 <script type="text/javascript">
+//全局变量，用于判断input
+var psV=false,lnV=false,vcV=false;
+//未登录的忘记密码页面
 function modPwd(){
-  window.location.href="<%=path%>/login/modPwd.jsp?modType=2";
+  window.location.href="<%=path%>/login/backpwd/validateUser.jsp?modType=2";
+}
+function pwdOnActive() {
+  //隐藏
+  $("#pwdSpan").hide();
+  //获得焦点和选择
+  $("#password")[0].focus();
+  $("#password")[0].select();
+}
+//如果不是ie浏览器，从新初始化inputcsss
+function setInputCss() {
+	var browserType = getBrowserVersion();
+  browserType = browserType.substring(0,browserType.lastIndexOf(' '));
+  if(browserType!='msie'){
+	  $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+	  $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+	  $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+  }
+}
+function pwdMouseOver(){
+	 $("#pwdSpan").toggleClass("addSelect");
 }
 $(function(){
+	$("#pwdSpan").mouseover(function(){pwdOnActive();});
+	$("#password").focus(function(){pwdOnActive();});
+	$("#password").mouseover(function(){pwdOnActive();});
+	$("#password").blur(function(){
+		if ($(this).val()=="") $("#pwdSpan").show();
+  });
+
+	$("#maskPwd").css({"position":"absolute", "border":"solid red 1px","top":"100px", "left":"100px","color":"#ABCDEF"})
+	.click(function(){
+		$("#maskPwd").hide();
+	});
+	setInputCss();
   if($('#loginName').val()==$('#loginName')[0].defaultValue){
     $('#loginName').css('color','#ABCDEF');
   }
@@ -98,11 +149,11 @@ $(function(){
     $('#checkCode').css('color','#ABCDEF');
   }
 });
-var psV=false,lnV=false,vcV=false;
+//从新发送激活邮件到邮箱
 function activeAgain(){
   var url="<%=path%>/login/activeAgain.do";
   var loginName = $("#loginName").val();
-  if(loginName==null||loginName==""){
+  if(loginName==null||loginName==""||loginName==$("#loginName")[0].defaultValue){
     $.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
     return;
   }else{
@@ -120,21 +171,17 @@ function activeAgain(){
     });
   }
 }
-function checkStr(str){
-  var re = /^[a-zA-z]\w{4,11}$/;
-  if(re.test(str)){
-    return true;
-  }else{
-    return false;
-  }       
-}
+//跳转到注册页面
 function tregister(){
   window.location.href="<%=path%>/login/register.jsp";
 }
+//刷新验证码
 function refresh(obj) {
   obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
 }
+//验证验证码
 function validateValidateCode(eleId){
+	$('#vCImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
     ele.val(ele[0].defaultValue);
@@ -143,10 +190,9 @@ function validateValidateCode(eleId){
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
-      $('#checkResult').html('<div style="width:370px;font-size: 12px;color:green;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/accept.png">验证码正确!</div>');
+    	$('#vVC').append('<img id="vCImg" align="middle" src="img/accept.png">');
       vcV = true;
     }else{
-      $('#checkResult').html('<div style="font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">验证码错误!</div>');
       vcV = false;
     }
   }
@@ -165,23 +211,25 @@ function verificationCheckCode(val){
   return vfMsg;
 }
 function validatePassword(eleId){
+  $('#pWImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-    ele.val(ele[0].defaultValue);
-    ele.css('color','#ABCDEF');
+	  $('#pwdSpan').html('密码');
     psV = false;
   }else{
+		$('#vPW').append('<img id="pWImg" align="middle" src="img/accept.png">'); 
     psV = true;
   }
 }
 function validateLoginName(eleId){
+	$('#lNImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
     ele.val(ele[0].defaultValue);
     ele.css('color','#ABCDEF');
     lnV = false;
   }else{
-    $('#checkResult').html('<img src="img/accept.png">');
+	  $('#vLN').append('<img id="lNImg" align="middle" src="img/accept.png">');
     lnV = true;
   }
 }
@@ -201,6 +249,9 @@ function checkLoginName(val){
 function onClick(obj){
   if(obj.value==obj.defaultValue){
     obj.value='';obj.style.color='#000';
+  }
+  if($(obj).attr('id')+''=='password'){
+	  $('#pwdSpan').html('');
   }
 }
 function loginF() {
@@ -246,6 +297,9 @@ function loginF() {
       }
     });
   }else{
+	  if(lnV==false)$('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
+    if(psV==false)$('#vPW').append('<img id="pWImg" align="middle" src="img/cross.png">'); 
+    if(vcV==false)$('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">'); 
     $.messager.alert("登录信息","您的登录信息某些地方有误，请完善您的注册信息");
     return ;
   }

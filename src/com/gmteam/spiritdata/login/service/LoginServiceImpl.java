@@ -1,6 +1,7 @@
 package com.gmteam.spiritdata.login.service;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,6 @@ import com.gmteam.spiritdata.UGA.pojo.User;
 public class LoginServiceImpl implements LoginService {
     @Resource
     private BasicDataSource dataSource;
-
     @Override
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
@@ -41,6 +41,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Map<String, Object> afterUserLoginOk(UgaUser user, HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
+        
         //激活邮箱
         User u = (User)user;
         //==0,未发邮箱激活
@@ -67,17 +68,17 @@ public class LoginServiceImpl implements LoginService {
         Statement st = null;
         boolean autoCommitFlag = true;
         String sessionId = session.getId();
-/*
         try {
+            //更新持久化部分
             conn = dataSource.getConnection();
             autoCommitFlag = conn.getAutoCommit();
             conn.setAutoCommit(false);
             //修改信息
             st = conn.createStatement();
-            st.execute("update sa_imp_log set ownerId='"+userId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
-            st.execute("update sa_md_tabmodel set ownerId='"+userId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
-            st.execute("update sa_md_tabmap_org set ownerId='"+userId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
-            st.execute("update plat_dictm set ownerId='"+userId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
+            st.execute("update sa_file_index set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
+            st.execute("update sa_md_tabmodel set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
+            st.execute("update sa_md_tabmap_org set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
+            st.execute("update plat_dictm set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
             //修改文件夹信息
             conn.commit();
             conn.setAutoCommit(autoCommitFlag);
@@ -94,6 +95,6 @@ public class LoginServiceImpl implements LoginService {
         } finally {
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
             try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
-        }*/
+        }
     }
 }

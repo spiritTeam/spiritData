@@ -589,7 +589,8 @@ function logout() {
     success: function(json) {
       if (json.type==1) {
     	  $.messager.alert("注销信息","注销成功!",'info',function(){
-    		  window.location.href="<%=path%>/login/login.jsp?noAuth";
+    		  //window.location.href="<%=path%>/login/login.jsp?noAuth";
+    		  window.location.href="<%=path%>/asIndexTemp.jsp";    		  
     	  });
       } else {  
         $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
@@ -606,6 +607,9 @@ function logout() {
 };
 function modPwd(){
 	openSWin({"title":"修改密码", "url":"<%=path%>/login/modPwd.jsp?modType=1", "width":1000, "height":600, modal:true});
+}
+function login(){
+	openSWin({"title":"登录", "url":"<%=path%>/login/login.jsp", "width":1000, "height":600, modal:true});
 }
 </script>
 </body>
