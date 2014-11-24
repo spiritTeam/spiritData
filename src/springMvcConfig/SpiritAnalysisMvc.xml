@@ -18,7 +18,7 @@
   <context:component-scan base-package="com.gmteam.spiritdata" use-default-filters="false">
     <context:include-filter type="regex" expression=".*.web.*Controller"/>
   </context:component-scan>
-  <bean id="loginService" class="com.gmteam.spiritdata.login.service.LoginServiceImpl"/>
+
   <bean name="/fileUpLoad.do" class="com.gmteam.spiritdata.upload.web.FileUpLoadController">
     <property name="savePath" value="userData"/>  <!--保存的路径 -->
     <property name="conflictType" value="1"/> <!-- 冲突规则：默认=0命名规则顺序加1，类似windows，这是默认方式，若进行10次仍然重名，则随机删除重名文件删除掉；=1，覆盖同名的文件 -->

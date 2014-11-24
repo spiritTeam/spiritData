@@ -89,7 +89,7 @@ public class MdEntityTableService {
         if (tableType==1) mm.setTableName(tableName);
         //写入注册信息
         TableMapRel insertTmo = new TableMapRel();
-        String newkey = SequenceUUID.getUUIDSubSegment(4);
+        String newkey = SequenceUUID.getPureUUID();
         insertTmo.setId(newkey);
         insertTmo.setOwnerId(mm.getOwnerId());
         insertTmo.setMdMId(mm.getId());

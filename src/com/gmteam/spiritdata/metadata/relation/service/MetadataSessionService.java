@@ -47,7 +47,7 @@ public class MetadataSessionService {
             //生成积累表名称
             String mdMId = mm.getId();
             if (mdMId==null||mdMId.equals("")) {
-                mdMId = SequenceUUID.getUUIDSubSegment(4);
+                mdMId = SequenceUUID.getPureUUID();
                 mm.setId(mdMId);
             }
             String accumulationTabName = "tab_"+mdMId;
@@ -60,7 +60,7 @@ public class MetadataSessionService {
             mm=_existMm;
         }
         //创建临时表
-        String tempTabName = "tabt_"+SequenceUUID.getUUIDSubSegment(4);
+        String tempTabName = "tabt_"+SequenceUUID.getPureUUID();
         tempTable = mdTableOrgService.registTabOrgMap(tempTabName, mm, 2);
         //获得积累表
         TableMapRel[] ret = new TableMapRel[2];

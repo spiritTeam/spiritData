@@ -129,7 +129,7 @@ public class MdQuotaService {
             } else {
                 qt.setAllCount(-1);
             }
-            qt.setId(SequenceUUID.getUUIDSubSegment(4));
+            qt.setId(SequenceUUID.getPureUUID());
             rs.close();rs=null;
             ps.close();ps=null;
             //对列进行指标统计
@@ -139,7 +139,7 @@ public class MdQuotaService {
                 QuotaColumn qc = new QuotaColumn();
                 qc.setColId(mc.getId());
                 qc.setTqId(qt.getId());
-                qc.setId(SequenceUUID.getUUIDSubSegment(4));
+                qc.setId(SequenceUUID.getPureUUID());
                 qc.setColumn(mc);
                 //distinct
                 String sql = "select count(distinct "+fieldName+") from "+tableName;

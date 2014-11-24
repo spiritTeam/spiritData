@@ -1,4 +1,4 @@
-package com.gmteam.filemanage.persistence.pojo;
+package com.gmteam.spiritdata.filemanage.persistence.pojo;
 
 import java.sql.Timestamp;
 
@@ -10,7 +10,7 @@ import com.gmteam.framework.util.FileNameUtils;
  * 对应持久化中数据库的表为SA_FILE_INDEX
  * @author wh
  */
-public class FileIndex extends BaseObject {
+public class FileIndexPo extends BaseObject {
     private static final long serialVersionUID = 2308403169193332695L;
 
     private String id; //文件id

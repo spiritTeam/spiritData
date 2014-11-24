@@ -289,21 +289,14 @@ public class SpiritRandom {
                 range = new int[2];
                 range[0]=this.beginNum;
                 range[1]=this.endNum;
-
-                l = getRandom(range);
-                for (int i=0; i<l.size(); i++) {
-                    if (i==0) _randomCache.add(l.get(i)[0]); 
-                    else _assistList.add(l.get(i));
-                }
             } else {
                 int index = SpiritRandom.getRandom(this._r2, 0, _assistList.size()-1);
                 range= _assistList.remove(index);
-                l = getRandom(range);
-
-                for (int i=0; i<l.size(); i++) {
-                    if (i==0) _randomCache.add(l.get(i)[0]); 
-                    else _assistList.add(l.get(i));
-                }
+            }
+            l = getRandom(range);
+            for (int i=0; i<l.size(); i++) {
+                if (i==0) _randomCache.add(l.get(i)[0]); 
+                else _assistList.add(l.get(i));
             }
         } while(_randomCache.size()<cacheSize);
     }
