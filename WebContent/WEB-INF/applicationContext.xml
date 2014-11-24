@@ -78,7 +78,15 @@
   </bean>
 
   <!-- 以下为web环境Session加载的定义 -->
-  <bean id="sessionLoader"        class="com.gmteam.spiritdata.login.SessionLoaderImp"/>
+  <!-- session加载器外壳 -->
+  <bean id="sessionLoaderShell" class="com.gmteam.framework.core.web.SessionLoaderShell">
+    <property name="sessionLoaderList">
+      <list>
+        <ref bean="_OwnerMetadataService"/>
+      </list>
+    </property>
+  </bean>
+
   <!-- 以下为UGA框架(用户/用户组/权限框架)所需配置 -->
   <!--gisUga用户服务：平台 -->
   <bean id="ugaUserService"       class="com.gmteam.spiritdata.UGA.service.UserService"/>
