@@ -22,7 +22,7 @@ public class FileIndexPo extends BaseObject {
     private String extName; //文件扩展名
     private Long fileSize; //文件大小
     private String desc; //文件说明
-    private Timestamp cTime; //文件创建时间
+    private Timestamp CTime; //文件创建时间
     private Timestamp lmTime; //文件最后修改时间
 
     public String getId() {
@@ -81,11 +81,11 @@ public class FileIndexPo extends BaseObject {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-    public Timestamp getcTime() {
-        return cTime;
+    public Timestamp getCTime() {
+        return CTime;
     }
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setCTime(Timestamp CTime) {
+        this.CTime = CTime;
     }
     public Timestamp getLmTime() {
         return lmTime;

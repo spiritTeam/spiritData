@@ -196,9 +196,9 @@ CREATE TABLE sa_file_index (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件记录索引';
 
-/**013 文件分类[SA_FILE_CLASS]*/
-DROP TABLE IF EXISTS sa_file_class;
-CREATE TABLE sa_file_class (
+/**013 文件分类[SA_FILE_CATEGORY]*/
+DROP TABLE IF EXISTS sa_file_category;
+CREATE TABLE sa_file_category (
   id      varchar(32)  NOT NULL  COMMENT '文件分类表ID(UUID)',
   fId     varchar(32)  NOT NULL  COMMENT '主文件id，指向文件表',
   type1   varchar(10)  NOT NULL  COMMENT '文件大类型：目前支持持三种,IMP、LOG和ANAL，即导入文件、日志和分析，日志是文本文件，分析是jsonD格式',
@@ -239,5 +239,5 @@ VIEW vsa_file_inverserel AS
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vsa_imp_log AS
   select a.id, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.extInfo AS cFileName, descn, a.cTime
-  from sa_file_index a, sa_file_class b
+  from sa_file_index a, sa_file_category b
   where a.id=b.fid and b.type1='IMP';

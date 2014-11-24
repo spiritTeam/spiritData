@@ -15,7 +15,7 @@ import com.gmteam.spiritdata.filemanage.persistence.pojo.FileIndexPo;
 public class FileInfo extends FileIndexPo {
     private static final long serialVersionUID = 12366632000244738L;
 
-    private List<FileClass> fileClassList; //本文件的分类列表，一个文件可以属于多个分类
+    private List<FileCategory> fileClassList; //本文件的分类列表，一个文件可以属于多个分类
     private List<FileRelation> positiveRelationFiles; //与本文件相关的正向关联关系
     private List<FileRelation> inverseRelationFiles; //与本文件相关的反向关联关系
     private List<FileRelation> equalRelationFiles; //与本文件相关的反向关联关系
