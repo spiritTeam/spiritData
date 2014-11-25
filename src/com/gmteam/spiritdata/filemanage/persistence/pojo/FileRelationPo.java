@@ -19,7 +19,7 @@ public class FileRelationPo extends BaseObject {
     private int RType1; //关联类型1:=1单向-说明aid是bid的子；=0平等；=-1反向-说明bid是aid的子(这个通过视图实现)
     private String RType2; //关联类型2
     private String desc; //说明
-    private Timestamp cTime; //关系创建时间
+    private Timestamp CTime; //关系创建时间
 
     public String getId() {
         return id;
@@ -69,11 +69,10 @@ public class FileRelationPo extends BaseObject {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-    public Timestamp getcTime() {
-        return cTime;
+    public Timestamp getCTime() {
+        return CTime;
     }
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setCTime(Timestamp CTime) {
+        this.CTime = CTime;
     }
-
 }

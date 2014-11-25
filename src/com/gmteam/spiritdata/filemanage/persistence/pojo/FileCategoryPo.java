@@ -6,10 +6,10 @@ import com.gmteam.framework.core.model.BaseObject;
 
 /**
  * 文件分类
- * 对应持久化中数据库的表为SA_FILE_CLASS
+ * 对应持久化中数据库的表为SA_FILE_CATEGORY
  * @author wh
  */
-public class FileClassPo extends BaseObject {
+public class FileCategoryPo extends BaseObject {
     private static final long serialVersionUID = -8686440848224680046L;
 
     private String id; //文件分类id

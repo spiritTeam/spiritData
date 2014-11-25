@@ -9,8 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import com.gmteam.framework.FConstants;
+import com.gmteam.framework.UGA.UgaUser;
+import com.gmteam.framework.core.web.SessionLoader;
 import com.gmteam.spiritdata.SDConstants;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColSemanteme;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataColumn;
@@ -24,12 +27,28 @@ import com.gmteam.spiritdata.util.SequenceUUID;
  * 
  * @author wh
  */
-@Component
-public class _OwnerMetadataService {
+@Service
+public class _OwnerMetadataService implements SessionLoader {
     @Resource
     private MdBasisService mdBasisService;
     public MdBasisService getMdBasisService() {
         return mdBasisService;
+    }
+
+    /**
+     * 构造所有者元数据信息，并存入Session。构造过程会启动另一个线程处理\
+     * @param session session 从这个session中获得ownerType和ownerId
+     */
+    @Override
+    public void loader(HttpSession session) throws Exception {
+        String ownerId = session.getId();
+        int ownerType = 2;
+        UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+        if (user!=null) {
+            ownerId = user.getUserId();
+            ownerType = 1;
+        }
+        loadData2Session(ownerId, ownerType, session);
     }
 
     /**

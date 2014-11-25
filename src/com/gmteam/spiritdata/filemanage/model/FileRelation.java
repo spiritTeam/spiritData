@@ -20,10 +20,10 @@ public class FileRelation extends BaseObject {
     private String id; //文件id
     private Object element1; //可能是文件，也可能是文件关系
     private Object element2; //可能是文件，也可能是文件关系
-    private RelType1 rType1; //关联类型1
-    private String rType2; //关联类型2
+    private RelType1 RType1; //关联类型1
+    private String RType2; //关联类型2
     private String desc; //说明
-    private Timestamp cTime; //关系创建时间
+    private Timestamp CTime; //关系创建时间
 
     public String getId() {
         return id;
@@ -35,8 +35,8 @@ public class FileRelation extends BaseObject {
         return element1;
     }
     public void setElement1(Object element1) {
-        if (!(element1 instanceof FileInfo)&&!(element1 instanceof FileClass)) {
-            throw new IllegalArgumentException("只能是FileInfo或FileClass类型");
+        if (!(element1 instanceof FileInfo)&&!(element1 instanceof FileCategory)) {
+            throw new IllegalArgumentException("第一关联对象只能是FileInfo或FileClass类型");
         }
         this.element1 = element1;
     }
@@ -44,22 +44,22 @@ public class FileRelation extends BaseObject {
         return element2;
     }
     public void setElement2(Object element2) {
-        if (!(element2 instanceof FileInfo)&&!(element2 instanceof FileClass)) {
-            throw new IllegalArgumentException("只能是FileInfo或FileClass类型");
+        if (!(element2 instanceof FileInfo)&&!(element2 instanceof FileCategory)) {
+            throw new IllegalArgumentException("第二关联对象只能是FileInfo或FileClass类型");
         }
         this.element2 = element2;
     }
-    public RelType1 getrType1() {
-        return rType1;
+    public RelType1 getRType1() {
+        return RType1;
     }
-    public void setrType1(RelType1 rType1) {
-        this.rType1 = rType1;
+    public void setRType1(RelType1 RType1) {
+        this.RType1 = RType1;
     }
-    public String getrType2() {
-        return rType2;
+    public String getRType2() {
+        return RType2;
     }
-    public void setrType2(String rType2) {
-        this.rType2 = rType2;
+    public void setRType2(String RType2) {
+        this.RType2 = RType2;
     }
     public String getDesc() {
         return desc;
@@ -67,17 +67,25 @@ public class FileRelation extends BaseObject {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-    public Timestamp getcTime() {
-        return cTime;
+    public Timestamp getCTime() {
+        return CTime;
     }
-    public void setcTime(Timestamp cTime) {
-        this.cTime = cTime;
+    public void setCTime(Timestamp CTime) {
+        this.CTime = CTime;
     }
 
     /**
      * 把当前对象转换为Po对象，为数据库操作做准备
+     * @throws Exception 
      */
-    public FileRelationPo convert2Po() {
+    public FileRelationPo convert2Po() throws Exception {
+        if (!(element1 instanceof FileInfo)&&!(element1 instanceof FileCategory)) {
+            throw new Exception("第一关联对象只能是FileInfo或FileClass类型，无法转换！");
+        }
+        if (!(element2 instanceof FileInfo)&&!(element2 instanceof FileCategory)) {
+            throw new Exception("第二关联对象只能是FileInfo或FileClass类型，无法转换！");
+        }
+
         FileRelationPo ret = new FileRelationPo();
         //id处理
         if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
@@ -86,10 +94,27 @@ public class FileRelation extends BaseObject {
             ret.setId(this.id);
         }
         //第一元素处理
+        if (this.element1 instanceof FileInfo) {
+            ret.setAId(((FileInfo)this.element1).getId());
+            ret.setAType(1);
+        } else if (this.element1 instanceof FileCategory) {
+            ret.setAId(((FileCategory)this.element1).getId());
+            ret.setAType(2);
+        }
         //第二元素处理
+        if (this.element2 instanceof FileInfo) {
+            ret.setBId(((FileInfo)this.element2).getId());
+            ret.setBType(1);
+        } else if (this.element2 instanceof FileCategory) {
+            ret.setBId(((FileCategory)this.element2).getId());
+            ret.setBType(2);
+        }
         //分类处理
+        ret.setRType1(this.RType1.getValue());
+        ret.setRType2(this.RType2);
         //其他
-        
+        ret.setDesc(this.desc);
+        ret.setCTime(this.CTime);
         return null;
     }
 }
