@@ -17,7 +17,7 @@
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">注册账号</span></div>
     <div style="height:10px; width:400px;border-top: 1px solid  #999999;"></div>
     <form  style="" action="">
-      <table  width="370px;" border="1px;" >
+      <table  width="370px;" >
         <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
         <tr style="height:50px; valign:top;" >
           <td align="right" width="100px;" ><span class="myspan">账　号</span></td>
@@ -43,18 +43,22 @@
           <td align="right"><span class="myspan">密　码</span></td>
           <td colspan="2" rowspan="1">
             <div style="float: left">
-              <input id="password" name="password"  tabindex="3" type="password" onmouseover=this.focus();this.select();
+              <input id="password" name="password"  tabindex="3" type="password" onmouseover="pwdMouseOver();"
                 onclick="onClick(password);" onBlur="validatePassword('password');" /></div>
             <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vPwd'></div>
+            <div id="pwDiv" style="float: left;width: 25px;height: 25px;padding-top: 10px;margin-left: -224px;" align="center" >
+              <span id="pwdSpan" style="color: #ABCDEF;font-size: 12px;">密码</span></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan" style="font-size: 12px;">确认密码</span></td>
           <td colspan="2">
             <div style="float: left">
-              <input id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
+              <input id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover="cpwdMouseOver();"
                 onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" /></div>
             <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vCPwd'></div>
+            <div id="cpwDiv" style="float: left;width: 50px;height: 25px;padding-top: 10px;margin-left: -224px;" align="center" >
+              <span id="cpwdSpan" style="color: #ABCDEF;font-size: 12px;">确认密码</span></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -84,7 +88,29 @@
 </body>
 <script type="text/javascript">
 var psV=false,cpsV=false,lnV=false,maV=false,vcV=false;
+function pwdMouseOver(){
+  $("#pwdSpan").toggleClass("addSelect");
+}
+function cpwdMouseOver(){
+	$("#cpwdSpan").toggleClass("addSelect");
+}
+function pwdOnActive() {
+  //password
+  //隐藏
+  $("#pwdSpan").hide();
+  //获得焦点和选择
+  $("#password")[0].focus();
+  $("#password")[0].select();
+}
+function cpwdOnActive() {
+  //confirmPassword
+  $("#cpwdSpan").hide();
+  //获得焦点和选择
+  $("#confirmPassword")[0].focus();
+  $("#confirmPassword")[0].select();
+}
 function saveRegister(){
+	$('#commitButton').attr("disabled",true); 
 	$('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
   if(psV&&cpsV&&lnV&&maV&&vcV){
     var pData={
@@ -131,6 +157,7 @@ function saveRegister(){
       $('#vVC').append('<img id="vcImg" align="middle" src="img/cross.png">');
     } 
     $.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息");
+    $('#commitButton').attr("disabled",false); 
     return ;
   }
 }
@@ -155,6 +182,18 @@ function setInputCss() {
   }
 }
 $(function() {
+	$("#pwdSpan").mouseover(function(){pwdOnActive();});
+  $("#password").focus(function(){pwdOnActive();});
+  $("#password").mouseover(function(){pwdOnActive();});
+  $("#password").blur(function(){
+    if ($(this).val()=="") $("#pwdSpan").show();
+  });
+  $("#cpwdSpan").mouseover(function(){cpwdOnActive();});
+  $("#confirmPassword").focus(function(){cpwdOnActive();});
+  $("#confirmPassword").mouseover(function(){cpwdOnActive();});
+  $("#confirmPassword").blur(function(){
+    if ($(this).val()=="") $("#cpwdSpan").show();
+  });
   setInputCss();
   if($('#mail').val()==$('#mail')[0].defaultValue){
     $('#mail').css('color','#ABCDEF');

@@ -16,6 +16,7 @@
 <title>login</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
+<script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
 <style type="text/css">
 #loginName{padding-top:8px; height:25px; font-size:14px;}
 #password{padding-top:8px; height:25px; font-size:14px;}
@@ -32,7 +33,7 @@
       <table width="430px;" >
         <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="myspan">我的账号&nbsp;&nbsp;</span></td>
+          <td align="right"><span class="myspan">账　号</span></td>
           <td colspan="2" rowspan="1" width="197px;" style="text-align:left;">
           <div style="float: left;">
             <input id="loginName"  name="loginName"  tabindex="1" type="text"  value="请填写用户名" 
@@ -42,7 +43,7 @@
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="myspan">新的密码&nbsp;&nbsp;</span></td>
+          <td align="right"><span class="myspan">新密码</span></td>
           <td colspan="2" style="text-align:left;">
 	          <div style="float: left;">
 	            <input style="width:197px;" id="password" name="password"  tabindex="2" type="password" value="" onselect="" onmouseover="pwdMouseOver();"
@@ -53,16 +54,16 @@
           </td>
         </tr>
         <tr >
-          <td align="right"><span class="myspan">确认密码&nbsp;&nbsp;</span></td>
+          <td align="right"><span class="myspan" style="font-size: 12px;">确认密码</span></td>
           <td colspan="2">
             <div style="float: left;">
-              <input style="width:197px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover=this.focus();this.select();
+              <input style="width:197px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover="cpwdMouseOver();"
                 onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');" /></div>
             <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vCPwd'></div>
             <div id="cpwDiv" style="float: left;width: 50px;height: 25px;padding-top: 10px;margin-left: -225px;" align="center" >
               <span id="cpwdSpan" style="color: #ABCDEF;font-size: 12px;">确认密码</span></div>
           </td></tr>
-        <tr><td colspan="3" align="right"><input style="margin-top: 50px;margin-right: 20px;" type="button" value="确认修改" onclick="modPwd();"/></td></tr>
+        <tr><td colspan="3" align="right"><input id="saveButton" style="margin-top: 50px;margin-right: 20px;" type="button" value="确认修改" onclick="modPwd();"/></td></tr>
       </table>
     </form>
   </div>
@@ -73,24 +74,12 @@ var modType=<%=modType%>,psV=false,lnV=false,cpsV=false;
 var loginName = '<%=loginName%>';
 function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
+}
+function cpwdMouseOver(){
   $("#cpwdSpan").toggleClass("addSelect");
 }
-function pwdOnActive() {
-	//password
-  //隐藏
-  $("#pwdSpan").hide();
-  //获得焦点和选择
-  $("#password")[0].focus();
-  $("#password")[0].select();
-}
-function cpwdOnActive() {
-  //confirmPassword
-  $("#cpwdSpan").hide();
-  //获得焦点和选择
-  $("#confirmPassword")[0].focus();
-  $("#confirmPassword")[0].select();
-}
 function modPwd(){
+	$("#saveButton").attr('disabled',true);
   if(psV&&lnV&&cpsV){
     var pData = {
       loginName:$('#loginName').val(),
@@ -106,6 +95,7 @@ function modPwd(){
   }else{
     $.messager.alert("提示","您还有未完善的信息!");
   }
+  $("#saveButton").attr('disabled',false);
 }
 //如果不是ie浏览器，从新初始化inputcsss
 function setInputCss() {
@@ -118,18 +108,9 @@ function setInputCss() {
   }
 }
 $(function(){
-	$("#pwdSpan").mouseover(function(){pwdOnActive();});
-  $("#password").focus(function(){pwdOnActive();});
-  $("#password").mouseover(function(){pwdOnActive();});
-  $("#password").blur(function(){
-    if ($(this).val()=="") $("#pwdSpan").show();
-  });
-  $("#cpwdSpan").mouseover(function(){cpwdOnActive();});
-  $("#confirmPassword").focus(function(){cpwdOnActive();});
-  $("#confirmPassword").mouseover(function(){cpwdOnActive();});
-  $("#confirmPassword").blur(function(){
-    if ($(this).val()=="") $("#cpwdSpan").show();
-  });
+	initPwdInputCss('password','pwdSpan');
+	//initCPwdInputCss();
+	initPwdInputCss('confirmPassword','cpwdSpan');
   setInputCss();
   if(modType==1){
     $('#loginName').val(loginName);
