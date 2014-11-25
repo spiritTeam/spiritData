@@ -17,7 +17,7 @@
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">注册账号</span></div>
     <div style="height:10px; width:400px;border-top: 1px solid  #999999;"></div>
     <form  style="" action="">
-      <table  width="370px;" border="1px;" >
+      <table  width="370px;" >
         <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
         <tr style="height:50px; valign:top;" >
           <td align="right" width="100px;" ><span class="myspan">账　号</span></td>
@@ -110,6 +110,7 @@ function cpwdOnActive() {
   $("#confirmPassword")[0].select();
 }
 function saveRegister(){
+	$('#commitButton').attr("disabled",true); 
 	$('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
   if(psV&&cpsV&&lnV&&maV&&vcV){
     var pData={
@@ -156,6 +157,7 @@ function saveRegister(){
       $('#vVC').append('<img id="vcImg" align="middle" src="img/cross.png">');
     } 
     $.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息");
+    $('#commitButton').attr("disabled",false); 
     return ;
   }
 }

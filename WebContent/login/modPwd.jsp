@@ -63,7 +63,7 @@
             <div id="cpwDiv" style="float: left;width: 50px;height: 25px;padding-top: 10px;margin-left: -225px;" align="center" >
               <span id="cpwdSpan" style="color: #ABCDEF;font-size: 12px;">确认密码</span></div>
           </td></tr>
-        <tr><td colspan="3" align="right"><input style="margin-top: 50px;margin-right: 20px;" type="button" value="确认修改" onclick="modPwd();"/></td></tr>
+        <tr><td colspan="3" align="right"><input id="saveButton" style="margin-top: 50px;margin-right: 20px;" type="button" value="确认修改" onclick="modPwd();"/></td></tr>
       </table>
     </form>
   </div>
@@ -79,6 +79,7 @@ function cpwdMouseOver(){
   $("#cpwdSpan").toggleClass("addSelect");
 }
 function modPwd(){
+	$("#saveButton").attr('disabled',true);
   if(psV&&lnV&&cpsV){
     var pData = {
       loginName:$('#loginName').val(),
@@ -94,6 +95,7 @@ function modPwd(){
   }else{
     $.messager.alert("提示","您还有未完善的信息!");
   }
+  $("#saveButton").attr('disabled',false);
 }
 //如果不是ie浏览器，从新初始化inputcsss
 function setInputCss() {

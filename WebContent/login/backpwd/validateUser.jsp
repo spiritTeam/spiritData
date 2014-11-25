@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>login</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
-<link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
+<link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css"/>
 </head>
 <body>
 <center>
@@ -16,16 +16,18 @@
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">找回密码</span></div>
     <div style="height:1px; width:400px;border-top: 1px solid  #999999;"></div>
     <form style="margin-top: 15px;" action="">
-      <table width="430px;" >
-        <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
+      <table width="370px;">
+        <tr><td colspan="3"><div style="height: 20px;text-align: left;margin-left: 80px;" id="checkResult"></div></td></tr>
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="myspan">账号&nbsp;&nbsp;</span></td>
-          <td colspan="2" rowspan="1" width="280px;" style="text-align:left;">
-          <input style="height: 35px;" id="loginName" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" /><img id="logRImg" src=""/>
+          <td align="right"><span class="myspan">账　　号</span></td>
+          <td colspan="2" rowspan="1" style="text-align:left;">
+          <div style="float: left">
+            <input id="loginName" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
+                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" /></div>
+          <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
           </td>
         </tr>
-        <tr><td colspan="3" align="center"><input type="button" value="下一步" onclick="sendBackPwdMail();"/></td></tr>
+        <tr><td colspan="3" align="center"><input id="sendButton" type="button" value="下一步" onclick="sendBackPwdMail();"/></td></tr>
       </table>
     </form>
   </div>
@@ -33,8 +35,20 @@
 </body>
 <script type="text/javascript">
 var lnV =false;
+function setInputCss() {
+  var browserType = getBrowserVersion();
+  browserType = browserType.substring(0,browserType.lastIndexOf(' '));
+  if(browserType!='msie'){
+    $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+  }
+}
+$(function(){
+  setInputCss();
+});
 function sendBackPwdMail(){
-  
+  $('#lnImg').remove();
+  $('#checkResult').html('');
+  $('#sendButton').attr('disabled',true);
   if(lnV){
     $('#loginName')
     var url = '<%=path%>/login/sendBackPwdMail.do';
@@ -51,7 +65,12 @@ function sendBackPwdMail(){
         }
       }
     });
+  }else{
+    $.messager.alert('提示','您的账号填写有误!');
+    $('#vLN').append('<img id="lnImg" align="middle" src="../img/cross.png">');
+    $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;登录名错误!</div>');
   }
+  $('#sendButton').attr('disabled',false);
 }
 function onClick(obj){
   if(obj.value==obj.defaultValue){
@@ -59,6 +78,8 @@ function onClick(obj){
   }
 }
 function validateLoginName(eleId){
+  $('#lnImg').remove();
+  $('#checkResult').html('');
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
     ele.val(ele[0].defaultValue);
@@ -67,10 +88,11 @@ function validateLoginName(eleId){
   }else{
     var vsMsg = checkLoginName(ele.val());
     if(vsMsg==true){
-      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="../img/cross.png">登录名错误!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;登录名错误!</div>');
+      $('#vLN').append('<img id="lnImg" align="middle" src="../img/cross.png">');
       lnV = false;
     }else{
-      $('#logRImg').attr('src','../img/accept.png');
+      $('#vLN').append('<img id="lnImg" align="middle" src="../img/accept.png">');
       lnV = true;
     }
   }

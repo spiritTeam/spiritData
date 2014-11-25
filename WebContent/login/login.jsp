@@ -256,6 +256,7 @@ function onClick(obj){
   }
 }
 function loginF() {
+	$('#register').attr('disabled',true);
 	$('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
   if(psV&&lnV&&vcV){
     var url="<%=path%>/login.do";
@@ -282,7 +283,6 @@ function loginF() {
               window.location.href="<%=path%>/asIndexTemp.jsp";
             });
           }
-          return;
         } else if (json.type==2) {
           $.messager.alert("登录信息", "登录失败："+json.data, "error");
         } else {
@@ -312,6 +312,7 @@ function loginF() {
     	$('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
     } 
     $.messager.alert("登录信息","您的登录信息某些地方有误，请完善您的注册信息");
+    $('#register').attr('disabled',false);
     return ;
   }
 }
