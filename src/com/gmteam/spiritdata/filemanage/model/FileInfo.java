@@ -1,8 +1,13 @@
 package com.gmteam.spiritdata.filemanage.model;
 
+import java.io.File;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import com.gmteam.framework.core.model.BaseObject;
+import com.gmteam.framework.util.FileNameUtils;
+import com.gmteam.spiritdata.filemanage.enumeration.RelType1;
 import com.gmteam.spiritdata.filemanage.persistence.pojo.FileIndexPo;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
@@ -14,25 +19,186 @@ import com.gmteam.spiritdata.util.SequenceUUID;
  * 使用模型类更加规范，但开销大——结构复杂
  * @author wh
  */
-public class FileInfo extends BaseObject {
+public class FileInfo extends FileIndexPo {
     private static final long serialVersionUID = 12366632000244738L;
 
-    private String id; //文件分类id
-    private String ownerId; //文件所有者id
-    private int ownerType; //文件所有者类型
+    private File file; //文件信息所对应的文件：当accessType==1(操作系统文件)时；若是其他accessType，则这个是null
 
     private List<FileCategory> fileCategoryList; //本文件的分类列表，一个文件可以属于多个分类
     private List<FileRelation> positiveRelationFiles; //与本文件相关的正向关联关系
     private List<FileRelation> inverseRelationFiles; //与本文件相关的反向关联关系
     private List<FileRelation> equalRelationFiles; //与本文件相关的反向关联关系
 
-    public String getId() {
-        return id;
+    public File getFile() {
+        return file;
     }
-    public void setId(String id) {
-        this.id = id;
+    public void setFile(File file) {
+        this.file = file;
     }
 
+    //文件分类列表处理
+    public void addFileCategoryList(FileCategory fc) {
+        if (fc.getCTime()==null&&this.CTime!=null) fc.setCTime(this.CTime);
+        fc.setCategoryFile(this);
+    }
+    public List<FileCategory> getFileCategoryList() {
+        return fileCategoryList;
+    }
+    public void setFileCategoryList(List<FileCategory> fileCategoryList) {
+        if (fileCategoryList!=null&&fileCategoryList.size()>0) {
+            for (FileCategory fc: fileCategoryList) {
+                this.addFileCategoryList(fc);
+            }
+        }
+    }
+
+    //文件关系关系
+    /*
+     * 与本文件建立关联关系
+     * @param obj 关联关系中另一个对象，只能是{@linkplain com.gmteam.spiritdata.filemanage.model.FileInfo FileInfo}
+     *         或{@linkplain com.gmteam.spiritdata.filemanage.model.FileCategory FileCategory}
+     * @param type 关联关系类型，是枚举值{@linkplain com.gmteam.spiritdata.filemanage.enumeration.RelType1 RelType1} 
+     * @param rType2 第二分类 
+     * @param desc 关系描述
+     * @return 所建立的关系
+     * @throws Exception 如果obj不是符合的类型
+     */
+    protected FileRelation _buildRel(Object obj, RelType1 type, String rType2, String desc) throws Exception {
+        if (!(obj instanceof FileInfo)&&!(obj instanceof FileCategory)) {
+            throw new IllegalArgumentException("另一关联对象只能是FileInfo或FileCategory类型，无法转换！");
+        }
+        FileRelation fr = new FileRelation();
+        fr.setElement1(this);
+        fr.setElement2(obj);
+        fr.setRType1(type);
+        fr.setDesc(desc);
+        fr.setCTime(new Timestamp(new Date().getTime()));
+        //关系处理
+        boolean canAdd = true;
+        switch(type) {
+        case EQUAL:
+            if (equalRelationFiles!=null&&equalRelationFiles.size()>0) {
+                for (FileRelation _fr: equalRelationFiles) {
+                    if (fr.equals(_fr)) {
+                        canAdd = false;
+                        break;
+                    }
+                }
+            }
+            if (canAdd) {
+                if (equalRelationFiles==null) equalRelationFiles = new ArrayList<FileRelation>();
+                equalRelationFiles.add(fr);
+            }
+            break;
+        case POSITIVE:
+            if (positiveRelationFiles!=null&&positiveRelationFiles.size()>0) {
+                for (FileRelation _fr: positiveRelationFiles) {
+                    if (fr.equals(_fr)) {
+                        canAdd = false;
+                        break;
+                    }
+                }
+            }
+            if (canAdd) {
+                if (positiveRelationFiles==null) positiveRelationFiles = new ArrayList<FileRelation>();
+                positiveRelationFiles.add(fr);
+            }
+            break;
+        case INVERSE:
+            if (inverseRelationFiles!=null&&inverseRelationFiles.size()>0) {
+                for (FileRelation _fr: inverseRelationFiles) {
+                    if (fr.equals(_fr)) {
+                        canAdd = false;
+                        break;
+                    }
+                }
+            }
+            if (canAdd) {
+                if (inverseRelationFiles==null) inverseRelationFiles = new ArrayList<FileRelation>();
+                inverseRelationFiles.add(fr);
+            }
+            break;
+        default:
+            break;
+        }
+        return fr;
+    }
+
+    /**
+     * 与本文件建立关联关系
+     * @param obj 关联关系中另一个对象，只能是{@linkplain com.gmteam.spiritdata.filemanage.model.FileInfo FileInfo}
+     *         或{@linkplain com.gmteam.spiritdata.filemanage.model.FileCategory FileCategory}
+     * @param type 关联关系类型，是枚举值{@linkplain com.gmteam.spiritdata.filemanage.enumeration.RelType1 RelType1} 
+     * @param rType2 第二分类 
+     * @param desc 关系描述
+     * @return 所建立的关系
+     * @throws Exception 如果obj不是符合的类型
+     */
+    public FileRelation buildRel(Object obj, RelType1 type, String rType2, String desc) throws Exception {
+        FileRelation ret = this._buildRel(obj, type, rType2, desc);
+        FileRelation _contraryRet = ret.getContraryRelation();
+        if (obj instanceof FileInfo) ((FileInfo)obj)._buildRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
+        if (obj instanceof FileCategory) ((FileCategory)obj)._buildRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
+        return ret;
+    }
+
+    /**
+     * 与一个文件建立关联关系
+     * @param fc 文件分类对象，关联关系中另一个对象，
+     * @param type 关联关系类型，是枚举值{@linkplain com.gmteam.spiritdata.filemanage.enumeration.RelType1 RelType1} 
+     * @param rType2 第二分类 
+     * @param desc 关系描述
+     * @return 所建立的关系
+     * @throws Exception 如果obj不是符合的类型
+     */
+    public FileRelation buildCFileRel(FileInfo fc, RelType1 type, String rType2, String desc) throws Exception {
+        return this.buildRel(fc, type, rType2, desc);
+    }
+
+    /**
+     * 与一个文件分类建立关联关系
+     * @param fc 文件分类对象，关联关系中另一个对象，
+     * @param type 关联关系类型，是枚举值{@linkplain com.gmteam.spiritdata.filemanage.enumeration.RelType1 RelType1} 
+     * @param rType2 第二分类 
+     * @param desc 关系描述
+     * @return 所建立的关系
+     * @throws Exception 如果obj不是符合的类型
+     */
+    public FileRelation buildCategoryRel(FileCategory fc, RelType1 type, String rType2, String desc) throws Exception {
+        return this.buildRel(fc, type, rType2, desc);
+    }
+
+    public List<FileRelation> getPositiveRelationFiles() {
+        return positiveRelationFiles;
+    }
+    public int getPositiveRelationSize() {
+        return positiveRelationFiles==null?0:positiveRelationFiles.size();
+    }
+    public List<FileRelation> getInverseRelationFiles() {
+        return inverseRelationFiles;
+    }
+    public int getInverseRelationSize() {
+        return inverseRelationFiles==null?0:inverseRelationFiles.size();
+    }
+    public List<FileRelation> getEqualRelationFiles() {
+        return equalRelationFiles;
+    }
+    public int getEqualRelationSize() {
+        return inverseRelationFiles==null?0:inverseRelationFiles.size();
+    }
+    public List<FileRelation> getAllRelationFiles() {
+        List<FileRelation> ret = new ArrayList<FileRelation>();
+        ret.addAll(positiveRelationFiles);
+        ret.addAll(inverseRelationFiles);
+        ret.addAll(equalRelationFiles);
+        return ret;
+    }
+    public int getAllRelationSize() {
+        return (positiveRelationFiles==null?0:positiveRelationFiles.size())
+               +(inverseRelationFiles==null?0:inverseRelationFiles.size())
+               +(equalRelationFiles==null?0:equalRelationFiles.size());
+    }
+    
     /**
      * 把当前对象转换为Po对象，为数据库操作做准备
      * @throws Exception 
@@ -49,13 +215,21 @@ public class FileInfo extends BaseObject {
         ret.setOwnerId(this.ownerId);
         ret.setOwnerType(this.ownerType);
         //文件访问类型，现在不用枚举，这个属性的使用还是教复杂的
-        //ret.setAccessType(this.accessType);
+        ret.setAccessType(this.accessType);
         //文件信息
-        //ret.set
+        if (this.file!=null&&this.file.isFile()) {
+            String allFileName = this.file.getAbsolutePath();
+            ret.setPath(FileNameUtils.getFilePath(allFileName));
+            ret.setFileName(FileNameUtils.getFileName(allFileName));
+        } else {
+            ret.setPath(this.path);
+            ret.setFileName(this.fileName);
+            ret.setFileSize(this.fileSize);
+        }
         //其他
-        //ret.setDesc(this.desc);
-        //ret.setCTime(this.CTime);
-        //ret.setLmTime(this.lmTime);
+        ret.setDesc(this.desc);
+        ret.setCTime(this.CTime);
+        ret.setLmTime(this.lmTime);
         return ret;
     }
 }

@@ -5,7 +5,7 @@ package com.gmteam.spiritdata.filemanage.enumeration;
  * 为与数据库配合，其对应的值是String
  * @author wh
  */
-public enum FileClassType1 {
+public enum FileCategoryType1 {
     IMP("IMP"), LOG("LOG"), ANAL("ANAL");
 
     private String value;
@@ -13,7 +13,7 @@ public enum FileClassType1 {
         return this.value;
     }
 
-    private FileClassType1(String v) {
+    private FileCategoryType1(String v) {
         this.value =v;
     }
 }

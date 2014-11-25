@@ -16,4 +16,10 @@ public enum RelType1 {
     private RelType1(int v) {
         this.value=v;
     }
+
+    public RelType1 getContrary() {
+        if (this==POSITIVE) return INVERSE;
+        if (this==INVERSE) return POSITIVE;
+        return EQUAL;
+    }
 }
