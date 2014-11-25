@@ -17,7 +17,7 @@ public class RandomValidateCode {
     private String randString = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";//随机产生的字符串
     
     private int width = 80;//图片宽
-    private int height = 35;//图片高
+    private int height = 34;//图片高
     private int lineSize = 38;//干扰线数量
     private int stringNum = 4;//随机产生字符数量
     //获得字体
