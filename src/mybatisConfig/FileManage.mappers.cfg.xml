@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-  <!-- 类别名设置
+  <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="FileClass" type="com.gmteam.spiritdata.importdata.pojo.ImportFileLog"/>
+    <typeAlias alias="FileIndex" type="com.gmteam.spiritdata.filemanage.persistence.pojo.FileIndexPo"/>
+    <typeAlias alias="FileCategory" type="com.gmteam.spiritdata.filemanage.persistence.pojo.FileCategoryPo"/>
+    <typeAlias alias="FileRelation" type="com.gmteam.spiritdata.filemanage.persistence.pojo.FileRelationPo"/>
   </typeAliases>
   <mappers>
-    <mapper resource="com/gmteam/spiritdata/importdata/sql/ImportFileLog.mapper.xml"/>
-  </mappers> -->
+    <mapper resource="com/gmteam/spiritdata/filemanage/persistence/sql/FileIndex.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/filemanage/persistence/sql/FileCategory.mapper.xml"/>
+    <mapper resource="com/gmteam/spiritdata/filemanage/persistence/sql/FileRel.mapper.xml"/>
+  </mappers>
 </configuration>
