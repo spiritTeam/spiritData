@@ -11,9 +11,6 @@
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
 <style type="text/css">
-#loginName{padding-top:8px; height:25px; font-size:14px;}
-#password{padding-top:8px; height:25px; font-size:14px;}
-#checkCode{width: 115px; padding-top:8px; height:25px; font-size:14px;}
 </style>
 </head>
 <body>
@@ -47,19 +44,19 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 }
 </script>
 <center>
-  <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
-    <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">账　号</span></div>
-    <div style="height:2px; width:400px;border-top: 1px solid  #999999;"></div>
+  <div style="border:1px solid #ABCDEF;width: 330px;height: 400px;">
+    <div style="margin-top: 15px; margin-left: 14px;"align="left"><span style="font-size: 16px;color: #999999;">登录</span></div>
+    <div style="height:2px; width:300px;border-top: 1px solid  #999999;"></div>
     <form  style="margin-top: 15px;" action="">
-      <table width="370px;" >
+      <table width="300px;" style="margin-right: -35px;">
         <tr style="height:50px; valign:top;">
-          <td align="right" width="100px;"><span class="myspan">账　号</span></td>
+          <td align="right" width="56px;"><span class="myspan">账　号</span></td>
           <td colspan="2" rowspan="1" width="200px;" style="text-align:left;">
             <div style="float: left;">
-              <input id="loginName" name="loginName" tabindex="1" type="text"  value="账号/QQ/手机号" 
+              <input id="loginName" name="loginName" tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
                 onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
             </div>
-            <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
+            <div style="float: left;width: 20px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -68,8 +65,8 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 	          <div style="float: left;">
 	            <input id="password" name="password" tabindex="2" type="password" value=""  onselect="" onmouseover="pwdMouseOver();"
 	                onclick="onClick(password);" onBlur="validatePassword('password');" /></div>
-	          <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vPW'></div>
-	          <div id="pwDiv" style="float: left;width: 25px;height: 25px;padding-top: 10px;margin-left: -225px;" align="center" >
+	          <div style="float: left;width: 20px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vPW'></div>
+	          <div id="pwDiv" style="float: left;width: 25px;height: 25px;padding-top: 10px;margin-left: -220px;" align="center" >
 	            <span id="pwdSpan" style="color: #ABCDEF;font-size: 12px;">密码</span></div>
           </td>
         </tr>
@@ -77,25 +74,25 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <td align="right"><span class="myspan">验证码</span></td>
           <td colspan="2">
             <div style="float: left;">
-              <input type="text" id="checkCode" name="checkCode" tabindex="3" value="验证码" 
+              <input type="text"  id="checkCode" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" />
             </div>
-            <div style="float: left;border: 1px solid #999999;width: 80px;margin-left: -3px;" >
-              <img title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
+            <div style="float: left;border: 1px solid #999999;width: 83px;margin-left: -3px;" >
+              <img style="height: 35px;" title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
             </div>
-            <div style="float: left;width: 25px;height: 25px;padding-top: 8px;" align="center" id='vVC'></div>
+            <div style="float: left;width: 20px;height: 25px;padding-top: 8px;padding-left: 2px;" align="center" id='vVC'></div>
           </td>
         </tr>
         <tr style="height:70px; valign:top;">
           <td colspan="3" align="center" >
-            <div tabindex="4" style="width:280px; background-image:url(img/loginb.png); padding-left:2px;">
+            <div tabindex="4" style="width:250px; background-image:url(img/loginb.png); padding-left:0px;margin-left: -31px;">
               <img id="register" name="register"  src="img/login.png" onclick="loginF();" />
             </div>
           </td>
         </tr>
       </table>
     </form>
-    <div align="right" style="width: 400px;margin-top: 50px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">&nbsp;注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
+    <div align="right" style="width: 310px;margin-top: 50px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
   </div>
 </center>
 </body>
