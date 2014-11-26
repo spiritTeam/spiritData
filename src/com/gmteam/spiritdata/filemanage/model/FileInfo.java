@@ -207,7 +207,7 @@ public class FileInfo extends FileIndexPo {
         FileIndexPo ret = new FileIndexPo();
         //id处理
         if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
-            SequenceUUID.getPureUUID();
+            ret.setId(SequenceUUID.getPureUUID());
         } else {
             ret.setId(this.id);
         }

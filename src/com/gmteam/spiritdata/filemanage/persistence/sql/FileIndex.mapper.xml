@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  文件：对照关系表(主表)
+-->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="fileIndex" >
+  <!-- 对象定义:元数据列模式 -->
+  <resultMap id="FileIndexMap" type="FileIndex" >
+    <id     column="id"          property="id"         jdbcType="VARCHAR" />
+    <result column="ownerType"   property="ownerType"  jdbcType="INTEGER" />
+    <result column="ownerId"     property="ownerId"    jdbcType="VARCHAR" />
+    <result column="accessType"  property="accessType" jdbcType="INTEGER" />
+    <result column="filePath"    property="path"       jdbcType="VARCHAR" />
+    <result column="fileName"    property="fileName"   jdbcType="VARCHAR" />
+    <result column="fileExtName" property="extName"    jdbcType="VARCHAR" />
+    <result column="fileSize"    property="fileSize"   jdbcType="INTEGER" />
+    <result column="descn"       property="desc"       jdbcType="VARCHAR" />
+    <result column="cTime"       property="CTime"      jdbcType="TIMESTAMP" />
+    <result column="lmTime"      property="lmTime"     jdbcType="TIMESTAMP" />
+  </resultMap>
+  <!-- 所有列 -->
+  <sql id="Base_Column_List" >
+    id, ownerType, ownerId, accessType, filePath, fileName, fileExtName, descn, cTime, lmTime
+  </sql>
+  <!-- 条件子句 -->
+  <sql id="WhereClauseByEntiey" >
+    <where >
+      <trim prefix="(" suffix=")" prefixOverrides="and" >
+        <if test="id!=null" > and id = #{id,jdbcType=VARCHAR} </if>
+        <if test="ownerType!=null and ownerType!=0" > and ownerType = #{ownerType,jdbcType=INTEGER} </if>
+        <if test="ownerId!=null" > and ownerId = #{ownerId,jdbcType=VARCHAR} </if>
+        <if test="accessType!=null and accessType!=0" > and accessType = #{accessType,jdbcType=INTEGER} </if>
+        <if test="path!=null" > and filePath = #{path,jdbcType=VARCHAR} </if>
+        <if test="fileName!=null" > and fileName = #{fileName,jdbcType=VARCHAR} </if>
+        <if test="extName!=null" > and fileExtName = #{extName,jdbcType=VARCHAR} </if>
+        <if test="fileSize!=null" > and fileSize = #{fileSize,jdbcType=INTEGER} </if>
+        <if test="desc!=null" > and descn = #{desc,jdbcType=VARCHAR} </if>
+        <if test="CTime!=null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
+        <if test="lmTime!=null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
+      </trim>
+    </where>
+  </sql>
+
+  <!-- 获得记录条数-->
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
+    select count(*) from sa_file_index
+    <if test="_parameter!= null" ><include refid="WhereClauseByEntiey" /></if>
+  </select>
+
+  <!-- 获得列表 -->
+  <select id="getList" resultMap="FileIndexMap" parameterType="java.util.Map" >
+    select <include refid="Base_Column_List" /> from sa_file_index
+    <if test="_parameter!=null" ><include refid="WhereClauseByEntiey" /></if>
+    <if test="orderByClause!= null" >order by ${orderByClause}</if>
+  </select>
+
+  <!-- 获得一条数据 -->
+  <select id="getInfo" resultMap="FileIndexMap" parameterType="java.util.Map" >
+    select <include refid="Base_Column_List" /> from sa_file_index
+    <if test="_parameter!=null" ><include refid="WhereClauseByEntiey" /></if>
+  </select>
+  <select id="getInfoById" resultMap="FileIndexMap" parameterType="java.lang.String" >
+    select <include refid="Base_Column_List" /> from sa_file_index where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 新增数据 -->
+  <insert id="insert" parameterType="java.util.Map" >
+    insert into sa_file_index
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id!=null" >id,</if>
+      <if test="ownerType!=null and ownerType!=0" >ownerType,</if>
+      <if test="ownerId!=null" >ownerId,</if>
+      <if test="accessType!=null and accessType!=0" >accessType,</if>
+      <if test="path!=null" >filePath,</if>
+      <if test="fileName!=null" >fileName,</if>
+      <if test="extName!=null" >fileExtName,</if>
+      <if test="fileSize!=null" >fileSize,</if>
+      <if test="desc!=null" >descn,</if>
+      <if test="CTime!=null" >CTime,</if>
+      <if test="lmTime!=null" >lmTime,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id!=null" >#{id,jdbcType=VARCHAR},</if>
+      <if test="ownerType!=null and ownerType!=0" >#{ownerType,jdbcType=INTEGER},</if>
+      <if test="ownerId!=null" >#{ownerId,jdbcType=VARCHAR},</if>
+      <if test="accessType!=null and accessType!=0" >#{accessType,jdbcType=INTEGER},</if>
+      <if test="path!=null" >#{path,jdbcType=VARCHAR},</if>
+      <if test="fileName!=null" >#{fileName,jdbcType=VARCHAR},</if>
+      <if test="extName!=null" >#{extName,jdbcType=VARCHAR},</if>
+      <if test="fileSize!=null" >#{fileSize,jdbcType=INTEGER},</if>
+      <if test="desc!=null" >#{desc,jdbcType=VARCHAR},</if>
+      <if test="CTime!=null" >#{CTime,jdbcType=TIMESTAMP},</if>
+      <if test="lmTime!=null" >#{lmTime,jdbcType=TIMESTAMP},</if>
+    </trim>
+  </insert>
+
+  <!-- 修改 根据主键 -->
+  <update id="update" parameterType="java.util.Map" >
+    update sa_file_index
+    <set >
+      <if test="id!=null" >id = #{id,jdbcType=VARCHAR},</if>
+      <if test="ownerType!=null and ownerType!=0" >ownerType = #{ownerType,jdbcType=INTEGER},</if>
+      <if test="ownerId!=null" >ownerId = #{ownerId,jdbcType=VARCHAR} </if>
+      <if test="accessType!=null and accessType!=0" >accessType = #{accessType,jdbcType=INTEGER},</if>
+      <if test="path!=null" >filePath = #{path,jdbcType=VARCHAR},</if>
+      <if test="fileName!=null" >fileName = #{fileName,jdbcType=VARCHAR},</if>
+      <if test="extName!=null" >fileExtName = #{extName,jdbcType=VARCHAR},</if>
+      <if test="fileSize!=null" >fileSize = #{fileSize,jdbcType=INTEGER},</if>
+      <if test="desc!=null" >descn = #{desc,jdbcType=VARCHAR},</if>
+      <if test="CTime!=null" >cTime = #{CTime,jdbcType=TIMESTAMP},</if>
+      <if test="lmTime!=null" >lmTime = #{lmTime,jdbcType=TIMESTAMP},</if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from sa_file_index where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByEntity" parameterType="java.util.Map" >
+    delete from sa_file_index
+    <if test="_parameter != null" ><include refid="WhereClauseByEntiey" /></if>
+  </delete>
+</mapper>
