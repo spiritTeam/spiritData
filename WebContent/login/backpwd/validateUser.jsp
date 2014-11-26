@@ -9,15 +9,16 @@
 <title>login</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css"/>
+<title>找回密码</title>
 </head>
 <body>
 <center>
-  <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
+  <div style="border:1px solid #ABCDEF;width: 330px;height: 400px;">
     <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">找回密码</span></div>
-    <div style="height:1px; width:400px;border-top: 1px solid  #999999;"></div>
-    <form style="margin-top: 15px;" action="">
-      <table width="370px;">
-        <tr><td colspan="3"><div style="height: 20px;text-align: left;margin-left: 80px;" id="checkResult"></div></td></tr>
+    <div style="height:1px; width:300px;border-top: 1px solid  #999999;"></div>
+    <div id="rstDiv" style="text-align: left;margin-left: 86px;height: 20px;padding-top: 5px;"><span id="checkResult"></span></div>
+    <form action="">
+      <table width="300px;" style="margin-right:-35px;">
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">账　　号</span></td>
           <td colspan="2" rowspan="1" style="text-align:left;">
@@ -27,8 +28,15 @@
           <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
           </td>
         </tr>
-        <tr><td colspan="3" align="center"><input id="sendButton" type="button" value="下一步" onclick="sendBackPwdMail();"/></td></tr>
+        <tr><td colspan="3" align="center"></td></tr>
       </table>
+      <div><input id="sendButton" type="button" value="下一步" onclick="sendBackPwdMail();"/></div>
+      <div><h2>重置密码流程：</h2>
+           <span>1、填写用户名,系统校验用户名。</span>
+           <span>2、成功后点击下一步,将发送邮件至您的邮箱。</span>
+           <span>3、登录邮箱,根据提示重置密码。</span>
+           <span></span>
+      </div>
     </form>
   </div>
 </center>
