@@ -103,6 +103,6 @@
   <!-- end Servlet设置 -->
 
   <welcome-file-list>
-    <welcome-file>jump.jsp</welcome-file>
+    <welcome-file>asIndexTemp.jsp</welcome-file>
   </welcome-file-list>
 </web-app>

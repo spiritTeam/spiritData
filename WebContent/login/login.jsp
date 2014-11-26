@@ -44,13 +44,13 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 }
 </script>
 <center>
-  <div style="border:1px solid #ABCDEF;width: 330px;height: 500px;">
-    <div style="margin-top: 15px; margin-left: 4px;"align="left"><span style="font-size: 20px;color: #999999;">登　录</span></div>
-    <div style="height:2px; width:320px;border-top: 1px solid  #999999;"></div>
+  <div style="border:1px solid #ABCDEF;width: 330px;height: 400px;">
+    <div style="margin-top: 15px; margin-left: 14px;"align="left"><span style="font-size: 16px;color: #999999;">登录</span></div>
+    <div style="height:2px; width:300px;border-top: 1px solid  #999999;"></div>
     <form  style="margin-top: 15px;" action="">
-      <table width="285px;">
+      <table width="300px;" style="margin-right: -35px;">
         <tr style="height:50px; valign:top;">
-          <td align="right" width="55px;"><span class="myspan">账　号</span></td>
+          <td align="right" width="56px;"><span class="myspan">账　号</span></td>
           <td colspan="2" rowspan="1" width="200px;" style="text-align:left;">
             <div style="float: left;">
               <input id="loginName" name="loginName" tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
@@ -85,14 +85,14 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         </tr>
         <tr style="height:70px; valign:top;">
           <td colspan="3" align="center" >
-            <div tabindex="4" style="width:253px; background-image:url(img/loginb.png); padding-left:2px;margin-left: -19px;">
+            <div tabindex="4" style="width:250px; background-image:url(img/loginb.png); padding-left:0px;margin-left: -31px;">
               <img id="register" name="register"  src="img/login.png" onclick="loginF();" />
             </div>
           </td>
         </tr>
       </table>
     </form>
-    <div align="right" style="width: 400px;margin-top: 50px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">&nbsp;注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
+    <div align="right" style="width: 310px;margin-top: 50px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
   </div>
 </center>
 </body>
