@@ -148,23 +148,7 @@ CREATE TABLE sa_md_colquota (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据列指标表';
 
-/**010 数据导入日志[SA_IMP_LOG],这个废弃掉*/
-DROP TABLE IF EXISTS sa_imp_log;
-/**
-CREATE TABLE sa_imp_log (
-  id        varchar(32)       NOT NULL  COMMENT '日志id(UUID)',
-  ownerId   varchar(32)       NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)',
-  ownerType int(1) unsigned   NOT NULL  COMMENT '用户类型(1-用户，2-session)',
-  sFileName varchar(500)      NOT NULL  COMMENT '服务端文件名(包含文件路径',
-  fileSize  int(10) unsigned  NOT NULL  COMMENT '文件大小',
-  cFileName varchar(500)      NOT NULL  COMMENT '客户端文件名(包含文件路径)',
-  cTime     timestamp         NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '创建时间(也可以作为上传时间)',
-  PRIMARY KEY (id)
-)
-ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据导入日志';
-*//**废弃掉*/
-
-/**011 数据文件/实体表对应[SA_IMP_TABLOG_REL]*/
+/**010 数据文件/实体表对应[SA_IMP_TABLOG_REL]*/
 DROP TABLE IF EXISTS sa_imp_tablog_rel;
 CREATE TABLE sa_imp_tablog_rel (
   id         varchar(32)      NOT NULL  COMMENT '文件/实体对应关系ID(UUID)',
@@ -178,12 +162,12 @@ CREATE TABLE sa_imp_tablog_rel (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据文件/实体表对应关系表';
 
-/**012 文件记录索引[SA_FILE_INDEX]*/
+/**011 文件记录索引[SA_FILE_INDEX]*/
 DROP TABLE IF EXISTS sa_file_index;
 CREATE TABLE sa_file_index (
   id          varchar(32)       NOT NULL  COMMENT '文件记录索引表ID(UUID)',
-  ownerId     varchar(32)       NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
   ownerType   int(1) unsigned   NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
+  ownerId     varchar(32)       NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
   accessType  int(1) unsigned   NOT NULL  COMMENT '文件访问类型，如ftp,操作系统文件等，目前只支持1=操作系统文件',
   filePath    varchar(500)      NOT NULL  COMMENT '文件地址，实际就是文件存储的路径，不包括文件名称',
   fileName    varchar(100)      NOT NULL  COMMENT '文件名称，包括扩展名，注意只有文件名称，没有路径',
@@ -196,7 +180,7 @@ CREATE TABLE sa_file_index (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件记录索引';
 
-/**013 文件分类[SA_FILE_CATEGORY]*/
+/**012 文件分类[SA_FILE_CATEGORY]*/
 DROP TABLE IF EXISTS sa_file_category;
 CREATE TABLE sa_file_category (
   id      varchar(32)  NOT NULL  COMMENT '文件分类表ID(UUID)',
@@ -210,9 +194,7 @@ CREATE TABLE sa_file_category (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件分类(文件语义)';
 
-
-/**014 文件关系[SA_FILE_REL]*/
-/**目前先不实现*/
+/**013 文件关系[SA_FILE_REL]*/
 DROP TABLE IF EXISTS sa_file_rel;
 CREATE TABLE sa_file_rel (
   id     varchar(32)      NOT NULL  COMMENT '文件关系表ID(UUID)',
@@ -228,14 +210,14 @@ CREATE TABLE sa_file_rel (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件之间的关系';
 
-/**015 视图[vSA_FILE_INVERSEREL]*/
+/**014 视图[vSA_FILE_INVERSEREL]*/
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vsa_file_inverserel AS
   select id, bId AS aId, bType AS aType, aId AS bId, aType AS bType, 
   (0-rType1) AS rType1, rType2, descn, cTime
   from sa_file_rel;
 
-/**016 视图*/
+/**015 视图*/
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vsa_imp_log AS
   select a.id, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.extInfo AS cFileName, descn, a.cTime

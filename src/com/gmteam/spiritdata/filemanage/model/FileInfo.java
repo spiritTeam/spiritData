@@ -232,4 +232,21 @@ public class FileInfo extends FileIndexPo {
         ret.setLmTime(this.lmTime);
         return ret;
     }
+
+    /**
+     * 用全部文件名(目录+文件名+扩展名)
+     * @param allFileName 全部文件名
+     */
+    public void setAllFileName(String allFileName) {
+        this.setPath(FileNameUtils.getFilePath(allFileName));
+        this.setFileName(FileNameUtils.getFileName(allFileName));
+    }
+
+    /**
+     * 返回全部文件名
+     * @return 全部文件名
+     */
+    public String getAllFileName() {
+        return FileNameUtils.concatPath(this.getPath(), this.getFileName());
+    }
 }
