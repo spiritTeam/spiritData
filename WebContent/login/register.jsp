@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>register</title>
+<title>注册</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css">
 </head>
@@ -18,8 +18,8 @@
     <div style="height:1px; width:300px;border-top: 1px solid  #999999;"></div>
     <div id="rstDiv" style="text-align: left;margin-left: 80px;height: 20px;padding-top: 5px;"><span id="checkResult"></span></div>
     <form action="">
-      <table  width="300px;" style="margin-right: -35px;" >
-        <tr style="height:35px; valign:top;"  >
+      <table width="300px;" style="margin-right:-35px;" >
+        <tr style="height:35px; valign:top;" >
           <td align="right"  width="56px;" ><span class="myspan">账　号</span></td>
           <td colspan="2" width="200px;" >
             <div style="float: left">
@@ -156,7 +156,24 @@ function saveRegister(){
       $('#vcImg').remove();
       $('#vVC').append('<img id="vcImg" align="middle" src="img/cross.png">');
     } 
-    $.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息");
+    $.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息", 'info',function () {
+      if(lnV==false){
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }else if(maV=false){
+    	  $('#mail')[0].focus();
+    	  $('#mail')[0].select();
+      }else if(psV==false){
+        $('#password')[0].focus();
+        $('#password')[0].select();
+      }else if(cpsV=false){
+    	  $('#confirmPassword')[0].focus();
+        $('#confirmPassword')[0].select();
+      }else{
+        $('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+      }
+    });
     $('#commitButton').attr("disabled",false); 
     return ;
   }
@@ -178,9 +195,9 @@ function setInputCss() {
     $('#mail').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    $('#mailEndStr').css({"width":"85px;"});
+    $('#mailEndStr').css({"width":"84px"});
     $('#commitButton').css({"width":"240px","padding-left":"10px"});
-    $('#rstDiv').css({"margin-left": "76px"});
+    $('#rstDiv').css({"margin-left": "76px;"});
   }
 }
 $(function() {

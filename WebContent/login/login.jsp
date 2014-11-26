@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>login</title>
+<title>登录</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
 <style type="text/css">
@@ -92,7 +92,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         </tr>
       </table>
     </form>
-    <div align="right" style="width: 310px;margin-top: 50px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
+    <div align="right" style="width: 310px;margin-top: 100px;margin-right: 10px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
   </div>
 </center>
 </body>
@@ -308,10 +308,24 @@ function loginF() {
     	$('#vCImg').remove();
     	$('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
     } 
-    $.messager.alert("登录信息","您的登录信息某些地方有误，请完善您的注册信息");
+    $.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的注册信息", 'info',function () {
+   	  if(lnV==false){
+ 	      $('#loginName')[0].focus();
+ 	      $('#loginName')[0].select();
+ 	    }else if(psV==false){
+ 	    	$('#password')[0].focus();
+        $('#password')[0].select();
+ 	    }else{
+ 	    	$('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+ 	    }
+    });
     $('#register').attr('disabled',false);
     return ;
   }
+}
+function getFocus(){
+   
 }
 </script>
 </html>

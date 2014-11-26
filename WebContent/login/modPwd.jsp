@@ -13,7 +13,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>login</title>
+<title>修改密码</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
 <script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
@@ -26,22 +26,23 @@
 </head>
 <body>
 <center>
-  <div style="border:1px solid #ABCDEF;width: 450px;height: 500px;">
-    <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">修改密码</span></div>
-    <div style="height:1px; width:400px;border-top: 1px solid  #999999;"></div>
-    <form  style="margin-top: 15px;" action="">
-      <table width="430px;" >
-        <tr><td colspan="3"><div style="height: 30px;text-align: left;margin-left: 35px;" id="checkResult"></div></td></tr>
-        <tr style="height:50px; valign:top;">
+  <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
+    <div style="margin-top: 15px; margin-left: 15px;"align="left"><span style="font-size: 16px;color: #999999;">修改密码</span></div>
+    <div style="height:1px; width:300px;border-top: 1px solid  #999999;"></div>
+    <div id="rstDiv" style="text-align: left;margin-left: 86px;height: 20px;padding-top: 5px;"><span id="checkResult"></span></div>
+    <form action="">
+      <table width="300px;" style="margin-right:-35px;">
+        <tr style="height:35px; valign:top;">
           <td align="right"><span class="myspan">账　号</span></td>
           <td colspan="2" rowspan="1" width="197px;" style="text-align:left;">
           <div style="float: left;">
-            <input id="loginName"  name="loginName"  tabindex="1" type="text"  value="请填写用户名" 
+            <input id="loginName"  name="loginName"  tabindex="1" type="text"  value="账号" onmouseover=this.focus();this.select();
                 onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" />
           </div>
           <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
           </td>
         </tr>
+        <tr><td><div style="height: 8px;width: 5px;"></div></td></tr>
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">新密码</span></td>
           <td colspan="2" style="text-align:left;">
@@ -53,8 +54,8 @@
               <span id="pwdSpan" style="color: #ABCDEF;font-size: 12px;">密码</span></div>
           </td>
         </tr>
-        <tr >
-          <td align="right"><span class="myspan" style="font-size: 12px;">确认密码</span></td>
+        <tr style="height:50px; valign:top;" >
+          <td align="right"><span class="myspan" style="font-size: 12px;padding-right: 0px;">确认密码</span></td>
           <td colspan="2">
             <div style="float: left;">
               <input style="width:197px;" id="confirmPassword" name="confirmPassword"  tabindex="4" type="password" onmouseover="cpwdMouseOver();"
@@ -134,7 +135,8 @@ function validateConfirmPassword(eleId){
     cpsV =false;
   }else{
     if($('#password').val()!=ele.val()){
-      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码不一致!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">密码不一致!</div>');
+      $('#vCpwd').append('<img id="cpwdImg" align="middle" src="img/cross.png">');
       cpsV =false;
     }else{
       $('#vCpwd').append('<img id="cpwdImg" align="middle" src="img/accept.png">');
@@ -158,7 +160,8 @@ function validatePassword(eleId){
     psV = false;
   }else{
     if(!checkPasswordStr(ele.val())){
-      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">密码应由6~12位的字母、数字、下划线组成!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">密码应由6~12位的字母、数字、下划线组成!</div>');
+      $('#vPwd').append('<img id="pwdImg" align="middle" src="img/cross.png">');
       psV = false;
     }else{
     	$('#vPwd').append('<img id="pwdImg" align="middle" src="img/accept.png">');
@@ -177,7 +180,8 @@ function validateLoginName(eleId){
   }else{
     var vsMsg = checkLoginName(ele.val());
     if(vsMsg==true){
-      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;<img src="img/cross.png">登录名错误!</div>');
+      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">账号错误!</div>');
+      $('#vLN').append('<img id="lnImg" align="middle" src="img/cross.png">');
       lnV = false;
     }else{
       $('#vLN').append('<img id="lnImg" align="middle" src="img/accept.png">');
