@@ -13,29 +13,29 @@
 </head>
 <body>
 <center>
-  <div style="border:1px solid #ABCDEF;width: 330px;height: 400px;">
-    <div style="margin-top: 15px; margin-left: 25px;"align="left"><span style="font-size: 20px;color: #999999;">找回密码</span></div>
-    <div style="height:1px; width:300px;border-top: 1px solid  #999999;"></div>
-    <div id="rstDiv" style="text-align: left;margin-left: 86px;height: 20px;padding-top: 5px;"><span id="checkResult"></span></div>
-    <form action="">
+  <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
+    <div style="margin-top:15px;margin-left:25px;" align="left"><span style="font-size:20px;color:#999999;">找回密码</span></div>
+    <div style="height:1px;width:300px;border-top: 1px solid  #999999;"></div>
+    <div id="rstDiv" style="text-align:left;margin-left:86px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
+    <form>
       <table width="300px;" style="margin-right:-35px;">
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">账　　号</span></td>
           <td colspan="2" rowspan="1" style="text-align:left;">
-          <div style="float: left">
-            <input id="loginName" name="loginName"  tabindex="1" type="text"  value="请填写用户名" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" /></div>
-          <div style="float: left;width: 25px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
+          <div style="float:left">
+            <input id="loginName" name="loginName" tabindex="1" type="text" value="请填写用户名" onmouseover=this.focus();this.select();
+              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/></div>
+          <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr><td colspan="3" align="center"></td></tr>
       </table>
       <div><input id="sendButton" type="button" value="下一步" onclick="sendBackPwdMail();"/></div>
-      <div><h2>重置密码流程：</h2>
-           <span>1、填写用户名,系统校验用户名。</span>
-           <span>2、成功后点击下一步,将发送邮件至您的邮箱。</span>
-           <span>3、登录邮箱,根据提示重置密码。</span>
-           <span></span>
+      <div style="text-align: left;width: 200px;margin-top: 50px;">
+        <h2>重置密码流程：</h2>
+        <span>1、填写用户名,系统校验用户名。</span><br/>
+        <span>2、成功后点击下一步,将发送邮件至您的邮箱。</span><br/>
+        <span>3、登录邮箱,根据提示重置密码。</span><br/>
       </div>
     </form>
   </div>
@@ -43,7 +43,7 @@
 </body>
 <script type="text/javascript">
 var lnV =false;
-function setInputCss() {
+function setInputCss(){
   var browserType = getBrowserVersion();
   browserType = browserType.substring(0,browserType.lastIndexOf(' '));
   if(browserType!='msie'){
@@ -63,7 +63,6 @@ function sendBackPwdMail(){
     var pData = {
       loginName:$('#loginName').val()
     };
-    alert($('#loginName').val());
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success: function(json) {
         if(json){

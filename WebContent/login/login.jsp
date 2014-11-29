@@ -47,27 +47,26 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
   <div style="border:1px solid #ABCDEF;width: 330px;height: 400px;">
     <div style="margin-top: 15px; margin-left: 14px;"align="left"><span style="font-size: 16px;color: #999999;">登录</span></div>
     <div style="height:2px; width:300px;border-top: 1px solid  #999999;"></div>
-    <form  style="margin-top: 15px;" action="">
+    <form  style="margin-top: 15px;">
       <table width="300px;" style="margin-right: -35px;">
         <tr style="height:50px; valign:top;">
           <td align="right" width="56px;"><span class="myspan">账　号</span></td>
           <td colspan="2" rowspan="1" width="200px;" style="text-align:left;">
             <div style="float: left;">
               <input id="loginName" name="loginName" tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/>
-            </div>
+                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/></div>
             <div style="float: left;width: 20px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="myspan">密　码</span></td>
           <td colspan="2" style="text-align:left;" id="pwTd">
-	          <div style="float: left;">
-	            <input id="password" name="password" tabindex="2" type="password" value=""  onselect="" onmouseover="pwdMouseOver();"
-	                onclick="onClick(password);" onBlur="validatePassword('password');" /></div>
-	          <div style="float: left;width: 20px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vPW'></div>
-	          <div id="pwDiv" style="float: left;width: 25px;height: 25px;padding-top: 10px;margin-left: -220px;" align="center" >
-	            <span id="pwdSpan" style="color: #ABCDEF;font-size: 12px;">密码</span></div>
+            <div style="float: left;">
+              <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
+                  onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
+            <div style="float: left;width: 20px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vPW'></div>
+            <div id="pwDiv" style="float: left;width: 25px;height: 25px;padding-top: 10px;margin-left: -220px;" align="center">
+              <span id="pwdSpan" style="color: #ABCDEF;font-size: 12px;">密码</span></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -75,24 +74,24 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <td colspan="2">
             <div style="float: left;">
               <input type="text"  id="checkCode" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
-                onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');" />
+                onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');"/>
             </div>
-            <div style="float: left;border: 1px solid #999999;width: 83px;margin-left: -3px;" >
+            <div style="float: left;border: 1px solid #999999;width: 83px;margin-left: -3px;">
               <img style="height: 35px;" title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
             </div>
             <div style="float: left;width: 20px;height: 25px;padding-top: 8px;padding-left: 2px;" align="center" id='vVC'></div>
           </td>
         </tr>
         <tr style="height:70px; valign:top;">
-          <td colspan="3" align="center" >
+          <td colspan="3" align="center">
             <div tabindex="4" style="width:250px; background-image:url(img/loginb.png); padding-left:0px;margin-left: -31px;">
-              <img id="register" name="register"  src="img/login.png" onclick="loginF();" />
+              <img id="register" name="register"  src="img/login.png" onclick="loginF();"/>
             </div>
           </td>
         </tr>
       </table>
     </form>
-    <div align="right" style="width: 310px;margin-top: 100px;margin-right: 10px;" ><span class="myspan" style="font-size: 12px;" onclick="tregister()">注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
+    <div align="right" style="width: 310px;margin-top: 100px;margin-right: 10px;"><span class="myspan" style="font-size: 12px;" onclick="tregister()">注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
   </div>
 </center>
 </body>
@@ -110,32 +109,17 @@ function pwdOnActive() {
   $("#password")[0].focus();
   $("#password")[0].select();
 }
-//如果不是ie浏览器，从新初始化inputcsss
-function setInputCss() {
-	var browserType = getBrowserVersion();
-  browserType = browserType.substring(0,browserType.lastIndexOf(' '));
-  if(browserType!='msie'){
-	  $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-	  $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-	  $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-  }
-}
 function pwdMouseOver(){
-	 $("#pwdSpan").toggleClass("addSelect");
+  $("#pwdSpan").toggleClass("addSelect");
 }
 $(function(){
-	$("#pwdSpan").mouseover(function(){pwdOnActive();});
-	$("#password").focus(function(){pwdOnActive();});
-	$("#password").mouseover(function(){pwdOnActive();});
-	$("#password").blur(function(){
-		if ($(this).val()=="") $("#pwdSpan").show();
+  $("#pwdSpan").mouseover(function(){pwdOnActive();});
+  $("#password").focus(function(){pwdOnActive();});
+  $("#password").mouseover(function(){pwdOnActive();});
+  $("#password").blur(function(){
+    if ($(this).val()=="") $("#pwdSpan").show();
   });
-
-	$("#maskPwd").css({"position":"absolute", "border":"solid red 1px","top":"100px", "left":"100px","color":"#ABCDEF"})
-	.click(function(){
-		$("#maskPwd").hide();
-	});
-	setInputCss();
+  setInputCss();
   if($('#loginName').val()==$('#loginName')[0].defaultValue){
     $('#loginName').css('color','#ABCDEF');
   }
@@ -178,7 +162,7 @@ function refresh(obj) {
 }
 //验证验证码
 function validateValidateCode(eleId){
-	$('#vCImg').remove();
+  $('#vCImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
     ele.val(ele[0].defaultValue);
@@ -187,10 +171,10 @@ function validateValidateCode(eleId){
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
-    	$('#vVC').append('<img id="vCImg" align="middle" src="img/accept.png">');
+      $('#vVC').append('<img id="vCImg" align="middle" src="img/accept.png">');
       vcV = true;
     }else{
-    	$('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
+      $('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
       vcV = false;
     }
   }
@@ -212,22 +196,22 @@ function validatePassword(eleId){
   $('#pWImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-	  $('#pwdSpan').html('密码');
+    $('#pwdSpan').html('密码');
     psV = false;
   }else{
-		$('#vPW').append('<img id="pWImg" align="middle" src="img/accept.png">'); 
+    $('#vPW').append('<img id="pWImg" align="middle" src="img/accept.png">'); 
     psV = true;
   }
 }
 function validateLoginName(eleId){
-	$('#lNImg').remove();
+  $('#lNImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
     ele.val(ele[0].defaultValue);
     ele.css('color','#ABCDEF');
     lnV = false;
   }else{
-	  $('#vLN').append('<img id="lNImg" align="middle" src="img/accept.png">');
+    $('#vLN').append('<img id="lNImg" align="middle" src="img/accept.png">');
     lnV = true;
   }
 }
@@ -249,12 +233,12 @@ function onClick(obj){
     obj.value='';obj.style.color='#000';
   }
   if($(obj).attr('id')+''=='password'){
-	  $('#pwdSpan').html('');
+    $('#pwdSpan').html('');
   }
 }
 function loginF() {
-	$('#register').attr('disabled',true);
-	$('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+  $('#register').attr('disabled',true);
+  $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
   if(psV&&lnV&&vcV){
     var url="<%=path%>/login.do";
     var pData={
@@ -262,8 +246,8 @@ function loginF() {
       "password":$("#password").val(),
       "checkCode":$("#checkCode").val(),
       "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
-       "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
-       "browser":getBrowserVersion()
+      "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
+      "browser":getBrowserVersion()
     };
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success: function(json) {
@@ -291,41 +275,37 @@ function loginF() {
           $.messager.alert("登录信息", "登录异常：未知！", "error");
         } else {
           $("#mask").hide();
-          setBodyEnter(true);
         }
       }
     });
   }else{
-	  if(lnV==false) {
-		  $('#lNImg').remove();
-		  $('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
-	  }
+    if(lnV==false) {
+      $('#lNImg').remove();
+      $('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
+    }
     if(psV==false){
-    	$('#pWImg').remove();
-    	$('#vPW').append('<img id="pWImg" align="middle" src="img/cross.png">');
+      $('#pWImg').remove();
+      $('#vPW').append('<img id="pWImg" align="middle" src="img/cross.png">');
     } 
     if(vcV==false){
-    	$('#vCImg').remove();
-    	$('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
+      $('#vCImg').remove();
+      $('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
     } 
     $.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的注册信息", 'info',function () {
-   	  if(lnV==false){
- 	      $('#loginName')[0].focus();
- 	      $('#loginName')[0].select();
- 	    }else if(psV==false){
- 	    	$('#password')[0].focus();
+       if(lnV==false){
+         $('#loginName')[0].focus();
+         $('#loginName')[0].select();
+       }else if(psV==false){
+         $('#password')[0].focus();
         $('#password')[0].select();
- 	    }else{
- 	    	$('#checkCode')[0].focus();
+       }else{
+         $('#checkCode')[0].focus();
         $('#checkCode')[0].select();
- 	    }
+       }
     });
     $('#register').attr('disabled',false);
     return ;
   }
-}
-function getFocus(){
-   
 }
 </script>
 </html>
