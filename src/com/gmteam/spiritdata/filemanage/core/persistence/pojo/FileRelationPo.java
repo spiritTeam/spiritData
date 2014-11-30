@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.filemanage.persistence.pojo;
+package com.gmteam.spiritdata.filemanage.core.persistence.pojo;
 
 import java.sql.Timestamp;
 import com.gmteam.framework.core.model.BaseObject;

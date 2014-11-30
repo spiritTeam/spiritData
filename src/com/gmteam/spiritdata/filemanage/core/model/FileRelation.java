@@ -1,10 +1,10 @@
-package com.gmteam.spiritdata.filemanage.model;
+package com.gmteam.spiritdata.filemanage.core.model;
 
 import java.sql.Timestamp;
 
 import com.gmteam.framework.core.model.BaseObject;
-import com.gmteam.spiritdata.filemanage.enumeration.RelType1;
-import com.gmteam.spiritdata.filemanage.persistence.pojo.FileRelationPo;
+import com.gmteam.spiritdata.filemanage.core.enumeration.RelType1;
+import com.gmteam.spiritdata.filemanage.core.persistence.pojo.FileRelationPo;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**

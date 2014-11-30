@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.filemanage.model;
+package com.gmteam.spiritdata.filemanage.core.model;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.gmteam.framework.core.model.BaseObject;
-import com.gmteam.spiritdata.filemanage.enumeration.FileCategoryType1;
-import com.gmteam.spiritdata.filemanage.enumeration.RelType1;
-import com.gmteam.spiritdata.filemanage.persistence.pojo.FileCategoryPo;
+import com.gmteam.spiritdata.filemanage.core.enumeration.FileCategoryType1;
+import com.gmteam.spiritdata.filemanage.core.enumeration.RelType1;
+import com.gmteam.spiritdata.filemanage.core.persistence.pojo.FileCategoryPo;
 import com.gmteam.spiritdata.util.SequenceUUID;
 
 /**

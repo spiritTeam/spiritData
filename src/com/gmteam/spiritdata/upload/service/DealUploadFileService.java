@@ -13,10 +13,10 @@ import com.gmteam.framework.FConstants;
 import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.framework.util.FileNameUtils;
 import com.gmteam.framework.util.FileUtils;
-import com.gmteam.spiritdata.filemanage.enumeration.FileCategoryType1;
-import com.gmteam.spiritdata.filemanage.model.FileCategory;
-import com.gmteam.spiritdata.filemanage.model.FileInfo;
-import com.gmteam.spiritdata.filemanage.service.FileManageService;
+import com.gmteam.spiritdata.filemanage.core.enumeration.FileCategoryType1;
+import com.gmteam.spiritdata.filemanage.core.model.FileCategory;
+import com.gmteam.spiritdata.filemanage.core.model.FileInfo;
+import com.gmteam.spiritdata.filemanage.core.service.FileManageService;
 import com.gmteam.spiritdata.importdata.excel.service.DealExcelFileService;
 
 /**
