@@ -255,6 +255,7 @@ function onClick(obj){
 function loginF() {
 	$('#register').attr('disabled',true);
 	$('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+
   if(psV&&lnV&&vcV){
     var url="<%=path%>/login.do";
     var pData={
@@ -265,8 +266,10 @@ function loginF() {
        "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
        "browser":getBrowserVersion()
     };
+    var _json;
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success: function(json) {
+      	_json = json;
         var loginInfo = json.data;
         var retInfo = loginInfo.retInfo;
         if(json.type==-1){
@@ -295,6 +298,7 @@ function loginF() {
         }
       }
     });
+    alert(_json);
   }else{
 	  if(lnV==false) {
 		  $('#lNImg').remove();
@@ -320,9 +324,10 @@ function loginF() {
         $('#checkCode')[0].select();
  	    }
     });
+    
     $('#register').attr('disabled',false);
-    return ;
   }
+  alert("ABCD");
 }
 function getFocus(){
    

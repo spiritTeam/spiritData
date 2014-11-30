@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.gmteam.framework.FConstants;
 import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.framework.util.FileNameUtils;
+import com.gmteam.framework.util.FileUtils;
 import com.gmteam.spiritdata.filemanage.enumeration.FileCategoryType1;
 import com.gmteam.spiritdata.filemanage.model.FileCategory;
 import com.gmteam.spiritdata.filemanage.model.FileInfo;
@@ -69,7 +70,7 @@ public class DealUploadFileService {
         ret.setAllFileName(allFileName);
         ret.setFileSize((Long)uploadInfoMap.get("size"));
         ret.setAccessType(1);
-        ret.setCTime(new Timestamp(1234));
+        ret.setCTime(new Timestamp(FileUtils.getFileCreateTime4Win(f)));
         ret.setLmTime(new Timestamp(f.lastModified()));
 
         //创建分类，上传文件的分类中
