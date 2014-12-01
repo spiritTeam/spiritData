@@ -16,12 +16,13 @@
     <result column="fileExtName" property="extName"    jdbcType="VARCHAR" />
     <result column="fileSize"    property="fileSize"   jdbcType="INTEGER" />
     <result column="descn"       property="desc"       jdbcType="VARCHAR" />
+    <result column="fcTime"      property="fcTime"      jdbcType="TIMESTAMP" />
+    <result column="flmTime"     property="flmTime"     jdbcType="TIMESTAMP" />
     <result column="cTime"       property="CTime"      jdbcType="TIMESTAMP" />
-    <result column="lmTime"      property="lmTime"     jdbcType="TIMESTAMP" />
   </resultMap>
   <!-- 所有列 -->
   <sql id="Base_Column_List" >
-    id, ownerType, ownerId, accessType, filePath, fileName, fileExtName, descn, cTime, lmTime
+    id, ownerType, ownerId, accessType, filePath, fileName, fileExtName, descn, fcTime, flmTime, cTime
   </sql>
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey" >
@@ -36,8 +37,9 @@
         <if test="extName!=null" > and fileExtName = #{extName,jdbcType=VARCHAR} </if>
         <if test="fileSize!=null" > and fileSize = #{fileSize,jdbcType=INTEGER} </if>
         <if test="desc!=null" > and descn = #{desc,jdbcType=VARCHAR} </if>
+        <if test="fcTime!=null" > and fcTime = #{fcTime,jdbcType=TIMESTAMP} </if>
+        <if test="flmTime!=null" > and flmTime = #{flmTime,jdbcType=TIMESTAMP} </if>
         <if test="CTime!=null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
-        <if test="lmTime!=null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
       </trim>
     </where>
   </sql>
@@ -77,8 +79,9 @@
       <if test="extName!=null" >fileExtName,</if>
       <if test="fileSize!=null" >fileSize,</if>
       <if test="desc!=null" >descn,</if>
+      <if test="fcTime!=null" >fcTime,</if>
+      <if test="flmTime!=null" >flmTime,</if>
       <if test="CTime!=null" >CTime,</if>
-      <if test="lmTime!=null" >lmTime,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id!=null" >#{id,jdbcType=VARCHAR},</if>
@@ -90,8 +93,9 @@
       <if test="extName!=null" >#{extName,jdbcType=VARCHAR},</if>
       <if test="fileSize!=null" >#{fileSize,jdbcType=INTEGER},</if>
       <if test="desc!=null" >#{desc,jdbcType=VARCHAR},</if>
+      <if test="fcTime!=null" >#{fcTime,jdbcType=TIMESTAMP},</if>
+      <if test="flmTime!=null" >#{flmTime,jdbcType=TIMESTAMP},</if>
       <if test="CTime!=null" >#{CTime,jdbcType=TIMESTAMP},</if>
-      <if test="lmTime!=null" >#{lmTime,jdbcType=TIMESTAMP},</if>
     </trim>
   </insert>
 
@@ -108,8 +112,9 @@
       <if test="extName!=null" >fileExtName = #{extName,jdbcType=VARCHAR},</if>
       <if test="fileSize!=null" >fileSize = #{fileSize,jdbcType=INTEGER},</if>
       <if test="desc!=null" >descn = #{desc,jdbcType=VARCHAR},</if>
+      <if test="fcTime!=null" >fcTime = #{fcTime,jdbcType=TIMESTAMP},</if>
+      <if test="flmTime!=null" >flmTime = #{flmTime,jdbcType=TIMESTAMP},</if>
       <if test="CTime!=null" >cTime = #{CTime,jdbcType=TIMESTAMP},</if>
-      <if test="lmTime!=null" >lmTime = #{lmTime,jdbcType=TIMESTAMP},</if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>

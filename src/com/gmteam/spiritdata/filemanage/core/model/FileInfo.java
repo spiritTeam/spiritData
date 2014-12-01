@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.gmteam.framework.util.FileNameUtils;
+import com.gmteam.framework.util.FileUtils;
 import com.gmteam.spiritdata.filemanage.core.enumeration.RelType1;
 import com.gmteam.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.gmteam.spiritdata.util.SequenceUUID;
@@ -25,6 +26,7 @@ public class FileInfo extends FileIndexPo {
     private File file; //文件信息所对应的文件：当accessType==1(操作系统文件)时；若是其他accessType，则这个是null
 
     private List<FileCategory> fileCategoryList; //本文件的分类列表，一个文件可以属于多个分类
+
     private List<FileRelation> positiveRelationFiles; //与本文件相关的正向关联关系
     private List<FileRelation> inverseRelationFiles; //与本文件相关的反向关联关系
     private List<FileRelation> equalRelationFiles; //与本文件相关的反向关联关系
@@ -32,8 +34,18 @@ public class FileInfo extends FileIndexPo {
     public File getFile() {
         return file;
     }
+
+    /**
+     * 设置文件，文件必须是合法的文件
+     * @param file 文件
+     */
     public void setFile(File file) {
-        this.file = file;
+        if (file!=null&&file.isFile()) {
+            String allFileName = file.getAbsolutePath();
+            this.setPath(FileNameUtils.getFilePath(allFileName));
+            this.setFileName(FileNameUtils.getFileName(allFileName));
+            this.file = file;
+        } else throw new IllegalArgumentException("文件为空或是一个目录！");
     }
 
     //文件分类列表处理
@@ -221,15 +233,18 @@ public class FileInfo extends FileIndexPo {
             String allFileName = this.file.getAbsolutePath();
             ret.setPath(FileNameUtils.getFilePath(allFileName));
             ret.setFileName(FileNameUtils.getFileName(allFileName));
+            ret.setFcTime(new Timestamp(FileUtils.getFileCreateTime4Win(this.file)));
+            ret.setFlmTime(new Timestamp(this.file.lastModified()));
         } else {
             ret.setPath(this.path);
             ret.setFileName(this.fileName);
             ret.setFileSize(this.fileSize);
+            ret.setFcTime(this.fcTime);
+            ret.setFlmTime(this.flmTime);
         }
         //其他
         ret.setDesc(this.desc);
         ret.setCTime(this.CTime);
-        ret.setLmTime(this.lmTime);
         return ret;
     }
 

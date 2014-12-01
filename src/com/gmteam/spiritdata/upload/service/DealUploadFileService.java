@@ -1,22 +1,15 @@
 package com.gmteam.spiritdata.upload.service;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.stereotype.Component;
-
 import com.gmteam.framework.FConstants;
 import com.gmteam.framework.UGA.UgaUser;
 import com.gmteam.framework.util.FileNameUtils;
-import com.gmteam.framework.util.FileUtils;
-import com.gmteam.spiritdata.filemanage.core.enumeration.FileCategoryType1;
-import com.gmteam.spiritdata.filemanage.core.model.FileCategory;
-import com.gmteam.spiritdata.filemanage.core.model.FileInfo;
-import com.gmteam.spiritdata.filemanage.core.service.FileManageService;
+import com.gmteam.spiritdata.filemanage.IMP.model.ImportFile;
+import com.gmteam.spiritdata.filemanage.IMP.service.ImportFileService;
 import com.gmteam.spiritdata.importdata.excel.service.DealExcelFileService;
 
 /**
@@ -26,7 +19,7 @@ import com.gmteam.spiritdata.importdata.excel.service.DealExcelFileService;
 @Component
 public class DealUploadFileService {
     @Resource
-    private FileManageService fmService;
+    private ImportFileService ifService;
     @Resource
     private DealExcelFileService dealExcelService;
 
@@ -38,8 +31,8 @@ public class DealUploadFileService {
      */
     public void dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception  {
         //记录文件
-        FileInfo fi = getFileInfo(uploadInfoMap, session);
-        fmService.saveFileInfo(fi);
+        ImportFile fi = getFileInfo(uploadInfoMap, session);
+        ifService.saveImportFile(fi);
 
         //得到文件扩展名
         String extName = FileNameUtils.getExt("ifl.getsFileName()");
@@ -51,14 +44,14 @@ public class DealUploadFileService {
         }
     }
 
-    private FileInfo getFileInfo(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
+    private ImportFile getFileInfo(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception {
         //文件处理
         String allFileName = (String)uploadInfoMap.get("storeFilename");
         File f = new File(allFileName);
         if (!f.exists()||!f.isFile()) throw new Exception("文件不存在");
 
         //文件信息
-        FileInfo ret = new FileInfo();
+        ImportFile ret = new ImportFile();
         UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
         if(user==null){
             ret.setOwnerType(2);
@@ -67,20 +60,9 @@ public class DealUploadFileService {
             ret.setOwnerType(1);
             ret.setOwnerId(user.getUserId());
         }
-        ret.setAllFileName(allFileName);
+        ret.setServerFileName(allFileName);
+        ret.setClientFileName((String)uploadInfoMap.get("orglFilename"));
         ret.setFileSize((Long)uploadInfoMap.get("size"));
-        ret.setAccessType(1);
-        ret.setCTime(new Timestamp(FileUtils.getFileCreateTime4Win(f)));
-        ret.setLmTime(new Timestamp(f.lastModified()));
-
-        //创建分类，上传文件的分类中
-        FileCategory fc = new FileCategory();
-        fc.setFType1(FileCategoryType1.IMP);
-        fc.setFType2("关系型数据");
-        fc.setFType2(ret.getExtName());
-        fc.setExtInfo((String)uploadInfoMap.get("orglFilename"));
-        ret.addFileCategoryList(fc);
-
         return ret;
     }
 }
