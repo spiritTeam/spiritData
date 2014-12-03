@@ -249,8 +249,10 @@ function loginF() {
       "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
       "browser":getBrowserVersion()
     };
+    var _json;
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success: function(json) {
+      	_json = json;
         var loginInfo = json.data;
         var retInfo = loginInfo.retInfo;
         if(json.type==-1){
@@ -278,6 +280,7 @@ function loginF() {
         }
       }
     });
+    alert(_json);
   }else{
     if(lnV==false) {
       $('#lNImg').remove();
@@ -303,9 +306,11 @@ function loginF() {
         $('#checkCode')[0].select();
        }
     });
+    
     $('#register').attr('disabled',false);
-    return ;
   }
+}
+function getFocus(){
 }
 </script>
 </html>
