@@ -10,6 +10,7 @@
 <title>登录</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
+<script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
 <style type="text/css">
 </style>
 </head>
@@ -22,13 +23,13 @@
   <input type="hidden" name="txtDNSName"/>
 </form>
 <script>
-var service = locator.ConnectServer();
+//var service = locator.ConnectServer();
 var MACAddr;
 var IPAddr;
 var DomainAddr;
 var sDNSName;
-service.Security_.ImpersonationLevel=3;
-service.InstancesOfAsync(foo, 'Win32_NetworkAdapterConfiguration');
+//service.Security_.ImpersonationLevel=3;
+//service.InstancesOfAsync(foo, 'Win32_NetworkAdapterConfiguration');
 </script>
 
 <script language="JScript" event="OnCompleted(hResult,pErrorObject, pAsyncContext)" for="foo">
@@ -44,54 +45,54 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 }
 </script>
 <center>
-  <div style="border:1px solid #ABCDEF;width: 330px;height: 400px;">
-    <div style="margin-top: 15px; margin-left: 14px;"align="left"><span style="font-size: 16px;color: #999999;">登录</span></div>
-    <div style="height:2px; width:300px;border-top: 1px solid  #999999;"></div>
-    <form  style="margin-top: 15px;">
-      <table width="300px;" style="margin-right: -35px;">
+  <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
+    <div style="margin-top:15px; margin-left:14px;"align="left"><span style="font-size:16px;color:#999999;">登录</span></div>
+    <div style="height:2px; width:300px;border-top:1px solid  #999999;"></div>
+    <form  style="margin-top:15px;">
+      <table width="300px;" style="margin-right:-35px;">
         <tr style="height:50px; valign:top;">
-          <td align="right" width="56px;"><span class="myspan">账　号</span></td>
-          <td colspan="2" rowspan="1" width="200px;" style="text-align:left;">
-            <div style="float: left;">
+          <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
+          <td colspan="2" rowspan="1"  style="text-align:left;">
+            <div style="float:left;">
               <input id="loginName" name="loginName" tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
                 onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/></div>
-            <div style="float: left;width: 20px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vLN'></div>
+            <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="myspan">密　码</span></td>
+          <td align="right"><span class="loginspan">密　码</span></td>
           <td colspan="2" style="text-align:left;" id="pwTd">
-            <div style="float: left;">
+            <div style="float:left;">
               <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
                   onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
-            <div style="float: left;width: 20px;height: 25px;padding-top: 8px;margin-left: -2px;" align="center" id='vPW'></div>
-            <div id="pwDiv" style="float: left;width: 25px;height: 25px;padding-top: 10px;margin-left: -220px;" align="center">
-              <span id="pwdSpan" style="color: #ABCDEF;font-size: 12px;">密码</span></div>
+            <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPW'></div>
+            <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
+              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="myspan">验证码</span></td>
+          <td align="right"><span class="loginspan">验证码</span></td>
           <td colspan="2">
-            <div style="float: left;">
+            <div style="float:left;">
               <input type="text"  id="checkCode" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');"/>
             </div>
-            <div style="float: left;border: 1px solid #999999;width: 83px;margin-left: -3px;">
-              <img style="height: 35px;" title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
+            <div style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;">
+              <img style="height:35px;" title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
             </div>
-            <div style="float: left;width: 20px;height: 25px;padding-top: 8px;padding-left: 2px;" align="center" id='vVC'></div>
+            <div style="float:left;width:20px;height:25px;padding-top:8px;padding-left:2px;" align="center" id='vVC'></div>
           </td>
         </tr>
         <tr style="height:70px; valign:top;">
           <td colspan="3" align="center">
-            <div tabindex="4" style="width:250px; background-image:url(img/loginb.png); padding-left:0px;margin-left: -31px;">
+            <div tabindex="4" style="width:250px; background-image:url(img/loginb.png); padding-left:0px;margin-left:-31px;">
               <img id="register" name="register"  src="img/login.png" onclick="loginF();"/>
             </div>
           </td>
         </tr>
       </table>
     </form>
-    <div align="right" style="width: 310px;margin-top: 100px;margin-right: 10px;"><span class="myspan" style="font-size: 12px;" onclick="tregister()">注册</span><span onclick="activeAgain()" style="font-size: 12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size: 12px;">&nbsp;忘记密码</span></div>
+    <div align="right" style="width:310px;margin-top:100px;margin-right:10px;"><span class="loginspan" style="font-size:12px;" onclick="tregister()">注册</span><span onclick="activeAgain()" style="font-size:12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size:12px;">&nbsp;忘记密码</span></div>
   </div>
 </center>
 </body>
@@ -130,6 +131,16 @@ $(function(){
     $('#checkCode').css('color','#ABCDEF');
   }
 });
+function setInputCss(){
+  var browserType = getBrowserVersion();
+  alert(browserType);
+  browserType = browserType.substring(0,browserType.lastIndexOf(' '));
+  if(browserType!='msie'){
+    if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
+  }
+}
 //从新发送激活邮件到邮箱
 function activeAgain(){
   var url="<%=path%>/login/activeAgain.do";
@@ -142,7 +153,7 @@ function activeAgain(){
       "loginName":$("#loginName").val()
     };
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success: function(json) {
+      success:function(json) {
         if(json.success==true){
           $.messager.alert('提示信息',json.retInfo);
         }else{
@@ -186,7 +197,7 @@ function verificationCheckCode(val){
   };
   var url="<%=path%>/login/validateValidateCode.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-    success: function(json) {
+    success:function(json) {
       vfMsg = json;
     }
   });
@@ -222,7 +233,7 @@ function checkLoginName(val){
   };
   var url="<%=path%>/login/validateLoginName.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-     success: function(json) {
+     success:function(json) {
        vfMsg = json;
      }
   });
@@ -251,7 +262,7 @@ function loginF() {
     };
     var _json;
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success: function(json) {
+      success:function(json) {
       	_json = json;
         var loginInfo = json.data;
         var retInfo = loginInfo.retInfo;
@@ -272,7 +283,7 @@ function loginF() {
           $.messager.alert("登录信息", "登录异常："+json.data, "error");
         }
       },
-      error: function(errorData) {
+      error:function(errorData) {
         if (errorData) {
           $.messager.alert("登录信息", "登录异常：未知！", "error");
         } else {
@@ -309,8 +320,6 @@ function loginF() {
     
     $('#register').attr('disabled',false);
   }
-}
-function getFocus(){
 }
 </script>
 </html>
