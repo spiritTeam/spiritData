@@ -22,43 +22,45 @@
 <center>
   <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
     <div style="margin-top:15px;margin-left:15px;"align="left"><span style="font-size:16px;color:#999999;">修改密码</span></div>
-    <div style="height:1px; width:300px;border-top: 1px solid  #999999;"></div>
+    <div style="height:1px; width:300px;border-top:1px solid  #999999;"></div>
     <div id="rstDiv" style="text-align:left;margin-left:86px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
-      <table width="300px;" style="margin-right:-35px;">
+      <table width="300px;" style="margin-right:-10px;">
         <tr style="height:35px;valign:top;">
-          <td align="right"><span class="myspan">账　号</span></td>
-          <td colspan="2" width="197px;" style="text-align:left;">
-          <div style="float: left;">
+          <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
+          <td colspan="2" width="200px;" style="text-align:left;">
+          <div style="float:left;">
             <input id="loginName" name="loginName" tabindex="1" type="text" value="账号" onmouseover=this.focus();this.select();
               onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" />
           </div>
           <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
-        <tr><td><div style="height: 8px;width:5px;"></div></td></tr>
+        <tr><td><div style="height:8px;width:5px;"></div></td></tr>
         <tr style="height:50px;valign:top;">
-          <td align="right"><span class="myspan">新密码</span></td>
+          <td align="right"><span class="loginspan">新密码</span></td>
           <td colspan="2" style="text-align:left;">
-	          <div style="float:left;">
-	            <input style="width:197px;" id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
-	              onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
-	          <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPwd'></div>
-	          <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:10px;margin-left:-225px;" align="center">
-              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span></div>
+            <div style="float:left;">
+              <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
+                onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
+            <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPwd'></div>
+            <div id="pwDiv" style="float:left;width:40px;height:25px;padding-top:10px;margin-left:-223px;" align="center">
+              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">新密码</span></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;" >
-          <td align="right"><span class="myspan" style="font-size: 12px;">确认密码</span></td>
+          <td align="right"><span class="loginspan" style="font-size:12px;margin-right:-4px;">确认密码</span></td>
           <td colspan="2">
             <div style="float:left;">
-              <input style="width:197px;" id="confirmPassword" name="confirmPassword" tabindex="4" type="password" onmouseover="cpwdMouseOver();"
+              <input id="confirmPassword" name="confirmPassword" tabindex="4" type="password" onmouseover="cpwdMouseOver();"
                 onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');"/></div>
             <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vCPwd'></div>
-            <div id="cpwDiv" style="float:left;width:50px;height:25px;padding-top:10px;margin-left:-225px;" align="center">
-              <span id="cpwdSpan" style="color: #ABCDEF;font-size: 12px;">确认密码</span></div>
+            <div id="cpwDiv" style="float:left;width:50px;height:25px;padding-top:10px;margin-left:-223px;" align="center">
+              <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span></div>
           </td></tr>
-        <tr><td colspan="3" align="right"><input id="saveButton" style="margin-top:50px;margin-right:20px;" type="button" value="确认修改" onclick="modPwd();"/></td></tr>
+        <tr>
+          <td colspan="3" align="right">
+            <a id="saveButton" style="margin-top:50px;margin-right:20px;" onclick="modPwd();" href="#">确认修改</a></td></tr>
       </table>
     </form>
   </div>
@@ -74,33 +76,33 @@ function cpwdMouseOver(){
   $("#cpwdSpan").toggleClass("addSelect");
 }
 function modPwd(){
-	$("#saveButton").attr('disabled',true);
+  $("#saveButton").attr('disabled',true);
   if(psV&&lnV&&cpsV){
-    var pData = {
+    var pData ={
       loginName:$('#loginName').val(),
       password:$('#password').val()
     };
     var url = '<%=path%>/login/modifyPwd.do';
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success: function(json) {
+      success:function(json){
         if(json) $.messager.alert('提示','修改成功!');
         else $.messager.alert('提示','修改失败!');
       }
     });
   }else{
-	  if(lnV==false){
-		  $('#lnImg').remove();
-		  $('#vLN').append('<img id="lnImg" align="middle" src="img/cross.png">');
-	  }
-	  if(psV==false){
-		  $('#pwdImg').remove();
-		  $('#vPwd').append('<img id="pwdImg" align="middle" src="img/cross.png">');
-	  }
-	  if(cpsV==false){
-		  $('#cpwdImg').remove();
-		  $('#vCPwd').append('<img id="cpwdImg" align="middle" src="img/cross.png">');
-	  }
-    $.messager.alert("提示","您还有未完善的信息!",'info',function () {
+    if(lnV==false){
+      $('#lnImg').remove();
+      $('#vLN').append('<img id="lnImg" align="middle" src="img/cross.png">');
+    }
+    if(psV==false){
+      $('#pwdImg').remove();
+      $('#vPwd').append('<img id="pwdImg" align="middle" src="img/cross.png">');
+    }
+    if(cpsV==false){
+      $('#cpwdImg').remove();
+      $('#vCPwd').append('<img id="cpwdImg" align="middle" src="img/cross.png">');
+    }
+    $.messager.alert("提示","您还有未完善的信息!",'info',function (){
       if(lnV==false){
         $('#loginName')[0].focus();
         $('#loginName')[0].select();
@@ -115,10 +117,28 @@ function modPwd(){
   }
   $("#saveButton").attr('disabled',false);
 }
+function setInputCss(){
+  var browserType = getBrowserVersion();
+  var v = browserType.substring(0,browserType.lastIndexOf(' '));
+  if(v!='msie'){
+    if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"78px"});
+    if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
+  }else{
+    var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
+    if(ieVersion!=8.0){
+      if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"89px"});
+      if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    }
+  }
+}
 //如果不是ie浏览器，从新初始化inputcsss
 $(function(){
-	initPwdInputCss('password','pwdSpan');
-	initPwdInputCss('confirmPassword','cpwdSpan');
+  initPwdInputCss('password','pwdSpan');
+  initPwdInputCss('confirmPassword','cpwdSpan');
   setInputCss();
   //modType=1，为修改密码，为2，则是忘记密码
   if(modType==1){
@@ -134,14 +154,14 @@ $(function(){
   }
 });
 function validateConfirmPassword(eleId){
-	$('#checkResult').html('');
-	$('#cpwdImg').remove();
+  $('#checkResult').html('');
+  $('#cpwdImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
     cpsV =false;
   }else{
     if($('#password').val()!=ele.val()){
-      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">密码不一致!</div>');
+      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">密码不一致!</div>');
       $('#vCPwd').append('<img id="cpwdImg" align="middle" src="img/cross.png">');
       cpsV =false;
     }else{
@@ -159,25 +179,25 @@ function checkPasswordStr(str){
   }       
 }
 function validatePassword(eleId){
-	$('#checkResult').html('');
-	$('#pwdImg').remove();
+  $('#checkResult').html('');
+  $('#pwdImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
     psV = false;
   }else{
     if(!checkPasswordStr(ele.val())){
-      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">密码应由6~12位的字母、数字、下划线组成!</div>');
+      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">密码应是6~12位字母、数字、下划线!</div>');
       $('#vPwd').append('<img id="pwdImg" align="middle" src="img/cross.png">');
       psV = false;
     }else{
-    	$('#vPwd').append('<img id="pwdImg" align="middle" src="img/accept.png">');
+      $('#vPwd').append('<img id="pwdImg" align="middle" src="img/accept.png">');
       psV = true;
     }
   }
 }
 function validateLoginName(eleId){
-	$('#checkResult').html('');
-	$('#lnImg').remove();
+  $('#checkResult').html('');
+  $('#lnImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
     ele.val(ele[0].defaultValue);
@@ -186,7 +206,7 @@ function validateLoginName(eleId){
   }else{
     var vsMsg = checkLoginName(ele.val());
     if(vsMsg==true){
-      $('#checkResult').html('<div style="width:370;font-size: 12px;color:red;">该用户不存在!</div>');
+      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">该用户不存在!</div>');
       $('#vLN').append('<img id="lnImg" align="middle" src="img/cross.png">');
       lnV = false;
     }else{
@@ -202,7 +222,7 @@ function checkLoginName(val){
   };
   var url="<%=path%>/login/validateLoginName.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-     success: function(json) {
+     success:function(json){
        vfMsg = json;
      }
   });

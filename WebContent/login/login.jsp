@@ -49,7 +49,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     <div style="margin-top:15px; margin-left:14px;"align="left"><span style="font-size:16px;color:#999999;">登录</span></div>
     <div style="height:2px; width:300px;border-top:1px solid  #999999;"></div>
     <form  style="margin-top:15px;">
-      <table width="300px;" style="margin-right:-35px;">
+      <table width="300px;" style="margin-right:-15px;">
         <tr style="height:50px; valign:top;">
           <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
           <td colspan="2" rowspan="1"  style="text-align:left;">
@@ -66,7 +66,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
               <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
                   onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPW'></div>
-            <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
+            <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:12spx;margin-left:-219px;" align="center">
               <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span></div>
           </td>
         </tr>
@@ -77,7 +77,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
               <input type="text"  id="checkCode" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
                 onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');"/>
             </div>
-            <div style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;">
+            <div id="checkCodeDiv" style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;border-left:0px;">
               <img style="height:35px;" title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
             </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;padding-left:2px;" align="center" id='vVC'></div>
@@ -86,13 +86,17 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         <tr style="height:70px; valign:top;">
           <td colspan="3" align="center">
             <div tabindex="4" style="width:250px; background-image:url(img/loginb.png); padding-left:0px;margin-left:-31px;">
-              <img id="register" name="register"  src="img/login.png" onclick="loginF();"/>
+              <a id="login" name="login"  onclick="loginF();"><img src="img/login.png"/></a>
             </div>
           </td>
         </tr>
       </table>
     </form>
-    <div align="right" style="width:310px;margin-top:100px;margin-right:10px;"><span class="loginspan" style="font-size:12px;" onclick="tregister()">注册</span><span onclick="activeAgain()" style="font-size:12px;">&nbsp;激活</span><span onclick="modPwd()" style="font-size:12px;">&nbsp;忘记密码</span></div>
+    <div align="right" style="width:310px;margin-top:100px;margin-right:10px;">
+      <a onclick="tregister()" href="#">注册</a>
+      <a onclick="activeAgain()" href="#">&nbsp;激活</a>
+      <a onclick="modPwd()" href="#">&nbsp;忘记密码</a>
+    </div>
   </div>
 </center>
 </body>
@@ -133,12 +137,20 @@ $(function(){
 });
 function setInputCss(){
   var browserType = getBrowserVersion();
-  alert(browserType);
-  browserType = browserType.substring(0,browserType.lastIndexOf(' '));
-  if(browserType!='msie'){
+  var v = browserType.substring(0,browserType.lastIndexOf(' '));
+  if(v!='msie'){
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
+    if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#pwDiv')!=null) $('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
+  }else {
+    $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
+    var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
+    if(ieVersion==11.0){
+      if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
+    }
   }
 }
 //从新发送激活邮件到邮箱
@@ -169,6 +181,7 @@ function tregister(){
 }
 //刷新验证码
 function refresh(obj) {
+  $('#checkCode').val('');
   obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
 }
 //验证验证码
@@ -192,9 +205,7 @@ function validateValidateCode(eleId){
 }
 function verificationCheckCode(val){
   var vfMsg =null;
-  var pData={
-    "checkCode":val
-  };
+  var pData={"checkCode":val};
   var url="<%=path%>/login/validateValidateCode.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
     success:function(json) {
@@ -248,8 +259,7 @@ function onClick(obj){
   }
 }
 function loginF() {
-  $('#register').attr('disabled',true);
-  $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+  $('#login').attr('disabled',true);
   if(psV&&lnV&&vcV){
     var url="<%=path%>/login.do";
     var pData={
@@ -263,7 +273,10 @@ function loginF() {
     var _json;
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json) {
-      	_json = json;
+        $('#register').attr('disabled',false);
+        $('#checkCode').val('');
+        $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+        _json = json;
         var loginInfo = json.data;
         var retInfo = loginInfo.retInfo;
         if(json.type==-1){
@@ -277,13 +290,16 @@ function loginF() {
               window.location.href="<%=path%>/asIndexTemp.jsp";
             });
           }
-        } else if (json.type==2) {
+        } else if(json.type==2) {
           $.messager.alert("登录信息", "登录失败："+json.data, "error");
         } else {
           $.messager.alert("登录信息", "登录异常："+json.data, "error");
         }
       },
       error:function(errorData) {
+        $('#register').attr('disabled',false);
+        $('#checkCode').val('');
+        $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
         if (errorData) {
           $.messager.alert("登录信息", "登录异常：未知！", "error");
         } else {
@@ -291,8 +307,8 @@ function loginF() {
         }
       }
     });
-    alert(_json);
   }else{
+    $('#register').attr('disabled',false);
     if(lnV==false) {
       $('#lNImg').remove();
       $('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
@@ -317,8 +333,6 @@ function loginF() {
         $('#checkCode')[0].select();
        }
     });
-    
-    $('#register').attr('disabled',false);
   }
 }
 </script>
