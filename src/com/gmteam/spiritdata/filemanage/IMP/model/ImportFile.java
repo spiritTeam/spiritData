@@ -86,8 +86,7 @@ public class ImportFile extends BaseObject{
         ret.setOwnerId(this.ownerId);
         ret.setOwnerType(this.ownerType);
         ret.setAccessType(1);
-        ret.setFile(f);
-        ret.setDesc("导入数据，文件为:"+FileNameUtils.getFileName(this.serverFileName)+"导入时间:"+DateUtils.convert2TimeChineseStr(new Date()));
+        ret.setDesc("导入数据，文件为:"+FileNameUtils.getFileName(this.serverFileName)+"；导入时间:"+DateUtils.convert2TimeChineseStr(new Date()));
         ret.setCTime(this.CTime);
         //分类信息
         FileCategory fc = new FileCategory();

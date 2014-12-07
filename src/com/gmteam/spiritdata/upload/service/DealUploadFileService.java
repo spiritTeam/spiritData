@@ -35,7 +35,7 @@ public class DealUploadFileService {
         ifService.saveImportFile(fi);
 
         //得到文件扩展名
-        String extName = FileNameUtils.getExt("ifl.getsFileName()");
+        String extName = FileNameUtils.getExt(fi.getServerFileName());
         if (extName.toUpperCase().indexOf(".XLS")==0||extName.toUpperCase().indexOf(".XLSX")==0) {
             //对excel进行处理
             dealExcelService.process("ifl.getsFileName()", session);

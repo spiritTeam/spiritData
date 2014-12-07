@@ -40,18 +40,22 @@ public class FileInfo extends FileIndexPo {
      * @param file 文件
      */
     public void setFile(File file) {
-        if (file!=null&&file.isFile()) {
-            String allFileName = file.getAbsolutePath();
-            this.setPath(FileNameUtils.getFilePath(allFileName));
-            this.setFileName(FileNameUtils.getFileName(allFileName));
-            this.file = file;
-        } else throw new IllegalArgumentException("文件为空或是一个目录！");
+        if (file==null||!file.isFile()) throw new IllegalArgumentException("文件为空或是一个目录！");
+
+        this.file = file;
+        this.setPath(FileNameUtils.getFilePath(file.getAbsolutePath()));
+        this.setFileName(FileNameUtils.getFileName(file.getAbsolutePath()));
+        this.setFileSize(file.length());
+        this.setFcTime(new Timestamp(FileUtils.getFileCreateTime4Win(this.file)));
+        this.setFlmTime(new Timestamp(this.file.lastModified()));
     }
 
     //文件分类列表处理
     public void addFileCategoryList(FileCategory fc) {
         if (fc.getCTime()==null&&this.CTime!=null) fc.setCTime(this.CTime);
         fc.setCategoryFile(this);
+        if (this.fileCategoryList==null) this.fileCategoryList = new ArrayList<FileCategory>();
+        this.fileCategoryList.add(fc);
     }
     public List<FileCategory> getFileCategoryList() {
         return fileCategoryList;
@@ -229,6 +233,11 @@ public class FileInfo extends FileIndexPo {
         //文件访问类型，现在不用枚举，这个属性的使用还是教复杂的
         ret.setAccessType(this.accessType);
         //文件信息
+        ret.setPath(this.path);
+        ret.setFileName(this.fileName);
+        ret.setFileSize(this.fileSize);
+        ret.setFcTime(this.fcTime);
+        ret.setFlmTime(this.flmTime);
         if (this.file!=null&&this.file.isFile()) {
             String allFileName = this.file.getAbsolutePath();
             ret.setPath(FileNameUtils.getFilePath(allFileName));

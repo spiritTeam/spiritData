@@ -47,7 +47,9 @@ public class FileManageService {
         if (fi.getFileCategoryList()!=null&&fi.getFileCategoryList().size()>0) {
             for (FileCategory fc: fi.getFileCategoryList()) {
                 //TODO 还要判断是否已经存在！！！！
-                fileIndexDao.insert(fc.convert2Po());
+                FileCategoryPo fcPo = fc.convert2Po();
+                fcPo.setFId(fiPo.getId());
+                fileCategoryDao.insert(fcPo);
             }
         }
         //文件关系表
