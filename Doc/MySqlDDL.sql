@@ -1,4 +1,4 @@
-﻿/**001 PLAT_USER（用户）*/
+/**001 PLAT_USER（用户）*/
 DROP TABLE IF EXISTS plat_user;
 CREATE TABLE plat_user (
   id                varchar(32)      NOT NULL                COMMENT 'uuid（用户id）',

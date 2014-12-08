@@ -23,9 +23,7 @@ public class LoginServiceImpl implements LoginService {
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
         try {
             Thread.sleep(10000);
-            System.out.println("==DDD====================DDD");
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         Map<String,Object> retMap = new HashMap<String,Object>();

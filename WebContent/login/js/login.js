@@ -13,8 +13,9 @@ function pwdInputOnActive(inputId,spanId) {
   $("#"+inputId)[0].focus();
   $("#"+inputId)[0].select();
 }
-function setInputCss() {
+function setInputCss(){
   var browserType = getBrowserVersion();
+  alert(browserType);
   browserType = browserType.substring(0,browserType.lastIndexOf(' '));
   if(browserType!='msie'){
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
