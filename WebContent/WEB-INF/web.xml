@@ -101,7 +101,6 @@
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
   <!-- end Servlet设置 -->
-
   <welcome-file-list>
     <welcome-file>asIndexTemp.jsp</welcome-file>
   </welcome-file-list>

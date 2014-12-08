@@ -161,9 +161,7 @@ function activeAgain(){
     $.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
     return;
   }else{
-    var pData={
-      "loginName":$("#loginName").val()
-    };
+    var pData={"loginName":$("#loginName").val()};
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json) {
         if(json.success==true){
