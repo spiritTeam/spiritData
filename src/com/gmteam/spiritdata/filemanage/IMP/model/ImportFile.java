@@ -15,7 +15,7 @@ import com.gmteam.spiritdata.filemanage.core.model.FileInfo;
  * 导入文件模型，用于记录导入文件，基于File管理模型
  * @author wh
  */
-public class ImportFile extends BaseObject{
+public class ImportFile extends BaseObject {
     private static final long serialVersionUID = -6413748884964474948L;
 
     private String id; //文件上传id
