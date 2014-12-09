@@ -9,6 +9,7 @@
   <resultMap id="BaseResultMap" type="TabRelMap" >
     <id     column="id"         property="id"         jdbcType="VARCHAR" />
     <result column="tmId"       property="mdMId"      jdbcType="VARCHAR" />
+    <result column="ownerType"  property="ownerType"  jdbcType="INTEGER" />
     <result column="ownerId"    property="ownerId"    jdbcType="VARCHAR" />
     <result column="tableName"  property="tableName"  jdbcType="VARCHAR" />
     <result column="tableType"  property="tableType"  jdbcType="INTEGER" />
@@ -17,7 +18,7 @@
   </resultMap>
   <!-- 所有列 -->
   <sql id="Base_Column_List" >
-    id, tmId, ownerId, tableName, tableType, tableDescn, cTime
+    id, tmId, ownerType, ownerId, tableName, tableType, tableDescn, cTime
   </sql>
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey" >
@@ -25,6 +26,7 @@
       <trim prefix="(" suffix=")" prefixOverrides="and" >
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
         <if test="mdMId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
+        <if test="ownerType!=null and ownerType!=0" > and ownerType = #{ownerType,jdbcType=INTEGER} </if>
         <if test="ownerId != null" > and ownerId = #{ownerId,jdbcType=VARCHAR} </if>
         <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
         <if test="tableType!=null and tableType!=0" > and tableType = #{tableType,jdbcType=INTEGER} </if>
@@ -70,11 +72,14 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="ownerId != null" >
-        ownerId,
-      </if>
       <if test="mdMId != null" >
         tmId,
+      </if>
+      <if test="ownerType!=null and ownerType!=0" >
+        ownerType,
+      </if>
+      <if test="ownerId != null" >
+        ownerId,
       </if>
       <if test="tableName != null" >
         tableName,
@@ -90,11 +95,14 @@
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="ownerId != null" >
-        #{ownerId,jdbcType=VARCHAR},
-      </if>
       <if test="mdMId != null" >
         #{mdMId,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerType!=null and ownerType!=0" >
+        #{ownerType,jdbcType=INTEGER},
+      </if>
+      <if test="ownerId != null" >
+        #{ownerId,jdbcType=VARCHAR},
       </if>
       <if test="tableName != null" >
         #{tableName,jdbcType=VARCHAR},
@@ -115,11 +123,14 @@
       <if test="id != null" >
         id = #{id,jdbcType=VARCHAR},
       </if>
-      <if test="ownerId != null" >
-        ownerId = #{ownerId,jdbcType=VARCHAR},
-      </if>
       <if test="mdMId != null" >
         tmId = #{mdMId,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerType != null and ownerType!=0" >
+        ownerType = #{ownerType,jdbcType=INTEGER},
+      </if>
+      <if test="ownerId != null" >
+        ownerId = #{ownerId,jdbcType=VARCHAR},
       </if>
       <if test="tableName != null" >
         tableName = #{tableName,jdbcType=VARCHAR},

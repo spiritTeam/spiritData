@@ -8,8 +8,8 @@
   <!-- 对象定义:元数据模式 -->
   <resultMap id="BaseResultMap" type="MdM" >
     <id     column="id"        property="id"        jdbcType="VARCHAR" />
-    <result column="ownerId"   property="ownerId"   jdbcType="VARCHAR" />
     <result column="ownerType" property="ownerType" jdbcType="INTEGER" />
+    <result column="ownerId"   property="ownerId"   jdbcType="VARCHAR" />
     <result column="tableName" property="tableName" jdbcType="VARCHAR" />
     <result column="descn"     property="descn"     jdbcType="VARCHAR" />
     <result column="cTime"     property="CTime"     jdbcType="TIMESTAMP" />
@@ -23,8 +23,8 @@
     <where >
       <trim prefix="(" suffix=")" prefixOverrides="and" >
         <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="ownerId != null" > and ownerId = #{ownerId,jdbcType=VARCHAR} </if>
         <if test="ownerType!=null and ownerType!=0" > and ownerType = #{ownerType,jdbcType=INTEGER} </if>
+        <if test="ownerId != null" > and ownerId = #{ownerId,jdbcType=VARCHAR} </if>
         <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
         <if test="descn != null" > and descn = #{descn,jdbcType=VARCHAR} </if>
         <if test="CTime != null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
@@ -68,11 +68,11 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="ownerId != null" >
-        ownerId,
-      </if>
       <if test="ownerType!=null and ownerType!=0" >
         ownerType,
+      </if>
+      <if test="ownerId != null" >
+        ownerId,
       </if>
       <if test="tableName != null" >
         tableName,
@@ -85,11 +85,11 @@
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="ownerId != null" >
-        #{ownerId,jdbcType=VARCHAR},
-      </if>
       <if test="ownerType!=null and ownerType!=0" >
         #{ownerType,jdbcType=INTEGER},
+      </if>
+      <if test="ownerId != null" >
+        #{ownerId,jdbcType=VARCHAR},
       </if>
       <if test="tableName != null" >
         #{tableName,jdbcType=VARCHAR},
@@ -104,11 +104,11 @@
   <update id="update" parameterType="java.util.Map" >
     update sa_md_tabmodel
     <set >
-      <if test="ownerId != null" >
-        ownerId = #{ownerId,jdbcType=VARCHAR},
-      </if>
       <if test="ownerType != null and ownerType!=0" >
         ownerType = #{ownerType,jdbcType=INTEGER},
+      </if>
+      <if test="ownerId != null" >
+        ownerId = #{ownerId,jdbcType=VARCHAR},
       </if>
       <if test="tableName != null" >
         tableName = #{tableName,jdbcType=VARCHAR},

@@ -29,7 +29,7 @@ public class MdEntityTableService {
 
     @PostConstruct
     public void initParam() {
-        tmoDao.setNamespace("mdTableMapOrg");
+        tmoDao.setNamespace("mdTableMapRel");
     }
     /**
      * 注册对应关系，并创建相应的表。
@@ -91,6 +91,7 @@ public class MdEntityTableService {
         TableMapRel insertTmo = new TableMapRel();
         String newkey = SequenceUUID.getPureUUID();
         insertTmo.setId(newkey);
+        insertTmo.setOwnerType(mm.getOwnerType());
         insertTmo.setOwnerId(mm.getOwnerId());
         insertTmo.setMdMId(mm.getId());
         insertTmo.setTableName(tableName);

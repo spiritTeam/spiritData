@@ -16,29 +16,37 @@ public class TableMapRel extends BaseObject {
     private static final long serialVersionUID = 6654644065903338171L;
 
     private String id; //对照表Id
-    private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
     private String mdMId; //元数据模式表Id
+    private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session)）
+    private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
     private String tableName; //数据表名称
     private Integer tableType; //表类型：1=积累表；2=临时表
     private String tableDescn; //表说明
     private Timestamp CTime; //本记录创建时间，也是表实体创建时间
+
     public String getId() {
         return id;
     }
     public void setId(String id) {
         this.id = id;
     }
-    public String getOwnerId() {
-        return ownerId;
-    }
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
     public String getMdMId() {
         return mdMId;
     }
     public void setMdMId(String mdMId) {
         this.mdMId = mdMId;
+    }
+    public int getOwnerType() {
+        return ownerType;
+    }
+    public void setOwnerType(int ownerType) {
+        this.ownerType = ownerType;
+    }
+    public String getOwnerId() {
+        return ownerId;
+    }
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
     public String getTableName() {
         return tableName;

@@ -13,6 +13,7 @@ import java.util.Map;
 public class AtomData implements Serializable {
     private static final long serialVersionUID = 5914919027685891934L;
 
+    private String dataName;
     private String dataType;//数据类型
     private Object dataValue;//数据值
     public String getDataType() {
