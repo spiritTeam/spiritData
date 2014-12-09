@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.filemanage.service;
+package com.gmteam.spiritdata.filemanage.core.service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -6,12 +6,12 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.gmteam.framework.core.dao.mybatis.MybatisDAO;
-import com.gmteam.spiritdata.filemanage.model.FileCategory;
-import com.gmteam.spiritdata.filemanage.model.FileInfo;
-import com.gmteam.spiritdata.filemanage.model.FileRelation;
-import com.gmteam.spiritdata.filemanage.persistence.pojo.FileCategoryPo;
-import com.gmteam.spiritdata.filemanage.persistence.pojo.FileIndexPo;
-import com.gmteam.spiritdata.filemanage.persistence.pojo.FileRelationPo;
+import com.gmteam.spiritdata.filemanage.core.model.FileCategory;
+import com.gmteam.spiritdata.filemanage.core.model.FileInfo;
+import com.gmteam.spiritdata.filemanage.core.model.FileRelation;
+import com.gmteam.spiritdata.filemanage.core.persistence.pojo.FileCategoryPo;
+import com.gmteam.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
+import com.gmteam.spiritdata.filemanage.core.persistence.pojo.FileRelationPo;
 
 /**
  * 文件管理服务类
@@ -47,7 +47,9 @@ public class FileManageService {
         if (fi.getFileCategoryList()!=null&&fi.getFileCategoryList().size()>0) {
             for (FileCategory fc: fi.getFileCategoryList()) {
                 //TODO 还要判断是否已经存在！！！！
-                fileIndexDao.insert(fc.convert2Po());
+                FileCategoryPo fcPo = fc.convert2Po();
+                fcPo.setFId(fiPo.getId());
+                fileCategoryDao.insert(fcPo);
             }
         }
         //文件关系表

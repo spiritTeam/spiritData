@@ -1,4 +1,4 @@
-package com.gmteam.spiritdata.filemanage.persistence.pojo;
+package com.gmteam.spiritdata.filemanage.core.persistence.pojo;
 
 import java.sql.Timestamp;
 
@@ -22,8 +22,9 @@ public class FileIndexPo extends BaseObject {
     protected String extName; //文件扩展名
     protected Long fileSize; //文件大小
     protected String desc; //文件说明
-    protected Timestamp CTime; //文件创建时间
-    protected Timestamp lmTime; //文件最后修改时间
+    protected Timestamp fcTime; //文件创建时间
+    protected Timestamp flmTime; //文件最后修改时间
+    protected Timestamp CTime; //记录创建时间
 
     public String getId() {
         return id;
@@ -81,16 +82,22 @@ public class FileIndexPo extends BaseObject {
     public void setDesc(String desc) {
         this.desc = desc;
     }
+    public Timestamp getFcTime() {
+        return fcTime;
+    }
+    public void setFcTime(Timestamp fcTime) {
+        this.fcTime = fcTime;
+    }
+    public Timestamp getFlmTime() {
+        return flmTime;
+    }
+    public void setFlmTime(Timestamp flmTime) {
+        this.flmTime = flmTime;
+    }
     public Timestamp getCTime() {
         return CTime;
     }
     public void setCTime(Timestamp CTime) {
         this.CTime = CTime;
-    }
-    public Timestamp getLmTime() {
-        return lmTime;
-    }
-    public void setLmTime(Timestamp lmTime) {
-        this.lmTime = lmTime;
     }
 }
