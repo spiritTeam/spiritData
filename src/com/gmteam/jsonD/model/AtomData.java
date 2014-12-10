@@ -13,9 +13,10 @@ import java.util.Map;
 public class AtomData implements Serializable {
     private static final long serialVersionUID = 5914919027685891934L;
 
-    private String dataName;
+    private String dataName;//信息名称
     private String dataType;//数据类型
     private Object dataValue;//数据值
+
     public String getDataType() {
         return dataType;
     }
@@ -28,23 +29,29 @@ public class AtomData implements Serializable {
     public void setDataValue(Object dataValue) {
         this.dataValue = dataValue;
     }
-
-    public AtomData(String dataType, Object dataValue) {
-        super();
-        this.dataType = dataType;
-        this.dataValue = dataValue;
+    public String getDataName() {
+        return dataName;
+    }
+    public void setDataName(String dataName) {
+        this.dataName = dataName;
     }
 
     public AtomData() {
         super();
     }
+    public AtomData(String dataName, String dataType, Object dataValue) {
+        super();
+        setAtomData(dataName, dataType, dataValue);
+    }
 
-    public void setAtomData(String dataType, Object dataValue) {
+    public void setAtomData(String dataName, String dataType, Object dataValue) {
+        this.dataName = dataName;
         this.dataType = dataType;
         this.dataValue = dataValue;
     }
 
     public void clean() {
+        this.dataName = null;
         this.dataType = null;
         this.dataValue = null;
     }
@@ -55,6 +62,8 @@ public class AtomData implements Serializable {
      */
     public Map<String, Object> toJsonMap() {
         Map<String, Object> ret = new HashMap<String, Object>();
+        Map<String, Object> nameMap = new HashMap<String, Object>();
+        
         if (this.dataValue==null) {
             if (this.dataType==null||this.dataType.equals("")) {
                 ret = null;
