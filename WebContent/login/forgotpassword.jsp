@@ -15,11 +15,11 @@
   <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
     <div style="margin-top:15px;margin-left:14px;" align="left"><span style="font-size:16px;color:#999999;">找回密码</span></div>
     <div style="height:1px;width:300px;border-top:1px solid  #999999;"></div>
-    <div id="rstDiv" style="text-align:left;margin-left:86px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
+    <div id="rstDiv" style="text-align:left;margin-left:75px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
       <table width="300px;" style="margin-right:-35px;">
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="loginspan">账　号</span></td>
+          <td align="right"><span class="loginspan">用户名</span></td>
           <td colspan="2" rowspan="1" style="text-align:left;">
           <div style="float:left">
             <input id="loginName" name="loginName" tabindex="1" style="color: #ABCDEF;" type="text" value="请填写用户名" onmouseover=this.focus();this.select();
@@ -29,7 +29,7 @@
         </tr>
         <tr><td colspan="3" align="center"></td></tr>
       </table>
-      <div><input id="sendButton" type="button" value="下一步" onclick="sendBackPwdMail();"/></div>
+      <div><a id="sendButton" onclick="sendBackPwdMail();" href="#">下一步</a>||<a onclick="jumpLogin();" href="#">返回登陆</a></div>
       <div id="infoDiv" style="text-align:left;width:250px;margin-top:50px;margin-left:-9px;">
         <h2>重置密码流程：</h2>
         <span>1、填写用户名,系统校验用户名。</span><br/>
@@ -42,6 +42,9 @@
 </body>
 <script type="text/javascript">
 var lnV =false;
+function jumpLogin(){
+  window.location.href="<%=path%>/login/login.jsp";
+}
 function setInputCss(){
   var browserType = getBrowserVersion();
   browserType = browserType.substring(0,browserType.lastIndexOf(' '));
@@ -99,7 +102,7 @@ function validateLoginName(eleId){
   }else{
     var vsMsg = checkLoginName(ele.val());
     if(vsMsg==true){
-      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;登录名错误!</div>');
+      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;你输入的用户名有误！</div>');
       $('#vLN').append('<img id="lnImg" align="middle" src="../img/cross.png">');
       lnV = false;
     }else{
