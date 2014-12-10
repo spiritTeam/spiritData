@@ -9,7 +9,6 @@
 <title>找回密码</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css"/>
-<title>找回密码</title>
 </head>
 <body>
 <center>

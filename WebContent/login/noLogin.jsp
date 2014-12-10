@@ -14,7 +14,7 @@
 </head>
 <body>
 <script type="text/javascript">
-var noLoginUrl="<%=path%>/login/login.jsp?nolog";
+var noLoginUrl="<%=path%>/login/asIndex.jsp?nolog";
 
 var mainPage=getMainPage();
 if (mainPage) mainPage.location.href=noLoginUrl;

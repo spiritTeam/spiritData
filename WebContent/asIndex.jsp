@@ -144,9 +144,9 @@
 
 <!-- 头部:悬浮 -->
 <div id="topSegment">
-  <div>
-  <label for="loginName"><%=sid %>||登录名：</label><input type="text" id='loginName' tabindex="1"/><label for="password">密　码：</label><input type="password" id='password' tabindex="2"/>
-  <div id="commitButton" style="height:16px; width:16px; background-color:green;"></div>
+  <div style="float:right;">
+	  <!-- <label for="loginName"><%=sid %>||登录名：</label><input type="text" id='loginName' tabindex="1"/><label for="password">密　码：</label><input type="password" id='password' tabindex="2"/><div id="commitButton" style="height:16px; width:16px; background-color:green;"></div> -->
+	  <div ><%=sid %>||<span onclick="login();">登录</span><input value="注销" type="button" onclick="logout();"><input value="修改密码" type="button" onclick="modPwd();"></div>
   </div>
 </div>
 
@@ -157,7 +157,7 @@
 <div id="mainSegment">
   <div id="fileIn">
     <div id="dayLogo"></div>
-    <div id="inForm"><form method="post" action="/sa/uploadtest.do" enctype="multipart/form-data" id="afUpload" target="tframe">
+    <div id="inForm"><form method="post" action="/sa/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">
       <input id="upf" name="upf" type=file style="display:none;" onchange="showFileInfo()"/>
       <div id="upIcon" onclick="upIcon_clk();"></div>
       <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>
@@ -222,13 +222,13 @@ function showFileInfo() {
 //文件上传
 function uploadF() {
   if ($("#upfs").val()==_promptMessage) {
-  	_suClicked=true;
+    _suClicked=true;
     $("#upf").click();
     return;
   }
   try {
     var form = $('#afUpload');
-    $(form).attr('action', _PATH+'/uploadtest.do');
+    $(form).attr('action', _PATH+'/fileUpLoad.do');
     $(form).attr('method', 'POST');
     $(form).attr('target', 'tframe');
     if (form.encoding) form.encoding = 'multipart/form-data';    
@@ -255,8 +255,8 @@ function loginF() {
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
     success: function(json) {
       if (json.type==1) {
-      	alert("loginOk");
-      	return;
+        alert("loginOk");
+        return;
       } else if (json.type==2) {
         $.messager.alert("错误", "登录失败："+json.data, "error", function(){
           $("#loginname").focus();
@@ -566,13 +566,50 @@ function showDemo() {
       i=0;
       stepStr="...";
       //singleAnalysis();
-      showResult();
+     // showResult();
     }
   }
 }
 
 function showResult() {
-  openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
+  //openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
+}
+
+function onlyLogout(ip, mac, browser) {
+  var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
+  if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
+  $.messager.alert("提示", msg+"<br/>现返回登录页面。", "info", function(){ logout(); });
+}
+/**
+ * 注销
+ */
+function logout() {
+  var url=_PATH+"/logout.do";
+  $.ajax({type:"post", async:true, url:url, data:null, dataType:"json",
+    success: function(json) {
+      if (json.type==1) {
+    	  $.messager.alert("注销信息","注销成功!",'info',function(){
+    		  //window.location.href="<%=path%>/login/login.jsp?noAuth";
+    		  window.location.href="<%=path%>/asIndexTemp.jsp";    		  
+    	  });
+      } else {  
+        $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
+          window.location.href="<%=path%>/login/login.jsp?noAuth";
+        });
+      }
+    },
+    error: function(errorData) {
+      $.messager.alert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
+        window.location.href="<%=path%>/login/login.jsp?noAuth";
+      });
+    }
+  });
+};
+function modPwd(){
+	openSWin({"title":"修改密码", "url":"<%=path%>/login/modPwd.jsp?modType=1", "width":1000, "height":600, modal:true});
+}
+function login(){
+	openSWin({"title":"登录", "url":"<%=path%>/login/login.jsp", "width":1000, "height":600, modal:true});
 }
 </script>
 </body>

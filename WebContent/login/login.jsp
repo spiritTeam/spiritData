@@ -105,7 +105,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 var psV=false,lnV=false,vcV=false;
 //未登录的忘记密码页面
 function modPwd(){
-  window.location.href="<%=path%>/login/backpwd/validateUser.jsp?modType=2";
+  window.location.href="<%=path%>/login/forgotpassword.jsp?modType=2";
 }
 function pwdOnActive() {
   //隐藏
@@ -285,7 +285,7 @@ function loginF() {
             $.messager.alert('登录信息',retInfo);
           }else if(activeType==2){
             $.messager.alert('登录信息',retInfo,"info",function(){
-              window.location.href="<%=path%>/asIndexTemp.jsp";
+              window.location.href="<%=path%>/asIndex.jsp";
             });
           }
         } else if(json.type==2) {
