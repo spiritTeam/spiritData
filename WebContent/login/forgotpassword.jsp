@@ -22,20 +22,22 @@
           <td align="right"><span class="loginspan">用户名</span></td>
           <td colspan="2" rowspan="1" style="text-align:left;">
           <div style="float:left">
-            <input id="loginName" name="loginName" tabindex="1" style="color: #ABCDEF;" type="text" value="请填写用户名" onmouseover=this.focus();this.select();
+            <input id="loginName" name="loginName" tabindex="1" style="color:#ABCDEF;" type="text" value="请填写用户名" onmouseover=this.focus();this.select();
               onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/></div>
           <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr><td colspan="3" align="center"></td></tr>
       </table>
-      <div><a id="sendButton" onclick="sendBackPwdMail();" href="#">下一步</a>||<a onclick="jumpLogin();" href="#">返回登陆</a></div>
-      <div id="infoDiv" style="text-align:left;width:250px;margin-top:50px;margin-left:-9px;">
+      <div style="width:40px;margin-top:10px;"><a id="sendButton" onclick="sendBackPwdMail();" href="#">下一步</a></div>
+      <div id="infoDiv" style="text-align:left;width:250px;margin-top:40px;margin-left:-6px;">
         <h2>重置密码流程：</h2>
         <span>1、填写用户名,系统校验用户名。</span><br/>
         <span>2、成功后点击下一步,将发送邮件至您的邮箱。</span><br/>
         <span>3、登录邮箱,根据提示重置密码。</span><br/>
       </div>
+      <div style="width:50px;float:right;margin-right:45px;margin-top:50px;">
+      	<a id="jumpLogin" onclick="jumpLogin();" href="#">返回登陆</a></div>
     </form>
   </div>
 </center>
@@ -64,6 +66,7 @@ function sendBackPwdMail(){
   $('#lnImg').remove();
   $('#checkResult').html('');
   $('#sendButton').attr('disabled',true);
+  $('#jumpLogin').attr('disabled',true);
   if(lnV){
     $('#loginName')
     var url = '<%=path%>/login/sendBackPwdMail.do';
@@ -85,6 +88,7 @@ function sendBackPwdMail(){
     $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;登录名错误!</div>');
   }
   $('#sendButton').attr('disabled',false);
+  $('#jumpLogin').attr('disabled',false);
 }
 function onClick(obj){
   if(obj.value==obj.defaultValue){
