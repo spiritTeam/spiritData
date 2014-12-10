@@ -67,6 +67,7 @@
 </center>
 </body>
 <script type="text/javascript">
+var mainPage=getMainPage();
 var modType=<%=modType%>,psV=false,lnV=false,cpsV=false;
 var loginName = '<%=loginName%>';
 function pwdMouseOver(){
@@ -85,8 +86,8 @@ function modPwd(){
     var url = '<%=path%>/login/modifyPwd.do';
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json){
-        if(json) $.messager.alert('提示','修改成功!');
-        else $.messager.alert('提示','修改失败!');
+        if(json) mainPage.$.messager.alert('提示','修改成功!');
+        else mainPage.$.messager.alert('提示','修改失败!');
       }
     });
   }else{
@@ -102,7 +103,7 @@ function modPwd(){
       $('#cpwdImg').remove();
       $('#vCPwd').append('<img id="cpwdImg" align="middle" src="img/cross.png">');
     }
-    $.messager.alert("提示","您还有未完善的信息!",'info',function (){
+    mainPage.$.messager.alert("提示","您还有未完善的信息!",'info',function (){
       if(lnV==false){
         $('#loginName')[0].focus();
         $('#loginName')[0].select();

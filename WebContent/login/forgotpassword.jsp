@@ -13,16 +13,16 @@
 <body>
 <center>
   <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
-    <div style="margin-top:15px;margin-left:25px;" align="left"><span style="font-size:20px;color:#999999;">找回密码</span></div>
+    <div style="margin-top:15px;margin-left:14px;" align="left"><span style="font-size:16px;color:#999999;">找回密码</span></div>
     <div style="height:1px;width:300px;border-top:1px solid  #999999;"></div>
     <div id="rstDiv" style="text-align:left;margin-left:86px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
       <table width="300px;" style="margin-right:-35px;">
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="myspan">账　　号</span></td>
+          <td align="right"><span class="loginspan">账　号</span></td>
           <td colspan="2" rowspan="1" style="text-align:left;">
           <div style="float:left">
-            <input id="loginName" name="loginName" tabindex="1" type="text" value="请填写用户名" onmouseover=this.focus();this.select();
+            <input id="loginName" name="loginName" tabindex="1" style="color: #ABCDEF;" type="text" value="请填写用户名" onmouseover=this.focus();this.select();
               onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/></div>
           <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>

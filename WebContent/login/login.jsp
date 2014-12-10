@@ -38,10 +38,10 @@ fooForm.txtIPAddr.value=unescape(IPAddr);
 fooForm.txtDNSName.value=unescape(sDNSName);
 </script>
 <script language="JScript" event="OnObjectReady(objObject,objAsyncContext)" for="foo">
-if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObject.IPEnabled == true) {
-  if(objObject.MACAddress != null && objObject.MACAddress != "undefined") MACAddr = objObject.MACAddress;
-  if(objObject.IPEnabled && objObject.IPAddress(0) != null && objObject.IPAddress(0) != "undefined") IPAddr = objObject.IPAddress(0);
-  if(objObject.DNSHostName != null && objObject.DNSHostName != "undefined") sDNSName = objObject.DNSHostName;
+if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObject.IPEnabled == true ){
+  if(objObject.MACAddress != null && objObject.MACAddress != "undefined" )MACAddr = objObject.MACAddress;
+  if(objObject.IPEnabled && objObject.IPAddress(0 )!= null && objObject.IPAddress(0 )!= "undefined" )IPAddr = objObject.IPAddress(0);
+  if(objObject.DNSHostName != null && objObject.DNSHostName != "undefined" )sDNSName = objObject.DNSHostName;
 }
 </script>
 <center>
@@ -107,7 +107,7 @@ var psV=false,lnV=false,vcV=false;
 function modPwd(){
   window.location.href="<%=path%>/login/forgotpassword.jsp?modType=2";
 }
-function pwdOnActive() {
+function pwdOnActive(){
   //隐藏
   $("#pwdSpan").hide();
   //获得焦点和选择
@@ -122,7 +122,7 @@ $(function(){
   $("#password").focus(function(){pwdOnActive();});
   $("#password").mouseover(function(){pwdOnActive();});
   $("#password").blur(function(){
-    if ($(this).val()=="") $("#pwdSpan").show();
+    if ($(this).val()=="" )$("#pwdSpan").show();
   });
   setInputCss();
   if($('#loginName').val()==$('#loginName')[0].defaultValue){
@@ -139,17 +139,17 @@ function setInputCss(){
   var browserType = getBrowserVersion();
   var v = browserType.substring(0,browserType.lastIndexOf(' '));
   if(v!='msie'){
-    if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    if($('#pwDiv')!=null) $('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
+    if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
   }else {
     $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
     var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
     if(ieVersion==11.0){
-      if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-      if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-      if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
+      if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
     }
   }
 }
@@ -163,7 +163,7 @@ function activeAgain(){
   }else{
     var pData={"loginName":$("#loginName").val()};
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success:function(json) {
+      success:function(json ){
         if(json.success==true){
           $.messager.alert('提示信息',json.retInfo);
         }else{
@@ -175,10 +175,10 @@ function activeAgain(){
 }
 //跳转到注册页面
 function tregister(){
-  window.location.href="<%=path%>/login/register.jsp";
+  window.location.href="<%=path%>/login/register.jsp?"+Math.random();
 }
 //刷新验证码
-function refresh(obj) {
+function refresh(obj ){
   $('#checkCode').val('');
   obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
 }
@@ -206,7 +206,7 @@ function verificationCheckCode(val){
   var pData={"checkCode":val};
   var url="<%=path%>/login/validateValidateCode.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-    success:function(json) {
+    success:function(json ){
       vfMsg = json;
     }
   });
@@ -242,7 +242,7 @@ function checkLoginName(val){
   };
   var url="<%=path%>/login/validateLoginName.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-     success:function(json) {
+     success:function(json ){
        vfMsg = json;
      }
   });
@@ -256,7 +256,8 @@ function onClick(obj){
     $('#pwdSpan').html('');
   }
 }
-function loginF() {
+function loginF(){
+  var mainPage=getMainPage();
   $('#login').attr('disabled',true);
   if(psV&&lnV&&vcV){
     var url="<%=path%>/login.do";
@@ -270,7 +271,7 @@ function loginF() {
     };
     var _json;
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success:function(json) {
+      success:function(json ){
         $('#register').attr('disabled',false);
         $('#checkCode').val('');
         $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
@@ -279,35 +280,35 @@ function loginF() {
         var retInfo = loginInfo.retInfo;
         if(json.type==-1){
           $.messager.alert('登录信息',retInfo);
-        }else if (json.type==1) {
+        }else if (json.type==1){
           var activeType = loginInfo.activeType;
           if(activeType==1){
             $.messager.alert('登录信息',retInfo);
           }else if(activeType==2){
-            $.messager.alert('登录信息',retInfo,"info",function(){
-              window.location.href="<%=path%>/asIndex.jsp";
-            });
+            var dom = mainPage.document.getElementById("loginStatus")
+            $(dom).val(1);
+            mainPage.$.messager.alert("登陆信息","登陆成功！");
           }
-        } else if(json.type==2) {
-          $.messager.alert("登录信息", "登录失败："+json.data, "error");
+        } else if(json.type==2 ){
+          mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
         } else {
-          $.messager.alert("登录信息", "登录异常："+json.data, "error");
+          mainPage.$.messager.alert("登录信息", "登录异常："+json.data, "error");
         }
       },
-      error:function(errorData) {
+      error:function(errorData ){
         $('#register').attr('disabled',false);
         $('#checkCode').val('');
         $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
-        if (errorData) {
-          $.messager.alert("登录信息", "登录异常：未知！", "error");
+        if (errorData ){
+          mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
         } else {
-          $("#mask").hide();
+          mainPage.$("#mask").hide();
         }
       }
     });
   }else{
     $('#register').attr('disabled',false);
-    if(lnV==false) {
+    if(lnV==false ){
       $('#lNImg').remove();
       $('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
     }
@@ -318,18 +319,18 @@ function loginF() {
     if(vcV==false){
       $('#vCImg').remove();
       $('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
-    } 
-    $.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的注册信息", 'info',function () {
-       if(lnV==false){
-         $('#loginName')[0].focus();
-         $('#loginName')[0].select();
-       }else if(psV==false){
-         $('#password')[0].focus();
+    }
+    mainPage.$.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的注册信息", 'info',function (){
+      if(lnV==false){
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }else if(psV==false){
+        $('#password')[0].focus();
         $('#password')[0].select();
-       }else{
-         $('#checkCode')[0].focus();
+      }else{
+        $('#checkCode')[0].focus();
         $('#checkCode')[0].select();
-       }
+      }
     });
   }
 }

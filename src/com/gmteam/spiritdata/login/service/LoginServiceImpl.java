@@ -21,11 +21,11 @@ public class LoginServiceImpl implements LoginService {
     private BasicDataSource dataSource;
     @Override
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         Map<String,Object> retMap = new HashMap<String,Object>();
         String requestCC = request.getParameter("checkCode");
         HttpSession session = request.getSession();
@@ -81,7 +81,7 @@ public class LoginServiceImpl implements LoginService {
             st = conn.createStatement();
             st.execute("update sa_file_index set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
             st.execute("update sa_md_tabmodel set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
-            st.execute("update sa_md_tabmap_org set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
+            st.execute("update sa_md_tabmap_rel set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
             st.execute("update plat_dictm set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
             //修改文件夹信息
             conn.commit();

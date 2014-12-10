@@ -72,11 +72,11 @@
     </init-param>
     <init-param>
       <param-name>noLogin</param-name>
-      <param-value>../login/noLogin.jsp</param-value>
+      <param-value>/login/noLogin.jsp</param-value>
     </init-param>
     <init-param>
       <param-name>hasNewLogin</param-name>
-      <param-value>../login/hasNewLogin.jsp</param-value>
+      <param-value>/login/hasNewLogin.jsp</param-value>
     </init-param>
   </filter>
   <filter-mapping>
