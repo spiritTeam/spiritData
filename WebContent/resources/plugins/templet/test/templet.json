@@ -1,0 +1,33 @@
+{_Head:{},
+  _Data:[/*全部是jsond的格式*/
+    {id:1, url:'getData.do?datafile=anal.json'},
+    {id:2, url:'getData.do?datafile=gender.json'}
+  ],
+  _Templet:{
+    seg1:{
+      data:[1],
+      title:'<style s="strong">1、结构分析</style>',
+      content: ,
+      subSeg:{
+        set1_1:{
+          data:[1],
+          content:'<data d="1" value="description[0]"/><br/>
+          <data d="1" showType="table" value="dataContent"/><br/>
+          <data d="1" value="description[1]"/>'
+        }
+      }
+    },
+    seg2:{
+      data:[2],
+      title:'<style s="strong">2、单项指标分析</style>',
+      content: ,
+      subSeg:{
+        set1_1:{
+          data:[2],
+          content:'“人员”[性别]指标分析：“人员”中大多为{男}占78%，{女}占20%，具体分析数据如下：<data d="2" value="description[0]"/><br/>
+          <data d="2" showType="pie" value="dataContent" label="gender", data="num"/>'
+        }
+      }
+    }
+  }
+}
