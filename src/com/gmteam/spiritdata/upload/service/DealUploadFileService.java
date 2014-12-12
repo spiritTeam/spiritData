@@ -38,7 +38,7 @@ public class DealUploadFileService {
         String extName = FileNameUtils.getExt(fi.getServerFileName());
         if (extName.toUpperCase().indexOf(".XLS")==0||extName.toUpperCase().indexOf(".XLSX")==0) {
             //对excel进行处理
-            dealExcelService.process("ifl.getsFileName()", session);
+            dealExcelService.process(fi.getServerFileName(), session);
         } else { //处理其他文件类型的文件
             
         }

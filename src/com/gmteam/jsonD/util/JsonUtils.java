@@ -5,8 +5,14 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gmteam.framework.CodeException;
+import com.gmteam.jsonD.exceptionC.Jsond0101CException;
 
-public class JsonUtils {
+/**
+ * 处理Json的方法类
+ * @author wh
+ */
+public abstract class JsonUtils {
     private static ObjectMapper mapper;
 
     /**
@@ -24,13 +30,16 @@ public class JsonUtils {
      * 将java对象转换成json字符串
      * @param obj 准备转换的对象
      * @return json字符串
-     * @throws JsonProcessingException 
-     * @throws Exception
+     * @throws Jsond0101CException
      */
-    public static String objToJson(Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper=getMapperInstance(false);
-        String json=objectMapper.writeValueAsString(obj);
-        return json;
+    public static String objToJson(Object obj) throws CodeException {
+        try {
+            ObjectMapper objectMapper=getMapperInstance(false);
+            String json=objectMapper.writeValueAsString(obj);
+            return json;
+        } catch (Exception e) {
+            throw new Jsond0101CException(e);
+        }
     }
 
     /**
@@ -38,15 +47,15 @@ public class JsonUtils {
      * @param obj 准备转换的对象
      * @param createNew ObjectMapper实例方式:true，新实例;false,存在的mapper实例
      * @return json字符串
-     * @throws Exception
+     * @throws Jsond0101CException
      */
-    public static String objToJson(Object obj,Boolean createNew) throws Exception {
+    public static String objToJson(Object obj, Boolean createNew) throws CodeException {
         try {
             ObjectMapper objectMapper=getMapperInstance(createNew);
             String json=objectMapper.writeValueAsString(obj);
             return json;
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            throw new Jsond0101CException(e);
         }
     }
 
@@ -93,7 +102,7 @@ public class JsonUtils {
      * @return Json字符串
      * @throws JsonProcessingException 异常 
      */
-    public static String Obj2AjaxJson(Object obj, int type) throws JsonProcessingException {
+    public static String Obj2AjaxJson(Object obj, int type) throws CodeException {
         return JsonUtils.objToJson(JsonUtils.Obj2AjaxMap(obj, type));
     }
 
@@ -109,5 +118,67 @@ public class JsonUtils {
         m.put("jsonType", type);
         m.put("data", obj);
         return m;
+    }
+
+    /**
+     * 把json字符串，格式化为更可读的形式
+     * @param jsonStr json字符串，注意必须是已经Json了
+     * @param indentStr 缩进字符串，可为空，若为空，缩进字符串为两个ASCII空格
+     * @return 格式化后的字符串
+     */
+    public static String formatJsonStr(String jsonStr, String indentStr) {
+        if (jsonStr==null || jsonStr.trim().length()==0) return null;
+
+        int dQuotes = 0, sQuotes=0; //单双引号标志 
+
+        //去掉占位符，变为最紧凑的Json串
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<jsonStr.length(); i++) {
+            char c = jsonStr.charAt(i);
+            if (c=='\''&&dQuotes%2==0) sQuotes++;
+            if (c=='\"'&&sQuotes%2==0) dQuotes++;
+
+            if ((sQuotes%2==1||dQuotes%2==1)&&c!='\t'&&c!='\n') sb.append(c);
+            else
+            if (c!=' '&&c!='\t'&&c!='\n'&&c!='\r') sb.append(c);
+        }
+
+        //格式化Json串
+        dQuotes = 0; sQuotes=0;//重置引号标志位
+        StringBuffer _sb = new StringBuffer();
+        //占位符处理
+        String _indentStr = indentStr;
+        if (_indentStr==null||_indentStr.length()==0) _indentStr="  ";
+        String _is = "";
+        for (int i=0; i<sb.length(); i++) {
+            char c = sb.charAt(i);
+            char _c = c;
+            if (i<sb.length()-1) _c = sb.charAt(i+1);
+            if (c=='\''&&dQuotes%2==0) sQuotes++;
+            if (c=='\"'&&sQuotes%2==0) dQuotes++;
+
+            if (sQuotes%2==1||dQuotes%2==1) _sb.append(c);
+            else {
+                if (c=='{'||c=='['||(c==','&&_c!='['&&_c!='{')) {
+                    _sb.append(c);
+                    _sb.append("\n");
+                    if (c=='{'||c=='[') {
+                        _is +=_indentStr;
+                    }
+                    _sb.append(_is);
+                } else if (c=='}'||c==']') {
+                    _is = _is.substring(0, _is.length()-_indentStr.length());
+                    _sb.append("\n");
+                    _sb.append(_is);
+                    _sb.append(c);
+                } else if (c==':') {
+                    _sb.append(c);
+                    _sb.append(' ');
+                } else {
+                    _sb.append(c);
+                }
+            }
+        }
+        return _sb.toString();
     }
 }

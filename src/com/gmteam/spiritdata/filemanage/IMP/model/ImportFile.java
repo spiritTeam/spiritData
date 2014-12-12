@@ -70,7 +70,13 @@ public class ImportFile extends BaseObject {
     }
 
     /**
-     * 转换为模型化文件信息，注意，这里要验证服务器端文件是否存在
+     * 转换为模型化文件信息，注意，这里要验证服务器端文件是否存在。<br/>
+     * 根据文件类型，控制分类的第二分类，目前有：<br/>
+     * -Rdata:关系型数据<br/>
+     * -Tdata:文本形数据<br/>
+     * -Vdata:视频数据<br/>
+     * -Adata:音频数据<br/>
+     * -Idata:图片数据
      * @param impFile 导入的文件
      * @return 模型化文件信息
      * @throws Exception 若服务器端文件不存在
@@ -91,7 +97,11 @@ public class ImportFile extends BaseObject {
         //分类信息
         FileCategory fc = new FileCategory();
         fc.setFType1(FileCategoryType1.IMP);
-        fc.setFType2("关系型数据");
+        if (ret.getExtName().equalsIgnoreCase("XLS")||ret.getExtName().equalsIgnoreCase("XLSX")||ret.getExtName().equalsIgnoreCase("CVS")) {
+            fc.setFType2("Rdata");
+        } else {
+            fc.setFType2("Tdata");
+        }
         fc.setFType3(ret.getExtName());
         fc.setExtInfo((String)this.getClientFileName());
         ret.addFileCategoryList(fc);
