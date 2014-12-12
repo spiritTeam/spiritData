@@ -1,0 +1,53 @@
+/*数据1-getData.do?datafile=anal.json*/
+{_id: "550E8400-E29B-11D4-A716-446655440000",
+  _code: "SP.TEAM-00007",
+  _parsefun:{
+    _lan: "java",
+    _class: "com.spirit.team.Key001"
+  },
+  _node: {},
+  _file: "d:/.../test.xls",
+  _cTime: "-300::321234345435",
+  desc:"全国男女人数抽样调查",
+  _DATA:{
+    description:
+      ["人员”页签(Sheet1)为新增结构，元数据结构分析结果如下:"
+      ,"“案件”页签(Sheet2)为原有结构，元数据用原有结构。"],
+    dataContent:{
+      _title:[{titleName:"元数据名"},{titleName:"元数据类型"},{titleName:"详细"},{titleName:"语义定义"}],
+      _body:[
+        {colName:"id",       colType:"String", details:"",  semantic:"唯一列，可做主键"},
+        {colName:"名称",     colType:"String", details:"",  semantic:"可能是中文名称，可能性98%"},
+        {colName:"SFZ",      colType:"String", details:"",  semantic:"可能是身份证，可能性99%"},
+        {colName:"性别",     colType:"String", details:"",  semantic:"字典项"},
+        {colName:"籍贯",     colType:"String", details:"",  semantic:"字典项"},
+        {colName:"出生日期", colType:"Date",    details:"",  semantic:"唯一列"},
+        {colName:"政治面貌", colType:"未知",    details:"",  semantic:"次元数据列为空，数据抛弃"},
+        {colName:"其他",     colType:"未知",    details:"",  semantic:"次元数据列数据格式混乱，数据抛弃"}
+      ]
+    }
+  }
+}
+/*数据2-getData.do?datafile=gender.json*/
+{_id: "550E8400-E29B-11D4-A716-446655448232",
+  _code: "SP.TEAM-00009",
+  _parsefun:{
+     _lan: "java",
+     _class: "com.spirit.team.Key003"
+  },
+  _node: {},
+  _file: "d:/.../test.xls",
+  _cTime: "-300::321234345435",
+  desc:"全国男女人数抽样调查",
+  _DATA:{
+    description:["“人员”[性别]指标分析：“人员”中大多为{男}占78%，{女}占20%，具体分析数据如下："],
+    dataContent:{
+      _title:[{titleName:"性别"},{titleName:"人员"}],
+      _body:[
+        {gender:"男",    num:"156"},
+        {gender:"女",    num:"40"},
+        {gender:"其他",  num:"4"}
+      ]
+    }
+  }
+}
