@@ -42,9 +42,6 @@ public class RegisterController {
     }
     @RequestMapping("login/activePwdMail.do")
     public @ResponseBody Map<String,Object> activePwdMail(HttpServletRequest request, HttpServletResponse response){
-        String uri=request.getRequestURI();
-        //String path=uri.substring(uri.lastIndexOf("/"),uri.lastIndexOf("."));
-        System.out.println(uri);
         Map<String,Object> retMap = new HashMap<String,Object>();
         String authCode = request.getParameter("authCode");
         if(authCode==null){

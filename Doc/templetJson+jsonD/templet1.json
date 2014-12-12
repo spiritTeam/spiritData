@@ -1,0 +1,56 @@
+{
+  _HEAD:{},
+  _DATA:[/*建议全部是jsond的格式*/
+    {_id:1, _url:'getJsonD.do?datafile=/??/metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond', _jsonD_code:'SP.TEAM-00007'},
+    {_id:2, _url:'getJsonD.do?datafile=/??/anal_quota_716-446655440000.jsond', _jsonD_code:'SP.TEAM-00009'}
+  ],
+  _TEMPLET:[
+    {
+      id:"seg1",
+      name:"上传数据",
+      data: [1,2],
+      title:'<style s="font-height:bold; font-size:24px;">上传数据</style>',
+      subSeg:[
+        {
+          id:"seg1_1",
+          name:"结构分析",
+          data:[1],
+          content:'<style s="font-height:bold; font-size:18px;">1、结构分析</style><br/>
+            <style s="font-height:bold; ">“<d data="1" showType="value" value="excelMdmArray[0].sheetInfo.name"/>”页签(sheet<d data="1" showType="value" value="excelMdmArray[0].sheetInfo.index"/>)</style>为新增结构，元数据结构分析结果如下：<br/>
+            <data d="1" showType="table" value="excelMdmArray[0]"/><br/>
+            <style s="font-height:bold; ">“<d data="1" showType="value" value="excelMdmArray[2].sheetInfo.name"/>”页签(sheet<d data="1" showType="value" value="excelMdmArray[1].sheetInfo.index"/>)</style>为原有结构，元数据用原有结构。<br/>'
+        },{
+          id:"seg1_2",
+          name:"单项指标分析",
+          data:[2],
+          content:'<style s="font-height:bold; font-size:18px;">2、单项指标分析</style><br/>
+            <style s="font-height:bold; ">“<d data="2" showType="value" value="mdName"/>”[<d data="2" showType="value" value="quotas[0].titleName"/>]</style>指标分析：<br/>
+            “<d data="2" showType="value" value="quotas[0].titleName"/>”中
+              大多为{<d data="2" showType="value" value="quotas[0].categoryNumDistribution[0].category"/>}占<d data="2" showType="value" value="quotas[0].categoryNumDistribution[0].percent"/>%，
+              {<d data="2" showType="value" value="quotas[0].categoryNumDistribution[1].category"/>}占<d data="2" showType="value" value="quotas[0].categoryNumDistribution[1].percent"/>%，具体分析数据如下：<br/>
+            /*也可以如下：(在不知道SP.TEAM-00009的情况下)
+            “<d data="2" showType="value" value="quotas[0].titleName"/>”中大多为
+              <d data="2" showType="first(3)" value="quotas[0].categoryNumDistribution" decorateView="{#category#}占#percent#%"/>
+              ，具体分析数据如下：
+            */
+            /*也可以如下：(在不知道SP.TEAM-00009的情况下)，考虑一下first(3)/first(1)/last(2)
+            “<d data="2" showType="value" value="quotas[0].titleName"/>”中大多为
+              <d data="2" showType="first(3)" value="quotas[0].categoryNumDistribution" decorateView="{#category#}占#num:percent#%"/>
+              ，具体分析数据如下：
+            */
+            /*若在知道SP.TEAM-00009的情况下，考虑下该怎样做？？？？
+            */
+            <data d="2" showType="table" value="quotas[0].categoryNumDistribution" titleDcrt="quotas[0].titles"/>
+            <data d="2" showType="pie" value="quotas[0].categoryNumDistribution" label="category", data="num" decorateView="{lableShow:[category, percent]}"/>
+            /*也可以如下：
+            <data d="2" showType="table" value="quotas[0].categoryNumDistribution" titleDcrt="quotas[0].titles"/>
+            <data d="2" showType="pie" value="quotas[0].categoryNumDistribution" label="category", data="num" decorateView="{lableShow:[category, num:percent]}"/>
+            */
+            <br/>
+            <style s="font-height:bold; ">“<d data="2" showType="value" value="mdName"/>”[<d data="2" showType="value" value="quotas[1].titleName"/>]</style>指标分析：<br/>
+            '
+        }
+      ]
+    }
+  ]
+}
