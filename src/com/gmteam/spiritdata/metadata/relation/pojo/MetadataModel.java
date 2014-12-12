@@ -17,6 +17,7 @@ public class MetadataModel extends BaseObject {
     private static final long serialVersionUID = 946755758804895450L;
 
     private String id; //模式Id
+    private String titleName; //模式名称：此名称在数据库中对应的字段若有值，则这个值是手工设定的，若这个值为空，需要从sa_imp_tablog_rel表中得到最有可能的名称(头两个)
     private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session)）
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
     private Timestamp CTime; //记录创建时间
