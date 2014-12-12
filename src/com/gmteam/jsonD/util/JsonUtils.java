@@ -2,8 +2,11 @@ package com.gmteam.jsonD.util;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gmteam.framework.CodeException;
+import com.gmteam.jsonD.exceptionC.Jsond0101CException;
 
 /**
  * 处理Json的方法类
@@ -27,13 +30,16 @@ public abstract class JsonUtils {
      * 将java对象转换成json字符串
      * @param obj 准备转换的对象
      * @return json字符串
-     * @throws JsonProcessingException 
-     * @throws Exception
+     * @throws Jsond0101CException
      */
-    public static String objToJson(Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper=getMapperInstance(false);
-        String json=objectMapper.writeValueAsString(obj);
-        return json;
+    public static String objToJson(Object obj) throws CodeException {
+        try {
+            ObjectMapper objectMapper=getMapperInstance(false);
+            String json=objectMapper.writeValueAsString(obj);
+            return json;
+        } catch (Exception e) {
+            throw new Jsond0101CException(e);
+        }
     }
 
     /**
@@ -41,15 +47,15 @@ public abstract class JsonUtils {
      * @param obj 准备转换的对象
      * @param createNew ObjectMapper实例方式:true，新实例;false,存在的mapper实例
      * @return json字符串
-     * @throws Exception
+     * @throws Jsond0101CException
      */
-    public static String objToJson(Object obj,Boolean createNew) throws Exception {
+    public static String objToJson(Object obj, Boolean createNew) throws CodeException {
         try {
             ObjectMapper objectMapper=getMapperInstance(createNew);
             String json=objectMapper.writeValueAsString(obj);
             return json;
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            throw new Jsond0101CException(e);
         }
     }
 
@@ -96,7 +102,7 @@ public abstract class JsonUtils {
      * @return Json字符串
      * @throws JsonProcessingException 异常 
      */
-    public static String Obj2AjaxJson(Object obj, int type) throws JsonProcessingException {
+    public static String Obj2AjaxJson(Object obj, int type) throws CodeException {
         return JsonUtils.objToJson(JsonUtils.Obj2AjaxMap(obj, type));
     }
 

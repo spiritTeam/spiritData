@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
+import com.gmteam.framework.CodeException;
 import com.gmteam.framework.FConstants;
 import com.gmteam.spiritdata.metadata.relation.pojo.MetadataModel;
 import com.gmteam.spiritdata.metadata.relation.pojo.QuotaColumn;
@@ -174,11 +175,10 @@ public class AnalKey implements AnalTable {
         jsonMap.put("_cTime", (new Date()).getTime());
         jsonMap.put("desc", "分析表["+tableName+"]那列或那些列可作为主键的记录文件");
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
-        AtomData _dataElement = new AtomData("string", tableName);
-        _DATA_Map.put("_tableName", _dataElement.toJsonMap());
-        _dataElement.clean();
-        _dataElement.setAtomData("string", mm.getId());
-        _DATA_Map.put("_mdMId", _dataElement.toJsonMap());
+        AtomData _dataElement = new AtomData("_tableName", "string", tableName);
+        _DATA_Map.putAll(_dataElement.toJsonMap());
+        _dataElement.setAtomData("_mdMId", "string", mm.getId());
+        _DATA_Map.putAll(_dataElement.toJsonMap());
         _DATA_Map.put("_keyAnals", convertToList(ret));
         jsonMap.put("_DATA", _DATA_Map);
         //写文件
@@ -208,17 +208,16 @@ public class AnalKey implements AnalTable {
         return ret;
     }
 
-    private List<Map<String, Object>> convertToList(Map<String, Float> keyAnalResultMap) {
+    private List<Map<String, Object>> convertToList(Map<String, Float> keyAnalResultMap) throws CodeException {
         if (keyAnalResultMap==null||keyAnalResultMap.size()==0) return null;
 
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (String cols: keyAnalResultMap.keySet()) {
             Map<String, Object> oneEle = new HashMap<String, Object>();
-            AtomData _dataElement = new AtomData("string", cols);
-            oneEle.put("keyCols", _dataElement.toJsonMap());
-            _dataElement.clean();
-            _dataElement.setAtomData("double", keyAnalResultMap.get(cols));
-            oneEle.put("rate", _dataElement.toJsonMap());
+            AtomData _dataElement = new AtomData("keyCols", "string", cols);
+            oneEle.putAll(_dataElement.toJsonMap());
+            _dataElement.setAtomData("rate", "double", keyAnalResultMap.get(cols));
+            oneEle.putAll(_dataElement.toJsonMap());
             ret.add(oneEle);
         }
         return ret;
