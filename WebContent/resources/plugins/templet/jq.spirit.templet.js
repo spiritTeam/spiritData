@@ -5,6 +5,11 @@
  *3、解析<d>中的属性，如value。。
  *4、根据showType选择处理文件的方法。
  */
+(function($){
+  $.templetJD = function(){
+    alert(1111);
+  };
+})
 function templetResolve(templet){
   //访问jsond的url
   var dataAry = templet._DATA;
@@ -13,5 +18,4 @@ function templetResolve(templet){
   //sug数组
   var sugAry;
   //确定元素个数，
-  //var dataAry =  
 }
