@@ -3,10 +3,9 @@ package com.gmteam.jsonD.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gmteam.framework.CodeException;
 import com.gmteam.jsonD.exceptionC.Jsond0101CException;
+import com.gmteam.jsonD.exceptionC.Jsond0102CException;
 
 /**
  * 处理Json的方法类
@@ -32,7 +31,7 @@ public abstract class JsonUtils {
      * @return json字符串
      * @throws Jsond0101CException
      */
-    public static String objToJson(Object obj) throws CodeException {
+    public static String objToJson(Object obj) {
         try {
             ObjectMapper objectMapper=getMapperInstance(false);
             String json=objectMapper.writeValueAsString(obj);
@@ -49,7 +48,7 @@ public abstract class JsonUtils {
      * @return json字符串
      * @throws Jsond0101CException
      */
-    public static String objToJson(Object obj, Boolean createNew) throws CodeException {
+    public static String objToJson(Object obj, Boolean createNew) {
         try {
             ObjectMapper objectMapper=getMapperInstance(createNew);
             String json=objectMapper.writeValueAsString(obj);
@@ -60,19 +59,31 @@ public abstract class JsonUtils {
     }
 
     /**
+     * 将对象转换为Json字符串。type是输出类型。
+     * 输出的json对象为{jsonType:#type, data:#cls2json}
+     * @param obj 欲转换的对象，如果是String 则直接返回到data中
+     * @param type 类型：1是成功，0是失败，其他整型类型可自己定义
+     * @return Json字符串
+     * @throws Jsond0101CException 异常 
+     */
+    public static String Obj2AjaxJson(Object obj, int type) {
+        return JsonUtils.objToJson(JsonUtils.Obj2AjaxMap(obj, type));
+    }
+
+    /**
      * 将json字符串转换成java对象
      * @param json 准备转换的json字符串
      * @param cls  准备转换的类
      * @return java对象
-     * @throws Exception
+     * @throws Jsond0102CException
      */
-    public static Object jsonToObj(String json, Class<?> cls) throws Exception {
+    public static Object jsonToObj(String json, Class<?> cls) {
         try {
             ObjectMapper objectMapper=getMapperInstance(false);
             Object vo=objectMapper.readValue(json, cls);
             return vo;
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            throw new Jsond0102CException(e);
         }
     }
 
@@ -82,28 +93,16 @@ public abstract class JsonUtils {
      * @param cls  准备转换的类
      * @param createNew ObjectMapper实例方式:true，新实例;false,存在的mapper实例
      * @return java对象
-     * @throws Exception
+     * @throws Jsond0102CException
      */
-    public static Object jsonToObj(String json, Class<?> cls,Boolean createNew) throws Exception {
+    public static Object jsonToObj(String json, Class<?> cls,Boolean createNew) {
         try {
             ObjectMapper objectMapper=getMapperInstance(createNew);
             Object vo=objectMapper.readValue(json, cls);
             return vo;
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            throw new Jsond0102CException(e);
         }
-    }
-
-    /**
-     * 将对象转换为Json字符串。type是输出类型。
-     * 输出的json对象为{jsonType:#type, data:#cls2json}
-     * @param obj 欲转换的对象，如果是String 则直接返回到data中
-     * @param type 类型：1是成功，0是失败，其他整型类型可自己定义
-     * @return Json字符串
-     * @throws JsonProcessingException 异常 
-     */
-    public static String Obj2AjaxJson(Object obj, int type) throws CodeException {
-        return JsonUtils.objToJson(JsonUtils.Obj2AjaxMap(obj, type));
     }
 
     /**
