@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.gmteam.framework.core.model.BaseObject;
+import com.gmteam.spiritdata.exceptionC.Dtal0001CException;
 
 /**
  * 元数据模式
@@ -28,13 +29,19 @@ public class MetadataModel extends BaseObject {
     public String getId() {
         return id;
     }
-    public void setId(String id) throws Exception {
+    public void setId(String id) {
         this.id = id;
         if (this.columnList!=null&&this.columnList.size()>0) {
             for (MetadataColumn mc: this.columnList) {
                 mc.setMdMId(id);
             }
         }
+    }
+    public String getTitleName() {
+        return titleName;
+    }
+    public void setTitleName(String titleName) {
+        this.titleName = titleName;
     }
     public int getOwnerType() {
         return ownerType;
@@ -63,7 +70,7 @@ public class MetadataModel extends BaseObject {
     public List<MetadataColumn> getColumnList() {
         return columnList;
     }
-    public void setColumnList(List<MetadataColumn> columnList) throws Exception {
+    public void setColumnList(List<MetadataColumn> columnList) {
         if (columnList!=null&&columnList.size()>0) {
             for (MetadataColumn mc: columnList) this.addColumn(mc);
         }
@@ -79,16 +86,20 @@ public class MetadataModel extends BaseObject {
      * @param mdc 被插入的对象，其中Mid可以省略，本对象的Mid将填入传来的参数mdc
      * @throws Exception 若对象重复
      */
-    public void addColumn(MetadataColumn mdc) throws Exception {
+    public void addColumn(MetadataColumn mdc) {
         if (mdc==null) return;
-        if (mdc.getColumnType()==null||mdc.getColumnType().equals("")) throw new IllegalArgumentException("列描术必须设置类型columnType");
-        if (mdc.getTitleName()==null||mdc.getTitleName().equals("")) throw new IllegalArgumentException("列描术必须设置列标题TitleName");
+        if (mdc.getColumnType()==null||mdc.getColumnType().equals("")) {
+            throw new Dtal0001CException(new IllegalArgumentException("列描术必须设置类型columnType"));
+        }
+        if (mdc.getTitleName()==null||mdc.getTitleName().equals("")) {
+            throw new Dtal0001CException(new IllegalArgumentException("列描术必须设置列标题TitleName"));
+        }
 
         if (this.columnList==null) this.columnList = new ArrayList<MetadataColumn>();
         for (MetadataColumn c: this.columnList) {
-            if (mdc.getId()!=null&&(c.getId().equals(mdc.getId()))) throw new Exception("在列描述列表中已经有与所添加对象[列Id]相同的列描述对象，不同重复添加！");
-            if (mdc.getTitleName()!=null&&(c.getTitleName().equals(mdc.getTitleName()))) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列描述对象，不同重复添加！");
-            if (mdc.getColumnName()!=null&&(c.getColumnName().equals(mdc.getColumnName()))) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列描述对象，不同重复添加！");
+            if (mdc.getId()!=null&&(c.getId().equals(mdc.getId()))) throw new Dtal0001CException("在列描述列表中已经有与所添加对象[列Id]相同的列描述对象，不能重复添加！");
+            if (mdc.getTitleName()!=null&&(c.getTitleName().equals(mdc.getTitleName()))) throw new Dtal0001CException("在列描述列表中已经有与所添加对象[列意义名称]相同的列描述对象，不能重复添加！");
+            if (mdc.getColumnName()!=null&&(c.getColumnName().equals(mdc.getColumnName()))) throw new Dtal0001CException("在列描述列表中已经有与所添加对象[列名称]相同的列描述对象，不能重复添加！");
         }
         mdc.setMdModel(this);
         this.columnList.add(mdc);
@@ -149,10 +160,10 @@ public class MetadataModel extends BaseObject {
      *   type=-1，message=不一致
      */
     //目前只实现type=-1,0,1
-    public Map<String, String> isSame(MetadataModel mm, int compareOwner) throws Exception {
+    public Map<String, String> isSame(MetadataModel mm, int compareOwner) {
         Map<String, String> ret = new HashMap<String, String>();
-        if (this.columnList==null) throw new Exception("本模式无列描述信息，无法比较");
-        if (mm.getColumnList()==null)  throw new Exception("被比较模式无列描述信息，无法比较");
+        if (this.columnList==null) throw new Dtal0001CException("本模式无列描述信息，无法比较");
+        if (mm.getColumnList()==null)  throw new Dtal0001CException("被比较模式无列描述信息，无法比较");
         if (compareOwner==1&&!this.ownerId.equals(mm.getOwnerId())) {
             ret.put("type", "0");
             ret.put("message", "所有者不一致");

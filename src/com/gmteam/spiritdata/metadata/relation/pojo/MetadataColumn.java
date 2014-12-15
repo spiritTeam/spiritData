@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gmteam.framework.core.model.BaseObject;
+import com.gmteam.spiritdata.exceptionC.Dtal0002CException;
 
 /**
  * 元数据列描述
@@ -47,10 +48,10 @@ public class MetadataColumn extends BaseObject {
      * @param mdMId 元数据模式Id
      * @throws Exception 若本实体已经设置元数据模式，但元数据模式Id与参数Id不同
      */
-    public void setMdMId(String mdMId) throws Exception {
+    public void setMdMId(String mdMId) {
         if (this.mdModel==null) this.mdMId = mdMId;
         else if (this.mdModel.getId().equals(mdMId)) this.mdMId = mdMId;
-        else throw new Exception("所设置的元数据模式Id与已有的元数据模式不同！");
+        else throw new Dtal0002CException("所设置的元数据模式Id与已设置的元数据模式(this.mdModel)Id不同！");
     }
 
     public String getColumnName() {
