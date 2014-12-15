@@ -9,10 +9,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <script type="text/javascript" src="<%=path %>/resources/plugins/templet/jq.spirit.templet.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/templet/css/templet.css"/>
 <title>分析报告</title>
 </head>
 <body>
-<div id="analReportArea" style="width:400px;height:700px;border: solid red 1px;"></div>
+<div id="analReportArea" style="width:400px;height:700px;border: solid red 1px;float:left;">
+</div><div style="float:left;"><ul id="tt"></ul></div>
 </body>
 <script type="text/javascript">
 $(function(){
