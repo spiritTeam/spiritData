@@ -8,7 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.gmteam.spiritdata.templet.service.TempletService;
+import com.spiritdata.dataanal.templet.service.TempletService;
+
 
 @Controller
 public class TempletController {

@@ -44,7 +44,7 @@
   </listener>
   <!-- 平台监听器，加载平台信息 -->
   <listener>
-    <listener-class>com.gmteam.framework.core.web.InitSysConfigListener</listener-class>
+    <listener-class>com.spiritdata.framework.core.web.InitSysConfigListener</listener-class>
   </listener>
   <!-- end监听设置 -->
 
@@ -65,7 +65,7 @@
   <!-- 登录 -->
   <filter>
     <filter-name>loginFilter</filter-name>
-    <filter-class>com.gmteam.framework.component.login.web.LoginFilter</filter-class>
+    <filter-class>com.spiritdata.framework.component.login.web.LoginFilter</filter-class>
     <init-param>
       <param-name>ingores</param-name>
       <param-value>jump.jsp,login.jsp,login.do,hasNewLogin.jsp,noLogin.jsp,login,logout.do,asIndex.jsp,fileUpLoad.do,resultRd.jsp,templet</param-value>
