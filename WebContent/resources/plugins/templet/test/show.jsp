@@ -16,12 +16,6 @@
 <div id="analReportArea"></div>
 </body>
 <script type="text/javascript">
-//aaa=window.href::templetId
-$(function() {
-  var templetId = getUrlParam(window.location.href, "templetId");
-  $('#templetId').val(templetId);
-});
-
 function showAnalRst(){
   var templetId = $('#templetId').val();
   var templetUrl = "<%=path%>/getTempletJson.do?templetId="+templetId;
