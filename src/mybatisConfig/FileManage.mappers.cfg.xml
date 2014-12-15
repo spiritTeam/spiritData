@@ -3,13 +3,13 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="FileIndex" type="com.gmteam.spiritdata.filemanage.core.persistence.pojo.FileIndexPo"/>
-    <typeAlias alias="FileCategory" type="com.gmteam.spiritdata.filemanage.core.persistence.pojo.FileCategoryPo"/>
-    <typeAlias alias="FileRelation" type="com.gmteam.spiritdata.filemanage.core.persistence.pojo.FileRelationPo"/>
+    <typeAlias alias="FileIndex" type="com.spiritdata.dataanal.filemanage.core.persistence.pojo.FileIndexPo"/>
+    <typeAlias alias="FileCategory" type="com.spiritdata.dataanal.filemanage.core.persistence.pojo.FileCategoryPo"/>
+    <typeAlias alias="FileRelation" type="com.spiritdata.dataanal.filemanage.core.persistence.pojo.FileRelationPo"/>
   </typeAliases>
   <mappers>
-    <mapper resource="com/gmteam/spiritdata/filemanage/core/persistence/sql/FileIndex.mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/filemanage/core/persistence/sql/FileCategory.mapper.xml"/>
-    <mapper resource="com/gmteam/spiritdata/filemanage/core/persistence/sql/FileRel.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/filemanage/core/persistence/sql/FileIndex.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/filemanage/core/persistence/sql/FileCategory.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/filemanage/core/persistence/sql/FileRel.mapper.xml"/>
   </mappers>
 </configuration>

@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@page import="java.util.Map"%>
-<%@page import="com.gmteam.framework.FConstants"%>
-<%@page import="com.gmteam.framework.core.cache.SystemCache"%>
-<%@page import="com.gmteam.framework.component.login.pojo.UserLogin"%>
-<%@page import="com.gmteam.framework.core.cache.CacheEle"%>
-<%@page import="com.gmteam.framework.UGA.UgaUser"%>
+<%@page import="com.spiritdata.framework.FConstants"%>
+<%@page import="com.spiritdata.framework.core.cache.SystemCache"%>
+<%@page import="com.spiritdata.framework.component.login.pojo.UserLogin"%>
+<%@page import="com.spiritdata.framework.core.cache.CacheEle"%>
+<%@page import="com.spiritdata.framework.UGA.UgaUser"%>
 <%
   String path = request.getContextPath();
   CacheEle<Map<String, UserLogin>> mc = (CacheEle<Map<String, UserLogin>>)SystemCache.getCache(FConstants.USERSESSIONMAP);

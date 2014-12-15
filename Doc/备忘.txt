@@ -5,7 +5,7 @@
   c)无法分析统一sheet中的多个表格
   d)合并单元格的分析还比较粗糙
 3-Session或缓存修改问题
-  在com.gmteam.spiritdata.metadata.relation.service.MdKeyService中第168行
+  在com.spiritdata.dataanal.metadata.relation.service.MdKeyService中第168行
   //！！！由于修改了元数据，所有要通知session，修改相关的信息
 4-excel分析主键，对空没有做出正确判断
   [已完成：2014年11月18日]

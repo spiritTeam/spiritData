@@ -30,7 +30,7 @@
     <property name="dataSource" ref="dataSource"/>
   </bean>
 
-  <bean id="sqlSessionFactory" class="com.gmteam.framework.ext.spring.mybatis.MySqlSessionFactoryBean">
+  <bean id="sqlSessionFactory" class="com.spiritdata.framework.ext.spring.mybatis.MySqlSessionFactoryBean">
     <property name="configLocations">
       <list merge="default">
         <value>classpath*:mybatisConfig/frameworkMybatis.xml</value>
@@ -50,12 +50,12 @@
     </property>
   </bean>
 
-  <bean id="defaultDAO" class="com.gmteam.framework.core.dao.mybatis.MybatisDAO"  scope="prototype" init-method="initialize">
+  <bean id="defaultDAO" class="com.spiritdata.framework.core.dao.mybatis.MybatisDAO"  scope="prototype" init-method="initialize">
     <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
   </bean>
 
   <!-- 平台缓存池-->
-  <bean id="cachePool" class=" com.gmteam.framework.core.cache.CachePool">
+  <bean id="cachePool" class=" com.spiritdata.framework.core.cache.CachePool">
     <property name="caches">
       <map>
         <!--<entry key="2" value-ref="dataToolsCacheManager"/>
@@ -79,7 +79,7 @@
 
   <!-- 以下为web环境Session加载的定义 -->
   <!-- session加载器外壳 -->
-  <bean id="sessionLoaderShell" class="com.gmteam.framework.core.web.SessionLoaderShell">
+  <bean id="sessionLoaderShell" class="com.spiritdata.framework.core.web.SessionLoaderShell">
     <property name="sessionLoaderList">
       <list>
         <ref bean="_OwnerMetadataService"/>
@@ -89,7 +89,7 @@
 
   <!-- 以下为UGA框架(用户/用户组/权限框架)所需配置 -->
   <!--gisUga用户服务：平台 -->
-  <bean id="ugaUserService"       class="com.gmteam.spiritdata.UGA.service.UserService"/>
+  <bean id="ugaUserService"       class="com.spiritdata.dataanal.UGA.service.UserService"/>
   <!--Uga用户模块服务：平台 -->
-  <bean id="ugaAuthorityService"  class="com.gmteam.spiritdata.UGA.service.AuthorityService"/>
+  <bean id="ugaAuthorityService"  class="com.spiritdata.dataanal.UGA.service.AuthorityService"/>
 </beans>
