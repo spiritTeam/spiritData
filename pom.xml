@@ -4,10 +4,9 @@
   <artifactId>SpiritAnalysis</artifactId>
   <version>0.0.1</version>
   <packaging>war</packaging>
-  
   <!-- 配置编码格式，与eclpse的IDE环境编码格式匹配 -->
   <properties>
-     <build.webProjectDir>D:\Users\admi\git\SpiritAnalysis</build.webProjectDir>
+    <build.webProjectDir>D:\Users\admi\git\SpiritAnalysis</build.webProjectDir>
   </properties>
   <parent>
     <groupId>team.gm</groupId>
@@ -34,10 +33,10 @@
     -->
     <!-- commons-io -->
     <dependency>
-	    <groupId>org.htmlparser</groupId>
-	    <artifactId>thumbelina</artifactId>
-	    <version>2.1</version>
-	   </dependency>
+      <groupId>org.htmlparser</groupId>
+      <artifactId>thumbelina</artifactId>
+      <version>2.1</version>
+     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -65,9 +64,9 @@
     </dependency> -->
     <!-- mail 包 -->
     <dependency>
-	  <groupId>javax.mail</groupId>
-	  <artifactId>mail</artifactId>
-	  <version>1.5.0-b01</version>
+    <groupId>javax.mail</groupId>
+    <artifactId>mail</artifactId>
+    <version>1.5.0-b01</version>
     </dependency>
     <!-- Poi 包 -->
     <dependency>
@@ -97,7 +96,6 @@
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.29</version>
     </dependency>
-
     <!-- 引入平台包 -->
     <dependency>
       <groupId>com.gmteam</groupId>

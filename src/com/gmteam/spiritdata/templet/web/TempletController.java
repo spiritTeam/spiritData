@@ -16,8 +16,7 @@ public class TempletController {
     private TempletService templetService;
 
     @RequestMapping(value="/templet/getTemplet.do")
-    @ResponseBody
-    public String getTemplet(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody String getTemplet(HttpServletRequest request, HttpServletResponse response) {
         String templetId = request.getParameter("templetId");
         try {
             return "{jsonType:1, data:"+templetService.getTempletJsonById(templetId)+"}";

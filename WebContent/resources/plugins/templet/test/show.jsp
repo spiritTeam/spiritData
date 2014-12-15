@@ -12,7 +12,7 @@
 <title>分析报告</title>
 </head>
 <body>
-<div id="analReportArea"></div>
+<div id="analReportArea" style="width:400px;height:700px;border: solid red 1px;"></div>
 </body>
 <script type="text/javascript">
 $(function(){
@@ -20,12 +20,18 @@ $(function(){
 });
 function showAnalRst(){
   var templetUrl = "<%=path%>/getTempletJson.do?templetId=";
-  templetUrl = "<%=path%>/resources/plugins/templet/test/templet.json"
-  var pData = {};
-  $.ajax({type:"post",async:false,url:templetUrl,data:pData,dataType:"json",
+  templetUrl = "<%=path%>/resources/plugins/templet/test/templet.json";
+  templetUrl= "<%=path%>/templet/getTemplet.do";
+  var pData = {templetId:"2323e"};
+  $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
     success:function(json){
-    alert(json);  
-   //   $.templetJD($("#analReportArea"),templetJson);
+      eval( "var jsonData="+json+";");
+      if(jsonData.jsonType==1){
+        var templetJD = jsonData.data;
+        $.templetJD("analReportArea",templetJD);
+      }else{
+    	$.messager.alert("提示",jsonData.message);
+      }
     },error:function(errorData ){
       alert(errorData.length);
     }
