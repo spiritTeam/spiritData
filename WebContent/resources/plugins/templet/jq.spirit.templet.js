@@ -6,16 +6,18 @@
  *4、根据showType选择处理文件的方法。
  */
 (function($){
-  $.templetJD = function(){
-    alert(1111);
+  $.templetJD = function(templet,templetUrl){
+    alert(templetUrl);
+    return 
   };
-})
-function templetResolve(templet){
-  //访问jsond的url
-  var dataAry = templet._DATA;
-  //得到templet主体
-  var _Templet = templet._Templet
-  //sug数组
-  var sugAry;
-  //确定元素个数，
-}
+  function templetResolve(templet){
+    //访问jsond的url
+    var dataAry = templet._DATA;
+    //得到templet主体
+    var _Templet = templet._Templet
+    //sug数组
+    var sugAry;
+    //确定元素个数，
+  }
+})(jQuery);
+

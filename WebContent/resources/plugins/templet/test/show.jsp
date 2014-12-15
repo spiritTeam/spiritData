@@ -8,18 +8,29 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
+<script type="text/javascript" src="<%=path %>/resources/plugins/templet/jq.spirit.templet.js"></script>
 <title>分析报告</title>
 </head>
 <body>
-<input type="button" value="显示分析结果" onclick="showAnalRst();"/>
-<input id="templetId" type="hidden" value=""/>
 <div id="analReportArea"></div>
 </body>
 <script type="text/javascript">
+$(function(){
+  showAnalRst();
+});
 function showAnalRst(){
-  var templetId = $('#templetId').val();
-  var templetUrl = "<%=path%>/getTempletJson.do?templetId="+templetId;
-  $.templetJD($("#analReportArea"), templetUrl);
+  var templetUrl = "<%=path%>/getTempletJson.do?templetId=";
+  templetUrl = "<%=path%>/resources/plugins/templet/test/templet.json"
+  var pData = {};
+  $.ajax({type:"post",async:false,url:templetUrl,data:pData,dataType:"json",
+    success:function(json){
+    alert(json);  
+   //   $.templetJD($("#analReportArea"),templetJson);
+    },error:function(errorData ){
+      alert(errorData.length);
+    }
+  });
+  //$.templetJD("aa");
 }
 </script>
 </html>
