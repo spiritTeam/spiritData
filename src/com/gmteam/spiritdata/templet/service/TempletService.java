@@ -1,0 +1,56 @@
+package com.gmteam.spiritdata.templet.service;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+import org.springframework.stereotype.Component;
+
+import com.gmteam.framework.FConstants;
+import com.gmteam.framework.core.cache.CacheEle;
+import com.gmteam.framework.core.cache.SystemCache;
+import com.gmteam.framework.util.FileNameUtils;
+import com.gmteam.spiritdata.exceptionC.Dtal0101CException;
+
+/**
+ * 模板服务，主要是获得模板信息
+ * @author wh
+ */
+@Component
+public class TempletService {
+    /**
+     * 根据模板Id，得到模板的Json串
+     * @param templetId 模板Id
+     * @return 模板json串
+     */
+    public String getTempletJsonById(String templetId) {
+        if (templetId==null||templetId.length()==0) throw new Dtal0101CException("所给templetId参数为空，无法获取数据！");
+        //根据id获取内容，现在先不处理
+        return this.getTempletJsonByUri("demo\\templetDemo\\templet1.json");
+    }
+
+    /**
+     * 根据Uri，得到模板的Json串。注意若Uri不带协议头，则指的是项对于服务目录根的一个项对地址
+     * @param uri 模板的Uri
+     * @return
+     */
+    public String getTempletJsonByUri(String uri) {
+        String ret = null;
+        if (uri.indexOf("\\\\:")!=-1||uri.indexOf("//:")!=-1) {//走协议方式
+            
+        } else {//走服务器目录方式
+            uri = FileNameUtils.concatPath(((CacheEle<String>)SystemCache.getCache(FConstants.APPOSPATH)).getContent(), uri);
+            File f = FileUtils.getFile(uri);
+            if (f.isFile()) {//读取文件
+                try {
+                    ret = FileUtils.readFileToString(f, "UTF-8");
+                } catch(IOException ioe) {
+                    throw new Dtal0101CException("读取文件["+uri+"]失败！");
+                }
+            } else {
+                throw new Dtal0101CException("Uri["+uri+"]所指向的地址不可用！");
+            }
+        }
+        return ret;
+    }
+}
