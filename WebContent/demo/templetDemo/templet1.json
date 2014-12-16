@@ -9,13 +9,13 @@
       id:"seg1",
       name:"上传数据",
       data: [1,2],
-      title:'<style s="font-height:bold; font-size:24px;">上传数据</style>',
+      title:'<div style="font-height:bold; font-size:24px;">上传数据</div>',
       subSeg:[
         {
           id:"seg1_1",
           name:"结构分析",
           data:[1],
-          content:'<style s="font-height:bold; font-size:18px;">1、结构分析</style><br/>'
+          content:'<div style="font-height:bold; font-size:18px;">1、结构分析</div><br/>'
             +'<style s="font-height:bold; ">“<d data="1" showType="value" value="excelMdmArray[0].sheetInfo.name"/>”页签(sheet<d data="1" showType="value" value="excelMdmArray[0].sheetInfo.index"/>)</style>为新增结构，元数据结构分析结果如下：<br/>'
             +'<data d="1" showType="table" value="excelMdmArray[0]"/><br/>'
             +'<style s="font-height:bold; ">“<d data="1" showType="value" value="excelMdmArray[2].sheetInfo.name"/>”页签(sheet<d data="1" showType="value" value="excelMdmArray[1].sheetInfo.index"/>)</style>为原有结构，元数据用原有结构。<br/>'
