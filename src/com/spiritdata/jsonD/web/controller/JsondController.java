@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.templet.web;
+package com.spiritdata.jsonD.web.controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -8,25 +8,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.spiritdata.dataanal.templet.service.TempletService;
+import com.spiritdata.jsonD.web.service.JsondService;
 
 /**
- * 模板功能的web控制类
+ * Jsond功能的web控制类
  * @author wh
  */
 @Controller
-public class TempletController {
+public class JsondController {
     @Resource
-    private TempletService templetService;
+    private JsondService jsondService;
 
-    @RequestMapping(value="/templet/getTemplet.do")
+    @RequestMapping(value="/jsonD/getJsonD.do")
     @ResponseBody
-    public String getTemplet(HttpServletRequest request, HttpServletResponse response) {
+    public String getJsond(HttpServletRequest request, HttpServletResponse response) {
         String ret = null;
-        String templetId = request.getParameter("templetId");
-        if (templetId!=null) {
+        String jsondId = request.getParameter("jsondId");
+        if (jsondId!=null) {
             try {
-                ret="{jsonType:1, data:"+templetService.getTempletJsonById(templetId)+"}";
+                ret="{jsonType:1, data:"+jsondService.getJsondById(jsondId)+"}";
             } catch(Exception e) {
                 ret="{jsonType:0, message:'"+e.getMessage()+"'}";
             }
@@ -34,7 +34,7 @@ public class TempletController {
         String uri = request.getParameter("uri");
         if (uri!=null) {
             try {
-                ret="{jsonType:1, data:"+templetService.getTempletJsonByUri(uri)+"}";
+                ret="{jsonType:1, data:"+jsondService.getJsondByUri(uri)+"}";
             } catch(Exception e) {
                 ret="{jsonType:0, message:'"+e.getMessage()+"'}";
             }

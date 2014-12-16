@@ -121,6 +121,39 @@ public abstract class JsonUtils {
     }
 
     /**
+     * 得到紧凑型Json串
+     * @param jsonStr 原Json串
+     * @return 紧凑型Json串
+     */
+    public static String getCompactJsonStr(String jsonStr) {
+        if (jsonStr==null || jsonStr.trim().length()==0) return null;
+
+        int dQuotes = 0, sQuotes=0; //单双引号标志
+        int rnFlag = 0; //回车换行标记
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<jsonStr.length(); i++) {
+            char c = jsonStr.charAt(i);
+            if (c=='\'') sQuotes=(sQuotes==0?((sQuotes<<1)+1):(sQuotes>>1));
+            if (c=='\"') dQuotes=(dQuotes==0?((dQuotes<<1)+1):(dQuotes>>1));
+
+            if (sQuotes>0||dQuotes>0) {
+                if (c=='\r'||c=='\n') {
+                    while (sb.charAt(sb.length()-1)==' ') sb.deleteCharAt(sb.length()-1);
+                    rnFlag=1;
+                    continue;
+                }
+                if (rnFlag>0) {
+                    if (c!='\t'&&c!=' ') {
+                        sb.append(c);
+                        rnFlag=0;
+                    }
+                } else sb.append(c);
+            } else if (c!=' '&&c!='\t'&&c!='\n'&&c!='\r') sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    /**
      * 把json字符串，格式化为更可读的形式
      * @param jsonStr json字符串，注意必须是已经Json了
      * @param indentStr 缩进字符串，可为空，若为空，缩进字符串为两个ASCII空格
@@ -129,18 +162,27 @@ public abstract class JsonUtils {
     public static String formatJsonStr(String jsonStr, String indentStr) {
         if (jsonStr==null || jsonStr.trim().length()==0) return null;
 
-        int dQuotes = 0, sQuotes=0; //单双引号标志 
-
-        //去掉占位符，变为最紧凑的Json串
+        int dQuotes = 0, sQuotes=0; //单双引号标志
+        int rnFlag = 0; //回车换行标记
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<jsonStr.length(); i++) {
             char c = jsonStr.charAt(i);
-            if (c=='\''&&dQuotes%2==0) sQuotes++;
-            if (c=='\"'&&sQuotes%2==0) dQuotes++;
+            if (c=='\'') sQuotes=(sQuotes==0?((sQuotes<<1)+1):(sQuotes>>1));
+            if (c=='\"') dQuotes=(dQuotes==0?((dQuotes<<1)+1):(dQuotes>>1));
 
-            if ((sQuotes%2==1||dQuotes%2==1)&&c!='\t'&&c!='\n') sb.append(c);
-            else
-            if (c!=' '&&c!='\t'&&c!='\n'&&c!='\r') sb.append(c);
+            if (sQuotes>0||dQuotes>0) {
+                if (c=='\r'||c=='\n') {
+                    while (sb.charAt(sb.length()-1)==' ') sb.deleteCharAt(sb.length()-1);
+                    rnFlag=1;
+                    continue;
+                }
+                if (rnFlag>0) {
+                    if (c!='\t'&&c!=' ') {
+                        sb.append(c);
+                        rnFlag=0;
+                    }
+                } else sb.append(c);
+            } else if (c!=' '&&c!='\t'&&c!='\n'&&c!='\r') sb.append(c);
         }
 
         //格式化Json串
