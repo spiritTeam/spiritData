@@ -31,6 +31,7 @@ import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.JsonUtils;
 import com.spiritdata.jsonD.model.AtomData;
+import com.spiritdata.jsonD.model.HeadData;
 
 /**
  * 主键分析器
@@ -168,7 +169,10 @@ public class AnalKey implements AnalTable {
                 n++;
             }
         }
-        //写json文件，此方法目前为测试方法，今后把他变为一个更好用的包
+
+        //写jsonD文件，此方法目前为测试方法，今后把他变为一个更好用的包
+        HeadData jsonDHead = new HeadData();
+        jsonDHead.set_id(SequenceUUID.getPureUUID());
         Map<String, Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("_id", SequenceUUID.getPureUUID());
         jsonMap.put("_code", "SD.TEAM.ANAL-0001");
