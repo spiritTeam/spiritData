@@ -1,6 +1,6 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="com.gmteam.framework.FConstants"%>
-<%@page import="com.gmteam.spiritdata.UGA.pojo.User"%>
+<%@page import="com.spiritdata.framework.FConstants"%>
+<%@page import="com.spiritdata.dataanal.UGA.pojo.User"%>
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();

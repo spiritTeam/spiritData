@@ -8,18 +8,37 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
+<script type="text/javascript" src="<%=path %>/resources/plugins/templet/jq.spirit.templet.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/templet/css/templet.css"/>
 <title>分析报告</title>
 </head>
 <body>
-<input type="button" value="显示分析结果" onclick="showAnalRst();"/>
-<input id="templetId" type="hidden" value=""/>
-<div id="analReportArea"></div>
+<div id="analReportArea" style="width:400px;height:700px;border: solid red 1px;float:left;">
+</div><div style="float:left;"><ul id="tt"></ul></div>
 </body>
 <script type="text/javascript">
+$(function(){
+  showAnalRst();
+});
 function showAnalRst(){
-  var templetId = $('#templetId').val();
-  var templetUrl = "<%=path%>/getTempletJson.do?templetId="+templetId;
-  $.templetJD($("#analReportArea"), templetUrl);
+  var templetUrl = "<%=path%>/getTempletJson.do?templetId=";
+  templetUrl = "<%=path%>/resources/plugins/templet/test/templet.json";
+  templetUrl= "<%=path%>/templet/getTemplet.do";
+  var pData = {templetId:"2323e"};
+  $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
+    success:function(json){
+      eval( "var jsonData="+json+";");
+      if(jsonData.jsonType==1){
+        var templetJD = jsonData.data;
+        $.templetJD("analReportArea",templetJD);
+      }else{
+    	$.messager.alert("提示",jsonData.message);
+      }
+    },error:function(errorData ){
+      alert(errorData.length);
+    }
+  });
+  //$.templetJD("aa");
 }
 </script>
 </html>

@@ -3,9 +3,9 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="WebUser" type="com.gmteam.spiritdata.UGA.pojo.User"/>
+    <typeAlias alias="WebUser" type="com.spiritdata.dataanal.UGA.pojo.User"/>
   </typeAliases>
   <mappers>
-    <mapper resource="com/gmteam/spiritdata/UGA/sql/UGA.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/UGA/sql/UGA.mapper.xml"/>
   </mappers>
 </configuration>
