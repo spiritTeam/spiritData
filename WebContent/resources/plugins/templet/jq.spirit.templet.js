@@ -20,18 +20,29 @@
     //判断eleId
     if(jObj==null) return "未知的eleId";
     //mianDiv
-    var segGroup = $("<div id='segGroup_"+treeLevel+"'/>");
-    for (var i=0; i<segArray.length; i++) {
+    var segGroup = $("<div id='segGroup_"+treeLevel+"' class='segGroup_"+treeLevel+"'/>");
+    for(var i=0; i<segArray.length; i++){
       var segDiv=$("<div class='segLevel1' id='segLevel_"+i+"'/>");
       segGroup.append(segDiv);
       if(segArray[i].title){
         var titleDiv=$("<div class='segLevel_+level' id='title_"+segArray[i].id+"'></div>");
         titleDiv.html(segArray[i].title);
         segDiv.append(titleDiv);
-      }else if(segArray[i].name){
-        var titleDiv=$("<div class='segLevel_+level' id='title_"+segArray[i].id+"'></div>");
-        titleDiv.html(segArray[i].name);
-        segDiv.append(titleDiv);
+      }else if(segArray[i].content){
+        var contentDiv=$("<div class='content_+level' id='title_"+segArray[i].id+"'></div>");
+        var content = segArray[i].content;
+        //----------
+        var str="1 plus 2 equal 3"
+        alert(str.match(/\d+/g));
+        //-------
+        if(content){
+          content = content.replace(/<style/g, "<div");
+          content = content.replace(/s="/g, "style=\"");
+          content = content.replace(/<\/style>/g, "</\div>");
+          //content = content.replace(/<d/g, "<div");
+        }
+        contentDiv.html(content);
+        segDiv.append(contentDiv);
       }
       var contendEle = templetContentParse(segArray[i].content);
       segDiv.append(contendEle);
