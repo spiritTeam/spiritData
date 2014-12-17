@@ -22,14 +22,14 @@
     //mianDiv
     var segGroup = $("<div id='segGroup_"+treeLevel+"' class='segGroup_"+treeLevel+"'/>");
     for(var i=0; i<segArray.length; i++){
-      var segDiv=$("<div class='segLevel1' id='segLevel_"+i+"'/>");
+      var segDiv=$("<div class='noBorderDiv' id='segLevel_"+i+"'/>");
       segGroup.append(segDiv);
       if(segArray[i].title){
-        var titleDiv=$("<div class='segLevel_+level' id='title_"+segArray[i].id+"'></div>");
+        var titleDiv=$("<div class='borderDiv' id='title_"+segArray[i].id+"'></div>");
         titleDiv.html(segArray[i].title);
         segDiv.append(titleDiv);
       }else if(segArray[i].content){
-        var contentDiv=$("<div class='content_+level' id='title_"+segArray[i].id+"'></div>");
+        var contentDiv=$("<div class='' id='title_"+segArray[i].id+"'></div>");
         var content = segArray[i].content;
         //----------
         //var str="1 plus 2 equal 3";alert(str.match(/\d+/g));
