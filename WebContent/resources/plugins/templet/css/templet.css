@@ -1,2 +1,2 @@
-div{width:100%;border 1px;}
-#segGroup_0{margin-left:5px;}
+div{width:99%;margin-left:0.4%;border:solid 1px red;margin-top:5px;margin-bottom:5px;}
+#segGroup_0{width:99%;border:solid 1px red;margin-left:0.4%;}

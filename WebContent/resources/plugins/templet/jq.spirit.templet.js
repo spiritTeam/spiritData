@@ -32,8 +32,7 @@
         var contentDiv=$("<div class='content_+level' id='title_"+segArray[i].id+"'></div>");
         var content = segArray[i].content;
         //----------
-        var str="1 plus 2 equal 3"
-        alert(str.match(/\d+/g));
+        //var str="1 plus 2 equal 3";alert(str.match(/\d+/g));
         //-------
         if(content){
           content = content.replace(/<style/g, "<div");
