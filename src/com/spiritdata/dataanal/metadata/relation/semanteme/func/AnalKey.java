@@ -172,24 +172,26 @@ public class AnalKey implements AnalTable {
 
         //写jsonD文件，此方法目前为测试方法，今后把他变为一个更好用的包
         HeadData jsonDHead = new HeadData();
-        jsonDHead.set_id(SequenceUUID.getPureUUID());
-        Map<String, Object> jsonMap = new HashMap<String, Object>();
-        jsonMap.put("_id", SequenceUUID.getPureUUID());
-        jsonMap.put("_code", "SD.TEAM.ANAL-0001");
-        jsonMap.put("_cTime", (new Date()).getTime());
-        jsonMap.put("desc", "分析表["+tableName+"]那列或那些列可作为主键的记录文件");
+        jsonDHead.setId(SequenceUUID.getPureUUID());
+        jsonDHead.setCode("SD.TEAM.ANAL-0001");
+        jsonDHead.setCTime(new Date());
+        jsonDHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键的记录文件");
+        //文件名
+        String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
+        //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
+        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+mm.getOwnerId()+File.separator+"MM_"+mm.getId()+File.separator+"keyAnal"+File.separator+tableName+".json");
+        jsonDHead.setFileName(storeFile);
+
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
         AtomData _dataElement = new AtomData("_tableName", "string", tableName);
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _dataElement.setAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _DATA_Map.put("_keyAnals", convertToList(ret));
-        jsonMap.put("_DATA", _DATA_Map);
         //写文件
-        String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-        //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
-        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+mm.getOwnerId()+File.separator+"MM_"+mm.getId()+File.separator+"keyAnal"+File.separator+tableName+".json");
-        jsonMap.put("_file", storeFile);
+
+        String jsonStr=JsonUtils.formatJsonStr("{_HEAD:"+jsonDHead.toJson()+",_DATA:"+JsonUtils.beanToJson(_DATA_Map)+"}", null);
+
         FileOutputStream fileOutputStream = null;
         try {
             File file = new File(storeFile);
@@ -199,7 +201,7 @@ public class AnalKey implements AnalTable {
                 file.createNewFile();
             }
             fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write((JsonUtils.formatJsonStr(JsonUtils.beanToJson(jsonMap), null)).getBytes()); 
+            fileOutputStream.write(jsonStr.getBytes()); 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

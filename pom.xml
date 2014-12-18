@@ -5,8 +5,9 @@
   <version>0.0.1</version>
   <packaging>war</packaging>
   <!-- 配置编码格式，与eclpse的IDE环境编码格式匹配 -->
+  <!-- D:\Users\admi\git || D:\workIDE\projects -->
   <properties>
-    <build.webProjectDir>D:\Users\admi\git\SpiritAnalysis</build.webProjectDir>
+    <build.webProjectDir>D:\workIDE\projects\SpiritAnalysis</build.webProjectDir>
   </properties>
   <parent>
     <groupId>team.gm</groupId>
