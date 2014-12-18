@@ -12,14 +12,14 @@
     var level=0;
     //建立segmentGroup组
     buildSegmentGroup(templetDiv, _TEMPLET, level);
-  }
+  };
   $.templetJD.catalogTree = function(catalogTreeDiv,templetJD){
     var _TEMPLET = templetJD._TEMPLET;
     var level = 1;
     var tree = getTreeData(_TEMPLET,level);
     catalogTreeDiv.tree({animate:true});
     catalogTreeDiv.tree("loadData", tree);
-  }
+  };
   function buildSegmentGroup(jObj, segArray, treeLevel) {
     var templetTreeData = new Array;
     //判断segArray
