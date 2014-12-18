@@ -6,22 +6,52 @@
  *4、根据showType选择处理文件的方法。
  */
 (function($){
-  $.templetJD = function(templetDiv,templetJD){
-    var _TEMPLET = templetJD._TEMPLET;
+  $.templetJD = function(jsonTempletObj){
+    //默认宽高
+    var defaultViewWidth = "800px;";
+    var defaultViewHeight = "0px;";
+    //默认高
+    var viewWidth,viewHeight;
     //level
     var level=0;
-    //建立segmentGroup组
-    buildSegmentGroup(templetDiv, _TEMPLET, level);
-  };
-  $.templetJD.catalogTree = function(catalogTreeDiv,templetJD){
+    
+    var templetJD = jsonTempletObj.templetJD;
+    if(jsonTempletObj.viewWidth!=""&&jsonTempletObj.viewWidth!=null) viewWidth = jsonTempletObj.viewWidth;
+    else viewWidth = defaultViewWidth;
+    if(jsonTempletObj.viewHeight!=""&&jsonTempletObj.viewHeight!=null) viewHeight = jsonTempletObj.viewHeight;
+    else viewHeight = defaultViewHeight;
+    var templetJD = jsonTempletObj.templetData;
     var _TEMPLET = templetJD._TEMPLET;
-    var level = 1;
-    var tree = getTreeData(_TEMPLET,level);
-    catalogTreeDiv.tree({animate:true});
-    catalogTreeDiv.tree("loadData", tree);
+    
+    //mainDiv
+    var mainDiv = $('<div></div>');
+    mainDiv.attr('id','mainDiv');
+    mainDiv.addClass('mainClass');
+    mainDiv.css('width',viewWidth);
+    mainDiv.css('height',viewHeight);
+    //viewDiv
+    var viewDiv = $('<div></div>');
+    viewDiv.attr('id','viewDiv');
+    viewDiv.addClass('viewDiv');
+    //treeDiv
+    var treeDiv = $('<div></div>');
+    treeDiv.attr('id','treeDiv');
+    treeDiv.addClass('treeDiv');
+    viewDiv.appendTo(mainDiv);
+    treeDiv.appendTo(mainDiv);
+    mainDiv.appendTo('body');
+    
+    //建立segmentGroup组
+    buildSegmentGroup(viewDiv, _TEMPLET, level);
+    catalogTree(treeDiv, _TEMPLET,level);
+  };
+  
+  function catalogTree(treeDiv,_TEMPLET,level){
+    var tree = getTreeData(_TEMPLET,level+1);
+    treeDiv.tree({animate:true});
+    treeDiv.tree("loadData", tree);
   };
   function buildSegmentGroup(jObj, segArray, treeLevel) {
-    var templetTreeData = new Array;
     //判断segArray
     if(segArray==null||segArray=="") return "segArry 为空!";
     //判断eleId

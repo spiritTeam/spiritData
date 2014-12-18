@@ -14,7 +14,7 @@
 </head>
 <body>
 <div style="width:700px;">
-  <div id="analReportArea" class="borderCss" style="width:400px;height:700px;margin-left:20px;float:left;"></div>
+  <div id="analReportArea" class="borderCss" style="width:400px;margin-left:20px;float:left;"></div>
   <div id="catalogTree" style="border:1px solid #E6E6E6;width:258px;float:left;margin-left:10px;margin-top:5px;"></div>
 </div>
 </body>
@@ -23,18 +23,22 @@ $(function(){
   showAnalRst();
 });
 function showAnalRst(){
-  var templetUrl = "<%=path%>/getTempletJson.do?templetId=";
-  templetUrl = "<%=path%>/resources/plugins/templet/test/templet.json";
-  templetUrl= "<%=path%>/templet/getTemplet.do";
+  var templetUrl= "<%=path%>/templet/getTemplet.do";
   var pData = {templetId:"2323e"};
   $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
     success:function(json){
       //var rst = str2JsonObj("jsonDats",json);不好使
       eval( "var jsonData="+json+";");
       if(jsonData.jsonType==1){
-        var templetJD = jsonData.data;
-        $.templetJD.catalogTree($('#catalogTree'),templetJD);
-        $.templetJD($("#analReportArea"),templetJD);
+    	var templetJD = jsonData.data;
+        var jsonTempletObj={
+          viewWidth:'',
+          viewHeight:'',
+          templetData:templetJD
+        }
+        $.templetJD(jsonTempletObj);
+        //$.templetJD.catalogTree($('#catalogTree'),templetJD);
+        //$.templetJD($("#analReportArea"),templetJD);
       }else{
     	$.messager.alert("提示",jsonData.message);
       }
