@@ -12,10 +12,14 @@
     var level=0;
     //建立segmentGroup组
     buildSegmentGroup(templetDiv, _TEMPLET, level);
-    var tree = getTreeData(_TEMPLET,level);
-    alert(tree);
   }
-  
+  $.templetJD.catalogTree = function(catalogTreeDiv,templetJD){
+    var _TEMPLET = templetJD._TEMPLET;
+    var level = 1;
+    var tree = getTreeData(_TEMPLET,level);
+    catalogTreeDiv.tree({animate:true});
+    catalogTreeDiv.tree("loadData", tree);
+  }
   function buildSegmentGroup(jObj, segArray, treeLevel) {
     var templetTreeData = new Array;
     //判断segArray
@@ -76,8 +80,7 @@
         //}
         //children
         treeNode.children=getTreeData(segArray[i].subSeg,treeLevel+1);
-        alert("child="+treeNode.children+"id="+treeNode.id+"text="+treeNode.text);
-        treeData[treeLevel-1] = treeNode;
+        treeData[i] = treeNode;
       } 
     }
     return treeData;

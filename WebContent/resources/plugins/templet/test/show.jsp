@@ -13,7 +13,10 @@
 <title>分析报告</title>
 </head>
 <body>
-<div id="analReportArea" class="borderCss" style="width:600px;height:700px;margin-left:20px;"></div>
+<div style="width:700px;">
+  <div id="analReportArea" class="borderCss" style="width:400px;height:700px;margin-left:20px;float:left;"></div>
+  <div id="catalogTree" style="border:1px solid #E6E6E6;width:258px;float:left;margin-left:10px;margin-top:5px;"></div>
+</div>
 </body>
 <script type="text/javascript">
 $(function(){
@@ -30,6 +33,7 @@ function showAnalRst(){
       eval( "var jsonData="+json+";");
       if(jsonData.jsonType==1){
         var templetJD = jsonData.data;
+        $.templetJD.catalogTree($('#catalogTree'),templetJD);
         $.templetJD($("#analReportArea"),templetJD);
       }else{
     	$.messager.alert("提示",jsonData.message);
