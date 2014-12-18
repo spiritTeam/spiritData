@@ -13,8 +13,10 @@
 <title>分析报告</title>
 </head>
 <body>
-<div id="analReportArea" style="width:400px;height:700px;border: solid red 1px;float:left;">
-</div><div style="float:left;"><ul id="tt"></ul></div>
+<div style="width:700px;">
+  <div id="analReportArea" class="borderCss" style="width:400px;height:700px;margin-left:20px;float:left;"></div>
+  <div id="catalogTree" style="border:1px solid #E6E6E6;width:258px;float:left;margin-left:10px;margin-top:5px;"></div>
+</div>
 </body>
 <script type="text/javascript">
 $(function(){
@@ -27,10 +29,12 @@ function showAnalRst(){
   var pData = {templetId:"2323e"};
   $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
     success:function(json){
+      //var rst = str2JsonObj("jsonDats",json);不好使
       eval( "var jsonData="+json+";");
       if(jsonData.jsonType==1){
         var templetJD = jsonData.data;
-        $.templetJD("analReportArea",templetJD);
+        $.templetJD.catalogTree($('#catalogTree'),templetJD);
+        $.templetJD($("#analReportArea"),templetJD);
       }else{
     	$.messager.alert("提示",jsonData.message);
       }

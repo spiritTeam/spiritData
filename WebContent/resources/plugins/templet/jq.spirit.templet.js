@@ -6,67 +6,86 @@
  *4、根据showType选择处理文件的方法。
  */
 (function($){
-<<<<<<< HEAD
-  $.templetJD = function(){
-    alert(1111);
-  };
-  function templetResolve(templet){
-    //访问jsond的url
-    var dataAry = templet._DATA;
-    //得到templet主体
-    var _Templet = templet._Templet
-    //sug数组
-    var sugAry;
-    //确定元素个数，
-  }
-})
-=======
-  $.templetJD = function(templetDivId,templetJD){
+  $.templetJD = function(templetDiv,templetJD){
     var _TEMPLET = templetJD._TEMPLET;
-    var int level=0;
-    buildSegmentGroup(templetDivId, _TEMPLET, level);
-    //整个templet的id
-    var mainDivId = "mainDivId";
-    
-    //title
-    var title = _TEMPLET.title;
-    $('#'+templetDivId).append('<div id="titleDiv">title\'s div</div>');
-    //root,可能是多个，也可能是一个
-    $('#'+templetDivId).append('<div id="'+mainDivId+'">main\'s div</div>');
-    for(var i=0;i<_TEMPLET.length;i++){
-      var rootId = _TEMPLET[i].id;
-      var rootDiv = '<div id="'+rootId+'">root'+i+'\'s div</div>';
-      $('#'+mainDivId).append(rootDiv);
-      //subSeg
-      var subSegAry = _TEMPLET[i].subSeg;
-      for(var k=0;k<subSegAry.length;k++){
-        var subSeg = subSegAry[k];
-        var subSegId = subSeg.id;
-        var subSegDiv = '<div id="'+subSegId+'">subSeg'+k+'\'s div</div>';
-        $('#'+rootId).append(subSegDiv)
-        //subSegContent
-        var subSegContent = subSeg.content;
-        var contentId = subSegId+"content";
-        var contentDiv = '<div id="'+contentId+'">'+subSegId+'\'s content</div>';
-        $('#'+subSegId).append(contentDiv);
+    //level
+    var level=0;
+    //建立segmentGroup组
+    buildSegmentGroup(templetDiv, _TEMPLET, level);
+  };
+  $.templetJD.catalogTree = function(catalogTreeDiv,templetJD){
+    var _TEMPLET = templetJD._TEMPLET;
+    var level = 1;
+    var tree = getTreeData(_TEMPLET,level);
+    catalogTreeDiv.tree({animate:true});
+    catalogTreeDiv.tree("loadData", tree);
+  };
+  function buildSegmentGroup(jObj, segArray, treeLevel) {
+    var templetTreeData = new Array;
+    //判断segArray
+    if(segArray==null||segArray=="") return "segArry 为空!";
+    //判断eleId
+    if(jObj==null) return "未知的eleId";
+    //mianDiv
+    var segGroup = $("<div id='segGroup_"+treeLevel+"'/>");
+    if(treeLevel!=0) segGroup.attr('class','borderCss');
+    for(var i=0; i<segArray.length; i++){
+      var segDiv=$("<div class='' id='segLevel_"+i+"'/>");
+      segGroup.append(segDiv);
+      if(segArray[i].title){
+        var titleDiv=$("<div class='borderCss' id='title_"+segArray[i].id+"' style='border-bottom-width:0px;'></div>");
+        titleDiv.html(segArray[i].title);
+        segDiv.append(titleDiv);
+      }else if(segArray[i].content){
+        var contentDiv=$("<div class='' id='title_"+segArray[i].id+"'></div>");
+        var content = segArray[i].content;
+        //----------
+        //var str="1 plus 2 equal 3";alert(str.match(/\d+/g));
+        //-------
+        if(content){
+          content = content.replace(/<style/g, "<div");
+          content = content.replace(/s="/g, "style=\"");
+          content = content.replace(/<\/style>/g, "</\div>");
+          //content = content.replace(/<d/g, "<div");
+        }
+        contentDiv.html(content);
+        segDiv.append(contentDiv);
       }
-    }
-  }
-
-  function drowContent(eleId, segArray, treeLevel) {
-    //判断segArray???
-    //判断eleId???
-    var segGroup = $("<div id='segGroup_"+i+"'/>");
-    for (var i=0; i<segArray.length; i++) {
-      var segDiv=$("<div id='segLevel_"+i+"'/>");
-      var titleDiv=$("<div class='segLevel' id='title_"+segArray[i].id+"'>"+segArray[i].title+"</div>");
-      segDiv.append(titleDiv);
       var contendEle = templetContentParse(segArray[i].content);
       segDiv.append(contendEle);
-      segGroup.append(segDiv);
       var subSegs = segArray[i].subSeg;
-      drowContent(segDiv, subSegs, treeLevel+1);
+      var segDivId = segDiv.attr("id");
+      buildSegmentGroup(segDiv, subSegs, treeLevel+1);
     }
+    jObj.append(segGroup);
     return segGroup;
+  }
+  
+  function getTreeData(segArray,treeLevel){
+    var treeData = new Array;
+    if(segArray!=null&&segArray!=""){
+      for(var i=0;i<segArray.length;i++){
+        var treeNode={
+          id:'',
+          text:'',
+          children:''
+        }
+        //id
+        treeNode.id = treeLevel;
+        //text
+        //if(segArray[i].title){
+         // treeNode.text = segArray[i].title;
+        //}else{
+          if(segArray[i].name)treeNode.text = segArray[i].name;
+        //}
+        //children
+        treeNode.children=getTreeData(segArray[i].subSeg,treeLevel+1);
+        treeData[i] = treeNode;
+      } 
+    }
+    return treeData;
+  }
+  function templetContentParse(content){
+    return null;
   }
 })(jQuery);
