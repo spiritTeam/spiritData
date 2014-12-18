@@ -12,20 +12,24 @@
     var level=0;
     //建立segmentGroup组
     buildSegmentGroup(templetDiv, _TEMPLET, level);
+    var tree = getTreeData(_TEMPLET,level);
+    alert(tree);
   }
   
   function buildSegmentGroup(jObj, segArray, treeLevel) {
+    var templetTreeData = new Array;
     //判断segArray
     if(segArray==null||segArray=="") return "segArry 为空!";
     //判断eleId
     if(jObj==null) return "未知的eleId";
     //mianDiv
-    var segGroup = $("<div id='segGroup_"+treeLevel+"' class='segGroup_"+treeLevel+"'/>");
+    var segGroup = $("<div id='segGroup_"+treeLevel+"'/>");
+    if(treeLevel!=0) segGroup.attr('class','borderCss');
     for(var i=0; i<segArray.length; i++){
-      var segDiv=$("<div class='noBorderDiv' id='segLevel_"+i+"'/>");
+      var segDiv=$("<div class='' id='segLevel_"+i+"'/>");
       segGroup.append(segDiv);
       if(segArray[i].title){
-        var titleDiv=$("<div class='borderDiv' id='title_"+segArray[i].id+"'></div>");
+        var titleDiv=$("<div class='borderCss' id='title_"+segArray[i].id+"' style='border-bottom-width:0px;'></div>");
         titleDiv.html(segArray[i].title);
         segDiv.append(titleDiv);
       }else if(segArray[i].content){
@@ -53,8 +57,51 @@
     return segGroup;
   }
   
+  function getTreeData(segArray,treeLevel){
+    var treeData = new Array;
+    if(segArray!=null&&segArray!=""){
+      for(var i=0;i<segArray.length;i++){
+        var treeNode={
+          id:'',
+          text:'',
+          children:''
+        }
+        //id
+        treeNode.id = treeLevel;
+        //text
+        //if(segArray[i].title){
+         // treeNode.text = segArray[i].title;
+        //}else{
+          if(segArray[i].name)treeNode.text = segArray[i].name;
+        //}
+        //children
+        treeNode.children=getTreeData(segArray[i].subSeg,treeLevel+1);
+        alert("child="+treeNode.children+"id="+treeNode.id+"text="+treeNode.text);
+        treeData[treeLevel-1] = treeNode;
+      } 
+    }
+    return treeData;
+  }
   function templetContentParse(content){
     return null;
+  }
+  
+  var treeData=[{
+    "id":1, "text":"上传数据",
+    "children":[{"id":11, "text":"结构分析"},{"id":12, "text":"单项指标分析"},{"id":13, "text":"类别指标分析"},{"id":14, "text":"数值指标分析"},{"id":15, "text":"时间指标分析"}]
+  },{
+    "id":2, "text":"积累数据",
+    "children":[{"id":21, "text":"单项指标分析"},{"id":22, "text":"类别指标分析"},{"id":23, "text":"数值指标分析"},{"id":24, "text":"时间指标分析"}]
+  },{
+    "id":3, "text":"高级",
+    "children":[{"id":31, "text":"数据质量及结构"},{"id":32, "text":"时间关联分析"},{"id":33, "text":"分布统计"},{"id":34, "text":"关联分析"}]
+  }];
+  $.templetJD.tree = function(treeDiv){
+    var _TEMPLET = templetJD._TEMPLET;
+    //level
+    var level=0;
+    //建立segmentGroup组
+    buildSegmentGroup(templetDiv, _TEMPLET, level);
   }
 })(jQuery);
 

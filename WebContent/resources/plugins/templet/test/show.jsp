@@ -13,7 +13,7 @@
 <title>分析报告</title>
 </head>
 <body>
-<div id="analReportArea" style="width:600px;height:700px;border: solid red 1px;float:left;margin-left:20px;"></div>
+<div id="analReportArea" class="borderCss" style="width:600px;height:700px;margin-left:20px;"></div>
 </body>
 <script type="text/javascript">
 $(function(){
