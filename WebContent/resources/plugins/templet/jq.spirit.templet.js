@@ -69,11 +69,7 @@
       }else if(segArray[i].content){
         var contentDiv=$("<div class='' id='title_"+segArray[i].id+"'></div>");
         var content = segArray[i].content;
-        //----------
-        //var str="1 plus 2 equal 3";alert(str.match(/\d+/g));
-        //-------
         if(content){
-          content = content.replace(/<style/g, "<div");
           content = content.replace(/s="/g, "style=\"");
           content = content.replace(/<\/style>/g, "</\div>");
           //content = content.replace(/<d/g, "<div");
@@ -103,11 +99,7 @@
         //id
         treeNode.id = treeLevel;
         //text
-        //if(segArray[i].title){
-         // treeNode.text = segArray[i].title;
-        //}else{
           if(segArray[i].name)treeNode.text = segArray[i].name;
-        //}
         //children
         treeNode.children=getTreeData(segArray[i].subSeg,treeLevel+1);
         treeData[i] = treeNode;
