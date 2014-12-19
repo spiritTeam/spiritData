@@ -315,7 +315,6 @@
   $.fn.spiritPageFrame = function(options, param) {
     //若参数一为字符串，则直接当作本插件的方法进行处理，这里的this是本插件对应的jquery选择器的选择结果
     if (typeof options=='string') return $.fn.spiritPageFrame.methods[options](this, param);
-
     return initPage(options);
   };
   //插件方法，参考eaqyUi的写法
