@@ -7,6 +7,8 @@
  */
 (function($){
   $.templetJD = function(jsonTempletObj){
+  	//
+  	var segTree;
     //默认宽高
     var defaultViewWidth = "800px;";
     var defaultViewHeight = "0px;";
@@ -41,17 +43,18 @@
     treeDiv.appendTo(mainDiv);
     mainDiv.appendTo('body');
     
-    //建立segmentGroup组
-    buildSegmentGroup(viewDiv, _TEMPLET, level);
-    catalogTree(treeDiv, _TEMPLET,level);
-  };
-  
-  function catalogTree(treeDiv,_TEMPLET,level){
-    var tree = getTreeData(_TEMPLET,level+1);
+    //建立segmentGroup组,同时生成树
+    buildSegmentGroup(viewDiv, _TEMPLET, level, this, 0);
+    //画树
+
     treeDiv.tree({animate:true});
     treeDiv.tree("loadData", tree);
   };
-  function buildSegmentGroup(jObj, segArray, treeLevel) {
+  
+  /**
+   * 画seg结构,同时生成树
+   */
+  function buildSegmentGroup(jObj, segArray, treeLevel, self, parentTreeId) {
     //判断segArray
     if(segArray==null||segArray=="") return "segArry 为空!";
     //判断eleId
@@ -59,7 +62,7 @@
     //mianDiv
     var segGroup = $("<div id='segGroup_"+treeLevel+"'/>");
     if(treeLevel!=0) segGroup.attr('class','borderCss');
-    for(var i=0; i<segArray.length; i++){
+    for (var i=0; i<segArray.length; i++) {
       var segDiv=$("<div class='' id='segLevel_"+i+"'/>");
       segGroup.append(segDiv);
       if(segArray[i].title){
@@ -80,13 +83,34 @@
       var contendEle = templetContentParse(segArray[i].content);
       segDiv.append(contendEle);
       var subSegs = segArray[i].subSeg;
-      var segDivId = segDiv.attr("id");
-      buildSegmentGroup(segDiv, subSegs, treeLevel+1);
+      //处理树
+    	var treeNode = {};
+    	if (segArray[i].name) treeNode.text = segArray[i].name;
+    	else if (segArray[i].title) {
+    		treeNode.text=$(segArray[i].title).html();
+    	}
+    	if (!treeNode.text&&treeNode.text!="") {
+      	treeNode.id = "_tree_"+segArray[i].id;
+      	treeNode.segId = segArray[i].id;
+
+      	var parent = null;
+      	if (parentTreeId==0) parent=self.segTree;
+      	else parent=findNode(self.segTree, parentTreeId);
+
+      	if (parent) parent.children[i]=treeNode;
+    	}
+      buildSegmentGroup(segDiv, subSegs, treeLevel+1, self, treeNode.id);
     }
     jObj.append(segGroup);
+    
     return segGroup;
   }
-  
+
+  function findNode(tree, id) {
+  	//??
+  	return null;
+  }
+
   function getTreeData(segArray,treeLevel){
     var treeData = new Array;
     if(segArray!=null&&segArray!=""){
@@ -95,7 +119,7 @@
           id:'',
           text:'',
           children:''
-        }
+        };
         //id
         treeNode.id = treeLevel;
         //text

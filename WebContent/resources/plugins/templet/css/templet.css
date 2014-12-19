@@ -3,3 +3,22 @@ div{width:99%;margin-left:0.4%;}
 .borderCss{border:solid 1px #E6E6E6;}
 .treeDiv{border:1px solid #E6E6E6;width:258px;float:left;margin-left:10px;margin-top:5px;}
 .viewDiv{width:400px;margin-left:20px;float:left;}
+
+/**
+ * 文档结构-第一层组
+ */
+.segGroup_0{}
+.seg_0{}
+.segTitle_0{}
+
+.segGroup_1{}
+.seg_1{}
+.segTitle_1{}
+
+.segGroup_2{}
+.seg_2{}
+.segTitle_2{}
+
+.segGroup_3{}
+.seg_3{}
+.segTitle_3{}

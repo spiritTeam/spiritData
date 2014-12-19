@@ -250,7 +250,7 @@ function uploadF() {
 
 //主函数
 $(function() {
-  var initStr = $().spiritPageFrame(INIT_PARAM);
+  var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
     $.messager.alert("页面初始化失败", initStr, "error");
     return ;
