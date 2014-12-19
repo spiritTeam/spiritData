@@ -9,6 +9,7 @@
 <script type="text/javascript" src="<%=resourcePath%>/resources/plugins/easyui-1.3.4/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="<%=resourcePath%>/resources/js/common.utils.js"></script>
 <script type="text/javascript" src="<%=resourcePath%>/resources/js/framework.utils.js"></script>
+<script type="text/javascript" src="<%=resourcePath%>/resources/js/window.utils.js"></script>
 <script>
 var _PATH = "<%=resourcePath%>";
 </script>
