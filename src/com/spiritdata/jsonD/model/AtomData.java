@@ -117,6 +117,6 @@ public class AtomData implements Serializable {
      * @throws CodeException
      */
     private void checkAttributes() throws CodeException {
-        if (this.dataName==null||this.dataName.trim().length()==0) throw new Jsond0001CException("名称不能为null或空串！");
+        if (this.dataName==null||this.dataName.trim().length()==0) throw new Jsond0001CException("名称dataName必须设置！");
     }
 }
