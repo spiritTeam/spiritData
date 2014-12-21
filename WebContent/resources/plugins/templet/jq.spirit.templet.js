@@ -7,16 +7,16 @@
  */
 (function($){
   $.templetJD = function(jsonTempletObj){
-  	//
+  	//定义变量
   	var segTree;
     //默认宽高
-    var defaultViewWidth = "800px;";
-    var defaultViewHeight = "0px;";
-    //默认高
+    var defaultViewWidth = "800px;",defaultViewHeight = "0px;";
+    //传入高和宽的值
     var viewWidth,viewHeight;
     //level
     var level=0;
     
+    //从jsonTemplet中得到参数
     var templetJD = jsonTempletObj.templetJD;
     if(jsonTempletObj.viewWidth!=""&&jsonTempletObj.viewWidth!=null) viewWidth = jsonTempletObj.viewWidth;
     else viewWidth = defaultViewWidth;
@@ -25,7 +25,7 @@
     var templetJD = jsonTempletObj.templetData;
     var _TEMPLET = templetJD._TEMPLET;
     
-    //mainDiv
+    //构建主要布局(3个div)
     var mainDiv = $('<div></div>');
     mainDiv.attr('id','mainDiv');
     mainDiv.addClass('mainClass');
@@ -36,14 +36,19 @@
     viewDiv.attr('id','viewDiv');
     viewDiv.addClass('viewDiv');
     //treeDiv
-    var treeDiv = $('<div></div>');
+    var treeView = $('<div></div>');
     treeDiv.attr('id','treeDiv');
     treeDiv.addClass('treeDiv');
     viewDiv.appendTo(mainDiv);
     treeDiv.appendTo(mainDiv);
     mainDiv.appendTo('body');
     
-    //建立segmentGroup组,同时生成树
+    /**
+     * 建立segmentGroup组,同时生成树
+     * viewDiv 
+     * _TEMPLET
+     * level
+     */
     buildSegmentGroup(viewDiv, _TEMPLET, level, this, 0);
     //画树
 
