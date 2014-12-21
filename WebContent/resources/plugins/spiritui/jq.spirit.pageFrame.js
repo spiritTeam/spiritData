@@ -289,7 +289,7 @@
 
   function initPage(options) {
     //参数合并，传入的参数和默认参数
-    var _options = $.extend(true, $.fn.spiritPageFrame.defaults, options);
+    var _options = $.extend(true, $.spiritPageFrame.defaults, options);
     if ($.trim(_options.pageObjs.mainId)=="") return "未指定主体部分Id，无法初始化页面！";
     if ($("#"+_options.pageObjs.mainId).length==0) return "无id为\""+_options.pageObjs.mainId+"\"的元素，无法初始化页面！";
     INIT_PARAM = _options;//绑定参数
@@ -312,17 +312,17 @@
   }
 
   //页面框架主函数
-  $.fn.spiritPageFrame = function(options, param) {
+  $.spiritPageFrame = function(options, param) {
     //若参数一为字符串，则直接当作本插件的方法进行处理，这里的this是本插件对应的jquery选择器的选择结果
-    if (typeof options=='string') return $.fn.spiritPageFrame.methods[options](this, param);
+    if (typeof options=='string') return $.spiritPageFrame.methods[options](this, param);
     return initPage(options);
   };
   //插件方法，参考eaqyUi的写法
-  $.fn.spiritPageFrame.methods = {
+  $.spiritPageFrame.methods = {
   };
 
   //默认属性
-  $.fn.spiritPageFrame.defaults = {
+  $.spiritPageFrame.defaults = {
     //页面中所用到的元素的id，只用到三个Div，另，这三个div应在body层
     pageObjs: {
       topId: "topSegment", //头部Id
