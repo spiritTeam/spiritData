@@ -15,8 +15,6 @@
 
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.utils.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
-<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.tabs.js"></script>
-
 <script type="text/javascript" src="<%=path%>/resources/js/mainPage.utils.js"></script>
 
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
