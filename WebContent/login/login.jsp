@@ -85,8 +85,8 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         </tr>
         <tr style="height:70px; valign:top;">
           <td colspan="3" align="center">
-            <div tabindex="4" style="width:250px; background-image:url(img/loginb.png); padding-left:0px;margin-left:-31px;">
-              <a id="login" name="login"  onclick="loginF();"><img src="img/login.png"/></a>
+            <div tabindex="4" style="width:250px; background-image:url(images/loginb.png); padding-left:0px;margin-left:-31px;">
+              <a id="login" name="login"  onclick="loginF();"><img src="images/login.png"/></a>
             </div>
           </td>
         </tr>
@@ -193,10 +193,10 @@ function validateValidateCode(eleId){
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
-      $('#vVC').append('<img id="vCImg" align="middle" src="img/accept.png">');
+      $('#vVC').append('<img id="vCImg" align="middle" src="images/accept.png">');
       vcV = true;
     }else{
-      $('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
+      $('#vVC').append('<img id="vCImg" align="middle" src="images/cross.png">');
       vcV = false;
     }
   }
@@ -219,7 +219,7 @@ function validatePassword(eleId){
     $('#pwdSpan').html('密码');
     psV = false;
   }else{
-    $('#vPW').append('<img id="pWImg" align="middle" src="img/accept.png">'); 
+    $('#vPW').append('<img id="pWImg" align="middle" src="images/accept.png">'); 
     psV = true;
   }
 }
@@ -231,7 +231,7 @@ function validateLoginName(eleId){
     ele.css('color','#ABCDEF');
     lnV = false;
   }else{
-    $('#vLN').append('<img id="lNImg" align="middle" src="img/accept.png">');
+    $('#vLN').append('<img id="lNImg" align="middle" src="images/accept.png">');
     lnV = true;
   }
 }
@@ -310,15 +310,15 @@ function loginF(){
     $('#register').attr('disabled',false);
     if(lnV==false ){
       $('#lNImg').remove();
-      $('#vLN').append('<img id="lNImg" align="middle" src="img/cross.png">');
+      $('#vLN').append('<img id="lNImg" align="middle" src="images/cross.png">');
     }
     if(psV==false){
       $('#pWImg').remove();
-      $('#vPW').append('<img id="pWImg" align="middle" src="img/cross.png">');
+      $('#vPW').append('<img id="pWImg" align="middle" src="images/cross.png">');
     } 
     if(vcV==false){
       $('#vCImg').remove();
-      $('#vVC').append('<img id="vCImg" align="middle" src="img/cross.png">');
+      $('#vVC').append('<img id="vCImg" align="middle" src="images/cross.png">');
     }
     mainPage.$.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的注册信息", 'info',function (){
       if(lnV==false){

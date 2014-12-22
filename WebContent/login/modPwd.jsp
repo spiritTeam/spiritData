@@ -93,15 +93,15 @@ function modPwd(){
   }else{
     if(lnV==false){
       $('#lnImg').remove();
-      $('#vLN').append('<img id="lnImg" align="middle" src="img/cross.png">');
+      $('#vLN').append('<img id="lnImg" align="middle" src="images/cross.png">');
     }
     if(psV==false){
       $('#pwdImg').remove();
-      $('#vPwd').append('<img id="pwdImg" align="middle" src="img/cross.png">');
+      $('#vPwd').append('<img id="pwdImg" align="middle" src="images/cross.png">');
     }
     if(cpsV==false){
       $('#cpwdImg').remove();
-      $('#vCPwd').append('<img id="cpwdImg" align="middle" src="img/cross.png">');
+      $('#vCPwd').append('<img id="cpwdImg" align="middle" src="images/cross.png">');
     }
     mainPage.$.messager.alert("提示","您还有未完善的信息!",'info',function (){
       if(lnV==false){
@@ -163,10 +163,10 @@ function validateConfirmPassword(eleId){
   }else{
     if($('#password').val()!=ele.val()){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">密码不一致!</div>');
-      $('#vCPwd').append('<img id="cpwdImg" align="middle" src="img/cross.png">');
+      $('#vCPwd').append('<img id="cpwdImg" align="middle" src="images/cross.png">');
       cpsV =false;
     }else{
-      $('#vCPwd').append('<img id="cpwdImg" align="middle" src="img/accept.png">');
+      $('#vCPwd').append('<img id="cpwdImg" align="middle" src="images/accept.png">');
       cpsV =true;
     }
   }
@@ -188,10 +188,10 @@ function validatePassword(eleId){
   }else{
     if(!checkPasswordStr(ele.val())){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">密码应是6~12位字母、数字、下划线!</div>');
-      $('#vPwd').append('<img id="pwdImg" align="middle" src="img/cross.png">');
+      $('#vPwd').append('<img id="pwdImg" align="middle" src="images/cross.png">');
       psV = false;
     }else{
-      $('#vPwd').append('<img id="pwdImg" align="middle" src="img/accept.png">');
+      $('#vPwd').append('<img id="pwdImg" align="middle" src="images/accept.png">');
       psV = true;
     }
   }
@@ -208,10 +208,10 @@ function validateLoginName(eleId){
     var vsMsg = checkLoginName(ele.val());
     if(vsMsg==true){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">该用户不存在!</div>');
-      $('#vLN').append('<img id="lnImg" align="middle" src="img/cross.png">');
+      $('#vLN').append('<img id="lnImg" align="middle" src="images/cross.png">');
       lnV = false;
     }else{
-      $('#vLN').append('<img id="lnImg" align="middle" src="img/accept.png">');
+      $('#vLN').append('<img id="lnImg" align="middle" src="images/accept.png">');
       lnV = true;
     }
   }
