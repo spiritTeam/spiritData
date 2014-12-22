@@ -3,7 +3,7 @@ package com.spiritdata.dataanal.login;
  * 激活邮箱常量
  * @author admi
  */
-public class ActiveMailConstants {
+public class LoginConstants {
     /*
      * MAIL_SMTP_HOST，只有发件人才用，目标邮箱没有，例如qq邮箱就是smtp.qq.com，
      * 网易163邮箱就是smtp.163.com,由于是发件箱邮箱的smtp,如果mailName变成163，
@@ -15,5 +15,7 @@ public class ActiveMailConstants {
     //邮箱密码
     public final static String HOST_MAIL_PASSWORD="MHTloveLJJ1314";
     //是否打印dug信息
-    public final static boolean HOST_MAIL_DEBUG=true;
+    public final static boolean HOST_MAIL_DEBUG=false;
+    //激活修改密码邮件请求地址
+    public final static String ACTIVE_MODIFY_PASSWORD_REQUEST="/login/activeModifyPasswordRequest.do";
 }

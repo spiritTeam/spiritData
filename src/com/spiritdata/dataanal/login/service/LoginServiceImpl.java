@@ -21,6 +21,16 @@ public class LoginServiceImpl implements LoginService {
     private BasicDataSource dataSource;
     @Override
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
+    	System.out.println(request.getRequestURL());
+    	System.out.println(request.getRequestURI());
+    	System.out.println(request.getLocalAddr());
+    	System.out.println(request.getLocalPort());
+    	System.out.println(request.getContextPath());
+    	System.out.println(request.getRemoteHost());
+    	System.out.println(request.getServerName());
+    	System.out.println(request.getPathInfo());
+    	System.out.println(request.getServletPath());
+    	System.out.println(request.getServerPort());
 //        try {
 //            Thread.sleep(10000);
 //        } catch (InterruptedException e) {

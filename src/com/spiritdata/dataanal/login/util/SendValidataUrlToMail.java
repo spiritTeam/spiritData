@@ -12,13 +12,13 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import com.spiritdata.dataanal.login.ActiveMailConstants;
+import com.spiritdata.dataanal.login.LoginConstants;
 
 public class SendValidataUrlToMail {
-    private  String host = ActiveMailConstants.HOST_MAIL_SMTP;
-    private String mailName = ActiveMailConstants.HOST_MAIL_NAME.substring(0,ActiveMailConstants.HOST_MAIL_NAME.lastIndexOf("@"));
-    private String password = ActiveMailConstants.HOST_MAIL_PASSWORD;
-    private  boolean debug = ActiveMailConstants.HOST_MAIL_DEBUG;
+    private  String host = LoginConstants.HOST_MAIL_SMTP;
+    private String mailName = LoginConstants.HOST_MAIL_NAME.substring(0,LoginConstants.HOST_MAIL_NAME.lastIndexOf("@"));
+    private String password = LoginConstants.HOST_MAIL_PASSWORD;
+    private  boolean debug = LoginConstants.HOST_MAIL_DEBUG;
     public void send(String targetMail, String msgTitle, String msgText) {
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
@@ -31,7 +31,7 @@ public class SendValidataUrlToMail {
         session.setDebug(debug);
         try {
             MimeMessage msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(ActiveMailConstants.HOST_MAIL_NAME));
+            msg.setFrom(new InternetAddress(LoginConstants.HOST_MAIL_NAME));
             InternetAddress[] address = { new InternetAddress(targetMail) };
             msg.setRecipients(Message.RecipientType.TO, address);
             msg.setSubject(msgTitle);

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
+import com.spiritdata.dataanal.login.LoginConstants;
 import com.spiritdata.dataanal.login.util.RandomValidateCode;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
 import com.spiritdata.dataanal.util.SequenceUUID;
@@ -24,15 +25,25 @@ import com.spiritdata.dataanal.util.SequenceUUID;
 public class RegisterController {
     @Resource
     private UserService userService;
+    /**
+     * 发送重设密码的验证邮件
+     * @param request
+     * @return
+     */
     @RequestMapping(value="/login/sendBackPwdMail.do")
-    public @ResponseBody Map<String,Object> sendBackPwdMail(HttpServletRequest req){
+    public @ResponseBody Map<String,Object> sendBackPwdMail(HttpServletRequest request){
         Map<String,Object> retMap = new HashMap<String,Object>();
-        String loginName = req.getParameter("loginName");
+        String loginName = request.getParameter("loginName");
         User user = userService.getUserByLoginName(loginName);
         String validatsaSequence = SequenceUUID.getPureUUID();
         user.setValidataSequence(validatsaSequence);
-        String url = "请前往以下地址修改密码\n"
-                + " http://localhost:8080/sa/login/activePwdMail.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+        //发布名
+        String deployName = request.getContextPath();
+        int  serverPort = request.getServerPort();
+        //serverming
+    	String serverName = request.getServerName();
+    	//验证url=serverName+deployName+servletPath
+        String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+"/"+deployName+LoginConstants.ACTIVE_MODIFY_PASSWORD_REQUEST+"?authCode="+user.getUserId()+"~"+validatsaSequence;
         SendValidataUrlToMail svu = new SendValidataUrlToMail();
         svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
         userService.updateUser(user);
@@ -40,7 +51,14 @@ public class RegisterController {
         retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请注意查看!");
         return retMap;
     }
-    @RequestMapping("login/activePwdMail.do")
+    /**
+     * 接收验证邮件,如果找到用户，并且验证信息正确，
+     * 转发到修改页面。
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("login/activeModifyPasswordRequest.do")
     public @ResponseBody Map<String,Object> activePwdMail(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String authCode = request.getParameter("authCode");
@@ -64,7 +82,9 @@ public class RegisterController {
                 userService.updateUser(user);
                 response.setContentType("text/html; charset=gb2312");
                 try {
-                    response.sendRedirect("/sa/login/modPwd.jsp?modType=2");
+                	String deployName = request.getContextPath();
+                	String redirectUrl = deployName+"/login/modPwd.jsp?modType=2&userName="+user.getUserName();
+                    response.sendRedirect(redirectUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -7,7 +7,8 @@
   String modType = request.getParameter("modType");
   User user = ((User)session.getAttribute(FConstants.SESSION_USER));
   String loginName = "";
-  if (user!=null) loginName = user.getLoginName();
+  loginName = request.getParameter("userName");
+  //if (user!=null) loginName = user.getLoginName();
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -70,6 +71,7 @@
 var mainPage=getMainPage();
 var modType=<%=modType%>,psV=false,lnV=false,cpsV=false;
 var loginName = '<%=loginName%>';
+alert(loginName);
 function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
 }
