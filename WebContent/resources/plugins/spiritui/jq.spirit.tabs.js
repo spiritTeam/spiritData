@@ -11,6 +11,31 @@
  */
  
 (function($) {
+  //默认属性
+  var defaults = {
+    id: null,           //标识
+    mutualType: false,  //两页标签的交互区域的处理模式，若为false，则无交互区域，用css处理交互，若为true则有交互区域，交互用图片来处理
+    mutualStyle: {       //交互区样式，当mutualType=true生效
+      width: "10px",     //交互区宽度
+      firstCss:"",       //最左边未选中交互区样式，要是json格式的
+      firstSelCss:"",    //最左边选中交互区样式，要是json格式的
+      lastCss:"",        //最右边未选中交互区样式，要是json格式的
+      lastSelCss:"",     //最右边选中交互区样式，要是json格式的
+      middleLCss:"",     //中间未选中左交互区样式，要是json格式的
+      middleRCss:"",     //中间未选中右交互区样式，要是json格式的
+      middleSelLCss:"",  //中间选中左交互区样式，要是json格式的
+      middleSelRCss:""   //中间未选中右交互区样式，要是json格式的
+    },
+    defaultTab: {        //默认的页签规则，若每个页标签不设定自己的规则，则所有页签的规则以此为准
+      maxTextLength: 100,//最大宽度:大于此值,遮罩主
+      normalCss: "",     //常态css样式(未选中，鼠标未悬停)，可包括边框/字体/背景，注意，要是json格式的
+      mouseOverCss: "",  //鼠标悬停样式，可包括边框/字体/背景，注意，要是json格式的
+      selCss: ""         //选中后样式，可包括边框/字体/背景，注意，要是json格式的
+    },
+    tabs:[], //页标签数组
+    onClick:function(title, tabOpts, tabDomObj){}
+  };
+
   /**
    * 生成UUID，默认为36位
    */
@@ -78,13 +103,13 @@
             if (count>=5) uId=t+getUuid(3);
             aTab.id=uId;
           }
-          aTab=$.extend(true, {}, $.fn.spiritTabs.defaults.defaultTab, _options?(_options.defaultTab?_options.defaultTab:null):null, options.defaultTab, aTab);
+          aTab=$.extend(true, {}, defaults.defaultTab, _options?(_options.defaultTab?_options.defaultTab:null):null, options.defaultTab, aTab);
           newTabs[olen]=aTab;
           olen++;
         }
       }
     }
-    _options = _options?$.extend(true, {}, _options, options):$.extend(true, {}, $.fn.spiritTabs.defaults, options);
+    _options = _options?$.extend(true, {}, _options, options):$.extend(true, {}, defaults, options);
     _options.tabs=newTabs;
     _options.container=_options.container?$.extend(true, {}, _options.container, options.container):options.container;
     //绑定变量
@@ -300,34 +325,9 @@
   $.fn.spiritTabs.methods = {
       	
   };
-
-  //默认属性
-  $.fn.spiritTabs.defaults = {
-    id: null,           //标识
-    mutualType: false,  //两页标签的交互区域的处理模式，若为false，则无交互区域，用css处理交互，若为true则有交互区域，交互用图片来处理
-    mutualStyle: {       //交互区样式，当mutualType=true生效
-      width: "10px",     //交互区宽度
-      firstCss:"",       //最左边未选中交互区样式，要是json格式的
-      firstSelCss:"",    //最左边选中交互区样式，要是json格式的
-      lastCss:"",        //最右边未选中交互区样式，要是json格式的
-      lastSelCss:"",     //最右边选中交互区样式，要是json格式的
-      middleLCss:"",     //中间未选中左交互区样式，要是json格式的
-      middleRCss:"",     //中间未选中右交互区样式，要是json格式的
-      middleSelLCss:"",  //中间选中左交互区样式，要是json格式的
-      middleSelRCss:""   //中间未选中右交互区样式，要是json格式的
-    },
-    defaultTab: {        //默认的页签规则，若每个页标签不设定自己的规则，则所有页签的规则以此为准
-      maxTextLength: 100,//最大宽度:大于此值,遮罩主
-      normalCss: "",     //常态css样式(未选中，鼠标未悬停)，可包括边框/字体/背景，注意，要是json格式的
-      mouseOverCss: "",  //鼠标悬停样式，可包括边框/字体/背景，注意，要是json格式的
-      selCss: ""         //选中后样式，可包括边框/字体/背景，注意，要是json格式的
-    },
-    tabs:[], //页标签数组
-    onClick:function(title, tabOpts, tabDomObj){}
-  };
 })(jQuery);
 /**
-  $.fn.spiritTabs.defaults = {
+  defaults = {
     id: null,           //标识
     container: {        //容器
       styleCss: {},     //容器样式，要是json格式的
