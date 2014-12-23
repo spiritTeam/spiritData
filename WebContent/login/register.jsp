@@ -75,8 +75,8 @@
         <tr>
           <td colspan="3" align="left" style="height:50px;padding-top:10px;" valign="top">
             <div style="width:5px;height:5px;"></div>
-            <div tabindex="6" id="commitButton" style="background-image:url(img/registerb.png);">
-              <a id="register" name="register" onclick="saveRegister();" href="#"><img src="img/register.png"/></a>
+            <div tabindex="6" id="commitButton" style="background-image:url(images/registerb.png);">
+              <a id="register" name="register" onclick="saveRegister();" href="#"><img src="images/register.png"/></a>
             </div>
           </td>
         </tr>
@@ -141,23 +141,23 @@ function saveRegister(){
     $('#register').attr("disabled",false); 
     if(lnV==false) {
       $('#lnImg').remove();
-      $('#vLN').append('<img id="lnImg" align="middle" src="img/cross.png">');
+      $('#vLN').append('<img id="lnImg" align="middle" src="images/cross.png">');
     }
     if(cpsV==false){
       $('#cpwdImg').remove();
-      $('#vCPwd').append('<img id="cpwdImg" align="middle" src="img/cross.png">');
+      $('#vCPwd').append('<img id="cpwdImg" align="middle" src="images/cross.png">');
     }
     if(maV==false){
       $('#mailImg').remove();
-      $('#vMail').append('<img id="mailImg" align="middle" src="img/cross.png">');
+      $('#vMail').append('<img id="mailImg" align="middle" src="images/cross.png">');
     }
     if(psV==false){
       $('#pwdImg').remove();
-      $('#vPwd').append('<img id="pwdImg" align="middle" src="img/cross.png">');
+      $('#vPwd').append('<img id="pwdImg" align="middle" src="images/cross.png">');
     } 
     if(vcV==false){
       $('#vcImg').remove();
-      $('#vVC').append('<img id="vcImg" align="middle" src="img/cross.png">');
+      $('#vVC').append('<img id="vcImg" align="middle" src="images/cross.png">');
     } 
     $.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息",'info',function () {
       if(lnV==false){
@@ -239,7 +239,7 @@ $(function(){
     $('#checkCode').css('color','#ABCDEF');
   }
   $('#mailEndStr').combobox({    
-    url:'mailEndStr.json',   
+    url:'<%=path%>/login/js/mailAdress.json',   
     valueField:'id',   
     textField:'text',
     height:37,
@@ -264,10 +264,10 @@ function validatePassword(eleId){
   }else{
     if(!checkPasswordStr(ele.val())){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;密码应是5~12位的字母、数字、下划线!</div>');
-      $('#vPwd').append('<img id="pwdImg" align="middle" src="img/cross.png">');
+      $('#vPwd').append('<img id="pwdImg" align="middle" src="images/cross.png">');
       psV = false;
     }else{
-      $('#vPwd').append('<img id="pwdImg" align="middle" src="img/accept.png">');
+      $('#vPwd').append('<img id="pwdImg" align="middle" src="images/accept.png">');
       psV = true;
     }
   }
@@ -284,15 +284,15 @@ function validateLoginName(eleId){
     if(checkStr(ele.val())){
       var vsMsg = checkLoginName(ele.val());
       if(vsMsg==true){
-        $('#vLN').append('<img id="lnImg" src="img/accept.png">');
+        $('#vLN').append('<img id="lnImg" src="images/accept.png">');
         lnV = true;
       }else{
-        $('#vLN').append('<img id="lnImg" src="img/cross.png">');
+        $('#vLN').append('<img id="lnImg" src="images/cross.png">');
         $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;该登录名已被使用!</div>');
         lnV = false;
       }
     }else{
-      $('#vLN').append('<img id="lnImg" src="img/cross.png">');
+      $('#vLN').append('<img id="lnImg" src="images/cross.png">');
       $('#checkResult').html('<div style="width:370;height:40px; font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;账号应为5~11位字母、数字、下划线!</div>');
       lnV = false;
     }
@@ -306,11 +306,11 @@ function validateConfirmPassword(eleId){
     cpsV =false;
   }else{
     if($('#password').val()!=ele.val()){
-      $('#vCPwd').append('<img id="cpwdImg" src="img/cross.png">');
+      $('#vCPwd').append('<img id="cpwdImg" src="images/cross.png">');
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;密码不一致!</div>');
       cpsV =false;
     }else{
-      $('#vCPwd').append('<img id="cpwdImg" src="img/accept.png">');
+      $('#vCPwd').append('<img id="cpwdImg" src="images/accept.png">');
       cpsV =true;
     }
   }
@@ -330,10 +330,10 @@ function validateMail(eleId,index){
     else  mailStr = ele.val() +$('#mailEndStr').combobox('getText');
     var vsMsg = checkMail(mailStr);
     if(vsMsg==true){
-      $('#vMail').append('<img style="padding-left:5px;" id="mailImg" src="img/accept.png">');
+      $('#vMail').append('<img style="padding-left:5px;" id="mailImg" src="images/accept.png">');
       maV = true;
     }else{
-      $('#vMail').append('<img style="padding-left:5px;" id="mailImg" src="img/cross.png">');
+      $('#vMail').append('<img style="padding-left:5px;" id="mailImg" src="images/cross.png">');
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;该邮箱已被注册!</div>');
       maV = false;
     }
@@ -350,10 +350,10 @@ function validateValidateCode(eleId){
   }else{
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
-      $("#vVC").append('<img style="padding-left:5px;" id="vcImg" src="img/accept.png">');
+      $("#vVC").append('<img style="padding-left:5px;" id="vcImg" src="images/accept.png">');
       vcV = true;
     }else{
-      $("#vVC").append('<img style="padding-left:5px;" id="vcImg" src="img/cross.png">');
+      $("#vVC").append('<img style="padding-left:5px;" id="vcImg" src="images/cross.png">');
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;验证码错误!</div>');
       vcV = false;
     }

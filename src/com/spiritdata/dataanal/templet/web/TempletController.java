@@ -18,7 +18,6 @@ import com.spiritdata.dataanal.templet.service.TempletService;
 public class TempletController {
     @Resource
     private TempletService templetService;
-
     @RequestMapping(value="/templet/getTemplet.do")
     @ResponseBody
     public String getTemplet(HttpServletRequest request, HttpServletResponse response) {

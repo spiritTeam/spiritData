@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
+import com.spiritdata.dataanal.login.LoginConstants;
 import com.spiritdata.dataanal.login.util.RandomValidateCode;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
 import com.spiritdata.dataanal.util.SequenceUUID;
@@ -24,15 +25,26 @@ import com.spiritdata.dataanal.util.SequenceUUID;
 public class RegisterController {
     @Resource
     private UserService userService;
+    /**
+     * 发送重设密码的验证邮件
+     * @param request
+     * @return
+     */
     @RequestMapping(value="/login/sendBackPwdMail.do")
-    public @ResponseBody Map<String,Object> sendBackPwdMail(HttpServletRequest req){
+    public @ResponseBody Map<String,Object> sendBackPwdMail(HttpServletRequest request){
         Map<String,Object> retMap = new HashMap<String,Object>();
-        String loginName = req.getParameter("loginName");
+        String loginName = request.getParameter("loginName");
         User user = userService.getUserByLoginName(loginName);
         String validatsaSequence = SequenceUUID.getPureUUID();
         user.setValidataSequence(validatsaSequence);
-        String url = "请前往以下地址修改密码\n"
-                + " http://localhost:8080/sa/login/activePwdMail.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+        //发布名
+        String deployName = request.getContextPath();
+        //serverPort
+        int  serverPort = request.getServerPort();
+        //serverName
+    	String serverName = request.getServerName();
+    	//验证url=serverName+deployName+servletPath
+        String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+LoginConstants.ACTIVE_MODIFY_PASSWORD_REQUEST+"?authCode="+user.getUserId()+"~"+validatsaSequence;
         SendValidataUrlToMail svu = new SendValidataUrlToMail();
         svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
         userService.updateUser(user);
@@ -40,7 +52,14 @@ public class RegisterController {
         retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请注意查看!");
         return retMap;
     }
-    @RequestMapping("login/activePwdMail.do")
+    /**
+     * 接收验证邮件,如果找到用户，并且验证信息正确，
+     * 转发到修改页面。
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("login/activeModifyPasswordRequest.do")
     public @ResponseBody Map<String,Object> activePwdMail(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String authCode = request.getParameter("authCode");
@@ -64,7 +83,9 @@ public class RegisterController {
                 userService.updateUser(user);
                 response.setContentType("text/html; charset=gb2312");
                 try {
-                    response.sendRedirect("/sa/login/modPwd.jsp?modType=2");
+                	String deployName = request.getContextPath();
+                	String redirectUrl = deployName+"/login/modPwd.jsp?modType=2&userName="+user.getUserName();
+                    response.sendRedirect(redirectUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -75,6 +96,11 @@ public class RegisterController {
         }
         return retMap;
     }
+    /**
+     * 修改密码
+     * @param req
+     * @return
+     */
     @RequestMapping(value="/login/modifyPwd.do")
     public @ResponseBody boolean modifyPwd(HttpServletRequest req){
         HttpSession session =req.getSession();
@@ -88,6 +114,9 @@ public class RegisterController {
             return false;
         }
     }
+    /**
+     * 从新发送激活邮件
+     */
     @RequestMapping("login/activeAgain.do")
     public @ResponseBody Map<String,Object> sendAgain(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
@@ -102,10 +131,16 @@ public class RegisterController {
                 retMap.put("success", true);
                 retMap.put("retInfo", "该账号已经激活啦");
             }else{
+            	//发布名
+                String deployName = request.getContextPath();
+                //serverPort
+                int  serverPort = request.getServerPort();
+                //serverName
+            	String serverName = request.getServerName();
+            	//验证url=serverName+deployName+servletPath
                 String validatsaSequence = SequenceUUID.getPureUUID();
                 user.setValidataSequence(validatsaSequence);
-                String url = "请前往以下地址激活账号\n"
-                        + " http://localhost:8080/sa/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+                String url = "请前往以下地址激活账号\n"+serverName+":"+serverPort+deployName+"/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
                 SendValidataUrlToMail svu = new SendValidataUrlToMail();
                 svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
                 userService.updateUser(user);
@@ -222,6 +257,7 @@ public class RegisterController {
         }
     }
     /**
+     * 注册，
      * @param request
      * @param response
      * @return
@@ -233,6 +269,7 @@ public class RegisterController {
         String password = request.getParameter("password");
         String userName = request.getParameter("userName");
         String mailAdress = request.getParameter("mailAdress");
+        String validatsaSequence = SequenceUUID.getPureUUID();
         User user  = new User();
         user.setLoginName(loginName);
         user.setPassword(password);
@@ -240,25 +277,25 @@ public class RegisterController {
         user.setUserName(userName);
         user.setUserId(SequenceUUID.getPureUUID());
         user.setUserState(0);
+        user.setUserType(1);
+        user.setValidataSequence(validatsaSequence);
         int rst = userService.insertUser(user);
         if(rst==1){
-            String validatsaSequence = SequenceUUID.getPureUUID();
-            user.setValidataSequence(validatsaSequence);
-            //1代表以发验证到邮箱验证，用户为验证
-            user.setUserState(0);
+            String deployName = request.getContextPath();
+            int  serverPort = request.getServerPort();
+        	String serverName = request.getServerName();
             String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
-                    + " http://localhost:8080/sa/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
-            SendValidataUrlToMail svu = new SendValidataUrlToMail();
-            svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
-            int r = userService.updateUser(user);
-            if(r==1){
-                retMap.put("success", true);
-                retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请激活账号");
-                return retMap; 
-            }else{
-                retMap.put("success", false);
-                retMap.put("retInfo", "发送不成功，请重试");
-                return retMap; 
+                    + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+            try{
+            	 SendValidataUrlToMail svu = new SendValidataUrlToMail();
+                 svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
+                 retMap.put("success", true);
+                 retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请激活账号");
+                 return retMap; 
+            }catch(Exception e){
+            	 retMap.put("success", false);
+                 retMap.put("retInfo", "发送不成功，请重试");
+                 return retMap; 
             }
         }else{
             retMap.put("success", false);

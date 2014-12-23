@@ -84,7 +84,7 @@ function sendBackPwdMail(){
     });
   }else{
     $.messager.alert('提示','您的账号填写有误!');
-    $('#vLN').append('<img id="lnImg" align="middle" src="../img/cross.png">');
+    $('#vLN').append('<img id="lnImg" align="middle" src="<%=path%>/login/images/cross.png">');
     $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;登录名错误!</div>');
   }
   $('#sendButton').attr('disabled',false);
@@ -107,10 +107,10 @@ function validateLoginName(eleId){
     var vsMsg = checkLoginName(ele.val());
     if(vsMsg==true){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;你输入的用户名有误！</div>');
-      $('#vLN').append('<img id="lnImg" align="middle" src="../img/cross.png">');
+      $('#vLN').append('<img id="lnImg" align="middle" src="<%=path%>/login/images/cross.png">');
       lnV = false;
     }else{
-      $('#vLN').append('<img id="lnImg" align="middle" src="../img/accept.png">');
+      $('#vLN').append('<img id="lnImg" align="middle" src="<%=path%>/login/images/accept.png">');
       lnV = true;
     }
   }

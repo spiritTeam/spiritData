@@ -37,10 +37,10 @@
     viewDiv.addClass('viewDiv');
     //treeDiv
     var treeView = $('<div></div>');
-    treeDiv.attr('id','treeDiv');
-    treeDiv.addClass('treeDiv');
+    treeView.attr('id','treeView');
+    treeView.addClass('treeView');
     viewDiv.appendTo(mainDiv);
-    treeDiv.appendTo(mainDiv);
+    treeView.appendTo(mainDiv);
     mainDiv.appendTo('body');
     
     /**
@@ -50,10 +50,10 @@
      * level
      */
     buildSegmentGroup(viewDiv, _TEMPLET, level, this, 0);
+    
     //画树
-
-    treeDiv.tree({animate:true});
-    treeDiv.tree("loadData", tree);
+    treeView.tree({animate:true});
+    treeView.tree("loadData", tree);
   };
   
   /**
@@ -107,7 +107,6 @@
       buildSegmentGroup(segDiv, subSegs, treeLevel+1, self, treeNode.id);
     }
     jObj.append(segGroup);
-    
     return segGroup;
   }
 
