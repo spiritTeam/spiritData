@@ -145,7 +145,8 @@
   <div style="float:right;">
     <div ><%=sid %>||<a id="loginButton" onclick="login();" href="#">登录</a>
       <a id="logoutButton" onclick="logout();" href="#">注销</a>
-      <a id="modPwdButton" onclick="modPwd();" href="#" >修改密码</a>
+      <a id="modifyPwdButton" onclick="modifyPwd();" href="#" >修改密码</a>
+      <a id="" onclick="register()" href="#">注册</a>
       <a id="test" onclick="testW();" href="#" >窗口测试</a>
       <input id="loginStatus" type="hidden" value="">
     </div>
@@ -569,27 +570,50 @@ function logout() {
     }
   });
 };
-function modPwd(){
+var wHeight = "500";
+var wWidth = "400";
+/**
+ * 注册
+ */
+function register(){
   var loginStatus = $('#loginStatus').val();
-  var _url;
-  if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modPwd.jsp?modType=1";
-  else _url="<%=path%>/login/forgotpassword.jsp";
+  var _url ="<%=path%>/login/register.jsp";
   var winOption={
     url:_url,
-    title:"修改密码",
-    height:"500",
-    width:"800",
+    title:"注册",
+    height:wHeight,
+    width:wWidth,
     modal:true
   };
   openWin(winOption);
 }
+/**
+ * 修改
+ */
+function modifyPwd(){
+  var loginStatus = $('#loginStatus').val();
+  var _url;
+  if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modifyPwd.jsp?modType=1";
+  else _url="<%=path%>/login/forgotpassword.jsp";
+  var winOption={
+    url:_url,
+    title:"修改密码",
+    height:wHeight,
+    width:wWidth,
+    modal:true
+  };
+  openWin(winOption);
+}
+/*
+ * 登陆
+ */
 function login(){
   var _url="<%=path%>/login/login.jsp?";
   var winOption={
     url:_url,
     title:"登陆",
-    height:"500",
-    width:"800",
+    height:wHeight,
+    width:wWidth,
     modal:true
   };
   openWin(winOption);
