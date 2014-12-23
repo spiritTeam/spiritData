@@ -146,6 +146,7 @@
     <div ><%=sid %>||<a id="loginButton" onclick="login();" href="#">登录</a>
       <a id="logoutButton" onclick="logout();" href="#">注销</a>
       <a id="modPwdButton" onclick="modPwd();" href="#" >修改密码</a>
+      <a id="test" onclick="testW();" href="#" >窗口测试</a>
       <input id="loginStatus" type="hidden" value="">
     </div>
   </div>
@@ -178,6 +179,7 @@
 <iframe id="tframe" name="tframe" bordercolor=red frameborder="yes" border=1 width="600" height="200" style="width:600px;heigth:200px; boder:1px solid red;display:none;"></iframe>
 
 <script>
+
 //提示信息
 var _promptMessage="点击选择分析的文件";
 var analysizeing=false;
@@ -264,6 +266,7 @@ $(function() {
   }).mouseout(function(){
     $(this).css({"color":"white", "background-color":"#36B148"});
   });
+  alert($.spiritPageFrame.defaults.top_height);
 });
 
 //初始化界面
@@ -590,6 +593,14 @@ function login(){
     modal:true
   };
   openWin(winOption);
+}
+
+/**
+ * 测试
+ */
+function testW() {
+  newSWin({height:"300px", width:"400px"});
+  //  newSWin();
 }
 </script>
 </body>

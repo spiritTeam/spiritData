@@ -2,9 +2,8 @@
  * 打开windows的数组
  */
 var winArray = [];
-var winSArray = [];
-var _Zindex = 1000;
-var winMask = null;
+var sWinArray = [];
+var _zIndex = 10000;
 
 /**
  * 得到窗口的ID
@@ -122,12 +121,49 @@ function newWin(winOption) {
   return _uuid;
 }
 
+/**
+ * 关闭并销毁easyUi窗口
+ * @param winId easyUi窗口的ID
+ */
+function closeWin(winId) {
+	var find = false;
+  $(winArray).each(function(){
+    if (this.winID==winId) {
+      this.winOBJ.window('close');
+      return ;
+    }
+  });
+  if (!find) {
+    $.messager.alert('未找到Id='+winId+'的窗口，无法关闭!','error');
+  }
+}
 
 /**
- * 创建并打开简单模态窗口
+ * 根据winId得到easyUi窗口
+ * @param winId easyUi窗口的ID
+ */
+function getWin(winId) {
+  var ret=null;
+  $(winArray).each(function(){
+    if (this.winID==winId) {
+      ret = this.winOBJ;
+      return ;
+    }
+  });
+  if (!ret) {
+    $.messager.alert('未找到Id='+winId+'的窗口，无法关闭!','error');
+    return null;
+  } else {
+    return ret;
+  }
+}
+
+/**
+ * 创建并打开简单模态窗口，注意这里总是模态窗口
  * @param winOption是一个js对象，目前支持如下参数
  * winOption.title 窗口标题
  * winOption.url 窗口内嵌的iframe的url
+ * winOption.content 窗口内的html内容，其与url属性是互斥的，但url的优先级更高
  * winOption.height 窗口高度
  * winOption.width 窗口宽度
  * winOption.minButton 最小化窗口按钮是否显示
@@ -138,101 +174,38 @@ function newSWin(winOption) {
   if (!winOption) {
     $.messager.alert('新建窗口错误','请指定窗口参数!','error');
     return ;
-  } else {
-    if (!winOption.url) {
-      $.messager.alert('新建窗口错误','窗口参数url必须指定!','error');
-      return ;
-    }
   }
-  //得到UUID
-  var _uuid = getWinUUID();
-  if (!_uuid) return;
-  //遮罩
-  if (winMask==null) {
-  	winMask=window.document.createElement("div");
-    $(winMask).appendTo($("body"));
-  }
-  $(winMask).css({
-  	width:$(window).width(),
-    height:$(window).height(),
-    top:0,
-    left:0,
-    border:"solid 0px",
-    position:"absolute",
-    "background-color": "#EBEBEB",
-    zIndex:_Zindex++,
-    display:"none",
-    "filter":"alpha(opacity=70)",
-    "-moz-opacity":"0.7",
-    "opacity":"0.7"
-  }).attr("id", "winMask");
-  $(winMask).show();
-
-  //在顶层窗口创建对象
-  var newWinDiv = window.document.createElement("div");
-  var newWin = window.document.createElement("iframe");
-  $(newWin).attr("width", winOption.width?winOption.width:400).attr("height", winOption.height?winOption.height:300)
-    .attr("scrolling", "auto")
-    .attr("frameborder", "no")
-    .attr("src", winOption.url.indexOf("?")==-1?winOption.url+"?_winID="+_uuid:winOption.url+"&_winID="+_uuid);
-  if (winOption.expandAttr) {
-    if (winOption.expandAttr.frameID) $(newWin).attr("id", winOption.expandAttr.frameID);
-  }
-  $(newWin).appendTo($(newWinDiv));
-  var top = ($(window).height() - parseInt(winOption.height?winOption.height:0))*0.5;
-  if (winOption.top&&winOption.top!=""&&((parseInt(winOption.top)+"")!="NaN")) top=parseInt(winOption.top);
-  var left = ($(window).width() - parseInt(winOption.width?winOption.width:0))*0.5;
-  if (winOption.left&&winOption.left!=""&&((parseInt(winOption.left)+"")!="NaN")) left=parseInt(winOption.left);
-  $(newWinDiv).css({
-    width: parseInt(winOption.width?winOption.width:400),
-    height: parseInt(winOption.height?winOption.height:300),
-    top: top,
-    left: left,
-    border: "solid 1px #36B148",
-    position:"absolute",
-    zIndex:_Zindex++,
-    display:"none"
-  }).attr("id", _uuid);
-  //按钮调整
-  //最小化按钮
-  var btnBar = window.document.createElement("div");
-  $(btnBar).appendTo($(newWinDiv));
-  $(btnBar).css({
-  	border: "solid 1px red",
-    position:"absolute",
-  	width: 80,
-  	height: 40,
-  	left:900,
-  	top:0
-  });
-//  $(btnBar).hide();
-  if (winOption.expandAttr) $(newWinDiv).expandAttr = winOption.expandAttr;
-  $(newWinDiv).attr("winID", _uuid);
-  $(newWinDiv).appendTo($("body"));
-  $(newWinDiv).show();
-  //全局变量处理
-  winArray.push({"winID": _uuid, "winOBJ": $(newWinDiv)});
+  _zIndex = _zIndex+2;
+  winOption.zIndex = _zIndex;
+  var newSWin = $.spiritSimpleWin(winOption);
+  var _uuid = newSWin.getId();
+  sWinArray.push({"winID": _uuid, "winOBJ": newSWin});
+  newSWin.open();
   return _uuid;
 }
 
 /**
- * 关闭并销毁窗口
- * @param winId 窗口的ID
+ * 关闭并销毁简单模态窗口
+ * @param winId 简单模态窗口的ID
  */
-function closeWin(winId) {
+function closeSWin(winId) {
+	var find = false;
   $(winArray).each(function(){
     if (this.winID==winId) {
-      this.winOBJ.window('close');
+      this.close();
       return ;
     }
   });
+  if (!find) {
+    $.messager.alert('未找到Id='+winId+'的窗口，无法关闭!','error');
+  }
 }
 
 /**
- * 得到窗口jquery对象
- * @param winId 窗口的ID
+ * 根据winId得到简单模态窗口
+ * @param winId 简单模态窗口的ID
  */
-function getWin(winId) {
+function getSWin(winId) {
   var ret=null;
   $(winArray).each(function(){
     if (this.winID==winId) {
@@ -240,5 +213,12 @@ function getWin(winId) {
       return ;
     }
   });
-  return ret;
+  if (!ret) {
+    $.messager.alert('未找到Id='+winId+'的窗口，无法关闭!','error');
+    return null;
+  } else {
+    return ret;
+  }
 }
+
+//$(window).resize(_resizeTimeout);
