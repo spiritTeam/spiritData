@@ -75,10 +75,10 @@ function sendBackPwdMail(){
     };
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json) {
-        if(json){
-          $.messager.alert('提示','已发送验证信息到注册邮箱,请登录到邮箱查看!');
+        if(json.success){
+          $.messager.alert('提示',json.retInfo,'info');
         }else{
-          $.messager.alert('提示','发送失败,请重试!');
+          $.messager.alert('提示',json.retInfo,'info');
         }
       }
     });
