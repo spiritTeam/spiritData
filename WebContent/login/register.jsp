@@ -122,18 +122,20 @@ function saveRegister(){
     var url="<%=path%>/login/register.do";
     $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
       success:function(json) {
-        vfMsg = json;
-        if(vfMsg){
+        if(json.success){
+        	alert(json.retInfo);
+        	return;
           $.messager.show({
             title:'注册提示',
-            msg:'消息将在3秒后跳转到登录页面!',
+            msg:json.retInfo+'页面将在3秒后跳转到登录页面!',
             timeout:3000,
             showType:'slide'
           });
           jumpLogin();
           $('#register').attr("disabled",false); 
         }else{
-          alert(vfMsg);
+          $.messager.alert('提示',json.retInfo,'info');
+          $('#register').attr("disabled",false);
         }
       }
     });

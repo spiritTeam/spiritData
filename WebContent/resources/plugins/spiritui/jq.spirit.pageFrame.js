@@ -19,6 +19,27 @@
   var INIT_PARAM={};//初始化参数
   var _bv = getBrowserVersion();
   var _ie8H1=1, _ie8H2=2, _ie8W1=1, _ie8W2=2;
+  //默认属性
+  var defaults = {
+    //页面中所用到的元素的id，只用到三个Div，另，这三个div应在body层
+    pageObjs: {
+      topId: "topSegment", //头部Id
+      mainId: "mainSegment", //主体Id
+      footId: "footSegment" //尾部Id
+    },
+
+    page_width: 0, //主页面的宽度。<0：宽度不控制；0：宽度自适应；>0：宽度值，页面定宽
+    page_height: 0, //主页面的高度。<0：高度不控制；0：高度自适应；>0：高度值，页面定高
+
+    top_height: 120, //顶部高度
+    top_shadow_color: null, //头部阴影颜色
+    foot_height: 40, //脚部高度
+
+    top_peg: false, //是否钉住头部在顶端。false：顶部随垂直滚动条移动(浮动)；true：顶部钉在顶端
+    foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
+
+    iframe_height_flag: 1 //具体功能区域（可能是整个中部，也可能是带左侧导航的中部）的iframe高度标志。1：iframe高度与框架匹配；非1：框架高度适应iframe内部高度(反向适应)
+  };
 
   function initPosition() {
     //1-调整中间主体
@@ -289,7 +310,7 @@
 
   function initPage(options) {
     //参数合并，传入的参数和默认参数
-    var _options = $.extend(true, $.spiritPageFrame.defaults, options);
+    var _options = $.extend(true, {}, defaults, options);
     if ($.trim(_options.pageObjs.mainId)=="") return "未指定主体部分Id，无法初始化页面！";
     if ($("#"+_options.pageObjs.mainId).length==0) return "无id为\""+_options.pageObjs.mainId+"\"的元素，无法初始化页面！";
     INIT_PARAM = _options;//绑定参数
@@ -319,28 +340,6 @@
   };
   //插件方法，参考eaqyUi的写法
   $.spiritPageFrame.methods = {
-  };
-
-  //默认属性
-  $.spiritPageFrame.defaults = {
-    //页面中所用到的元素的id，只用到三个Div，另，这三个div应在body层
-    pageObjs: {
-      topId: "topSegment", //头部Id
-      mainId: "mainSegment", //主体Id
-      footId: "footSegment" //尾部Id
-    },
-
-    page_width: 0, //主页面的宽度。<0：宽度不控制；0：宽度自适应；>0：宽度值，页面定宽
-    page_height: 0, //主页面的高度。<0：高度不控制；0：高度自适应；>0：高度值，页面定高
-
-    top_height: 120, //顶部高度
-    top_shadow_color: null, //头部阴影颜色
-    foot_height: 40, //脚部高度
-
-    top_peg: false, //是否钉住头部在顶端。false：顶部随垂直滚动条移动(浮动)；true：顶部钉在顶端
-    foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
-
-    iframe_height_flag: 1 //具体功能区域（可能是整个中部，也可能是带左侧导航的中部）的iframe高度标志。1：iframe高度与框架匹配；非1：框架高度适应iframe内部高度(反向适应)
   };
 
 //-以下函数为通用函数-----------------------------------------------------------------
