@@ -8,7 +8,6 @@
  * Licensed same as jquery - MIT License
  * http://www.opensource.org/licenses/mit-license.php
  */
-
 (function($) {
   //本控件内的全局变量
   var _hScrollbarWidth = 0; //纵向滚动条宽度
@@ -127,10 +126,6 @@
     if (INIT_PARAM.myInit) INIT_PARAM.myInit();
   };
 
-  //100毫秒后调整页面位置，为其中的控件调整位置准备时间
-  function _resizeTimeout() {
-    setTimeout(resizePosition ,100);
-  }
   function resizePosition() {
     //ie兼容
     if (_bv.indexOf("msie")==0) {
@@ -224,7 +219,7 @@
     };
     if (INIT_PARAM.myResize) INIT_PARAM.myResize();
 
-    scrollPositioin();    
+    pfOnScroll();    
     //ie兼容
     if (_bv.indexOf("msie")==0) {
       var _v = parseFloat(_bv.substring(5));
@@ -232,7 +227,7 @@
     }
   }
 
-  function scrollPositioin() {
+  function pfOnScroll() {
     //1-调整顶部
     if (!INIT_PARAM.top_peg&&_hasTop) {
       //Y轴方向
@@ -308,6 +303,11 @@
     if (INIT_PARAM.myScroll) INIT_PARAM.myScroll();
   }
 
+  //100毫秒后调整页面位置，为其中的控件调整位置准备时间
+  function _pfResizeTimeout(){
+    setTimeout(resizePosition ,100);
+  };
+
   function initPage(options) {
     //参数合并，传入的参数和默认参数
     var _options = $.extend(true, {}, defaults, options);
@@ -326,21 +326,11 @@
     if (_hasTop) $("#"+_options.pageObjs.topId).addClass("hoverArea").addClass("topSegment");
     if (_hasFoot) $("#"+_options.pageObjs.footId).addClass("hoverArea").addClass("footSegment");
 
-    initPosition();//初始化
-    $(window).resize(_resizeTimeout);//页面调整
-    $(window).scroll(scrollPositioin);//滚动条
+    initPosition();//初始化位置
+    $(window).resize(_pfResizeTimeout);//页面调整
+    $(window).scroll(pfOnScroll);//滚动条
     return "";
   }
-
-  //页面框架主函数
-  $.spiritPageFrame = function(options, param) {
-    //若参数一为字符串，则直接当作本插件的方法进行处理，这里的this是本插件对应的jquery选择器的选择结果
-    if (typeof options=='string') return $.spiritPageFrame.methods[options](this, param);
-    return initPage(options);
-  };
-  //插件方法，参考eaqyUi的写法
-  $.spiritPageFrame.methods = {
-  };
 
 //-以下函数为通用函数-----------------------------------------------------------------
   /**
@@ -462,6 +452,17 @@
     return (parseFloat(_target.css("height"))+parseFloat(_target.css("padding-top"))+parseFloat(_target.css("padding-bottom"))+(_target.css("border-top-width")=="medium"?0:parseFloat(_target.css("border-top-width")))+(_target.css("border-bottom-width")=="medium"?0:parseFloat(_target.css("border-bottom-width"))))
       -(parseFloat(_view.css("padding-top"))+parseFloat(_view.css("padding-bottom"))+(_view.css("border-top-width")=="medium"?0:parseFloat(_view.css("border-top-width")))+(_view.css("border-bottom-width")=="medium"?0:parseFloat(_view.css("border-bottom-width"))));
   }
+
+  //=spiritPageFrame 命名空间中的方法 ===========================================================
+  //页面框架主函数
+  $.spiritPageFrame = function(options, param) {
+    //若参数一为字符串，则直接当作本插件的方法进行处理，这里的this是本插件对应的jquery选择器的选择结果
+    if (typeof options=='string') return $.spiritPageFrame.methods[options](this, param);
+    return initPage(options);
+  };
+  //插件方法，参考eaqyUi的写法
+  $.spiritPageFrame.methods = {
+  };
 })(jQuery);
 /*
   //默认属性

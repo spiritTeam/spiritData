@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+
+/*=简单窗口=========*/
+/* 主体容器 */
+.sWin{
+  position:absolute;
+  background-color:red;
+  border:1px solid green;
+}
+/* 遮罩窗口 */
+.wMask {
+  position: absolute;
+  background: #ccc;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  filter: alpha(opacity=40);
+  opacity: 0.40;
+  font-size: 1px;
+  *zoom: 1;
+  overflow: hidden;
+}
