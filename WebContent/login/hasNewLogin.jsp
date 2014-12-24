@@ -20,7 +20,7 @@ $(function(){
   var ip = getUrlParam(url, "clientIp");
   var mac = getUrlParam(url, "clientMacAddr");
   var browser = decodeURI(getUrlParam(url, "browser"));
-
+  alert("hasNew");
   var mainPage = getMainPage();
   if (!mainPage) {
     var url="<%=path%>/logout.do";

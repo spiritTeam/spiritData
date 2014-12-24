@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.mail.Address;
+import javax.mail.MessagingException;
+import javax.mail.SendFailedException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,15 +45,64 @@ public class RegisterController {
         //serverPort
         int  serverPort = request.getServerPort();
         //serverName
-    	String serverName = request.getServerName();
-    	//验证url=serverName+deployName+servletPath
+        String serverName = request.getServerName();
+        //验证url=serverName+deployName+servletPath
         String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+LoginConstants.ACTIVE_MODIFY_PASSWORD_REQUEST+"?authCode="+user.getUserId()+"~"+validatsaSequence;
         SendValidataUrlToMail svu = new SendValidataUrlToMail();
-        svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
-        userService.updateUser(user);
-        retMap.put("success", true);
-        retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请注意查看!");
+        String retInfo = "";
+        try {
+            svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
+            userService.updateUser(user);
+            retMap.put("success", true);
+            retInfo = "已经向您的邮箱发送一封邮件，请注意查看!";
+            retMap.put("retInfo", retInfo);
+        }catch (MessagingException mex) {
+            retInfo = dwMEXException(mex);
+            retMap.put("success", false);
+            retMap.put("retInfo", retInfo);
+        }
         return retMap;
+    }
+    /**
+     * 处理发送邮件不成功的异常,暂时只支持单一邮件发送
+     * @param mex
+     */
+    private String dwMEXException(MessagingException mex) {
+        Exception ex = mex;
+        String retInfo = "";
+        ex.printStackTrace();
+        do {
+            if ((ex instanceof SendFailedException)) {
+                SendFailedException sfex = (SendFailedException)ex;
+                //无效的地址
+                Address addres;
+                Address[] invalid = sfex.getInvalidAddresses();
+                if (invalid != null&&invalid.length>0) {
+                    System.out.println("    ** Invalid Addresses");
+                    addres = invalid[0];
+                    System.out.println("         " + addres);
+                    retInfo = "无效的邮箱地址\""+addres+"\"！";
+                }
+                //有效的地址，但是消息没发送成功。
+                Address[] validUnsent = sfex.getValidUnsentAddresses();
+                if (validUnsent != null&&validUnsent.length>0&&validUnsent[0]!=null) {
+                    addres = validUnsent[0];
+                    System.out.println("    ** ValidUnsent Addresses");
+                    System.out.println("         " + addres);
+                    retInfo = "邮箱地址\""+addres+"\"是有效的，但可能是由于网络或其他原因造成发送失败！";
+                }
+                //返回消息发送成功的地址，这个if可能不会走到，因为只有现仅针对一个单邮件
+                Address[] validSent = sfex.getValidSentAddresses();
+                if (validSent != null&&validSent.length>0&&validSent[0]!=null) {
+                    addres = validSent[0];
+                    System.out.println("    ** ValidSent Addresses");
+                    System.out.println("         " + addres);
+                    retInfo = "已成功向邮箱\""+addres+"\"发送成功！";
+                }
+            }
+            ex = null; 
+        }while (ex != null);
+        return retInfo;
     }
     /**
      * 接收验证邮件,如果找到用户，并且验证信息正确，
@@ -83,8 +135,8 @@ public class RegisterController {
                 userService.updateUser(user);
                 response.setContentType("text/html; charset=gb2312");
                 try {
-                	String deployName = request.getContextPath();
-                	String redirectUrl = deployName+"/login/modPwd.jsp?modType=2&userName="+user.getUserName();
+                    String deployName = request.getContextPath();
+                    String redirectUrl = deployName+"/login/modPwd.jsp?modType=2&userName="+user.getUserName();
                     response.sendRedirect(redirectUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -131,21 +183,29 @@ public class RegisterController {
                 retMap.put("success", true);
                 retMap.put("retInfo", "该账号已经激活啦");
             }else{
-            	//发布名
+                //发布名
                 String deployName = request.getContextPath();
                 //serverPort
                 int  serverPort = request.getServerPort();
                 //serverName
-            	String serverName = request.getServerName();
-            	//验证url=serverName+deployName+servletPath
+                String serverName = request.getServerName();
+                //验证url=serverName+deployName+servletPath
                 String validatsaSequence = SequenceUUID.getPureUUID();
                 user.setValidataSequence(validatsaSequence);
                 String url = "请前往以下地址激活账号\n"+serverName+":"+serverPort+deployName+"/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
                 SendValidataUrlToMail svu = new SendValidataUrlToMail();
-                svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
-                userService.updateUser(user);
-                retMap.put("success", true);
-                retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请激活账号");
+                String retInfo = "";
+                try {
+                    svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
+                    userService.updateUser(user);
+                    retMap.put("success", true);
+                    retInfo = "已经向您的邮箱发送一封邮件，请激活账号";
+                    retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请激活账号");
+                } catch (MessagingException mex) {
+                    retInfo = dwMEXException(mex);
+                    retMap.put("success", true);
+                    retMap.put("retInfo", retInfo);
+                }
             }
             return retMap;
         }
@@ -257,7 +317,7 @@ public class RegisterController {
         }
     }
     /**
-     * 注册，
+     * 注册:注册后成功后，向用户邮箱发送验证邮件
      * @param request
      * @param response
      * @return
@@ -280,26 +340,30 @@ public class RegisterController {
         user.setUserType(1);
         user.setValidataSequence(validatsaSequence);
         int rst = userService.insertUser(user);
+        String retInfo = "";
         if(rst==1){
             String deployName = request.getContextPath();
             int  serverPort = request.getServerPort();
-        	String serverName = request.getServerName();
+            String serverName = request.getServerName();
             String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
                     + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
             try{
-            	 SendValidataUrlToMail svu = new SendValidataUrlToMail();
-                 svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
-                 retMap.put("success", true);
-                 retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请激活账号");
-                 return retMap; 
-            }catch(Exception e){
-            	 retMap.put("success", false);
-                 retMap.put("retInfo", "发送不成功，请重试");
-                 return retMap; 
+                SendValidataUrlToMail svu = new SendValidataUrlToMail();
+                svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
+                retMap.put("success", true);
+                retInfo = "注册成功，已经向您的邮箱发送一封邮件，请登陆邮箱激活账号";
+                retMap.put("retInfo", retInfo);
+                return retMap; 
+            }catch(MessagingException mex){
+                retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
+                retMap.put("success", false);
+                retMap.put("retInfo", retInfo);
+                return retMap; 
             }
         }else{
             retMap.put("success", false);
-            retMap.put("retInfo", "注册不成功，请重试");
+            retInfo = "注册不成功，请稍后重试！";
+            retMap.put("retInfo", retInfo);
             return retMap;  
         }
     }

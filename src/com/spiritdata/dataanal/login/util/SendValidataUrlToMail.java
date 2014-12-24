@@ -24,7 +24,7 @@ public class SendValidataUrlToMail {
     private String mailName = LoginConstants.HOST_MAIL_NAME.substring(0,LoginConstants.HOST_MAIL_NAME.lastIndexOf("@"));
     private String password = LoginConstants.HOST_MAIL_PASSWORD;
     private  boolean debug = LoginConstants.HOST_MAIL_DEBUG;
-    public void send(String targetMail, String msgTitle, String msgText) throws AddressException, MessagingException {
+    public void send(String targetMail, String msgTitle, String msgText) throws MessagingException  {
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
         props.put("mail.smtp.auth", Boolean.valueOf(true));

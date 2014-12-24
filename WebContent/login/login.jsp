@@ -320,7 +320,7 @@ function loginF(){
       $('#vCImg').remove();
       $('#vVC').append('<img id="vCImg" align="middle" src="images/cross.png">');
     }
-    mainPage.$.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的注册信息", 'info',function (){
+    mainPage.$.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的登陆信息", 'info',function (){
       if(lnV==false){
         $('#loginName')[0].focus();
         $('#loginName')[0].select();
