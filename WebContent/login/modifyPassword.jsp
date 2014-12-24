@@ -4,11 +4,10 @@
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
-  String modType = request.getParameter("modType");
+  String modifyType = request.getParameter("modifyType");
   User user = ((User)session.getAttribute(FConstants.SESSION_USER));
   String loginName = "";
   loginName = request.getParameter("userName");
-  //if (user!=null) loginName = user.getLoginName();
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -61,7 +60,7 @@
           </td></tr>
         <tr>
           <td colspan="3" align="right">
-            <a id="saveButton" style="margin-top:50px;margin-right:20px;" onclick="modPwd();" href="#">确认修改</a></td></tr>
+            <a id="saveButton" style="margin-top:50px;margin-right:20px;" onclick="modifyPassword();" href="#">确认修改</a></td></tr>
       </table>
     </form>
   </div>
@@ -69,27 +68,45 @@
 </body>
 <script type="text/javascript">
 var mainPage=getMainPage();
-var modType=<%=modType%>,psV=false,lnV=false,cpsV=false;
+var modifyType=<%=modifyType%>,psV=false,lnV=false,cpsV=false;
 var loginName = '<%=loginName%>';
-alert(loginName);
+function jumpLogin(){
+  window.location.href="<%=path%>/login/login.jsp?uT=3";
+}
 function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
 }
 function cpwdMouseOver(){
   $("#cpwdSpan").toggleClass("addSelect");
 }
-function modPwd(){
+function modifyPassword(){
   $("#saveButton").attr('disabled',true);
   if(psV&&lnV&&cpsV){
-    var pData ={
+    var pData = {
       loginName:$('#loginName').val(),
       password:$('#password').val()
     };
-    var url = '<%=path%>/login/modifyPwd.do';
+    var url = '<%=path%>/login/modifyPassword.do';
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json){
-        if(json) mainPage.$.messager.alert('提示','修改成功!');
-        else mainPage.$.messager.alert('提示','修改失败!');
+   	  if(json){
+         $.messager.confirm('确认对话框', json.retInfo+",现在是否登陆?", function(r){
+           if (r){
+             jumpLogin();
+           }else{
+             var mainPage = getMainPage();
+             var winId = mainPage.registerWinId;
+             alert("关闭窗口功能还为实现");
+             return;
+             if(mainPage!=null) mainPage.closeWin(winId);
+             else window.location.href = "<%=path%>/asIndex.jsp";
+            }
+          });
+          $('#register').attr("disabled",false); 
+        }else{
+         $.messager.alert('提示',json.retInfo,'info');
+         $('#register').attr("disabled",false);
+        }
       }
     });
   }else{
@@ -143,8 +160,8 @@ $(function(){
   initPwdInputCss('password','pwdSpan');
   initPwdInputCss('confirmPassword','cpwdSpan');
   setInputCss();
-  //modType=1，为修改密码，为2，则是忘记密码
-  if(modType==1){
+  //modifyType=1，为修改密码，为2，则是忘记密码
+  if(modifyType==1){
     $('#loginName').val(loginName);
     $('#loginName').attr('disabled',true);
     lnV = true;

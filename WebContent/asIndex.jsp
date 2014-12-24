@@ -534,7 +534,7 @@ function showResult() {
 }
 
 function onlyLogout(ip, mac, browser) {
-	alert("in mainPage");
+  alert("in mainPage");
   var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   $.messager.alert("提示", msg+"<br/>现返回登录页面。", "info", function(){ logout(); });
@@ -574,6 +574,7 @@ var wWidth = "400";
 /**
  * 注册
  */
+var registerWinId ="";
 function register(){
   var loginStatus = $('#loginStatus').val();
   var _url ="<%=path%>/login/register.jsp";
@@ -584,15 +585,16 @@ function register(){
     width:wWidth,
     modal:true
   };
-  openWin(winOption);
+  registerWinId = newSWin(winOption);
 }
 /**
  * 修改
  */
+var modifyWinId = "";
 function modifyPwd(){
   var loginStatus = $('#loginStatus').val();
   var _url;
-  if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modifyPwd.jsp?modType=1";
+  if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modifyPassword.jsp?modifyType=1";
   else _url="<%=path%>/login/forgotpassword.jsp";
   var winOption={
     url:_url,
@@ -601,11 +603,12 @@ function modifyPwd(){
     width:wWidth,
     modal:true
   };
-  openWin(winOption);
+  modifyWinId = newSWin(winOption);
 }
 /*
  * 登陆
  */
+var loginWinId = "";
 function login(){
   var _url="<%=path%>/login/login.jsp?";
   var winOption={
@@ -615,15 +618,16 @@ function login(){
     width:wWidth,
     modal:true
   };
-  openWin(winOption);
+  loginWinId = newSWin(winOption);
 }
 
 /**
  * 测试
  */
 function testW() {
-//  newSWin({height:"400px", width:"300px", title:"测试窗口", url:"http://blog.csdn.net/oldwolf1987/article/details/4031534"});
-  newSWin({height:"400px", width:"300px", title:"测试窗口"});
+  newSWin({height:"400px", width:"300px", title:"测试窗口", url:"http://blog.csdn.net/oldwolf1987/article/details/4031534"});
+  //newSWin({height:"400px", width:"300px", title:"测试窗口"});
+  return;
 }
 </script>
 </body>

@@ -3,7 +3,7 @@ input[type="text"], input[type="password"] {width:195px;}
 #loginName {padding-top:8px;height:25px;font-size:12px;}
 #mail {width:114px;padding-top:8px;height:25px;font-size:12px;}
 #mailEndStr {width:80px;padding-left:-10px;font-size:12px;margin-left:-2px;}
-#password {padding-top:8px;height:25px;font-size:14px;}
+#password {padding-top:8px;height:25px;font-size:12px;}
 #confirmPassword {width:195px;padding-top:8px;height:25px;font-size:12px;}
 #checkCode {width:111px;padding-top:8px;height:25px;font-size:12px;}
 #otherButCss {width:210px;background-image:url(img/registerb.png);padding-left:45px;border:1px solid red;margin-left:48px;}

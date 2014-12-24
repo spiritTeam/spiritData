@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
-import com.spiritdata.dataanal.login.LoginConstants;
 import com.spiritdata.dataanal.login.util.RandomValidateCode;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
 import com.spiritdata.dataanal.util.SequenceUUID;
@@ -47,7 +46,7 @@ public class RegisterController {
         //serverName
         String serverName = request.getServerName();
         //验证url=serverName+deployName+servletPath
-        String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+LoginConstants.ACTIVE_MODIFY_PASSWORD_REQUEST+"?authCode="+user.getUserId()+"~"+validatsaSequence;
+        String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+"/login/activeModifyPasswordRequest.do?authCode="+user.getUserId()+"~"+validatsaSequence;
         SendValidataUrlToMail svu = new SendValidataUrlToMail();
         String retInfo = "";
         try {
@@ -136,7 +135,7 @@ public class RegisterController {
                 response.setContentType("text/html; charset=gb2312");
                 try {
                     String deployName = request.getContextPath();
-                    String redirectUrl = deployName+"/login/modPwd.jsp?modType=2&userName="+user.getUserName();
+                    String redirectUrl = deployName+"/login/modifyPassword.jsp?modifyType=1&userName="+user.getUserName();
                     response.sendRedirect(redirectUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -153,7 +152,7 @@ public class RegisterController {
      * @param req
      * @return
      */
-    @RequestMapping(value="/login/modifyPwd.do")
+    @RequestMapping(value="/login/modifyPassword.do")
     public @ResponseBody boolean modifyPwd(HttpServletRequest req){
         HttpSession session =req.getSession();
         User user = (User) session.getAttribute(FConstants.SESSION_USER);
@@ -210,6 +209,12 @@ public class RegisterController {
             return retMap;
         }
     }
+    /**
+     * 激活新注册用户
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping("login/activeUser.do")
     public @ResponseBody Map<String,Object> activeMail(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
@@ -232,6 +237,14 @@ public class RegisterController {
                     userService.updateUser(user);
                     retMap.put("success", true);
                     retMap.put("retInfo", "激活成功!");
+                    try {
+                    	String deployName = request.getContextPath();
+                    	//uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
+                        String redirectUrl = deployName+"/login/login.jsp?uT=1";
+						response.sendRedirect(redirectUrl);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
                 }else{
                     retMap.put("success", false);
                     retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");

@@ -2,6 +2,7 @@
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
+  String uT = request.getParameter("uT");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -28,6 +29,17 @@ var MACAddr;
 var IPAddr;
 var DomainAddr;
 var sDNSName;
+//uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
+//uTMessage表示要提示的信息
+var uT=<%=uT%>,uTMessage = "";
+if(uT==1){
+  uTMessage = "激活成功!";
+  $.messager.alert('提示',uTMessage,'info');
+}else if(uT==2) {
+  uTMessage = "修改密码成功!";
+  $.messager.alert('提示',uTMessage,'info');
+}
+
 //service.Security_.ImpersonationLevel=3;
 //service.InstancesOfAsync(foo, 'Win32_NetworkAdapterConfiguration');
 </script>
