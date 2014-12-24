@@ -13,12 +13,11 @@
 <meta http-equiv="expires" content="0"/>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 
+<link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
+<link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/spiritui/themes/default/all.css"/>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.utils.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/js/mainPage.utils.js"></script>
-
-<link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
-<link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/spiritui/themes/default/all.css"/>
 <style>
 #fileIn {
   position:absolute;
@@ -198,7 +197,7 @@ var INIT_PARAM = {
   page_height: 0,
 
   top_height: 30, //顶部高度
-  top_peg: true,
+  top_peg: false,
 
   foot_height: 75, //脚部高度
   foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
@@ -267,7 +266,6 @@ $(function() {
   }).mouseout(function(){
     $(this).css({"color":"white", "background-color":"#36B148"});
   });
-  alert($.spiritPageFrame.defaults.top_height);
 });
 
 //初始化界面
@@ -624,8 +622,8 @@ function login(){
  * 测试
  */
 function testW() {
-  newSWin({height:"300px", width:"400px"});
-  //  newSWin();
+//  newSWin({height:"400px", width:"300px", title:"测试窗口", url:"http://blog.csdn.net/oldwolf1987/article/details/4031534"});
+  newSWin({height:"400px", width:"300px", title:"测试窗口"});
 }
 </script>
 </body>

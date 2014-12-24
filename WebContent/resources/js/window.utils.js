@@ -207,12 +207,14 @@ function closeSWin(winId) {
  */
 function getSWin(winId) {
   var ret=null;
-  $(winArray).each(function(){
-    if (this.winID==winId) {
-      ret = this.winOBJ;
-      return ;
-    }
-  });
+  var i=0, len=sWinArray.length;
+  for (; i<len; i++) {
+  	var _sWin=sWinArray[i];
+  	if (_sWin.getId()==winId) {
+  		ret = _sWin;
+  		break;
+  	}
+  }
   if (!ret) {
     $.messager.alert('未找到Id='+winId+'的窗口，无法关闭!','error');
     return null;
@@ -220,5 +222,3 @@ function getSWin(winId) {
     return ret;
   }
 }
-
-//$(window).resize(_resizeTimeout);

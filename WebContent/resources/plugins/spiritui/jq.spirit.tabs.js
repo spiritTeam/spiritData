@@ -219,9 +219,10 @@
         //任何标签都不显示
         var _index=parseInt($(this).attr("_index"));
         var tabData=null, aTab=null;
-        var j=0, len=$(target).find(".tab").length;
+        var _tabs = $(target).find(".tab");
+        var j=0, len=_tabs.length;
         for(;j<len;j++) {
-          aTab=$(target).find(".tab")[j];
+          aTab=_tabs[j];
           tabData=$(aTab).data("tabData");
           var _lm=$(target).find("#tab_m_"+j);
           $(_lm).attr("class", "").addClass("tab_m");
