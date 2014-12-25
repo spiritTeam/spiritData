@@ -123,15 +123,18 @@ function saveRegister(){
     $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
       success:function(json) {
         if(json.success){
-        	alert(json.retInfo);
-        	return;
-          $.messager.show({
-            title:'注册提示',
-            msg:json.retInfo+'页面将在3秒后跳转到登录页面!',
-            timeout:3000,
-            showType:'slide'
+          $.messager.confirm('确认对话框', json.retInfo+",现在是否登陆?", function(r){
+            if (r){
+              jumpLogin();
+            }else{
+              var mainPage = getMainPage();
+              var winId = mainPage.registerWinId;
+              alert("关闭窗口功能还为实现");
+              return;
+              if(mainPage!=null) mainPage.closeWin(winId);
+              else window.location.href = "<%=path%>/asIndex.jsp";
+            }
           });
-          jumpLogin();
           $('#register').attr("disabled",false); 
         }else{
           $.messager.alert('提示',json.retInfo,'info');
@@ -182,7 +185,7 @@ function saveRegister(){
   }
 }
 function jumpLogin(){
-  window.location.href="<%=path%>/login/login.jsp";
+  window.location.href="<%=path%>/login/login.jsp?uT=3";
 }
 //如果不是ie浏览器，从新初始化inputcsss
 function setInputCss(){
@@ -201,7 +204,6 @@ function setInputCss(){
     if($('#commitButton')!=null) $('#commitButton').css({"width":"210px","padding-left":"38px","margin-left":"9px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
   }else{
-    //var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
@@ -210,9 +212,6 @@ function setInputCss(){
     if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
     if($('#commitButton')!=null) $('#commitButton').css({"width":"210px","padding-left":"38px","margin-left":"12px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"70px"});
-    //if(ieVersion==11.0){
-    //}else if(ieVersion==8.0){
-    //}
   }
 }
 $(function(){

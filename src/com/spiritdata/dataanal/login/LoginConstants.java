@@ -16,6 +16,4 @@ public class LoginConstants {
     public final static String HOST_MAIL_PASSWORD="MHTloveLJJ1314";
     //是否打印dug信息
     public final static boolean HOST_MAIL_DEBUG=false;
-    //激活修改密码邮件请求地址
-    public final static String ACTIVE_MODIFY_PASSWORD_REQUEST="/login/activeModifyPasswordRequest.do";
 }

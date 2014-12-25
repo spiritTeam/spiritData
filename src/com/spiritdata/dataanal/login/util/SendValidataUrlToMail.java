@@ -3,13 +3,10 @@ package com.spiritdata.dataanal.login.util;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -17,7 +14,6 @@ import com.spiritdata.dataanal.login.LoginConstants;
 /**
  * 发送简易验证邮件
  * @author mht
- *
  */
 public class SendValidataUrlToMail {
     private  String host = LoginConstants.HOST_MAIL_SMTP;
@@ -31,7 +27,7 @@ public class SendValidataUrlToMail {
         if (debug) {
             props.put("mail.debug", Boolean.valueOf(debug));
         }
-        MyAuth auth = new MyAuth(mailName, password);
+        MailAuth auth = new MailAuth(mailName, password);
         Session session = Session.getInstance(props, auth);
         session.setDebug(debug);
         MimeMessage msg = new MimeMessage(session);
@@ -42,40 +38,5 @@ public class SendValidataUrlToMail {
         msg.setSentDate(new Date());
         msg.setText(msgText);
         Transport.send(msg);
-//        try {
-//        } catch (MessagingException mex) {
-//            mex.printStackTrace();
-//            System.out.println();
-//            Exception ex = mex;
-//            do {
-//                if ((ex instanceof SendFailedException)) {
-//                SendFailedException sfex = (SendFailedException)ex;
-//                Address[] invalid = sfex.getInvalidAddresses();
-//                if (invalid != null) {
-//                    System.out.println("    ** Invalid Addresses");
-//                    for (int i = 0; i < invalid.length; i++)
-//                    System.out.println("         " + invalid[i]);
-//                }
-//                Address[] validUnsent = sfex.getValidUnsentAddresses();
-//                if (validUnsent != null) {
-//                    System.out.println("    ** ValidUnsent Addresses");
-//                    for (int i = 0; i < validUnsent.length; i++)
-//                    System.out.println("         " + validUnsent[i]);
-//                }
-//                Address[] validSent = sfex.getValidSentAddresses();
-//                if (validSent != null) {
-//                    System.out.println("    ** ValidSent Addresses");
-//                    for (int i = 0; i < validSent.length; i++)
-//                    System.out.println("         " + validSent[i]);
-//                }
-//              }
-//              System.out.println();
-//              if ((ex instanceof MessagingException))
-//                  ex = ((MessagingException)ex).getNextException();
-//              else
-//                  ex = null; 
-//            }
-//            while (ex != null);
-//        }
     }
 }  
