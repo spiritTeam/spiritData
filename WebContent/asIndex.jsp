@@ -569,8 +569,8 @@ function logout() {
     }
   });
 };
-var wHeight = "500";
-var wWidth = "400";
+var wHeight = "400";
+var wWidth = "350";
 /**
  * 注册
  */
@@ -595,7 +595,7 @@ function modifyPwd(){
   var loginStatus = $('#loginStatus').val();
   var _url;
   if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modifyPassword.jsp?modifyType=1";
-  else _url="<%=path%>/login/forgotpassword.jsp";
+  else _url="<%=path%>/login/forgotPassword.jsp";
   var winOption={
     url:_url,
     title:"修改密码",
