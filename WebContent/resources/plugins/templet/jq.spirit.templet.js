@@ -7,14 +7,18 @@
  */
 (function($){
   $.templetJD = function(jsonTempletObj){
-  	//定义变量
-  	var segTree;
+    //定义变量
+    var segTree={
+        id:0,
+        text:'segTree',
+        children:[]
+    };
     //默认宽高
     var defaultViewWidth = "800px;",defaultViewHeight = "0px;";
     //传入高和宽的值
     var viewWidth,viewHeight;
     //level
-    var level=0;
+    var level=0,tree;
     
     //从jsonTemplet中得到参数
     var templetJD = jsonTempletObj.templetJD;
@@ -49,17 +53,17 @@
      * _TEMPLET
      * level
      */
-    buildSegmentGroup(viewDiv, _TEMPLET, level, this, 0);
-    
+    buildSegmentGroup(viewDiv, _TEMPLET, level, segTree, 0);
+    alert(eval(segTree));
     //画树
     treeView.tree({animate:true});
-    treeView.tree("loadData", tree);
+    treeView.tree("loadData", [segTree]);
   };
   
   /**
    * 画seg结构,同时生成树
    */
-  function buildSegmentGroup(jObj, segArray, treeLevel, self, parentTreeId) {
+  function buildSegmentGroup(jObj, segArray, treeLevel, segTree, parentTreeId) {
     //判断segArray
     if(segArray==null||segArray=="") return "segArry 为空!";
     //判断eleId
@@ -89,30 +93,48 @@
       segDiv.append(contendEle);
       var subSegs = segArray[i].subSeg;
       //处理树
-    	var treeNode = {};
-    	if (segArray[i].name) treeNode.text = segArray[i].name;
-    	else if (segArray[i].title) {
-    		treeNode.text=$(segArray[i].title).html();
-    	}
-    	if (!treeNode.text&&treeNode.text!="") {
-      	treeNode.id = "_tree_"+segArray[i].id;
-      	treeNode.segId = segArray[i].id;
-
-      	var parent = null;
-      	if (parentTreeId==0) parent=self.segTree;
-      	else parent=findNode(self.segTree, parentTreeId);
-
-      	if (parent) parent.children[i]=treeNode;
-    	}
-      buildSegmentGroup(segDiv, subSegs, treeLevel+1, self, treeNode.id);
+      var treeNode = {};
+      if (segArray[i].name) treeNode.text = segArray[i].name;
+      else if (segArray[i].title) {
+        treeNode.text=$(segArray[i].title).html();
+      }
+      if (treeNode.text&&treeNode.text!="") {
+        treeNode.id = "_tree_"+segArray[i].id;
+        treeNode.segId = segArray[i].id;
+    
+        var parent = {};
+        if (parentTreeId==0) parent=segTree;
+        else parent=findNode(segTree, parentTreeId);
+        //parent
+        if (parent) parent.children[i]=treeNode;
+      }
+      buildSegmentGroup(segDiv, subSegs, treeLevel+1, segTree, treeNode.id);
     }
     jObj.append(segGroup);
     return segGroup;
   }
-
+  
+  /**
+   * 递归实现
+   */
   function findNode(tree, id) {
-  	//??
-  	return null;
+    var parent ;
+    var children = tree.children;
+    var childrenSize = children.length;
+    if(childrenSize>0){
+      for(var i=0;i<childrenSize;i++){
+        if(children[i].id==id){
+          parent = children[i];
+          return parent;
+        }else{
+          parent = findNode(children[i],id)
+          return parent;
+        }
+      }
+    }else{
+      return null;
+    }
+    return null;
   }
 
   function getTreeData(segArray,treeLevel){
