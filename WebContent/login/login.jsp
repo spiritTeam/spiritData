@@ -57,7 +57,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 }
 </script>
 <center>
-  <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
+  <div style="width:330px;height:400px;">
     <div style="margin-top:15px; margin-left:14px;"align="left"><span style="font-size:16px;color:#999999;">登录</span></div>
     <div style="height:2px; width:300px;border-top:1px solid  #999999;"></div>
     <form  style="margin-top:15px;">
@@ -67,7 +67,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <td colspan="2" rowspan="1"  style="text-align:left;">
             <div style="float:left;">
               <input id="loginName" name="loginName" tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/></div>
+                onclick="changeLoginNameCss(loginName);" onBlur="validateLoginName('loginName');"/></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
@@ -76,7 +76,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <td colspan="2" style="text-align:left;" id="pwTd">
             <div style="float:left;">
               <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
-                  onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
+                 onclick="changePasswordCss(password);" onBlur="validatePassword('password');"/></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPW'></div>
             <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:12spx;margin-left:-219px;" align="center">
               <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span></div>
@@ -87,7 +87,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <td colspan="2">
             <div style="float:left;">
               <input type="text"  id="checkCode" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
-                onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');"/>
+                onclick="changeCheckCodeCss(checkCode);" onBlur="validateValidateCode('checkCode');"/>
             </div>
             <div id="checkCodeDiv" style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;border-left:0px;">
               <img style="height:35px;" title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
@@ -117,8 +117,31 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 var psV=false,lnV=false,vcV=false;
 //未登录的忘记密码页面
 function modPwd(){
-  window.location.href="<%=path%>/login/forgotpassword.jsp?modType=2";
+  window.location.href="<%=path%>/login/forgotPassword.jsp?modType=2";
 }
+/**
+ * 在点击的时候把颜色变成黑色
+ */
+function changeLoginNameCss(obj){
+  if(obj.value==obj.defaultValue){
+    obj.value='';obj.style.color='#000';
+  }
+  if($(obj).attr('id')+''=='password'){
+    $('#pwdSpan').html('');
+  }
+}
+function changePasswordCss(obj){
+  if(obj.value==obj.defaultValue){
+    obj.value='';obj.style.color='#000';
+  }
+  $('#pwdSpan').html('');
+}
+function changeCheckCodeCss(obj){
+  if(obj.value==obj.defaultValue){
+    obj.value='';obj.style.color='#000';
+  }
+}
+
 function pwdOnActive(){
   //隐藏
   $("#pwdSpan").hide();
@@ -259,14 +282,6 @@ function checkLoginName(val){
      }
   });
   return vfMsg;
-}
-function onClick(obj){
-  if(obj.value==obj.defaultValue){
-    obj.value='';obj.style.color='#000';
-  }
-  if($(obj).attr('id')+''=='password'){
-    $('#pwdSpan').html('');
-  }
 }
 function loginF(){
   var mainPage=getMainPage();
