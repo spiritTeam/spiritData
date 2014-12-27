@@ -24,7 +24,8 @@ $(function(){
   $("#thisWinId").val(getUrlParam(window.location.href, "_winID"));
 });
 function testCloseWin() {
-  closeSWinInMain($("#thisWinId").val());
+  var mp = getMainPage();
+  mp.$.messager.alert("提示", "测试", "info", function(){closeSWinInMain($("#thisWinId").val());});
 }
 </script>
 </html>

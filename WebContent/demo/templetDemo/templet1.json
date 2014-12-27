@@ -1,5 +1,7 @@
 {
-  _HEAD:{},
+  _HEAD:{
+    reportName:"“XXX”分析报告"
+  },
   _DATA:[/*建议全部是jsond的格式*/
     {_id:1, _url:'getJsonD.do?datafile=/??/metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond', _jsonD_code:'SP.TEAM-00007'},
     {_id:2, _url:'getJsonD.do?datafile=/??/anal_quota_716-446655440000.jsond', _jsonD_code:'SP.TEAM-00009'}
@@ -8,7 +10,6 @@
     {
       id:"seg1",
       name:"上传数据",
-      data: [1,2],
       title:'<div style="font-height:bold;font-size:24px;">上传数据</div>',
       subSeg:[
         {
@@ -70,7 +71,6 @@
     {
       id:"seg2",
       name:"seg2上传数据",
-      data: [1,2],
       title:'<div style="font-height:bold;font-size:24px;">上传数据</div>',
       subSeg:[
         {
@@ -114,7 +114,6 @@
     },{
       id:"seg3",
       name:"seg3上传数据###",
-      data: [1,2],
       title:'<div style="font-height:bold;font-size:24px;">上传数据</div>',
       subSeg:[
         {
