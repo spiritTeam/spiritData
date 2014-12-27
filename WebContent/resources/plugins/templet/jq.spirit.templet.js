@@ -127,16 +127,12 @@
       for(var i=0;i<childrenSize;i++){
         if(children[i].id==id){
           parent = children[i];
-          return parent;
         }else{
           parent = findNode(children[i],id)
-          return parent;
         }
       }
-    }else{
-      return null;
     }
-    return null;
+    return parent;
   }
 
   function getTreeData(segArray,treeLevel){

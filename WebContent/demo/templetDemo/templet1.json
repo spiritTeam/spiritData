@@ -75,14 +75,14 @@
       subSeg:[
         {
           id:"seg2_1",
-          name:"结构分析",
+          name:"seg2结构分析",
           content:'<div s="font-height:bold; font-size:18px;">1、结构分析</div><br/>
             <div s="font-height:bold; ">“<d data="1" showType="value" value="excelMdmArray[0].sheetInfo.name"/>”页签(sheet<d data="1" showType="value" value="excelMdmArray[0].sheetInfo.index"/>)</div>为新增结构，元数据结构分析结果如下：<br/>
             <d data="1" showType="table" value="excelMdmArray[0]"/><br/>
             <div s="font-height:bold; ">“<d data="1" showType="value" value="excelMdmArray[2].sheetInfo.name"/>”页签(sheet<d data="1" showType="value" value="excelMdmArray[1].sheetInfo.index"/>)</div>为原有结构，元数据用原有结构。<br/>'
         },{
           id:"seg2_2",
-          name:"单项指标分析",
+          name:"seg2单项指标分析",
           content:'<div s="font-height:bold; font-size:18px;">2、单项指标分析</div><br/>
             <div s="font-height:bold; ">“<d data="2" showType="value" value="mdName"/>”[<d data="2" showType="value" value="quotas[0].titleName"/>]</div>指标分析：<br/>
             “<d data="2" showType="value" value="quotas[0].titleName"/>”中
@@ -119,14 +119,14 @@
       subSeg:[
         {
           id:"seg3_1",
-          name:"结构分析##",
+          name:"seg3结构分析##",
           content:'<div s="font-height:bold; font-size:18px;">1、结构分析###</div><br/>
             <div s="font-height:bold; ">“<d data="1" showType="value" value="excelMdmArray[0].sheetInfo.name"/>”页签(sheet<d data="1" showType="value" value="excelMdmArray[0].sheetInfo.index"/>)</div>为新增结构，元数据结构分析结果如下：<br/>
             <d data="1" showType="table" value="excelMdmArray[0]"/><br/>
             <div s="font-height:bold; ">“<d data="1" showType="value" value="excelMdmArray[2].sheetInfo.name"/>”页签(sheet<d data="1" showType="value" value="excelMdmArray[1].sheetInfo.index"/>)</div>为原有结构，元数据用原有结构。<br/>'
         },{
           id:"seg3_2",
-          name:"单项指标分析##",
+          name:"seg3单项指标分析##",
           content:'<div s="font-height:bold; font-size:18px;">2、单项指标分析###</div><br/>
             <div s="font-height:bold; ">“<d data="2" showType="value" value="mdName"/>”[<d data="2" showType="value" value="quotas[0].titleName"/>]</div>指标分析：<br/>
             “<d data="2" showType="value" value="quotas[0].titleName"/>”中
