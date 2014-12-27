@@ -125,8 +125,8 @@ function getUUID(len,radix) {
  * @returns javascript对象
  */
 function str2JsonObj(varName, jsonStr) {
-  eval("var "+varName+"="+decodeURI(jsonStr)+";");
-  return result;
+  eval("var "+varName+"="+jsonStr+";");
+  return eval(varName);
 }
 
 /**

@@ -2,7 +2,7 @@
  * 打开windows的数组
  */
 var winArray = [];
-var _zIndex = 10000;
+var _zIndex = 1000;
 var sWinArray = [];
 
 /**

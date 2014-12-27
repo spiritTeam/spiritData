@@ -23,15 +23,14 @@ function showAnalRst(){
   var pData = {templetId:"2323e"};
   $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
     success:function(json){
-      //var rst = str2JsonObj("jsonDats",json);不好使
-      eval( "var jsonData="+json+";");
-      if(jsonData.jsonType==1){
-    	var templetJD = jsonData.data;
+      rst=str2JsonObj("jsonData",json);
+      if(rst.jsonType==1){
+    	var templetJD = rst.data;
         var jsonTempletObj={
           viewWidth:'',
           viewHeight:'',
           templetData:templetJD
-        }
+        };
         $.templetJD(jsonTempletObj);
       }else{
     	$.messager.alert("提示",jsonData.message,'info');

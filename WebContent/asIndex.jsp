@@ -567,7 +567,7 @@ function logout() {
     }
   });
 };
-var wHeight = "400";
+var wHeight = "450";
 var wWidth = "350";
 /**
  * 注册
@@ -583,7 +583,7 @@ function register(){
     width:wWidth,
     modal:true
   };
-  registerWinId = newSWin(winOption);
+  registerWinId = openSWinInMain(winOption);
 }
 /**
  * 修改
@@ -601,7 +601,7 @@ function modifyPwd(){
     width:wWidth,
     modal:true
   };
-  modifyWinId = newSWin(winOption);
+  modifyWinId = openSWinInMain(winOption);
 }
 /*
  * 登陆
@@ -616,7 +616,7 @@ function login(){
     width:wWidth,
     modal:true
   };
-  loginWinId = newSWin(winOption);
+  loginWinId = openSWinInMain(winOption);
 }
 
 /**
