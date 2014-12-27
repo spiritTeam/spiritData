@@ -2,8 +2,8 @@
  * 打开windows的数组
  */
 var winArray = [];
-var sWinArray = [];
 var _zIndex = 10000;
+var sWinArray = [];
 
 /**
  * 得到窗口的ID
@@ -46,6 +46,7 @@ function newWin(winOption) {
     $.messager.alert('新建窗口错误','请指定窗口参数!','error');
     return ;
   } else {
+  	alert(winOption.url);
     if (!winOption.url) {
       $.messager.alert('新建窗口错误','窗口参数url必须指定!','error');
       return ;
@@ -126,16 +127,14 @@ function newWin(winOption) {
  * @param winId easyUi窗口的ID
  */
 function closeWin(winId) {
-	var find = false;
+  var find = false;
   $(winArray).each(function(){
     if (this.winID==winId) {
       this.winOBJ.window('close');
       return ;
     }
   });
-  if (!find) {
-    $.messager.alert('未找到Id='+winId+'的窗口，无法关闭!','error');
-  }
+  if (!find) $.messager.alert('关闭窗口错误', '未找到Id='+winId+'的窗口，无法关闭!','error');
 }
 
 /**
@@ -150,75 +149,90 @@ function getWin(winId) {
       return ;
     }
   });
-  if (!ret) {
-    $.messager.alert('未找到Id='+winId+'的窗口，无法关闭!','error');
-    return null;
-  } else {
-    return ret;
-  }
+  if (!ret) $.messager.alert('得到窗口对象错误', '未找到Id='+winId+'的窗口，无法得到窗口对象!','error');
+  return ret;
 }
 
 /**
  * 创建并打开简单模态窗口，注意这里总是模态窗口
  * @param winOption是一个js对象，目前支持如下参数
- * winOption.title 窗口标题
- * winOption.url 窗口内嵌的iframe的url
- * winOption.content 窗口内的html内容，其与url属性是互斥的，但url的优先级更高
  * winOption.height 窗口高度
  * winOption.width 窗口宽度
- * winOption.minButton 最小化窗口按钮是否显示
+ * winOption.url 窗口内嵌的iframe的url
+ * winOption.content 窗口内的html内容，其与url属性是互斥的，但url的优先级更高
+
+ * winOption.headCss 窗口头样式：主要是高度和背景色
+ * winOption.title 窗口标题
+ * winOption.titleCss 标题样式
+ * winOption.iconCss 窗口图标的css
+ * winOption.iconUrl 窗口图标的url
+
  * winOption.expandAttr 窗口的扩展属性，可定义iframe的id，是javaScript对象，如expandAttr={"frameID":"iframeID"}
  * @returns 返回生成窗口的UUID
  */
 function newSWin(winOption) {
   if (!winOption) {
-    $.messager.alert('新建窗口错误','请指定窗口参数!','error');
+    $.messager.alert('新建窗口错误','请指定窗口参数!<br/>','error');
     return ;
+  } else {
+    if ((!winOption.url||$.trim(winOption.url)=="")&&(!winOption.content||$.trim(winOption.content)=="")) {
+      $.messager.alert('新建窗口错误', '参数中的url或content属性至少指定一个!<br/>','error');
+      return ;
+    }
   }
+
+  winOption.onBeforeClose=function(sWinId) {
+    var _i=-1;
+    var i=0;
+    var len=sWinArray.length;
+    for (;i<len;i++) {
+      if (sWinId==sWinArray[i].sWinId) {
+        _i=i;
+        break;
+      }
+    }
+    if (_i!=-1) sWinArray.splice(_i,1);
+  };
   _zIndex = _zIndex+2;
   winOption.zIndex = _zIndex;
   var newSWin = $.spiritSimpleWin(winOption);
   var _uuid = newSWin.getId();
-  sWinArray.push({"winID": _uuid, "winOBJ": newSWin});
+  sWinArray.push({"sWinId": _uuid, "sWinOBJ": newSWin});
   newSWin.open();
   return _uuid;
 }
 
 /**
  * 关闭并销毁简单模态窗口
- * @param winId 简单模态窗口的ID
+ * @param sWinId 简单模态窗口的ID
  */
-function closeSWin(winId) {
-	var find = false;
-  $(winArray).each(function(){
-    if (this.winID==winId) {
-      this.close();
-      return ;
+function closeSWin(sWinId) {
+  var _i=-1;
+  var i=0;
+  var len=sWinArray.length;
+  for (;i<len;i++) {
+    if (sWinId==sWinArray[i].sWinId) {
+      _i=i;
+      sWinArray[i].sWinOBJ.close();
+      break;
     }
-  });
-  if (!find) {
-    $.messager.alert('未找到Id='+winId+'的窗口，无法关闭!','error');
   }
+  if (_i==-1) $.messager.alert('关闭窗口错误','未找到Id='+winId+'的窗口，无法关闭!','error');
 }
 
 /**
  * 根据winId得到简单模态窗口
- * @param winId 简单模态窗口的ID
+ * @param sWinId 简单模态窗口的ID
  */
-function getSWin(winId) {
+function getSWin(sWinId) {
   var ret=null;
   var i=0, len=sWinArray.length;
   for (; i<len; i++) {
-  	var _sWin=sWinArray[i];
-  	if (_sWin.getId()==winId) {
-  		ret = _sWin;
-  		break;
-  	}
+    if (sWinId==sWinArray[i].sWinId) {
+      ret=sWinArray[i].sWinOBJ;
+      break;
+    }
   }
-  if (!ret) {
-    $.messager.alert('未找到Id='+winId+'的窗口，无法关闭!','error');
-    return null;
-  } else {
-    return ret;
-  }
+  if (!ret) $.messager.alert('得到窗口对象错误', '未找到Id='+winId+'的窗口，无法得到窗口对象!','error');
+  return ret;
 }

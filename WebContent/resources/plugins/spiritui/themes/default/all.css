@@ -72,28 +72,29 @@
 .sWin_head {
   position:absolute;
   border-bottom:1px solid #D3D3D3;
-  height:33px;
-  line-height:33px;
+  height:30px;
+  line-height:30px;
   top:0px;
   left:0px;
-  padding-top:5px;
+  padding-top:8px;
   background:#F7F7F7;
+  cursor:move;
 }
 /* 窗口标题图标 */
 .sWin_icon {
   position:absolute;
-  height:26px;
-  width:26px;
+  height:24px;
+  width:24px;
   background:url(images/login_icons.png) no-repeat scroll transparent;
   background-position: -112px 0px;
-  margin-left:10px;
+  margin-left:8px;
 }
 /* 窗口标题区域 */
 .sWin_title {
   position:absolute;
   padding-left:40px;
-  height:26px;
-  line-height:26px;
+  height:24px;
+  line-height:24px;
   valign:middle;
   vertical-align:middle;
   font-size:14px;
@@ -104,7 +105,7 @@
   position:absolute;
   width:16px;
   height:16px;
-  margin-top:6px;
+  margin-top:3px;
   background-image: url("images/login_icons.png");
   background-position: -56px -48px;
   background-repeat: no-repeat;
@@ -114,5 +115,5 @@
 .sWin_content {
   position:absolute;
   left:0px;
-  background:red;
+  background:#84D935;
 }

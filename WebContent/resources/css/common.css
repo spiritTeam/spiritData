@@ -33,9 +33,9 @@ input[type="text"] { width:100px; height:16px; line-height:16px; }
 textarea { overflow:auto; width:500px; }
 select{ height:20px; font-size:10px; vertical-align:middle; }
 a { color:black; text-decoration:none; outline:none; blr:expression(this.onFocus=this.blur()); cursor:pointer; }
-a:link { color:black; text-decoration:none; }
-a:visited { color:black; text-decoration:none; }
-a:hover { color:#c00; text-decoration:underline; }
+a:link { color:black; }
+a:visited { color:black; }
+a:hover { color:#c00; }
 a:active { color:#c00; text-decoration:underline; }
 img { vertical-align:middle; }
 /* common end */
