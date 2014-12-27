@@ -23,17 +23,21 @@ import com.spiritdata.dataanal.UGA.service.UserService;
 import com.spiritdata.dataanal.login.util.RandomValidateCode;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
 import com.spiritdata.dataanal.util.SequenceUUID;
+
+/**
+ * 所有关于 登陆和注册用到的方法
+ * @author mht
+ */
 @Controller
 public class RegisterController {
+	/**
+     * 发送重设密码的验证邮件
+     * @return retMap
+     */
     @Resource
     private UserService userService;
-    /**
-     * 发送重设密码的验证邮件
-     * @param request
-     * @return
-     */
-    @RequestMapping(value="/login/sendBackPwdMail.do")
-    public @ResponseBody Map<String,Object> sendBackPwdMail(HttpServletRequest request){
+    @RequestMapping(value="/login/sendBackPasswordMail.do")
+    public @ResponseBody Map<String,Object> sendBackPasswordMail(HttpServletRequest request){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
         User user = userService.getUserByLoginName(loginName);
@@ -62,9 +66,11 @@ public class RegisterController {
         }
         return retMap;
     }
+    
     /**
      * 处理发送邮件不成功的异常,暂时只支持单一邮件发送
-     * @param mex
+     * @param mex MessagingException异常
+     * @return 返回错误信息
      */
     private String dwMEXException(MessagingException mex) {
         Exception ex = mex;
@@ -99,19 +105,17 @@ public class RegisterController {
                     retInfo = "已成功向邮箱\""+addres+"\"发送成功！";
                 }
             }
-            ex = null; 
+            ex = null;
         }while (ex != null);
         return retInfo;
     }
     /**
      * 接收验证邮件,如果找到用户，并且验证信息正确，
      * 转发到修改页面。
-     * @param request
-     * @param response
      * @return
      */
     @RequestMapping("login/activeModifyPasswordRequest.do")
-    public @ResponseBody Map<String,Object> activePwdMail(HttpServletRequest request, HttpServletResponse response){
+    public @ResponseBody Map<String,Object> activePasswordMail(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String authCode = request.getParameter("authCode");
         if(authCode==null){
@@ -132,7 +136,7 @@ public class RegisterController {
                 session.removeAttribute(FConstants.SESSION_USER);
                 session.setAttribute(FConstants.SESSION_USER, user);
                 userService.updateUser(user);
-                response.setContentType("text/html; charset=gb2312");
+                response.setContentType("text/html;charset=gb2312");
                 try {
                     String deployName = request.getContextPath();
                     String redirectUrl = deployName+"/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
@@ -153,12 +157,12 @@ public class RegisterController {
      * @return
      */
     @RequestMapping(value="/login/modifyPassword.do")
-    public @ResponseBody boolean modifyPwd(HttpServletRequest req){
+    public @ResponseBody boolean modifyPassword(HttpServletRequest req){
         HttpSession session =req.getSession();
         User user = (User) session.getAttribute(FConstants.SESSION_USER);
         String pwd = req.getParameter("password");
         user.setPassword(pwd);
-        int i = userService.updateUser(user); 
+        int i = userService.updateUser(user);
         if(i==1){
             return true;
         }else{
@@ -326,7 +330,7 @@ public class RegisterController {
         if(sessionCC.equals(registerCC.toUpperCase())){
             return true;
         }else{
-            return false;  
+            return false; 
         }
     }
     /**
@@ -366,18 +370,18 @@ public class RegisterController {
                 retMap.put("success", true);
                 retInfo = "注册成功，已经向您的邮箱发送一封邮件，请登陆邮箱激活账号";
                 retMap.put("retInfo", retInfo);
-                return retMap; 
+                return retMap;
             }catch(MessagingException mex){
                 retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
                 retMap.put("success", false);
                 retMap.put("retInfo", retInfo);
-                return retMap; 
+                return retMap;
             }
         }else{
             retMap.put("success", false);
             retInfo = "注册不成功，请稍后重试！";
             retMap.put("retInfo", retInfo);
-            return retMap;  
+            return retMap; 
         }
     }
 }

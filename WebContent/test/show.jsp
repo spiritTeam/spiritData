@@ -34,13 +34,11 @@ function showAnalRst(){
         }
         $.templetJD(jsonTempletObj);
       }else{
-    	$.messager.alert("提示",jsonData.message);
+    	$.messager.alert("提示",jsonData.message,'info');
       }
     },error:function(errorData ){
-      alert(errorData.length);
     }
   });
-  //$.templetJD("aa");
 }
 </script>
 </html>
