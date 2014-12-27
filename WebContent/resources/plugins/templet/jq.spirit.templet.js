@@ -11,7 +11,7 @@
     var segTree={
         id:0,
         text:'segTree',
-        children:[]
+        children:new Array()
     };
     //默认宽高
     var defaultViewWidth = "800px;",defaultViewHeight = "0px;";
@@ -49,12 +49,11 @@
     
     /**
      * 建立segmentGroup组,同时生成树
-     * viewDiv 
-     * _TEMPLET
+     * viewDiv 主div 
+     * _TEMPLET 数据部分
      * level
      */
     buildSegmentGroup(viewDiv, _TEMPLET, level, segTree, 0);
-    alert(eval(segTree));
     //画树
     treeView.tree({animate:true});
     treeView.tree("loadData", [segTree]);
@@ -83,7 +82,6 @@
         var content = segArray[i].content;
         if(content){
           content = content.replace(/s="/g, "style=\"");
-          content = content.replace(/<\/style>/g, "</\div>");
           //content = content.replace(/<d/g, "<div");
         }
         contentDiv.html(content);
@@ -93,7 +91,12 @@
       segDiv.append(contendEle);
       var subSegs = segArray[i].subSeg;
       //处理树
-      var treeNode = {};
+      var treeNode = {
+        id:'',
+        text:'',
+        segId:'',
+        children:new Array()
+      };
       if (segArray[i].name) treeNode.text = segArray[i].name;
       else if (segArray[i].title) {
         treeNode.text=$(segArray[i].title).html();
@@ -101,8 +104,7 @@
       if (treeNode.text&&treeNode.text!="") {
         treeNode.id = "_tree_"+segArray[i].id;
         treeNode.segId = segArray[i].id;
-    
-        var parent = {};
+        var parent;
         if (parentTreeId==0) parent=segTree;
         else parent=findNode(segTree, parentTreeId);
         //parent
@@ -115,7 +117,7 @@
   }
   
   /**
-   * 递归实现
+   * 递归实现查找结点
    */
   function findNode(tree, id) {
     var parent ;
