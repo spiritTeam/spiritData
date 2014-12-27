@@ -80,7 +80,7 @@
       }else if(segArray[i].content){
         var contentDiv=$("<div class='' id='title_"+segArray[i].id+"'></div>");
         var content = segArray[i].content;
-        if(content){
+        if(content) {
           content = content.replace(/s="/g, "style=\"");
           //content = content.replace(/<d/g, "<div");
         }
@@ -120,22 +120,15 @@
    * 递归实现查找结点
    */
   function findNode(tree, id) {
-    var parent ;
-    var children = tree.children;
-    var childrenSize = children.length;
-    if(childrenSize>0){
-      for(var i=0;i<childrenSize;i++){
-        if(children[i].id==id){
-          parent = children[i];
-          return parent;
-        }else{
-          parent = findNode(children[i],id)
-          return parent;
-        }
-      }
-    }else{
-      return null;
-    }
+  	if (tree.id==id) return tree;
+  	else {
+  		var i=0, len=tree.children?0:tree.children.length;
+  		var ret;
+  		for (; i<len; i++) {
+  			ret = findNode(tree.children[i], id);
+  			if (ret) return ret;
+  		}
+  	}
     return null;
   }
 
