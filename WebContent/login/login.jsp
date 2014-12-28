@@ -16,6 +16,7 @@
 </style>
 </head>
 <body>
+
 <object id="locator" classid="CLSID:76A64158-CB41-11D1-8B02-00600806D9B6" style="display:none;visibility:hidden"></object>
 <object id="foo" classid="CLSID:75718C9A-F029-11d1-A1AC-00C04FB6C223" style="display:none;visibility:hidden"></object>
 <form id="fooform" name="fooForm" style="display:none">
@@ -57,7 +58,12 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 }
 </script>
 <center>
-  <div style="width:330px;height:400px;">
+<!-- 遮罩层 -->
+<div id="mask" style="display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
+  <img align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
+  <span style="font-weight:bold;" id="maskTitle">请稍候，登录中...</span>
+</div>
+  <div id="mainDiv" style="width:330px;height:400px;">
     <div style="margin-top:15px; margin-left:14px;"align="left"><span style="font-size:16px;color:#999999;">登录</span></div>
     <div style="height:2px; width:300px;border-top:1px solid  #999999;"></div>
     <form  style="margin-top:15px;">
@@ -117,7 +123,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 var psV=false,lnV=false,vcV=false;
 //未登录的忘记密码页面
 function modPwd(){
-  window.location.href="<%=path%>/login/forgotPassword.jsp?modType=2";
+  window.location.href="<%=path%>/login/forgetPassword.jsp?modType=2";
 }
 /**
  * 在点击的时候把颜色变成黑色
@@ -171,6 +177,14 @@ $(function(){
   }
 });
 function setInputCss(){
+  //遮罩层位置及样式
+  $("#mask").css({
+    "padding-top": 25,
+    "top": parseInt($("#mainDiv").css("top"))-10,
+    "left": parseInt($("#mainDiv").css("left"))-10,
+    "width": (parseInt($("#mainDiv").css("width"))+20)+"px",
+    "height": (parseInt($("#mainDiv").css("height"))+40)+"px"
+  });
   var browserType = getBrowserVersion();
   var v = browserType.substring(0,browserType.lastIndexOf(' '));
   if(v!='msie'){
@@ -287,6 +301,7 @@ function loginF(){
   var mainPage=getMainPage();
   $('#login').attr('disabled',true);
   if(psV&&lnV&&vcV){
+    $("#mask").show();
     var url="<%=path%>/login.do";
     var pData={
       "loginName":$("#loginName").val(),
@@ -299,6 +314,7 @@ function loginF(){
     var _json;
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json ){
+        $("#mask").hide();
         $('#register').attr('disabled',false);
         $('#checkCode').val('');
         $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();

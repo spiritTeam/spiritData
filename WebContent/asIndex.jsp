@@ -581,7 +581,8 @@ function register(){
     title:"注册",
     height:wHeight,
     width:wWidth,
-    modal:true
+    modal:true,
+    zIndex:-1
   };
   registerWinId = openSWinInMain(winOption);
 }
@@ -593,7 +594,7 @@ function modifyPwd(){
   var loginStatus = $('#loginStatus').val();
   var _url;
   if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modifyPassword.jsp?modifyType=1";
-  else _url="<%=path%>/login/forgotPassword.jsp";
+  else _url="<%=path%>/login/forgetPassword.jsp";
   var winOption={
     url:_url,
     title:"修改密码",

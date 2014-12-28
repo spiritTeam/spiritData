@@ -7,7 +7,7 @@
   String modifyType = request.getParameter("modifyType");
   User user = ((User)session.getAttribute(FConstants.SESSION_USER));
   String loginName = "";
-  loginName = request.getParameter("userName");
+  loginName = request.getParameter("loginName");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -157,6 +157,7 @@ $(function(){
   initPwdInputCss('confirmPassword','cpwdSpan');
   setInputCss();
   //modifyType=1，为修改密码，为2，则是忘记密码
+  alert(loginName);
   if(modifyType==1){
     $('#loginName').val(loginName);
     $('#loginName').attr('disabled',true);
