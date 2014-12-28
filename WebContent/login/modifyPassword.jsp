@@ -89,23 +89,19 @@ function modifyPassword(){
     var url = '<%=path%>/login/modifyPassword.do';
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json){
-   	  if(json){
-         $.messager.confirm('确认对话框', json.retInfo+",现在是否登陆?", function(r){
-           if (r){
-             jumpLogin();
-           }else{
-             var mainPage = getMainPage();
-             var winId = mainPage.registerWinId;
-             alert("关闭窗口功能还为实现");
-             return;
-             if(mainPage!=null) mainPage.closeWin(winId);
-             else window.location.href = "<%=path%>/asIndex.jsp";
-            }
-          });
+        if(json){
+          var mainPage = getMainPage();
+          if(mainPage){
+            closeSWinInMain(mainPage.registerWinId);
+            mainPage.$.messager.alert('修改提示',json.retInfo,'info');
+          }else{
+            $.messager.alert('修改提示',json.retInfo,'info');
+            window.location.href = "<%=path%>/asIndex.jsp";
+          }
           $('#register').attr("disabled",false); 
         }else{
-         $.messager.alert('提示',json.retInfo,'info');
-         $('#register').attr("disabled",false);
+          $.messager.alert('提示',json.retInfo,'info');
+          $('#register').attr("disabled",false);
         }
       }
     });

@@ -11,20 +11,12 @@
 
 (function($) {
   //本控件内的全局变量
-  var _bv = getBrowserVersion();
+  //var _bv = getBrowserVersion();版本信息，现在没用上
   //默认属性
   var defaults = {
     width: 640, //窗口的宽度
     height: 480, //窗口的高度
-    url: "", //内部的url用iframe实现
-    content: "", //内部的html
-
-    headCss: "", //窗口头样式：主要是高度和背景色
-    title: "标题",
-    titleCss: "", //标题样式
-    iconCss: "", //窗口图标的css
-    iconUrl: "", //窗口图标的url
-
+    title: "窗口标题",
     onBeforeClose: null, //窗口关闭之前
     zIndex:1000
   };
@@ -57,6 +49,7 @@
     var _options = $.extend(true, {}, defaults, options);
     var swinId = "sui-sWinID-"+getUuid(6);
     var winDiv = $("<div class='sWin'></div>");//窗口主对象
+    $("body").append(winDiv);
     winDiv.attr("id", swinId);
     $.data(winDiv, 'spiritSimpleWin', _options);//绑定参数
     //样式处理
@@ -67,39 +60,37 @@
       "display": "none"
     });
 
-    //画里面的内容
-    //1-头
-    var titleDiv=$("<div class='sWin_head'><div class='sWin_icon' /><div class='sWin_title' /><div class='sWin_closeBtn' /></div>");
+    //1-画里面的内容
+    //a)头
+    var headDiv=$("<div class='sWin_head'><div class='sWin_icon' /><div class='sWin_title' /><div class='sWin_closeBtn' /></div>");
+    winDiv.append(headDiv);
     //窗口头
-    titleDiv.spiritUtils("setWidthByViewWidth", winDiv.width());
-    if (_options.headCss) titleDiv.css(headCss);
-    titleDiv.spiritUtils("setWidthByViewWidth", winDiv.width());
+    if (_options.headCss) headDiv.css(headCss);
+    headDiv.spiritUtils("setWidthByViewWidth", winDiv.width());
     //窗口图标
-    if (_options.iconCss) titleDiv.find("div.sWin_icon").css(iconCss);
-    else if (_options.iconUrl) titleDiv.find("div.sWin_icon").css("background", "url('"+_options.iconUrl+"') no-repeat");
+    if (_options.iconCss) headDiv.find("div.sWin_icon").css(iconCss);
+    else if (_options.iconUrl) headDiv.find("div.sWin_icon").css("background-image", "url('"+_options.iconUrl+"') no-repeat");
     //标题区域
-    if (_options.titleCss) titleDiv.find("div.sWin_title").css(titleCss);
-    titleDiv.find(".sWin_title").html(_options.title);
-    titleDiv.find(".sWin_title").spiritUtils("setWidthByViewWidth", titleDiv.spiritUtils("getViewWidth"));
+    if (_options.titleCss) headDiv.find("div.sWin_title").css(titleCss);
+    headDiv.find(".sWin_title").html(_options.title);
+    headDiv.find(".sWin_title").spiritUtils("setWidthByViewWidth", headDiv.spiritUtils("getViewWidth"));
     //关闭按钮
-    titleDiv.find(".sWin_closeBtn").css({
-      "left": winDiv.width()-titleDiv.find(".sWin_closeBtn").width()-10
+    headDiv.find(".sWin_closeBtn").css({
+      "left": winDiv.width()-headDiv.find(".sWin_closeBtn").width()-10
     });
-    titleDiv.find(".sWin_closeBtn").mouseover(function(){
-    	$(this).css("background-position", "-72px -48px");
+    headDiv.find(".sWin_closeBtn").mouseover(function(){
+      $(this).css("background-position", "-72px -48px");
     }).mouseout(function(){
-    	$(this).css("background-position", "-56px -48px");
+      $(this).css("background-position", "-56px -48px");
     }).click(function(){
-      $(this).parent().parent().hide();
       winDiv.close();
-      $("body>div._wMask").hide();
     });
-    winDiv.append(titleDiv);
-    //2-体
+    //b)体
     var contentDiv = $("<div class='sWin_content'></div>");//窗口内容
+    winDiv.append(contentDiv);
     contentDiv.spiritUtils("setWidthByViewWidth", winDiv.width());
-    contentDiv.spiritUtils("setHeightByViewHeight", winDiv.height()-titleDiv.spiritUtils("getViewHeight"));
-    contentDiv.css("top", titleDiv.spiritUtils("getViewHeight"));
+    contentDiv.spiritUtils("setHeightByViewHeight", winDiv.height()-headDiv.spiritUtils("getViewHeight"));
+    contentDiv.css("top", headDiv.spiritUtils("getViewHeight"));
     if (_options.url) {
       var _iframe = window.document.createElement("iframe");
       $(_iframe).attr("width", "100%").attr("height", "100%").attr("scrolling", "no").attr("frameborder", "no").attr("src", _options.url.indexOf("?")==-1?_options.url+"?_winID="+swinId:_options.url+"&_winID="+swinId);
@@ -107,26 +98,45 @@
         if (_options.expandAttr.frameID) $(_iframe).attr("id", _options.expandAttr.frameID);
       }
       $(_iframe).appendTo($(contentDiv));
+    } else {
+      $(contentDiv).html(_options.content);
     }
-
-    winDiv.append(contentDiv);
-
-    //方法处理
+    //2-拖动效果
+    headDiv[0].beginX=-1;
+    headDiv[0].beginY=-2;
+    headDiv[0].beginTop=-1;
+    headDiv[0].beginLeft=-2;
+    headDiv[0].isDown=false;
+    headDiv.mousemove(function(e){
+      if (this.isDown) {
+        $(this).parent().css({
+          top: this.beginTop+(e.pageY-this.beginY),
+          left: this.beginLeft+(e.pageX-this.beginX)
+        });
+      }
+    }).mousedown(function(e){
+      this.beginX=e.pageX;
+      this.beginY=e.pageY;
+      this.beginTop=parseFloat($(this).parent().css("top"));
+      this.beginLeft=parseFloat($(this).parent().css("left"));
+      this.isDown=true;
+    }).mouseup(function(){this.isDown=false;}).mouseleave(function(){this.isDown=false;});
+    //3-方法处理
     winDiv.getId=function() {//获得Id
       return (winDiv.attr("id"));
     };
     winDiv.open=function() {//打开窗口
       var opt = $.data(this, "spiritSimpleWin");
       //遮罩层处理
-      if ($("body>div._wMask").length==0) {
-        var maskDiv = $("<div class='_wMask'>AABBCCDD</div>");
+      var maskDiv=$("body>div._wMask");
+      if (maskDiv.length==0) {
+        maskDiv = $("<div class='_wMask'></div>");
         $("body").append(maskDiv);
-      } else {
-        $("body>div._wMask").css({
-          "z-index": opt.zIndex-1,
-          "display":"block"
-        });
       }
+      maskDiv.css({
+        "z-index": opt.zIndex-1,
+        "display":"block"
+      });
       //显示窗口
       this.css({
         "display":"block",
@@ -135,21 +145,23 @@
         "left":($(window).width()-parseFloat(opt.width))/2
       });
     };
-    winDiv.resize=function(){//当窗口调整大小时
-      
+    winDiv.resize=function(){//当窗口调整大小时，resize不进行处理
+      //var abc='ddd';
     };
     winDiv.close=function(){
-    	//alert(winDiv.getId());
+      var opt = $.data(this, "spiritSimpleWin");
+      if (opt.onBeforeClose) opt.onBeforeClose(winDiv.attr("id"));
+    	winDiv.remove();
+      $("body>div._wMask").css("display", "none");
       //删除对象
       //resize去掉
     };
 
-    $("body").append(winDiv);
     return winDiv;
   }
 
   //简单窗口主函数
-  $.spiritSimpleWin = function(options) {
+  $.spiritSimpleWin = function(options, param) {
     return initSimpleWin(options);
   };
 
@@ -160,8 +172,8 @@
   }
   function resizePosition() {
     var _sWins = $("body>div.sWin");
-    var i=0; len=_sWins.length;
-    window.console.log(len);
+    var i=0;
+    var len=_sWins.length;
     for (; i<len; i++) {
       var _sWin = _sWins[i];
       $(_sWin).css({
@@ -188,6 +200,7 @@
     iconUrl: "", //窗口图标的url
 
     onBeforeClose: null, //窗口关闭之前
-    zIndex:1000
+    zIndex:1000,
+    expandAttr 窗口的扩展属性，可定义iframe的id，是javaScript对象，如expandAttr={"frameID":"iframeID"}
   };
 */

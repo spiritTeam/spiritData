@@ -106,7 +106,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     </form>
     <div align="right" style="width:310px;margin-top:100px;margin-right:10px;">
       <a onclick="tregister()" href="#">注册</a>
-      <a onclick="activeAgain()" href="#">&nbsp;激活</a>
+      <a onclick="activeUserAgain()" href="#">&nbsp;激活</a>
       <a onclick="modPwd()" href="#">&nbsp;忘记密码</a>
     </div>
   </div>
@@ -189,8 +189,8 @@ function setInputCss(){
   }
 }
 //从新发送激活邮件到邮箱
-function activeAgain(){
-  var url="<%=path%>/login/activeAgain.do";
+function activeUserAgain(){
+  var url="<%=path%>/login/activeUserAgain.do";
   var loginName = $("#loginName").val();
   if(loginName==null||loginName==""||loginName==$("#loginName")[0].defaultValue){
     $.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
@@ -306,15 +306,22 @@ function loginF(){
         var loginInfo = json.data;
         var retInfo = loginInfo.retInfo;
         if(json.type==-1){
-          $.messager.alert('登录信息',retInfo);
+          $.messager.alert('登录信息',retInfo,'info');
         }else if (json.type==1){
           var activeType = loginInfo.activeType;
           if(activeType==1){
-            $.messager.alert('登录信息',retInfo);
+            $.messager.alert('登录信息',retInfo,'info');
           }else if(activeType==2){
-            var dom = mainPage.document.getElementById("loginStatus")
-            $(dom).val(1);
-            mainPage.$.messager.alert("登陆信息","登陆成功！");
+            if(mainPage) {
+              var dom = mainPage.document.getElementById("loginStatus");
+              $(dom).val(1);
+              closeSWinInMain(mainPage.loginWinId);
+              mainPage.$.messager.alert("登陆信息","登陆成功！",'info');
+            }else{
+              $.messager.alert("登陆信息","登陆成功！",'info');
+              window.location.href = "<%=path%>/asIndex.jsp";
+            }
+            
           }
         } else if(json.type==2 ){
           mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");

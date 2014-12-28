@@ -14,8 +14,6 @@
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
-<link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/spiritui/themes/default/all.css"/>
-<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.utils.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/js/mainPage.utils.js"></script>
 <style>
@@ -569,7 +567,7 @@ function logout() {
     }
   });
 };
-var wHeight = "400";
+var wHeight = "450";
 var wWidth = "350";
 /**
  * 注册
@@ -585,7 +583,7 @@ function register(){
     width:wWidth,
     modal:true
   };
-  registerWinId = newSWin(winOption);
+  registerWinId = openSWinInMain(winOption);
 }
 /**
  * 修改
@@ -603,7 +601,7 @@ function modifyPwd(){
     width:wWidth,
     modal:true
   };
-  modifyWinId = newSWin(winOption);
+  modifyWinId = openSWinInMain(winOption);
 }
 /*
  * 登陆
@@ -618,15 +616,15 @@ function login(){
     width:wWidth,
     modal:true
   };
-  loginWinId = newSWin(winOption);
+  loginWinId = openSWinInMain(winOption);
 }
 
 /**
  * 测试
  */
 function testW() {
-  newSWin({height:"400px", width:"300px", title:"测试窗口", url:"http://blog.csdn.net/oldwolf1987/article/details/4031534"});
-  //newSWin({height:"400px", width:"300px", title:"测试窗口"});
+  //newSWin({height:"400px", width:"300px", title:"测试窗口", content:"http://blog.csdn.net/oldwolf1987/article/details/4031534"});
+  openSWinInMain({height:"400px", width:"300px", title:"测试窗口", url:"<%=path%>/test/testSWin.jsp"});
   return;
 }
 </script>

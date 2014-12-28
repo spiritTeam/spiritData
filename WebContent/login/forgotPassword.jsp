@@ -69,7 +69,7 @@ function sendBackPwdMail(){
   $('#jumpLogin').attr('disabled',true);
   if(lnV){
     $('#loginName')
-    var url = '<%=path%>/login/sendBackPwdMail.do';
+    var url = '<%=path%>/login/sendBackPasswordMail.do';
     var pData = {
       loginName:$('#loginName').val()
     };
