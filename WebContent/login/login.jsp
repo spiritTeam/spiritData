@@ -57,14 +57,15 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
   if(objObject.DNSHostName != null && objObject.DNSHostName != "undefined" )sDNSName = objObject.DNSHostName;
 }
 </script>
-<center>
 <!-- 遮罩层 -->
 <div id="mask" style="border:1px;display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
   <img align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
   <span style="font-weight:bold;" id="maskTitle">请稍候，登录中...</span>
 </div>
+
+<center>
   <div id="mainDiv" style="width:330px;height:400px;">
-  <form  style="margin-top:15px;">
+  <form >
     <table width="300px;" style="margin-right:-15px;">
     <tr style="height:50px; valign:top;">
       <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
@@ -160,10 +161,6 @@ function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
 }
 $(function(){
-	alert($('#mask').width());
-	$("#mask").css("width",$(window).width());
-	$("#mask").css("height",$(window).width());
-	$("#mask").show();
   $("#pwdSpan").mouseover(function(){pwdOnActive();});
   $("#password").focus(function(){pwdOnActive();});
   $("#password").mouseover(function(){pwdOnActive();});
@@ -182,14 +179,17 @@ $(function(){
   }
 });
 function setInputCss(){
+	//$("#mask").css("width",$(window).width());
+	//$("#mask").css("height",$(window).height());
   //遮罩层位置及样式
   $("#mask").css({
     "padding-top": 25,
     "top": parseInt($("#mainDiv").css("top"))-10,
     "left": parseInt($("#mainDiv").css("left"))-10,
-    "width": (parseInt($("#mainDiv").css("width"))+20)+"px",
-    "height": (parseInt($("#mainDiv").css("height"))+40)+"px"
+    "width": $(window).width(),
+    "height": $(window).height()
   });
+  $("#mask").show();
   var browserType = getBrowserVersion();
   var v = browserType.substring(0,browserType.lastIndexOf(' '));
   if(v!='msie'){
