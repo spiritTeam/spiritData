@@ -96,8 +96,10 @@ function openSWinInMain(winOption) {
  */
 function getSWinInMain(winId) {
   var mainPage = getMainPage();
-  if (mainPage) mainPage.getSWin(winId);
-  else getSWin(winId);
+  var _win;
+  if (mainPage) _win=mainPage.getSWin(winId);
+  else _win=getSWin(winId);
+  return _win;
 }
 
 /**

@@ -18,6 +18,7 @@
 
 <body>
 窗口ID:<input id="thisWinId" type="text" style="width:200px"></input><input type="button" value="关闭窗口" onclick="testCloseWin()"/>
+修改title:<input id="thisTitle" type="text" style="width:200px"></input><input type="button" value="修改" onclick="updateWin()"/>
 </body>
 <script>
 $(function(){
@@ -26,6 +27,10 @@ $(function(){
 function testCloseWin() {
   var mp = getMainPage();
   mp.$.messager.alert("提示", "测试", "info", function(){closeSWinInMain($("#thisWinId").val());});
+}
+function updateWin() {
+  var win = getSWinInMain($("#thisWinId").val());
+  win.modify({title: ""+$("#thisTitle").val()})
 }
 </script>
 </html>

@@ -148,6 +148,12 @@
     winDiv.resize=function(){//当窗口调整大小时，resize不进行处理
       //var abc='ddd';
     };
+    winDiv.modify=function(options) {//修改参数，目前只修改标题
+    	var opt = $.data(this, "spiritSimpleWin");
+    	opt = $.extend(true, {}, opt, options);
+      $.data(this, 'spiritSimpleWin', opt);//绑定参数
+      if (opt.title&&opt.title!="") $(this).find(".sWin_head>.sWin_title").html(opt.title);
+    };
     winDiv.close=function(){
       var opt = $.data(this, "spiritSimpleWin");
       if (opt.onBeforeClose) opt.onBeforeClose(winDiv.attr("id"));
