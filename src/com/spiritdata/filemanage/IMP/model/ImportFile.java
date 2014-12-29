@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.filemanage.IMP.model;
+package com.spiritdata.filemanage.IMP.model;
 
 import java.io.File;
 import java.sql.Timestamp;
@@ -7,9 +7,10 @@ import java.util.Date;
 import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
-import com.spiritdata.dataanal.filemanage.core.enumeration.FileCategoryType1;
-import com.spiritdata.dataanal.filemanage.core.model.FileCategory;
-import com.spiritdata.dataanal.filemanage.core.model.FileInfo;
+import com.spiritdata.dataanal.exceptionC.Dtal0101CException;
+import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
+import com.spiritdata.filemanage.core.model.FileCategory;
+import com.spiritdata.filemanage.core.model.FileInfo;
 
 /**
  * 导入文件模型，用于记录导入文件，基于File管理模型
@@ -81,9 +82,9 @@ public class ImportFile extends BaseObject {
      * @return 模型化文件信息
      * @throws Exception 若服务器端文件不存在
      */
-    public FileInfo convertToFileInfo() throws Exception {
+    public FileInfo convertToFileInfo() {
         File f = new File(this.serverFileName);
-        if (f==null||!f.isFile()) throw new IllegalArgumentException("导入文件对象中serverFileName所指向的文件为空或是一个目录！");
+        if (f==null||!f.isFile()) throw new Dtal0101CException(new IllegalArgumentException("导入文件对象中serverFileName所指向的文件为空或是一个目录！"));
 
         FileInfo ret = new FileInfo();
         //主信息

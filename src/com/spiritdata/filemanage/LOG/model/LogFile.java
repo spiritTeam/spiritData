@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.filemanage.LOG.model;
+package com.spiritdata.filemanage.LOG.model;
 
 import com.spiritdata.framework.core.model.BaseObject;
 

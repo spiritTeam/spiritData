@@ -29,15 +29,15 @@ public class HeadData implements Serializable {
         return id;
     }
     public void setId(String id) {
-        if (this.id==null||this.id.length()==0) throw new Jsond0002CException("id必须设置！", new IllegalArgumentException("id不能为null或空串！"));
+        if (id==null||id.length()==0) throw new Jsond0002CException("id必须设置！", new IllegalArgumentException("id不能为null或空串！"));
         this.id = id;
     }
     public String getCode() {
         return code;
     }
     public void setCode(String code) {
-        if (this.code==null||this.code.length()==0) throw new Jsond0002CException("code必须设置！", new IllegalArgumentException("code不能为null或空串！"));
-        if (!this.isLegalCode(code)) throw new Jsond0002CException("code不合规！", new IllegalArgumentException("code不合规，请参看JsonD相关文档！"));
+        if (code==null||code.length()==0) throw new Jsond0002CException("code必须设置！", new IllegalArgumentException("code不能为null或空串！"));
+        if (!this.isLegalCode(code)) throw new Jsond0002CException("code["+code+"]不合规！", new IllegalArgumentException("code不合规，请参看JsonD相关文档！"));
         this.code = code;
     }
     public String getParseFun() {
@@ -114,7 +114,7 @@ public class HeadData implements Serializable {
      * Code是否合法，前提是this.Code不为空
      */
     private boolean isLegalCode(String code) {
-        Pattern pattern = Pattern.compile("^[A-Z]+(\\.[A-Z]+)*::(\\d+){1}");
+        Pattern pattern = Pattern.compile("^[A-Z]+(\\.[A-Z]+)*::\\d+");
         Matcher matcher = pattern.matcher(code);
         return matcher.find();
     }

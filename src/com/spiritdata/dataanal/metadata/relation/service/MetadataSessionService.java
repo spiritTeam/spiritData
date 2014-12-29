@@ -9,11 +9,12 @@ import org.springframework.stereotype.Component;
 
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
+import com.spiritdata.framework.util.SequenceUUID;
+
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.TableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
-import com.spiritdata.dataanal.util.SequenceUUID;
 
 /**
  * 元数据处理服务，关于所有者元数据的操作都封装在这里。

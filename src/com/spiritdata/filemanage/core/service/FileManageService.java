@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.filemanage.core.service;
+package com.spiritdata.filemanage.core.service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -6,12 +6,12 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
-import com.spiritdata.dataanal.filemanage.core.model.FileCategory;
-import com.spiritdata.dataanal.filemanage.core.model.FileInfo;
-import com.spiritdata.dataanal.filemanage.core.model.FileRelation;
-import com.spiritdata.dataanal.filemanage.core.persistence.pojo.FileCategoryPo;
-import com.spiritdata.dataanal.filemanage.core.persistence.pojo.FileIndexPo;
-import com.spiritdata.dataanal.filemanage.core.persistence.pojo.FileRelationPo;
+import com.spiritdata.filemanage.core.model.FileCategory;
+import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.model.FileRelation;
+import com.spiritdata.filemanage.core.persistence.pojo.FileCategoryPo;
+import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
+import com.spiritdata.filemanage.core.persistence.pojo.FileRelationPo;
 
 /**
  * 文件管理服务类

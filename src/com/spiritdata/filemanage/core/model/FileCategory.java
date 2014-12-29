@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.filemanage.core.model;
+package com.spiritdata.filemanage.core.model;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -6,10 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.spiritdata.framework.core.model.BaseObject;
-import com.spiritdata.dataanal.filemanage.core.enumeration.FileCategoryType1;
-import com.spiritdata.dataanal.filemanage.core.enumeration.RelType1;
-import com.spiritdata.dataanal.filemanage.core.persistence.pojo.FileCategoryPo;
-import com.spiritdata.dataanal.util.SequenceUUID;
+import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
+import com.spiritdata.filemanage.core.enumeration.RelType1;
+import com.spiritdata.filemanage.core.persistence.pojo.FileCategoryPo;
 
 /**
  * 模型化文件分类对象。它与持久化中的FileClassPo区别在于：
@@ -76,7 +76,7 @@ public class FileCategory extends BaseObject {
         CTime = cTime;
     }
 
-    //文件关系关系
+    //文件分类关联关系
     /*
      * 与本文件分类建立关联关系
      * @param obj 关联关系中另一个对象，只能是{@linkplain com.spiritdata.dataanal.filemanage.model.FileInfo FileInfo}
@@ -161,8 +161,8 @@ public class FileCategory extends BaseObject {
     public FileRelation buildRel(Object obj, RelType1 type, String rType2, String desc) throws Exception {
         FileRelation ret = this._buildRel(obj, type, rType2, desc);
         FileRelation _contraryRet = ret.getContraryRelation();
-        if (obj instanceof FileInfo) ((FileInfo)obj)._buildRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
-        if (obj instanceof FileCategory) ((FileCategory)obj)._buildRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
+        if (obj instanceof FileInfo) ((FileInfo)obj).buildCategoryRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
+        if (obj instanceof FileCategory) ((FileCategory)obj).buildCategoryRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
         return ret;
     }
 
@@ -175,7 +175,7 @@ public class FileCategory extends BaseObject {
      * @return 所建立的关系
      * @throws Exception 如果obj不是符合的类型
      */
-    public FileRelation buildCFileRel(FileInfo fc, RelType1 type, String rType2, String desc) throws Exception {
+    public FileRelation buildFileRel(FileInfo fc, RelType1 type, String rType2, String desc) throws Exception {
         return this.buildRel(fc, type, rType2, desc);
     }
 

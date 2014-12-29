@@ -17,12 +17,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.spiritdata.framework.FConstants;
+import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
 import com.spiritdata.dataanal.login.util.RandomValidateCode;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
-import com.spiritdata.dataanal.util.SequenceUUID;
-import com.spiritdata.framework.FConstants;
 
 /**
  * 用于登陆和注册

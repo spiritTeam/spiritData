@@ -16,13 +16,14 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
+import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
+
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable;
 import com.spiritdata.dataanal.metadata.relation.pojo.TableMapRel;
-import com.spiritdata.dataanal.util.SequenceUUID;
 
 /**
  * 计算表指标的服务，此服务直接从数据库中读取信息，而不从session中读取数据

@@ -20,16 +20,18 @@ import org.springframework.stereotype.Component;
 
 import com.spiritdata.framework.CodeException;
 import com.spiritdata.framework.FConstants;
+import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.core.cache.SystemCache;
+import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.framework.util.JsonUtils;
+
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable;
 import com.spiritdata.dataanal.metadata.relation.semanteme.AnalTable;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.util.Arithmetic;
-import com.spiritdata.dataanal.util.SequenceUUID;
-import com.spiritdata.framework.core.cache.SystemCache;
-import com.spiritdata.framework.util.FileNameUtils;
-import com.spiritdata.framework.util.JsonUtils;
+
 import com.spiritdata.jsonD.model.AtomData;
 import com.spiritdata.jsonD.model.HeadData;
 
@@ -173,7 +175,7 @@ public class AnalKey implements AnalTable {
         //写jsonD文件，此方法目前为测试方法，今后把他变为一个更好用的包
         HeadData jsonDHead = new HeadData();
         jsonDHead.setId(SequenceUUID.getPureUUID());
-        jsonDHead.setCode("SD.TEAM.ANAL-0001");
+        jsonDHead.setCode("SD.TEAM.ANAL::0001");
         jsonDHead.setCTime(new Date());
         jsonDHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键的记录文件");
         //文件名
@@ -211,6 +213,7 @@ public class AnalKey implements AnalTable {
                 try {fileOutputStream.close();}catch(IOException e) {e.printStackTrace();}
             }
         }
+        //文件绑定
         return ret;
     }
 

@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.filemanage.core.persistence.pojo;
+package com.spiritdata.filemanage.core.persistence.pojo;
 
 import java.sql.Timestamp;
 import com.spiritdata.framework.core.model.BaseObject;

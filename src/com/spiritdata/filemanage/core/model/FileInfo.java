@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.filemanage.core.model;
+package com.spiritdata.filemanage.core.model;
 
 import java.io.File;
 import java.sql.Timestamp;
@@ -8,9 +8,9 @@ import java.util.List;
 
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
-import com.spiritdata.dataanal.filemanage.core.enumeration.RelType1;
-import com.spiritdata.dataanal.filemanage.core.persistence.pojo.FileIndexPo;
-import com.spiritdata.dataanal.util.SequenceUUID;
+import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.filemanage.core.enumeration.RelType1;
+import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 
 /**
  * 模型化文件信息对象，包括文件的索引信息，文件的分类信息，以及文件的关系信息。
@@ -29,7 +29,7 @@ public class FileInfo extends FileIndexPo {
 
     private List<FileRelation> positiveRelationFiles; //与本文件相关的正向关联关系
     private List<FileRelation> inverseRelationFiles; //与本文件相关的反向关联关系
-    private List<FileRelation> equalRelationFiles; //与本文件相关的反向关联关系
+    private List<FileRelation> equalRelationFiles; //与本文件相关的平等关联关系
 
     public File getFile() {
         return file;
@@ -153,8 +153,8 @@ public class FileInfo extends FileIndexPo {
     public FileRelation buildRel(Object obj, RelType1 type, String rType2, String desc) throws Exception {
         FileRelation ret = this._buildRel(obj, type, rType2, desc);
         FileRelation _contraryRet = ret.getContraryRelation();
-        if (obj instanceof FileInfo) ((FileInfo)obj)._buildRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
-        if (obj instanceof FileCategory) ((FileCategory)obj)._buildRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
+        if (obj instanceof FileInfo) ((FileInfo)obj).buildFileRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
+        if (obj instanceof FileCategory) ((FileCategory)obj).buildFileRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
         return ret;
     }
 
@@ -167,7 +167,7 @@ public class FileInfo extends FileIndexPo {
      * @return 所建立的关系
      * @throws Exception 如果obj不是符合的类型
      */
-    public FileRelation buildCFileRel(FileInfo fc, RelType1 type, String rType2, String desc) throws Exception {
+    public FileRelation buildFileRel(FileInfo fc, RelType1 type, String rType2, String desc) throws Exception {
         return this.buildRel(fc, type, rType2, desc);
     }
 
