@@ -12,9 +12,8 @@
 <meta http-equiv="pragma" content="no-cache"/>
 <meta http-equiv="expires" content="0"/>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
-<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.utils.js"></script>
-<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
-<script type="text/javascript" src="<%=path%>/resources/js/mainPage.utils.js"></script>
+
+<link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mySpiritUi/pageFrame.css"/>
 
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/excanvas.min.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.js"></script>
@@ -22,7 +21,7 @@
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.categories.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/Chart.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mySpiritUi/pageFrame.css"/>
+<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 
 <title>分析报告</title>
 </head>
@@ -440,9 +439,15 @@ var INIT_PARAM = {
   page_height: -1,
   top_shadow_color:"#E6E6E6",
   top_height: 60,
-  top_peg: false
+  top_peg: false,
+  myInit: initPos,
+  myResize: initPos
 };
 
+function initPos() {
+  $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth"));
+  $("#sideFrame").css("left", $("#reportFrame").width());
+}
 //主函数
 $(function() {
   var initStr = $.spiritPageFrame(INIT_PARAM);
@@ -450,8 +455,7 @@ $(function() {
     $.messager.alert("页面初始化失败", initStr, "error");
     return ;
   };
-  $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth"));
-  $("#sideFrame").css("left", $("#reportFrame").width());
+
   //树
   var treeData=[{
     "id":1, "text":"上传数据",

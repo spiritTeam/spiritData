@@ -21,6 +21,4 @@ public class AnalResultFile extends BaseObject {
     private String objId; //所分析的对象Id，MetadataModelId
     private String objType; //分析对象类型，
     private String objAdress; //分析对象的访问地址
-
-    
 }

@@ -48,18 +48,18 @@
     });
     //1.1-若出现滚动条，进行处理
     var rh=parseFloat($("#_main").css("height")), rw=parseFloat($("#_main").css("width"));
-    if (INIT_PARAM.page_width==0)  {//若为自适应宽
+    if (INIT_PARAM.page_width<=0)  {//若为自适应宽
       if ((rh+caculateHeightOffSet())>wHeight()) rw -= _hScrollbarWidth;//若出现纵向滚动条，则宽度为页面宽度减去滚动条宽度
       //ie兼容
       if (_bv.indexOf("msie")==0) {
         var _v = parseFloat(_bv.substring(5));
         if (_v==8) {
-          if (INIT_PARAM.page_height!=0) rw -= _hScrollbarWidth;
+          if (INIT_PARAM.page_height>0) rw -= _hScrollbarWidth;
         }
       }
       if (rw>INIT_PARAM.win_min_width) $("#_main").css({"width": rw});
     }
-    if (INIT_PARAM.page_height==0) {//若为自适应高
+    if (INIT_PARAM.page_height<=0) {//若为自适应高
       if ((rw+caculateWidthOffSet())>wWidth()) rh -= _wScrollbarWidth;//若出现横向滚动条，则宽度为页面宽度减去滚动条宽度
       if (_bv.indexOf("msie")==0) {
         var _v = parseFloat(_bv.substring(5));
@@ -172,11 +172,11 @@
     });
     //1.1-若出现滚动条，进行处理
     var rh=parseFloat($("#_main").css("height")), rw=parseFloat($("#_main").css("width"));
-    if (INIT_PARAM.page_width==0)  {//若为自适应宽
+    if (INIT_PARAM.page_width<=0)  {//若为自适应宽
       if ((rh+caculateHeightOffSet())>wHeight()) rw -= _hScrollbarWidth;//若出现纵向滚动条，则宽度为页面宽度减去滚动条宽度
       if (rw>INIT_PARAM.win_min_width) $("#_main").css({"width": rw});
     }
-    if (INIT_PARAM.page_height==0) {//若为自适应高
+    if (INIT_PARAM.page_height<=0) {//若为自适应高
       if ((rw+caculateWidthOffSet())>wWidth()) rh -= _wScrollbarWidth;//若出现横向滚动条，则宽度为页面宽度减去滚动条宽度
       //ie8兼容
       if (_bv.indexOf("msie")==0) {
@@ -485,7 +485,7 @@
   function getWidth() {
     if (INIT_PARAM.page_width>0) return INIT_PARAM.page_width;//若指定宽度，返回定宽
     var retWidth = $("#_main").width();//不控制
-    if (INIT_PARAM.page_width==0) {//若为自适应
+    if (INIT_PARAM.page_width<=0) {//若为自适应
       retWidth = wWidth()-caculateWidthOffSet();//主体宽度=窗口宽度-宽度偏移量
       if (retWidth<INIT_PARAM.win_min_width) retWidth=INIT_PARAM.win_min_width;
     };
@@ -497,7 +497,7 @@
   function getHeight() {
     if (INIT_PARAM.page_height>0) return INIT_PARAM.page_height;//若指定宽度，返回定宽
     var retHeight = $("#_main").height();//不控制
-    if (INIT_PARAM.page_height==0) {//若为自适应
+    if (INIT_PARAM.page_height<=0) {//若为自适应
       retHeight = wHeight()-caculateHeightOffSet();//主体宽度=窗口宽度-宽度偏移量
       if (retHeight<INIT_PARAM.win_min_height) retHeight=INIT_PARAM.win_min_height;
     };

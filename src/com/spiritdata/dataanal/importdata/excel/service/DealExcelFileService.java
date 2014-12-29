@@ -2,14 +2,10 @@ package com.spiritdata.dataanal.importdata.excel.service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +15,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
-import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -28,11 +23,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
-import com.spiritdata.framework.FConstants;
-import com.spiritdata.framework.core.cache.SystemCache;
-import com.spiritdata.framework.util.FileNameUtils;
-import com.spiritdata.framework.util.JsonUtils;
-import com.spiritdata.jsonD.model.AtomData;
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
@@ -46,7 +36,6 @@ import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalKey;
 import com.spiritdata.dataanal.metadata.relation.service.MdKeyService;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.metadata.relation.service.MetadataSessionService;
-import com.spiritdata.dataanal.util.SequenceUUID;
 
 /**
  * 处理excel文件。

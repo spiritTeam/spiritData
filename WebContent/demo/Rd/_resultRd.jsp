@@ -12,18 +12,17 @@
 <meta http-equiv="pragma" content="no-cache"/>
 <meta http-equiv="expires" content="0"/>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
+
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mySpiritUi/pageFrame.css"/>
-<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.utils.js"></script>
-<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
-<script type="text/javascript" src="<%=path%>/resources/js/mainPage.utils.js"></script>
 
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/excanvas.min.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.pie.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.categories.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/Chart.min.js"></script>
-<script type="text/javascript" src="<%=path %>/resources/js/brief.jqplotToImg.js"></script>
-<!-- 测试 -->
+
+<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
+
 <title>分析报告</title>
 </head>
 <style>
@@ -111,7 +110,7 @@ body {
         </table>
           </div>
         </td>
-        <td><div style="width:240px;height:148px;border:1px solid #95B8E7;padding:5px;margin-left:5px;"><div class="jqplot" id="chartA1_2_a" style="width:220px;height:145px;"></div></div></td>
+        <td><div style="width:240px;height:148px;border:1px solid #95B8E7;padding:5px;margin-left:5px;"><div id="chartA1_2_a" style="width:220px;height:145px;"></div></div></td>
         </tr></table></div>
       </li>
       <li>
@@ -139,8 +138,8 @@ body {
           </div>
         </td>
         </tr><tr>
-        <td><div style="width:180px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div class="jqplot" id="chartA1_2_b" style="width:170px;height:170px;"></div></div></td>
-        <td><div style="width:392px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div  class="jqplot" id="chartA1_2_c" style="width:400px;height:170px;"></div></div></td>
+        <td><div style="width:180px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_2_b" style="width:170px;height:170px;"></div></div></td>
+        <td><div style="width:392px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div id="chartA1_2_c" style="width:400px;height:170px;"></div></div></td>
         </tr></table></div>
       </li>
       <li>
@@ -168,8 +167,8 @@ body {
           </div>
         </td>
         </tr><tr>
-        <td><div style="width:180px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div class="jqplot" id="chartA1_2_d" style="width:170px;height:170px;"></div></div></td>
-        <td><div style="width:392px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div class="jqplot" id="chartA1_2_e" style="width:400px;height:170px;"></div></div></td>
+        <td><div style="width:180px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_2_d" style="width:170px;height:170px;"></div></div></td>
+        <td><div style="width:392px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div id="chartA1_2_e" style="width:400px;height:170px;"></div></div></td>
         </tr></table></div>
       </li>
       <li>
@@ -197,8 +196,8 @@ body {
           </div>
         </td>
         </tr><tr>
-        <td><div style="width:180px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div class="jqplot" id="chartA1_2_f" style="width:170px;height:170px;"></div></div></td>
-        <td><div style="width:392px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div class="jqplot" id="chartA1_2_g" style="width:400px;height:170px;"></div></div></td>
+        <td><div style="width:180px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_2_f" style="width:170px;height:170px;"></div></div></td>
+        <td><div style="width:392px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div id="chartA1_2_g" style="width:400px;height:170px;"></div></div></td>
         </tr></table></div>
       </li>
     </ul>
@@ -292,11 +291,11 @@ body {
           </div>
         </td>
         </tr><tr>
-        <td><div style="width:280px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div style="position:absolute;">个数</div><div class="jqplot" id="chartA1_4_a" style="width:270px;height:170px;"></div></div></td>
-        <td><div style="width:290px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div style="position:absolute;">值</div><div class="jqplot" id="chartA1_4_b" style="width:280px;height:170px;"></div></div></td>
+        <td><div style="width:280px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div style="position:absolute;">个数</div><div id="chartA1_4_a" style="width:270px;height:170px;"></div></div></td>
+        <td><div style="width:290px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div style="position:absolute;">值</div><div id="chartA1_4_b" style="width:280px;height:170px;"></div></div></td>
         </tr><tr>
         <td colspan=2>
-        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div class="jqplot" id="chartA1_4_c" style="width:590px;height:180px;"></div></div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_4_c" style="width:590px;height:180px;"></div></div>
         </td>
         </tr></table></div>
       </li>
@@ -313,19 +312,19 @@ body {
       </li>
       <li>
         <div><span style="font-weight:bold;">“案件”按[发案时间]</span>分析，日分布情况如下:</div>
-        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div class="jqplot" id="chartA1_4_d" style="width:590px;height:180px;"></div></div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA1_4_d" style="width:590px;height:180px;"></div></div>
       </li>
       <li>
         <div><span style="font-weight:bold;">“案件”按[发案时间]</span>分析，周分布情况如下:</div>
-        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div class="jqplot" id="chartA1_4_e" style="width:590px;height:180px;"></div></div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA1_4_e" style="width:590px;height:180px;"></div></div>
       </li>
       <li>
         <div><span style="font-weight:bold;">“案件”按[发案时间]、[报案金额]</span>分析，周分布情况如下:</div>
-        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div class="jqplot" id="chartA1_4_f" style="width:590px;height:180px;"></div></div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA1_4_f" style="width:590px;height:180px;"></div></div>
       </li>
       <li>
         <div><span style="font-weight:bold;">“案件”按[发案时间]、[案件类别]</span>分析，周分布情况如下:</div>
-        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div class="jqplot" id="chartA1_4_g" style="width:590px;height:180px;"></div></div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA1_4_g" style="width:590px;height:180px;"></div></div>
       </li>
     </ul>
   </div>
@@ -352,15 +351,15 @@ body {
     <ul>
       <li>
         <div><span style="font-weight:bold;">“案件”按[发案时间]</span>分析，当月分布情况如下:</div>
-        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div class="jqplot" id="chartA2_4_a" style="width:590px;height:180px;"></div></div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA2_4_a" style="width:590px;height:180px;"></div></div>
       </li>
       <li>
         <div><span style="font-weight:bold;">“案件”按[发案时间]发案数量</span>分析，月同环比情况如下:</div>
-        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div  id="chartA2_4_c" style="width:590px;height:180px;"></div></div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA2_4_c" style="width:590px;height:180px;"></div></div>
       </li>
       <li>
         <div><span style="font-weight:bold;">“案件”按[发案时间][报案金额]</span>分析，月同环比情况如下:</div>
-        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div class="jqplot" id="chartA2_4_b" style="width:590px;height:180px;"></div></div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA2_4_b" style="width:590px;height:180px;"></div></div>
       </li>
     </ul>
   </div>
@@ -420,25 +419,6 @@ body {
             </tr>
           </thead>
         </table>
-        <form id="imgInfoForm" hidden="true" action="<%=path %>/getImage.do" method="post" onsubmit="initForm();">
-		      <input type="hidden" id="u1" value="" name="chartA1_2_a">
-		      <input type="hidden" id="u1" value="" name="chartA1_2_b">
-		      <input type="hidden" id="u1" value="" name="chartA1_2_c">
-		      <input type="hidden" id="u1" value="" name="chartA1_2_d">
-		      <input type="hidden" id="u1" value="" name="chartA1_2_e">
-		      <input type="hidden" id="u1" value="" name="chartA1_2_f">
-		      <input type="hidden" id="u1" value="" name="chartA1_2_g">
-		      <input type="hidden" id="u1" value="" name="chartA1_4_a">
-		      <input type="hidden" id="u1" value="" name="chartA1_4_b">
-		      <input type="hidden" id="u1" value="" name="chartA1_4_c">
-          <input type="hidden" id="u1" value="" name="chartA1_4_d">
-          <input type="hidden" id="u1" value="" name="chartA1_4_e">
-          <input type="hidden" id="u1" value="" name="chartA1_4_f">
-          <input type="hidden" id="u1" value="" name="chartA1_4_g">
-          <input type="hidden" id="u1" value="" name="chartA2_4_a">
-          <input type="hidden" id="u1" value="" name="chartA2_4_b">
-		      <input type="hidden" id="thisUrl" name="thisUrl" value="">
-		    </form>
         </div>
       </li>
     </ul>
@@ -449,28 +429,6 @@ body {
 </div>
 </body>
 <script>
-//本页url
-var thisUrl = window.location.href;
-//获取japlot元素
-var jqplotDoms;  
-function initForm(){
-  //初始化链接
-  $('#thisUrl').val(thisUrl);
-  //初始化图片Str
-  initImg();
-}
-function initImg(){
-  jqplotDoms = $(".jqplot");
-  if(jqplotDoms.length>0){
-    for (var i=0;i<jqplotDoms.length;i++) {
-      var jqpoltDom=$(jqplotDoms[i]);
-      var id = jqpoltDom.attr('id');
-      var image = jqplotToImg($('#'+id));
-      var arr=image.split(',');
-      $("input[name='"+id+"']").val(arr[arr.length-1]);
-    } 
-  }
-}
 //主窗口参数
 var INIT_PARAM = {
   pageObjs: {
@@ -481,18 +439,23 @@ var INIT_PARAM = {
   page_height: -1,
   top_shadow_color:"#E6E6E6",
   top_height: 60,
-  top_peg: false
+  top_peg: false,
+  myInit: initPos,
+  myResize: initPos
 };
 
+function initPos() {
+  $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth"));
+  $("#sideFrame").css("left", $("#reportFrame").width());
+}
 //主函数
 $(function() {
-  var initStr = $().spiritPageFrame(INIT_PARAM);
+  var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
     $.messager.alert("页面初始化失败", initStr, "error");
     return ;
   };
-  $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth"));
-  $("#sideFrame").css("left", $("#reportFrame").width());
+
   //树
   var treeData=[{
     "id":1, "text":"上传数据",
