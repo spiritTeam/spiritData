@@ -1,11 +1,11 @@
-package com.spiritdata.dataanal.filemanage.core.model;
+package com.spiritdata.filemanage.core.model;
 
 import java.sql.Timestamp;
 
 import com.spiritdata.framework.core.model.BaseObject;
-import com.spiritdata.dataanal.filemanage.core.enumeration.RelType1;
-import com.spiritdata.dataanal.filemanage.core.persistence.pojo.FileRelationPo;
-import com.spiritdata.dataanal.util.SequenceUUID;
+import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.filemanage.core.enumeration.RelType1;
+import com.spiritdata.filemanage.core.persistence.pojo.FileRelationPo;
 
 /**
  * 模型化文件关联对象。它与持久化中的FileRelationPo区别在于：
@@ -148,9 +148,9 @@ public class FileRelation extends BaseObject {
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof FileRelation)) return false;
-        boolean ret = super.equals(obj)&&(this.element1.equals(((FileRelation)obj).element1))
-                &&(this.element2.equals(((FileRelation)obj).element2))
+        boolean ret = super.equals(obj)
                 &&(this.element1.equals(((FileRelation)obj).element1))
+                &&(this.element2.equals(((FileRelation)obj).element2))
                 &&(this.RType1==((FileRelation)obj).RType1);
 
         String s1, s2;

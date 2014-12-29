@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.filemanage.core.enumeration;
+package com.spiritdata.filemanage.core.enumeration;
 
 /**
  * 文件关系分类1，正向关系，对等关系，反响关系

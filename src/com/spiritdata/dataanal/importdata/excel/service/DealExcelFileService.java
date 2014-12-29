@@ -24,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.dataanal.SDConstants;
+import com.spiritdata.filemanage.IMP.model.ImportFile;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
@@ -62,7 +63,7 @@ public class DealExcelFileService {
      * @param fileName 文件名称
      * @param session 用户Session
      */
-    public void process(String fileName, HttpSession session) {
+    public void process(ImportFile ifile, HttpSession session) {
         Enumeration ea = logger.getAllAppenders();
         Logger l = logger.getRootLogger();
         ea = l.getAllAppenders();
@@ -77,7 +78,7 @@ public class DealExcelFileService {
         myLogAppender.activateOptions();
         logger.info("abcd");
 
-        File excelFile = new File(fileName);
+        File excelFile = new File(ifile.getServerFileName());
         Workbook book = null;
         int excelType = 0;
         FileInputStream fis = null;
@@ -99,7 +100,7 @@ public class DealExcelFileService {
                 }
             }
             if (excelType==0) {
-                logger.info("以excel格式读取文件["+fileName+"]失败");
+                logger.info("以excel格式读取文件["+ifile.getServerFileName()+"]失败");
                 return;
             }
 

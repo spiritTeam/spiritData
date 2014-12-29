@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.filemanage.core.enumeration;
+package com.spiritdata.filemanage.core.enumeration;
 
 /**
  * 文件分类中的大分类，目前只支持IMP,LOG,ANAL

@@ -12,11 +12,12 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
+
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.TableMapRel;
-import com.spiritdata.dataanal.util.SequenceUUID;
 
 /**
  * 元数据实体表相关功能服务

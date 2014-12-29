@@ -13,13 +13,14 @@ import org.springframework.stereotype.Service;
 
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
+import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.core.web.SessionLoader;
+
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
-import com.spiritdata.dataanal.util.SequenceUUID;
 
 /**
  * 对[所有者“关系型元数据”的操作。
