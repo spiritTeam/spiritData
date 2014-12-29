@@ -21,7 +21,6 @@
     var level=0,tree;
     
     //从jsonTemplet中得到参数
-    var templetJD = jsonTempletObj.templetJD;
     if(jsonTempletObj.viewWidth!=""&&jsonTempletObj.viewWidth!=null) viewWidth = jsonTempletObj.viewWidth;
     else viewWidth = defaultViewWidth;
     if(jsonTempletObj.viewHeight!=""&&jsonTempletObj.viewHeight!=null) viewHeight = jsonTempletObj.viewHeight;

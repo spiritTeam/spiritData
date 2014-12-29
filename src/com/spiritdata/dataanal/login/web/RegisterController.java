@@ -139,7 +139,8 @@ public class RegisterController {
                 response.setContentType("text/html;charset=gb2312");
                 try {
                     String deployName = request.getContextPath();
-                    String redirectUrl = deployName+"/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
+                    String actionUrl = deployName+"/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
+                    String redirectUrl =deployName+"/asIndex.jsp?action=1&actionUrl="+actionUrl;
                     response.sendRedirect(redirectUrl);
                 } catch (IOException e) {
                     e.printStackTrace();

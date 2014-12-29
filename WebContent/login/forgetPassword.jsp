@@ -13,8 +13,6 @@
 <body>
 <center>
   <div style="width:330px;height:400px;">
-    <div style="margin-top:15px;margin-left:14px;" align="left"><span style="font-size:16px;color:#999999;">找回密码</span></div>
-    <div style="height:1px;width:300px;border-top:1px solid  #999999;"></div>
     <div id="rstDiv" style="text-align:left;margin-left:75px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
       <table width="300px;" style="margin-right:-35px;">

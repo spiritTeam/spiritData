@@ -10,6 +10,7 @@
 <title>注册</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css">
+<script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
 </head>
 <body>
 <center>
@@ -19,8 +20,6 @@
     <span style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
   </div>
   <div id="mainDiv" style="width:330px;height:400px;">
-    <div style="margin-top:15px; margin-left:15px;"align="left"><span style="font-size:16px;color:#999999;">注册</span></div>
-    <div style="height:1px; width:300px;border-top:1px solid  #999999;"></div>
     <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
       <table width="300px;" style="margin-right:-15px;">
@@ -131,13 +130,10 @@ function saveRegister(){
         if(json.success){
           var mainPage = getMainPage();
           if(mainPage){
-            if(mainPage.registerWinId!=null&&mainPage.registerWinId!="") closeSWinInMain(mainPage.registerWinId);
-            if(mainPage.modifyWinId!=null&&mainPage.modifyWinId!="") closeSWinInMain(mainPage.modifyWinId);
-            if(mainPage.loginWinId!=null&&mainPage.loginWinId!="") closeSWinInMain(mainPage.loginWinId);
+            var winId = getWinId(mainPage);
+            closeSWinInMain(winId);
             mainPage.$.messager.alert('注册提示',json.retInfo,'info');
-            mainPage.registerWinId = "";
-            mainPage.modifyWinId = "";
-            mainPage.loginWinId = "";
+            cleanWinId(mainPage);
           }else{
             $.messager.alert('注册提示',json.retInfo,'info');
             window.location.href = "<%=path%>/asIndex.jsp";

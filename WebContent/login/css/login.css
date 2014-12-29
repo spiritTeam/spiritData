@@ -7,3 +7,4 @@ input[type="text"], input[type="password"] {width:195px;}
 #confirmPassword {width:195px;padding-top:8px;height:25px;font-size:12px;}
 #checkCode {width:111px;padding-top:8px;height:25px;font-size:12px;}
 #otherButCss {width:210px;background-image:url(img/registerb.png);padding-left:45px;border:1px solid red;margin-left:48px;}
+#mask {border-radius:10px; -moz-border-radius:10px; filter:alpha(opacity=70); opacity:0.7; background:#E7F1F5; z-index:1000;}
