@@ -87,7 +87,6 @@
         </tr>
       </table>
     </form>
-    <div align="right" style="width:300px;margin-top:10px;"><span style="font-size:12px;" onclick="jumpLogin();"><a onclick="jumpLogin();" href="#">返回登录页面</a></span></div>
   </div>
 </center>
 </body>
@@ -128,12 +127,17 @@ function saveRegister(){
     var url="<%=path%>/login/register.do";
     $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
       success:function(json) {
+        $("#mask").hide();
         if(json.success){
-          $("#mask").hide();
           var mainPage = getMainPage();
           if(mainPage){
-            closeSWinInMain(mainPage.registerWinId);
+            if(mainPage.registerWinId!=null&&mainPage.registerWinId!="") closeSWinInMain(mainPage.registerWinId);
+            if(mainPage.modifyWinId!=null&&mainPage.modifyWinId!="") closeSWinInMain(mainPage.modifyWinId);
+            if(mainPage.loginWinId!=null&&mainPage.loginWinId!="") closeSWinInMain(mainPage.loginWinId);
             mainPage.$.messager.alert('注册提示',json.retInfo,'info');
+            mainPage.registerWinId = "";
+            mainPage.modifyWinId = "";
+            mainPage.loginWinId = "";
           }else{
             $.messager.alert('注册提示',json.retInfo,'info');
             window.location.href = "<%=path%>/asIndex.jsp";
@@ -186,9 +190,6 @@ function saveRegister(){
       }
     });
   }
-}
-function jumpLogin(){
-  window.location.href="<%=path%>/login/login.jsp?uT=3";
 }
 //如果不是ie浏览器，从新初始化inputcsss
 function setInputCss(){

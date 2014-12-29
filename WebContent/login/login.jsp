@@ -331,8 +331,13 @@ function loginF(){
             if(mainPage) {
               var dom = mainPage.document.getElementById("loginStatus");
               $(dom).val(1);
-              closeSWinInMain(mainPage.loginWinId);
+              if(mainPage.registerWinId!=null&&mainPage.registerWinId!="") closeSWinInMain(mainPage.registerWinId);
+              if(mainPage.modifyWinId!=null&&mainPage.modifyWinId!="") closeSWinInMain(mainPage.modifyWinId);
+              if(mainPage.loginWinId!=null&&mainPage.loginWinId!="") closeSWinInMain(mainPage.loginWinId);
               mainPage.$.messager.alert("登陆信息","登陆成功！",'info');
+              mainPage.registerWinId = "";
+              mainPage.modifyWinId = "";
+              mainPage.loginWinId = "";
             }else{
               $.messager.alert("登陆信息","登陆成功！",'info');
               window.location.href = "<%=path%>/asIndex.jsp";

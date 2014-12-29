@@ -20,7 +20,7 @@
 </head>
 <body>
 <center>
-  <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
+  <div style="width:330px;height:400px;">
     <div style="margin-top:15px;margin-left:15px;"align="left"><span style="font-size:16px;color:#999999;">修改密码</span></div>
     <div style="height:1px; width:300px;border-top:1px solid  #999999;"></div>
     <div id="rstDiv" style="text-align:left;margin-left:86px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
@@ -70,9 +70,6 @@
 var mainPage=getMainPage();
 var modifyType=<%=modifyType%>,psV=false,lnV=false,cpsV=false;
 var loginName = '<%=loginName%>';
-function jumpLogin(){
-  window.location.href="<%=path%>/login/login.jsp?uT=3";
-}
 function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
 }
@@ -92,8 +89,13 @@ function modifyPassword(){
         if(json){
           var mainPage = getMainPage();
           if(mainPage){
-            closeSWinInMain(mainPage.registerWinId);
+            if(mainPage.registerWinId!=null&&mainPage.registerWinId!="") closeSWinInMain(mainPage.registerWinId);
+            if(mainPage.modifyWinId!=null&&mainPage.modifyWinId!="") closeSWinInMain(mainPage.modifyWinId);
+            if(mainPage.loginWinId!=null&&mainPage.loginWinId!="") closeSWinInMain(mainPage.loginWinId);
             mainPage.$.messager.alert('修改提示',json.retInfo,'info');
+            mainPage.registerWinId = "";
+            mainPage.modifyWinId = "";
+            mainPage.loginWinId = "";
           }else{
             $.messager.alert('修改提示',json.retInfo,'info');
             window.location.href = "<%=path%>/asIndex.jsp";
