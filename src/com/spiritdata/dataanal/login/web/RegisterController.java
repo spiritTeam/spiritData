@@ -17,23 +17,27 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.spiritdata.framework.FConstants;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
 import com.spiritdata.dataanal.login.util.RandomValidateCode;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
 import com.spiritdata.dataanal.util.SequenceUUID;
+import com.spiritdata.framework.FConstants;
+
+/**
+ * 用于登陆和注册
+ * @author mht
+ */
 @Controller
 public class RegisterController {
+	/**
+     * 发送重设密码的验证邮件
+     * @return retMap
+     */
     @Resource
     private UserService userService;
-    /**
-     * 发送重设密码的验证邮件
-     * @param request
-     * @return
-     */
-    @RequestMapping(value="/login/sendBackPwdMail.do")
-    public @ResponseBody Map<String,Object> sendBackPwdMail(HttpServletRequest request){
+    @RequestMapping(value="/login/sendBackPasswordMail.do")
+    public @ResponseBody Map<String,Object> sendBackPasswordMail(HttpServletRequest request){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
         User user = userService.getUserByLoginName(loginName);
@@ -46,7 +50,7 @@ public class RegisterController {
         //serverName
         String serverName = request.getServerName();
         //验证url=serverName+deployName+servletPath
-        String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+"/login/activeModifyPasswordRequest.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+        String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+"/login/activeModifyPassword.do?authCode="+user.getUserId()+"~"+validatsaSequence;
         SendValidataUrlToMail svu = new SendValidataUrlToMail();
         String retInfo = "";
         try {
@@ -62,9 +66,11 @@ public class RegisterController {
         }
         return retMap;
     }
+    
     /**
      * 处理发送邮件不成功的异常,暂时只支持单一邮件发送
-     * @param mex
+     * @param mex MessagingException异常
+     * @return 返回错误信息
      */
     private String dwMEXException(MessagingException mex) {
         Exception ex = mex;
@@ -99,19 +105,17 @@ public class RegisterController {
                     retInfo = "已成功向邮箱\""+addres+"\"发送成功！";
                 }
             }
-            ex = null; 
+            ex = null;
         }while (ex != null);
         return retInfo;
     }
     /**
      * 接收验证邮件,如果找到用户，并且验证信息正确，
      * 转发到修改页面。
-     * @param request
-     * @param response
-     * @return
+     * @return 暂时未return，而是重定向到login页面
      */
-    @RequestMapping("login/activeModifyPasswordRequest.do")
-    public @ResponseBody Map<String,Object> activePwdMail(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping("login/activeModifyPassword.do")
+    public @ResponseBody Map<String,Object> activeModifyPasswordMail(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String authCode = request.getParameter("authCode");
         if(authCode==null){
@@ -132,7 +136,7 @@ public class RegisterController {
                 session.removeAttribute(FConstants.SESSION_USER);
                 session.setAttribute(FConstants.SESSION_USER, user);
                 userService.updateUser(user);
-                response.setContentType("text/html; charset=gb2312");
+                response.setContentType("text/html;charset=gb2312");
                 try {
                     String deployName = request.getContextPath();
                     String redirectUrl = deployName+"/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
@@ -149,27 +153,34 @@ public class RegisterController {
     }
     /**
      * 修改密码
-     * @param req
-     * @return
      */
     @RequestMapping(value="/login/modifyPassword.do")
-    public @ResponseBody boolean modifyPwd(HttpServletRequest req){
-        HttpSession session =req.getSession();
+    public @ResponseBody Map<String,Object> modifyPassword(HttpServletRequest request){
+    	Map<String,Object> retMap = new HashMap<String,Object>();
+    	String retInfo = "";
+        HttpSession session =request.getSession();
         User user = (User) session.getAttribute(FConstants.SESSION_USER);
-        String pwd = req.getParameter("password");
-        user.setPassword(pwd);
-        int i = userService.updateUser(user); 
+        String password = request.getParameter("password");
+        user.setPassword(password);
+        int i = userService.updateUser(user);
         if(i==1){
-            return true;
+        	retInfo = "修改密码成功!";
+        	retMap.put("success", true);
+        	retMap.put("retInfo", retInfo);
         }else{
-            return false;
+        	retInfo = "修改密码失败!";
+        	retMap.put("success", false);
+        	retMap.put("retInfo", retInfo);
         }
+        return retMap;
     }
+    
     /**
      * 从新发送激活邮件
+     * @return
      */
-    @RequestMapping("login/activeAgain.do")
-    public @ResponseBody Map<String,Object> sendAgain(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping("login/activeUserAgain.do")
+    public @ResponseBody Map<String,Object> activeUserAgain(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
         User user = userService.getUserByLoginName(loginName);
@@ -211,8 +222,6 @@ public class RegisterController {
     }
     /**
      * 激活新注册用户
-     * @param request
-     * @param response
      * @return
      */
     @RequestMapping("login/activeUser.do")
@@ -258,8 +267,6 @@ public class RegisterController {
     }
     /**
      * 得到验证码
-     * @param request
-     * @param response
      * @throws ServletException
      * @throws IOException
      */
@@ -278,13 +285,9 @@ public class RegisterController {
     }
     /**
      * 验证登录名
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
      */
     @RequestMapping("login/validateLoginName.do")
-    public @ResponseBody boolean validateLoginName(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody boolean validateLoginName(HttpServletRequest request) {
         String loginName = request.getParameter("loginName");
         User user  = userService.getUserByLoginName(loginName);
         if(user!=null){
@@ -295,13 +298,9 @@ public class RegisterController {
     }
     /**
      * 验证邮箱
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
      */
     @RequestMapping("login/validateMail.do")
-    public @ResponseBody boolean validateMail(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody boolean validateMail(HttpServletRequest request) {
         String mail = request.getParameter("mail");
         User user  = userService.getUserByMailAdress(mail);
         if(user!=null){
@@ -312,13 +311,9 @@ public class RegisterController {
     }
     /**
      * 验证验证码
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
      */
     @RequestMapping("login/validateValidateCode.do")
-    public @ResponseBody boolean validateValidateCode(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody boolean validateValidateCode(HttpServletRequest request) {
         HttpSession session = request.getSession();
         String sessionCC = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
         String registerCC = request.getParameter("checkCode");
@@ -326,17 +321,14 @@ public class RegisterController {
         if(sessionCC.equals(registerCC.toUpperCase())){
             return true;
         }else{
-            return false;  
+            return false;
         }
     }
     /**
      * 注册:注册后成功后，向用户邮箱发送验证邮件
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping("login/register.do")
-    public @ResponseBody Map<String,Object> saveRegisterInfo(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody Map<String,Object> saveRegisterInfo(HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
         String password = request.getParameter("password");
@@ -366,18 +358,18 @@ public class RegisterController {
                 retMap.put("success", true);
                 retInfo = "注册成功，已经向您的邮箱发送一封邮件，请登陆邮箱激活账号";
                 retMap.put("retInfo", retInfo);
-                return retMap; 
+                return retMap;
             }catch(MessagingException mex){
                 retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
                 retMap.put("success", false);
                 retMap.put("retInfo", retInfo);
-                return retMap; 
+                return retMap;
             }
         }else{
             retMap.put("success", false);
             retInfo = "注册不成功，请稍后重试！";
             retMap.put("retInfo", retInfo);
-            return retMap;  
+            return retMap;
         }
     }
 }
