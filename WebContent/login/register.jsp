@@ -13,7 +13,12 @@
 </head>
 <body>
 <center>
-  <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
+  <!-- 遮罩层 -->
+  <div id="mask" style="display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
+    <img align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
+    <span style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
+  </div>
+  <div id="mainDiv" style="width:330px;height:400px;">
     <div style="margin-top:15px; margin-left:15px;"align="left"><span style="font-size:16px;color:#999999;">注册</span></div>
     <div style="height:1px; width:300px;border-top:1px solid  #999999;"></div>
     <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
@@ -119,22 +124,20 @@ function saveRegister(){
       "userName":$("#userName").val(),
       "mailAdress":$("#mail").val()+$('#mailEndStr').combobox('getText'),
     };
+    $("#mask").show();
     var url="<%=path%>/login/register.do";
     $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
       success:function(json) {
         if(json.success){
-          $.messager.confirm('确认对话框', json.retInfo+",现在是否登陆?", function(r){
-            if (r){
-              jumpLogin();
-            }else{
-              var mainPage = getMainPage();
-              var winId = mainPage.registerWinId;
-              alert("关闭窗口功能还为实现");
-              return;
-              if(mainPage!=null) mainPage.closeWin(winId);
-              else window.location.href = "<%=path%>/asIndex.jsp";
-            }
-          });
+          $("#mask").hide();
+          var mainPage = getMainPage();
+          if(mainPage){
+            closeSWinInMain(mainPage.registerWinId);
+            mainPage.$.messager.alert('注册提示',json.retInfo,'info');
+          }else{
+            $.messager.alert('注册提示',json.retInfo,'info');
+            window.location.href = "<%=path%>/asIndex.jsp";
+          }
           $('#register').attr("disabled",false); 
         }else{
           $.messager.alert('提示',json.retInfo,'info');
@@ -189,6 +192,14 @@ function jumpLogin(){
 }
 //如果不是ie浏览器，从新初始化inputcsss
 function setInputCss(){
+  //遮罩层位置及样式
+  $("#mask").css({
+    "padding-top": 25,
+    "top": parseInt($("#mainDiv").css("top"))-10,
+    "left": parseInt($("#mainDiv").css("left"))-10,
+    "width": (parseInt($("#mainDiv").css("width"))+20)+"px",
+    "height": (parseInt($("#mainDiv").css("height"))+40)+"px"
+  });
   var browserType = getBrowserVersion();
   var v = browserType.substring(0,browserType.lastIndexOf(' '));
   $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});

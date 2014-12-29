@@ -33,13 +33,11 @@ function showAnalRst(){
         };
         $.templetJD(jsonTempletObj);
       }else{
-    	$.messager.alert("提示",rst.message);
+    	$.messager.alert("提示",jsonData.message,'info');
       }
-    },error:function(errorData){
-      alert(errorData.length);
+    },error:function(errorData ){
     }
   });
-  //$.templetJD("aa");
 }
 </script>
 </html>

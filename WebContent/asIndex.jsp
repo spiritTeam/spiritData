@@ -567,7 +567,7 @@ function logout() {
     }
   });
 };
-var wHeight = "400";
+var wHeight = "450";
 var wWidth = "350";
 /**
  * 注册
@@ -581,9 +581,10 @@ function register(){
     title:"注册",
     height:wHeight,
     width:wWidth,
-    modal:true
+    modal:true,
+    zIndex:-1
   };
-  registerWinId = newSWin(winOption);
+  registerWinId = openSWinInMain(winOption);
 }
 /**
  * 修改
@@ -593,7 +594,7 @@ function modifyPwd(){
   var loginStatus = $('#loginStatus').val();
   var _url;
   if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modifyPassword.jsp?modifyType=1";
-  else _url="<%=path%>/login/forgotPassword.jsp";
+  else _url="<%=path%>/login/forgetPassword.jsp";
   var winOption={
     url:_url,
     title:"修改密码",
@@ -601,7 +602,7 @@ function modifyPwd(){
     width:wWidth,
     modal:true
   };
-  modifyWinId = newSWin(winOption);
+  modifyWinId = openSWinInMain(winOption);
 }
 /*
  * 登陆
@@ -616,7 +617,7 @@ function login(){
     width:wWidth,
     modal:true
   };
-  loginWinId = newSWin(winOption);
+  loginWinId = openSWinInMain(winOption);
 }
 
 /**
