@@ -588,7 +588,7 @@ function logout() {
     }
   });
 };
-var wHeight = "450";
+var wHeight = "430";
 var wWidth = "350";
 /**
  * 注册

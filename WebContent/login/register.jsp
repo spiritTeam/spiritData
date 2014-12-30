@@ -16,8 +16,8 @@
 <center>
   <!-- 遮罩层 -->
   <div id="mask" style="display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
-    <img align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
-    <span style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
+    <img id="waittingImg" align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
+    <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
   </div>
   <div id="mainDiv" style="width:330px;height:400px;">
     <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
@@ -191,7 +191,7 @@ function saveRegister(){
 function setInputCss(){
   //遮罩层位置及样式
   $("#mask").css({
-    "padding-top": 25,
+    "padding-top": ($(window).height()-95)/3,//设置图片位置
     "top": parseInt($("#mainDiv").css("top"))-10,
     "left": parseInt($("#mainDiv").css("left"))-10,
     "width": (parseInt($("#mainDiv").css("width"))+20)+"px",
