@@ -4,10 +4,10 @@
   String path = request.getContextPath();
   String sid = request.getSession().getId();
   //用于验证邮箱后直接转发到主界面并打开修改密码页面。
-  String action = request.getParameter("action");
+  String action = (String)request.getAttribute("action");
   String actionUrl = "";
-  if(action!=null&&!action.equals("")) actionUrl = request.getParameter("actionUrl");
-  String loginName = request.getParameter("loginName");
+  if(action!=null&&!action.equals("")) actionUrl = (String)request.getAttribute("actionUrl");
+  //String loginName = request.getParameter("loginName");
   //
 %>
 <!DOCTYPE html>
@@ -273,9 +273,10 @@ $(function() {
   //是否需要打开修改密码页面
   var action = "<%=action%>";
   if(action==1){
-    var loginName = "<%=loginName%>";
-    actionUrl = "<%=actionUrl%>&loginName="+loginName;
+    var loginName = "";
+    var actionUrl = "<%=path+"/"+actionUrl%>";
     var _url = actionUrl;
+    alert(_url);
     var winOption={
       url:_url,
       title:"修改密码",

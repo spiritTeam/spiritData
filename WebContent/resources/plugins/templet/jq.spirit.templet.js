@@ -90,12 +90,7 @@
       segDiv.append(contendEle);
       var subSegs = segArray[i].subSeg;
       //处理树
-      var treeNode = {
-        id:'',
-        text:'',
-        segId:'',
-        children:new Array()
-      };
+      var treeNode = {};
       if (segArray[i].name) treeNode.text = segArray[i].name;
       else if (segArray[i].title) {
         treeNode.text=$(segArray[i].title).html();
@@ -103,6 +98,7 @@
       if (treeNode.text&&treeNode.text!="") {
         treeNode.id = "_tree_"+segArray[i].id;
         treeNode.segId = segArray[i].id;
+        treeNode.children = new Array();
         var parent;
         if (parentTreeId==0) parent=segTree;
         else parent=findNode(segTree, parentTreeId);
