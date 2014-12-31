@@ -8,11 +8,10 @@
 (function($){
   $.templetJD = function(jsonTempletObj){
     //定义变量
-    var segTree={
-        id:0,
-        text:'segTree',
-        children:new Array()
-    };
+    var segTree={};
+    segTree.id="";
+    segTree.text="segTree";
+    segTree.children = new Array();
     //默认宽高
     var defaultViewWidth = "800px;",defaultViewHeight = "0px;";
     //传入高和宽的值
@@ -25,8 +24,12 @@
     else viewWidth = defaultViewWidth;
     if(jsonTempletObj.viewHeight!=""&&jsonTempletObj.viewHeight!=null) viewHeight = jsonTempletObj.viewHeight;
     else viewHeight = defaultViewHeight;
+    //数据主体
     var templetJD = jsonTempletObj.templetData;
     var _TEMPLET = templetJD._TEMPLET;
+    //标题
+    var _HEAD = templetJD._HEAD;
+    $('#rTitle').html(_HEAD.reportName);
     
     //构建主要布局(3个div)
     var mainDiv = $('<div></div>');
@@ -52,8 +55,11 @@
      * _TEMPLET 数据部分
      * level
      */
-    buildSegmentGroup(viewDiv, _TEMPLET, level, segTree, 0);
+    buildSegmentGroup($('#reportFrame'), _TEMPLET, level, segTree, 0);
     //画树
+    $('#catalogTree').tree({animate:true});
+    $('#catalogTree').tree("loadData", [segTree]);
+    return;
     treeView.tree({animate:true});
     treeView.tree("loadData", [segTree]);
   };
