@@ -3,6 +3,12 @@
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
+  //用于验证邮箱后直接转发到主界面并打开修改密码页面。
+  String action = (String)request.getAttribute("action");
+  String actionUrl = "";
+  if(action!=null&&!action.equals("")) actionUrl = (String)request.getAttribute("actionUrl");
+  //String loginName = request.getParameter("loginName");
+  //
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -146,6 +152,7 @@
       <a id="" onclick="register()" href="#">注册</a>
       <a id="test" onclick="testW();" href="#" >窗口测试</a>
       <input id="loginStatus" type="hidden" value="">
+      <input id="loginName" type="hidden" value="">
     </div>
   </div>
 </div>
@@ -245,7 +252,6 @@ function uploadF() {
     $.messager.alert("文件上传失败", e, "error");
   }
 }
-
 //主函数
 $(function() {
   var initStr = $.spiritPageFrame(INIT_PARAM);
@@ -264,6 +270,22 @@ $(function() {
   }).mouseout(function(){
     $(this).css({"color":"white", "background-color":"#36B148"});
   });
+  //是否需要打开修改密码页面
+  var action = "<%=action%>";
+  if(action==1){
+    var loginName = "";
+    var actionUrl = "<%=path+"/"+actionUrl%>";
+    var _url = actionUrl;
+    alert(_url);
+    var winOption={
+      url:_url,
+      title:"修改密码",
+      height:wHeight,
+      width:wWidth,
+      modal:true
+    };
+    modifyWinId = openSWinInMain(winOption);
+  }
 });
 
 //初始化界面
@@ -567,7 +589,7 @@ function logout() {
     }
   });
 };
-var wHeight = "450";
+var wHeight = "430";
 var wWidth = "350";
 /**
  * 注册
@@ -593,7 +615,7 @@ var modifyWinId = "";
 function modifyPwd(){
   var loginStatus = $('#loginStatus').val();
   var _url;
-  if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modifyPassword.jsp?modifyType=1";
+  if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modifyPassword.jsp?modifyType=1&loginName="+$('#loginName').val();
   else _url="<%=path%>/login/forgetPassword.jsp";
   var winOption={
     url:_url,

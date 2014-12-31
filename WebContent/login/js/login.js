@@ -23,4 +23,22 @@ function setInputCss(){
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
   }
 }
+/**
+ * 得到mainPage中打开窗口的winId
+ */
+function getWinId(mainPage){
+  var winId = "";
+  if(mainPage.registerWinId!=null&&mainPage.registerWinId!="") winId = mainPage.registerWinId;
+  if(mainPage.modifyWinId!=null&&mainPage.modifyWinId!="") winId = mainPage.modifyWinId;
+  if(mainPage.loginWinId!=null&&mainPage.loginWinId!="") winId = mainPage.loginWinId;
+  return winId;
+}
+/**
+ * 清除mainPage中打开窗口的winId
+ */
+function cleanWinId(mainPage){
+  mainPage.loginWinId = "";
+  mainPage.modifyWinId = "";
+  mainPage.registerWinId = "";
+}
 

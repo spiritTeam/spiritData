@@ -10,17 +10,16 @@
 <title>注册</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css">
+<script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
 </head>
 <body>
 <center>
   <!-- 遮罩层 -->
   <div id="mask" style="display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
-    <img align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
-    <span style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
+    <img id="waittingImg" align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
+    <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
   </div>
   <div id="mainDiv" style="width:330px;height:400px;">
-    <div style="margin-top:15px; margin-left:15px;"align="left"><span style="font-size:16px;color:#999999;">注册</span></div>
-    <div style="height:1px; width:300px;border-top:1px solid  #999999;"></div>
     <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
       <table width="300px;" style="margin-right:-15px;">
@@ -87,7 +86,6 @@
         </tr>
       </table>
     </form>
-    <div align="right" style="width:300px;margin-top:10px;"><span style="font-size:12px;" onclick="jumpLogin();"><a onclick="jumpLogin();" href="#">返回登录页面</a></span></div>
   </div>
 </center>
 </body>
@@ -128,12 +126,14 @@ function saveRegister(){
     var url="<%=path%>/login/register.do";
     $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
       success:function(json) {
+        $("#mask").hide();
         if(json.success){
-          $("#mask").hide();
           var mainPage = getMainPage();
           if(mainPage){
-            closeSWinInMain(mainPage.registerWinId);
+            var winId = getWinId(mainPage);
+            closeSWinInMain(winId);
             mainPage.$.messager.alert('注册提示',json.retInfo,'info');
+            cleanWinId(mainPage);
           }else{
             $.messager.alert('注册提示',json.retInfo,'info');
             window.location.href = "<%=path%>/asIndex.jsp";
@@ -187,14 +187,11 @@ function saveRegister(){
     });
   }
 }
-function jumpLogin(){
-  window.location.href="<%=path%>/login/login.jsp?uT=3";
-}
 //如果不是ie浏览器，从新初始化inputcsss
 function setInputCss(){
   //遮罩层位置及样式
   $("#mask").css({
-    "padding-top": 25,
+    "padding-top": ($(window).height()-95)/3,//设置图片位置
     "top": parseInt($("#mainDiv").css("top"))-10,
     "left": parseInt($("#mainDiv").css("left"))-10,
     "width": (parseInt($("#mainDiv").css("width"))+20)+"px",

@@ -136,14 +136,24 @@ public class RegisterController {
                 session.removeAttribute(FConstants.SESSION_USER);
                 session.setAttribute(FConstants.SESSION_USER, user);
                 userService.updateUser(user);
-                response.setContentType("text/html;charset=gb2312");
+//                response.setContentType("text/html;charset=gb2312");
+//                try {
+//                    String deployName = request.getContextPath();
+//                    String actionUrl = deployName+"/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
+//                    String redirectUrl =deployName+"/asIndex.jsp?action=1&actionUrl="+actionUrl;
+//                    response.sendRedirect(redirectUrl);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 try {
-                    String deployName = request.getContextPath();
-                    String redirectUrl = deployName+"/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
-                    response.sendRedirect(redirectUrl);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                	//在重定向的基础上修改为转发
+                	String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
+                	request.setAttribute("action", "1");
+                	request.setAttribute("actionUrl", actionUrl);
+					request.getRequestDispatcher("../asIndex.jsp").forward(request, response);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}//转发到apage.jsp
             }else{
                 retMap.put("success", false);
                 retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");

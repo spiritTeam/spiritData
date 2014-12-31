@@ -20,9 +20,7 @@
 </head>
 <body>
 <center>
-  <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
-    <div style="margin-top:15px;margin-left:15px;"align="left"><span style="font-size:16px;color:#999999;">修改密码</span></div>
-    <div style="height:1px; width:300px;border-top:1px solid  #999999;"></div>
+  <div style="width:330px;height:400px;">
     <div id="rstDiv" style="text-align:left;margin-left:86px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
       <table width="300px;" style="margin-right:-10px;">
@@ -70,9 +68,6 @@
 var mainPage=getMainPage();
 var modifyType=<%=modifyType%>,psV=false,lnV=false,cpsV=false;
 var loginName = '<%=loginName%>';
-function jumpLogin(){
-  window.location.href="<%=path%>/login/login.jsp?uT=3";
-}
 function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
 }
@@ -92,8 +87,10 @@ function modifyPassword(){
         if(json){
           var mainPage = getMainPage();
           if(mainPage){
-            closeSWinInMain(mainPage.registerWinId);
+            var winId = getWinId(mainPage);
+            closeSWinInMain(winId);
             mainPage.$.messager.alert('修改提示',json.retInfo,'info');
+            cleanWinId(mainPage);
           }else{
             $.messager.alert('修改提示',json.retInfo,'info');
             window.location.href = "<%=path%>/asIndex.jsp";
@@ -157,7 +154,6 @@ $(function(){
   initPwdInputCss('confirmPassword','cpwdSpan');
   setInputCss();
   //modifyType=1，为修改密码，为2，则是忘记密码
-  alert(loginName);
   if(modifyType==1){
     $('#loginName').val(loginName);
     $('#loginName').attr('disabled',true);

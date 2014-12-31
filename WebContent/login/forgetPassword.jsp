@@ -12,9 +12,7 @@
 </head>
 <body>
 <center>
-  <div style="border:1px solid #ABCDEF;width:330px;height:400px;">
-    <div style="margin-top:15px;margin-left:14px;" align="left"><span style="font-size:16px;color:#999999;">找回密码</span></div>
-    <div style="height:1px;width:300px;border-top:1px solid  #999999;"></div>
+  <div style="width:330px;height:400px;">
     <div id="rstDiv" style="text-align:left;margin-left:75px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
       <table width="300px;" style="margin-right:-35px;">
@@ -36,17 +34,12 @@
         <span>2、成功后点击下一步,将发送邮件至您的邮箱。</span><br/>
         <span>3、登录邮箱,根据提示重置密码。</span><br/>
       </div>
-      <div style="width:50px;float:right;margin-right:45px;margin-top:50px;">
-      	<a id="jumpLogin" onclick="jumpLogin();" href="#">返回登陆</a></div>
     </form>
   </div>
 </center>
 </body>
 <script type="text/javascript">
 var lnV =false;
-function jumpLogin(){
-  window.location.href="<%=path%>/login/login.jsp";
-}
 function setInputCss(){
   var browserType = getBrowserVersion();
   browserType = browserType.substring(0,browserType.lastIndexOf(' '));
@@ -66,7 +59,6 @@ function sendBackPwdMail(){
   $('#lnImg').remove();
   $('#checkResult').html('');
   $('#sendButton').attr('disabled',true);
-  $('#jumpLogin').attr('disabled',true);
   if(lnV){
     $('#loginName')
     var url = '<%=path%>/login/sendBackPasswordMail.do';
@@ -88,7 +80,6 @@ function sendBackPwdMail(){
     $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;登录名错误!</div>');
   }
   $('#sendButton').attr('disabled',false);
-  $('#jumpLogin').attr('disabled',false);
 }
 function onClick(obj){
   if(obj.value==obj.defaultValue){
