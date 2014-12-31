@@ -72,7 +72,6 @@ public class DealUploadFileService {
         }
         ret.setServerFileName(allFileName);
         ret.setClientFileName((String)uploadInfoMap.get("orglFilename"));
-        ret.setFileSize((Long)uploadInfoMap.get("size"));
         return ret;
     }
 }

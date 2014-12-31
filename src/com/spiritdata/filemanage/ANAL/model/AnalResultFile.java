@@ -24,6 +24,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
  * 注意：这里的分析结构，都按照
  * @author wh
  */
+//今后，若有可能把分析结果和jsonD进行结合
 public class AnalResultFile extends BaseObject {
     private static final long serialVersionUID = 7715689049076212381L;
 
@@ -127,13 +128,13 @@ public class AnalResultFile extends BaseObject {
         if (this.CTime==null) this.CTime=new Timestamp(new Date().getTime());
         ret.setCTime(this.CTime);
         ret.setDesc("分析结果文件，文件为:"+FileNameUtils.getFileName(this.fileName)+"；得到分析结果时间:"+DateUtils.convert2TimeChineseStr(new Date(this.CTime.getTime()))
-                +"；分析类型："+this.analType+"::"+this.subType);
+                +"；分析类型："+this.analType+"::"+this.subType+"，jsonD代码："+this.jsonDCode);
         //分类信息
         FileCategory fc = new FileCategory();
         fc.setFType1(FileCategoryType1.ANAL);
         fc.setFType2(this.analType);
         fc.setFType3(this.subType);
-        //分类扩展信息是一个json，包括
+        //分类扩展信息是一个json，包括jsonD的编码，
         if (this.extInfo!=null&&this.extInfo.size()>0) fc.setExtInfo(JsonUtils.beanToJson(this.extInfo));
 
         ret.addFileCategoryList(fc);
