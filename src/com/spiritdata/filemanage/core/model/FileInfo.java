@@ -11,6 +11,7 @@ import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
+import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
 
 /**
  * 模型化文件信息对象，包括文件的索引信息，文件的分类信息，以及文件的关系信息。
@@ -81,7 +82,7 @@ public class FileInfo extends FileIndexPo {
      */
     protected FileRelation _buildRel(Object obj, RelType1 type, String rType2, String desc) throws Exception {
         if (!(obj instanceof FileInfo)&&!(obj instanceof FileCategory)) {
-            throw new IllegalArgumentException("另一关联对象只能是FileInfo或FileCategory类型，无法转换！");
+            throw new Flmg0002CException(new IllegalArgumentException("另一关联对象只能是FileInfo或FileCategory类型，无法转换！"));
         }
         FileRelation fr = new FileRelation();
         fr.setElement1(this);
@@ -219,7 +220,7 @@ public class FileInfo extends FileIndexPo {
      * 把当前对象转换为Po对象，为数据库操作做准备
      * @throws Exception 
      */
-    public FileIndexPo convert2Po() throws Exception {
+    public FileIndexPo convert2Po() {
         FileIndexPo ret = new FileIndexPo();
         //id处理
         if (this.id==null||this.id.length()==0) {//没有id，自动生成一个

@@ -6,6 +6,7 @@ import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileRelationPo;
+import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
 
 /**
  * 模型化文件关联对象。它与持久化中的FileRelationPo区别在于：
@@ -36,7 +37,7 @@ public class FileRelation extends BaseObject {
     }
     public void setElement1(Object element1) {
         if (!(element1 instanceof FileInfo)&&!(element1 instanceof FileCategory)) {
-            throw new IllegalArgumentException("第一关联对象只能是FileInfo或FileCategory类型");
+            throw new Flmg0002CException(new IllegalArgumentException("第一关联对象只能是FileInfo或FileCategory类型"));
         }
         this.element1 = element1;
     }
@@ -45,7 +46,7 @@ public class FileRelation extends BaseObject {
     }
     public void setElement2(Object element2) {
         if (!(element2 instanceof FileInfo)&&!(element2 instanceof FileCategory)) {
-            throw new IllegalArgumentException("第二关联对象只能是FileInfo或FileCategory类型");
+            throw new Flmg0002CException(new IllegalArgumentException("第二关联对象只能是FileInfo或FileCategory类型"));
         }
         this.element2 = element2;
     }
@@ -102,12 +103,12 @@ public class FileRelation extends BaseObject {
      * 把当前对象转换为Po对象，为数据库操作做准备
      * @throws Exception 
      */
-    public FileRelationPo convert2Po() throws Exception {
+    public FileRelationPo convert2Po() {
         if (!(element1 instanceof FileInfo)&&!(element1 instanceof FileCategory)) {
-            throw new Exception("第一关联对象只能是FileInfo或FileCategory类型，无法转换！");
+            throw new Flmg0002CException("第一关联对象只能是FileInfo或FileCategory类型，无法转换！");
         }
         if (!(element2 instanceof FileInfo)&&!(element2 instanceof FileCategory)) {
-            throw new Exception("第二关联对象只能是FileInfo或FileCategory类型，无法转换！");
+            throw new Flmg0002CException("第二关联对象只能是FileInfo或FileCategory类型，无法转换！");
         }
 
         FileRelationPo ret = new FileRelationPo();
@@ -139,7 +140,7 @@ public class FileRelation extends BaseObject {
         //其他
         ret.setDesc(this.desc);
         ret.setCTime(this.CTime);
-        return null;
+        return ret;
     }
 
     /**

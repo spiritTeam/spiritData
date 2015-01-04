@@ -18,20 +18,19 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
+import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.framework.CodeException;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.JsonUtils;
-
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable;
 import com.spiritdata.dataanal.metadata.relation.semanteme.AnalTable;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.util.Arithmetic;
-
 import com.spiritdata.jsonD.model.AtomData;
 import com.spiritdata.jsonD.model.HeadData;
 
@@ -42,6 +41,7 @@ import com.spiritdata.jsonD.model.HeadData;
 
 @Component
 public class AnalKey implements AnalTable {
+    private final static String jsonDCode = "SD.TEAM.ANAL::0001"; 
     @Resource
     private BasicDataSource dataSource;
     @Resource
@@ -54,10 +54,10 @@ public class AnalKey implements AnalTable {
      * 分析结构以json的形式存储在文件中，便于以后查找。
      * @param tableName 表名称
      * @param md 元数据信息
-     * @return 是一个Map<String, Float>，其中String是列名，float是主键可能性
+     * @return 是一个Map<String, Object> 其中若String是列名，Object=float是主键可能性；若String是"resultFile"，Object=AnalResultFile是文件信息
      */
     @Override
-    public Map<String, Float> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Exception {
+    public Map<String, Object> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Exception {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
         //先分析指标表
         QuotaTable qt = mdQuotaService.getQuotaInfo(tableName, mm);
@@ -66,7 +66,7 @@ public class AnalKey implements AnalTable {
         }
         //按指标分析
         if (qt.getColQuotaList()==null||qt.getColQuotaList().size()==0) return null;
-        Map<String, Float> ret  = new HashMap<String, Float>();
+        Map<String, Object> ret  = new HashMap<String, Object>();
         Float one = new Float("1");
         for (QuotaColumn qc: qt.getColQuotaList()) {
             String cType = mm.getColumnByColId(qc.getColId()).getColumnType();
@@ -82,7 +82,7 @@ public class AnalKey implements AnalTable {
                 } else if (cType.equalsIgnoreCase("Date")) {
                     ret.put(cName, new Float(one*0.1));
                 }
-                Float f = ret.get(cName);
+                Float f = (Float)ret.get(cName);
                 if (f!=null) {
                     if (title.indexOf("id")!=-1) ret.put(cName, new Float(f*2));
                     else if (title.indexOf("ident")!=-1) ret.put(cName, new Float(f*1.5));
@@ -175,13 +175,13 @@ public class AnalKey implements AnalTable {
         //写jsonD文件，此方法目前为测试方法，今后把他变为一个更好用的包
         HeadData jsonDHead = new HeadData();
         jsonDHead.setId(SequenceUUID.getPureUUID());
-        jsonDHead.setCode("SD.TEAM.ANAL::0001");
+        jsonDHead.setCode(jsonDCode);
         jsonDHead.setCTime(new Date());
-        jsonDHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键的记录文件");
+        jsonDHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键");
         //文件名
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
         //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
-        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+mm.getOwnerId()+File.separator+"MM_"+mm.getId()+File.separator+"keyAnal"+File.separator+tableName+".json");
+        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+"METADATA"+File.separator+"key"+File.separator+tableName+".json");
         jsonDHead.setFileName(storeFile);
 
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
@@ -203,7 +203,16 @@ public class AnalKey implements AnalTable {
                 file.createNewFile();
             }
             fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(jsonStr.getBytes()); 
+            fileOutputStream.write(jsonStr.getBytes());
+            //回写文件信息到返回值
+            AnalResultFile arf = new AnalResultFile();
+            arf.setFileName(storeFile);
+            arf.setJsonDCode(jsonDCode);
+            arf.setAnalType("METADATA");
+            arf.setSubType("key");
+            arf.setObjType("table");
+            arf.setObjId(tableName);
+            ret.put("resultFile", arf);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -217,7 +226,7 @@ public class AnalKey implements AnalTable {
         return ret;
     }
 
-    private List<Map<String, Object>> convertToList(Map<String, Float> keyAnalResultMap) throws CodeException {
+    private List<Map<String, Object>> convertToList(Map<String, Object> keyAnalResultMap) throws CodeException {
         if (keyAnalResultMap==null||keyAnalResultMap.size()==0) return null;
 
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();

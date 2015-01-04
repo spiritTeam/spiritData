@@ -69,21 +69,21 @@
       <if test="AId!=null" >aId,</if>
       <if test="BType!=null and BType!=0" >bType,</if>
       <if test="BId!=null" >bId,</if>
-      <if test="RType1!=null" >type2,</if>
-      <if test="FType3!=null" >type3,</if>
+      <if test="RType1!=null" >rType1,</if>
+      <if test="RType2!=null" >rType2,</if>
       <if test="desc!=null" >descn,</if>
       <if test="CTime!=null" >cTime,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id!=null" >#{id,jdbcType=VARCHAR} </if>
-      <if test="AType!=null and AType!=0" >#{AType, jdbcType=INTEGER} </if>
-      <if test="AId!=null" >#{AId, jdbcType=VARCHAR} </if>
-      <if test="BType!=null and BType!=0" >#{BType, jdbcType=INTEGER} </if>
-      <if test="BId!=null" >#{BId, jdbcType=VARCHAR} </if>
-      <if test="RType1!=null" >#{RType1, jdbcType=INTEGER} </if>
-      <if test="RType2!=null" >#{RType2, jdbcType=VARCHAR} </if>
-      <if test="desc!=null" >#{desc,jdbcType=VARCHAR} </if>
-      <if test="CTime!=null" >#{CTime,jdbcType=TIMESTAMP} </if>
+      <if test="id!=null" >#{id,jdbcType=VARCHAR},</if>
+      <if test="AType!=null and AType!=0" >#{AType, jdbcType=INTEGER},</if>
+      <if test="AId!=null" >#{AId, jdbcType=VARCHAR},</if>
+      <if test="BType!=null and BType!=0" >#{BType, jdbcType=INTEGER},</if>
+      <if test="BId!=null" >#{BId, jdbcType=VARCHAR},</if>
+      <if test="RType1!=null" >#{RType1, jdbcType=INTEGER},</if>
+      <if test="RType2!=null" >#{RType2, jdbcType=VARCHAR},</if>
+      <if test="desc!=null" >#{desc,jdbcType=VARCHAR},</if>
+      <if test="CTime!=null" >#{CTime,jdbcType=TIMESTAMP},</if>
     </trim>
   </insert>
 

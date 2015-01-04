@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.dataanal.SDConstants;
+import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
+import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
 import com.spiritdata.filemanage.IMP.model.ImportFile;
+import com.spiritdata.filemanage.core.enumeration.RelType1;
+import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.model.FileRelation;
+import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
@@ -52,18 +60,22 @@ public class DealExcelFileService {
     @Resource
     private MdQuotaService mdQutotaService;
     @Resource
-    private MdKeyService mdKeyService ;
+    private MdKeyService mdKeyService;
     @Resource
     private AnalKey analKey;
     @Resource
-    private DataSource dataSource ;
+    private DataSource dataSource;
+    @Resource
+    private AanlResultFileService arfService;
+    @Resource
+    private FileManageService fmService;
 
     /**
      * 处理Excel文件
      * @param fileName 文件名称
      * @param session 用户Session
      */
-    public void process(ImportFile ifile, HttpSession session) {
+    public void process(FileInfo fi, HttpSession session) {
         Enumeration ea = logger.getAllAppenders();
         Logger l = logger.getRootLogger();
         ea = l.getAllAppenders();
@@ -78,7 +90,7 @@ public class DealExcelFileService {
         myLogAppender.activateOptions();
         logger.info("abcd");
 
-        File excelFile = new File(ifile.getServerFileName());
+        File excelFile = new File(fi.getAllFileName());
         Workbook book = null;
         int excelType = 0;
         FileInputStream fis = null;
@@ -100,7 +112,7 @@ public class DealExcelFileService {
                 }
             }
             if (excelType==0) {
-                logger.info("以excel格式读取文件["+ifile.getServerFileName()+"]失败");
+                logger.info("以excel格式读取文件["+fi.getAllFileName()+"]失败");
                 return;
             }
 
@@ -117,6 +129,7 @@ public class DealExcelFileService {
                 try {//处理每个Sheet，并保证某个Sheet处理失败后，继续处理后续Sheet
                     Sheet sheet = book.getSheetAt(i);
                     si = initSheetInfo(sheet, excelType, i);
+                    si.setFileName(fi.getAllFileName());
                     parseExcel = new PoiParseUtils(si);
                     List<String> logl = parseExcel.analSheetMetadata();
                     excelParseList.add(parseExcel);
@@ -188,7 +201,20 @@ public class DealExcelFileService {
                             saveDataToTempTab(sti, sysMd, tabMapOrgAry[1].getTableName(), parseExcel);
                             //3-临时表分析
                             mdQutotaService.caculateQuota(tabMapOrgAry[1]); //分析临时表指标
-                            analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
+                            //3.1-临时表主键分析
+                            Map<String, Object> keyMap = analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
+                            AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
+                            FileInfo arFi = arfService.saveFile(arf);//分析jsonD存储
+                            //3.2-文件关系存储
+                            FileRelation fr = new FileRelation();
+                            fr.setElement1(fi.getFileCategoryList().get(0));
+                            fr.setElement2(arFi.getFileCategoryList().get(0));
+                            fr.setCTime(new Timestamp((new Date()).getTime()));
+                            fr.setRType1(RelType1.POSITIVE);
+                            fr.setRType2("语义分析-主键");
+                            fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")]的主键");
+                            fmService.saveFileRelation(fr);//分析jsonD存储
+                            //3.3-主键联合分析
                             mdKeyService.adjustMdKey(sysMd); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
                             //4-存储积累表
                             if (sysMd.getTableName().equalsIgnoreCase(tabMapOrgAry[0].getTableName())) {

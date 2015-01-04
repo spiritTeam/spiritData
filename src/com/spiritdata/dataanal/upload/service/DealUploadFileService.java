@@ -11,12 +11,11 @@ import org.springframework.stereotype.Component;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.util.FileNameUtils;
-
 import com.spiritdata.dataanal.exceptionC.Dtal0101CException;
 import com.spiritdata.dataanal.importdata.excel.service.DealExcelFileService;
-
 import com.spiritdata.filemanage.IMP.model.ImportFile;
 import com.spiritdata.filemanage.IMP.service.ImportFileService;
+import com.spiritdata.filemanage.core.model.FileInfo;
 
 /**
  * 处理上传文件
@@ -38,10 +37,10 @@ public class DealUploadFileService {
     public void dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception  {
         //记录文件
         try {
-            ImportFile fi = getFileInfo(uploadInfoMap, session);
-            ifService.saveImportFile(fi);
+            ImportFile ifl = getFileInfo(uploadInfoMap, session);
+            FileInfo fi = ifService.saveImportFile(ifl);
             //得到文件扩展名
-            String extName = FileNameUtils.getExt(fi.getServerFileName());
+            String extName = FileNameUtils.getExt(ifl.getServerFileName());
             if (extName.toUpperCase().indexOf(".XLS")==0||extName.toUpperCase().indexOf(".XLSX")==0) {
                 //对excel进行处理
                 dealExcelService.process(fi, session);
@@ -72,7 +71,6 @@ public class DealUploadFileService {
         }
         ret.setServerFileName(allFileName);
         ret.setClientFileName((String)uploadInfoMap.get("orglFilename"));
-        ret.setFileSize((Long)uploadInfoMap.get("size"));
         return ret;
     }
 }
