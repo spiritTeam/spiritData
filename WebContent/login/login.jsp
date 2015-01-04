@@ -66,7 +66,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 <center>
   <div id="mainDiv" style="width:330px;height:400px;">
   <form>
-    <table width="300px;" style="margin-right:-15px;margin-top:15px;">
+    <table width="300px;" style="margin-right:-40px;margin-top:30px;">
       <tr style="height:50px; valign:top;">
         <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
         <td colspan="2" rowspan="1"  style="text-align:left;">
@@ -109,7 +109,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       </tr>
     </table>
   </form>
-  <div align="right" style="width:310px;margin-top:100px;margin-right:10px;">
+  <div align="right" style="width:310px;margin-top:115px;margin-right:10px;">
     <a onclick="toRegister()" href="#">注册</a>
     <a onclick="activeUserAgain()" href="#">&nbsp;激活</a>
     <a onclick="modifyPassword()" href="#">&nbsp;忘记密码</a>
