@@ -1,7 +1,10 @@
-﻿/doc
+﻿/Doc
 /WebContent/log
 /WebContent/WEB-INF/lib
 /WebContent/WEB-INF/classes
+/WebContent/analData
+/WebContent/tempUpload
+/WebContent/uploadFiles
 /pom.xml
 
 /.classpath
@@ -9,3 +12,4 @@
 /target
 /test
 /build
+
