@@ -1,15 +1,15 @@
-package com.spiritdata.dataanal.exceptionC;
+package com.spiritdata.dataanal.login.exceptionC;
 
 import com.spiritdata.framework.CodeException;
 
 /**
- * Login登陆注册“带码异常”，其分类码为"Login"
+ * DataAnal数据分析“带码异常”，其分类码为"DTAL"
  * @author wh
  */
-public abstract class DtalCException extends CodeException {
+public abstract class LoginCException extends CodeException {
     private static final long serialVersionUID = -4358416181016248285L;
-    //代码分类(category)
-    private static String category = "LOGIN"; //分类码
+
+    private static String category = "DTAL"; //分类码
 
     //扩充父类的构造函数
     /**
@@ -17,7 +17,7 @@ public abstract class DtalCException extends CodeException {
      * @param c 内部码
      * @param bMsg 基础信息
      */
-    protected DtalCException(int c, String bMsg) {
+    protected LoginCException(int c, String bMsg) {
         super(category, c, bMsg);
     }
 
@@ -27,7 +27,7 @@ public abstract class DtalCException extends CodeException {
      * @param bMsg 基础信息
      * @param message 详细消息
      */
-    protected DtalCException(int c, String bMsg, String message) {
+    protected LoginCException(int c, String bMsg, String message) {
         super(category, c, bMsg, message);
     }
 
@@ -37,7 +37,7 @@ public abstract class DtalCException extends CodeException {
      * @param bMsg 基础信息
      * @param cause 异常原因，以后通过Throwable.getCause()方法获取它。允许使用null值，指出原因不存在或者是未知的异常
      */
-    protected DtalCException(int c, String bMsg, Throwable cause) {
+    protected LoginCException(int c, String bMsg, Throwable cause) {
         super(category, c, bMsg, cause);
     }
 
@@ -48,11 +48,11 @@ public abstract class DtalCException extends CodeException {
      * @param message 详细消息
      * @param cause 异常原因，以后通过Throwable.getCause()方法获取它。允许使用null值，指出原因不存在或者是未知的异常
      */
-    protected DtalCException(int c, String bMsg, String message, Throwable cause) {
+    protected LoginCException(int c, String bMsg, String message, Throwable cause) {
         super(category, c, bMsg, message, cause);
     }
 
-    protected DtalCException(int c, String bMsg, String message,Throwable cause, boolean enableSuppression,
+    protected LoginCException(int c, String bMsg, String message,Throwable cause, boolean enableSuppression,
             boolean writableStackTrace) {
         super(category, c, bMsg, message, cause, enableSuppression, writableStackTrace);
     }
