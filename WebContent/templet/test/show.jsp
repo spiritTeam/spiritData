@@ -52,7 +52,7 @@ body {
   <div id="catalogTree" style="border:1px solid #E6E6E6; width:258px; "></div>
 </div>
 <div id="reportFrame">
-<div class="rptSegment"></div></div></div>
+</div></div>
 </body>
 <script type="text/javascript">
 var INIT_PARAM = {
@@ -88,6 +88,7 @@ function showAnalRst(){
       rst=str2JsonObj("jsonData",json);
       if(rst.jsonType==1){
       var templetJD = rst.data;
+      	//暂时宽和高无用，因为用了晖哥的
         var jsonTempletObj={
           viewWidth:'',
           viewHeight:'',
