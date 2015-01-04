@@ -13,16 +13,16 @@
 <script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
 </head>
 <body>
+<!-- 遮罩层 -->
+<div id="mask" style="display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
+  <img id="waittingImg" align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
+  <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
+</div>
 <center>
-  <!-- 遮罩层 -->
-  <div id="mask" style="display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
-    <img id="waittingImg" align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
-    <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
-  </div>
   <div id="mainDiv" style="width:330px;height:400px;">
-    <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
+    <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;margin-top: 10px;"><span id="checkResult"></span></div>
     <form>
-      <table width="300px;" style="margin-right:-15px;">
+      <table width="300px;" style="margin-right:-40px;">
         <tr style="height:35px; valign:top;">
           <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
           <td colspan="2" width="200px;">

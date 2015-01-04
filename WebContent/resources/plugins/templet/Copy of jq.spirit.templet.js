@@ -37,9 +37,12 @@
      * level
      */
     buildSegmentGroup($('#reportFrame'), _TEMPLET, level, segTree, 0);
-    //树
+    //画树
     $('#catalogTree').tree({animate:true});
     $('#catalogTree').tree("loadData", [segTree]);
+    return;
+    //treeView.tree({animate:true});
+    //treeView.tree("loadData", [segTree]);
   };
   
   /**
@@ -50,19 +53,21 @@
     if(segArray==null||segArray=="") return "segArry 为空!";
     //判断eleId
     if(jObj==null) return "未知的eleId";
-    //rptSegment
-    var rptSegment = $('<div class="rptSegment"/></div>');
+    //mianDiv
+    var segGroup = $("<div id='segGroup_"+treeLevel+"'/>");
+    if(treeLevel!=0) segGroup.attr('class','borderCss');
     for (var i=0; i<segArray.length; i++) {
-      var segId = segArray[i].id;
+      var segDiv=$("<div class='' id='segLevel_"+i+"'/>");
+      segGroup.append(segDiv);
       if(segArray[i].title){
-        var segTitle = $('<div id="'+segId+'title" class="segTitle"/></div>');
-        segTitle.html(segArray[i].title);
-        rptSegment.append(segTitle);
+        var titleDiv=$("<div class='borderCss' id='title_"+segArray[i].id+"' style='border-bottom-width:0px;'></div>");
+        titleDiv.html(segArray[i].title);
+        segDiv.append(titleDiv);
       }else if(segArray[i].content){
-        var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent"/></div>');
+        var contentDiv=$("<div class='' id='title_"+segArray[i].id+"'></div>");
         var content = segArray[i].content;
         if(content) {
-          //content = content.replace(/s="/g, "style=\"");
+          content = content.replace(/s="/g, "style=\"");
           //content = content.replace(/<d/g, "<div");
         }
         contentDiv.html(content);
