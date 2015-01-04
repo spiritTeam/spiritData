@@ -6,10 +6,10 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
-import com.spiritdata.dataanal.exceptionC.Dtal0101CException;
 import com.spiritdata.filemanage.IMP.model.ImportFile;
+import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.service.FileManageService;
+import com.spiritdata.filemanage.exceptionC.Flmg0101CException;
 
 /**
  * 导入文件服务类
@@ -18,8 +18,6 @@ import com.spiritdata.filemanage.core.service.FileManageService;
 
 @Component
 public class ImportFileService {
-    @Resource(name="defaultDAO")
-    private MybatisDAO<ImportFile> inportFileDao;
     @Resource
     private FileManageService fmService;
 
@@ -27,12 +25,18 @@ public class ImportFileService {
         return null;
     }
 
-    public void saveImportFile(ImportFile impFile) {
+    /**
+     * 保存导入文件
+     * @param impFile 导入文件对象
+     * @return 对应该导入文件对象的保存后的文件信息
+     */
+    public FileInfo saveImportFile(ImportFile impFile) {
         try {
-            fmService.saveFileInfo(impFile.convertToFileInfo());
+            FileInfo fi = impFile.convertToFileInfo();
+            fmService.saveFileInfo(fi);
+            return fi;
         } catch(Exception e) {
-            if (e instanceof Dtal0101CException) throw (Dtal0101CException)e;
-            else throw new Dtal0101CException(e);
+            throw new Flmg0101CException(e);
         }
     }
 }

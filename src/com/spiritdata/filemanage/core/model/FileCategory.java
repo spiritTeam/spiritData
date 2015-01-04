@@ -10,6 +10,7 @@ import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileCategoryPo;
+import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
 
 /**
  * 模型化文件分类对象。它与持久化中的FileClassPo区别在于：
@@ -87,9 +88,9 @@ public class FileCategory extends BaseObject {
      * @return 所建立的关系
      * @throws Exception 如果obj不是符合的类型
      */
-    protected FileRelation _buildRel(Object obj, RelType1 type, String rType2, String desc) throws Exception {
+    protected FileRelation _buildRel(Object obj, RelType1 type, String rType2, String desc) {
         if (!(obj instanceof FileInfo)&&!(obj instanceof FileCategory)) {
-            throw new IllegalArgumentException("另一关联对象只能是FileInfo或FileCategory类型，无法转换！");
+            throw new Flmg0002CException(new IllegalArgumentException("另一关联对象只能是FileInfo或FileCategory类型，无法转换！"));
         }
         FileRelation fr = new FileRelation();
         fr.setElement1(this);
@@ -227,7 +228,7 @@ public class FileCategory extends BaseObject {
      * 把当前对象转换为Po对象，为数据库操作做准备
      * @throws Exception 
      */
-    public FileCategoryPo convert2Po() throws Exception {
+    public FileCategoryPo convert2Po() {
         FileCategoryPo ret = new FileCategoryPo();
         //id处理
         if (this.id==null||this.id.length()==0) {//没有id，自动生成一个

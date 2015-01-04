@@ -1,13 +1,14 @@
 package com.spiritdata.filemanage.ANAL.model;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.JsonUtils;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
@@ -30,7 +31,6 @@ public class AnalResultFile extends BaseObject {
 
     private String id; //分析文件id
     private String fileName; //分析文件的地址
-    private Timestamp CTime; //记录创建时间
     private String jsonDCode; //jsonD的Code
 
     private String analType; //分析类型-METADATA:元数据结构分析，又可分为key/dict/sement，今后根据情况再扩充，用于确定保存的目录
@@ -39,7 +39,6 @@ public class AnalResultFile extends BaseObject {
 
     private String objId; //所分析的对象Id，MetadataModelId
     private String objType; //分析对象类型
-    private String objAdress; //分析对象的访问地址
 
     private Map<String, Object> extInfo; //分析的扩展信息，将转换为json存储在ExtInfo中
 
@@ -91,18 +90,6 @@ public class AnalResultFile extends BaseObject {
     public void setObjType(String objType) {
         this.objType = objType;
     }
-    public String getObjAdress() {
-        return objAdress;
-    }
-    public void setObjAdress(String objAdress) {
-        this.objAdress = objAdress;
-    }
-    public Timestamp getCTime() {
-        return CTime;
-    }
-    public void setCTime(Timestamp CTime) {
-        this.CTime = CTime;
-    }
     public Map<String, Object> getExtInfo() {
         return extInfo;
     }
@@ -125,17 +112,24 @@ public class AnalResultFile extends BaseObject {
         ret.setOwnerId("sys");
         ret.setOwnerType(3);
         ret.setAccessType(1);
+        /**
         if (this.CTime==null) this.CTime=new Timestamp(new Date().getTime());
         ret.setCTime(this.CTime);
-        ret.setDesc("分析结果文件，文件为:"+FileNameUtils.getFileName(this.fileName)+"；得到分析结果时间:"+DateUtils.convert2TimeChineseStr(new Date(this.CTime.getTime()))
+        */
+        ret.setDesc("分析结果文件，文件为:"+FileNameUtils.getFileName(this.fileName)+"；得到分析结果时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f)))
                 +"；分析类型："+this.analType+"::"+this.subType+"，jsonD代码："+this.jsonDCode);
         //分类信息
         FileCategory fc = new FileCategory();
         fc.setFType1(FileCategoryType1.ANAL);
         fc.setFType2(this.analType);
         fc.setFType3(this.subType);
-        //分类扩展信息是一个json，包括jsonD的编码，
-        if (this.extInfo!=null&&this.extInfo.size()>0) fc.setExtInfo(JsonUtils.beanToJson(this.extInfo));
+        //分类扩展信息是一个json，包括jsonD的编码
+        Map<String, Object> _extInfo = new HashMap<String, Object>();
+        if (this.extInfo!=null&&this.extInfo.size()>0)_extInfo.putAll(this.extInfo);
+        _extInfo.put("JSOND", this.jsonDCode);
+        _extInfo.put(this.objType, this.objId);
+
+        fc.setExtInfo(JsonUtils.beanToJson(_extInfo));
 
         ret.addFileCategoryList(fc);
 

@@ -9,7 +9,7 @@ import com.spiritdata.dataanal.metadata.relation.semanteme.AnalTable;
 public class AnalDict implements AnalColumn, AnalTable {
 
     @Override
-    public Map<String, Float> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Exception {
+    public Map<String, Object> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Exception {
         return null;
     }
 

@@ -16,8 +16,8 @@ public interface AnalTable {
      * @param tableName 表名
      * @param md 元数据
      * @param param 扩展参数，若分析需要其他参数，可通过这个参数传入
-     * @return Map<String, Float>，此返回值只能是一行，key为语义编号，float是相似度
+     * @return Map<String, Object> 一个Map对象，这样能返回更丰富的信息
      * @throws Exception 
      */
-    public Map<String, Float> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Exception;
+    public Map<String, Object> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Exception;
 }

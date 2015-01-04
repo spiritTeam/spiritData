@@ -199,9 +199,9 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件分类(文件语义)';
 DROP TABLE IF EXISTS sa_file_rel;
 CREATE TABLE sa_file_rel (
   id     varchar(32)      NOT NULL  COMMENT '文件关系表ID(UUID)',
-  aType  int(1) unsigned  NOT NULL  COMMENT '第一文件类型：=1是对原生态表的关联关系；=2是文件关联表',
+  aType  int(1) unsigned  NOT NULL  COMMENT '第一文件类型：=1是对原生态表的关联关系；=2是文件分类',
   aId    varchar(32)      NOT NULL  COMMENT '第一文件类Id',
-  bType  int(1) unsigned  NOT NULL  COMMENT '第二文件类型：=1是对原生态表的关联关系；=2是文件关联表',
+  bType  int(1) unsigned  NOT NULL  COMMENT '第二文件类型：=1是对原生态表的关联关系；=2是文件分类',
   bId    varchar(32)      NOT NULL  COMMENT '第二文件类Id',
   rType1 int(1)           NOT NULL  COMMENT '关联类型1:=1单向-说明aid是bid的子；=0平等；=-1反向-说明bid是aid的子(这个通过视图实现)',
   rType2 varchar(200)               COMMENT '关联类型2',
