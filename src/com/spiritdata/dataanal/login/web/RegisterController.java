@@ -30,7 +30,7 @@ import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
  */
 @Controller
 public class RegisterController {
-	/**
+    /**
      * 发送重设密码的验证邮件
      * @return retMap
      */
@@ -67,6 +67,37 @@ public class RegisterController {
         return retMap;
     }
     
+    /**
+     * 跟新用户信息
+     * @return
+     */
+    @RequestMapping("login/update.do")
+    public Map<String,Object> update(HttpServletRequest request){
+    	// #TODO
+        Map<String,Object> retMap = new HashMap<String,Object>();
+        String loginName = request.getParameter("loginName");
+        String password = request.getParameter("password");
+        String userName = request.getParameter("userName");
+        String mailAdress = request.getParameter("mailAdress");
+        User user = userService.getUserByLoginName(loginName);
+        if(user!=null||!user.equals("")){
+            retMap.put("success", false);
+            retMap.put("retInfo", "修改异常,请重试"+loginName+"的用户，请重新");
+        }else{
+            user.setPassword(password);
+            user.setMailAdress(mailAdress);
+            user.setUserName(userName);
+            int rst = userService.updateUser(user);
+            if(rst==1){
+                retMap.put("success", true);
+                retMap.put("retInfo", "修改成功");
+            }else{
+                retMap.put("success", false);
+                retMap.put("retInfo", "修改失败");
+            }
+        }
+        return retMap;
+    }
     /**
      * 处理发送邮件不成功的异常,暂时只支持单一邮件发送
      * @param mex MessagingException异常
@@ -124,7 +155,7 @@ public class RegisterController {
         }
         String userId = authCode.substring(0,authCode.lastIndexOf("~"));
         String code = authCode.substring(authCode.lastIndexOf("~")+1);
-        User user  = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
         if(user==null){
             retMap.put("success", false);
             retMap.put("retInfo", "验证码缺失!");
@@ -136,24 +167,15 @@ public class RegisterController {
                 session.removeAttribute(FConstants.SESSION_USER);
                 session.setAttribute(FConstants.SESSION_USER, user);
                 userService.updateUser(user);
-//                response.setContentType("text/html;charset=gb2312");
-//                try {
-//                    String deployName = request.getContextPath();
-//                    String actionUrl = deployName+"/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
-//                    String redirectUrl =deployName+"/asIndex.jsp?action=1&actionUrl="+actionUrl;
-//                    response.sendRedirect(redirectUrl);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
                 try {
-                	//在重定向的基础上修改为转发
-                	String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
-                	request.setAttribute("action", "1");
-                	request.setAttribute("actionUrl", actionUrl);
-					request.getRequestDispatcher("../asIndex.jsp").forward(request, response);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}//转发到apage.jsp
+                    //在重定向的基础上修改为转发
+                    String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
+                    request.setAttribute("action", "1");
+                    request.setAttribute("actionUrl", actionUrl);
+                    request.getRequestDispatcher("../asIndex.jsp").forward(request, response);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }//转发到apage.jsp
             }else{
                 retMap.put("success", false);
                 retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
@@ -166,21 +188,21 @@ public class RegisterController {
      */
     @RequestMapping(value="/login/modifyPassword.do")
     public @ResponseBody Map<String,Object> modifyPassword(HttpServletRequest request){
-    	Map<String,Object> retMap = new HashMap<String,Object>();
-    	String retInfo = "";
+        Map<String,Object> retMap = new HashMap<String,Object>();
+        String retInfo = "";
         HttpSession session =request.getSession();
         User user = (User) session.getAttribute(FConstants.SESSION_USER);
         String password = request.getParameter("password");
         user.setPassword(password);
         int i = userService.updateUser(user);
         if(i==1){
-        	retInfo = "修改密码成功!";
-        	retMap.put("success", true);
-        	retMap.put("retInfo", retInfo);
+            retInfo = "修改密码成功!";
+            retMap.put("success", true);
+            retMap.put("retInfo", retInfo);
         }else{
-        	retInfo = "修改密码失败!";
-        	retMap.put("success", false);
-        	retMap.put("retInfo", retInfo);
+            retInfo = "修改密码失败!";
+            retMap.put("success", false);
+            retMap.put("retInfo", retInfo);
         }
         return retMap;
     }
@@ -244,7 +266,7 @@ public class RegisterController {
         }
         String userId = authCode.substring(0,authCode.lastIndexOf("~"));
         String code = authCode.substring(authCode.lastIndexOf("~")+1);
-        User user  = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
         if(user==null){
             retMap.put("success", false);
             retMap.put("retInfo", "该用户不存在!");
@@ -257,13 +279,13 @@ public class RegisterController {
                     retMap.put("success", true);
                     retMap.put("retInfo", "激活成功!");
                     try {
-                    	String deployName = request.getContextPath();
-                    	//uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
+                        String deployName = request.getContextPath();
+                        //uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
                         String redirectUrl = deployName+"/login/login.jsp?uT=1";
-						response.sendRedirect(redirectUrl);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+                        response.sendRedirect(redirectUrl);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }else{
                     retMap.put("success", false);
                     retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
@@ -299,7 +321,7 @@ public class RegisterController {
     @RequestMapping("login/validateLoginName.do")
     public @ResponseBody boolean validateLoginName(HttpServletRequest request) {
         String loginName = request.getParameter("loginName");
-        User user  = userService.getUserByLoginName(loginName);
+        User user = userService.getUserByLoginName(loginName);
         if(user!=null){
             return false;
         }else{
@@ -312,7 +334,7 @@ public class RegisterController {
     @RequestMapping("login/validateMail.do")
     public @ResponseBody boolean validateMail(HttpServletRequest request) {
         String mail = request.getParameter("mail");
-        User user  = userService.getUserByMailAdress(mail);
+        User user = userService.getUserByMailAdress(mail);
         if(user!=null){
             return false;
         }else{
@@ -345,7 +367,7 @@ public class RegisterController {
         String userName = request.getParameter("userName");
         String mailAdress = request.getParameter("mailAdress");
         String validatsaSequence = SequenceUUID.getPureUUID();
-        User user  = new User();
+        User user = new User();
         user.setLoginName(loginName);
         user.setPassword(password);
         user.setMailAdress(mailAdress);
