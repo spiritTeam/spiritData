@@ -22,19 +22,19 @@ div{width:99%;margin-left:0.4%;}
  * 文档结构-第一层组
  	预留位置，现在起作用的仅有segGroup_1、segTitle_0
  */
-.segGroup_0{border:0px solid #E6E6E6;margin-bottom:15px;}
+.segGroup_0{border:1px solid #E6E6E6;margin-bottom:15px;}
 .seg_0{border:1px solid #E6E6E6;}
 .segTitle_0{border:1px solid #E6E6E6;}
 .segContent_0{border:1px solid #E6E6E6;}
 
 .segGroup_1{border-width:0px 1px 0px 1px;border-color: #E6E6E6; border-style: solid;}
-.seg_1{}
-.segTitle_1{}
-.segContent_1{}
-.segGroup_2{}
-.seg_2{}
-.segTitle_2{}
+.seg_1{border:1px solid #E6E6E6;}
+.segTitle_1{border:1px solid #E6E6E6;}
+.segContent_1{border:1px solid #E6E6E6;}
+.segGroup_2{border:1px solid #E6E6E6;}
+.seg_2{border:1px solid #E6E6E6;}
+.segTitle_2{border:1px solid #E6E6E6;}
 
-.segGroup_3{}
-.seg_3{}
-.segTitle_3{}
+.segGroup_3{border:1px solid #E6E6E6;}
+.seg_3{border:1px solid #E6E6E6;}
+.segTitle_3{border:1px solid #E6E6E6;}

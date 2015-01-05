@@ -27,13 +27,14 @@ var k=10000;
 $(function(){
   var templetId = "2323e";
   var templetUrl = "<%=path%>/templet/getTemplet.do";
-  //$.templetJD(templetUrl,templetId);
+  $.templetJD(templetUrl,templetId);
 });
 setInterval('test()',1000);
 function test(){
 	k=++k;
 	$('#test').html(k);
 }
+----------------------------
 <html>
 <body>
 
@@ -50,5 +51,6 @@ function clock()
 
 </body>
 </html>
+
 </script>
 </html>
