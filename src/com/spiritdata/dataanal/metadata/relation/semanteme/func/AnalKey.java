@@ -19,12 +19,12 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
-import com.spiritdata.framework.CodeException;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileNameUtils;
-import com.spiritdata.framework.util.JsonUtils;
+import com.spiritdata.dataanal.SDConstants;
+import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable;
@@ -33,6 +33,7 @@ import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.util.Arithmetic;
 import com.spiritdata.jsonD.model.AtomData;
 import com.spiritdata.jsonD.model.HeadData;
+import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
  * 主键分析器
@@ -57,7 +58,7 @@ public class AnalKey implements AnalTable {
      * @return 是一个Map<String, Object> 其中若String是列名，Object=float是主键可能性；若String是"resultFile"，Object=AnalResultFile是文件信息
      */
     @Override
-    public Map<String, Object> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Exception {
+    public Map<String, Object> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Dtal0202CException {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
         //先分析指标表
         QuotaTable qt = mdQuotaService.getQuotaInfo(tableName, mm);
@@ -182,7 +183,7 @@ public class AnalKey implements AnalTable {
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
         //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
         String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+"METADATA"+File.separator+"key"+File.separator+tableName+".json");
-        jsonDHead.setFileName(storeFile);
+        jsonDHead.setFileName(storeFile.replace(File.separator, "/"));
 
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
         AtomData _dataElement = new AtomData("_tableName", "string", tableName);
@@ -192,7 +193,7 @@ public class AnalKey implements AnalTable {
         _DATA_Map.put("_keyAnals", convertToList(ret));
         //写文件
 
-        String jsonStr=JsonUtils.formatJsonStr("{_HEAD:"+jsonDHead.toJson()+",_DATA:"+JsonUtils.beanToJson(_DATA_Map)+"}", null);
+        String jsonStr=JsonUtils.formatJsonStr("{"+jsonDHead.toJson()+",\"_DATA\":"+JsonUtils.objToJson(_DATA_Map)+"}", null);
 
         FileOutputStream fileOutputStream = null;
         try {
@@ -208,8 +209,8 @@ public class AnalKey implements AnalTable {
             AnalResultFile arf = new AnalResultFile();
             arf.setFileName(storeFile);
             arf.setJsonDCode(jsonDCode);
-            arf.setAnalType("METADATA");
-            arf.setSubType("key");
+            arf.setAnalType(SDConstants.ANAL_MD_KEY);
+            arf.setSubType(mm.getId());
             arf.setObjType("table");
             arf.setObjId(tableName);
             ret.put("resultFile", arf);
@@ -222,11 +223,10 @@ public class AnalKey implements AnalTable {
                 try {fileOutputStream.close();}catch(IOException e) {e.printStackTrace();}
             }
         }
-        //文件绑定
         return ret;
     }
 
-    private List<Map<String, Object>> convertToList(Map<String, Object> keyAnalResultMap) throws CodeException {
+    private List<Map<String, Object>> convertToList(Map<String, Object> keyAnalResultMap) {
         if (keyAnalResultMap==null||keyAnalResultMap.size()==0) return null;
 
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();

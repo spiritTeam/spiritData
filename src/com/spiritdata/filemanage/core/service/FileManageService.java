@@ -1,5 +1,8 @@
 package com.spiritdata.filemanage.core.service;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
@@ -91,5 +94,19 @@ public class FileManageService {
         } catch(Exception e) {
             throw new Flmg0101CException("存储文件关系", e);
         }
+    }
+
+    /**
+     * 按条件获得分析文件列表
+     * @param m 条件参数
+     * @return
+     */
+    public List<FileIndexPo> getAnalFiles(Map<String, Object> m) {
+        try {
+            return fileIndexDao.queryForList("getAnalList", m);
+        } catch(Exception e) {
+            new Flmg0101CException("获得分析结果文件列表", e); 
+        }
+        return null;
     }
 }

@@ -48,7 +48,7 @@ public class DealUploadFileService {
                 
             }
         } catch(Exception e) {
-            if (e instanceof Dtal0101CException) throw (Dtal0101CException)e;
+            if (e instanceof Dtal0101CException) throw e;
             else throw new Dtal0101CException(e);
         }
     }

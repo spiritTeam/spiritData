@@ -4,8 +4,6 @@ package com.spiritdata.filemanage.ANAL.service;
  * 分析文件服务类
  * @author wh
  */
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
@@ -16,10 +14,6 @@ import com.spiritdata.filemanage.exceptionC.Flmg0101CException;
 public class AanlResultFileService {
     @Resource
     private FileManageService fmService;
-
-    public List<AnalResultFile> getAnalResultFileList(AnalResultFile param) {
-        return null;
-    }
 
     /**
      * 保存分析结果文件

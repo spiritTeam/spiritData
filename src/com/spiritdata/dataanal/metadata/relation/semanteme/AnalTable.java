@@ -2,6 +2,7 @@ package com.spiritdata.dataanal.metadata.relation.semanteme;
 
 import java.util.Map;
 
+import com.spiritdata.dataanal.exceptionC.DtalCException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 
 /**
@@ -17,7 +18,7 @@ public interface AnalTable {
      * @param md 元数据
      * @param param 扩展参数，若分析需要其他参数，可通过这个参数传入
      * @return Map<String, Object> 一个Map对象，这样能返回更丰富的信息
-     * @throws Exception 
+     * @throws DtalCException 
      */
-    public Map<String, Object> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Exception;
+    public Map<String, Object> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws DtalCException;
 }
