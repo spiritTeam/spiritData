@@ -20,14 +20,35 @@ body {
 }
 </style>
 <body>
-<div style="border-width: "></div>
+<span id="test"></span>
 </body>
 <script type="text/javascript">
+var k=10000;
 $(function(){
-  var templetUrl = "<%=path%>/templet/getTemplet.do";
   var templetId = "2323e";
-  var jsonDId = "<%=path%>/jsonD/getJsonD.do?uri=\demo\templetDemo\metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond";
-  $.templetJD(templetUrl,templetId);
+  var templetUrl = "<%=path%>/templet/getTemplet.do";
+  //$.templetJD(templetUrl,templetId);
 });
+setInterval('test()',1000);
+function test(){
+	k=++k;
+	$('#test').html(k);
+}
+<html>
+<body>
+
+<input type="text" id="clock" size="35" />
+<script language=javascript>
+var int=self.setInterval("clock()",50)
+function clock()
+  {
+  var t=new Date()
+  document.getElementById("clock").value=t
+  }
+</script>
+<button onclick="int=window.clearInterval(int)">Stop interval</button>
+
+</body>
+</html>
 </script>
 </html>
