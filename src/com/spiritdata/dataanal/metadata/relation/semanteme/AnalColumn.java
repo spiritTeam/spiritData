@@ -2,6 +2,7 @@ package com.spiritdata.dataanal.metadata.relation.semanteme;
 
 import java.util.Map;
 
+import com.spiritdata.dataanal.exceptionC.DtalCException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 
 /**
@@ -16,7 +17,8 @@ public interface AnalColumn {
      * @param md 元数据
      * @param columnName 列名
      * @param param 扩展参数，若分析需要其他参数，可通过这个参数传入
-     * @return Map<Integer, Float>，此返回值只能是一行，key{Integer}为列语义编号，float是可能性
+     * @return Map<String, Object> 一个Map对象，这样能返回更丰富的信息
+     * @throws DtalCException 
      */
-    public Float scanOneField(String tableName, MetadataModel md, String columnName, Map<String, Object> param) throws Exception;
+    public Float scanOneField(String tableName, MetadataModel md, String columnName, Map<String, Object> param) throws DtalCException;
 }

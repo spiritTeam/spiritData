@@ -7,7 +7,7 @@ package com.spiritdata.dataanal.exceptionC;
  * @author wh
  */
 public class Dtal1001CException extends DtalCException {
-    private static final long serialVersionUID = -6750918808279334815L;
+    private static final long serialVersionUID = -972139498862422207L;
 
     private static String myBaseMsg = "模板获取";
     private static int myCode = 1001;

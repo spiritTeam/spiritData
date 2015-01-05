@@ -93,9 +93,9 @@
       //处理树
       var treeNode = {};
       if (segArray[i].name) treeNode.text = segArray[i].name;
-      else if (segArray[i].title) {
-        treeNode.text=$(segArray[i].title).html();
-      }
+      else
+      if (segArray[i].title) treeNode.text=$(segArray[i].title).html();
+
       if (treeNode.text&&treeNode.text!="") {
         treeNode.id = "_tree_"+segArray[i].id;
         treeNode.segId = segArray[i].id;
@@ -103,7 +103,7 @@
         if (parent==null) {
           //parent=treeNode;为什么加上这个就会出问题？
           segTree[i]=treeNode;
-        }else{
+        } else {
           parent.children[i] = treeNode;
         }
       }

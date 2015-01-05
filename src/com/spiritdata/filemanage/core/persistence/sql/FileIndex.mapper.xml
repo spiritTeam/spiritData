@@ -127,4 +127,12 @@
     delete from sa_file_index
     <if test="_parameter != null" ><include refid="WhereClauseByEntiey" /></if>
   </delete>
+
+  <!-- 获得分析结果列表 -->
+  <select id="getAnalList" resultMap="FileIndexMap" parameterType="java.util.Map" >
+    select a.id, a.ownerType, a.ownerId, a.accessType, a.filePath, a.fileName, a.fileExtName, a.descn, a.fcTime, a.flmTime, a.cTime
+    from sa_file_index a, sa_file_category b
+    where a.id=b.fid and b.type1='ANAL' and b.type2=#{analType2,jdbcType=VARCHAR} and b.type3=#{analType3,jdbcType=VARCHAR}
+    order by a.cTime desc
+  </select>
 </mapper>

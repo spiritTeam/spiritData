@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
-
+import com.spiritdata.dataanal.exceptionC.Dtal0201CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn;
@@ -55,13 +55,18 @@ public class MdQuotaService {
      * @return 表指标信息
      * @throws Exception 当表名对应多个映射关系时
      */
-    public QuotaTable caculateQuota(String tableName, String ownerId) throws Exception {
+    public QuotaTable caculateQuota(String tableName, String ownerId) {
         Map<String, String> param = new HashMap<String, String>();
         param.put("tableName", tableName);
         param.put("ownerId", ownerId);
-        List<TableMapRel> l = tmoService.getList(param);
+        List<TableMapRel> l;
+        try {
+            l = tmoService.getList(param);
+        } catch (Exception e) {
+            throw new Dtal0201CException(e);
+        }
         if (l==null) return null;
-        if (l.size()>1) throw new Exception("此表名对应多个表映射关系，无法处理！");
+        if (l.size()>1) throw new Dtal0201CException("此表名对应多个表映射关系，无法处理！");
 
         return caculateQuota(l.get(0));
     }
@@ -71,13 +76,19 @@ public class MdQuotaService {
      * @param tmo 表映射关系
      * @return 表指标信息
      */
-    public QuotaTable caculateQuota(TableMapRel tmo) throws Exception {
-        if (tmo.getId()==null||tmo.getId().equals("")) throw new IllegalArgumentException("参数中映射表Id字段为空，必须指定映射表Id");
-        if (tmo.getMdMId()==null||tmo.getMdMId().equals("")) throw new IllegalArgumentException("参数中映射表元数据模式mdMId字段为空，必须指定元数据模式Id");
-        if (tmo.getTableName()==null||tmo.getTableName().equals("")) throw new IllegalArgumentException("参数中映射表表名称字段tableName字段为空，必须指定表名称");
-        MetadataModel mm = mdBasisService.getMetadataMode(tmo.getMdMId());
+    public QuotaTable caculateQuota(TableMapRel tmo) {
+        if (tmo.getId()==null||tmo.getId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表Id字段为空，必须指定映射表Id"));
+        if (tmo.getMdMId()==null||tmo.getMdMId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表元数据模式mdMId字段为空，必须指定元数据模式Id"));
+        if (tmo.getTableName()==null||tmo.getTableName().equals("")) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表表名称字段tableName字段为空，必须指定表名称"));
+
+        MetadataModel mm;
+        try {
+            mm = mdBasisService.getMetadataMode(tmo.getMdMId());
+        } catch (Exception e) {
+            throw new Dtal0201CException(e);
+        }
         if (mm==null) return null;
-        if (mm.getOwnerId()==null||mm.getOwnerId().equals("")) throw new IllegalArgumentException("参数中映射表元数据模式mdMId所对应的元数据信息中没有所有者信息，无法处理");
+        if (mm.getOwnerId()==null||mm.getOwnerId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表元数据模式mdMId所对应的元数据信息中没有所有者信息，无法处理"));
 
         return caculateQuota(mm, tmo.getTableName(), tmo.getId());
     }
@@ -89,10 +100,15 @@ public class MdQuotaService {
      * @return 表指标信息
      * @throws Exception
      */
-    public QuotaTable caculateQuota(MetadataModel mm, String tableName) throws Exception {
-        if (mm.getId()==null||mm.getId().equals("")) throw new IllegalArgumentException("必须指定元数据模式Id");
-        if (mm.getOwnerId()==null||mm.getOwnerId().equals("")) throw new IllegalArgumentException("元数据信息中没有所有者信息，无法处理");
-        TableMapRel tmo = tmoService.getTableMapOrg(mm.getId(), tableName);
+    public QuotaTable caculateQuota(MetadataModel mm, String tableName) {
+        if (mm.getId()==null||mm.getId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("必须指定元数据模式Id"));
+        if (mm.getOwnerId()==null||mm.getOwnerId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("元数据信息中没有所有者信息，无法处理"));
+        TableMapRel tmo;
+        try {
+            tmo = tmoService.getTableMapOrg(mm.getId(), tableName);
+        } catch (Exception e) {
+            throw new Dtal0201CException(e);
+        }
         String tmoId = tmo.getId();
 
         return caculateQuota(mm, tableName, tmoId);
@@ -105,7 +121,7 @@ public class MdQuotaService {
      * @param tmoId 映射表记录id
      * @throws SQLException
      */
-    private QuotaTable caculateQuota(MetadataModel mm, String tableName, String tmoId) throws SQLException, Exception {
+    private QuotaTable caculateQuota(MetadataModel mm, String tableName, String tmoId) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
 
         QuotaTable qt = null;
@@ -209,7 +225,6 @@ public class MdQuotaService {
                 qtDao.update(qt);
             }
             List<QuotaColumn> qcl = qt.getColQuotaList();
-            List<QuotaColumn> lc = null;
             if (qcl!=null&&qcl.size()>0) {
                 for (QuotaColumn qc: qt.getColQuotaList()) {
                     int updateSize = qcDao.update(qc);
@@ -227,7 +242,7 @@ public class MdQuotaService {
                     sqlE.printStackTrace();
                 }
             }
-            e.printStackTrace();
+            throw new Dtal0201CException(e);
         } finally {
             try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
             try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
@@ -242,7 +257,7 @@ public class MdQuotaService {
      * @param mdMId 元数据模式Id 
      * @return 指标信息
      */
-    public QuotaTable getQuotaInfo(String tableName, MetadataModel mm) throws Exception {
+    public QuotaTable getQuotaInfo(String tableName, MetadataModel mm) {
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("tmId", mm.getId());
         param.put("tableName", tableName);
@@ -259,7 +274,13 @@ public class MdQuotaService {
                     else qc.setColumn(mc);
                 }
             }
-            if (qcl!=null&&qcl.size()>0) ret.setColQuotaList(qcl);
+            if (qcl!=null&&qcl.size()>0) {
+                try {
+                    ret.setColQuotaList(qcl);
+                } catch (Exception e) {
+                    throw new Dtal0201CException("得到表["+tableName+"]的列指标信息", e);
+                }
+            }
             else ret = null;
         }
         return ret;

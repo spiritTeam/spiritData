@@ -6,9 +6,8 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
@@ -20,10 +19,12 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spiritdata.framework.FConstants;
-import com.spiritdata.framework.core.cache.SystemCache;
-import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
+import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.util.StringUtils;
+import com.spiritdata.jsonD.util.JsonUtils;
+import com.spiritdata.dataanal.SDConstants;
+import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 
@@ -37,6 +38,8 @@ public class MdKeyService {
     private BasicDataSource dataSource;
     @Resource
     private MdBasisService mdBasisService;
+    @Resource
+    private FileManageService fmService;
 
     /**
      * 分析元数据的key，并返回最有可能作为key的列组合。
@@ -45,8 +48,13 @@ public class MdKeyService {
      * @return 最有可能作为key的列组合，用列名称(String类型)的数组来表示
      * @throws Exception
      */
-    public String[] analMdKey(String mdMId) throws Exception {
-        MetadataModel mm = mdBasisService.getMetadataMode(mdMId);
+    public String[] analMdKey(String mdMId) {
+        MetadataModel mm;
+        try {
+            mm = mdBasisService.getMetadataMode(mdMId);
+        } catch (Exception e) {
+            throw new Dtal0202CException("无法根据["+mdMId+"]得到元数据信息", e);
+        }
         return analMdKey(mm);
     }
 
@@ -57,37 +65,26 @@ public class MdKeyService {
      * @return 最有可能作为key的列组合，用列名称(String类型)的数组来表示
      * @throws Exception
      */
-    public String[] analMdKey(MetadataModel mm) throws Exception {
+    public String[] analMdKey(MetadataModel mm) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
         //读取元数据信息，看是否需要对主键进行分析
         String keyStr = null; //主键串，若分析后无主键，此变量为null
         int pkSign = 2; //主键可能性
-        int _maxFileCount = 10;//最多只分析近10个文件
 
         if (needAnalKey(mm)) {//若需要分析主键
             List<Map<String, Double>> keyList = new ArrayList<Map<String, Double>>();
-            String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-            //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
-            String dirStr = FileNameUtils.concatPath(root, "analData"+File.separator+mm.getOwnerId()+File.separator+"MM_"+mm.getId()+File.separator+"keyAnal"+File.separator);
-            File dir = new File(dirStr);
-            File[] fl = dir.listFiles();
-            if (fl!=null&&fl.length>0) {
-                Arrays.sort(fl, new Comparator<File>(){
-                    @Override
-                    public int compare(File f1, File f2) {
-                        long diff = f1.lastModified()-f2.lastModified();
-                        if(diff>0) return 1;  
-                        else if(diff==0) return 0;  
-                        else return -1;
-                    }
-                });
-                for (int i=fl.length-1; i>=0; i--) {
-                    if (_maxFileCount==0) break;
-                    File f = fl[i];
+            //从新的文件系统中得到分析的文件
+            Map<String, Object> m = new HashMap<String, Object>();
+            m.put("analType2", SDConstants.ANAL_MD_KEY);
+            m.put("analType3", mm.getId());
+            List<FileIndexPo> afl = fmService.getAnalFiles(m);
+            if (afl!=null&&afl.size()>0) {
+                for (int i=0; i<(afl.size()>10?10:afl.size()); i++) {
+                    FileIndexPo fip = afl.get(i);
+                    File f = new File(fip.getPath()+File.separator+fip.getFileName());
                     if (f.isFile()) {
                         Map<String, Double> km = parseJsonFile(f, mm);
                         if (km!=null) keyList.add(km);
-                        _maxFileCount--;
                     }
                 }
                 //根据这些分析结果，分析主键
@@ -158,14 +155,24 @@ public class MdKeyService {
                 ps.executeBatch();
                 conn.commit();
             } catch(Exception e) {
-                conn.rollback();
+                try {
+                    conn.rollback();
+                } catch (SQLException e1) {
+                    throw new Dtal0202CException("无法rollback", e1);
+                }
             } finally {
-                if (conn!=null) conn.setAutoCommit(autoCommit);
+                if (conn!=null) {
+                    try {
+                        conn.setAutoCommit(autoCommit);
+                    } catch (SQLException e) {
+                        throw new Dtal0202CException("无法setAutoCommit", e);
+                    }
+                }
                 try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
                 try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
             }
         }
-        //TODO 由于修改了元数据，所有要通知session，修改相关的信息
+        //TODO 由于修改了元数据，所以要通知session，修改相关的信息
         return ret;
     }
 
@@ -175,8 +182,13 @@ public class MdKeyService {
      * @param mdMId 元数据模式Id
      * @throws Exception
      */
-    public void adjustMdKey(String mdMId) throws Exception {
-        MetadataModel mm = mdBasisService.getMetadataMode(mdMId);
+    public void adjustMdKey(String mdMId) {
+        MetadataModel mm;
+        try {
+            mm = mdBasisService.getMetadataMode(mdMId);
+        } catch (Exception e) {
+            throw new Dtal0202CException("无法根据["+mdMId+"]得到元数据信息", e);
+        }
         adjustMdKey(mm);
     }
 
@@ -186,7 +198,7 @@ public class MdKeyService {
      * @param mm 元数据信息
      * @throws Exception
      */
-    public void adjustMdKey(MetadataModel mm) throws Exception {
+    public void adjustMdKey(MetadataModel mm) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return ;
         
         //读取元数据信息，看主键是否是确定的
@@ -245,6 +257,8 @@ public class MdKeyService {
             if (needCreateKey) {
                 st.execute("Alter table "+sumTableName+" add primary key("+keyStr+")");
             }
+        } catch(Exception e) {
+            throw new Dtal0202CException(e);
         } finally {
             try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
@@ -290,6 +304,12 @@ public class MdKeyService {
         return true;
     }
 
+    /*
+     * 读取文件内容，今后可能会用到JsonD的功能 
+     * @param f
+     * @param mm
+     * @return
+     */
     private Map<String, Double> parseJsonFile(File f, MetadataModel mm) {
         Map<String, Double> ret = null;
         FileInputStream fis = null;
@@ -299,9 +319,11 @@ public class MdKeyService {
             fis = new FileInputStream(f);
             byte[] b=new byte[fis.available()];
             fis.read(b);
-            analKey = mapper.readValue((new String(b)).getBytes("utf-8"), Map.class);
-            String _code = (String)analKey.get("_code");
-            if (_code.equals("SD.TEAM.ANAL-0001")) {
+            String jsonS = new String(b);
+            analKey = (Map<String, Object>)JsonUtils.jsonToObj(jsonS, Map.class);
+            Map<String, Object> _HEAD = (Map<String, Object>)analKey.get("_HEAD");
+            String _code = (String)_HEAD.get("_code");
+            if (_code.equals("SD.TEAM.ANAL::0001")) {
                 Map<String, Object> _data = (Map<String, Object>)analKey.get("_DATA");
                 Map<String, Object> _temp = (Map<String, Object>)_data.get("_mdMId");
                 String tempStr = (String)_temp.get("value");

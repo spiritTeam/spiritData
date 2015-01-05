@@ -82,7 +82,7 @@ public class ImportFile extends BaseObject {
         //分类信息
         FileCategory fc = new FileCategory();
         fc.setFType1(FileCategoryType1.IMP);
-        if (ret.getExtName().equalsIgnoreCase("XLS")||ret.getExtName().equalsIgnoreCase("XLSX")||ret.getExtName().equalsIgnoreCase("CVS")) {
+        if (ret.getExtName().equalsIgnoreCase(".XLS")||ret.getExtName().equalsIgnoreCase(".XLSX")||ret.getExtName().equalsIgnoreCase(".CVS")) {
             fc.setFType2("Rdata");
         } else {
             fc.setFType2("Tdata");

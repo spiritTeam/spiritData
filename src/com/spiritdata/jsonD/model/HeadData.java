@@ -81,11 +81,11 @@ public class HeadData implements Serializable {
         if (!this.isLegalCode(this.code)) throw new Jsond0002CException("code不合规，请参看JsonD相关文档！");
 
         if (this.CTime==null) CTime= new Date();
-        String ret = "{_id:\""+this.id+"\", _code:\""+this.code+"\", _cTime:\""+this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime()+"\"";
-        if (this.parseFun!=null&&this.parseFun.length()>0) ret +=", _parseFun:\""+this.parseFun+"\"";
+        String ret = "\"_HEAD\":{\"_id\":\""+this.id+"\", \"_code\":\""+this.code+"\", \"_cTime\":\""+this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime()+"\"";
+        if (this.parseFun!=null&&this.parseFun.length()>0) ret +=", \"_parseFun\":\""+this.parseFun+"\"";
         if (this.node!=null&&this.node.length()>0) ret +=", _node:\""+this.node+"\"";
-        if (this.fileName!=null&&this.fileName.length()>0) ret +=", _fileName:\""+this.fileName+"\"";
-        if (this.desc!=null&&this.desc.length()>0) ret +=", _desc:\""+this.desc+"\"";
+        if (this.fileName!=null&&this.fileName.length()>0) ret +=", \"_fileName\":\""+this.fileName+"\"";
+        if (this.desc!=null&&this.desc.length()>0) ret +=", \"_desc\":\""+this.desc+"\"";
         return ret+"}";
     }
 
