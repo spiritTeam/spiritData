@@ -45,10 +45,7 @@ body {
 $(function(){
   var templetUrl = "<%=path%>/templet/getTemplet.do";
   var templetId = "2323e";
-  showAnalRst(templetUrl,templetId);
-});
-function showAnalRst(templetUrl,templetId){
   $.templetJD(templetUrl,templetId);
-}
+});
 </script>
 </html>

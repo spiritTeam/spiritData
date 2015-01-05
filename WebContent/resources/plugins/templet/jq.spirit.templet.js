@@ -9,10 +9,6 @@
   //定义变量
   //树。。
   var segTree=[];
-  //默认宽高
-  var defaultViewWidth = "800px;",defaultViewHeight = "0px;";
-  //传入高和宽的值
-  var viewWidth,viewHeight;
   //level
   var level=0;
   function initPageFrame(){
@@ -62,18 +58,21 @@
     //1,画pageFrame
     initPageFrame();
     //2，从后台请求数据
-    var pData = {templetId:"2323e"};
+    var pData = {'templetId':templetId};
     $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
       success:function(json){
         rst=str2JsonObj("jsonData",json);
         if(rst.jsonType==1){
-        var templetJD = rst.data;
-          //暂时宽和高无用，因为用了晖哥的
-          var jsonTempletObj={
-            templetData:templetJD
-          };
-          // TODO 衔接第三部
-          //$.templetJD(jsonTempletObj);
+          var templetJD = rst.data;
+          //3，根据templetD构造出树和框
+          var _TEMPLET = templetJD._TEMPLET;
+          //标题
+          var _HEAD = templetJD._HEAD;
+          $('#rTitle').html(_HEAD.reportName);
+          buildSegmentGroup($('#reportFrame'), _TEMPLET, level, null);
+          //显示树的部分
+          $('#catalogTree').tree({animate:true});
+          $('#catalogTree').tree("loadData", segTree);
         }else{
           $.messager.alert("提示",jsonData.message,'info');
         }
@@ -81,17 +80,6 @@
         $.messager.alert("提示","未知错误！",'info');
       }
     });
-    //3，根据templetD构造出树和框
-    //取出数据
-    var templetJD = jsonTempletObj.templetData;
-    var _TEMPLET = templetJD._TEMPLET;
-    //标题
-    //var _HEAD = templetJD._HEAD;
-    //$('#rTitle').html(_HEAD.reportName);
-    buildSegmentGroup($('#reportFrame'), _TEMPLET, level, null);
-    //树
-    $('#catalogTree').tree({animate:true});
-    $('#catalogTree').tree("loadData", segTree);
   };
   
   /**
@@ -106,58 +94,58 @@
    *     rptSegment:{segTitle,segContent,subSegs}]
    */
   function buildSegmentGroup(jObj, segArray, treeLevel, parent) {
-  //判断segArray
-  if(segArray==null||segArray=="") return "segArry 为空!";
-  //判断eleId
-  if(jObj==null) return "未知的eleId";
-  //rptSegment
-  var rptSegment = $('<div class="rptSegment"/></div>');
-  for (var i=0; i<segArray.length; i++) {
-    var segId = segArray[i].id;
-    //第一层的时候title中没有style标签，第二层有 ,可以跟晖哥商量下title标签问题？
-    //title是放在div下面的span中还是直接放在div中
-    if(segArray[i].title){
-    //segTitle
-    var segTitle = $('<div id="'+segId+'title"></div>');
-    segTitle.find("span").html(segArray[i].title);
-    rptSegment.append(segTitle);
-    }else if(segArray[i].content){
-    //segContent
-    var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent"/></div>');
-    var content = segArray[i].content;
-    if(content) {
-      //content = content.replace(/s="/g, "style=\"");
-      //content = content.replace(/<d/g, "<div");
+    //判断segArray
+    if(segArray==null||segArray=="") return "segArry 为空!";
+    //判断eleId
+    if(jObj==null) return "未知的eleId";
+    //rptSegment
+    var rptSegment = $('<div class="rptSegment"/></div>');
+    for (var i=0; i<segArray.length; i++) {
+      var segId = segArray[i].id;
+      //第一层的时候title中没有style标签，第二层有 ,可以跟晖哥商量下title标签问题？
+      //title是放在div下面的span中还是直接放在div中
+      if(segArray[i].title){
+      //segTitle
+      var segTitle = $('<div id="'+segId+'title"></div>');
+      segTitle.find("span").html(segArray[i].title);
+      rptSegment.append(segTitle);
+      }else if(segArray[i].content){
+      //segContent
+      var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent"/></div>');
+      var content = segArray[i].content;
+      if(content) {
+    	  // TODO 
+      }
+      segContent.html(content);
+      rptSegment.append(segContent);
+      }
+      var contendEle = templetContentParse(segArray[i].content);
+      rptSegment.append(contendEle);
+      var subSegs = segArray[i].subSeg;
+      //处理树
+      var treeNode = {};
+      if (segArray[i].name) treeNode.text = segArray[i].name;
+      else if (segArray[i].title) {
+    	  treeNode.text=$(segArray[i].title).html();
+      }
+      if (treeNode.text&&treeNode.text!="") {
+	      treeNode.id = "_tree_"+segArray[i].id;
+	      treeNode.segId = segArray[i].id;
+	      treeNode.children = new Array();
+	      if (parent==null) {
+	        //parent=treeNode;为什么加上这个就会出问题？
+	        segTree[i]=treeNode;
+	      }else{
+	        parent.children[i] = treeNode;
+	      }
+      }
+      buildSegmentGroup(rptSegment, subSegs, treeLevel+1, treeNode);
     }
-    segContent.html(content);
-    rptSegment.append(segContent);
-    }
-    var contendEle = templetContentParse(segArray[i].content);
-    rptSegment.append(contendEle);
-    var subSegs = segArray[i].subSeg;
-    //处理树
-    var treeNode = {};
-    if (segArray[i].name) treeNode.text = segArray[i].name;
-    else if (segArray[i].title) {
-    treeNode.text=$(segArray[i].title).html();
-    }
-    if (treeNode.text&&treeNode.text!="") {
-    treeNode.id = "_tree_"+segArray[i].id;
-    treeNode.segId = segArray[i].id;
-    treeNode.children = new Array();
-    if (parent==null) {
-      //parent=treeNode;为什么加上这个就会出问题？
-      segTree[i]=treeNode;
-    }else{
-      parent.children[i] = treeNode;
-    }
-    }
-    buildSegmentGroup(rptSegment, subSegs, treeLevel+1, treeNode);
-  }
-  jObj.append(rptSegment);
-  return rptSegment;
+    jObj.append(rptSegment);
+    return rptSegment;
   }
   function templetContentParse(content){
-  return null;
+	  // TODO 对content进行解析预留
+    return null;
   }
 })(jQuery);
