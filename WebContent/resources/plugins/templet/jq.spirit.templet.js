@@ -15,7 +15,7 @@
   var viewWidth,viewHeight;
   //level
   var level=0;
-  function initPageFrame(jsonTempletObj){
+  function initPageFrame(){
     //1、画pageFrame
     //1-1:topSegment    
     var topSegment =$('<div id="topSegment"><div id="rTitle"></div></div>');
@@ -32,9 +32,6 @@
     var reportFrame = $('<div id="reportFrame"></div>');
     mainSegment.append(sideFrame);
     mainSegment.append(reportFrame);
-    var templetJD = jsonTempletObj.templetData;
-    var _HEAD = templetJD._HEAD;
-    $('#rTitle').html(_HEAD.reportName);
     var INIT_PARAM = {
     pageObjs: {
       topId: "topSegment",
@@ -58,14 +55,33 @@
     return ;
   };
   }
-  
-  $.templetJD = function(jsonTempletObj){
-    initPageFrame(jsonTempletObj);
-    //从jsonTemplet中得到自定义的宽高，暂时未用到，因为用了晖哥的pageFrame.js
-    if(jsonTempletObj.viewWidth!=""&&jsonTempletObj.viewWidth!=null) viewWidth = jsonTempletObj.viewWidth;
-    else viewWidth = defaultViewWidth;
-    if(jsonTempletObj.viewHeight!=""&&jsonTempletObj.viewHeight!=null) viewHeight = jsonTempletObj.viewHeight;
-    else viewHeight = defaultViewHeight;
+  /**
+   * 主函数入口
+   */
+  $.templetJD = function(templetUrl,templetId){
+    //1,画pageFrame
+    initPageFrame();
+    //2，从后台请求数据
+    var pData = {templetId:"2323e"};
+    $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
+      success:function(json){
+        rst=str2JsonObj("jsonData",json);
+        if(rst.jsonType==1){
+        var templetJD = rst.data;
+          //暂时宽和高无用，因为用了晖哥的
+          var jsonTempletObj={
+            templetData:templetJD
+          };
+          // TODO 衔接第三部
+          //$.templetJD(jsonTempletObj);
+        }else{
+          $.messager.alert("提示",jsonData.message,'info');
+        }
+      },error:function(errorData ){
+        $.messager.alert("提示","未知错误！",'info');
+      }
+    });
+    //3，根据templetD构造出树和框
     //取出数据
     var templetJD = jsonTempletObj.templetData;
     var _TEMPLET = templetJD._TEMPLET;
