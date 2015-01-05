@@ -18,33 +18,15 @@
 body {
   background-color:#fff;
 }
-#sideFrame {
-  width:270px; padding-left:20px; position:fixed;
-}
-#rTitle {
-  height:40px; padding:10px; padding-left: 30px; font-size:36px; font-weight:bold;
-}
-.rptSegment {
-  border:1px solid #E6E6E6;
-  margin-bottom:15px;
-}
-.segTitle {
-  height:30px; border-bottom:1px solid #E6E6E6;padding: 3px 0 0 5px;
-}
-.segTitle span {
-  width:40px; font-size:24px; font-weight:bold;
-}
-.subTitle {
-  font-size:18px; font-weight:bold; padding:3px;
-}
-.segContent{padding-left:5px;padding-right:5px;}
 </style>
 <body>
+<div style="border-width: "></div>
 </body>
 <script type="text/javascript">
 $(function(){
   var templetUrl = "<%=path%>/templet/getTemplet.do";
   var templetId = "2323e";
+  var jsonDId = "<%=path%>/jsonD/getJsonD.do?uri=\demo\templetDemo\metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond";
   $.templetJD(templetUrl,templetId);
 });
 </script>

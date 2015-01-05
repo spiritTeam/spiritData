@@ -9,8 +9,8 @@
   _TEMPLET:[
     {
       id:"seg1",
-      name:"上传数据CCC",
-      title:'<div style="font-height:bold;font-size:24px;">上传数据￥￥￥￥</div>',
+      name:"上传数据$$",
+      title:'<div style="font-height:bold;font-size:24px;">上传数据$$</div>',
       subSeg:[
         {
           id:"seg1_1",
