@@ -1,43 +1,89 @@
 /**
- *框架流程:
- *1、接收templet,
- *2、分析templet中的element，并且按照showType分类
- *3、解析<d>中的属性，如value。。
- *4、根据showType选择处理文件的方法。
+ *框架介绍:
+ *1、两个参数，一个是url,另一个是templetId
+ *2、入口函数是$.templetJD(templetUrl,templetId);
+ *3、执行流程:
+ *  _1:先初始化PageFrame。
+ *  _2:向后太请求数据。
+ *  _3完成结构的组建(树和templet主体)。
+ *  _4解析jsonD。
+ *  _5显示
  */
 (function($){
-  //定义变量
-  //树。。
+  //树
   var segTree=[];
-  //默认宽高
-  var defaultViewWidth = "800px;",defaultViewHeight = "0px;";
-  //传入高和宽的值
-  var viewWidth,viewHeight;
   //level
   var level=0;
-  
-  $.templetJD = function(jsonTempletObj){
-    //从jsonTemplet中得到自定义的宽高，暂时未用到，因为用了晖哥的pageFrame.js
-    if(jsonTempletObj.viewWidth!=""&&jsonTempletObj.viewWidth!=null) viewWidth = jsonTempletObj.viewWidth;
-    else viewWidth = defaultViewWidth;
-    if(jsonTempletObj.viewHeight!=""&&jsonTempletObj.viewHeight!=null) viewHeight = jsonTempletObj.viewHeight;
-    else viewHeight = defaultViewHeight;
-    //取出数据
-    var templetJD = jsonTempletObj.templetData;
-    var _TEMPLET = templetJD._TEMPLET;
-    //标题
-    var _HEAD = templetJD._HEAD;
-    $('#rTitle').html(_HEAD.reportName);
-    /**
-     * 建立segmentGroup组,同时生成树
-     * viewDiv 主div 
-     * _TEMPLET 数据部分
-     * level
-     */
-    buildSegmentGroup($('#reportFrame'), _TEMPLET, level, segTree, null);
-    //树
-    $('#catalogTree').tree({animate:true});
-    $('#catalogTree').tree("loadData", segTree);
+  function initPageFrame(){
+    //1、画pageFrame
+    //1-1:topSegment    
+    var topSegment =$('<div id="topSegment"><div id="rTitle"></div></div>');
+    $("body").append(topSegment);
+    //1-2mainSegment
+    var mainSegment = $('<div id="mainSegment"></div>');
+    $("body").append(mainSegment);
+    //1-2-1sideFrame
+    var sideFrame = $('<div id="sideFrame"></div>');
+    //1-2-1-1catalogTree
+    var catalogTree = $('<div id="catalogTree" style="border:1px solid #E6E6E6; width:258px; "></div>');
+    sideFrame.append(catalogTree);
+    //1-2-2reportFrame
+    var reportFrame = $('<div id="reportFrame"></div>');
+    mainSegment.append(sideFrame);
+    mainSegment.append(reportFrame);
+    //INIT_PARAM
+    var INIT_PARAM = {
+      pageObjs: {
+        topId: "topSegment",
+        mainId: "mainSegment"
+      },
+      page_width: -1,
+      page_height: -1,
+      top_shadow_color:"#E6E6E6",
+      top_height: 60,
+      top_peg: false,
+      myInit: initPos,
+      myResize: initPos
+    };
+    function initPos() {
+      $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth"));
+      $("#sideFrame").css("left", $("#reportFrame").width());
+    }
+    var initStr = $.spiritPageFrame(INIT_PARAM);
+    if (initStr) {
+      $.messager.alert("页面初始化失败", initStr, "error");
+      return ;
+    };
+  }
+  /**
+   * 主函数入口
+   */
+  $.templetJD = function(templetUrl,templetId){
+    //1,画pageFrame
+    initPageFrame();
+    //2，从后台请求数据
+    var pData = {'templetId':templetId};
+    $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
+      success:function(json){
+        rst=str2JsonObj("jsonData",json);
+        if(rst.jsonType==1){
+          var templetJD = rst.data;
+          //3，根据templetD构造出树和框
+          var _TEMPLET = templetJD._TEMPLET;
+          //标题
+          var _HEAD = templetJD._HEAD;
+          $('#rTitle').html(_HEAD.reportName);
+          buildSegmentGroup($('#reportFrame'), _TEMPLET, level, null);
+          //显示树的部分
+          $('#catalogTree').tree({animate:true});
+          $('#catalogTree').tree("loadData", segTree);
+        }else{
+          $.messager.alert("提示",jsonData.message,'info');
+        }
+      },error:function(errorData ){
+        $.messager.alert("提示","未知错误！",'info');
+      }
+    });
   };
   
   /**
@@ -47,56 +93,38 @@
    * treeLevel：层数,
    * segTree:一个数组，用于储存节点
    * parent:可以是空也可以是null表示第一次遍历，无parent,
-   * 结构：jObj[rptSegment:{segTitle,segContent,subSegs},
-   *       rptSegment:{segTitle,segContent,subSegs},
-   *       rptSegment:{segTitle,segContent,subSegs}]
+   * 结构：jObj[segGroup:{segTitle,segContent,subSegs},
+   *     segGroup:{segTitle,segContent,subSegs},
+   *     segGroup:{segTitle,segContent,subSegs}]
    */
-  function buildSegmentGroup(jObj, segArray, treeLevel, segTree, parent) {
+  function buildSegmentGroup(jObj, segArray, treeLevel, parent) {
     //判断segArray
     if(segArray==null||segArray=="") return "segArry 为空!";
     //判断eleId
     if(jObj==null) return "未知的eleId";
-    //rptSegment
-    var rptSegment = $('<div class="rptSegment"/></div>');
+    //segGroup
+    var segGroup = $('<div id="segGroup_'+treeLevel+'" class="segGroup_'+treeLevel+'"/></div>');
     for (var i=0; i<segArray.length; i++) {
       var segId = segArray[i].id;
       //第一层的时候title中没有style标签，第二层有 ,可以跟晖哥商量下title标签问题？
       //title是放在div下面的span中还是直接放在div中
-      if(treeLevel>=1){
-        if(segArray[i].title){
-          var segTitle = $('<div id="'+segId+'title" class="subTitle"></div>');
-          segTitle.html(segArray[i].title);
-          rptSegment.append(segTitle);
-        }else if(segArray[i].content){
-          var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent"/></div>');
-          var content = segArray[i].content;
-          if(content) {
-            //content = content.replace(/s="/g, "style=\"");
-            //content = content.replace(/<d/g, "<div");
-          }
-          segContent.html(content);
-          rptSegment.append(segContent);
-        }
-      }else{
-        if(segArray[i].title){
-          //segTitle
-          var segTitle = $('<div id="'+segId+'title" class="segTitle"><span></span></div>');
-          segTitle.find("span").html(segArray[i].title);
-          rptSegment.append(segTitle);
-        }else if(segArray[i].content){
-          //segContent
-          var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent"/></div>');
-          var content = segArray[i].content;
-          if(content) {
-            //content = content.replace(/s="/g, "style=\"");
-            //content = content.replace(/<d/g, "<div");
-          }
-          segContent.html(content);
-          rptSegment.append(segContent);
-        }
+      if(segArray[i].title){
+      //segTitle
+      var segTitle = $('<div id="'+segId+'title" class="segTitle_'+treeLevel+'"></div>');
+      segTitle.html(segArray[i].title);
+      segGroup.append(segTitle);
+      }else if(segArray[i].content){
+      //segContent
+      var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
+      var content = segArray[i].content;
+      if(content) {
+        // TODO 
+      }
+      segContent.html(content);
+      segGroup.append(segContent);
       }
       var contendEle = templetContentParse(segArray[i].content);
-      rptSegment.append(contendEle);
+      segGroup.append(contendEle);
       var subSegs = segArray[i].subSeg;
       //处理树
       var treeNode = {};
@@ -115,12 +143,13 @@
           parent.children[i] = treeNode;
         }
       }
-      buildSegmentGroup(rptSegment, subSegs, treeLevel+1, segTree, treeNode);
+      buildSegmentGroup(segGroup, subSegs, treeLevel+1, treeNode);
     }
-    jObj.append(rptSegment);
-    return rptSegment;
+    jObj.append(segGroup);
+    return segGroup;
   }
   function templetContentParse(content){
+    // TODO 对content进行解析预留
     return null;
   }
 })(jQuery);
