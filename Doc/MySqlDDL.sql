@@ -67,6 +67,7 @@ CREATE TABLE sa_md_tabmodel (
   ownerId   varchar(32)      NOT NULL                COMMENT '指向用户表(用户id或sessionId)',
   ownerType int(1) unsigned  NOT NULL                COMMENT '用户类型(1-用户，2-session)',
   tableName varchar(40)      NOT NULL                COMMENT '业务 表中的积累表的名称',
+  titleName varchar(100)     NOT NULL  COMMENT '页签名称',
   descn     varchar(400)               DEFAULT NULL  COMMENT '备注',
   cTime     timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建的系统时间',
   PRIMARY KEY (id)
@@ -148,16 +149,17 @@ CREATE TABLE sa_md_colquota (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据列指标表';
 
-/**010 数据文件/实体表对应[SA_IMP_TABLOG_REL]*/
-DROP TABLE IF EXISTS sa_imp_tablog_rel;
-CREATE TABLE sa_imp_tablog_rel (
-  id         varchar(32)      NOT NULL  COMMENT '文件/实体对应关系ID(UUID)',
-  fId        varchar(32)      NOT NULL  COMMENT '文件日志ID(文件表外键)',
-  tmoId      varchar(32)      NOT NULL  COMMENT '对照表Id(元数据实体表对照Id，外键)',
-  tmId       varchar(32)      NOT NULL  COMMENT '元数据模式Id(表模式Id外键)',
-  sheetName  varchar(100)     NOT NULL  COMMENT '页签名称',
-  sheetIndex int(3) unsigned  NOT NULL  COMMENT '页签排序',
-  cTime      timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '创建时间',
+/**010 数据文件/实体表对应[SA_IMP_TABMAP_REL]*/
+DROP TABLE IF EXISTS sa_imp_tabmap_rel;
+CREATE TABLE sa_imp_tabmap_rel (
+  id              varchar(32)      NOT NULL  COMMENT '文件/实体对应关系ID(UUID)',
+  fId             varchar(32)      NOT NULL  COMMENT '文件日志ID(文件表外键)',
+  tmoId           varchar(32)      NOT NULL  COMMENT '对照表Id(元数据实体表对照Id，外键)',
+  tmId            varchar(32)      NOT NULL  COMMENT '元数据模式Id(表模式Id外键)',
+  sheetName       varchar(100)     NOT NULL  COMMENT '页签名称',
+  sheetIndex      int(3) unsigned  NOT NULL  COMMENT '页签排序',
+  tableTitleName  varchar(100)     NOT NULL  COMMENT '页签名称',
+  cTime           timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '创建时间',
   PRIMARY KEY (id)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据文件/实体表对应关系表';

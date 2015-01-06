@@ -27,6 +27,7 @@ public class SheetTableInfo extends BaseObject{
     private List<Map<String, Object>> titleInfo;
     private SheetInfo sheetInfo; //所在的sheet信息
     private MetadataModel mm; //对应的元数据模式
+    private String tableTitleName; //表的名称，一个sheet中可能包含多个表，每个表有不同的名称，目前tableTitleName就与sheetName相同
 
     /**
      * 分析数据结构的map,其中key和columnTitle相互对应
@@ -76,6 +77,13 @@ public class SheetTableInfo extends BaseObject{
     public void setMm(MetadataModel mm) {
         this.mm = mm;
     }
+    public String getTableTitleName() {
+        return tableTitleName;
+    }
+    public void setTableTitleName(String tableTitleName) {
+        this.tableTitleName = tableTitleName;
+    }
+
 
     public void setThreadEnd() {
         this.threadEnd=true;

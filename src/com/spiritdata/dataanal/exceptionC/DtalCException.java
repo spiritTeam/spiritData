@@ -3,13 +3,13 @@ package com.spiritdata.dataanal.exceptionC;
 import com.spiritdata.framework.CodeException;
 
 /**
- * Login登陆注册“带码异常”，其分类码为"Login"
+ * DataAnal数据分析“带码异常”，其分类码为"DTAL"
  * @author wh
  */
 public abstract class DtalCException extends CodeException {
     private static final long serialVersionUID = -4358416181016248285L;
     //代码分类(category)
-    private static String category = "LOGIN"; //分类码
+    private static String category = "DTAL"; //分类码
 
     //扩充父类的构造函数
     /**

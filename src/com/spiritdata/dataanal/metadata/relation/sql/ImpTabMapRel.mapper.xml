@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  基础元数据：元数据模式
+-->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="impTableMapRel">
+  <!-- 对象定义:元数据模式 -->
+  <resultMap id="BaseResultMap" type="ImpTabMapRel">
+    <id     column="id"             property="id"             jdbcType="VARCHAR"/>
+    <result column="fId"            property="FId"            jdbcType="VARCHAR"/>
+    <result column="tmoId"          property="tmoId"          jdbcType="VARCHAR"/>
+    <result column="tmId"           property="mdMId"          jdbcType="VARCHAR"/>
+    <result column="sheetName"      property="sheetName"      jdbcType="VARCHAR"/>
+    <result column="sheetIndex"     property="sheetIndex"     jdbcType="INTEGER"/>
+    <result column="tableTitleName" property="tableTitleName" jdbcType="VARCHAR"/>
+    <result column="cTime"          property="CTime"          jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 所有列 -->
+  <sql id="Base_Column_List">
+    id, fId, tmoId, tmId, tmId, sheetName, tableTitleName, cTime
+  </sql>
+
+  <!-- 条件子句 -->
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR} </if>
+        <if test="FId!=null"> and fId=#{FId,jdbcType=VARCHAR} </if>
+        <if test="tmoId!=null"> and tmoId=#{tmoId,jdbcType=VARCHAR} </if>
+        <if test="mdMId!=null"> and tmId=#{mdMId,jdbcType=VARCHAR} </if>
+        <if test="sheetName!=null"> and sheetName=#{sheetName,jdbcType=VARCHAR} </if>
+        <if test="sheetIndex!=null"> and sheetIndex=#{sheetIndex,jdbcType=INTEGER} </if>
+        <if test="tableTitleName!=null"> and tableTitleName=#{tableTitleName,jdbcType=VARCHAR} </if>
+        <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP} </if>
+      </trim>
+    </where>
+  </sql>
+
+  <!-- 获得记录条数-->
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from sa_imp_tabmap_rel <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
+  </select>
+
+  <!-- 获得列表 -->
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_imp_tabmap_rel
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="orderByClause!=null">order by ${orderByClause}</if>
+  </select>
+
+  <!-- 获得一条数据 -->
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_imp_tabmap_rel <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
+  </select>
+  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/> from sa_imp_tabmap_rel where id=#{id,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 新增数据 -->
+  <insert id="insert" parameterType="java.util.Map">
+    insert into sa_imp_tabmap_rel
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!=null">id,</if>
+      <if test="FId!=null">fId,</if>
+      <if test="tmoId!=null">tmoId,</if>
+      <if test="mdMId!=null">tmId,</if>
+      <if test="sheetName!=null">sheetName,</if>
+      <if test="sheetIndex!=null">sheetIndex,</if>
+      <if test="tableTitleName!=null">tableTitleName,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
+      <if test="FId!=null">#{FId,jdbcType=VARCHAR},</if>
+      <if test="tmoId!=null">#{tmoId,jdbcType=VARCHAR},</if>
+      <if test="mdMId!=null">#{mdMId,jdbcType=VARCHAR},</if>
+      <if test="sheetName!=null">#{sheetName,jdbcType=VARCHAR},</if>
+      <if test="sheetIndex!=null">#{sheetIndex,jdbcType=INTEGER},</if>
+      <if test="tableTitleName!=null">#{tableTitleName,jdbcType=VARCHAR},</if>
+    </trim>
+  </insert>
+
+  <!-- 修改 根据主键-->
+  <update id="update" parameterType="java.util.Map">
+    update sa_imp_tabmap_rel
+    <set>
+      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
+      <if test="FId!=null">fId=#{FId,jdbcType=VARCHAR},</if>
+      <if test="tmoId!=null">tmoId=#{tmoId,jdbcType=VARCHAR},</if>
+      <if test="mdMId!=null">tmId=#{mdMId,jdbcType=VARCHAR},</if>
+      <if test="sheetName!=null">sheetName=#{sheetName,jdbcType=VARCHAR},</if>
+      <if test="sheetIndex!=null">sheetIndex=#{sheetIndex,jdbcType=INTEGER},</if>
+      <if test="tableTitleName!=null">tableTitleName=#{tableTitleName,jdbcType=VARCHAR},</if>
+      <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP},</if>
+    </set>
+    where id=#{id,jdbcType=VARCHAR}
+  </update>
+
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.String">
+    delete from sa_imp_tabmap_rel where id=#{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByEntity" parameterType="java.util.Map">
+    delete from sa_imp_tabmap_rel<if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
+  </delete>
+</mapper>

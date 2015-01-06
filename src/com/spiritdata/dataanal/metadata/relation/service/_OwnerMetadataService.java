@@ -60,6 +60,7 @@ public class _OwnerMetadataService implements SessionLoader {
      */
     public void loadData2Session(String ownerId, int ownerType, HttpSession session) {
         _OwnerMetadata _om = new _OwnerMetadata(ownerId, ownerType);
+        session.removeAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         session.setAttribute(SDConstants.SESSION_OWNER_RMDUNIT, _om);
         //启动加载线程
         Thread_LoadData lm = new Thread_LoadData(session, this);
@@ -108,7 +109,7 @@ class Thread_LoadData implements Runnable {
         MdBasisService mdBasisService = caller.getMdBasisService();
 
         try {
-            List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId(ownerId);
+            List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId4Session(ownerId);
             Map<String, MetadataModel> flagMap = null;
             //过滤元数据模式，把可疑数据删除, 并准备元数据模式信息
             if (mmList!=null&&mmList.size()>0) {
@@ -125,7 +126,9 @@ class Thread_LoadData implements Runnable {
 
             List<MetadataColumn> mcList = null;
             List<MetadataColSemanteme> mcsList = null;
-            if (mmList!=null&&mmList.size()>0) {//这也保证了flagMap有内容
+            List<Map<String, Object>> mTitleList =  null;//名称处理
+
+            if (mmList!=null&&mmList.size()>0) {//这保证了flagMap有内容
                 //准备语义信息
                 mcsList = mdBasisService.getMdColSemantemeListByOwnerId(ownerId);
                 Map<String, List<MetadataColSemanteme>> _flagMap = null;
@@ -172,6 +175,9 @@ class Thread_LoadData implements Runnable {
                             mcsList.addAll(_flagMap.get(mcsId));
                         }
                     }
+                    //名称处理
+                    mTitleList = mdBasisService.getMdTitleListByOwnerId(ownerId);
+                    
                 } else {
                     mmList = null;
                     _om.mdModelMap.clear();
