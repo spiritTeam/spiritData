@@ -18,7 +18,6 @@ public class MetadataModel extends BaseObject {
     private static final long serialVersionUID = 946755758804895450L;
 
     private String id; //模式Id
-    private String titleName; //模式名称：此名称在数据库中对应的字段若有值，则这个值是手工设定的，若这个值为空，需要从sa_imp_tablog_rel表中得到最有可能的名称(头两个)
     private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session)）
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
     private Timestamp CTime; //记录创建时间
@@ -26,6 +25,11 @@ public class MetadataModel extends BaseObject {
     private String descn; //模式说明
     //以上信息对应数据库中的信息
     private List<MetadataColumn> columnList; //列描述信息列表
+
+    //表名称处理，根据Imp对应表中的内容，计数调整
+    private String titleName; ////模式名称：此名称在数据库中对应的字段若有值，则这个值是手工设定的，若这个值为空，需要从sa_imp_tablog_rel表中得到最有可能的名称(头两个)
+    //public Map<String, Integer> titleMap;//页签名称列表，是装载Session时转载的
+
     public String getId() {
         return id;
     }
@@ -36,12 +40,6 @@ public class MetadataModel extends BaseObject {
                 mc.setMdMId(id);
             }
         }
-    }
-    public String getTitleName() {
-        return titleName;
-    }
-    public void setTitleName(String titleName) {
-        this.titleName = titleName;
     }
     public int getOwnerType() {
         return ownerType;
@@ -66,6 +64,12 @@ public class MetadataModel extends BaseObject {
     }
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+    public String getTitleName() {
+        return titleName;
+    }
+    public void setTitleName(String titleName) {
+        this.titleName = titleName;
     }
     public List<MetadataColumn> getColumnList() {
         return columnList;

@@ -17,6 +17,7 @@ public class ImpTableMapRel extends BaseObject {
     private String mdMId; //元数据模式Id
     private String sheetName; //页签名称
     private int sheetIndex; //页签排序
+    private String tableTitleName; //页签中的表名称
     private Timestamp CTime; //本记录创建时间，也是表实体创建时间
 
     public String getId() {
@@ -54,6 +55,12 @@ public class ImpTableMapRel extends BaseObject {
     }
     public void setSheetIndex(int sheetIndex) {
         this.sheetIndex = sheetIndex;
+    }
+    public String getTableTitleName() {
+        return tableTitleName;
+    }
+    public void setTableTitleName(String tableTitleName) {
+        this.tableTitleName = tableTitleName;
     }
     public Timestamp getCTime() {
         return CTime;

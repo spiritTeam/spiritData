@@ -44,7 +44,7 @@ public class MdBasisService {
      * @return 元数据模式列表
      * @throws Exception
      */
-    public List<MetadataModel> getMdMList(MetadataModel paramMm) throws Exception {
+    public List<MetadataModel> getMdMList(MetadataModel paramMm) {
         return mmDao.queryForList(paramMm.toHashMapAsBean());
     }
 
@@ -54,7 +54,7 @@ public class MdBasisService {
      * @return 元数据模式列表
      * @throws Exception
      */
-    public List<MetadataModel> getMdMListByOwnerId(String ownerId) throws Exception {
+    public List<MetadataModel> getMdMListByOwnerId(String ownerId) {
         MetadataModel paramMm = new MetadataModel();
         paramMm.setOwnerId(ownerId);
         return this.getMdMList(paramMm);
@@ -65,7 +65,7 @@ public class MdBasisService {
      * @return 元数据模式列表
      * @throws Exception
      */
-    public List<MetadataModel> getMdMListByOwnerId4Session(String ownerId) throws Exception {
+    public List<MetadataModel> getMdMListByOwnerId4Session(String ownerId) {
         MetadataModel paramMm = new MetadataModel();
         paramMm.setOwnerId(ownerId);
         return mmDao.queryForList("getList4Session", paramMm.toHashMapAsBean());
@@ -78,7 +78,7 @@ public class MdBasisService {
      * @return 元数据列描述列表
      * @throws Exception
      */
-    public List<MetadataColumn> getMdColList(MetadataColumn paramMc) throws Exception {
+    public List<MetadataColumn> getMdColList(MetadataColumn paramMc) {
         return mcDao.queryForList(paramMc.toHashMapAsBean());
     }
 
@@ -88,7 +88,7 @@ public class MdBasisService {
      * @return 元数据列描述列表
      * @throws Exception
      */
-    public List<MetadataColumn> getMdColListByOwnerId(String ownerId) throws Exception {
+    public List<MetadataColumn> getMdColListByOwnerId(String ownerId) {
         return mcDao.queryForList("getListByOwnerId", ownerId);
     }
 
@@ -99,7 +99,7 @@ public class MdBasisService {
      * @return 元数据列语义列表
      * @throws Exception
      */
-    public List<MetadataColSemanteme> getMdColSemantemeList(MetadataColSemanteme paramMc) throws Exception {
+    public List<MetadataColSemanteme> getMdColSemantemeList(MetadataColSemanteme paramMc) {
         return mcsDao.queryForList(paramMc.toHashMapAsBean());
     }
 
@@ -109,7 +109,7 @@ public class MdBasisService {
      * @return 元数据列语义列表
      * @throws Exception
      */
-    public List<MetadataColSemanteme> getMdColSemantemeListByOwnerId(String ownerId) throws Exception {
+    public List<MetadataColSemanteme> getMdColSemantemeListByOwnerId(String ownerId) {
         return mcsDao.queryForList("getListByOwnerId", ownerId);
     }
 
@@ -118,7 +118,7 @@ public class MdBasisService {
      * @param mm 元数据模式
      * @throws Exception
      */
-    public void addMetadataModel(MetadataModel mm) throws Exception {
+    public void addMetadataModel(MetadataModel mm) {
         mmDao.insert(mm);
     }
 
@@ -127,7 +127,7 @@ public class MdBasisService {
      * @param mm 元数据列描述
      * @throws Exception
      */
-    public void addMetadataColumn(MetadataColumn mc) throws Exception {
+    public void addMetadataColumn(MetadataColumn mc) {
         mcDao.insert(mc);
     }
 
@@ -137,7 +137,7 @@ public class MdBasisService {
      * @return 该元数据信息
      * @throws Exception 
      */
-    public MetadataModel getMetadataMode(String id) throws Exception {
+    public MetadataModel getMetadataMode(String id) {
         Map<String, String> param = new HashMap<String, String>();
         param.put("id", id);
         MetadataModel ret = mmDao.getInfoObject(param);
@@ -151,5 +151,15 @@ public class MdBasisService {
             ret.addColumn(mc);
         }
         return ret;
+    }
+
+    /**
+     * 根据所有者Id获得元数据标题列表
+     * @param ownerId 所有者Id
+     * @return 元数据标题列表
+     * @throws Exception
+     */
+    public List<Map<String, Object>> getMdTitleListByOwnerId(String ownerId) {
+        return mmDao.queryForListAutoTranform("getMdTitleList", ownerId);
     }
 }

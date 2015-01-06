@@ -46,9 +46,7 @@ public class PoiParseUtils {
         int mergedCellCount = sheet.getNumMergedRegions();
         if (mergedCellCount>0) {
             mergedCellList = new ArrayList<CellRangeAddress>();
-            for (int i=0; i<mergedCellCount; i++) {
-                mergedCellList.add(sheet.getMergedRegion(i));
-            }
+            for (int i=0; i<mergedCellCount; i++) mergedCellList.add(sheet.getMergedRegion(i));
         }
     }
 
@@ -133,6 +131,7 @@ public class PoiParseUtils {
         oneSti.setBeginY(splitRowNum+1);
         oneSti.setEndY(rows);
         oneSti.setSheetInfo(sheetInfo);
+        oneSti.setTableTitleName(sheetInfo.getSheetName());// TODO tableName是需要重新处理的
         oneSti.dataStructureAnalMap= new HashMap<String, Object>();
         sheetInfo.addSheetTableInfo(oneSti);
 

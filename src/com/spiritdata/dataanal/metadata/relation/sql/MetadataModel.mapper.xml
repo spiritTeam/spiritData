@@ -8,20 +8,20 @@
   <!-- 对象定义:元数据模式 -->
   <resultMap id="BaseResultMap" type="MdM">
     <id     column="id"        property="id"        jdbcType="VARCHAR"/>
-    <result column="titleName" property="titleName" jdbcType="VARCHAR"/>
     <result column="ownerType" property="ownerType" jdbcType="INTEGER"/>
     <result column="ownerId"   property="ownerId"   jdbcType="VARCHAR"/>
     <result column="tableName" property="tableName" jdbcType="VARCHAR"/>
+    <result column="titleName" property="titleName" jdbcType="VARCHAR"/>
     <result column="descn"     property="descn"     jdbcType="VARCHAR"/>
     <result column="cTime"     property="CTime"     jdbcType="TIMESTAMP"/>
   </resultMap>
 
   <!-- 所有列 -->
   <sql id="Base_Column_List">
-    id, ownerId, ownerType, tableName, descn, cTime
+    id, ownerId, ownerType, tableName, titleName, descn, cTime
   </sql>
   <sql id="Base_Column_List_A">
-    a.id, a.ownerId, a.ownerType, a.tableName, a.descn, a.cTime
+    a.id, a.ownerId, a.ownerType, a.tableName, a.titleName, a.descn, a.cTime
   </sql>
 
   <!-- 条件子句 -->
@@ -33,6 +33,7 @@
         <if test="ownerType!=null and ownerType!=0"> and ownerType = #{ownerType,jdbcType=INTEGER} </if>
         <if test="ownerId!=null"> and ownerId = #{ownerId,jdbcType=VARCHAR} </if>
         <if test="tableName!=null"> and tableName = #{tableName,jdbcType=VARCHAR} </if>
+        <if test="titleName!=null"> and titleName = #{titleName,jdbcType=VARCHAR} </if>
         <if test="descn!=null"> and descn = #{descn,jdbcType=VARCHAR} </if>
         <if test="CTime!=null"> and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
       </trim>
@@ -46,6 +47,7 @@
         <if test="ownerType!=null and ownerType!=0"> and a.ownerType = #{ownerType,jdbcType=INTEGER} </if>
         <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR} </if>
         <if test="tableName!=null"> and a.tableName = #{tableName,jdbcType=VARCHAR} </if>
+        <if test="titleName!=null"> and a.titleName = #{titleName,jdbcType=VARCHAR} </if>
         <if test="descn!=null"> and a.descn = #{descn,jdbcType=VARCHAR} </if>
         <if test="CTime!=null"> and a.cTime = #{CTime,jdbcType=TIMESTAMP} </if>
       </trim>
@@ -80,6 +82,14 @@
     select <include refid="Base_Column_List"/> from sa_md_tabmodel where id = #{id,jdbcType=VARCHAR}
   </select>
 
+  <!-- 为Session获得表名称列表 -->
+  <select id="getMdTitleList" resultMap="java.util.HashMap" parameterType="java.lang.String">
+    select b.tmId, b.tableTitleName, count(*) size
+    from sa_md_tabmodel a, sa_imp_tabmap_rel b
+    where a.id=b.tmId and a.ownerId=#{ownerId,jdbcType=VARCHAR}
+    group by b.tmId, b.tableTitleName
+  </select>
+
   <!-- 新增数据 -->
   <insert id="insert" parameterType="java.util.Map">
     insert into sa_md_tabmodel
@@ -89,6 +99,7 @@
       <if test="ownerType!=null and ownerType!=0">ownerType,</if>
       <if test="ownerId!=null">ownerId,</if>
       <if test="tableName!=null">tableName,</if>
+      <if test="titleName!=null">titleName,</if>
       <if test="descn!=null">descn,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -97,6 +108,7 @@
       <if test="ownerType!=null and ownerType!=0">#{ownerType,jdbcType=INTEGER},</if>
       <if test="ownerId!=null">#{ownerId,jdbcType=VARCHAR},</if>
       <if test="tableName!=null">#{tableName,jdbcType=VARCHAR},</if>
+      <if test="titleName!=null">#{titleName,jdbcType=VARCHAR},</if>
       <if test="descn!=null">#{descn,jdbcType=VARCHAR},</if>
     </trim>
   </insert>
@@ -109,6 +121,7 @@
       <if test="ownerType!=null and ownerType!=0">ownerType=#{ownerType,jdbcType=INTEGER},</if>
       <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR},</if>
       <if test="tableName!=null">tableName=#{tableName,jdbcType=VARCHAR},</if>
+      <if test="titleName!=null">titleName=#{titleName,jdbcType=VARCHAR},</if>
       <if test="descn!=null">descn=#{descn,jdbcType=VARCHAR},</if>
       <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP},</if>
     </set>

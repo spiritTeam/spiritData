@@ -202,7 +202,9 @@ public class DealExcelFileService {
                             itmr.setMdMId(tabMapOrgAry[0].getMdMId());
                             itmr.setSheetName(si.getSheetName());
                             itmr.setSheetIndex(si.getSheetIndex());
+                            itmr.setTableTitleName(sti.getTableTitleName());
                             tmServier.bindImpTabMap(itmr);
+                            //处理Title内容
 
                             // TODO 为了有更好的处理响应时间，以下逻辑可以采用多线程处理
 

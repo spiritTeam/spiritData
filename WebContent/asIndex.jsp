@@ -99,7 +99,7 @@
   position:absolute;
   border:1px solid #BCCBDC;
   width:505px;
-  height:305px;
+  height:300px;
   top:230px;
 //  background-image:url(resources/images/waitting.gif);
   display:none;
@@ -119,7 +119,7 @@
   position:absolute;
   border-top:1px solid #BCCBDC;
   width:505px;
-  height:269px;
+  height:264px;
   top:35px;
   overflow-y:auto;
 }
