@@ -5,8 +5,8 @@ div{width:99%;margin-left:0.4%;}
 .viewDiv{width:400px;margin-left:20px;float:left;}
 
 /**
-*pageFrame部分的css
-*/
+ * pageFrame部分的css
+ */
 #sideFrame {
   width:270px; padding-left:20px; position:fixed;
 }
@@ -20,7 +20,7 @@ div{width:99%;margin-left:0.4%;}
 .segContent{padding-left:5px;padding-right:5px;}
 /**
  * 文档结构-第一层组
- 	预留位置，现在起作用的仅有segGroup_1、segTitle_0
+ * 预留位置，现在起作用的仅有segGroup_1、segTitle_0
  */
 .segGroup_0{border:1px solid #E6E6E6;margin-bottom:15px;}
 .seg_0{border:1px solid #E6E6E6;}

@@ -124,9 +124,9 @@ function getUUID(len,radix) {
  * @param varStr 变量名称
  * @returns javascript对象
  */
-function str2JsonObj(varName, jsonStr) {
-  eval("var "+varName+"="+jsonStr+";");
-  return eval(varName);
+function str2JsonObj(jsonStr) {
+  eval("var jsonObj="+jsonStr+";");
+  return eval(jsonObj);
 }
 
 /**
@@ -194,4 +194,4 @@ Date.prototype.Format = function(fmt) {
     }
   }
   return fmt;
-}
+};

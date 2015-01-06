@@ -21,23 +21,34 @@ body {
 </style>
 <body>
 <span id="test"></span>
+<span id="test1"></span>
+<button onclick="end();">Stop test</button>
+<button onclick="int=window.clearInterval(testY)">Stop test1</button>
 </body>
 <script type="text/javascript">
 var k=10000;
+var y = 1;
 $(function(){
   var templetId = "2323e";
   var templetUrl = "<%=path%>/templet/getTemplet.do";
   $.templetJD(templetUrl,templetId);
 });
-setInterval('test()',1000);
-function test(){
-	k=++k;
-	$('#test').html(k);
+/*function end(){
+  var s = clearInterval(testK);
+  alert(s);
 }
-----------------------------
-<html>
-<body>
-
+var testK =setInterval('test()',1000);
+var testY = setInterval('test1()',1000);
+function test(){
+  k=++k;
+  $('#test').html(k+"--"+testK);
+}
+function test1(){
+  if(y==4) clearInterval(testY);
+  y=++y;
+  $('#test1').html(y+'--'+testY);
+}*/
+/*
 <input type="text" id="clock" size="35" />
 <script language=javascript>
 var int=self.setInterval("clock()",50)
@@ -45,12 +56,9 @@ function clock()
   {
   var t=new Date()
   document.getElementById("clock").value=t
-  }
+  }*/
 </script>
-<button onclick="int=window.clearInterval(int)">Stop interval</button>
 
-</body>
-</html>
 
-</script>
+
 </html>
