@@ -83,7 +83,7 @@
   </select>
 
   <!-- 为Session获得表名称列表 -->
-  <select id="getMdTitleList" resultMap="java.util.HashMap" parameterType="java.lang.String">
+  <select id="getMdTitleList" resultType="java.util.HashMap" parameterType="java.lang.String">
     select b.tmId, b.tableTitleName, count(*) size
     from sa_md_tabmodel a, sa_imp_tabmap_rel b
     where a.id=b.tmId and a.ownerId=#{ownerId,jdbcType=VARCHAR}
