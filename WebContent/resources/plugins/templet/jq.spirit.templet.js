@@ -10,55 +10,16 @@
  *  _5显示
  */
 (function($){
+  
   //树
   var segTree=[];
   //level
   var level=0;
-  function initPageFrame(){
-    //1、画pageFrame
-    //1-1:topSegment    
-    var topSegment =$('<div id="topSegment"><div id="rTitle"></div></div>');
-    $("body").append(topSegment);
-    //1-2mainSegment
-    var mainSegment = $('<div id="mainSegment"></div>');
-    $("body").append(mainSegment);
-    //1-2-1sideFrame
-    var sideFrame = $('<div id="sideFrame"></div>');
-    //1-2-1-1catalogTree
-    var catalogTree = $('<div id="catalogTree" style="border:1px solid #E6E6E6; width:258px; "></div>');
-    sideFrame.append(catalogTree);
-    //1-2-2reportFrame
-    var reportFrame = $('<div id="reportFrame"></div>');
-    mainSegment.append(sideFrame);
-    mainSegment.append(reportFrame);
-    //INIT_PARAM
-    var INIT_PARAM = {
-      pageObjs: {
-        topId: "topSegment",
-        mainId: "mainSegment"
-      },
-      page_width: -1,
-      page_height: -1,
-      top_shadow_color:"#E6E6E6",
-      top_height: 60,
-      top_peg: false,
-      myInit: initPos,
-      myResize: initPos
-    };
-    function initPos() {
-      $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth"));
-      $("#sideFrame").css("left", $("#reportFrame").width());
-    }
-    var initStr = $.spiritPageFrame(INIT_PARAM);
-    if (initStr) {
-      $.messager.alert("页面初始化失败", initStr, "error");
-      return ;
-    };
-  }
+  
   /**
    * 主函数入口
    */
-  $.templetJD = function(templetUrl,templetId){
+  $.templetJD = function(templetUrl,templetId,deployPath){
     //1,画pageFrame
     initPageFrame();
     //2，从后台请求数据
@@ -69,9 +30,12 @@
         if(rst.jsonType==1){
           var templetJD = rst.data;
           //3，根据templetD构造出树和框
+          //主体
           var _TEMPLET = templetJD._TEMPLET;
           //标题
           var _HEAD = templetJD._HEAD;
+          //jsonDurl
+          var _DATA = templetJD._DATA;
           $('#rTitle').html(_HEAD.reportName);
           buildSegmentGroup($('#reportFrame'), _TEMPLET, level, null);
           //显示树的部分
@@ -114,14 +78,14 @@
       segTitle.html(segArray[i].title);
       segGroup.append(segTitle);
       }else if(segArray[i].content){
-      //segContent
-      var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
-      var content = segArray[i].content;
-      if(content) {
-        // TODO 
-      }
-      segContent.html(content);
-      segGroup.append(segContent);
+        //segContent
+        var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
+        var content = segArray[i].content;
+        if(content) {
+          // TODO 
+        }
+        segContent.html(content);
+        segGroup.append(segContent);
       }
       var contendEle = templetContentParse(segArray[i].content);
       segGroup.append(contendEle);
@@ -148,8 +112,51 @@
     jObj.append(segGroup);
     return segGroup;
   }
+  
   function templetContentParse(content){
     // TODO 对content进行解析预留
     return null;
+  }
+  
+  function initPageFrame(){
+    //1、画pageFrame
+    //1-1:topSegment    
+    var topSegment =$('<div id="topSegment"><div id="rTitle"></div></div>');
+    $("body").append(topSegment);
+    //1-2mainSegment
+    var mainSegment = $('<div id="mainSegment"></div>');
+    $("body").append(mainSegment);
+    //1-2-1sideFrame
+    var sideFrame = $('<div id="sideFrame"></div>');
+    //1-2-1-1catalogTree
+    var catalogTree = $('<div id="catalogTree" style="border:1px solid #E6E6E6; width:258px; "></div>');
+    sideFrame.append(catalogTree);
+    //1-2-2reportFrame
+    var reportFrame = $('<div id="reportFrame"></div>');
+    mainSegment.append(sideFrame);
+    mainSegment.append(reportFrame);
+    //INIT_PARAM
+    var INIT_PARAM = {
+      pageObjs: {
+        topId: "topSegment",
+        mainId: "mainSegment"
+      },
+      page_width: -1,
+      page_height: -1,
+      top_shadow_color:"#E6E6E6",
+      top_height: 60,
+      top_peg: false,
+      myInit: initPos,
+      myResize: initPos
+    };
+    function initPos() {
+      $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth"));
+      $("#sideFrame").css("left", $("#reportFrame").width());
+    }
+    var initStr = $.spiritPageFrame(INIT_PARAM);
+    if (initStr) {
+      $.messager.alert("页面初始化失败", initStr, "error");
+      return ;
+    };
   }
 })(jQuery);
