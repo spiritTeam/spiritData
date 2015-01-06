@@ -3,8 +3,8 @@
     reportName:"“XXX”分析报告"
   },
   _DATA:[
-    {_id:1, _url:'http://localhost:8080/sa/jsonD/getJsonD.do?uri=\demo\templetDemo\metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond', _jsonD_code:'SP.TEAM-00007'},
-    {_id:2, _url:'http://localhost:8080/sa/jsonD/getJsonD.do?uri=\demo\templetDemo\metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond'}
+    {_id:1, _url:'http://localhost:8080/sa/jsonD/getJsonD.do?uri=/demo/templetDemo/metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond', _jsonD_code:'SP.TEAM-00007'},
+    {_id:2, _url:'http://localhost:8080/sa/jsonD/getJsonD.do?uri=/demo/templetDemo/metedataInfo550E8400-E29B-11D4-A716-44665544.jsond'}
   ],
   _TEMPLET:[
     {

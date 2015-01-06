@@ -15,6 +15,9 @@
   var segTree=[];
   //level
   var level=0;
+  //用于存放jsonDInfo
+  var jsonDInfoArray = [];
+  var keyArray = [];
   
   /**
    * 主函数入口
@@ -26,16 +29,17 @@
     var pData = {'templetId':templetId};
     $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
       success:function(json){
-        rst=str2JsonObj("jsonData",json);
-        if(rst.jsonType==1){
-          var templetJD = rst.data;
+        var templetJsonObj=str2JsonObj(json);
+        if(templetJsonObj.jsonType==1){
+          var templetJD = templetJsonObj.data;
           //3，根据templetD构造出树和框
           //主体
           var _TEMPLET = templetJD._TEMPLET;
           //标题
           var _HEAD = templetJD._HEAD;
-          //jsonDurl
+          //jsonDurl 用于请求jsond
           var _DATA = templetJD._DATA;
+          getJsonD(_DATA);
           $('#rTitle').html(_HEAD.reportName);
           buildSegmentGroup($('#reportFrame'), _TEMPLET, level, null);
           //显示树的部分
@@ -49,6 +53,47 @@
       }
     });
   };
+  
+  /**
+   * 向后台请求jsond
+   * _DATA:jsondUrl的请求数组
+   */
+  function getJsonD(_DATA){
+    if(_DATA==null||_DATA==""||_DATA[0]==null||_DATA[0]=="") return null;
+    var i=0;
+    for(;i<_DATA.length;i++){
+      var jsondInfo = new Object();
+      jsondInfo.id = _DATA[i]._id;
+      jsondInfo.url =  _DATA[i]._url;
+      if(_DATA[i]._jsonD_code!=""&&_DATA[i]._jsonD_code!=null) jsondInfo.jsonD_code = _DATA[i]._jsonD_code;
+      else jsondInfo.jsonD_code = "";
+      jsondInfo.jsond = null;
+      jsondInfo.interval=function(index, jsonDurl){
+    	  alert(index+":"+jsonDurl);
+    	  /*
+          var pData = {'jsondId':"jsondId"};
+          $.ajax({type:"post",url:jsonDurl,data:pData,dataType:"json",
+            success:function(json){
+              var jsondJsonObj=str2JsonObj(json);
+              if(jsondJsonObj.jsonType==1){
+                  //alert("0:"+jsonDInfoArray.length+"\n"+url+"\n"+allFields(jsonDInfoArray[0]));
+                  //alert("1:"+jsonDInfoArray.length+"\n"+url+"\n"+allFields(jsonDInfoArray[1]));
+              	alert("inner:"+index);
+              }
+            },error:function(XMLHttpRequest, textStatus, errorThrown ){
+            }
+          });*/
+      };
+      jsonDInfoArray[i] = jsondInfo;
+    }
+    alert(jsonDInfoArray.length);
+    for(i=0;i<jsonDInfoArray.length;i++) {
+    	//alert("0:\n"+allFields(jsonDInfoArray[i]));
+    	//jsonDInfoArray[i].interval(i, jsonDInfoArray[i].url);
+    	//var intervalKey= 
+    	jsonDInfoArray[i].intervalKey=setInterval(jsonDInfoArray[i].interval(i, jsonDInfoArray[i].url),500);
+    }
+  }
   
   /**
    * 通过遍历实现树和主界面的构建
@@ -118,6 +163,9 @@
     return null;
   }
   
+  /**
+   * 初始化pageFrame
+   */
   function initPageFrame(){
     //1、画pageFrame
     //1-1:topSegment    
