@@ -14,24 +14,35 @@ import org.springframework.stereotype.Component;
 
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
-
+import com.spiritdata.dataanal.metadata.relation.pojo.ImpTableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
-import com.spiritdata.dataanal.metadata.relation.pojo.TableMapRel;
+import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
 
 /**
- * 元数据实体表相关功能服务
+ * 元数据实体表关联、导入文件和实体表关联，功能服务
  * @author wh
  */
 @Component
-public class MdEntityTableService {
+public class TableMapService {
     @Resource(name="defaultDAO")
-    private MybatisDAO<TableMapRel> tmoDao;
+    private MybatisDAO<MetadataTableMapRel> mtmrDao;
+    @Resource(name="defaultDAO")
+    private MybatisDAO<ImpTableMapRel> itmrDao;
 
     @PostConstruct
     public void initParam() {
-        tmoDao.setNamespace("mdTableMapRel");
+        mtmrDao.setNamespace("mdTableMapRel");
+        itmrDao.setNamespace("impTableMapRel");
     }
+
+    //导入文件实体表关联
+    public void bindImpTabMap(ImpTableMapRel itmr) {
+        if (itmr.getId()==null||itmr.getId().length()==0) itmr.setId(SequenceUUID.getPureUUID());
+        itmrDao.insert(itmr);
+    }
+
+    //元数据实体表关联
     /**
      * 注册对应关系，并创建相应的表。
      * 注意此方法会改变参数mm中积累表的名称
@@ -41,7 +52,7 @@ public class MdEntityTableService {
      * @return 映射关系表信息
      * @throws Exception
      */
-    public TableMapRel registTabOrgMap(String tableName, MetadataModel mm, int tableType)  throws Exception {
+    public MetadataTableMapRel registTabOrgMap(String tableName, MetadataModel mm, int tableType) {
         if (tableName==null||tableName.equals("")) throw new IllegalArgumentException("实体表名称不能为空！");
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new IllegalArgumentException("元数据模式没有任何列描述信息！");
         //创建相应的表
@@ -85,11 +96,11 @@ public class MdEntityTableService {
         if (mm.getDescn()!=null&&mm.getDescn().length()>0) {
             btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDescn());
         }
-        tmoDao.excute("createTable", btm);
+        mtmrDao.excute("createTable", btm);
         //修改mm中的积累表名称
         if (tableType==1) mm.setTableName(tableName);
         //写入注册信息
-        TableMapRel insertTmo = new TableMapRel();
+        MetadataTableMapRel insertTmo = new MetadataTableMapRel();
         String newkey = SequenceUUID.getPureUUID();
         insertTmo.setId(newkey);
         insertTmo.setOwnerType(mm.getOwnerType());
@@ -97,7 +108,7 @@ public class MdEntityTableService {
         insertTmo.setMdMId(mm.getId());
         insertTmo.setTableName(tableName);
         insertTmo.setTableType(tableType);
-        tmoDao.insert(insertTmo);
+        mtmrDao.insert(insertTmo);
         insertTmo.setCTime(new Timestamp(new Date().getTime()));
         return insertTmo;
     }
@@ -109,12 +120,12 @@ public class MdEntityTableService {
      * @return 积累表映射信息信息
      * @throws Exception
      */
-    public TableMapRel getAccumulationTableMapOrg(String mdMId) throws Exception {
+    public MetadataTableMapRel getAccumulationTableMapOrg(String mdMId) {
         if (mdMId==null||mdMId.equals("")) throw new IllegalArgumentException("元数据模式Id不能为空！");
-        TableMapRel paramTmo = new TableMapRel();
+        MetadataTableMapRel paramTmo = new MetadataTableMapRel();
         paramTmo.setMdMId(mdMId);
         paramTmo.setTableType(1);
-        return tmoDao.getInfoObject(paramTmo);
+        return mtmrDao.getInfoObject(paramTmo);
     }
 
     /**
@@ -124,13 +135,13 @@ public class MdEntityTableService {
      * @return 表映射信息
      * @throws Exception
      */
-    public TableMapRel getTableMapOrg(String mdMId, String tableName) throws Exception {
+    public MetadataTableMapRel getTableMapOrg(String mdMId, String tableName) {
         if (tableName==null||tableName.equals("")) throw new IllegalArgumentException("表名称不能为空！");
         if (mdMId==null||mdMId.equals("")) throw new IllegalArgumentException("元数据模式Id不能为空！");
-        TableMapRel paramTmo = new TableMapRel();
+        MetadataTableMapRel paramTmo = new MetadataTableMapRel();
         paramTmo.setMdMId(mdMId);
         paramTmo.setTableName(tableName);
-        return tmoDao.getInfoObject(paramTmo);
+        return mtmrDao.getInfoObject(paramTmo);
     }
 
     /**
@@ -139,7 +150,7 @@ public class MdEntityTableService {
      * @return
      * @throws Exception
      */
-    public List<TableMapRel> getList(Map<String, String> param) throws Exception {
-        return tmoDao.queryForList(param);
+    public List<MetadataTableMapRel> getList(Map<String, String> param) {
+        return mtmrDao.queryForList(param);
     }
 }

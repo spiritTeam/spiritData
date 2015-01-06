@@ -60,6 +60,7 @@ public class _OwnerMetadataService implements SessionLoader {
      */
     public void loadData2Session(String ownerId, int ownerType, HttpSession session) {
         _OwnerMetadata _om = new _OwnerMetadata(ownerId, ownerType);
+        session.removeAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         session.setAttribute(SDConstants.SESSION_OWNER_RMDUNIT, _om);
         //启动加载线程
         Thread_LoadData lm = new Thread_LoadData(session, this);
@@ -108,7 +109,7 @@ class Thread_LoadData implements Runnable {
         MdBasisService mdBasisService = caller.getMdBasisService();
 
         try {
-            List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId(ownerId);
+            List<MetadataModel> mmList = mdBasisService.getMdMListByOwnerId4Session(ownerId);
             Map<String, MetadataModel> flagMap = null;
             //过滤元数据模式，把可疑数据删除, 并准备元数据模式信息
             if (mmList!=null&&mmList.size()>0) {

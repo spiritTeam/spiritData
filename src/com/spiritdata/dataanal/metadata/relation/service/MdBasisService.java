@@ -59,6 +59,17 @@ public class MdBasisService {
         paramMm.setOwnerId(ownerId);
         return this.getMdMList(paramMm);
     }
+    /**
+     * 根据所有者Id获得元数据模式列表
+     * @param ownerId 所有者Id
+     * @return 元数据模式列表
+     * @throws Exception
+     */
+    public List<MetadataModel> getMdMListByOwnerId4Session(String ownerId) throws Exception {
+        MetadataModel paramMm = new MetadataModel();
+        paramMm.setOwnerId(ownerId);
+        return mmDao.queryForList("getList4Session", paramMm.toHashMapAsBean());
+    }
 
     //以下为元数据列描述相关操作
     /**

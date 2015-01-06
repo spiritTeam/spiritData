@@ -148,9 +148,9 @@ CREATE TABLE sa_md_colquota (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据列指标表';
 
-/**010 数据文件/实体表对应[SA_IMP_TABLOG_REL]*/
-DROP TABLE IF EXISTS sa_imp_tablog_rel;
-CREATE TABLE sa_imp_tablog_rel (
+/**010 数据文件/实体表对应[SA_IMP_TABMAP_REL]*/
+DROP TABLE IF EXISTS sa_imp_tabmap_rel;
+CREATE TABLE sa_imp_tabmap_rel (
   id         varchar(32)      NOT NULL  COMMENT '文件/实体对应关系ID(UUID)',
   fId        varchar(32)      NOT NULL  COMMENT '文件日志ID(文件表外键)',
   tmoId      varchar(32)      NOT NULL  COMMENT '对照表Id(元数据实体表对照Id，外键)',

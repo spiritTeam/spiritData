@@ -8,11 +8,7 @@ import com.spiritdata.framework.core.model.BaseObject;
  * 对应持久化中数据库的表为SA_MD_TABMAP_REL
  * @author mht, wh
  */
-/**
- * @author admi
- *
- */
-public class TableMapRel extends BaseObject {
+public class MetadataTableMapRel extends BaseObject {
     private static final long serialVersionUID = 6654644065903338171L;
 
     private String id; //对照表Id

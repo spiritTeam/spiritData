@@ -3,12 +3,13 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="MdM"       type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel"/>
-    <typeAlias alias="MdCol"     type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn"/>
-    <typeAlias alias="MdColS"    type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme"/>
-    <typeAlias alias="QuotaTab"  type="com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable"/>
-    <typeAlias alias="QuotaCol"  type="com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn"/>
-    <typeAlias alias="TabRelMap" type="com.spiritdata.dataanal.metadata.relation.pojo.TableMapRel"/>
+    <typeAlias alias="MdM"          type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel"/>
+    <typeAlias alias="MdCol"        type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn"/>
+    <typeAlias alias="MdColS"       type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme"/>
+    <typeAlias alias="QuotaTab"     type="com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable"/>
+    <typeAlias alias="QuotaCol"     type="com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn"/>
+    <typeAlias alias="MdTabRelMap"  type="com.spiritdata.dataanal.metadata.relation.pojo.TableMapRel"/>
+    <typeAlias alias="ImpTabMapRel" type="com.spiritdata.dataanal.metadata.relation.pojo.ImpTableMapRel"/>
   </typeAliases>
   <mappers>
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/MetadataModel.mapper.xml"/>
@@ -17,5 +18,6 @@
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/MdTabMapRel.mapper.xml"/>
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/QuotaTable.mapper.xml"/>
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/QuotaColumn.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/ImpTabMapRel.mapper.xml"/>
   </mappers>
 </configuration>

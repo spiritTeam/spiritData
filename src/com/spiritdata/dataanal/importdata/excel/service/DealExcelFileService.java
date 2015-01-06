@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
-import com.spiritdata.filemanage.IMP.model.ImportFile;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
@@ -37,14 +36,16 @@ import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
 import com.spiritdata.dataanal.importdata.excel.util.PoiParseUtils;
+import com.spiritdata.dataanal.metadata.relation.pojo.ImpTableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
-import com.spiritdata.dataanal.metadata.relation.pojo.TableMapRel;
+import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
 import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalKey;
 import com.spiritdata.dataanal.metadata.relation.service.MdKeyService;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.metadata.relation.service.MetadataSessionService;
+import com.spiritdata.dataanal.metadata.relation.service.TableMapService;
 
 /**
  * 处理excel文件。
@@ -69,6 +70,8 @@ public class DealExcelFileService {
     private AanlResultFileService arfService;
     @Resource
     private FileManageService fmService;
+    @Resource
+    private TableMapService tmServier;
 
     /**
      * 处理Excel文件
@@ -190,7 +193,16 @@ public class DealExcelFileService {
                             //-- 若元数据信息在系统中已经存在，则只生成临时表
                             //-- 否则，创建新的元数据，并生成积累表和临时表
                             mdSessionService.setSession(session);
-                            TableMapRel[] tabMapOrgAry = mdSessionService.storeMdModel4Import(sti.getMm());
+                            MetadataTableMapRel[] tabMapOrgAry = mdSessionService.storeMdModel4Import(sti.getMm());
+                            //处理sa_imp_tablog_rel表，
+                            //主表
+                            ImpTableMapRel itmr = new ImpTableMapRel();
+                            itmr.setFId(fi.getId());
+                            itmr.setTmoId(tabMapOrgAry[0].getId());
+                            itmr.setMdMId(tabMapOrgAry[0].getMdMId());
+                            itmr.setSheetName(si.getSheetName());
+                            itmr.setSheetIndex(si.getSheetIndex());
+                            tmServier.bindImpTabMap(itmr);
 
                             // TODO 为了有更好的处理响应时间，以下逻辑可以采用多线程处理
 
