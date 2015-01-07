@@ -69,7 +69,8 @@
       else jsondInfo.jsonD_code = "";
       jsondInfo.jsond = null;
       jsondInfo.interval=function(index, jsonDurl){
-    	  alert(index+":"+jsonDurl);
+    	  //document.write(jsonDurl);
+    	 alert(index+":"+jsonDurl);
     	  /*
           var pData = {'jsondId':"jsondId"};
           $.ajax({type:"post",url:jsonDurl,data:pData,dataType:"json",
@@ -86,7 +87,6 @@
       };
       jsonDInfoArray[i] = jsondInfo;
     }
-    alert(jsonDInfoArray.length);
     for(i=0;i<jsonDInfoArray.length;i++) {
     	//alert("0:\n"+allFields(jsonDInfoArray[i]));
     	//jsonDInfoArray[i].interval(i, jsonDInfoArray[i].url);
