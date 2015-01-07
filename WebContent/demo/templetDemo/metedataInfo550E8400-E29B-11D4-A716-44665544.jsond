@@ -1,6 +1,5 @@
-{/*数据1-getData.do?datafile=metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond*/
-  _id: "550E8400-E29B-11D4-A716-446655440000",
-  _code: "SP.TEAM-00007",/*excl元数据列表，基于元数据的jsonD*/
+{ _id: "1111",
+  _code: "SP.TEAM-00010",
   _parsefun:{
     _lan: "java",
     _class: "com.spirit.team.Key00007"

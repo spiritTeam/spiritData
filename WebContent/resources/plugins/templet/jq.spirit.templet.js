@@ -10,7 +10,6 @@
  *  _5显示
  */
 (function($){
-  
   //树
   var segTree=[];
   //level
@@ -55,44 +54,55 @@
   };
   
   /**
-   * 向后台请求jsond
+   * 向后台请求jsond,先根据_DATA中的数据，组成jsondInfo,放
+   * 入数组中，然后循环数组，向后台请求数据，
    * _DATA:jsondUrl的请求数组
    */
   function getJsonD(_DATA){
     if(_DATA==null||_DATA==""||_DATA[0]==null||_DATA[0]=="") return null;
     var i=0;
     for(;i<_DATA.length;i++){
+      //jsondInfo
       var jsondInfo = new Object();
       jsondInfo.id = _DATA[i]._id;
       jsondInfo.url =  _DATA[i]._url;
+      //jsonD_code有时有，有时没有，负值的时候判断下
       if(_DATA[i]._jsonD_code!=""&&_DATA[i]._jsonD_code!=null) jsondInfo.jsonD_code = _DATA[i]._jsonD_code;
       else jsondInfo.jsonD_code = "";
       jsondInfo.jsond = null;
-      jsondInfo.interval=function(index, jsonDurl){
-    	  alert(index+":"+jsonDurl);
-    	  /*
-          var pData = {'jsondId':"jsondId"};
-          $.ajax({type:"post",url:jsonDurl,data:pData,dataType:"json",
+      jsonDInfoArray[i] = jsondInfo;
+    }
+    //用于存储已得到jsond的jsondId
+    var jsonDIdary = new Array();
+    //启动请求数据线程
+    var intervalId = setInterval(function(){
+      //如果两个数组长度一样,关闭线程
+      if(jsonDIdary.length==jsonDInfoArray.length) clearInterval(intervalId);
+      //每次循环都将id拼起来，方便查找，
+      for(var k =0;k<jsonDInfoArray.length;k++){
+        var str = "";
+        if(jsonDIdary.length>0){
+          for(var y = 0;y<jsonDIdary.length;y++) str+= jsonDIdary[y]+"";
+        }
+        var id = jsonDInfoArray[k].id;
+        //=-1表示未请求过，
+        if(str.lastIndexOf(id)==-1){
+          $.ajax({type:"post",url:jsonDInfoArray[k].url,async:false,dataType:"json",
             success:function(json){
               var jsondJsonObj=str2JsonObj(json);
               if(jsondJsonObj.jsonType==1){
-                  //alert("0:"+jsonDInfoArray.length+"\n"+url+"\n"+allFields(jsonDInfoArray[0]));
-                  //alert("1:"+jsonDInfoArray.length+"\n"+url+"\n"+allFields(jsonDInfoArray[1]));
-              	alert("inner:"+index);
+                jsonDInfoArray[k].jsond = jsondJsonObj.data;//allFields(jsondJsonObj.data)
+                jsonDIdary.push(jsonDInfoArray[k].id);
+              }else{
+                $.messager.alert("提示",jsonData.message,'info');
               }
             },error:function(XMLHttpRequest, textStatus, errorThrown ){
+              $.messager.alert("提示","未知错误！",'info');
             }
-          });*/
-      };
-      jsonDInfoArray[i] = jsondInfo;
-    }
-    alert(jsonDInfoArray.length);
-    for(i=0;i<jsonDInfoArray.length;i++) {
-    	//alert("0:\n"+allFields(jsonDInfoArray[i]));
-    	//jsonDInfoArray[i].interval(i, jsonDInfoArray[i].url);
-    	//var intervalKey= 
-    	jsonDInfoArray[i].intervalKey=setInterval(jsonDInfoArray[i].interval(i, jsonDInfoArray[i].url),500);
-    }
+          });
+        }
+      }
+    },1000);
   }
   
   /**
@@ -127,7 +137,30 @@
         var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
         var content = segArray[i].content;
         if(content) {
-          // TODO 
+          //content = content.replace(/<d/g, "<div");^abc.*?qwe$  /<d\s{1,}.*?\/>$/g
+          //以<d />方式匹配
+          /*var pendingAry = content.match(/<d\s.*?\/>/g);/<d\s.*?\/d>/g
+          if(pendingAry!=null&&pendingAry.length>0){
+            for(var t=0;t<pendingAry.length;t++){
+              alert(pendingAry[t]);
+              //替换？调用转换方法！newEle为转换完的ele
+              var newEle = templetContentParse(pendingAry[t]);
+              content=content.replace(pendingAry[t],"!!!!change!");
+              //alert(content);
+            }
+          }*/
+          //以<d></d>方式匹配
+          var pendingAry = content.match(/<d\s.*?(><\/d>|\/>)/g);
+          // TODO 扩展令一种方法
+          if(pendingAry!=null&&pendingAry.length>0){
+            for(var t=0;t<pendingAry.length;t++){
+              alert(pendingAry[t]);
+              //替换？调用转换方法！newEle为转换完的ele
+              var newEle = templetContentParse(pendingAry[t]);
+              content=content.replace(pendingAry[t],"!!!!change!");
+              //alert(content);
+            }
+          }
         }
         segContent.html(content);
         segGroup.append(segContent);
@@ -146,7 +179,6 @@
         treeNode.segId = segArray[i].id;
         treeNode.children = new Array();
         if (parent==null) {
-          //parent=treeNode;为什么加上这个就会出问题？
           segTree[i]=treeNode;
         } else {
           parent.children[i] = treeNode;
@@ -158,11 +190,10 @@
     return segGroup;
   }
   
-  function templetContentParse(content){
+  function templetContentParse(ele){
     // TODO 对content进行解析预留
     return null;
   }
-  
   /**
    * 初始化pageFrame
    */
