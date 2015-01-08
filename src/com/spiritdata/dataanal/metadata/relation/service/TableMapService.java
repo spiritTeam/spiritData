@@ -66,7 +66,7 @@ public class TableMapService {
             columnStr += ",";
             if (mc.getColumnName()==null||mc.getColumnName().equals("")) mc.setColumnName("col_"+(_index++));
             if (mc.getColumnType().equalsIgnoreCase("String")) {
-                columnStr += mc.getColumnName()+" varchar(200)";
+                columnStr += mc.getColumnName()+" varchar(768)";//mysqlkey不可超过768，先这样
             } else {
                 columnStr += mc.getColumnName()+" "+mc.getColumnType();
             }

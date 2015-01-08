@@ -189,7 +189,7 @@ public class MdQuotaService {
                 ps = conn.prepareStatement(sql);
                 rs = ps.executeQuery();
                 if (rs.next()) {
-                    qc.setMax(rs.getString(1));
+                    qc.setMax(rs.getString(1)==null?"":rs.getString(1));
                 } else {
                     qc.setMax("");
                 }
@@ -204,7 +204,7 @@ public class MdQuotaService {
                 ps = conn.prepareStatement(sql);
                 rs = ps.executeQuery();
                 if (rs.next()) {
-                    qc.setMin(rs.getString(1));
+                    qc.setMin(rs.getString(1)==null?"":rs.getString(1));
                 } else {
                     qc.setMin("");
                 }

@@ -27,6 +27,7 @@ import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
+import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalKey;
 
 /**
  * 元数据主键处理服务
@@ -42,30 +43,119 @@ public class MdKeyService {
     private FileManageService fmService;
 
     /**
-     * 分析元数据的key，并返回最有可能作为key的列组合。
-     * 同时，此方法还修改了元数据的主键信息，包括传入的参数MM和数据库的持久化信息，但注意，不调整主键信息
+     * 调整元数据主键
+     * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
      * @param mdMId 元数据模式Id
-     * @return 最有可能作为key的列组合，用列名称(String类型)的数组来表示
-     * @throws Exception
      */
-    public String[] analMdKey(String mdMId) {
+    public void adjustMdKey(String mdMId) {
         MetadataModel mm;
         try {
             mm = mdBasisService.getMetadataMode(mdMId);
         } catch (Exception e) {
             throw new Dtal0202CException("无法根据["+mdMId+"]得到元数据信息", e);
         }
-        return analMdKey(mm);
+        adjustMdKey(mm);
     }
 
     /**
+     * 调整元数据主键。
+     * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
+     * @param mm 元数据信息
+     */
+    public void adjustMdKey(MetadataModel mm) {
+        if (mm.getColumnList()==null||mm.getColumnList().size()==0) return ;
+        
+        //读取元数据信息，看主键是否是确定的
+        String[] keys = (needAnalKey(mm))?analMdKey(mm):null;
+        //不管主键是否确定，下面都对主键进行调整
+        String keyStr = "";
+        if (keys==null) {
+            for (MetadataColumn mc : mm.getColumnList()) {
+                if (mc.isPk()) keyStr += ","+mc.getColumnName();
+            }
+            if (keyStr.equals("")) keys=null;
+            else keys = StringUtils.splitString(keyStr, ",");
+        } else {
+            for (int i=0; i<keys.length; i++) {
+                keyStr +="," + keys[i];
+            }
+        }
+        keyStr = keys==null?"":keyStr.substring(1);
+        if (keys==null||keys[0].equals("")) return ;
+        //看目前元数据积累表是否有主键，若有取出(注意这里是从关系型数据库的系统管理信息[metadata]中得到主键)
+        String sumTableName = mm.getTableName();
+        if (sumTableName==null||sumTableName.equals("")) return ;
+        //读取关系型数据元数据
+        Connection conn = null;
+        ResultSet rs = null;
+        Statement st = null;
+        try {
+            String[] _tabKeys;
+            String _tabKeyStr = "";
+            String _tabPkName = null;
+
+            conn = dataSource.getConnection();
+            st = conn.createStatement();
+
+            DatabaseMetaData dbMetaData = conn.getMetaData();
+            rs = dbMetaData.getPrimaryKeys(null, null, sumTableName);
+            while (rs.next()){
+                _tabKeyStr +=","+rs.getString("COLUMN_NAME"); //列名
+                if (_tabPkName==null) _tabPkName = rs.getString("PK_NAME");//主键名称
+            }
+            if (_tabKeyStr.equals("")) {
+                _tabKeys=null;
+            } else {
+                _tabKeyStr = _tabKeyStr.substring(1);
+                _tabKeys = StringUtils.splitString(_tabKeyStr, ",");
+            }
+            //检查是否需要创建主键
+            boolean needCreateKey = true;
+            //若有主键，比较主键是否和mm中主键一致
+            if (_tabKeys!=null&&!_tabKeys[0].equals("")) {
+                if (!twoStringArraySame(_tabKeys, keys)) {//若不相同，删除原来的主键
+                    st.execute("ALTER TABLE "+sumTableName+" DROP PRIMARY KEY");
+                } else needCreateKey = false;
+            }
+            //按照metadata中的内容创建主键
+            if (needCreateKey) {
+                st.execute("Alter table "+sumTableName+" add primary key("+keyStr+")");
+            }
+        } catch(Exception e) {
+            throw new Dtal0202CException(e);
+        } finally {
+            try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
+            try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
+            try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
+        }
+    }
+
+    private boolean needAnalKey(MetadataModel mm) {
+        boolean needAnalKey = false;//是否需要分析主键
+        int[] keySigns = new int[2];
+        for (MetadataColumn mc: mm.getColumnList()) {
+            if (mc.getPkSign()>0) {
+                if (keySigns[0]==keySigns[1]&&keySigns[0]==0) keySigns[0]=mc.getPkSign();
+                else keySigns[1]=mc.getPkSign();
+                if (keySigns[0]!=keySigns[1]&&keySigns[0]>0&&keySigns[1]>0) break;
+                else {
+                    keySigns[0]=keySigns[1];
+                    keySigns[1]=0;
+                }
+            }
+        }
+        needAnalKey = !(keySigns[0]==1&&(keySigns[1]==1||keySigns[1]==0));
+        return needAnalKey;
+    }
+
+    /*
      * 分析元数据的key，并返回最有可能作为key的列组合。
      * 同时，此方法还修改了元数据的主键信息，包括传入的参数MM和数据库的持久化信息，但注意，不调整主键信息
      * @param mm 元数据信息
      * @return 最有可能作为key的列组合，用列名称(String类型)的数组来表示
      * @throws Exception
      */
-    public String[] analMdKey(MetadataModel mm) {
+    private String[] analMdKey(MetadataModel mm) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
         //读取元数据信息，看是否需要对主键进行分析
         String keyStr = null; //主键串，若分析后无主键，此变量为null
@@ -176,114 +266,6 @@ public class MdKeyService {
         return ret;
     }
 
-    /**
-     * 调整元数据主键
-     * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
-     * @param mdMId 元数据模式Id
-     * @throws Exception
-     */
-    public void adjustMdKey(String mdMId) {
-        MetadataModel mm;
-        try {
-            mm = mdBasisService.getMetadataMode(mdMId);
-        } catch (Exception e) {
-            throw new Dtal0202CException("无法根据["+mdMId+"]得到元数据信息", e);
-        }
-        adjustMdKey(mm);
-    }
-
-    /**
-     * 调整元数据主键。
-     * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
-     * @param mm 元数据信息
-     * @throws Exception
-     */
-    public void adjustMdKey(MetadataModel mm) {
-        if (mm.getColumnList()==null||mm.getColumnList().size()==0) return ;
-        
-        //读取元数据信息，看主键是否是确定的
-        String[] keys = (needAnalKey(mm))?analMdKey(mm):null;
-        //不管主键是否确定，下面都对主键进行调整
-        String keyStr = "";
-        if (keys==null) {
-            for (MetadataColumn mc : mm.getColumnList()) {
-                if (mc.isPk()) keyStr += ","+mc.getColumnName();
-            }
-            if (keyStr.equals("")) keys=null;
-            else keys = StringUtils.splitString(keyStr, ",");
-        } else {
-            for (int i=0; i<keys.length; i++) {
-                keyStr +="," + keys[i];
-            }
-        }
-        keyStr = keys==null?"":keyStr.substring(1);
-        if (keys==null||keys[0].equals("")) return ;
-        //看目前元数据积累表是否有主键，若有取出(注意这里是从关系型数据库的系统管理信息[metadata]中得到主键)
-        String sumTableName = mm.getTableName();
-        if (sumTableName==null||sumTableName.equals("")) return ;
-        //读取关系型数据元数据
-        Connection conn = null;
-        ResultSet rs = null;
-        Statement st = null;
-        try {
-            String[] _tabKeys;
-            String _tabKeyStr = "";
-            String _tabPkName = null;
-
-            conn = dataSource.getConnection();
-            st = conn.createStatement();
-
-            DatabaseMetaData dbMetaData = conn.getMetaData();
-            rs = dbMetaData.getPrimaryKeys(null, null, sumTableName);
-            while (rs.next()){
-                _tabKeyStr +=","+rs.getString("COLUMN_NAME"); //列名
-                if (_tabPkName==null) _tabPkName = rs.getString("PK_NAME");//主键名称
-            }
-            if (_tabKeyStr.equals("")) {
-                _tabKeys=null;
-            } else {
-                _tabKeyStr = _tabKeyStr.substring(1);
-                _tabKeys = StringUtils.splitString(_tabKeyStr, ",");
-            }
-            //检查是否需要创建主键
-            boolean needCreateKey = true;
-            //若有主键，比较主键是否和mm中主键一致
-            if (_tabKeys!=null&&!_tabKeys[0].equals("")) {
-                if (!twoStringArraySame(_tabKeys, keys)) {//若不相同，删除原来的主键
-                    st.execute("ALTER TABLE "+sumTableName+" DROP PRIMARY KEY");
-                } else needCreateKey = false;
-            }
-            //按照metadata中的内容创建主键
-            if (needCreateKey) {
-                st.execute("Alter table "+sumTableName+" add primary key("+keyStr+")");
-            }
-        } catch(Exception e) {
-            throw new Dtal0202CException(e);
-        } finally {
-            try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
-            try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
-            try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
-        }
-    }
-
-    private boolean needAnalKey(MetadataModel mm) {
-        boolean needAnalKey = false;//是否需要分析主键
-        int[] keySigns = new int[2];
-        for (MetadataColumn mc: mm.getColumnList()) {
-            if (mc.getPkSign()>0) {
-                if (keySigns[0]==keySigns[1]&&keySigns[0]==0) keySigns[0]=mc.getPkSign();
-                else keySigns[1]=mc.getPkSign();
-                if (keySigns[0]!=keySigns[1]&&keySigns[0]>0&&keySigns[1]>0) break;
-                else {
-                    keySigns[0]=keySigns[1];
-                    keySigns[1]=0;
-                }
-            }
-        }
-        needAnalKey = !(keySigns[0]==1&&(keySigns[1]==1||keySigns[1]==0));
-        return needAnalKey;
-    }
-
     /*
      * 比较两个字符串数组是否一样
      */
@@ -323,7 +305,7 @@ public class MdKeyService {
             analKey = (Map<String, Object>)JsonUtils.jsonToObj(jsonS, Map.class);
             Map<String, Object> _HEAD = (Map<String, Object>)analKey.get("_HEAD");
             String _code = (String)_HEAD.get("_code");
-            if (_code.equals("SD.TEAM.ANAL::0001")) {
+            if (_code.equals(AnalKey.jsonDCode)) {
                 Map<String, Object> _data = (Map<String, Object>)analKey.get("_DATA");
                 Map<String, Object> _temp = (Map<String, Object>)_data.get("_mdMId");
                 String tempStr = (String)_temp.get("value");

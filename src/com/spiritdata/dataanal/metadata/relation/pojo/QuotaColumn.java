@@ -106,13 +106,14 @@ public class QuotaColumn extends BaseObject {
     }
 
     /**
-     * 得到列稀疏率
-     * @return 列稀疏率
+     * 得到列压缩率，1减去有意义的单值与所有非空值的比
+     * @return 列压缩率
      */
     public float getCompressRate() {
         if (this.tabQuota.getAllCount()==0) return -1;
         float a = Float.valueOf(this.distinctCount+"");
         float b = Float.valueOf(this.tabQuota.getAllCount()+"");
-        return a/b;
+        float c = Float.valueOf(this.nullCount+"");
+        return (b-c-a)/(b-c);
     }
 }

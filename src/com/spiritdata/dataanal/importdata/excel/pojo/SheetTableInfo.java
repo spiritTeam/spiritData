@@ -108,8 +108,8 @@ public class SheetTableInfo extends BaseObject{
         //这里的只对mm的columnList进行处理
         if (titleInfo==null||titleInfo.size()==0) return;
         for (Map<String, Object> tc: titleInfo) {
-            String columnTitle = (String)tc.get("title");
-            Map<Integer, Object> _colDataTypeAnalData = (Map<Integer, Object>)dataStructureAnalMap.get(columnTitle);
+            String titleName = (String)tc.get("title");
+            Map<Integer, Object> _colDataTypeAnalData = (Map<Integer, Object>)dataStructureAnalMap.get(titleName);
             if (_colDataTypeAnalData==null||_colDataTypeAnalData.size()==0) continue; //没有统计数据，不进行处理
             int _thisColType = -1;
             //计算总数
@@ -122,8 +122,10 @@ public class SheetTableInfo extends BaseObject{
             double b = Double.valueOf(allCount+"");
             double a = 0;
             int numberCount = 0;
+            boolean exceptType = false;
             for (Integer dType: _colDataTypeAnalData.keySet()) {
                 if (dType==ExcelConstants.DATA_TYPE_ERROR||dType==ExcelConstants.DATA_TYPE_NULL||dType==ExcelConstants.DATA_TYPE_FORMULA) continue;
+                if (dType!=ExcelConstants.DATA_TYPE_STRING&&dType!=ExcelConstants.DATA_TYPE_INTEGER) exceptType=true;
                 int thisCount = (Integer)((Map<String, Object>)_colDataTypeAnalData.get(dType)).get("dCount");
                 a = Double.valueOf(thisCount+"");
 
@@ -131,15 +133,20 @@ public class SheetTableInfo extends BaseObject{
 
                 if (dType==ExcelConstants.DATA_TYPE_NUMERIC||dType==ExcelConstants.DATA_TYPE_DOUBLE||dType==ExcelConstants.DATA_TYPE_INTEGER) numberCount+=thisCount;
             }
-
             if ((_thisColType==-1||_thisColType==ExcelConstants.DATA_TYPE_NUMERIC||_thisColType==ExcelConstants.DATA_TYPE_DOUBLE||_thisColType==ExcelConstants.DATA_TYPE_INTEGER)
               &&(numberCount/b>=ExcelConstants.WEIGHT_OF_DATATYPE&&numberCount>a)) {
                 _thisColType = ExcelConstants.DATA_TYPE_DOUBLE;
             }
-
+            if (_thisColType==-1) { //检查是否都是String或Integer类型
+                if (titleName.indexOf("号")!=-1||titleName.indexOf("证")!=-1||titleName.indexOf("码")!=-1) {
+                    if (_colDataTypeAnalData.size()==2&&!exceptType) {
+                        _thisColType = ExcelConstants.DATA_TYPE_STRING;
+                    }
+                }
+            }
             if (_thisColType!=-1) {//说明已经分析出数据类型
                 MetadataColumn mc = new MetadataColumn();
-                mc.setTitleName(columnTitle);
+                mc.setTitleName(titleName);
                 mc.setColumnType(ExcelConstants.convert2DataTypeString(_thisColType));
                 mc.setColumnIndex((Integer)tc.get("firstCol"));
                 mm.addColumn(mc);
