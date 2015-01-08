@@ -137,30 +137,45 @@
         var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
         var content = segArray[i].content;
         if(content) {
-          //content = content.replace(/<d/g, "<div");^abc.*?qwe$  /<d\s{1,}.*?\/>$/g
-          //以<d />方式匹配
-          /*var pendingAry = content.match(/<d\s.*?\/>/g);/<d\s.*?\/d>/g
-          if(pendingAry!=null&&pendingAry.length>0){
-            for(var t=0;t<pendingAry.length;t++){
-              alert(pendingAry[t]);
-              //替换？调用转换方法！newEle为转换完的ele
-              var newEle = templetContentParse(pendingAry[t]);
-              content=content.replace(pendingAry[t],"!!!!change!");
-              //alert(content);
+        	var eleS = content.match(/<d\s./g);
+            var reg = /<d\s.*?(><\/d>|\/>)/g;
+            var pendingAry = new Array();
+            var subAry = new Array();
+            var subStart=0; 
+            for(var s=0;s<eleS.length;s++){
+              var pendingStr = reg.exec(content);
+              var start = pendingStr.index;
+              var end = reg.lastIndex;
+              pendingAry[s] = pendingStr[0];
+              //每次只取前面的
+              var subStr;
+              if(s!=eleS.length-1){
+                //不是最后一个d元素的时候
+                if(subStart==start) {
+                  //subStart==end说明content是从d元素开始的,也可能是两个d连着的
+                  subStr = "";
+                  subAry[s] = subStr;
+                }else{
+                  subStr = content.substring(subStart,start);
+                  subAry[s] = subStr;
+                }
+              }else{
+                //是最后一个d元素的时候
+                if(subStart==start) {
+                  //subStart==end说明content是从d元素开始的,也可能是两个d连着的
+                  subStr = "";
+                  subAry[s] = subStr;
+                  subAry[s+1] = ""; 
+                }else{
+                  subStr = content.substring(subStart,start);
+                  subAry[s] = subStr;
+                  var ending = content.substring(end,content.length);
+                  subAry[s+1] = ending;
+                }
+              }
+              subStart = end;
             }
-          }*/
-          //以<d></d>方式匹配
-          var pendingAry = content.match(/<d\s.*?(><\/d>|\/>)/g);
-          // TODO 扩展令一种方法
-          if(pendingAry!=null&&pendingAry.length>0){
-            for(var t=0;t<pendingAry.length;t++){
-              alert(pendingAry[t]);
-              //替换？调用转换方法！newEle为转换完的ele
-              var newEle = templetContentParse(pendingAry[t]);
-              content=content.replace(pendingAry[t],"!!!!change!");
-              //alert(content);
-            }
-          }
+            var newContent = templetContentParse(pendingAry,subAry);
         }
         segContent.html(content);
         segGroup.append(segContent);
