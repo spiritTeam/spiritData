@@ -85,7 +85,6 @@ public class _OwnerMetadataService implements SessionLoader {
                 mdBasisService.addMetadataColumn(mc);
             }
         }
-
         //新增缓存
         _om.mdModelMap.put(mm.getId(), mm);
     }
@@ -131,9 +130,8 @@ class Thread_LoadData implements Runnable {
             if (mmList!=null&&mmList.size()>0) {//这保证了flagMap有内容
                 //准备语义信息
                 mcsList = mdBasisService.getMdColSemantemeListByOwnerId(ownerId);
-                Map<String, List<MetadataColSemanteme>> _flagMap = null;
+                Map<String, List<MetadataColSemanteme>> _flagMap = new HashMap<String, List<MetadataColSemanteme>>();
                 if (mcsList!=null&&mcsList.size()>0) {
-                    _flagMap = new HashMap<String, List<MetadataColSemanteme>>();
                     for (MetadataColSemanteme mcs: mcsList) {
                         List<MetadataColSemanteme> _l = _flagMap.get(mcs.getColId());
                         if (_l==null) {
@@ -177,15 +175,24 @@ class Thread_LoadData implements Runnable {
                     }
                     //名称处理
                     mTitleList = mdBasisService.getMdTitleListByOwnerId(ownerId);
-                    
+                    if (mTitleList!=null&&mTitleList.size()>0) {
+                        for (Map<String, Object> report: mTitleList) {
+                            String tmId=(String)report.get("tmId");
+                            if (_om.mdModelMap.get(tmId)!=null) {
+                                if (_om.mdModelMap.get(tmId).titleMap==null) _om.mdModelMap.get(tmId).titleMap = new HashMap<String, Integer>();
+                                _om.mdModelMap.get(tmId).titleMap.put((String)report.get("tableTitleName"), Integer.parseInt(report.get("size")+""));
+                            }
+                        }
+                    }
                 } else {
                     mmList = null;
                     _om.mdModelMap.clear();
                 }
             }
-            _om.setLoadSuccess();
         } catch(Exception e) {
             e.printStackTrace();
+        } finally {
+            _om.setLoadSuccess();
         }
     }
 }

@@ -28,7 +28,7 @@ public class MetadataModel extends BaseObject {
 
     //表名称处理，根据Imp对应表中的内容，计数调整
     private String titleName; ////模式名称：此名称在数据库中对应的字段若有值，则这个值是手工设定的，若这个值为空，需要从sa_imp_tablog_rel表中得到最有可能的名称(头两个)
-    //public Map<String, Integer> titleMap;//页签名称列表，是装载Session时转载的
+    public Map<String, Integer> titleMap;//页签名称列表，是装载Session时转载的
 
     public String getId() {
         return id;

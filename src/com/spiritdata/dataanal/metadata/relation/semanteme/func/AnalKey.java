@@ -42,7 +42,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
 
 @Component
 public class AnalKey implements AnalTable {
-    private final static String jsonDCode = "SD.TEAM.ANAL::0001"; 
+    public final static String jsonDCode = "SD.TEAM.ANAL::0001"; 
     @Resource
     private BasicDataSource dataSource;
     @Resource
@@ -59,21 +59,21 @@ public class AnalKey implements AnalTable {
      */
     @Override
     public Map<String, Object> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Dtal0202CException {
-        if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
-        //先分析指标表
-        QuotaTable qt = mdQuotaService.getQuotaInfo(tableName, mm);
-        if (qt==null) {//为空，则重新计算指标
-            qt = mdQuotaService.caculateQuota(mm, tableName);
-        }
-        //按指标分析
+        if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new Dtal0202CException("元数据模型信息不包含任何列信息，无法分析！");
+
+        QuotaTable qt = mdQuotaService.getQuotaInfo(tableName, mm); //获得指标表
+        if (qt==null) qt = mdQuotaService.caculateQuota(mm, tableName);//为空，则重新计算指标
+        if (qt.getAllCount()==0) return null;//返回空，表中没有数据，无法分析
         if (qt.getColQuotaList()==null||qt.getColQuotaList().size()==0) return null;
+
+        //按指标分析
         Map<String, Object> ret  = new HashMap<String, Object>();
         Float one = new Float("1");
         for (QuotaColumn qc: qt.getColQuotaList()) {
             String cType = mm.getColumnByColId(qc.getColId()).getColumnType();
             String cName = mm.getColumnByColId(qc.getColId()).getColumnName();
             String title = mm.getColumnByColId(qc.getColId()).getTitleName().toLowerCase();
-            if (one==qc.getCompressRate()&&qc.getNullCount()<2) {
+            if (one==(1-qc.getCompressRate())&&qc.getNullCount()<2) {
                 if (cType.equalsIgnoreCase("String")) {
                     ret.put(cName, one);
                 } else if (cType.equalsIgnoreCase("Integer")) {
@@ -126,12 +126,12 @@ public class AnalKey implements AnalTable {
                     List<Object[]> _keyL = CompagesMap.get(new Integer(n));
                     if (_keyL!=null&&_keyL.size()>0) {
                         for (Object[] o :_keyL) {
-                            String keyComp = ",";
+                            String keyComp = "";
                             for (int t=0; t<o.length; t++) {
-                                keyComp +=((QuotaColumn)o[t]).getColumn().getColumnName();
+                                keyComp +=","+((QuotaColumn)o[t]).getColumn().getColumnName();
                             }
                             keyComp = keyComp.substring(1);
-                            countSql.replaceAll("#colList", keyComp);
+                            countSql = countSql.replaceAll("#colList", keyComp);
                             ps = conn.prepareStatement(countSql);
                             rs = ps.executeQuery();
                             if (rs.next()) {
@@ -183,7 +183,7 @@ public class AnalKey implements AnalTable {
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
         //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
         String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+"METADATA"+File.separator+"key"+File.separator+tableName+".json");
-        jsonDHead.setFileName(storeFile.replace(File.separator, "/"));
+        jsonDHead.setFileName(storeFile.replace("\\", "/"));
 
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
         AtomData _dataElement = new AtomData("_tableName", "string", tableName);
@@ -191,10 +191,10 @@ public class AnalKey implements AnalTable {
         _dataElement.setAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _DATA_Map.put("_keyAnals", convertToList(ret));
-        //写文件
 
         String jsonStr=JsonUtils.formatJsonStr("{"+jsonDHead.toJson()+",\"_DATA\":"+JsonUtils.objToJson(_DATA_Map)+"}", null);
 
+        //写文件
         FileOutputStream fileOutputStream = null;
         try {
             File file = new File(storeFile);
