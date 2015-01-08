@@ -137,7 +137,7 @@
         var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
         var content = segArray[i].content;
         if(content) {
-        	var eleS = content.match(/<d\s./g);
+          var eleS = content.match(/<d\s./g);
             var reg = /<d\s.*?(><\/d>|\/>)/g;
             var pendingAry = new Array();
             var subAry = new Array();
@@ -180,7 +180,7 @@
         segContent.html(content);
         segGroup.append(segContent);
       }
-      var contendEle = templetContentParse(segArray[i].content);
+      var contendEle = null;
       segGroup.append(contendEle);
       var subSegs = segArray[i].subSeg;
       //处理树
@@ -205,9 +205,60 @@
     return segGroup;
   }
   
-  function templetContentParse(ele){
-    // TODO 对content进行解析预留
-    return null;
+  /**
+   * 对d标签解析，然后从新拼接新的content
+   * pendingAry：待处理的d元素数组，
+   * subAry：不用处理的数组
+   * return：返回处理完成后的content
+   */
+  function templetContentParse(pendingAry,subAry){
+    var newContent=""; 
+    for(var i=0;i<pendingAry.length;i++){
+      var ele = $(pendingAry[i]);
+      var parseEle = getParseEle(ele);
+      newContent.concat(subAry[i],parseEle);
+      newContent = (newContent.concat(subAry[i],parseEle));
+    }
+    newContent.concat(subAry[subAry.length-1]);
+    alert("content="+newContent);
+    return newContent;
+  }
+  
+  /**
+   * 解析d标签返回解析后的元素
+   * ele：d元素
+   * return 解析后的元素
+   */
+  function getParseEle(ele){
+    var parseELe;
+    //d元素中特有的属性
+    var eleAttr = new Object();
+    //数据来源值是_DATA中数据的id
+    eleAttr.data = ele.attr('data');
+    //显示类型pie?table?value?
+    eleAttr.showType = ele.attr('showType');
+    //指向jsond中的数据
+    eleAttr.value = ele.attr('value');
+    //
+    eleAttr.decorateView = ele.attr('decorateView');
+    //dom元素中的元素属性
+    eleAttr.id = ele.attr('id');
+  //显示类型pie?table?value?
+    eleAttr.showType = ele.attr('showType');
+    var eleShowType = ele.attr('showType');
+    //value，返回sapn？ ！value返回div？
+    if(eleShowType=="value"){
+    	//如果是value需要哪些属性？
+    	parseELe = "<sapn></sapn>";
+    }else{
+    	parseELe = "<div></div>";
+    	if(eleShowType=="pie"){
+    		//如果是pie需要哪些属性？
+    	}else if(eleShowType=="table"){
+    		//如果是table需要哪些属性？
+    	}
+    }
+    return parseELe;
   }
   /**
    * 初始化pageFrame
