@@ -44,24 +44,8 @@
             “<d data="2" showType="value" value="quotas[0].titleName" />”中
               大多为{<d data="2" showType="value" value="quotas[0].categoryNumDistribution[0].category" />}占<d data="2" showType="value" value="quotas[0].categoryNumDistribution[0].percent" />%，
               {<d data="2" showType="value" value="quotas[0].categoryNumDistribution[1].category" />}占<d data="2" showType="value" value="quotas[0].categoryNumDistribution[1].percent" />%，具体分析数据如下：<br/>
-            /*也可以如下：(在不知道SP.TEAM-00009的情况下)
-            “<d data="2" showType="value" value="quotas[0].titleName" />”中大多为
-              <d data="2" showType="first(3)" value="quotas[0].categoryNumDistribution" decorateView="{#category#}占#percent#%" />
-              ，具体分析数据如下：
-            */
-            /*也可以如下：(在不知道SP.TEAM-00009的情况下)，考虑一下first(3)/first(1)/last(2)
-            “<d data="2" showType="value" value="quotas[0].titleName" />”中大多为
-              <d data="2" showType="first(3)" value="quotas[0].categoryNumDistribution" decorateView="{#category#}占#num:percent#%" />
-              ，具体分析数据如下：
-            */
-            /*若在知道SP.TEAM-00009的情况下，考虑下该怎样做？？？？
-            */
             <data d="2" showType="table" value="quotas[0].categoryNumDistribution" titleDcrt="quotas[0].titles" />
             <data d="2" showType="pie" value="quotas[0].categoryNumDistribution" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
-            /*也可以如下：
-            <data d="2" showType="table" value="quotas[0].categoryNumDistribution" titleDcrt="quotas[0].titles" />
-            <data d="2" showType="pie" value="quotas[0].categoryNumDistribution" label="category", data="num" decorateView="{lableShow:[category, num:percent]}" />
-            */
             <br/>
             <div style="font-weight:bold; ">“<d data="2" showType="value" value="mdName" />”[<d data="2" showType="value" value="quotas[1].titleName" />]</div>指标分析：<br/>
             '
@@ -88,24 +72,8 @@
             “<d data="2" showType="value" value="quotas[0].titleName" />”中
               大多为{<d data="2" showType="value" value="quotas[0].categoryNumDistribution[0].category" />}占<d data="2" showType="value" value="quotas[0].categoryNumDistribution[0].percent" />%，
               {<d data="2" showType="value" value="quotas[0].categoryNumDistribution[1].category" />}占<d data="2" showType="value" value="quotas[0].categoryNumDistribution[1].percent" />%，具体分析数据如下：<br/>
-            /*也可以如下：(在不知道SP.TEAM-00009的情况下)
-            “<d data="2" showType="value" value="quotas[0].titleName" />”中大多为
-              <d data="2" showType="first(3)" value="quotas[0].categoryNumDistribution" decorateView="{#category#}占#percent#%" />
-              ，具体分析数据如下：
-            */
-            /*也可以如下：(在不知道SP.TEAM-00009的情况下)，考虑一下first(3)/first(1)/last(2)
-            “<d data="2" showType="value" value="quotas[0].titleName" />”中大多为
-              <d data="2" showType="first(3)" value="quotas[0].categoryNumDistribution" decorateView="{#category#}占#num:percent#%" />
-              ，具体分析数据如下：
-            */
-            /*若在知道SP.TEAM-00009的情况下，考虑下该怎样做？？？？
-            */
             <data d="2" showType="table" value="quotas[0].categoryNumDistribution" titleDcrt="quotas[0].titles" />
             <data d="2" showType="pie" value="quotas[0].categoryNumDistribution" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
-            /*也可以如下：
-            <data d="2" showType="table" value="quotas[0].categoryNumDistribution" titleDcrt="quotas[0].titles" />
-            <data d="2" showType="pie" value="quotas[0].categoryNumDistribution" label="category", data="num" decorateView="{lableShow:[category, num:percent]}" />
-            */
             <br/>
             <div style="font-weight:bold; ">“<d data="2" showType="value" value="mdName" />”[<d data="2" showType="value" value="quotas[1].titleName" />]</div>指标分析：<br/>
             '
@@ -131,24 +99,8 @@
             “<d data="2" showType="value" value="quotas[0].titleName" />”中
               大多为{<d data="2" showType="value" value="quotas[0].categoryNumDistribution[0].category" />}占<d data="2" showType="value" value="quotas[0].categoryNumDistribution[0].percent" />%，
               {<d data="2" showType="value" value="quotas[0].categoryNumDistribution[1].category" />}占<d data="2" showType="value" value="quotas[0].categoryNumDistribution[1].percent" />%，具体分析数据如下：<br/>
-            /*也可以如下：(在不知道SP.TEAM-00009的情况下)
-            “<d data="2" showType="value" value="quotas[0].titleName" />”中大多为
-              <d data="2" showType="first(3)" value="quotas[0].categoryNumDistribution" decorateView="{#category#}占#percent#%" />
-              ，具体分析数据如下：
-            */
-            /*也可以如下：(在不知道SP.TEAM-00009的情况下)，考虑一下first(3)/first(1)/last(2)
-            “<d data="2" showType="value" value="quotas[0].titleName" />”中大多为
-              <d data="2" showType="first(3)" value="quotas[0].categoryNumDistribution" decorateView="{#category#}占#num:percent#%" />
-              ，具体分析数据如下：
-            */
-            /*若在知道SP.TEAM-00009的情况下，考虑下该怎样做？？？？
-            */
             <data d="2" showType="table" value="quotas[0].categoryNumDistribution" titleDcrt="quotas[0].titles" />
             <data d="2" showType="pie" value="quotas[0].categoryNumDistribution" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
-            /*也可以如下：
-            <data d="2" showType="table" value="quotas[0].categoryNumDistribution" titleDcrt="quotas[0].titles" />
-            <data d="2" showType="pie" value="quotas[0].categoryNumDistribution" label="category", data="num" decorateView="{lableShow:[category, num:percent]}" />
-            */
             <br/>
             <div style="font-weight:bold; ">“<d data="2" showType="value" value="mdName" />”[<d data="2" showType="value" value="quotas[1].titleName" />]</div>指标分析：<br/>
             '

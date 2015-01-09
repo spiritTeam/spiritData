@@ -41,6 +41,8 @@
           getJsonD(_DATA);
           $('#rTitle').html(_HEAD.reportName);
           buildSegmentGroup($('#reportFrame'), _TEMPLET, level, null);
+          //开始加载数据？还是先加入d到tree中？
+          // TODO
           //显示树的部分
           $('#catalogTree').tree({animate:true});
           $('#catalogTree').tree("loadData", segTree);
@@ -102,7 +104,7 @@
           });
         }
       }
-    },1000);
+    },500);
   }
   
   /**
@@ -123,80 +125,89 @@
     if(jObj==null) return "未知的eleId";
     //segGroup
     var segGroup = $('<div id="segGroup_'+treeLevel+'" class="segGroup_'+treeLevel+'"/></div>');
-    for (var i=0; i<segArray.length; i++) {
+    for (var i=0;i<segArray.length;i++) {
       var segId = segArray[i].id;
       //第一层的时候title中没有style标签，第二层有 ,可以跟晖哥商量下title标签问题？
       //title是放在div下面的span中还是直接放在div中
+      var _dataAry;
       if(segArray[i].title){
-      //segTitle
-      var segTitle = $('<div id="'+segId+'title" class="segTitle_'+treeLevel+'"></div>');
-      segTitle.html(segArray[i].title);
-      segGroup.append(segTitle);
+        //segTitle
+        var segTitle = $('<div id="'+segId+'title" class="segTitle_'+treeLevel+'"></div>');
+        segTitle.html(segArray[i].title);
+        segGroup.append(segTitle);
       }else if(segArray[i].content){
         //segContent
         var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
         var content = segArray[i].content;
         if(content) {
           var eleS = content.match(/<d\s./g);
-            var reg = /<d\s.*?(><\/d>|\/>)/g;
-            var pendingAry = new Array();
-            var subAry = new Array();
-            var subStart=0; 
-            for(var s=0;s<eleS.length;s++){
-              var pendingStr = reg.exec(content);
-              var start = pendingStr.index;
-              var end = reg.lastIndex;
-              pendingAry[s] = pendingStr[0];
-              //每次只取前面的
-              var subStr;
-              if(s!=eleS.length-1){
-                //不是最后一个d元素的时候
-                if(subStart==start) {
-                  //subStart==end说明content是从d元素开始的,也可能是两个d连着的
-                  subStr = "";
-                  subAry[s] = subStr;
-                }else{
-                  subStr = content.substring(subStart,start);
-                  subAry[s] = subStr;
-                }
+          var reg = /<d\s.*?(><\/d>|\/>)/g;
+          var pendingAry = new Array();
+          var subAry = new Array();
+          var subStart=0; 
+          for(var s=0;s<eleS.length;s++){
+            var pendingStr = reg.exec(content);
+            var start = pendingStr.index;
+            var end = reg.lastIndex;
+            pendingAry[s] = pendingStr[0];
+            //每次只取前面的
+            var subStr;
+            if(s!=eleS.length-1){
+              //不是最后一个d元素的时候
+              if(subStart==start) {
+                //subStart==end说明content是从d元素开始的,也可能是两个d连着的
+                subStr = "";
+                subAry[s] = subStr;
               }else{
-                //是最后一个d元素的时候
-                if(subStart==start) {
-                  //subStart==end说明content是从d元素开始的,也可能是两个d连着的
-                  subStr = "";
-                  subAry[s] = subStr;
-                  subAry[s+1] = ""; 
-                }else{
-                  subStr = content.substring(subStart,start);
-                  subAry[s] = subStr;
-                  var ending = content.substring(end,content.length);
-                  subAry[s+1] = ending;
-                }
+                subStr = content.substring(subStart,start);
+                subAry[s] = subStr;
               }
-              subStart = end;
+            }else{
+              //是最后一个d元素的时候
+              if(subStart==start) {
+                //subStart==end说明content是从d元素开始的,也可能是两个d连着的
+                subStr = "";
+                subAry[s] = subStr;
+                subAry[s+1] = ""; 
+              }else{
+                subStr = content.substring(subStart,start);
+                subAry[s] = subStr;
+                var ending = content.substring(end,content.length);
+                subAry[s+1] = ending;
+              }
             }
-            var newContent = templetContentParse(pendingAry,subAry);
+            subStart = end;
+          }
+          var retObj = templetContentParse(pendingAry,subAry);
+          _dataAry = retObj._dataAry;
+          newContent = retObj.newContent;
         }
-        segContent.html(content);
+        segContent.html(newContent);
         segGroup.append(segContent);
       }
-      var contendEle = null;
-      segGroup.append(contendEle);
       var subSegs = segArray[i].subSeg;
       //处理树
       var treeNode = {};
       if (segArray[i].name) treeNode.text = segArray[i].name;
       else
       if (segArray[i].title) treeNode.text=$(segArray[i].title).html();
-
       if (treeNode.text&&treeNode.text!="") {
         treeNode.id = "_tree_"+segArray[i].id;
         treeNode.segId = segArray[i].id;
         treeNode.children = new Array();
+        treeNode.dataAry=_dataAry;
         if (parent==null) {
           segTree[i]=treeNode;
         } else {
           parent.children[i] = treeNode;
+        }
+        // TODO 方法为测试
+        if(treeLevel!=0){
+        	var pDataAry = parent.dataAry.toString();
+        	for(var v=0;v<_dataAry.length;v++){
+        		if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
+        	}
+        	parent.dataAry = pDataAry.split(",");
         }
       }
       buildSegmentGroup(segGroup, subSegs, treeLevel+1, treeNode);
@@ -212,16 +223,40 @@
    * return：返回处理完成后的content
    */
   function templetContentParse(pendingAry,subAry){
-    var newContent=""; 
+    var newContent="";
+    var _dataStr = "";
     for(var i=0;i<pendingAry.length;i++){
       var ele = $(pendingAry[i]);
-      var parseEle = getParseEle(ele);
-      newContent.concat(subAry[i],parseEle);
-      newContent = (newContent.concat(subAry[i],parseEle));
+      var _data = ele.attr('data')+",";
+      if(_dataStr=="") _dataStr = _dataStr +_data;
+      else if(_dataStr.indexOf(_data)==-1) _dataStr = _dataStr +_data;
+      var pendingStr = pendingAry[i];
+      pendingStr = pendingStr.replace(/data/,"_data");
+      if(ele.attr('showType')=="value"){
+        if(pendingStr.match(/></)!=null){
+          pendingStr = pendingStr.replace(/<d\s{1}/,"<sapn ");
+          pendingStr = pendingStr.replace(/\/d>/,"/sapn>");
+        }else{
+          pendingStr = pendingStr.replace(/<d\s{1}/,"<sapn ");
+          pendingStr = pendingStr.replace(/\/>/,"></sapn>");
+        }
+      }else{
+        if(pendingStr.match(/></)!=null){
+          pendingStr = pendingStr.replace(/<d\s{1}/,"<div ");
+            pendingStr = pendingStr.replace(/\/d>/,"/div>");
+        }else{
+          pendingStr = pendingStr.replace(/<d\s{1}/,"<div ");
+          pendingStr = pendingStr.replace(/\/>/,"></div>");
+        }
+      }
+      newContent = (newContent.concat(subAry[i],pendingStr));
     }
-    newContent.concat(subAry[subAry.length-1]);
-    alert("content="+newContent);
-    return newContent;
+    newContent = newContent.concat(subAry[subAry.length-1]);
+    var _dataAry = _dataStr.split(",");
+    var retObj = new Object();
+    retObj._dataAry = _dataAry;
+    retObj.newContent = newContent;
+    return retObj;
   }
   
   /**
@@ -230,6 +265,7 @@
    * return 解析后的元素
    */
   function getParseEle(ele){
+    //直接替换？
     var parseELe;
     //d元素中特有的属性
     var eleAttr = new Object();
@@ -243,20 +279,22 @@
     eleAttr.decorateView = ele.attr('decorateView');
     //dom元素中的元素属性
     eleAttr.id = ele.attr('id');
-  //显示类型pie?table?value?
+    //显示类型pie?table?value?
     eleAttr.showType = ele.attr('showType');
     var eleShowType = ele.attr('showType');
-    //value，返回sapn？ ！value返回div？
+    //value，返回sapn？ ！value返回div？无论showTyoe是什么类型，都会有data和value属性
+    var e = $("<div></div>");
+    //alert("e="+e[0].outerHTML);
     if(eleShowType=="value"){
-    	//如果是value需要哪些属性？
-    	parseELe = "<sapn></sapn>";
+      //如果是value需要哪些属性？
+      parseELe = "<sapn></sapn>";
     }else{
-    	parseELe = "<div></div>";
-    	if(eleShowType=="pie"){
-    		//如果是pie需要哪些属性？
-    	}else if(eleShowType=="table"){
-    		//如果是table需要哪些属性？
-    	}
+      parseELe = "<div></div>";
+      if(eleShowType=="pie"){
+        //如果是pie需要哪些属性？
+      }else if(eleShowType=="table"){
+        //如果是table需要哪些属性？
+      }
     }
     return parseELe;
   }
