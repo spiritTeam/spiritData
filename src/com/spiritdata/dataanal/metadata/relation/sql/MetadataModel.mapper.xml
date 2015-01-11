@@ -68,8 +68,8 @@
   <!-- 为Session获得列表，按照记录数和创建时间排序 -->
   <select id="getList4Session" resultMap="BaseResultMap" parameterType="java.util.Map">
     select <include refid="Base_Column_List_A"/> from sa_md_tabmodel a, sa_md_tabquota b
-    <if test="_parameter != null"><include refid="WhereClauseByEntiey_A"/></if>
-    <if test="_parameter == null">where (1=1)</if>
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey_A"/></if>
+    <if test="_parameter==null">where (1=1)</if>
     and a.id=b.tmId and a.tableName=b.tableName
     order by b.allCount desc , a.CTime
   </select>

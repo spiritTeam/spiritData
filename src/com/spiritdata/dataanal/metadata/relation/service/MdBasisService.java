@@ -39,6 +39,39 @@ public class MdBasisService {
 
     //以下为元数据模式相关操作
     /**
+     * 新增元数据模式
+     * @param mm 元数据模式
+     * @throws Exception
+     */
+    public void addMetadataModel(MetadataModel mm) {
+        mmDao.insert(mm);
+    }
+
+    /**
+     * 根据元数据Id，得到元数据信息
+     * 注意：这个方法不能取到语义信息
+     * @param id
+     * @return 该元数据信息
+     * @throws Exception 
+     * 这个目前不全，没有包括语义信息，不能调用
+     */
+    public MetadataModel getMetadataMode(String id) {
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("id", id);
+        MetadataModel ret = mmDao.getInfoObject(param);
+        if (ret==null) return ret;
+
+        param.clear();
+        param.put("mdMId", id);
+        List<MetadataColumn> clist = mcDao.queryForList(param);
+        if (clist==null||clist.size()==0) return null;
+        for (MetadataColumn mc: clist) {
+            ret.addColumn(mc);
+        }
+        return ret;
+    }
+
+    /**
      * 获得元数据模式列表
      * @param paramMm 元数据模式对象，此对象中的值将是条件，这些条件是And的关系
      * @return 元数据模式列表
@@ -59,6 +92,7 @@ public class MdBasisService {
         paramMm.setOwnerId(ownerId);
         return this.getMdMList(paramMm);
     }
+
     /**
      * 根据所有者Id获得元数据模式列表
      * @param ownerId 所有者Id
@@ -70,6 +104,7 @@ public class MdBasisService {
         paramMm.setOwnerId(ownerId);
         return mmDao.queryForList("getList4Session", paramMm.toHashMapAsBean());
     }
+
     /**
      * 根据所有者Id获得元数据标题列表
      * @param ownerId 所有者Id
@@ -79,6 +114,7 @@ public class MdBasisService {
     public List<Map<String, Object>> getMdTitleListByOwnerId(String ownerId) {
         return mmDao.queryForListAutoTranform("getMdTitleList", ownerId);
     }
+
     /**
      * 修改元数据模式信息
      * @param paramMm 元数据信息
@@ -89,6 +125,15 @@ public class MdBasisService {
     }
 
     //以下为元数据列描述相关操作
+    /**
+     * 新增元数据列描述
+     * @param mm 元数据列描述
+     * @throws Exception
+     */
+    public void addMetadataColumn(MetadataColumn mc) {
+        mcDao.insert(mc);
+    }
+
     /**
      * 获得元数据列描述列表
      * @param paramMc 元数据列描述对象，此对象中的值将是条件，这些条件是And的关系
@@ -111,6 +156,14 @@ public class MdBasisService {
 
     //以下为元数据列语义相关操作
     /**
+     * 新增元数据列语义描述
+     * @param mcs 元数据列描述
+     * @throws Exception
+     */
+    public void addMetadataColSemanteme(MetadataColSemanteme mcs) {
+        mcsDao.insert(mcs);
+    }
+    /**
      * 获得元数据列语义列表
      * @param paramMc 元数据列语义对象，此对象中的值将是条件，这些条件是And的关系
      * @return 元数据列语义列表
@@ -128,45 +181,5 @@ public class MdBasisService {
      */
     public List<MetadataColSemanteme> getMdColSemantemeListByOwnerId(String ownerId) {
         return mcsDao.queryForList("getListByOwnerId", ownerId);
-    }
-
-    /**
-     * 新增元数据模式
-     * @param mm 元数据模式
-     * @throws Exception
-     */
-    public void addMetadataModel(MetadataModel mm) {
-        mmDao.insert(mm);
-    }
-
-    /**
-     * 新增元数据列描述
-     * @param mm 元数据列描述
-     * @throws Exception
-     */
-    public void addMetadataColumn(MetadataColumn mc) {
-        mcDao.insert(mc);
-    }
-
-    /**
-     * 根据元数据Id，得到元数据信息
-     * @param id
-     * @return 该元数据信息
-     * @throws Exception 
-     */
-    public MetadataModel getMetadataMode(String id) {
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("id", id);
-        MetadataModel ret = mmDao.getInfoObject(param);
-        if (ret==null) return ret;
-
-        param.clear();
-        param.put("mdMId", id);
-        List<MetadataColumn> clist = mcDao.queryForList(param);
-        if (clist==null||clist.size()==0) return null;
-        for (MetadataColumn mc: clist) {
-            ret.addColumn(mc);
-        }
-        return ret;
     }
 }

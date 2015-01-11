@@ -10,7 +10,7 @@
   desc:"xyz.xml文件元数据分析结果",
   _DATA:{
     fileName:"c:/xyz.excel",
-    excelMdmArray:[{/*excl元数据数组*/
+    excelMdmArray:[{
       mdid:"446655440000",
       sheetInfo:{
         name:"人员",

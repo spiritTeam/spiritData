@@ -43,24 +43,9 @@ public class MdKeyService {
     private FileManageService fmService;
 
     /**
-     * 调整元数据主键
-     * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
-     * @param mdMId 元数据模式Id
-     */
-    public void adjustMdKey(String mdMId) {
-        MetadataModel mm;
-        try {
-            mm = mdBasisService.getMetadataMode(mdMId);
-        } catch (Exception e) {
-            throw new Dtal0202CException("无法根据["+mdMId+"]得到元数据信息", e);
-        }
-        adjustMdKey(mm);
-    }
-
-    /**
      * 调整元数据主键。
      * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
-     * @param mm 元数据信息
+     * @param mm 元数据信息，注意，这里的元数据信息必须是全的，包括column和语义
      */
     public void adjustMdKey(MetadataModel mm) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return ;
@@ -68,6 +53,7 @@ public class MdKeyService {
         //读取元数据信息，看主键是否是确定的
         String[] keys = (needAnalKey(mm))?analMdKey(mm):null;
         //不管主键是否确定，下面都对主键进行调整
+        //以下调整是对实体表(积累表)进行调整的
         String keyStr = "";
         if (keys==null) {
             for (MetadataColumn mc : mm.getColumnList()) {
@@ -150,7 +136,8 @@ public class MdKeyService {
 
     /*
      * 分析元数据的key，并返回最有可能作为key的列组合。
-     * 同时，此方法还修改了元数据的主键信息，包括传入的参数MM和数据库的持久化信息，但注意，不调整主键信息
+     * 同时，此方法还修改了元数据的主键信息，包括传入的参数MM和数据库的持久化信息，但注意，不调整主键信息。
+     * 注意：此方法不修改实体表的主键信息，只修改自定义的元数据结构中的信息
      * @param mm 元数据信息
      * @return 最有可能作为key的列组合，用列名称(String类型)的数组来表示
      * @throws Exception
@@ -262,7 +249,7 @@ public class MdKeyService {
                 try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
             }
         }
-        //TODO 由于修改了元数据，所以要通知session，修改相关的信息
+        //至此，Session中的内容已经做了修改！！！！原因是mm参数是通过指针传过来的
         return ret;
     }
 
