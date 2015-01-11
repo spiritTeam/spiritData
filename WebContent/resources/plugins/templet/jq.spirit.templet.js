@@ -16,7 +16,8 @@
   var level=0;
   //用于存放jsonDInfo
   var jsonDInfoArray = [];
-  var keyArray = [];
+  //用于存放dataId,方便最后一不进行搜索dom
+  var dataIdAry;
   
   /**
    * 主函数入口
@@ -38,11 +39,11 @@
           var _HEAD = templetJD._HEAD;
           //jsonDurl 用于请求jsond
           var _DATA = templetJD._DATA;
-          getJsonD(_DATA);
+          dataIdAry = getJsonD(_DATA);
           $('#rTitle').html(_HEAD.reportName);
           buildSegmentGroup($('#reportFrame'), _TEMPLET, level, null);
-          //开始加载数据？还是先加入d到tree中？
-          // TODO
+          //显示 
+          show();
           //显示树的部分
           $('#catalogTree').tree({animate:true});
           $('#catalogTree').tree("loadData", segTree);
@@ -56,6 +57,40 @@
   };
   
   /**
+   * 在content完成后，对新的content中元素进行解析
+   * 1、根据dataId抓取dom
+   * 2、起setInterval
+   */
+  function show(){
+    //根据dataIdAry中的id抓取dom
+    var domAry = new Array();
+    for(var i=0;i<dataIdAry.length;i++) {
+      var attr = "_data="+dataIdAry[i];
+      var _domAry = $('['+attr+']').toArray();
+      domAry[i] = _domAry;
+    }
+    //起setInterval
+    var intervalId = setInterval(function(){
+      for(var i=0;i<jsonDInfoArray.length;i++){
+        var jsondInfo = jsonDInfoArray[i];
+        //起setInterval,检查d元素是否到位
+        if(jsondInfo.jsond!=null&&jsondInfo.jsond!=""){
+          for(var k=0;k<domAry.length;k++){
+            var _domAry = domAry[i];
+            var _DATA = jsondInfo.jsond._DATA;
+            if(jsondInfo.id == $(_domAry[0]).attr('_data')){
+              //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
+              for(var j=0;j<_domAry.length;j++){
+                parseEle($(_domAry[j]),jsondInfo.jsond);
+              }
+            }
+          }
+        }
+      }
+    },200);
+  }
+  
+  /**
    * 向后台请求jsond,先根据_DATA中的数据，组成jsondInfo,放
    * 入数组中，然后循环数组，向后台请求数据，
    * _DATA:jsondUrl的请求数组
@@ -63,10 +98,12 @@
   function getJsonD(_DATA){
     if(_DATA==null||_DATA==""||_DATA[0]==null||_DATA[0]=="") return null;
     var i=0;
+    var dataIdAry = new Array();
     for(;i<_DATA.length;i++){
       //jsondInfo
       var jsondInfo = new Object();
       jsondInfo.id = _DATA[i]._id;
+      dataIdAry[i] = jsondInfo.id;
       jsondInfo.url =  _DATA[i]._url;
       //jsonD_code有时有，有时没有，负值的时候判断下
       if(_DATA[i]._jsonD_code!=""&&_DATA[i]._jsonD_code!=null) jsondInfo.jsonD_code = _DATA[i]._jsonD_code;
@@ -105,6 +142,7 @@
         }
       }
     },500);
+    return dataIdAry;
   }
   
   /**
@@ -112,7 +150,6 @@
    * jQbj:jQuery对象，指代的是根节点
    * segArray：数据数组，
    * treeLevel：层数,
-   * segTree:一个数组，用于储存节点
    * parent:可以是空也可以是null表示第一次遍历，无parent,
    * 结构：jObj[segGroup:{segTitle,segContent,subSegs},
    *     segGroup:{segTitle,segContent,subSegs},
@@ -201,13 +238,12 @@
         } else {
           parent.children[i] = treeNode;
         }
-        // TODO 方法为测试
-        if(treeLevel!=0){
-        	var pDataAry = parent.dataAry.toString();
-        	for(var v=0;v<_dataAry.length;v++){
-        		if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
-        	}
-        	parent.dataAry = pDataAry.split(",");
+        if(treeLevel>1){
+          var pDataAry = parent.dataAry.toString();
+          for(var v=0;v<_dataAry.length;v++){
+            if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
+          }
+          parent.dataAry = pDataAry.split(",");
         }
       }
       buildSegmentGroup(segGroup, subSegs, treeLevel+1, treeNode);
@@ -217,7 +253,8 @@
   }
   
   /**
-   * 对d标签解析，然后从新拼接新的content
+   * 把</d>或这<d></d>,根据showType是否=value，
+   * 来替换成<span>或者<div>;
    * pendingAry：待处理的d元素数组，
    * subAry：不用处理的数组
    * return：返回处理完成后的content
@@ -234,16 +271,16 @@
       pendingStr = pendingStr.replace(/data/,"_data");
       if(ele.attr('showType')=="value"){
         if(pendingStr.match(/></)!=null){
-          pendingStr = pendingStr.replace(/<d\s{1}/,"<sapn ");
-          pendingStr = pendingStr.replace(/\/d>/,"/sapn>");
+          pendingStr = pendingStr.replace(/<d\s{1}/,"<span ");
+          pendingStr = pendingStr.replace(/\/d>/,"/span>");
         }else{
-          pendingStr = pendingStr.replace(/<d\s{1}/,"<sapn ");
-          pendingStr = pendingStr.replace(/\/>/,"></sapn>");
+          pendingStr = pendingStr.replace(/<d\s{1}/,"<span ");
+          pendingStr = pendingStr.replace(/\/>/,"></span>");
         }
       }else{
         if(pendingStr.match(/></)!=null){
           pendingStr = pendingStr.replace(/<d\s{1}/,"<div ");
-            pendingStr = pendingStr.replace(/\/d>/,"/div>");
+          pendingStr = pendingStr.replace(/\/d>/,"/div>");
         }else{
           pendingStr = pendingStr.replace(/<d\s{1}/,"<div ");
           pendingStr = pendingStr.replace(/\/>/,"></div>");
@@ -260,43 +297,29 @@
   }
   
   /**
-   * 解析d标签返回解析后的元素
-   * ele：d元素
-   * return 解析后的元素
+   * 解析元素，根据showType进行拼接显示效果
+   * jQobj:需要解析的元素
+   * _DATA：对应的数据
    */
-  function getParseEle(ele){
-    //直接替换？
-    var parseELe;
-    //d元素中特有的属性
-    var eleAttr = new Object();
-    //数据来源值是_DATA中数据的id
-    eleAttr.data = ele.attr('data');
+  function parseEle(jQobj,_DATA){
     //显示类型pie?table?value?
-    eleAttr.showType = ele.attr('showType');
+    var showType = jQobj.attr('showType');
     //指向jsond中的数据
-    eleAttr.value = ele.attr('value');
-    //
-    eleAttr.decorateView = ele.attr('decorateView');
+    var value = jQobj.attr('value');
+    if(showType=="value"){
+    	alert(_DATA.value);
+    }else if(showType=="table"){
+    	
+    }else if(showType=="pie"){
+    	
+    }else alert("暂不支持showType为"+showType+"类型的解析");
+    
+    //decorateView
+    jQobj.attr('decorateView');
     //dom元素中的元素属性
-    eleAttr.id = ele.attr('id');
-    //显示类型pie?table?value?
-    eleAttr.showType = ele.attr('showType');
-    var eleShowType = ele.attr('showType');
-    //value，返回sapn？ ！value返回div？无论showTyoe是什么类型，都会有data和value属性
-    var e = $("<div></div>");
+    jQobj.attr('id');
+    //var e = $("<div></div>");
     //alert("e="+e[0].outerHTML);
-    if(eleShowType=="value"){
-      //如果是value需要哪些属性？
-      parseELe = "<sapn></sapn>";
-    }else{
-      parseELe = "<div></div>";
-      if(eleShowType=="pie"){
-        //如果是pie需要哪些属性？
-      }else if(eleShowType=="table"){
-        //如果是table需要哪些属性？
-      }
-    }
-    return parseELe;
   }
   /**
    * 初始化pageFrame
