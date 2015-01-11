@@ -14,7 +14,7 @@
     mdid:"446655440000",
     mdName:"人员",
     tempTableId:"",
-    sourceData:"c:\xyz.excel[0]",
+    sourceData:"c:/xyz.excel[0]",
     quotas:[{/*单项指标分析*/
       columnName:"col_1",
       titleName:"性别",

@@ -69,19 +69,28 @@
       var _domAry = $('['+attr+']').toArray();
       domAry[i] = _domAry;
     }
+    //用于判断执行和关闭setInterval
+    var _dataIdAry = new Array();
     //起setInterval
     var intervalId = setInterval(function(){
+      if(_dataIdAry.length==dataIdAry.length) {alert("in close");
+      // TODO 这里没有弹出关闭框？但确实关闭了
+        clearInterval(intervalId);
+      }
       for(var i=0;i<jsonDInfoArray.length;i++){
         var jsondInfo = jsonDInfoArray[i];
-        //起setInterval,检查d元素是否到位
-        if(jsondInfo.jsond!=null&&jsondInfo.jsond!=""){
-          for(var k=0;k<domAry.length;k++){
-            var _domAry = domAry[i];
-            var _DATA = jsondInfo.jsond._DATA;
-            if(jsondInfo.id == $(_domAry[0]).attr('_data')){
-              //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
-              for(var j=0;j<_domAry.length;j++){
-                parseEle($(_domAry[j]),_DATA);
+        if(_dataIdAry.toString().indexOf(jsondInfo.id)==-1){
+          //起setInterval,检查d元素是否到位
+          if(jsondInfo.jsond!=null&&jsondInfo.jsond!=""){
+            for(var k=0;k<domAry.length;k++){
+              var _domAry = domAry[i];
+              var _DATA = jsondInfo.jsond._DATA;
+              if(jsondInfo.id == $(_domAry[0]).attr('_data')){
+                //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
+                for(var j=0;j<_domAry.length;j++){
+                  _dataIdAry.push(jsondInfo.id);
+                  parseEle($(_domAry[j]),_DATA);
+                }
               }
             }
           }
@@ -112,16 +121,16 @@
       jsonDInfoArray[i] = jsondInfo;
     }
     //用于存储已得到jsond的jsondId
-    var jsonDIdary = new Array();
+    var jsonDIdAry = new Array();
     //启动请求数据线程
     var intervalId = setInterval(function(){
       //如果两个数组长度一样,关闭线程
-      if(jsonDIdary.length==jsonDInfoArray.length) clearInterval(intervalId);
+      if(jsonDIdAry.length==jsonDInfoArray.length) clearInterval(intervalId);
       //每次循环都将id拼起来，方便查找，
       for(var k =0;k<jsonDInfoArray.length;k++){
         var str = "";
-        if(jsonDIdary.length>0){
-          for(var y = 0;y<jsonDIdary.length;y++) str+= jsonDIdary[y]+"";
+        if(jsonDIdAry.length>0){
+          for(var y = 0;y<jsonDIdAry.length;y++) str+= jsonDIdAry[y]+"";
         }
         var id = jsonDInfoArray[k].id;
         //=-1表示未请求过，
@@ -131,7 +140,7 @@
               var jsondJsonObj=str2JsonObj(json);
               if(jsondJsonObj.jsonType==1){
                 jsonDInfoArray[k].jsond = jsondJsonObj.data;//allFields(jsondJsonObj.data)
-                jsonDIdary.push(jsonDInfoArray[k].id);
+                jsonDIdAry.push(jsonDInfoArray[k].id);
               }else{
                 $.messager.alert("提示",jsonData.message,'info');
               }
@@ -306,17 +315,68 @@
     var showType = jQobj.attr('showType');
     //指向jsond中的数据
     var value = jQobj.attr('value');
-    if(showType=="value"){
-    	//alert(_DATA);
-    	alert("abc");
-    	var abc="excelMdmArray[0].sheetInfo.name";
-    	alert(allFields(_DATA));
-    	eval("var a=_DATA."+abc);
-    	alert(a);
-    }else if(showType=="table"){
-    	
+    //根据value得到数据
+    eval("var _data=_DATA."+value);
+    //st = value
+    if(showType=="value") if(_data) jQobj.html(_data);
+    //st = tbale
+    else if(showType=="table"){
+      var columnList = _data.columnList;
+      var titles = _data.titles;
+      jQobj.datagrid({
+        singleSelect:true,
+        collapsible:true,
+        // TODO 这数据是有问题的，取不到title
+        columns:[[
+          {field:'colName',title:titles[0].colName,width:100},   
+          {field:'colType',title:titles[1].colType,width:100},
+          {field:'details',title:titles[2].details,width:100,align:'right'},
+          {field:'semantic',title:titles[3].semantic,width:100}
+        ]],
+        data:columnList
+      });
+    //st = pie
     }else if(showType=="pie"){
-    	
+      /**
+       * value="quotas[0].categoryNumDistribution" 
+       * label="category", 
+       * data="num" 
+       * decorateView="{lableShow:[category, percent]}" />
+       */
+      //特有属性
+      var categoryNumDistribution = _data.categoryNumDistribution;
+      var pieLabel = _data.label;
+      var pieData = _data.num;
+      var decorateView = _data.decorateView;
+      var ary = [];
+      for(var i=0;i<categoryNumDistribution.length;i++){
+        eval("var _pie_label=categoryNumDistribution[i]."+pieLabel);
+        eval("var _pie_data=categoryNumDistribution[i]."+pieData);
+        ary[i] = {label:_pie_label,data:_pie_data};
+      }
+      $.plot(jQobj, ary, {
+        series:{
+          pie:{
+            show:true,
+            radius:1,
+            label:{
+              show:true,
+              radius:2/3,
+              formatter:function(label, series){
+                return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+pieLabel+'<br/>'+Math.round(series.percent)+'%</div>';
+              },
+              threshold:0.1
+            }
+          }
+        },
+        legend:{
+          show:false
+        }
+      });
+    }else if(showType=="line"){
+      
+    }else if(showType=="bars"){
+      
     }else alert("暂不支持showType为"+showType+"类型的解析");
     
     //decorateView

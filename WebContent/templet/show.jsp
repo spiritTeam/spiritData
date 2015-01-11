@@ -12,6 +12,12 @@
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/templet/css/templet.css"/>
 <!-- pageFrame -->
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
+<!-- plot -->
+<script type="text/javascript" src="<%=path%>/resources/plugins/flot/excanvas.min.js"></script>
+<script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.js"></script>
+<script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.pie.js"></script>
+<script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.categories.js"></script>
+<script type="text/javascript" src="<%=path%>/resources/plugins/Chart.min.js"></script>
 <title>分析报告</title>
 </head>
 <style>
