@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -41,7 +42,10 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
+import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalDict;
 import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalKey;
+import com.spiritdata.dataanal.metadata.relation.service.MdBasisService;
+import com.spiritdata.dataanal.metadata.relation.service.MdDictService;
 import com.spiritdata.dataanal.metadata.relation.service.MdKeyService;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.metadata.relation.service.MetadataSessionService;
@@ -61,10 +65,6 @@ public class DealExcelFileService {
     @Resource
     private MdQuotaService mdQutotaService;
     @Resource
-    private MdKeyService mdKeyService;
-    @Resource
-    private AnalKey analKey;
-    @Resource
     private DataSource dataSource;
     @Resource
     private AanlResultFileService arfService;
@@ -72,6 +72,18 @@ public class DealExcelFileService {
     private FileManageService fmService;
     @Resource
     private TableMapService tmServier;
+    @Resource
+    private MdBasisService mdBasisServcie;
+    //key分析
+    @Resource
+    private AnalKey analKey;//只分析,并计入文件
+    @Resource
+    private MdKeyService mdKeyService;//调整表
+    //dict分析
+    @Resource
+    private AnalDict dictKey;//只分析,并计入文件
+    @Resource
+    private MdDictService mdDictService;//只分析,并计入文件
 
     /**
      * 处理Excel文件
@@ -204,41 +216,77 @@ public class DealExcelFileService {
                             itmr.setSheetIndex(si.getSheetIndex());
                             itmr.setTableTitleName(sti.getTableTitleName());
                             tmServier.bindImpTabMap(itmr);
-                            //处理Title内容
 
                             // TODO 为了有更好的处理响应时间，以下逻辑可以采用多线程处理
 
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                             _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
                             MetadataModel sysMd = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
+                            //处理Title内容
+                            String maxTitle = sti.getTableTitleName();
+                            if (sysMd.titleMap==null) sysMd.titleMap= new HashMap<String, Integer>();
+                            if (sysMd.titleMap.get(maxTitle)==null) sysMd.titleMap.put(maxTitle, 1);
+                            else sysMd.titleMap.put(maxTitle, sysMd.titleMap.get(maxTitle)+1);
+                            Integer flagI = 0, mV;
+                            for (Entry<String, Integer> entry: sysMd.titleMap.entrySet()) {
+                                mV = entry.getValue();
+                                if (mV>flagI) {
+                                    flagI = mV;
+                                    maxTitle = entry.getKey();
+                                }
+                            }
+                            if (!maxTitle.equals(sysMd.getTitleName())) {//改写内容，包括数据库
+                                sysMd.setTitleName(maxTitle);
+                                MetadataModel uMM = new MetadataModel();
+                                uMM.setId(sysMd.getId());
+                                uMM.setTitleName(maxTitle);
+                                mdBasisServcie.updateMdM(uMM);
+                            }
                             //2-储存临时表
                             saveDataToTempTab(sti, sysMd, tabMapOrgAry[1].getTableName(), parseExcel);
-                            //3-临时表分析
+                            //3-临时表指标分析
                             mdQutotaService.caculateQuota(tabMapOrgAry[1]); //分析临时表指标
-                            //3.1-临时表主键分析
+                            //4-主键分析
+                            //4.1-临时表主键分析
                             Map<String, Object> keyMap = analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
-                            AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
-                            FileInfo arFi = arfService.saveFile(arf);//分析jsonD存储
-                            //3.2-文件关系存储
-                            FileRelation fr = new FileRelation();
-                            fr.setElement1(fi.getFileCategoryList().get(0));
-                            fr.setElement2(arFi.getFileCategoryList().get(0));
-                            fr.setCTime(new Timestamp((new Date()).getTime()));
-                            fr.setRType1(RelType1.POSITIVE);
-                            fr.setRType2("语义分析-主键");
-                            fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")]的主键");
-                            fmService.saveFileRelation(fr);//分析jsonD存储
-                            //3.3-主键联合分析
-                            mdKeyService.adjustMdKey(sysMd); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
-                            //4-存储积累表
-                            if (sysMd.getTableName().equalsIgnoreCase(tabMapOrgAry[0].getTableName())) {
-                                saveDataToAccumulationTab(sti, sysMd, parseExcel);
-                                //5-积累表分析
-                                mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析积累表指标
-                                //6-元数据语义分析
-                                // TODO 分析元数据语义，目前想到——字典项/身份证/经纬度/URL分析/mail地址分析/姓名分析；另外（列之间关系，如数值的比例等）
-                            } else {
-                                throw new Exception("元数据信息中的积累表名称与对应的TableMap中的表名称不相符!");
+                            if (keyMap!=null) {
+                                AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
+                                FileInfo arFi = arfService.saveFile(arf);//分析jsonD存储
+                                //4.2-文件关系存储
+                                FileRelation fr = new FileRelation();
+                                fr.setElement1(fi.getFileCategoryList().get(0));
+                                fr.setElement2(arFi.getFileCategoryList().get(0));
+                                fr.setCTime(new Timestamp((new Date()).getTime()));
+                                fr.setRType1(RelType1.POSITIVE);
+                                fr.setRType2("语义分析-主键");
+                                fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的主键");
+                                fmService.saveFileRelation(fr);//文件关联存储
+                                //4.3-主键分析结果应用
+                                mdKeyService.adjustMdKey(sysMd); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
+                            }
+                            //5-存储积累表
+                            saveDataToAccumulationTab(sti, sysMd, parseExcel);
+                            //6-积累表指标分析
+                            mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析积累表指标
+                            //7-元数据语义分析
+                            // TODO 分析元数据语义，目前想到——字典项/身份证/经纬度/URL分析/mail地址分析/姓名分析；另外（列之间关系，如数值的比例等）
+                            //7.1-分析字典
+                            //7.1.1-积累表字典分析
+                            keyMap = dictKey.scanMetadata(sysMd, null);
+                            if (keyMap!=null) {
+                                AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
+                                FileInfo arFi = arfService.saveFile(arf);//分析jsonD存储
+                                //7.1.2-文件关系存储
+                                FileRelation fr = new FileRelation();
+                                fr.setElement1(fi.getFileCategoryList().get(0));
+                                fr.setElement2(arFi.getFileCategoryList().get(0));
+                                fr.setCTime(new Timestamp((new Date()).getTime()));
+                                fr.setRType1(RelType1.POSITIVE);
+                                fr.setRType2("语义分析-字典项");
+                                fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的字典项");
+                                fmService.saveFileRelation(fr);//文件关联存储
+                                //7.1.3-字典分析结果应用
+                                mdDictService.adjustMdDict(sysMd); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
                             }
                         } catch(Exception e) {
                             // TODO 记录日志 
@@ -329,11 +377,6 @@ public class DealExcelFileService {
                     _log_ignoreMap.put(i, "第"+i+"行为空行。");
                     continue;
                 }
-                if (rowData.size()>sysMm.getColumnList().size()) {
-                    _log_ignoreCount++;
-                    _log_ignoreMap.put(i, "第"+i+"行数据，列个数与元数据列个数不匹配，行数据为<<>>，元数据为<<>>。");
-                    continue;
-                }
                 for (int j=0; j<paramArray.length; j++) paramArray[j]=null;
 
                 int _mmDType, _infoDType;
@@ -359,6 +402,9 @@ public class DealExcelFileService {
                                             v = kv.get("value");
                                         }
                                     }
+                                }
+                                if (_mmDType==ExcelConstants.DATA_TYPE_STRING&&v==null) {
+                                    v=((Map<String, Object>)cell.get("transData")).get("value")+"";
                                 }
                                 paramArray[k]=v;
                             }
@@ -472,11 +518,6 @@ public class DealExcelFileService {
                     _log_ignoreMap.put(i, "第"+i+"行为空行。");
                     continue;
                 }
-                if (rowData.size()>sysMm.getColumnList().size()) {
-                    _log_ignoreCount++;
-                    _log_ignoreMap.put(i, "第"+i+"行数据，列个数与元数据列个数不匹配，行数据为<<>>，元数据为<<>>。");
-                    continue;
-                }
                 for (int j=0; j<paramArray.length; j++) {
                     paramArray[j]=null;
                     paramArray4Update[j]=null;
@@ -505,6 +546,9 @@ public class DealExcelFileService {
                                         if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
                                             v = kv.get("value");
                                         }
+                                    }
+                                    if (_mmDType==ExcelConstants.DATA_TYPE_STRING&&v==null) {
+                                        v=((Map<String, Object>)cell.get("transData")).get("value")+"";
                                     }
                                 }
                                 paramArray[k] = v;

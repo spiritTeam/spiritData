@@ -135,7 +135,7 @@ public class PoiParseUtils {
         oneSti.dataStructureAnalMap= new HashMap<String, Object>();
         sheetInfo.addSheetTableInfo(oneSti);
 
-        String tempStr = "页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])分析出表头分割行，并确定表区域范围[{"+oneSti.getBeginX()+","+oneSti.getBeginY()+"}->{{"+oneSti.getEndX()+","+oneSti.getEndY()+"}]";
+        String tempStr = "页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])分析出表头分割行，并确定表区域范围[{"+oneSti.getBeginX()+","+oneSti.getBeginY()+"}->{"+oneSti.getEndX()+","+oneSti.getEndY()+"}]";
 //        logl.add(StringUtils.convertLogStr(tempStr));
         //===以上最好能够分析出一个sheet中的多个数据表结构
 
@@ -147,6 +147,7 @@ public class PoiParseUtils {
 
  //       logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])开始分析表结构的列数据类型"));
         if (sheetInfo.getStiList().size()==1) {
+            numList.clear();
             _analSheetMetadata(sheetInfo.getStiList().get(0), numList, logl);
         } else { //用多个线程处理
             //TODO 多线程处理，日志和numlist都需要修改！！！！！
@@ -265,9 +266,15 @@ public class PoiParseUtils {
                             sti.dataStructureAnalMap.put(titleName, colAnalData);
                         }
                         int dType = (Integer)((Map<String, Object>)_cellMap.get("transData")).get("dType");
+                        int _dType = -1;
                         if (titleName.indexOf("号")!=-1||titleName.indexOf("证")!=-1||titleName.indexOf("码")!=-1) {
-                            dType = (Integer)((Map<String, Object>)_cellMap.get("nativeData")).get("dType");
-                            if (dType==ExcelConstants.DATA_TYPE_NUMERIC) dType = (Integer)((Map<String, Object>)_cellMap.get("transData")).get("dType");
+                            if (dType!=ExcelConstants.DATA_TYPE_DATE) {
+                                _dType = (Integer)((Map<String, Object>)_cellMap.get("nativeData")).get("dType");
+                                if (_dType==ExcelConstants.DATA_TYPE_NUMERIC) dType = (Integer)((Map<String, Object>)_cellMap.get("transData")).get("dType");
+                                if (_dType==ExcelConstants.DATA_TYPE_NUMERIC||_dType==ExcelConstants.DATA_TYPE_STRING) {
+                                    dType = (Integer)((Map<String, Object>)_cellMap.get("transData")).get("dType");
+                                }
+                            }
                         }
                         Map<String, Object> colDtypeAnalData = (Map<String, Object>)colAnalData.get(dType);
                         if (colDtypeAnalData==null) {
@@ -655,7 +662,6 @@ public class PoiParseUtils {
      * 判断行是否是由原始String类型列组成的行
      * @param row 行数据，以cellMap为list中的元素
      * @return 若一样返回true，否则返回false
-     */
     private boolean isNativeStingTypeRow(List<Map<String, Object>> row) {
         if (row==null||row.size()==0) return false;
         Map<String, Object> compareCellMap = null;//用于判断的map
@@ -670,6 +676,7 @@ public class PoiParseUtils {
         }
         return true;
     }
+     */
 
     /**
      * 判断行是否为某一区域的最后一行，用于判断是否是表头

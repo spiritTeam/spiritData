@@ -103,9 +103,9 @@ public class QuotaTable extends BaseObject {
         if (this.colQuotaList==null) this.colQuotaList=new ArrayList<QuotaColumn>();
         for (QuotaColumn c: this.colQuotaList) {
             MetadataColumn _c=c.getColumn();
-            if (_c.getId().equals(mdc.getId())) throw new Exception("在列指标列表中已经有与所添加对象[列Id]相同的列指标对象，不同重复添加！");
-            if (_c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列指标对象，不同重复添加！");
-            if (_c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列指标对象，不同重复添加！");
+            if (_c.getId().equals(mdc.getId())) throw new Exception("在列指标列表中已经有与所添加对象[列Id]相同的列指标对象，不能重复添加！");
+            if (_c.getTitleName().equals(mdc.getTitleName())) throw new Exception("在列描述列表中已经有与所添加对象[列意义名称]相同的列指标对象，不能重复添加！");
+            if (_c.getColumnName().equals(mdc.getColumnName())) throw new Exception("在列描述列表中已经有与所添加对象[列名称]相同的列指标对象，不能重复添加！");
         }
         qc.setTabQuota(this);
         this.colQuotaList.add(qc);

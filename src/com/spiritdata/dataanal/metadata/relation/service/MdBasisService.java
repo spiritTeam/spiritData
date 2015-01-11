@@ -70,6 +70,23 @@ public class MdBasisService {
         paramMm.setOwnerId(ownerId);
         return mmDao.queryForList("getList4Session", paramMm.toHashMapAsBean());
     }
+    /**
+     * 根据所有者Id获得元数据标题列表
+     * @param ownerId 所有者Id
+     * @return 元数据标题列表
+     * @throws Exception
+     */
+    public List<Map<String, Object>> getMdTitleListByOwnerId(String ownerId) {
+        return mmDao.queryForListAutoTranform("getMdTitleList", ownerId);
+    }
+    /**
+     * 修改元数据模式信息
+     * @param paramMm 元数据信息
+     * @return 修改的条数
+     */
+    public int updateMdM(MetadataModel paramMm) {
+        return mmDao.update(paramMm);
+    }
 
     //以下为元数据列描述相关操作
     /**
@@ -151,15 +168,5 @@ public class MdBasisService {
             ret.addColumn(mc);
         }
         return ret;
-    }
-
-    /**
-     * 根据所有者Id获得元数据标题列表
-     * @param ownerId 所有者Id
-     * @return 元数据标题列表
-     * @throws Exception
-     */
-    public List<Map<String, Object>> getMdTitleListByOwnerId(String ownerId) {
-        return mmDao.queryForListAutoTranform("getMdTitleList", ownerId);
     }
 }

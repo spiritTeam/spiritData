@@ -9,7 +9,7 @@ import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
-import com.spiritdata.framework.util.JsonUtils;
+import com.spiritdata.jsonD.util.JsonUtils;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
@@ -129,7 +129,7 @@ public class AnalResultFile extends BaseObject {
         _extInfo.put("JSOND", this.jsonDCode);
         _extInfo.put(this.objType, this.objId);
 
-        fc.setExtInfo(JsonUtils.beanToJson(_extInfo));
+        fc.setExtInfo(JsonUtils.objToJson(_extInfo));
 
         ret.addFileCategoryList(fc);
 
