@@ -81,7 +81,7 @@
             if(jsondInfo.id == $(_domAry[0]).attr('_data')){
               //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
               for(var j=0;j<_domAry.length;j++){
-                parseEle($(_domAry[j]),jsondInfo.jsond);
+                parseEle($(_domAry[j]),_DATA);
               }
             }
           }
@@ -301,13 +301,18 @@
    * jQobj:需要解析的元素
    * _DATA：对应的数据
    */
-  function parseEle(jQobj,_DATA){
+  function parseEle(jQobj, _DATA){
     //显示类型pie?table?value?
     var showType = jQobj.attr('showType');
     //指向jsond中的数据
     var value = jQobj.attr('value');
     if(showType=="value"){
-    	alert(_DATA.value);
+    	//alert(_DATA);
+    	alert("abc");
+    	var abc="excelMdmArray[0].sheetInfo.name";
+    	alert(allFields(_DATA));
+    	eval("var a=_DATA."+abc);
+    	alert(a);
     }else if(showType=="table"){
     	
     }else if(showType=="pie"){
