@@ -33,6 +33,7 @@ import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
+import com.spiritdata.dataanal.dictdata.pojo._OwnerDictionary;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
@@ -48,7 +49,7 @@ import com.spiritdata.dataanal.metadata.relation.service.MdBasisService;
 import com.spiritdata.dataanal.metadata.relation.service.MdDictService;
 import com.spiritdata.dataanal.metadata.relation.service.MdKeyService;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
-import com.spiritdata.dataanal.metadata.relation.service.MetadataSessionService;
+import com.spiritdata.dataanal.metadata.relation.service.MdSessionService;
 import com.spiritdata.dataanal.metadata.relation.service.TableMapService;
 
 /**
@@ -61,7 +62,7 @@ public class DealExcelFileService {
     private Logger logger = Logger.getLogger(DealExcelFileService.class);
 
     @Resource
-    private MetadataSessionService mdSessionService;
+    private MdSessionService mdSessionService;
     @Resource
     private MdQuotaService mdQutotaService;
     @Resource
@@ -285,9 +286,12 @@ public class DealExcelFileService {
                                 fr.setRType2("语义分析-字典项");
                                 fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的字典项");
                                 fmService.saveFileRelation(fr);//文件关联存储
-                                //7.1.3-字典分析结果应用
-                                mdDictService.adjustMdDict(sysMd); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
+                                keyMap.remove("resultFile");
                             }
+                            //7.1.3-字典分析结果调整
+                            //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
+                            _OwnerDictionary _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);
+                            mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
                         } catch(Exception e) {
                             // TODO 记录日志 
                             e.printStackTrace();
