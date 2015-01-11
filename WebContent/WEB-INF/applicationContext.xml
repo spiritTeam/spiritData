@@ -82,7 +82,8 @@
   <bean id="sessionLoaderShell" class="com.spiritdata.framework.core.web.SessionLoaderShell">
     <property name="sessionLoaderList">
       <list>
-        <ref bean="_OwnerMetadataService"/>
+        <ref bean="mdSessionService"/>
+        <ref bean="dictSessionService"/>
       </list>
     </property>
   </bean>

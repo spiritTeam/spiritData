@@ -74,7 +74,7 @@ public class AnalDict implements AnalMetadata {
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
         AtomData _dataElement = new AtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
-        _DATA_Map.put("_keyAnals", convertToList(ret));
+        _DATA_Map.put("_dictAnals", convertToList(ret));
 
         String jsonStr=JsonUtils.formatJsonStr("{"+jsonDHead.toJson()+",\"_DATA\":"+JsonUtils.objToJson(_DATA_Map)+"}", null);
 

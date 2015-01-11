@@ -9,15 +9,12 @@ import com.spiritdata.framework.core.model.BaseObject;
  * @author wh
  */
 public class DictMaster extends BaseObject {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -5935730569262158194L;
 
     private String id; //字典组id
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
     private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session)）
-    private String dmName; //典组名称
+    private String dmName; //字典组名称
     private String NPy; //字典组名称拼音
     private int sort; //排序号，越大越靠前
     private int isValidate; //字典组是否可用 1可用，2不可用

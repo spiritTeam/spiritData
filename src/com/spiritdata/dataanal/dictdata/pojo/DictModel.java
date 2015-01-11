@@ -3,8 +3,7 @@ package com.spiritdata.dataanal.dictdata.pojo;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 
 /**
- * 字典数据（字典模型），此模型包括素有者信息。
- * 由字典组和字典树组合而成
+ * 字典数据（字典模型），此模型包括所有者信息。由字典组和字典树组合而成
  * @author wh
  */
 public class DictModel extends DictMaster{
@@ -14,11 +13,19 @@ public class DictModel extends DictMaster{
         super();
     }
 
+    /**
+     * 根据持久化数据（字典组），构造无字典树的字典模型
+     * @param dMaster 字典组信息
+     */
     public DictModel(DictMaster dMaster) {
         super();
         this.setDictModelByMaster(dMaster);
     }
 
+    /**
+     * 根据持久化数据（字典组），构造无字典树的字典模型
+     * @param dMaster 字典组信息
+     */
     public void setDictModelByMaster (DictMaster dMaster) {
         this.setId(dMaster.getId());
         this.setDmName(dMaster.getDmName());
@@ -34,6 +41,9 @@ public class DictModel extends DictMaster{
         this.setLmTime(dMaster.getLmTime());
     }
 
+    /**
+     * 获得字典组信息，为持久化处理
+     */
     public DictMaster getDictMaster() {
         DictMaster dd = new DictMaster();
         dd.setId(this.getId());
@@ -51,5 +61,8 @@ public class DictModel extends DictMaster{
         return dd;
     }
 
-    public TreeNode<DictDetail> dictTree;//字典的根
+    /**
+     * 字典的根，此根结点是以本字典模型对应的字典组信息为基础的
+     */
+    public TreeNode<DictDetail> dictTree;
 }

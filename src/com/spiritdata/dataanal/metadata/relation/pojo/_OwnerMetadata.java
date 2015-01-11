@@ -38,6 +38,7 @@ public class _OwnerMetadata {
     public _OwnerMetadata(String onwerId, int onwerType) {
         this.onwerId = onwerId;
         this.onwerType = onwerType;
+        this.loadSuccess = false;
     }
 
     /**

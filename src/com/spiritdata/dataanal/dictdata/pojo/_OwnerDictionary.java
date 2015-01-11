@@ -8,12 +8,12 @@ import com.spiritdata.framework.core.model.tree.TreeNode;
 /**
  * 所有者“字典数据”。把一个所有者的所有字典信息按结构进行存储。
  * 主要服务于缓存(或Session)、数据导入、数据质量分析。
+ * 这里只对Session中的数据进行处理，不对持久化数据库进行处理。
  * 
  * @author wh
  */
 public class _OwnerDictionary {
-    public ConcurrentHashMap<String, DictModel> dictModelMap; //所有者字典数据集合
-    public ConcurrentHashMap<String, TreeNode<DictDetail>> dictTreeMap; //所有者字典项索引树
+    public ConcurrentHashMap<String, DictModel> dictModelMap; //所有者字典模型的数据集合
     public List<DictMaster> dmList = null; //所有者字典组列表
     public List<DictDetail> ddList = null; //所有者字典项列表
 
@@ -44,10 +44,11 @@ public class _OwnerDictionary {
     public _OwnerDictionary(String onwerId, int onwerType) {
         this.onwerId = onwerId;
         this.onwerType = onwerType;
+        this.loadSuccess = false;
     }
 
     /**
-     * 根据Id得到字典模型
+     * 根据Id得到字典模式
      * @param dictMId 字典组Id
      * @return 元数据信息
      */

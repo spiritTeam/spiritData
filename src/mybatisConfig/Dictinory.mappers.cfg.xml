@@ -7,7 +7,7 @@
     <typeAlias alias="dictDetail" type="com.spiritdata.dataanal.dictdata.pojo.DictDetail"/>
   </typeAliases>
   <mappers>
-    <mapper resource="com/spiritdata/dataanal/dictdata/sql/DictDetail.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/dictdata/sql/DictMaster.mapper.xml"/>
     <mapper resource="com/spiritdata/dataanal/dictdata/sql/DictDetail.mapper.xml"/>
   </mappers>
 </configuration>
