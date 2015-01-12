@@ -29,8 +29,8 @@
 </body>
 <script type="text/javascript">
 function showPolt(showMethod){
-  var pData={"showMethod":'bars'};
-  var url = '<%=path%>/plot/testData.json'
+  var pData={'showMethod':showMethod};
+  var url = '<%=path%>/testData.json'
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
     success:function(json){
       var id = "flotDemo1";
