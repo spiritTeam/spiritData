@@ -3,6 +3,7 @@ package com.spiritdata.dataanal.metadata.relation.service;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,32 +83,43 @@ public class MdDictService {
                         //1准备数据-字典组
                         DictMaster dm = new DictMaster();
                         dm.setId(SequenceUUID.getUUIDSubSegment(4));
-                        dm.setOwnerId(_dictCache.getOnwerId());
-                        dm.setOwnerType(_dictCache.getOnwerType());
-                        dm.setDmName(key);//字典组名称mm.getTitleName()+"::"+
-                        dm.setNPy(ChineseCharactersUtils.getFullSpellFirstUp(key)); //汉语拼音
+                        dm.setOwnerId(_dictCache.getOwnerId());
+                        dm.setOwnerType(_dictCache.getOwnerType());
+                        dm.setDmName(mm.getColumnByCName(key).getTitleName());//字典组名称mm.getTitleName()+"::"+
+                        dm.setNPy(ChineseCharactersUtils.getFullSpellFirstUp(dm.getDmName())); //汉语拼音
                         dm.setSort(1); //排序，排序需要由人来处理
                         dm.setIsValidate(1);
                         dm.setMType(2); //系统生成的
                         //2准备数据-字典语义
                         MetadataColSemanteme mcs = new MetadataColSemanteme();
                         mcs.setId(SequenceUUID.getPureUUID());
-                        mcs.setColId(mm.getColumnByTName(key).getId());
+                        mcs.setColId(mm.getColumnByCName(key).getId());
                         mcs.setMdMId(mm.getId());
                         mcs.setSemantemeType(1);//字典型
                         mcs.setSemantemeCode(dm.getId());
                         mcs.setSemantemeWeight((Float)v);
-                        //缓存处理
-                        //1缓存处理-字典
-                        dModel = new DictModel(dm);
-                        _dictCache.dmList.add(dm);
-                        _dictCache.dictModelMap.put(dm.getId(), dModel);
-                        //2缓存处理-源数据
-                        mm.getColumnByTName(key).addColSem(mcs);
-                        //字典处理
                         //数据库处理
                         dictService.addDictMaster(dm);//字典
                         mdBasisService.addMetadataColSemanteme(mcs);//语义
+                        //缓存处理
+                        //1缓存处理-字典
+                        dModel = new DictModel(dm);
+                        //1-1创建根结点
+                        DictDetail _t = new DictDetail();
+                        _t.setId(dModel.getId());
+                        _t.setMid(dModel.getId());
+                        _t.setNodeName(dModel.getDmName());
+                        _t.setIsValidate(1);
+                        _t.setParentId(null);
+                        _t.setOrder(1);
+                        _t.setBCode("root");
+                        TreeNode<DictDetail> root = new TreeNode<DictDetail>(_t);
+                        dModel.dictTree = root;
+                        if (_dictCache.dmList==null) _dictCache.dmList = new ArrayList<DictMaster>();
+                        _dictCache.dmList.add(dm);
+                        _dictCache.dictModelMap.put(dm.getId(), dModel);
+                        //2缓存处理-源数据
+                        mm.getColumnByCName(key).addColSem(mcs);
                     }
                     //字典项的具体处理
                     conn = dataSource.getConnection();
@@ -117,11 +129,12 @@ public class MdDictService {
                     while (rs.next()) {//处理每个字典项
                         String dictDetailName = rs.getString(1);
                         //找看看是否有相同的
-                        
-                        for (DictDetail dd: _dictCache.ddList) {
-                            if (dd.getMid().equals(dModel.getId())&&dd.getNodeName().equals(dictDetailName)) {
-                                find=true;
-                                break;
+                        if (_dictCache.ddList!=null&&_dictCache.ddList.size()>0) {
+                            for (DictDetail dd: _dictCache.ddList) {
+                                if (dd.getMid().equals(dModel.getId())&&dd.getNodeName().equals(dictDetailName)) {
+                                    find=true;
+                                    break;
+                                }
                             }
                         }
                         if (!find) {//需要新增
@@ -134,11 +147,14 @@ public class MdDictService {
                             dd.setBCode(dd.getId());
                             dd.setDType(2); //系统生成的
                             dd.setParentId(dModel.getId()); //在目前字典项只能是单级的，是一个单级树
+                            dd.setOrder(1); //由于是单级树，没有排序
                             //数据库新增
                             dictService.addDictDetail(dd);
                             //缓存处理
                             TreeNode<DictDetail> treeDD = new TreeNode<DictDetail>(dd);
                             dModel.dictTree.addChild(treeDD);
+                            if (_dictCache.ddList==null) _dictCache.ddList = new ArrayList<DictDetail>();
+                            _dictCache.ddList.add(dd);
                         }
                     }
                 }

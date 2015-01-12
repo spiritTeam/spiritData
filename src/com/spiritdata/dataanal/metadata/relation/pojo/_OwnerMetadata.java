@@ -13,14 +13,14 @@ public class _OwnerMetadata {
 
     protected boolean loadSuccess=false; //加载数据是否完成
 
-    protected String onwerId; //所有者Id，有可能是用户Id也有可能是SessionId
-    public String getOnwerId() {
-        return onwerId;
+    protected String ownerId; //所有者Id，有可能是用户Id也有可能是SessionId
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    protected int onwerType; //所有者类型：1=用户；2=Session
-    public int getOnwerType() {
-        return onwerType;
+    protected int ownerType; //所有者类型：1=用户；2=Session
+    public int getOwnerType() {
+        return ownerType;
     }
 
     public void setLoadSuccess() {
@@ -33,11 +33,11 @@ public class _OwnerMetadata {
     /**
      * 构造所有者处理单元
      * @param ownerId 所有者类型
-     * @param onwerType 所有者Id
+     * @param ownerType 所有者Id
      */
-    public _OwnerMetadata(String onwerId, int onwerType) {
-        this.onwerId = onwerId;
-        this.onwerType = onwerType;
+    public _OwnerMetadata(String ownerId, int ownerType) {
+        this.ownerId = ownerId;
+        this.ownerType = ownerType;
         this.loadSuccess = false;
     }
 

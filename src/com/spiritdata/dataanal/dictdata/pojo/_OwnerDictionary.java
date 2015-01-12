@@ -3,8 +3,6 @@ package com.spiritdata.dataanal.dictdata.pojo;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.spiritdata.framework.core.model.tree.TreeNode;
-
 /**
  * 所有者“字典数据”。把一个所有者的所有字典信息按结构进行存储。
  * 主要服务于缓存(或Session)、数据导入、数据质量分析。
@@ -19,14 +17,14 @@ public class _OwnerDictionary {
 
     protected boolean loadSuccess=false; //加载数据是否完成
 
-    protected String onwerId; //所有者Id，有可能是用户Id也有可能是SessionId
-    public String getOnwerId() {
-        return onwerId;
+    protected String ownerId; //所有者Id，有可能是用户Id也有可能是SessionId
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    protected int onwerType; //所有者类型：1=用户；2=Session
-    public int getOnwerType() {
-        return onwerType;
+    protected int ownerType; //所有者类型：1=用户；2=Session
+    public int getOwnerType() {
+        return ownerType;
     }
 
     public void setLoadSuccess() {
@@ -39,11 +37,11 @@ public class _OwnerDictionary {
     /**
      * 构造所有者处理单元
      * @param ownerId 所有者类型
-     * @param onwerType 所有者Id
+     * @param ownerType 所有者Id
      */
-    public _OwnerDictionary(String onwerId, int onwerType) {
-        this.onwerId = onwerId;
-        this.onwerType = onwerType;
+    public _OwnerDictionary(String ownerId, int ownerType) {
+        this.ownerId = ownerId;
+        this.ownerType = ownerType;
         this.loadSuccess = false;
     }
 

@@ -18,12 +18,15 @@
     quotas:[{/*单项指标分析*/
       columnName:"col_1",
       titleName:"性别",
-      titles:[{category:"分类"},{num:"数量"},{percent:"百分比"}],/*这是SP.TEAM-00009中默认的，应该去掉*/
-      categoryNumDistribution:[
-        {category:"男",   num:"156", percent:"78"},
-        {category:"女",   num:"40",  percent:"20"},
-        {category:"其他", num:"4",   percent:"2"}
-      ]
+      desc:"人员表性别分类数值分布",
+      tableData:{
+        titles:[{category:"分类"},{num:"数量"},{percent:"百分比"}],/*这是SP.TEAM-00009中默认的，应该去掉*/
+        bodyData:[
+          {category:"男",   num:"156", percent:"78"},
+          {category:"女",   num:"40",  percent:"20"},
+          {category:"其他", num:"4",   percent:"2"}
+        ]
+      }
     },{
       columnName:"col_4",
       titleName:"籍贯",

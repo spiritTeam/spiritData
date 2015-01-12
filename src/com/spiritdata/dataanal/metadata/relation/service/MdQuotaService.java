@@ -115,7 +115,7 @@ public class MdQuotaService {
     }
 
     /*
-     * 计算表指标信息
+     * 计算表指标信息，注意这里的分析会冲掉以前对改表分析的内容，用不用把表的分析存储在jsonD中呢？？？？
      * @param mm 元数据信息
      * @param tableName 表名称
      * @param tmoId 映射表记录id
@@ -127,6 +127,7 @@ public class MdQuotaService {
         QuotaTable qt = null;
         Connection conn = null;
         PreparedStatement ps = null;
+        PreparedStatement ps2 = null;
         ResultSet rs = null;
         boolean autoCommitFlag = true;
         try {
@@ -225,10 +226,29 @@ public class MdQuotaService {
                 qtDao.update(qt);
             }
             List<QuotaColumn> qcl = qt.getColQuotaList();
+            ps = conn.prepareStatement("update sa_md_colquota SET max=?, min=?, nullCount=?, distinctCount=? where cId=? and tqId=?");
+            ps2 = conn.prepareStatement("insert into sa_md_colquota ( id, cId, tqId, max, min, nullCount, distinctCount ) values ( ?, ?, ?, ?, ?, ?, ? )");
             if (qcl!=null&&qcl.size()>0) {
                 for (QuotaColumn qc: qt.getColQuotaList()) {
-                    int updateSize = qcDao.update(qc);
-                    if (updateSize<1) qcDao.insert(qc);
+                    ps.clearParameters();
+                    ps.setString(1, qc.getMax());
+                    ps.setString(2, qc.getMin());
+                    ps.setLong(3, qc.getNullCount());
+                    ps.setLong(4, qc.getDistinctCount());
+                    ps.setString(5, qc.getColId());
+                    ps.setString(6, qc.getTqId());
+                    int updateSize = ps.executeUpdate();
+                    if (updateSize<1) {
+                        ps2.clearParameters();
+                        ps2.setString(1, qc.getId());
+                        ps2.setString(2, qc.getColId());
+                        ps2.setString(3, qc.getTqId());
+                        ps2.setString(4, qc.getMax());
+                        ps2.setString(5, qc.getMin());
+                        ps2.setLong(6, qc.getNullCount());
+                        ps2.setLong(7, qc.getDistinctCount());
+                        ps2.executeUpdate();
+                    }
                 }
             }
             conn.commit();
@@ -246,6 +266,7 @@ public class MdQuotaService {
         } finally {
             try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
             try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
+            try { if (ps2!=null) {ps2.close();ps2 = null;} } catch (Exception e) {e.printStackTrace();} finally {ps2 = null;};
             try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
         return qt;

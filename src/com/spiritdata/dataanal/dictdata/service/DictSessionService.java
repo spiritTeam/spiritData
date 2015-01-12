@@ -15,6 +15,7 @@ import com.spiritdata.dataanal.dictdata.pojo.DictDetail;
 import com.spiritdata.dataanal.dictdata.pojo.DictMaster;
 import com.spiritdata.dataanal.dictdata.pojo.DictModel;
 import com.spiritdata.dataanal.dictdata.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.core.model.tree.TreeNode;
@@ -45,6 +46,7 @@ public class DictSessionService implements SessionLoader {
      */
     public void loadData2Session(String ownerId, int ownerType, HttpSession session) {
         _OwnerDictionary _od = new _OwnerDictionary(ownerId, ownerType);
+        session.removeAttribute(SDConstants.SESSION_OWNER_DICT);
         session.setAttribute(SDConstants.SESSION_OWNER_DICT, _od);
         //启动加载线程
         Thread_LoadData lm = new Thread_LoadData(session, this);
@@ -63,6 +65,31 @@ public class DictSessionService implements SessionLoader {
         }
         loadData2Session(ownerId, ownerType, session);
     }
+
+    /**
+     * 装载并检查数据，先检查是否已经装载，若没有装载则进行装载。并返回装载的内容
+     * @param session 
+     * @throws InterruptedException 
+     */
+    public _OwnerDictionary loadcheckData(HttpSession session) throws InterruptedException {
+        _OwnerDictionary _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);
+        if (_od==null) {
+            String ownerId = session.getId();
+            int ownerType = 2;
+            UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+            if (user!=null) {
+                ownerId = user.getUserId();
+                ownerType = 1;
+            }
+            loadData2Session(ownerId, ownerType, session);
+            _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);
+            while (!_od.isLoadSuccess()) {
+                Thread.sleep(100);
+                _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);
+            }
+        }
+        return _od;
+    }
 }
 
 class Thread_LoadData implements Runnable {
@@ -77,8 +104,8 @@ class Thread_LoadData implements Runnable {
     @Override
     public void run() {
         _OwnerDictionary _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);
-        String ownerId = _od.getOnwerId();
-        int ownerType = _od.getOnwerType();
+        String ownerId = _od.getOwnerId();
+        int ownerType = _od.getOwnerType();
         _od.dictModelMap = new ConcurrentHashMap<String, DictModel>();
 
         DictService dictService = caller.getDictService();
@@ -116,6 +143,7 @@ class Thread_LoadData implements Runnable {
 
                                     Map<String, Object> m = TreeUtils.convertFromList(templ);
                                     root.setChildren((List<TreeNode<DictDetail>>)m.get("forest"));
+                                    dModel.dictTree = root;
                                     //暂不处理错误记录
                                 }
                             }
@@ -126,7 +154,7 @@ class Thread_LoadData implements Runnable {
                 }
             }
         } catch(Exception e) {
-            e.printStackTrace();
+            throw new Dtal0203CException("加载Session中的字典信息", e);
         } finally {
             _od.setLoadSuccess();
         }
