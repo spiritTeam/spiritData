@@ -10,11 +10,24 @@
   desc:"xyz.xml文件元数据分析结果",
   _DATA:{
     fileName:"c:/xyz.excel",
-    excelMdmArray:[{/*excl元数据数组*/
+    excelMdmArray:[{
       mdid:"446655440000",
       sheetInfo:{
         name:"人员",
         index:"0"
+      },
+      tableData:{
+        titles:[{colName:"元数据名"},{colType:"元数据类型"},{details:"详细"},{semantic:"语义定义"}]/*这是样例，应该去掉*/
+        tableBody:[
+          {colName:"id",       colType:"String", details:"",           semantic:"唯一列，可做主键"},
+          {colName:"名称",     colType:"String", details:"",           semantic:"可能是中文名称，可能性98%"},
+          {colName:"SFZ",      colType:"String", details:"",           semantic:"可能是身份证，可能性99%"},
+          {colName:"性别",     colType:"String", details:"dictId:100", semantic:"字典项"},
+          {colName:"籍贯",     colType:"String", details:"dictId:200", semantic:"字典项"},
+          {colName:"出生日期", colType:"Date",   details:"",           semantic:"唯一列"},
+          {colName:"政治面貌", colType:"未知",   details:"",           semantic:"次元数据列为空，数据抛弃"},
+          {colName:"其他",     colType:"未知",   details:"",           semantic:"次元数据列数据格式混乱，数据抛弃"}
+        ]
       },
       columnList:[
         {colName:"id",       colType:"String", details:"",           semantic:"唯一列，可做主键"},
@@ -25,14 +38,20 @@
         {colName:"出生日期", colType:"Date",   details:"",           semantic:"唯一列"},
         {colName:"政治面貌", colType:"未知",   details:"",           semantic:"次元数据列为空，数据抛弃"},
         {colName:"其他",     colType:"未知",   details:"",           semantic:"次元数据列数据格式混乱，数据抛弃"}
-      ],
-      titles:[{colName:"元数据名"},{colType:"元数据类型"},{details:"详细"},{semantic:"语义定义"}]/*这是样例，应该去掉*/
+      ]
     },{
       mdid:"446655440001",
       sheetInfo:{
         name:"案件",
         index:"1"
       },
+      tableData:{
+        tableBody:[
+          {colName:"id",       colType:"String", details:"", Semantic:"唯一列，可做主键"},
+          {colName:"案件名称", colType:"String", details:"", Semantic:"可能是中文名称，可能性98%"},
+          {colName:"案件编号", colType:"String", details:"", Semantic:"可能是身份证，可能性99%"}
+      	]
+      }
       columnList:[
         {colName:"id",       colType:"String", details:"", Semantic:"唯一列，可做主键"},
         {colName:"案件名称", colType:"String", details:"", Semantic:"可能是中文名称，可能性98%"},
