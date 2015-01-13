@@ -318,11 +318,13 @@
     //根据value得到数据
     eval("var _data=_DATA."+value);
     //st = value
-    if(showType=="value") if(_data) jQobj.html(_data);
-    //st = tbale
-    else if(showType=="table"){
+    if(showType=="value"){
+      if(_data) jQobj.html(_data);
+    }else if(showType=="table"){
+    	//st = tbale
       var columnList = _data.columnList;
       var titles = _data.titles;
+      jQobj.attr('style','width:450px;');
       jQobj.datagrid({
         singleSelect:true,
         collapsible:true,
@@ -336,7 +338,7 @@
         data:columnList
       });
     //st = pie
-    }else if(showType=="pie"){
+    }else if(showType=="pie"){alert("111");
       /**
        * value="quotas[0].categoryNumDistribution" 
        * label="category", 
@@ -362,7 +364,7 @@
             label:{
               show:true,
               radius:2/3,
-              formatter:function(label, series){
+              formatter:function(pieLabel, series){
                 return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+pieLabel+'<br/>'+Math.round(series.percent)+'%</div>';
               },
               threshold:0.1
