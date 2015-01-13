@@ -3,149 +3,107 @@
   基础元数据：元数据列语义
 -->
 
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="metadataColSemanteme" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="metadataColSemanteme">
   <!-- 对象定义:元数据列语义 -->
-  <resultMap id="BaseResultMap" type="MdColS" >
-    <id     column="id"            property="id"            jdbcType="VARCHAR" />
-    <result column="cId"           property="colId"         jdbcType="VARCHAR" />
-    <result column="tmId"          property="mdMId"         jdbcType="VARCHAR" />
-    <result column="semantemeCode" property="semantemeCode" jdbcType="VARCHAR" />
-    <result column="semantemeType" property="semantemeType" jdbcType="INTEGER" />
-    <result column="cTime"         property="CTime"         jdbcType="TIMESTAMP" />
-    <result column="lmTime"        property="lmTime"        jdbcType="TIMESTAMP" />
+  <resultMap id="BaseResultMap" type="MdColS">
+    <id     column="id"            property="id"            jdbcType="VARCHAR"/>
+    <result column="cId"           property="colId"         jdbcType="VARCHAR"/>
+    <result column="tmId"          property="mdMId"         jdbcType="VARCHAR"/>
+    <result column="semantemeCode" property="semantemeCode" jdbcType="VARCHAR"/>
+    <result column="semantemeType" property="semantemeType" jdbcType="INTEGER"/>
+    <result column="cTime"         property="CTime"         jdbcType="TIMESTAMP"/>
+    <result column="lmTime"        property="lmTime"        jdbcType="TIMESTAMP"/>
   </resultMap>
+
   <!-- 所有列 -->
-  <sql id="Base_Column_List" >
+  <sql id="Base_Column_List">
     id, cId, tmId, semantemeCode, semantemeType, cTime, lmTime
   </sql>
+
   <!-- 条件子句 -->
-  <sql id="WhereClauseByEntiey" >
-    <where >
-      <trim prefix="(" suffix=")" prefixOverrides="and" >
-        <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="cId != null" > and cId = #{colId,jdbcType=VARCHAR} </if>
-        <if test="mdMId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
-        <if test="semantemeCode != null" > and semantemeCode = #{semantemeCode,jdbcType=VARCHAR} </if>
-        <if test="semantemeType!=null and semantemeType!=1" > and semantemeType = #{semantemeType,jdbcType=INTEGER} </if>
-        <if test="CTime != null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
-        <if test="lmTime != null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR} </if>
+        <if test="cId!=null"> and cId=#{colId,jdbcType=VARCHAR} </if>
+        <if test="mdMId!=null"> and tmId=#{mdMId,jdbcType=VARCHAR} </if>
+        <if test="semantemeCode!=null"> and semantemeCode=#{semantemeCode,jdbcType=VARCHAR} </if>
+        <if test="semantemeType!=null and semantemeType!=0"> and semantemeType=#{semantemeType,jdbcType=INTEGER} </if>
+        <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP} </if>
+        <if test="lmTime!=null"> and lmTime=#{lmTime,jdbcType=TIMESTAMP} </if>
       </trim>
     </where>
   </sql>
+
   <!-- 获得记录条数-->
-  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
-    select count(*) from sa_md_colsemanteme
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey"/>
-    </if>
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from sa_md_colsemanteme <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </select>
 
   <!-- 获得列表 -->
-  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" /> from sa_md_colsemanteme
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_md_colsemanteme
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="orderByClause!=null">order by ${orderByClause}</if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" /> from sa_md_colsemanteme where id = #{id,jdbcType=VARCHAR}
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/> from sa_md_colsemanteme where id=#{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 按照所有者获得列表 -->
-  <select id="getListByOwnerId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="getListByOwnerId" resultMap="BaseResultMap" parameterType="java.lang.String">
     select a.* from sa_md_colsemanteme a, sa_md_tabmodel b where a.tmId=b.id and b.ownerId=#{ownerId,jdbcType=VARCHAR}
     order by a.tmId, a.cid
   </select>
 
   <!-- 获得一条数据 -->
-  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" />
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/>
     from sa_md_colsemanteme
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </select>
 
   <!-- 新增数据 -->
-  <insert id="insert" parameterType="java.util.Map" >
+  <insert id="insert" parameterType="java.util.Map">
     insert into sa_md_colsemanteme
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="colId != null" >
-        cId,
-      </if>
-      <if test="mdMId != null" >
-        tmId,
-      </if>
-      <if test="semantemeCode != null" >
-        semantemeCode,
-      </if>
-      <if test="semantemeType!=null and semantemeType!=1" >
-        semantemeType,
-      </if>
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!=null">id,</if>
+      <if test="colId!=null">cId,</if>
+      <if test="mdMId!=null">tmId,</if>
+      <if test="semantemeCode!=null">semantemeCode,</if>
+      <if test="semantemeType!=null and semantemeType!=0">semantemeType,</if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="colId != null" >
-        #{coId,jdbcType=VARCHAR},
-      </if>
-      <if test="mdMId != null" >
-        #{mdMId,jdbcType=VARCHAR},
-      </if>
-      <if test="semantemecode != null" >
-        #{semantemeCode,jdbcType=VARCHAR},
-      </if>
-      <if test="semantemeType!=null and semantemeType!=1" >
-        #{semantemeType,jdbcType=INTEGER},
-      </if>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
+      <if test="colId!=null">#{colId,jdbcType=VARCHAR},</if>
+      <if test="mdMId!=null">#{mdMId,jdbcType=VARCHAR},</if>
+      <if test="semantemeCode!=null">#{semantemeCode,jdbcType=VARCHAR},</if>
+      <if test="semantemeType!=null and semantemeType!=0">#{semantemeType,jdbcType=INTEGER},</if>
     </trim>
   </insert>
 
   <!-- 修改 根据主键 -->
-  <update id="update" parameterType="java.util.Map" >
+  <update id="update" parameterType="java.util.Map">
     update sa_md_colsemanteme
-    <set >
-      <if test="id != null" >
-        id = #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="cid != null" >
-        cId = #{colId,jdbcType=VARCHAR},
-      </if>
-      <if test="tmid != null" >
-        tmId = #{mdMId,jdbcType=VARCHAR},
-      </if>
-      <if test="semantemecode != null" >
-        semantemeCode = #{semantemeCode,jdbcType=VARCHAR},
-      </if>
-      <if test="semantemeType!=null and semantemeType!=1" >
-        semantemeType = #{semantemeType,jdbcType=INTEGER},
-      </if>
-      <if test="Ctime != null" >
-        cTime = #{Ctime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="lmtime != null" >
-        lmTime = #{lmtime,jdbcType=TIMESTAMP},
-      </if>
+    <set>
+      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
+      <if test="cid!=null">cId=#{colId,jdbcType=VARCHAR},</if>
+      <if test="tmid!=null">tmId=#{mdMId,jdbcType=VARCHAR},</if>
+      <if test="semantemeCode!=null">semantemeCode=#{semantemeCode,jdbcType=VARCHAR},</if>
+      <if test="semantemeType!=null and semantemeType!=1">semantemeType=#{semantemeType,jdbcType=INTEGER},</if>
+      <if test="Ctime!=null">cTime=#{Ctime,jdbcType=TIMESTAMP},</if>
+      <if test="lmtime!=null">lmTime=#{lmtime,jdbcType=TIMESTAMP},</if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id=#{id,jdbcType=VARCHAR}
   </update>
 
   <!-- 删除数据 -->
-  <delete id="delete" parameterType="java.lang.String" >
-    delete from sa_md_colsemanteme where id = #{id,jdbcType=VARCHAR}
+  <delete id="delete" parameterType="java.lang.String">
+    delete from sa_md_colsemanteme where id=#{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByEntity" parameterType="java.util.Map" >
+  <delete id="deleteByEntity" parameterType="java.util.Map">
     delete from sa_md_colsemanteme
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </delete>
 </mapper>

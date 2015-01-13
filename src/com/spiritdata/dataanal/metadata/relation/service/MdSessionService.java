@@ -32,11 +32,6 @@ import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
  */
 @Service
 public class MdSessionService implements SessionLoader {
-    private HttpSession session;
-    public void setSession(HttpSession session) {
-        this.session = session;
-    }
-
     @Resource
     private TableMapService mdTableOrgService;
 
@@ -68,7 +63,7 @@ public class MdSessionService implements SessionLoader {
      * @param ownerType 所有者类型
      * @param session session
      */
-    private void loadData2Session(String ownerId, int ownerType, HttpSession session) {
+    public void loadData2Session(String ownerId, int ownerType, HttpSession session) {
         _OwnerMetadata _om = new _OwnerMetadata(ownerId, ownerType);
         session.removeAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
         session.setAttribute(SDConstants.SESSION_OWNER_RMDUNIT, _om);
@@ -83,10 +78,11 @@ public class MdSessionService implements SessionLoader {
      * @param mm 元数据信息，从Import文件中分析出的mm信息，此信息不必包含积累表名称
      * @return TableMapOrg数据的第一个元素是积累表，第二个元素是临时表
      */
-    public MetadataTableMapRel[] storeMdModel4Import(MetadataModel mm) throws Exception {
-        if (session==null) throw new NullPointerException("session为空，请通过[setSession]方法设置！");
+    public MetadataTableMapRel[] storeMdModel4Import(MetadataModel mm, _OwnerMetadata _om) throws Exception {
+        mm.setOwnerId(_om.getOwnerId());
+        mm.setOwnerType(_om.getOwnerType());
         MetadataTableMapRel accumulationTable=null, tempTable=null;
-        MetadataModel _existMm = getExistMetadataModel(mm);
+        MetadataModel _existMm = getExistMetadataModel(mm, _om);
         if (_existMm==null) {
             //生成积累表名称
             String mdMId = mm.getId();
@@ -98,7 +94,7 @@ public class MdSessionService implements SessionLoader {
             //注册积累表
             accumulationTable = mdTableOrgService.registTabOrgMap(accumulationTabName, mm, 1);
             //添加模型
-            addMetadataModel(mm, session);
+            addMetadataModel(mm, _om);
         } else {
             accumulationTable = mdTableOrgService.getAccumulationTableMapOrg(_existMm.getId());
             mm=_existMm;
@@ -118,8 +114,7 @@ public class MdSessionService implements SessionLoader {
      * @param mm 元数据模式
      * @param session
      */
-    public void addMetadataModel(MetadataModel mm, HttpSession session) throws Exception {
-        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
+    public void addMetadataModel(MetadataModel mm, _OwnerMetadata _om) throws Exception {
         //新增数据库-主表
         mdBasisService.addMetadataModel(mm);
         //新增数据库-子表
@@ -139,37 +134,38 @@ public class MdSessionService implements SessionLoader {
      * @param mm 被比较的元数据模型
      * @return 若存在返回true，否则返回false
      */
-    private MetadataModel getExistMetadataModel(MetadataModel mm) throws Exception {
-        String ownerId = mm.getOwnerId();
-        int ownerType = mm.getOwnerType();
-        if (ownerId==null||ownerId.equals("")) {
-            UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-            if (user!=null) {
-                ownerId = user.getUserId();
-                ownerType = 1;
-            } else {
-                ownerId = this.session.getId();
-                ownerType = 2;
-            }
-            mm.setOwnerId(ownerId);
-            mm.setOwnerType(ownerType);
-        }
-        _OwnerMetadata _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
-        if (_om==null) {
-            loadData2Session(ownerId, ownerType, this.session);
-            _om = (_OwnerMetadata)this.session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
-        }
-        if (_om==null) new Exception("从session中不能取得所有者数据模型，未知错误！");
-        while (!_om.isLoadSuccess()) {
-            Thread.sleep(100);
-        }
+    private MetadataModel getExistMetadataModel(MetadataModel mm, _OwnerMetadata _om) throws Exception {
         //比较是否存储在
         Map<String, MetadataModel> mmMap = _om.mdModelMap;
-        
         for (String id: mmMap.keySet()) {
             if ((mmMap.get(id).isSame(mm, 1)).get("type").equals("1")) return mmMap.get(id);
         }
         return null;
+    }
+
+    /**
+     * 装载并检查数据，先检查是否已经装载，若没有装载则进行装载。。并返回装载的内容
+     * @param session 
+     * @throws InterruptedException 
+     */
+    public _OwnerMetadata loadcheckData(HttpSession session) throws InterruptedException {
+        _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
+        if (_om==null) {
+            String ownerId = session.getId();
+            int ownerType = 2;
+            UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+            if (user!=null) {
+                ownerId = user.getUserId();
+                ownerType = 1;
+            }
+            loadData2Session(ownerId, ownerType, session);
+            _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
+            while (!_om.isLoadSuccess()) {
+                Thread.sleep(100);
+                _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
+            }
+        }
+        return _om;
     }
 }
 
@@ -185,8 +181,8 @@ class Thread_LoadData implements Runnable {
     @Override
     public void run() {
         _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
-        String ownerId = _om.getOnwerId();
-        int ownerType = _om.getOnwerType();
+        String ownerId = _om.getOwnerId();
+        int ownerType = _om.getOwnerType();
         _om.mdModelMap = new ConcurrentHashMap<String, MetadataModel>();
         MdBasisService mdBasisService = caller.getMdBasisService();
 
