@@ -18,29 +18,33 @@
     quotas:[{/*单项指标分析*/
       columnName:"col_1",
       titleName:"性别",
-      titles:[{category:"分类"},{num:"数量"},{percent:"百分比"}],/*这是SP.TEAM-00009中默认的，应该去掉*/
-      categoryNumDistribution:[
-        {category:"男",   num:"156", percent:"78"},
-        {category:"女",   num:"40",  percent:"20"},
-        {category:"其他", num:"4",   percent:"2"}
-      ]
-    },{
-      columnName:"col_4",
+      desc:"人员表性别分类数值分布",
+      tableData:{
+      	titles:[{category:"分类"},{num:"数量"},{percent:"百分比"}],/*这是SP.TEAM-00009中默认的，应该去掉又是列什么的不对应。。。暂时改为columnList这个变量还影响到pie，暂时不解决！！*/
+        tableBody:[
+          {category:"男",   num:"156", percent:"78"},
+          {category:"女",   num:"40",  percent:"20"},
+          {category:"其他", num:"4",   percent:"2"}
+        ]
+      }},
+      {columnName:"col_4",
       titleName:"籍贯",
-      titles:[{category:"籍贯"},{num:"数量"},{percent:"百分比"}],/*这个不应该去掉*/
-      categoryNumDistribution:[
-        {category:"北京",   num:"42", percent:"21"},
-        {category:"河北",   num:"36", percent:"18"},
-        {category:"河南",   num:"28", percent:"14"},
-        {category:"天津",   num:"27", percent:"13.5"},
-        {category:"上海",   num:"25", percent:"12.5"},
-        {category:"辽宁",   num:"12", percent:"6"},
-        {category:"浙江",   num:"8",  percent:"4"},
-        {category:"四川",   num:"8",  percent:"4"},
-        {category:"江苏",   num:"6",  percent:"3"},
-        {category:"黑龙江", num:"6",  percent:"3"},
-        {category:"其他",   num:"2",  percent:"1"},
-      ]
+      tableData:{
+        titles:[{category:"籍贯"},{num:"数量"},{percent:"百分比"}],/*这个不应该去掉*/
+        tableBody:[
+          {category:"北京",   num:"42", percent:"21"},
+          {category:"河北",   num:"36", percent:"18"},
+          {category:"河南",   num:"28", percent:"14"},
+          {category:"天津",   num:"27", percent:"13.5"},
+          {category:"上海",   num:"25", percent:"12.5"},
+          {category:"辽宁",   num:"12", percent:"6"},
+          {category:"浙江",   num:"8",  percent:"4"},
+          {category:"四川",   num:"8",  percent:"4"},
+          {category:"江苏",   num:"6",  percent:"3"},
+          {category:"黑龙江", num:"6",  percent:"3"},
+          {category:"其他",   num:"2",  percent:"1"},
+        ]
+      }
     }]
   }
 }

@@ -26,7 +26,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
-import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
@@ -34,6 +33,7 @@ import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.dataanal.dictdata.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.dictdata.service.DictSessionService;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
@@ -81,6 +81,8 @@ public class DealExcelFileService {
     @Resource
     private MdKeyService mdKeyService;//调整表
     //dict分析
+    @Resource
+    private DictSessionService dictSessionService;
     @Resource
     private AnalDict dictKey;//只分析,并计入文件
     @Resource
@@ -196,6 +198,10 @@ public class DealExcelFileService {
 */
             //2-获得元数据后，数据存储及语义分析功能
             if (excelParseList.size()>0) {
+                //准备缓存或Session
+                _OwnerMetadata _om = mdSessionService.loadcheckData(session);
+                _OwnerDictionary _od = dictSessionService.loadcheckData(session);
+
                 for (i=0; i<excelParseList.size(); i++) {
                     parseExcel = excelParseList.get(i);
                     si = parseExcel.getSheetInfo();
@@ -205,8 +211,8 @@ public class DealExcelFileService {
                             //--保存分析后的元数据信息，包括数据表的注册与创建
                             //-- 若元数据信息在系统中已经存在，则只生成临时表
                             //-- 否则，创建新的元数据，并生成积累表和临时表
-                            mdSessionService.setSession(session);
-                            MetadataTableMapRel[] tabMapOrgAry = mdSessionService.storeMdModel4Import(sti.getMm());
+
+                            MetadataTableMapRel[] tabMapOrgAry = mdSessionService.storeMdModel4Import(sti.getMm(), _om);
                             //处理sa_imp_tablog_rel表，
                             //主表
                             ImpTableMapRel itmr = new ImpTableMapRel();
@@ -221,7 +227,6 @@ public class DealExcelFileService {
                             // TODO 为了有更好的处理响应时间，以下逻辑可以采用多线程处理
 
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
-                            _OwnerMetadata _om = (_OwnerMetadata)session.getAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
                             MetadataModel sysMd = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
                             //处理Title内容
                             String maxTitle = sti.getTableTitleName();
@@ -290,8 +295,8 @@ public class DealExcelFileService {
                             }
                             //7.1.3-字典分析结果调整
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
-                            _OwnerDictionary _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);
                             mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
+                            System.out.println("DDDD");
                         } catch(Exception e) {
                             // TODO 记录日志 
                             e.printStackTrace();
