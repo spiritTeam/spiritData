@@ -347,8 +347,8 @@
     if(showType=="value") jQobj.html(_data);
     //st = tbale
     else if(showType=="table"){
-      var table_columnList = _data.columnList;
-      var table_titles = _data.titles;
+      var table_body = _data.tableData.tableBody;
+      var table_titles = _data.tableData.titles;
       var colAry = new Array();
       for(var i=0;i<table_titles.length;i++){
         //getAllPrpos得到对应的属性
@@ -366,28 +366,22 @@
         collapsible:true,
         // TODO 这数据是有问题的，取不到title
         columns:[colAry],
-        data:table_columnList
+        data:table_body
       });
     //st = pie
     }else if(showType=="pie"){
-      /**
-       * value="quotas[0].categoryNumDistribution" 
-       * label="category", 
-       * data="num" 
-       * decorateView="{lableShow:[category, percent]}" />
-       */
       //特有属性
       var pieLabel = jQobj.attr('label');
       var pieData = jQobj.attr('data');
       var decorateView = jQobj.attr('decorateView');
       var ary = [];
-      for(var i=0;i<_data.length;i++){ 
-        eval("var _pie_label=_data[i]."+pieLabel);
-        alert("lab="+_pie_label);
-        eval("var _pie_data=_data[i]."+pieData);
+      var pie_dataBody = _data.tableData.tableBody;
+      for(var i=0;i<pie_dataBody.length;i++){ 
+        eval("var _pie_label=pie_dataBody[i]."+pieLabel);
+        eval("var _pie_data=pie_dataBody[i]."+pieData);
         ary[i] = {label:_pie_label,data:_pie_data};
       }
-      jQobj.attr('style','height:200px;width:200px;border 1 px solid red;')
+      jQobj.attr('style','height:150px;width:150px;')
       $.plot(jQobj, ary, {
         series:{
           pie:{
@@ -408,31 +402,38 @@
         }
       });//st = line
     }else if(showType=="line"){
-      function line(id,json){
-          var ary = [];
-          for(var i=0;i<json.length;i++){
-            ary[i] = [json[i].sex,json[i].num];
-          }
-          $.plot("#"+id, [{label:"最小值", data:ary}],{
-            series: {
-              lines: { show: true },
-              points: { show: true }
-            },
-            xaxis: {
-              mode: "categories",
-              autoscaleMargin: 0.05,
-              tickLength: 0
-            },
-            yaxis:{
-              show:true,
-              position:'left',
-              tickLength:40,
-              tickDecimals:0
-            },
-            legend:{show:false}
-          });
-        }
-    }else if(showType=="bars"){
+      var xAxis = jQobj.attr('xAxis');
+      var yAxis = jQobj.attr('yAxis');
+      var line_dataBody = _data.tableData.tableBody;
+      var id = jQobj.attr('id');
+      var ary = [];
+      var height = 20*line_dataBody.length;
+      var width = 40*line_dataBody.length;alert(height+width);
+      jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+      for(var i=0;i<line_dataBody.length;i++){
+        eval("var _x = line_dataBody[i]."+xAxis);
+        eval("var _y = line_dataBody[i]."+yAxis);
+        ary[i] = [_x,_y];
+      }
+      $.plot(jQobj, [{label:"最小值", data:ary}],{
+        series: {
+          lines: { show: true },
+          points: { show: true }
+        },
+        xaxis: {
+          mode: "categories",
+          autoscaleMargin: 0.05,
+          tickLength: 0
+        },
+        yaxis:{
+          show:true,
+          position:'left',
+          tickLength:40,
+          tickDecimals:0
+        },
+        legend:{show:false}
+      });
+    }else if(showType=="bars"){return;
       function bars(id,json){
         var ary = [];
         for(var i=0;i<json.length;i++){
