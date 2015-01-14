@@ -55,7 +55,7 @@
       }
     });
   };
-  
+
   /**
    * 在content完成后，对新的content中元素进行解析
    * 1、根据dataId抓取dom
@@ -313,7 +313,7 @@
    */
   function getAllPrpos (obj) { // TODO 该方法未整理
     // 用来保存所有的属性名称和值 
-  var retProps = new Object();
+    var retProps = new Object();
     var props = "" ; 
     // 开始遍历 
     for ( var p in obj ){
