@@ -101,7 +101,7 @@
       }
     },200);
   }
-  
+
   /**
    * 向后台请求jsond,先根据_DATA中的数据，组成jsondInfo,放
    * 入数组中，然后循环数组，向后台请求数据，
@@ -156,7 +156,7 @@
     },500);
     return dataIdAry;
   }
-  
+
   /**
    * 通过遍历实现树和主界面的构建
    * jQbj:jQuery对象，指代的是根节点
@@ -181,12 +181,12 @@
       var _dataAry;
       if(segArray[i].title){
         //segTitle
-        var segTitle = $('<div id="'+segId+'title" class="segTitle_'+treeLevel+'"></div>');
+        var segTitle = $('<div id="'+segId+'_title" class="segTitle_'+treeLevel+'"></div>');
         segTitle.html(segArray[i].title);
         segGroup.append(segTitle);
       }else if(segArray[i].content){
         //segContent
-        var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
+        var segContent= $('<div id="'+segId+'_frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
         var content = segArray[i].content;
         if(content) {
           var eleS = content.match(/<d\s./g);
@@ -238,8 +238,7 @@
       //处理树
       var treeNode = {};
       if (segArray[i].name) treeNode.text = segArray[i].name;
-      else
-      if (segArray[i].title) treeNode.text=$(segArray[i].title).html();
+      else if (segArray[i].title) treeNode.text=$(segArray[i].title).html();
       if (treeNode.text&&treeNode.text!="") {
         treeNode.id = "_tree_"+segArray[i].id;
         treeNode.segId = segArray[i].id;
@@ -263,7 +262,7 @@
     jObj.append(segGroup);
     return segGroup;
   }
-  
+
   /**
    * 把</d>或这<d></d>,根据showType是否=value，
    * 来替换成<span>或者<div>;
@@ -307,7 +306,7 @@
     retObj.newContent = newContent;
     return retObj;
   }
-  
+
   /**
    * 用来获取title中对象的属性名和属性值
    * 方便easyui table的显示
@@ -477,14 +476,10 @@
     }else {
       //alert("暂不支持showType为"+showType+"类型的解析");
     }
-    
     //decorateView
     jQobj.attr('decorateView');
-    //dom元素中的元素属性
-    jQobj.attr('id');
-    //var e = $("<div></div>");
-    //alert("e="+e[0].outerHTML);
   }
+
   /**
    * 初始化pageFrame
    */
