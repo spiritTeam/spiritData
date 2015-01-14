@@ -1,10 +1,10 @@
 {
   _HEAD:{
-    reportName:"“XXX”分析报告"
+    reportName:"“XXXSSS”分析报告"
   },
   _DATA:[/*data问题，一定要注重规范*/
-    {_id:1, _url:'http://localhost:8080/sa/jsonD/getJsonD.do?uri=/demo/templetDemo/metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond', _jsonD_code:'SP.TEAM-00007'},
-    {_id:2, _url:'http://localhost:8080/sa/jsonD/getJsonD.do?uri=/demo/templetDemo/anal_quota_716-446655440000.jsond'}
+    {_id:1, _url:'http://localhost:808/as/jsonD/getJsonD.do?uri=/demo/templetDemo/metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond', _jsonD_code:'SP.TEAM-00007'},
+    {_id:2, _url:'http://localhost:808/as/jsonD/getJsonD.do?uri=/demo/templetDemo/anal_quota_716-446655440000.jsond'}
   ],
   _TEMPLET:[
     {

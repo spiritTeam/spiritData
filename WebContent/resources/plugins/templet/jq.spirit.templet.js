@@ -55,7 +55,7 @@
       }
     });
   };
-  
+
   /**
    * 在content完成后，对新的content中元素进行解析
    * 1、根据dataId抓取dom
@@ -402,7 +402,7 @@
         eval("var _pie_data=pie_dataBody[i]."+pieData);
         ary[i] = {label:_pie_label,data:_pie_data};
       }
-      jQobj.attr('style','height:150px;width:150px;')
+      jQobj.attr('style','height:150px;width:150px;');
       $.plot(jQobj, ary, {
         series:{
           pie:{
@@ -435,7 +435,12 @@
         eval("var _y = line_dataBody[i]."+yAxis);
         ary[i] = [_y,_x];
       }
-      $.plot(jQobj, [{label:"mmm", data:ary}],{
+    	jQobj.css({"width":"440px", "height":"220px", "border":"solid red 1px"});
+    	alert($("[id='lin11']").length);
+    	alert(jQobj.attr("id"));
+      $.plot(jQobj, [
+          {label:"最小值", data:[["9-28",12],["9-29",34],["9-30",30],["9-31",24],["10-1",3],["10-2",5],["10-3",7],["10-4",10],["10-5",11],["10-6",23],["10-7",34],["10-8",56],["10-9",34]]}
+        ], {
         series: {
           lines: { show: true },
           points: { show: true }
