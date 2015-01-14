@@ -67,7 +67,7 @@ CREATE TABLE sa_md_tabmodel (
   ownerId   varchar(32)      NOT NULL                COMMENT '指向用户表(用户id或sessionId)',
   ownerType int(1) unsigned  NOT NULL                COMMENT '用户类型(1-用户，2-session)',
   tableName varchar(40)      NOT NULL                COMMENT '业务 表中的积累表的名称',
-  titleName varchar(100)     NOT NULL  COMMENT '页签名称',
+  titleName varchar(100)                             COMMENT '页签名称',
   descn     varchar(400)               DEFAULT NULL  COMMENT '备注',
   cTime     timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建的系统时间',
   PRIMARY KEY (id)

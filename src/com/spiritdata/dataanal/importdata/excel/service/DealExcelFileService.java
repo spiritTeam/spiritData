@@ -213,11 +213,10 @@ public class DealExcelFileService {
                             //-- 否则，创建新的元数据，并生成积累表和临时表
 
                             MetadataTableMapRel[] tabMapOrgAry = mdSessionService.storeMdModel4Import(sti.getMm(), _om);
-                            //处理sa_imp_tablog_rel表，
-                            //主表
+                            //处理sa_imp_tablog_rel表，只记录临时表，不记录积累表，通过临时表或元数据ID可以查到积累表
                             ImpTableMapRel itmr = new ImpTableMapRel();
                             itmr.setFId(fi.getId());
-                            itmr.setTmoId(tabMapOrgAry[0].getId());
+                            itmr.setTmoId(tabMapOrgAry[1].getId());
                             itmr.setMdMId(tabMapOrgAry[0].getMdMId());
                             itmr.setSheetName(si.getSheetName());
                             itmr.setSheetIndex(si.getSheetIndex());
@@ -296,7 +295,6 @@ public class DealExcelFileService {
                             //7.1.3-字典分析结果调整
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                             mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
-                            System.out.println("DDDD");
                         } catch(Exception e) {
                             // TODO 记录日志 
                             e.printStackTrace();
@@ -478,26 +476,37 @@ public class DealExcelFileService {
             if (!isMate) throw new IllegalArgumentException("参数：paras(excel解析单元)必须与参数：sti(表结构区域信息)相匹配");
         }
 
-        Object[] paramArray = new Object[sysMm.getColumnList().size()];
-        Object[] paramArray4Update = new Object[sysMm.getColumnList().size()];
-
         String insertSql = "insert into "+mainTableName+"(#columnSql) values(#valueSql)", columnSql="", valueSql="";
         String updateSql = "update "+mainTableName+" set #updateSet where #updateKey", updateSet="", updateKey="";
-        for (MetadataColumn mc: sysMm.getColumnList()) {
+        Object[] paramArray4Insert = new Object[sysMm.getColumnList().size()];
+        Object[] paramArray4Update = new Object[sysMm.getColumnList().size()];
+        Map<String, Integer> insertColIndexMap = new HashMap<String, Integer>();
+        Map<String, Integer> updateColIndexMap = new HashMap<String, Integer>();
+        for (int k=0; k<sysMm.getColumnList().size(); k++) {
+            MetadataColumn mc = sysMm.getColumnList().get(k);
             columnSql+=","+mc.getColumnName();
             valueSql+=",?";
+            insertColIndexMap.put(mc.getColumnName(), k);
             if (!mc.isPk()) {
                 updateSet += ","+mc.getColumnName()+"=?";
             } else {
-                updateKey += "and "+mc.getColumnName()+"=?";
+                updateKey += " and "+mc.getColumnName()+"=?";
             }
         }
         if (columnSql.length()>0) columnSql=columnSql.substring(1);
         if (valueSql.length()>0) valueSql=valueSql.substring(1);
-        if (updateSet.length()>0) updateSet=updateSet.substring(1);
-        if (updateKey.length()>0) updateKey=updateKey.substring(4);
         insertSql = insertSql.replaceAll("#columnSql", columnSql).replaceAll("#valueSql", valueSql);
-        updateSql = updateSql.replaceAll("#updateSet", updateSet).replaceAll("#updateKey", updateKey);
+        if (updateKey.equals("")||updateSet.equals("")) updateSql=null;
+        else {
+            if (updateSet.length()>0) updateSet=updateSet.substring(1);
+            if (updateKey.length()>0) updateKey=updateKey.substring(5);
+            updateSql = updateSql.replaceAll("#updateSet", updateSet).replaceAll("#updateKey", updateKey);
+            String[] s = updateSet.split(",");
+            int k=0;
+            for (; k<s.length; k++) updateColIndexMap.put(s[k].substring(0, s[k].length()-2), k);
+            s = updateKey.split(" and ");
+            for (int l=0; l<s.length; l++) updateColIndexMap.put(s[l].substring(0, s[l].length()-2), k+l);
+        }
 
         Connection conn = null;
         PreparedStatement psInsert = null;
@@ -515,8 +524,13 @@ public class DealExcelFileService {
             autoCommit = conn.getAutoCommit();
             conn.setAutoCommit(true);
             psInsert = conn.prepareStatement(insertSql);
-            psUpdate = conn.prepareStatement(updateSql);
-            
+            if (updateSql!=null) psUpdate = conn.prepareStatement(updateSql);
+
+            int keyCount=0;
+            int _mmDType, _infoDType;
+            Object v;
+            String tagStr;
+
             List<Map<String, Object>> rowData = null;
             _log_readAllCount = sti.getEndY()-sti.getBeginY()+1;
             for (int i=sti.getBeginY(); i<=sti.getEndY(); i++) {
@@ -527,14 +541,11 @@ public class DealExcelFileService {
                     _log_ignoreMap.put(i, "第"+i+"行为空行。");
                     continue;
                 }
-                for (int j=0; j<paramArray.length; j++) {
-                    paramArray[j]=null;
-                    paramArray4Update[j]=null;
-                }
+                for (int j=0; j<paramArray4Insert.length; j++) paramArray4Insert[j]=null;
+                if (updateSql!=null) for (int j=0; j<paramArray4Update.length; j++) paramArray4Update[j]=null;
 
-                int keyCount=0;
-                int _mmDType, _infoDType;
-                Object v;
+                keyCount=0;
+                tagStr = "";
                 for (Map<String, Object> cell: rowData) {
                     titleCol = parse.findMatchTitle(cell, sti);
                     if (titleCol!=null) {
@@ -542,6 +553,7 @@ public class DealExcelFileService {
                             MetadataColumn mc = sysMm.getColumnList().get(k);
                             _mmDType = ExcelConstants.convert2DataType(mc.getColumnType());
                             _infoDType = -1;
+                            if (tagStr.indexOf(","+k)!=-1) continue;
                             if (mc.getTitleName().equals((String)titleCol.get("title"))) {
                                 Map<String, Object> kv = (Map<String, Object>)cell.get("transData");
                                 _infoDType = (Integer)kv.get("dType");
@@ -560,23 +572,17 @@ public class DealExcelFileService {
                                         v=((Map<String, Object>)cell.get("transData")).get("value")+"";
                                     }
                                 }
-                                paramArray[k] = v;
-                                if (mc.isPk()) {
-                                    for (int p=keyCount; p>0; p--) {
-                                        paramArray4Update[paramArray4Update.length-p-1] = paramArray4Update[paramArray4Update.length-p-2];
-                                    }
-                                    paramArray4Update[paramArray4Update.length-1] = v;
-                                    keyCount++;
-                                } else {
-                                    paramArray4Update[k-keyCount] = v;
-                                }
+                                paramArray4Insert[insertColIndexMap.get(mc.getColumnName())] = v;
+                                if (updateSql!=null) paramArray4Update[updateColIndexMap.get(mc.getColumnName())] = v;
+                                tagStr+=","+k;
+                                break;
                             }
                         }
                     }
                 }
                 boolean canSave = false;
-                for (int j=0; j<paramArray.length; j++) {
-                    if (paramArray[j]!=null) {
+                for (int j=0; j<paramArray4Insert.length; j++) {
+                    if (paramArray4Insert[j]!=null) {
                         canSave = true;
                         break;
                     }
@@ -586,30 +592,32 @@ public class DealExcelFileService {
                     _log_ignoreMap.put(i, "第"+i+"行数据与元数据不匹配，行数据为<<>>，元数据为<<>>。");
                     continue;
                 }
+                //先修改，再新增
                 boolean canInsert = true;
                 int j=0;
-                psUpdate.clearParameters();
-                try{
-                    for (j=0; j<paramArray4Update.length; j++) {
-                        psUpdate.setObject(j+1, paramArray4Update[j]);
-                    }
-                    int updateOk = psUpdate.executeUpdate();
-                    if (updateOk>0) {
-                        canInsert=false;
-                        _log_updateOkCount += updateOk;
-                    } else {
+                if (updateSql!=null) {
+                    psUpdate.clearParameters();
+                    try{
+                        for (j=0; j<paramArray4Update.length; j++) {
+                            psUpdate.setObject(j+1, paramArray4Update[j]);
+                        }
+                        int updateOk = psUpdate.executeUpdate();
+                        if (updateOk>0) {
+                            canInsert=false;
+                            _log_updateOkCount += updateOk;
+                        } else {
+                            canInsert=true;
+                        }
+                        canInsert = !(psUpdate.executeUpdate()==1);
+                    } catch(SQLException sqlE) {
                         canInsert=true;
                     }
-                    canInsert = !(psUpdate.executeUpdate()==1);
-                    
-                } catch(SQLException sqlE) {
-                    canInsert=true;
                 }
                 if (canInsert) {
                     psInsert.clearParameters();
                     try {
-                        for (j=0; j<paramArray.length; j++) {
-                            psInsert.setObject(j+1, paramArray[j]);
+                        for (j=0; j<paramArray4Insert.length; j++) {
+                            psInsert.setObject(j+1, paramArray4Insert[j]);
                         }
                         int insertOk = psInsert.executeUpdate();
                         if (insertOk>0) {

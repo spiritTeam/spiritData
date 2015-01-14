@@ -155,5 +155,7 @@ public class SheetTableInfo extends BaseObject{
         if (mm!=null&&mm.getColumnList()!=null&&mm.getColumnList().size()>0) {
             this.setMm(mm);
         }
+        //titleName设置，这个可能需要做更详细的分析
+        mm.setTitleName(this.getSheetInfo().getSheetName());
     }
 }

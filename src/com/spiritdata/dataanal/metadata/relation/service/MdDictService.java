@@ -73,11 +73,13 @@ public class MdDictService {
         Statement st = null;
         try {
             if (m.size()>0) {
+                String _tableName = "";
                 for (String key :m.keySet()) {
                     Object v = m.get(key); //每个字典组分别处理
                     DictModel dModel = null;
                     if (v instanceof MetadataColSemanteme) { //已引用的字典组
                         dModel=_dictCache.getDictModelById(((MetadataColSemanteme) v).getSemantemeCode());
+                        _tableName = tTableName;
                     } else { //未引用的字典组，加入新的字典组，包括Session和数据库
                         //准备数据
                         //1准备数据-字典组
@@ -120,14 +122,17 @@ public class MdDictService {
                         _dictCache.dictModelMap.put(dm.getId(), dModel);
                         //2缓存处理-源数据
                         mm.getColumnByCName(key).addColSem(mcs);
+
+                        _tableName = mm.getTableName();
                     }
                     //字典项的具体处理
                     conn = dataSource.getConnection();
                     st = conn.createStatement();
-                    rs = st.executeQuery("select distinct "+key+" from "+mm.getTableName());
+                    rs = st.executeQuery("select distinct "+key+" from "+_tableName);
                     boolean find = false;
                     while (rs.next()) {//处理每个字典项
                         String dictDetailName = rs.getString(1);
+                        find=false;
                         //找看看是否有相同的
                         if (_dictCache.ddList!=null&&_dictCache.ddList.size()>0) {
                             for (DictDetail dd: _dictCache.ddList) {
@@ -143,14 +148,15 @@ public class MdDictService {
                             dd.setId(SequenceUUID.getUUIDSubSegment(4));
                             dd.setMid(dModel.getId());
                             dd.setNodeName(dictDetailName);
-                            dd.setAnPy(ChineseCharactersUtils.getFullSpellFirstUp(dictDetailName));
+                            dd.setNPy(ChineseCharactersUtils.getFullSpellFirstUp(dictDetailName));
                             dd.setBCode(dd.getId());
                             dd.setDType(2); //系统生成的
-                            dd.setParentId(dModel.getId()); //在目前字典项只能是单级的，是一个单级树
+                            dd.setParentId("0");
                             dd.setOrder(1); //由于是单级树，没有排序
                             //数据库新增
                             dictService.addDictDetail(dd);
                             //缓存处理
+                            dd.setParentId(dModel.getId()); //在目前字典项只能是单级的，是一个单级树
                             TreeNode<DictDetail> treeDD = new TreeNode<DictDetail>(dd);
                             dModel.dictTree.addChild(treeDD);
                             if (_dictCache.ddList==null) _dictCache.ddList = new ArrayList<DictDetail>();

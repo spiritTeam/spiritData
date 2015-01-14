@@ -73,7 +73,7 @@ public class PoiParseUtils {
 //            logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])为空，无法分析"));
             return logl;
         }
-        if (rows==firstRowNum) {//只有一行数据，没有分析的价值
+        if (rows-firstRowNum<2) {//至少要有三行数据
 //            logl.add(StringUtils.convertLogStr("页签("+this.sheetInfo.getSheetName()+"["+this.sheetInfo.getSheetIndex()+"])只有一行有效数据，不具备分析价值"));
             return logl;
         }
@@ -153,7 +153,7 @@ public class PoiParseUtils {
             //TODO 多线程处理，日志和numlist都需要修改！！！！！
             cleanThreadEnd();
             for (int i=0; i<sheetInfo.getStiList().size(); i++) {
-                Thred_anay_MetadataTableInfo thread_a_m = new Thred_anay_MetadataTableInfo(sheetInfo.getStiList().get(i), this, numList, logl);
+                Thread_anay_MetadataTableInfo thread_a_m = new Thread_anay_MetadataTableInfo(sheetInfo.getStiList().get(i), this, numList, logl);
                 Thread t = new Thread(thread_a_m);
                 t.start();
             }
@@ -743,13 +743,13 @@ public class PoiParseUtils {
  * 分析表结构，得到元数据信息
  * @author wangxia
  */
-class Thred_anay_MetadataTableInfo implements Runnable {
+class Thread_anay_MetadataTableInfo implements Runnable {
     private PoiParseUtils caller;
     private SheetTableInfo _anayData;
     private List<Integer> numList;
     private List<String> logl;
 
-    public Thred_anay_MetadataTableInfo(SheetTableInfo anayData, PoiParseUtils caller, List<Integer> numList, List<String> logl) {
+    public Thread_anay_MetadataTableInfo(SheetTableInfo anayData, PoiParseUtils caller, List<Integer> numList, List<String> logl) {
         this.caller = caller;
         this._anayData = anayData;
         this.numList = numList;

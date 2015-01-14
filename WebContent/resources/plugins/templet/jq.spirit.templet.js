@@ -55,7 +55,7 @@
       }
     });
   };
-  
+
   /**
    * 在content完成后，对新的content中元素进行解析
    * 1、根据dataId抓取dom
@@ -73,8 +73,8 @@
     var _dataIdAry = new Array();
     //起setInterval
     var intervalId = setInterval(function(){
-      if(_dataIdAry.length==dataIdAry.length) {
-      // TODO 这里没有弹出关闭框？但确实关闭了
+      if(_dataIdAry.length==dataIdAry.length) {alert("in close");
+      // TODO 这里没有弹出关闭框？但确实关闭了alert("in close");
         clearInterval(intervalId);
       }
       for(var i=0;i<jsonDInfoArray.length;i++){
@@ -89,8 +89,9 @@
                 //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
                 for(var j=0;j<_domAry.length;j++){
                   _dataIdAry.push(jsondInfo.id);
-                  var domId = $(_domAry[j]).attr('showType')+j;
-                  $(_domAry[j]).attr('id',domId);
+                  //为找到的ele设id
+                  var id = $(_domAry[j]).attr('showType')+j;
+                  $(_domAry[j]).attr('id',id);
                   parseEle($(_domAry[j]),_DATA);
                 }
               }
@@ -100,7 +101,7 @@
       }
     },200);
   }
-  
+
   /**
    * 向后台请求jsond,先根据_DATA中的数据，组成jsondInfo,放
    * 入数组中，然后循环数组，向后台请求数据，
@@ -155,7 +156,7 @@
     },500);
     return dataIdAry;
   }
-  
+
   /**
    * 通过遍历实现树和主界面的构建
    * jQbj:jQuery对象，指代的是根节点
@@ -180,12 +181,12 @@
       var _dataAry;
       if(segArray[i].title){
         //segTitle
-        var segTitle = $('<div id="'+segId+'title" class="segTitle_'+treeLevel+'"></div>');
+        var segTitle = $('<div id="'+segId+'_title" class="segTitle_'+treeLevel+'"></div>');
         segTitle.html(segArray[i].title);
         segGroup.append(segTitle);
       }else if(segArray[i].content){
         //segContent
-        var segContent= $('<div id="'+segId+'frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
+        var segContent= $('<div id="'+segId+'_frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
         var content = segArray[i].content;
         if(content) {
           var eleS = content.match(/<d\s./g);
@@ -237,24 +238,39 @@
       //处理树
       var treeNode = {};
       if (segArray[i].name) treeNode.text = segArray[i].name;
-      else
-      if (segArray[i].title) treeNode.text=$(segArray[i].title).html();
+      else if (segArray[i].title) treeNode.text=$(segArray[i].title).html();
       if (treeNode.text&&treeNode.text!="") {
         treeNode.id = "_tree_"+segArray[i].id;
         treeNode.segId = segArray[i].id;
         treeNode.children = new Array();
-        treeNode.dataAry=_dataAry;
+        treeNode.dataAry = _dataAry;
         if (parent==null) {
           segTree[i]=treeNode;
         } else {
           parent.children[i] = treeNode;
         }
-        if(treeLevel>1){
-          var pDataAry = parent.dataAry.toString();
-          for(var v=0;v<_dataAry.length;v++){
-            if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
+        if(treeLevel>0){
+          var pDataAry
+          if(parent.dataAry) {
+            pDataAry = parent.dataAry.toString();
+            for(var v=0;v<_dataAry.length;v++){
+              if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+","+_dataAry[v];
+            }
+            if(pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
+            parent.dataAry = pDataAry.split(",");
+          }else{
+            pDataAry = "";
+            for(var v=0;v<_dataAry.length;v++){
+              if(pDataAry!=""){
+                if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
+              }else{
+                pDataAry = pDataAry+_dataAry[v]+",";
+              }
+              if(pDataAry==",") pDataAry="";
+            }
+            if(pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
+            parent.dataAry = pDataAry.split(",");
           }
-          parent.dataAry = pDataAry.split(",");
         }
       }
       buildSegmentGroup(segGroup, subSegs, treeLevel+1, treeNode);
@@ -262,7 +278,7 @@
     jObj.append(segGroup);
     return segGroup;
   }
-  
+
   /**
    * 把</d>或这<d></d>,根据showType是否=value，
    * 来替换成<span>或者<div>;
@@ -300,22 +316,25 @@
       newContent = (newContent.concat(subAry[i],pendingStr));
     }
     newContent = newContent.concat(subAry[subAry.length-1]);
+    if(_dataStr.lastIndexOf(",")==_dataStr.length-1) _dataStr = _dataStr.substring(0, _dataStr.lastIndexOf(","));
     var _dataAry = _dataStr.split(",");
     var retObj = new Object();
+    if(_dataAry==null) _dataAry.push("");
     retObj._dataAry = _dataAry;
     retObj.newContent = newContent;
     return retObj;
   }
-  
+
   /**
    * 用来获取title中对象的属性名和属性值
    * 方便easyui table的显示
    * obj:仅限一个对象，
    * return 
    */
-  function getAllPrpos (obj) { // TODO 该方法未整理
+  function getAllPrpos (obj) { 
+    // TODO 该方法未整理
     // 用来保存所有的属性名称和值 
-  var retProps = new Object();
+    var retProps = new Object();
     var props = "" ; 
     // 开始遍历 
     for ( var p in obj ){
@@ -383,7 +402,7 @@
         eval("var _pie_data=pie_dataBody[i]."+pieData);
         ary[i] = {label:_pie_label,data:_pie_data};
       }
-      jQobj.attr('style','height:150px;width:150px;')
+      jQobj.attr('style','height:150px;width:150px;');
       $.plot(jQobj, ary, {
         series:{
           pie:{
@@ -407,18 +426,19 @@
       var xAxis = jQobj.attr('xAxis');
       var yAxis = jQobj.attr('yAxis');
       var line_dataBody = _data.tableData.tableBody;
-      var id = jQobj.attr('id');
       var ary = [];
-      var height = 30*line_dataBody.length;
-      var width = 55*line_dataBody.length;
+      var height = 20*line_dataBody.length;
+      var width = 40*line_dataBody.length;
       jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
       for(var i=0;i<line_dataBody.length;i++){
         eval("var _x = line_dataBody[i]."+xAxis);
         eval("var _y = line_dataBody[i]."+yAxis);
-        alert(_x+"="+_y);
-        ary[i] = [_x,_y];
+        ary[i] = [_y,_x];
       }
-      $.plot('#'+id, [{label:"最小值", data:ary}],{
+    	jQobj.css({"width":"440px", "height":"220px", "border":"solid red 1px"});
+      $.plot(jQobj, [
+          {label:"最小值", data:[["9-28",12],["9-29",34],["9-30",30],["9-31",24],["10-1",3],["10-2",5],["10-3",7],["10-4",10],["10-5",11],["10-6",23],["10-7",34],["10-8",56],["10-9",34]]}
+        ], {
         series: {
           lines: { show: true },
           points: { show: true }
@@ -436,46 +456,50 @@
         },
         legend:{show:false}
       });
-    }else if(showType=="bars"){return;
-      function bars(id,json){
-        var ary = [];
-        for(var i=0;i<json.length;i++){
-          ary[i] = [json[i].sex,json[i].num];
-        }
-        $.plot("#"+id, [ary], {
-          series: {
-            bars: {
-              show: true,
-              barWidth: 0.3,
-              align: "center",
-              fill:0.3
-            }
-          },
-          xaxis: {
-            mode: "categories",
-            autoscaleMargin: 0.05,
-            tickLength: 0
-          },
-          yaxis:{
-            show:true,
-            position:'left',
-            tickLength:40,
-            tickDecimals:0
-          },
-          legend:{ show:true, position: "sw" }
-        });
+    }else if(showType=="bars"){
+      //对应x
+      var xAxis = jQobj.attr('xAxis');
+      //对应y
+      var yAxis = jQobj.attr('yAxis');
+      var line_dataBody = _data.tableData.tableBody;
+      var ary = [];
+      var height = 20*line_dataBody.length;
+      var width = 40*line_dataBody.length;
+      jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+      for(var i=0;i<line_dataBody.length;i++){
+        eval("var _x = line_dataBody[i]."+xAxis);
+        eval("var _y = line_dataBody[i]."+yAxis);
+        ary[i] = [_x,_y];
       }
+      $.plot(jQobj, [ary], {
+        series: {
+          bars: {
+            show: true,
+            barWidth: 0.3,
+            align: "center",
+            fill:0.3
+          }
+        },
+        xaxis: {
+          mode: "categories",
+          autoscaleMargin: 0.05,
+          tickLength: 0
+        },
+        yaxis:{
+          show:true,
+          position:'left',
+          tickLength:40,
+          tickDecimals:0
+        },
+        legend:{ show:true, position: "sw" }
+      });
     }else {
       //alert("暂不支持showType为"+showType+"类型的解析");
     }
-    
     //decorateView
     jQobj.attr('decorateView');
-    //dom元素中的元素属性
-    //jQobj.attr('id');
-    //var e = $("<div></div>");
-    //alert("e="+e[0].outerHTML);
   }
+
   /**
    * 初始化pageFrame
    */
