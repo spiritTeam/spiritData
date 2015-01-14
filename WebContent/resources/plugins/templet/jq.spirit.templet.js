@@ -89,6 +89,9 @@
                 //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
                 for(var j=0;j<_domAry.length;j++){
                   _dataIdAry.push(jsondInfo.id);
+                  //为找到的ele设id
+                  var id = $(_domAry[j]).attr('showType')+j;
+                  $(_domAry[j]).attr('id',id);
                   parseEle($(_domAry[j]),_DATA);
                 }
               }
@@ -311,9 +314,10 @@
    * obj:仅限一个对象，
    * return 
    */
-  function getAllPrpos (obj) { // TODO 该方法未整理
+  function getAllPrpos (obj) { 
+    // TODO 该方法未整理
     // 用来保存所有的属性名称和值 
-  var retProps = new Object();
+    var retProps = new Object();
     var props = "" ; 
     // 开始遍历 
     for ( var p in obj ){
@@ -405,10 +409,10 @@
       var xAxis = jQobj.attr('xAxis');
       var yAxis = jQobj.attr('yAxis');
       var line_dataBody = _data.tableData.tableBody;
-      var id = jQobj.attr('id');
+      //var id = jQobj.attr('id');
       var ary = [];
       var height = 20*line_dataBody.length;
-      var width = 40*line_dataBody.length;alert(height+width);
+      var width = 40*line_dataBody.length;
       jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
       for(var i=0;i<line_dataBody.length;i++){
         eval("var _x = line_dataBody[i]."+xAxis);
@@ -433,35 +437,43 @@
         },
         legend:{show:false}
       });
-    }else if(showType=="bars"){return;
-      function bars(id,json){
-        var ary = [];
-        for(var i=0;i<json.length;i++){
-          ary[i] = [json[i].sex,json[i].num];
-        }
-        $.plot("#"+id, [ary], {
-          series: {
-            bars: {
-              show: true,
-              barWidth: 0.3,
-              align: "center",
-              fill:0.3
-            }
-          },
-          xaxis: {
-            mode: "categories",
-            autoscaleMargin: 0.05,
-            tickLength: 0
-          },
-          yaxis:{
-            show:true,
-            position:'left',
-            tickLength:40,
-            tickDecimals:0
-          },
-          legend:{ show:true, position: "sw" }
-        });
+    }else if(showType=="bars"){
+      //对应x
+      var xAxis = jQobj.attr('xAxis');
+      //对应y
+      var yAxis = jQobj.attr('yAxis');
+      var line_dataBody = _data.tableData.tableBody;
+      var ary = [];
+      var height = 20*line_dataBody.length;
+      var width = 40*line_dataBody.length;
+      jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+      for(var i=0;i<line_dataBody.length;i++){
+        eval("var _x = line_dataBody[i]."+xAxis);
+        eval("var _y = line_dataBody[i]."+yAxis);
+        ary[i] = [_x,_y];
       }
+      $.plot(jQobj, [ary], {
+        series: {
+          bars: {
+            show: true,
+            barWidth: 0.3,
+            align: "center",
+            fill:0.3
+          }
+        },
+        xaxis: {
+          mode: "categories",
+          autoscaleMargin: 0.05,
+          tickLength: 0
+        },
+        yaxis:{
+          show:true,
+          position:'left',
+          tickLength:40,
+          tickDecimals:0
+        },
+        legend:{ show:true, position: "sw" }
+      });
     }else {
       //alert("暂不支持showType为"+showType+"类型的解析");
     }
