@@ -30,7 +30,7 @@
       <trim prefix="(" suffix=")" prefixOverrides="and">
         <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
         <if test="ownerId!=null"> and ownerId=#{ownerId,jdbcType=VARCHAR}</if>
-        <if test="ownerType!=null"> and ownerType=#{ownerType,jdbcType=VARCHAR}</if>
+        <if test="ownerType!=null and ownerType!=0"> and ownerType=#{ownerType,jdbcType=VARCHAR}</if>
         <if test="dmName!=null"> and dmName=#{dmName,jdbcType=VARCHAR}</if>
         <if test="NPy!=null"> and nPy=#{NPy,jdbcType=VARCHAR}</if>
         <if test="sort!=null and sort!=0"> and sort=#{sort,jdbcType=INTEGER}</if>
@@ -70,7 +70,7 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id!=null">id,</if>
       <if test="ownerId!=null">ownerId,</if>
-      <if test="ownerType!=null">ownerType,</if>
+      <if test="ownerType!=null and ownerType!=0">ownerType,</if>
       <if test="dmName!=null">dmName,</if>
       <if test="NPy!=null">nPy,</if>
       <if test="sort!=null and sort!=0">sort,</if>
@@ -82,7 +82,7 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
       <if test="ownerId!=null">#{ownerId,jdbcType=VARCHAR},</if>
-      <if test="ownerType!=null">#{ownerType,jdbcType=VARCHAR},</if>
+      <if test="ownerType!=null and ownerType!=0">#{ownerType,jdbcType=VARCHAR},</if>
       <if test="dmName!=null">#{dmName,jdbcType=VARCHAR},</if>
       <if test="NPy!=null">#{NPy,jdbcType=VARCHAR},</if>
       <if test="sort!=null and sort!=0">#{sort,jdbcType=INTEGER},</if>
@@ -99,7 +99,7 @@
     <set>
       <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
       <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR},</if>
-      <if test="ownerType!=null">ownerType=#{ownerType,jdbcType=VARCHAR},</if>
+      <if test="ownerType!=null and ownerType!=0">ownerType=#{ownerType,jdbcType=VARCHAR},</if>
       <if test="dmName!=null">dmName=#{dmName,jdbcType=VARCHAR},</if>
       <if test="NPy!=null">nPy=#{NPy,jdbcType=VARCHAR},</if>
       <if test="sort!=null and sort!=0">sort=#{sort,jdbcType=INTEGER},</if>

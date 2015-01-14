@@ -116,9 +116,9 @@ class Thread_LoadData implements Runnable {
             if (_od.dmList!=null&&_od.dmList.size()>0) _od.ddList = dictService.getDictDListByOwnerId(ownerId);
 
             //组装dictModelMap
-            List<DictDetail> templ = new ArrayList<DictDetail>();
-            String tempDmId = "";
             if (_od.dmList!=null&&_od.dmList.size()>0) {
+                List<DictDetail> templ = new ArrayList<DictDetail>();
+                String tempDmId = "";
                 for (DictMaster dm: _od.dmList) {
                     if (dm.getOwnerType()==ownerType&&ownerId.equals(dm.getOwnerId())) { //过滤掉不可用的数据
                         _od.dictModelMap.put(dm.getId(), new DictModel(dm));
@@ -129,7 +129,7 @@ class Thread_LoadData implements Runnable {
                         if (tempDmId.equals(dd.getMid())) templ.add(dd);
                         else {
                             if (templ.size()>0) {//组成树
-                                DictModel dModel = _od.dictModelMap.get(dd.getMid());
+                                DictModel dModel = _od.dictModelMap.get(templ.get(0).getMid());
                                 if (dModel!=null) {
                                     DictDetail _t = new DictDetail();
                                     _t.setId(dModel.getId());
@@ -148,7 +148,27 @@ class Thread_LoadData implements Runnable {
                                 }
                             }
                             templ.clear();
+                            templ.add(dd);
                             tempDmId=dd.getMid();
+                        }
+                    }
+                    if (templ.size()>0) {//组成树
+                        DictModel dModel = _od.dictModelMap.get(templ.get(0).getMid());
+                        if (dModel!=null) {
+                            DictDetail _t = new DictDetail();
+                            _t.setId(dModel.getId());
+                            _t.setMid(dModel.getId());
+                            _t.setNodeName(dModel.getDmName());
+                            _t.setIsValidate(1);
+                            _t.setParentId(null);
+                            _t.setOrder(1);
+                            _t.setBCode("root");
+                            TreeNode<DictDetail> root = new TreeNode<DictDetail>(_t);
+
+                            Map<String, Object> m = TreeUtils.convertFromList(templ);
+                            root.setChildren((List<TreeNode<DictDetail>>)m.get("forest"));
+                            dModel.dictTree = root;
+                            //暂不处理错误记录
                         }
                     }
                 }
