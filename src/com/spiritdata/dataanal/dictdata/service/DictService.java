@@ -1,6 +1,8 @@
 package com.spiritdata.dataanal.dictdata.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -96,7 +98,9 @@ public class DictService {
      */
     public List<DictDetail> getDictDListByOwnerId(String ownerId) {
         try {
-            return dictDDao.queryForList("getListByOwnerId", ownerId);
+            Map<String, String> param = new HashMap<String, String>();
+            param.put("ownerId", ownerId);
+            return dictDDao.queryForList("getListByOwnerId", param);
         } catch(Exception e) {
             throw new Dtal0301CException(e);
         }
