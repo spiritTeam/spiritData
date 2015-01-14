@@ -73,7 +73,7 @@
     var _dataIdAry = new Array();
     //起setInterval
     var intervalId = setInterval(function(){
-      if(_dataIdAry.length==dataIdAry.length) {alert("in close");
+      if(_dataIdAry.length==dataIdAry.length) {
       // TODO 这里没有弹出关闭框？但确实关闭了
         clearInterval(intervalId);
       }
@@ -89,6 +89,8 @@
                 //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
                 for(var j=0;j<_domAry.length;j++){
                   _dataIdAry.push(jsondInfo.id);
+                  var domId = $(_domAry[j]).attr('showType')+j;
+                  $(_domAry[j]).attr('id',domId);
                   parseEle($(_domAry[j]),_DATA);
                 }
               }
@@ -407,15 +409,16 @@
       var line_dataBody = _data.tableData.tableBody;
       var id = jQobj.attr('id');
       var ary = [];
-      var height = 20*line_dataBody.length;
-      var width = 40*line_dataBody.length;alert(height+width);
+      var height = 30*line_dataBody.length;
+      var width = 55*line_dataBody.length;
       jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
       for(var i=0;i<line_dataBody.length;i++){
         eval("var _x = line_dataBody[i]."+xAxis);
         eval("var _y = line_dataBody[i]."+yAxis);
+        alert(_x+"="+_y);
         ary[i] = [_x,_y];
       }
-      $.plot(jQobj, [{label:"最小值", data:ary}],{
+      $.plot('#'+id, [{label:"最小值", data:ary}],{
         series: {
           lines: { show: true },
           points: { show: true }
@@ -469,7 +472,7 @@
     //decorateView
     jQobj.attr('decorateView');
     //dom元素中的元素属性
-    jQobj.attr('id');
+    //jQobj.attr('id');
     //var e = $("<div></div>");
     //alert("e="+e[0].outerHTML);
   }
