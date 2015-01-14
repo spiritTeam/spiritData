@@ -89,9 +89,6 @@
                 //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
                 for(var j=0;j<_domAry.length;j++){
                   _dataIdAry.push(jsondInfo.id);
-                  //为找到的ele设id
-                  var id = $(_domAry[j]).attr('showType')+j;
-                  $(_domAry[j]).attr('id',id);
                   parseEle($(_domAry[j]),_DATA);
                 }
               }
@@ -291,6 +288,9 @@
     var _dataStr = "";
     for(var i=0;i<pendingAry.length;i++){
       var ele = $(pendingAry[i]);
+      //为找到的ele设id
+      var id = ele.attr('showType')+i;
+      ele.attr('id',id);
       var _data = ele.attr('data')+",";
       if(_dataStr=="") _dataStr = _dataStr +_data;
       else if(_dataStr.indexOf(_data)==-1) _dataStr = _dataStr +_data;
@@ -403,25 +403,8 @@
         ary[i] = {label:_pie_label,data:_pie_data};
       }
       jQobj.attr('style','height:150px;width:150px;');
-      $.plot(jQobj, ary, {
-        series:{
-          pie:{
-            show:true,
-            radius:1,
-            label:{
-              show:true,
-              radius:2/3,
-              formatter:function(label, series){
-                return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
-              },
-              threshold:0.1
-            }
-          }
-        },
-        legend:{
-          show:false
-        }
-      });//st = line
+      drawPie(jQobj,ary);
+      //st = line
     }else if(showType=="line"){
       var xAxis = jQobj.attr('xAxis');
       var yAxis = jQobj.attr('yAxis');
@@ -435,27 +418,8 @@
         eval("var _y = line_dataBody[i]."+yAxis);
         ary[i] = [_y,_x];
       }
-    	jQobj.css({"width":"440px", "height":"220px", "border":"solid red 1px"});
-      $.plot(jQobj, [
-          {label:"最小值", data:[["9-28",12],["9-29",34],["9-30",30],["9-31",24],["10-1",3],["10-2",5],["10-3",7],["10-4",10],["10-5",11],["10-6",23],["10-7",34],["10-8",56],["10-9",34]]}
-        ], {
-        series: {
-          lines: { show: true },
-          points: { show: true }
-        },
-        xaxis: {
-          mode: "categories",
-          autoscaleMargin: 0.05,
-          tickLength: 0
-        },
-        yaxis:{
-          show:true,
-          position:'left',
-          tickLength:40,
-          tickDecimals:0
-        },
-        legend:{show:false}
-      });
+      jQobj.css({"width":"440px", "height":"220px", "border":"solid red 1px"});
+      drawLine(jQobj,ary);
     }else if(showType=="bars"){
       //对应x
       var xAxis = jQobj.attr('xAxis');
@@ -471,35 +435,78 @@
         eval("var _y = line_dataBody[i]."+yAxis);
         ary[i] = [_x,_y];
       }
-      $.plot(jQobj, [ary], {
-        series: {
-          bars: {
-            show: true,
-            barWidth: 0.3,
-            align: "center",
-            fill:0.3
-          }
-        },
-        xaxis: {
-          mode: "categories",
-          autoscaleMargin: 0.05,
-          tickLength: 0
-        },
-        yaxis:{
-          show:true,
-          position:'left',
-          tickLength:40,
-          tickDecimals:0
-        },
-        legend:{ show:true, position: "sw" }
-      });
+      drawBars(jQobj,ary);
     }else {
       //alert("暂不支持showType为"+showType+"类型的解析");
     }
     //decorateView
     jQobj.attr('decorateView');
   }
-
+  function drawPie(jQobj,dataAry){
+    $.plot(jQobj, dataAry, {
+      series:{
+        pie:{
+          show:true,
+          radius:1,
+          label:{
+            show:true,
+            radius:2/3,
+            formatter:function(label, series){
+              return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+            },
+            threshold:0.1
+          }
+        }
+      },
+      legend:{
+        show:false
+      }
+    });
+  }
+  function drawLine(jQobj,dataAry){
+    $.plot(jQobj, [{label:"最小值", data:[dataAry]}], {
+      series: {
+        lines: { show: true },
+        points: { show: true }
+      },
+      xaxis: {
+        mode: "categories",
+        autoscaleMargin: 0.05,
+        tickLength: 0
+      },
+      yaxis:{
+        show:true,
+        position:'left',
+        tickLength:40,
+        tickDecimals:0
+      },
+      legend:{show:false}
+    });
+  }
+  function drawBars(jQobj,dataAry){
+    $.plot(jQobj, [dataAry], {
+      series: {
+        bars: {
+          show: true,
+          barWidth: 0.3,
+          align: "center",
+          fill:0.3
+        }
+      },
+      xaxis: {
+        mode: "categories",
+        autoscaleMargin: 0.05,
+        tickLength: 0
+      },
+      yaxis:{
+        show:true,
+        position:'left',
+        tickLength:40,
+        tickDecimals:0
+      },
+      legend:{ show:true, position: "sw" }
+    });
+  }
   /**
    * 初始化pageFrame
    */
