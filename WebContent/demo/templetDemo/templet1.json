@@ -32,7 +32,7 @@
             <br/>
             <div style="font-height:bold; ">“<d data="2" showType="value" value="mdName"/>”[<d data="2" showType="value" value="quotas[1].titleName"/>]</div>指标分析：<br/>
             新加测试showType=“line”：<br/><d data="2" showType="line" value="quotas[1]" xAxis="category" yAxis="num" />
-            新加测试showType=“bars”：<d data="2" showType="bars" value="quotas[1]"/>
+            新加测试showType=“bars”：<d data="2" showType="bars" value="quotas[1]" xAxis="category" yAxis="num" />
             '
         }
       ]
