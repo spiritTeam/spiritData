@@ -164,8 +164,8 @@ public class MetadataModel extends BaseObject {
      *   type=-1，message=不一致
      */
     //目前只实现type=-1,0,1
-    public Map<String, String> isSame(MetadataModel mm, int compareOwner) {
-        Map<String, String> ret = new HashMap<String, String>();
+    public Map<String, Object> isSame(MetadataModel mm, int compareOwner) {
+        Map<String, Object> ret = new HashMap<String, Object>();
         if (this.columnList==null) throw new Dtal0001CException("本模式无列描述信息，无法比较");
         if (mm.getColumnList()==null)  throw new Dtal0001CException("被比较模式无列描述信息，无法比较");
         if (compareOwner==1&&!this.ownerId.equals(mm.getOwnerId())) {
@@ -174,14 +174,25 @@ public class MetadataModel extends BaseObject {
             return ret;
         }
         MetadataColumn mc, _mc;
+        Map<String, String> alterTable = new HashMap<String, String>(); //需要对table进行调整的
+        String tagStr = "";
         int sameCount = 0;
         if (this.columnList.size()==mm.getColumnList().size()) {
             for (int i=0; i<this.columnList.size(); i++) {
                 mc=this.columnList.get(i);
                 for (int j=0; j<mm.getColumnList().size(); j++) {
+                    if (tagStr.indexOf(","+j)!=-1) continue;
                     _mc=mm.getColumnList().get(j);
-                    if (mc.getTitleName().equals(_mc.getTitleName())&&mc.getColumnType().equals(_mc.getColumnType())) {
+                    if (mc.getTitleName().equals(_mc.getTitleName())&&(
+                        mc.getColumnType().equals(_mc.getColumnType())
+                        ||(mc.getColumnType().equals("Integer")&&_mc.getColumnType().equals("Double"))
+                        ||(_mc.getColumnType().equals("Integer")&&mc.getColumnType().equals("Double"))
+                    )) {
                         sameCount++;
+                        tagStr+=","+j;
+                        if (mc.getColumnType().equals("Integer")&&_mc.getColumnType().equals("Double")) {
+                            alterTable.put(mc.getColumnName(), "Double");
+                        }
                         break;
                     }
                 }
@@ -190,6 +201,7 @@ public class MetadataModel extends BaseObject {
         if (sameCount==this.columnList.size()) {
             ret.put("type", "1");
             ret.put("message", "所有列描述一致");
+            if (alterTable.size()>0) ret.put("alterTable", alterTable);
             return ret;
         }
         ret.put("type", "-1");

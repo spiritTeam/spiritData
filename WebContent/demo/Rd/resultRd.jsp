@@ -311,7 +311,8 @@ body {
         <div><span style="font-weight:bold;">“案件”[发案时间]</span>情况如下：数据跨度从(2013-09-28)到(2013-10-30)，有[发案时间]为97条，占98%。</div>
       </li>
       <li>
-        <div><span style="font-weight:bold;">“案件”按[发案时间]</span>分析，日分布情况如下:</div>
+        <div><span style="font-weight:bold;">“案件”按[发案时间]</span>分析，日分布情ss况如下:</div>
+        <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA1_4_d" style="width:590px;height:180px;"></div></div>
         <div style="width:588px;height:180px;border:1px solid #95B8E7;padding:5px;margin:5px 0 0 5px;"><div id="chartA1_4_d" style="width:590px;height:180px;"></div></div>
       </li>
       <li>
@@ -711,7 +712,7 @@ $(function() {
       tickLength:40,
       tickDecimals:0
     },
-    legend:{show:false}
+    legend:{show:true}
   });
 
   $.plot("#chartA1_4_e", [

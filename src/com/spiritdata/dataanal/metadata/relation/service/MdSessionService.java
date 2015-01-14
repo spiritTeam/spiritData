@@ -1,5 +1,7 @@
 package com.spiritdata.dataanal.metadata.relation.service;
 
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Service;
 
 import com.spiritdata.framework.FConstants;
@@ -16,6 +19,7 @@ import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.core.web.SessionLoader;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.SDConstants;
+import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
@@ -34,6 +38,8 @@ import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
 public class MdSessionService implements SessionLoader {
     @Resource
     private TableMapService mdTableOrgService;
+    @Resource
+    private BasicDataSource dataSource;
 
     @Resource
     private MdBasisService mdBasisService;
@@ -82,7 +88,8 @@ public class MdSessionService implements SessionLoader {
         mm.setOwnerId(_om.getOwnerId());
         mm.setOwnerType(_om.getOwnerType());
         MetadataTableMapRel accumulationTable=null, tempTable=null;
-        MetadataModel _existMm = getExistMetadataModel(mm, _om);
+        Map<String, Object> compareMap = getExistMetadataModel(mm, _om);
+        MetadataModel _existMm = compareMap==null?null:(MetadataModel)compareMap.get("sameMM");
         if (_existMm==null) {
             //生成积累表名称
             String mdMId = mm.getId();
@@ -96,6 +103,28 @@ public class MdSessionService implements SessionLoader {
             //添加模型
             addMetadataModel(mm, _om);
         } else {
+            //调整数据类型
+            Map<String, String> alterTable = (Map<String, String>)compareMap.get("alterTable");
+            if (alterTable!=null&&alterTable.size()>0) {
+                Connection conn = null;
+                Statement st = null;
+                try {
+                    conn = dataSource.getConnection();
+                    st = conn.createStatement();
+                    for (String _k: alterTable.keySet()) {
+                        //缓存
+                        MetadataModel cm = _om.getMetadataById(_existMm.getId());
+                        cm.getColumnByCName(_k).setColumnType(alterTable.get(_k));
+                        //表
+                        st.execute("ALTER TABLE "+_existMm.getTableName()+" MODIFY COLUMN "+_k+" "+alterTable.get(_k)+" COMMENT '"+cm.getColumnByCName(_k).getTitleName()+"'");
+                    }
+                } catch(Exception e) {
+                    //???
+                } finally {
+                    try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
+                    try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
+                }
+            }
             accumulationTable = mdTableOrgService.getAccumulationTableMapOrg(_existMm.getId());
             mm=_existMm;
         }
@@ -134,11 +163,15 @@ public class MdSessionService implements SessionLoader {
      * @param mm 被比较的元数据模型
      * @return 若存在返回true，否则返回false
      */
-    private MetadataModel getExistMetadataModel(MetadataModel mm, _OwnerMetadata _om) throws Exception {
+    private Map<String, Object> getExistMetadataModel(MetadataModel mm, _OwnerMetadata _om) throws Exception {
         //比较是否存储在
         Map<String, MetadataModel> mmMap = _om.mdModelMap;
         for (String id: mmMap.keySet()) {
-            if ((mmMap.get(id).isSame(mm, 1)).get("type").equals("1")) return mmMap.get(id);
+            Map<String, Object> m = mmMap.get(id).isSame(mm, 1);
+            if ((mmMap.get(id).isSame(mm, 1)).get("type").equals("1")) {
+                m.put("sameMM", mmMap.get(id));
+                return m;
+            }
         }
         return null;
     }
