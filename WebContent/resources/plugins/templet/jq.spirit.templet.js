@@ -74,7 +74,7 @@
     //起setInterval
     var intervalId = setInterval(function(){
       if(_dataIdAry.length==dataIdAry.length) {alert("in close");
-      // TODO 这里没有弹出关闭框？但确实关闭了
+      // TODO 这里没有弹出关闭框？但确实关闭了alert("in close");
         clearInterval(intervalId);
       }
       for(var i=0;i<jsonDInfoArray.length;i++){
@@ -243,18 +243,34 @@
         treeNode.id = "_tree_"+segArray[i].id;
         treeNode.segId = segArray[i].id;
         treeNode.children = new Array();
-        treeNode.dataAry=_dataAry;
+        treeNode.dataAry = _dataAry;
         if (parent==null) {
           segTree[i]=treeNode;
         } else {
           parent.children[i] = treeNode;
         }
-        if(treeLevel>1){
-          var pDataAry = parent.dataAry.toString();
-          for(var v=0;v<_dataAry.length;v++){
-            if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
+        if(treeLevel>0){
+          var pDataAry
+          if(parent.dataAry) {
+            pDataAry = parent.dataAry.toString();
+            for(var v=0;v<_dataAry.length;v++){
+              if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+","+_dataAry[v];
+            }
+            if(pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
+            parent.dataAry = pDataAry.split(",");
+          }else{
+            pDataAry = "";
+            for(var v=0;v<_dataAry.length;v++){
+              if(pDataAry!=""){
+                if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
+              }else{
+                pDataAry = pDataAry+_dataAry[v]+",";
+              }
+              if(pDataAry==",") pDataAry="";
+            }
+            if(pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
+            parent.dataAry = pDataAry.split(",");
           }
-          parent.dataAry = pDataAry.split(",");
         }
       }
       buildSegmentGroup(segGroup, subSegs, treeLevel+1, treeNode);
@@ -300,8 +316,10 @@
       newContent = (newContent.concat(subAry[i],pendingStr));
     }
     newContent = newContent.concat(subAry[subAry.length-1]);
+    if(_dataStr.lastIndexOf(",")==_dataStr.length-1) _dataStr = _dataStr.substring(0, _dataStr.lastIndexOf(","));
     var _dataAry = _dataStr.split(",");
     var retObj = new Object();
+    if(_dataAry==null) _dataAry.push("");
     retObj._dataAry = _dataAry;
     retObj.newContent = newContent;
     return retObj;
@@ -408,7 +426,6 @@
       var xAxis = jQobj.attr('xAxis');
       var yAxis = jQobj.attr('yAxis');
       var line_dataBody = _data.tableData.tableBody;
-      //var id = jQobj.attr('id');
       var ary = [];
       var height = 20*line_dataBody.length;
       var width = 40*line_dataBody.length;
@@ -416,9 +433,9 @@
       for(var i=0;i<line_dataBody.length;i++){
         eval("var _x = line_dataBody[i]."+xAxis);
         eval("var _y = line_dataBody[i]."+yAxis);
-        ary[i] = [_x,_y];
+        ary[i] = [_y,_x];
       }
-      $.plot(jQobj, [{label:"最小值", data:ary}],{
+      $.plot(jQobj, [{label:"mmm", data:ary}],{
         series: {
           lines: { show: true },
           points: { show: true }
