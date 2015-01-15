@@ -117,6 +117,7 @@ public class MdSessionService implements SessionLoader {
                         cm.getColumnByCName(_k).setColumnType(alterTable.get(_k));
                         //表
                         st.execute("ALTER TABLE "+_existMm.getTableName()+" MODIFY COLUMN "+_k+" "+alterTable.get(_k)+" COMMENT '"+cm.getColumnByCName(_k).getTitleName()+"'");
+                        st.execute("update sa_md_column set columnType='"+alterTable.get(_k)+"' where tmid="+_existMm.getId()+" and columnName='"+_k+"'");
                     }
                 } catch(Exception e) {
                     //???
