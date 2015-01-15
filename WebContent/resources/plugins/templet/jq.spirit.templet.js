@@ -17,7 +17,7 @@
   //用于存放jsonDInfo
   var jsonDInfoArray = [];
   //用于存放dataId,方便最后一不进行搜索dom
-  var dataIdAry;
+  var dataIdAry = new Array();
   
   /**
    * 主函数入口
@@ -77,20 +77,22 @@
       // TODO 这里没有弹出关闭框？但确实关闭了alert("in close");
         clearInterval(intervalId);
       }
+      //循环jsonDInfoArray，看是否已经取到jsond
       for(var i=0;i<jsonDInfoArray.length;i++){
         var jsondInfo = jsonDInfoArray[i];
         if(_dataIdAry.toString().indexOf(jsondInfo.id)==-1){
           //起setInterval,检查d元素是否到位
           if(jsondInfo.jsond!=null&&jsondInfo.jsond!=""){
             for(var k=0;k<domAry.length;k++){
-              var _domAry = domAry[i];
+              var _domAry = domAry[k];
               var _DATA = jsondInfo.jsond._DATA;
               if(jsondInfo.id == $(_domAry[0]).attr('_data')){
                 //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
                 for(var j=0;j<_domAry.length;j++){
-                  _dataIdAry.push(jsondInfo.id);
+                  if($(_domAry[j]).attr('showType')=='line') alert(1);
                   parseEle($(_domAry[j]),_DATA);
                 }
+                _dataIdAry.push(jsondInfo.id);
               }
             }
           }
@@ -107,7 +109,7 @@
   function getJsonD(_DATA){
     if(_DATA==null||_DATA==""||_DATA[0]==null||_DATA[0]=="") return null;
     var i=0;
-    var dataIdAry = new Array();
+    //所有的jsonId
     for(;i<_DATA.length;i++){
       //jsondInfo
       var jsondInfo = new Object();
@@ -295,7 +297,7 @@
       if(_dataStr=="") _dataStr = _dataStr +_data;
       else if(_dataStr.indexOf(_data)==-1) _dataStr = _dataStr +_data;
       var pendingStr = pendingAry[i];
-      pendingStr = pendingStr.replace(/data/,"_data");
+      pendingStr = pendingStr.replace(/data/,"id='"+id+"' _data");
       if(ele.attr('showType')=="value"){
         if(pendingStr.match(/></)!=null){
           pendingStr = pendingStr.replace(/<d\s{1}/,"<span ");
@@ -406,33 +408,31 @@
       drawPie(jQobj,ary);
       //st = line
     }else if(showType=="line"){
-      var xAxis = jQobj.attr('xAxis');
-      var yAxis = jQobj.attr('yAxis');
+      var label = jQobj.attr('label');
+      var data = jQobj.attr('data');alert("drawing...");
       var line_dataBody = _data.tableData.tableBody;
       var ary = [];
       var height = 20*line_dataBody.length;
       var width = 40*line_dataBody.length;
       jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
       for(var i=0;i<line_dataBody.length;i++){
-        eval("var _x = line_dataBody[i]."+xAxis);
-        eval("var _y = line_dataBody[i]."+yAxis);
+        eval("var _x = line_dataBody[i]."+label);
+        eval("var _y = line_dataBody[i]."+data);
         ary[i] = [_y,_x];
       }
       jQobj.css({"width":"440px", "height":"220px", "border":"solid red 1px"});
       drawLine(jQobj,ary);
     }else if(showType=="bars"){
-      //对应x
-      var xAxis = jQobj.attr('xAxis');
-      //对应y
-      var yAxis = jQobj.attr('yAxis');
+      var label = jQobj.attr('label');
+      var data = jQobj.attr('data');
       var line_dataBody = _data.tableData.tableBody;
       var ary = [];
       var height = 20*line_dataBody.length;
       var width = 40*line_dataBody.length;
       jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
       for(var i=0;i<line_dataBody.length;i++){
-        eval("var _x = line_dataBody[i]."+xAxis);
-        eval("var _y = line_dataBody[i]."+yAxis);
+        eval("var _x = line_dataBody[i]."+label);
+        eval("var _y = line_dataBody[i]."+data);
         ary[i] = [_x,_y];
       }
       drawBars(jQobj,ary);
