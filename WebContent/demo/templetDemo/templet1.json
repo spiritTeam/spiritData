@@ -33,7 +33,8 @@
             <div style="font-height:bold; ">“<d data="2" showType="value" value="mdName"/>”[<d data="2" showType="value" value="quotas[1].titleName"/>]</div>指标分析：<br/>
             新加测试showType=“line”：<br/><d data="2" showType="line" value="quotas[1]" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
             新加测试showType=“bars”：<d data="2" showType="bars" value="quotas[1]" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
-            测试showType=“first”：<d data="2" showType="first( !(3 |num ) )" value="quotas[1]" decorateView="{#category#}占#percent#%"/>
+            测试showType=“first”降序：<d data="2" showType="first( !(3 |num ) )" value="quotas[1]" decorateView="{#category#}占#percent#%"/>
+            测试showType=“first”升序：<d data="2" showType="first( 3 |num )" value="quotas[1]" decorateView="{#category#}占#percent#%"/>
             '
         }
       ]
