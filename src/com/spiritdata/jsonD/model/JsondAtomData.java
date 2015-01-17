@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.spiritdata.framework.CodeException;
+import com.spiritdata.jsonD.ConvertJson;
 import com.spiritdata.jsonD.exceptionC.Jsond0001CException;
 import com.spiritdata.jsonD.util.JsonUtils;
 
@@ -14,7 +15,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * 包括数据的类型、数据的值和数据的名称
  * @author wh
  */
-public class JsondAtomData implements Serializable {
+public class JsondAtomData implements Serializable, ConvertJson {
     private static final long serialVersionUID = 5914919027685891934L;
 
     private String dataName;//信息名称
@@ -108,7 +109,7 @@ public class JsondAtomData implements Serializable {
      * @return jsonMap
      * @throws CodeException 
      */
-    public String toJsonStr() throws CodeException {
+    public String toJson() throws CodeException {
         return JsonUtils.objToJson(this.toJsonMap());
     }
 

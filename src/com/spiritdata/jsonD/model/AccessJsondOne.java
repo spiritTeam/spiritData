@@ -1,6 +1,7 @@
 package com.spiritdata.jsonD.model;
 
-import com.spiritdata.framework.core.model.BaseObject;
+import java.io.Serializable;
+
 import com.spiritdata.jsonD.exceptionC.Jsond0003CException;
 import com.spiritdata.jsonD.util.JsonDUtils;
 
@@ -8,7 +9,7 @@ import com.spiritdata.jsonD.util.JsonDUtils;
  * 访问某一个JsonD的访问描述对象
  * @author wh
  */
-public class AccessJsondOne extends BaseObject {
+public class AccessJsondOne implements Serializable {
     private static final long serialVersionUID = -2240704913305758719L;
 
     private String jsondId; //具体的jsond的id，相当于类的实例的标识

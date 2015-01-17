@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.spiritdata.jsonD.ConvertJson;
 import com.spiritdata.jsonD.exceptionC.Jsond0002CException;
 import com.spiritdata.jsonD.exceptionC.Jsond0003CException;
 import com.spiritdata.jsonD.util.JsonDUtils;
@@ -14,7 +15,7 @@ import com.spiritdata.jsonD.util.JsonDUtils;
  * 参看相关文档
  * @author wh
  */
-public class JsondHead implements Serializable {
+public class JsondHead implements Serializable, ConvertJson {
     private static final long serialVersionUID = 8454602778917800099L;
 
     private String id; //UUID
