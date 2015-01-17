@@ -31,8 +31,8 @@ import com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable;
 import com.spiritdata.dataanal.metadata.relation.semanteme.AnalTable;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.util.Arithmetic;
-import com.spiritdata.jsonD.model.AtomData;
-import com.spiritdata.jsonD.model.HeadData;
+import com.spiritdata.jsonD.model.JsondAtomData;
+import com.spiritdata.jsonD.model.JsondHead;
 import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
@@ -174,7 +174,7 @@ public class AnalKey implements AnalTable {
         }
 
         //写jsonD文件，此方法目前为测试方法，今后把他变为一个更好用的包
-        HeadData jsonDHead = new HeadData();
+        JsondHead jsonDHead = new JsondHead();
         jsonDHead.setId(SequenceUUID.getPureUUID());
         jsonDHead.setCode(jsonDCode);
         jsonDHead.setCTime(new Date());
@@ -186,7 +186,7 @@ public class AnalKey implements AnalTable {
         jsonDHead.setFileName(storeFile.replace("\\", "/"));
 
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
-        AtomData _dataElement = new AtomData("_tableName", "string", tableName);
+        JsondAtomData _dataElement = new JsondAtomData("_tableName", "string", tableName);
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _dataElement.setAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
@@ -232,7 +232,7 @@ public class AnalKey implements AnalTable {
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (String cols: keyAnalResultMap.keySet()) {
             Map<String, Object> oneEle = new HashMap<String, Object>();
-            AtomData _dataElement = new AtomData("keyCols", "string", cols);
+            JsondAtomData _dataElement = new JsondAtomData("keyCols", "string", cols);
             oneEle.putAll(_dataElement.toJsonMap());
             _dataElement.setAtomData("rate", "double", keyAnalResultMap.get(cols));
             oneEle.putAll(_dataElement.toJsonMap());

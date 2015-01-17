@@ -26,8 +26,8 @@ import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
-import com.spiritdata.jsonD.model.AtomData;
-import com.spiritdata.jsonD.model.HeadData;
+import com.spiritdata.jsonD.model.JsondAtomData;
+import com.spiritdata.jsonD.model.JsondHead;
 import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
@@ -61,7 +61,7 @@ public class AnalDict implements AnalMetadata {
         }
 
         //写jsonD文件，此方法目前为测试方法，今后把他变为一个更好用的包
-        HeadData jsonDHead = new HeadData();
+        JsondHead jsonDHead = new JsondHead();
         jsonDHead.setId(SequenceUUID.getPureUUID());
         jsonDHead.setCode(jsonDCode);
         jsonDHead.setCTime(new Date());
@@ -72,7 +72,7 @@ public class AnalDict implements AnalMetadata {
         jsonDHead.setFileName(storeFile.replace("\\", "/"));
 
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
-        AtomData _dataElement = new AtomData("_mdMId", "string", mm.getId());
+        JsondAtomData _dataElement = new JsondAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _DATA_Map.put("_dictAnals", convertToList(ret));
 
@@ -116,7 +116,7 @@ public class AnalDict implements AnalMetadata {
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (String cols: dictAnalResultMap.keySet()) {
             Map<String, Object> oneEle = new HashMap<String, Object>();
-            AtomData _dataElement = new AtomData("keyCols", "string", cols);
+            JsondAtomData _dataElement = new JsondAtomData("keyCols", "string", cols);
             oneEle.putAll(_dataElement.toJsonMap());
             _dataElement.setAtomData("rate", "double", dictAnalResultMap.get(cols));
             oneEle.putAll(_dataElement.toJsonMap());

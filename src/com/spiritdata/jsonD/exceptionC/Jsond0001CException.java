@@ -3,7 +3,7 @@ package com.spiritdata.jsonD.exceptionC;
 /**
  * JsonD中原子数据类型不规范，内部码为0001，基本信息为'原子类型(AtomData)不规范'
  * 请参看:
- * {@linkplain com.spiritdata.jsonD.model.AtomData AtomData}
+ * {@linkplain com.spiritdata.jsonD.model.JsondAtomData JsondAtomData}
  * @author wh
  */
 public class Jsond0001CException extends JsondCException {

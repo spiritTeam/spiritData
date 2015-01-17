@@ -8,7 +8,7 @@ import com.spiritdata.jsonD.util.JsonDUtils;
  * 访问某一个JsonD的访问描述对象
  * @author wh
  */
-public class AccessOne extends BaseObject {
+public class AccessJsondOne extends BaseObject {
     private static final long serialVersionUID = -2240704913305758719L;
 
     private String id; //数据Id

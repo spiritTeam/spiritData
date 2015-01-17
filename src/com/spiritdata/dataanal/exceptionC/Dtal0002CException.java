@@ -3,7 +3,7 @@ package com.spiritdata.dataanal.exceptionC;
 /**
  * DataAnal数据分析中元数据列描述不规范，内部码为0002，基本信息为'元数据列描述不规范'
  * 请参看:
- * {@linkplain com.spiritdata.jsonD.model.AtomData} 包
+ * {@linkplain com.spiritdata.jsonD.model.JsondAtomData} 包
  * @author wh
  */
 public class Dtal0002CException extends DtalCException {
