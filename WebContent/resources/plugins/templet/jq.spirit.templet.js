@@ -43,7 +43,7 @@
           $('#rTitle').html(_HEAD.reportName);
           buildSegmentGroup($('#reportFrame'), _TEMPLET, level, null);
           //显示 
-          show();
+          resolveAndDraw();
           //显示树的部分
           $('#catalogTree').tree({animate:true});
           $('#catalogTree').tree("loadData", segTree);
@@ -61,7 +61,7 @@
    * 1、根据dataId抓取dom
    * 2、起setInterval
    */
-  function show(){
+  function resolveAndDraw(){
     //根据dataIdAry中的id抓取dom
     var domAry = new Array();
     for(var i=0;i<dataIdAry.length;i++) {
@@ -452,7 +452,7 @@
         for(var i=0;i<line_dataBody.length;i++){
           eval("var _x = line_dataBody[i]."+label);
           eval("var _y = line_dataBody[i]."+data);
-          _y = Math.round((parseFloat(_y)/sum*10000)/100.00)+"%";alert(_y);
+          _y = Math.round((parseFloat(_y)/sum*10000)/100.00)+"%";
           ary[i] = [_x,_y];
         }
       }else{
@@ -504,7 +504,7 @@
               if(range>fData.length) range = fData.length;
               var oderCol = exp.split("|")[1];
               //接下来排序？
-              var ary = toDesc(range,oderCol,fData);alert(ary.length);
+              var ary = sortUp(range,oderCol,fData);
               var showStr = "";
               for(var k=0;k<ary.length;k++){
                 var tt = decorateView;
@@ -529,7 +529,7 @@
             if(range>fData.length) range = fData.length;
             var oderCol = exp.split("|")[1];
             //接下来排序？
-            var ary = toAcs(range,oderCol,fData);alert(ary.length);
+            var ary = sortDown(range,oderCol,fData);
             var showStr = "";
             for(var k=0;k<ary.length;k++){
               var tt = decorateView;
@@ -539,7 +539,7 @@
                 eval("var sVal=ary[k]."+showCol);
                 tt = tt.replace(showColExp,sVal);
               }
-              showStr = showStr+tt+"，";alert(showStr);
+              showStr = showStr+tt+"，";
             }
             jQobj.html(showStr);
             
@@ -557,7 +557,7 @@
   /**
    * 排序,降序
    */
-  function toAcs(range,oderCol,data){
+  function sortDown(range,oderCol,data){
     data = oder(oderCol,data);
     var retAry = new Array();
     var len = data.length;
@@ -593,7 +593,7 @@
   /**
    * 升序
    */
-  function toDesc(range,oderCol,data){
+  function sortUp(range,oderCol,data){
     data = oder(oderCol,data);
     var retAry = new Array();
     for(var i=0;i<range;i++){
@@ -603,7 +603,7 @@
   }
   
   /**
-   * 去除括号()
+   * 去除括号“()”
    */
   function removeBrackets(exp){
     var start = exp.indexOf("(")+1;
