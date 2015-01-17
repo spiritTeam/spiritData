@@ -73,8 +73,8 @@
     var _dataIdAry = new Array();
     //起setInterval
     var intervalId = setInterval(function(){
-      if(_dataIdAry.length==dataIdAry.length) {alert("in close");
-      // TODO 这里没有弹出关闭框？但确实关闭了alert("in close");
+      if(_dataIdAry.length==dataIdAry.length) {
+        //关闭setInterval
         clearInterval(intervalId);
       }
       //循环jsonDInfoArray，看是否已经取到jsond
@@ -89,7 +89,6 @@
               if(jsondInfo.id == $(_domAry[0]).attr('_data')){
                 //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
                 for(var j=0;j<_domAry.length;j++){
-                  if($(_domAry[j]).attr('showType')=='line') alert(1);
                   parseEle($(_domAry[j]),_DATA);
                 }
                 _dataIdAry.push(jsondInfo.id);
@@ -98,7 +97,7 @@
           }
         }
       }
-    },200);
+    },500);
   }
 
   /**
@@ -144,10 +143,10 @@
                 jsonDInfoArray[k].jsond = jsondJsonObj.data;//allFields(jsondJsonObj.data)
                 jsonDIdAry.push(jsonDInfoArray[k].id);
               }else{
-                $.messager.alert("提示",jsonData.message,'info');
+                return;
               }
             },error:function(XMLHttpRequest, textStatus, errorThrown ){
-              $.messager.alert("提示","未知错误！",'info');
+              return;
             }
           });
         }
@@ -409,7 +408,7 @@
       //st = line
     }else if(showType=="line"){
       var label = jQobj.attr('label');
-      var data = jQobj.attr('data');alert("drawing...");
+      var data = jQobj.attr('data');
       var line_dataBody = _data.tableData.tableBody;
       var ary = [];
       var height = 20*line_dataBody.length;
@@ -418,9 +417,9 @@
       for(var i=0;i<line_dataBody.length;i++){
         eval("var _x = line_dataBody[i]."+label);
         eval("var _y = line_dataBody[i]."+data);
-        ary[i] = [_y,_x];
+        ary[i] = [_x,_y];
       }
-      jQobj.css({"width":"440px", "height":"220px", "border":"solid red 1px"});
+      jQobj.css({"width":"440px", "height":"220px"});
       drawLine(jQobj,ary);
     }else if(showType=="bars"){
       var label = jQobj.attr('label');
@@ -436,11 +435,77 @@
         ary[i] = [_x,_y];
       }
       drawBars(jQobj,ary);
-    }else {
-      //alert("暂不支持showType为"+showType+"类型的解析");
+    }else if(showType.lastIndexOf("first(")!=-1){return;
+      /**
+       * 1、取出first中的表达式
+       * 2、取到数据
+       */
+      //1、提取出first中的表达式
+      var exp = removeBrackets(showType);
+      //2、数据+decorateView
+      var fData = _data.tableData.tableBody;
+      var decorateView = jQobj.attr('decorateView');
+      //3、解析exp:!(n|col)和(n|col)？ 
+      //去除空格处理
+      exp = exp.replace(/\s/g,'')
+      //得到拍序列以及取数范围
+      if(exp.charAt(0)=="!"){
+        //处理升序
+        if(exp.charAt(1)!="(") {
+          alert("缺失符号“(”");
+          return;
+        }else{
+          exp = removeBrackets(exp);
+          if(exp.lastIndexOf("|")==-1){
+            alert("缺失符号“|”");
+            return;
+          }else{
+            var range = exp.split("|")[0];
+            if(range>fData.length) range = fData.length;
+            var oderCol = exp.split("|")[1];
+            //接下来排序？
+            var ary = toDesc(range,oderCol,fData);
+          }
+        }
+      }else{
+        //处理降序
+        
+      }
     }
-    //decorateView
-    jQobj.attr('decorateView');
+  }
+  /**
+   * 排序,升序
+   */
+  function toAcs(range,oderCol){
+    
+  }
+
+  /**
+   * 排序,降序
+   */
+  function toDesc(range,oderCol,data){
+    var descAry = new Array();
+    for(var i=0;i<data.length;i++){
+      if(i=0){
+        descAry[i] = thisRowData;
+      }else{
+    	  for(var k=0;k<descAry.length;k++){
+    		  descAry[k];return;
+    		  // TODO 排序。。。
+    	  }
+        var thisRowData = data[i];
+        var nextRowData = data[i+1];
+      }
+    }
+  }
+  
+  /**
+   * 删除字符串
+   */
+  function removeBrackets(exp){
+    var start = exp.indexOf("(")+1;
+    var end = exp.lastIndexOf(")");
+    return exp.substring(start,end);
   }
   function drawPie(jQobj,dataAry){
     $.plot(jQobj, dataAry, {
@@ -464,7 +529,7 @@
     });
   }
   function drawLine(jQobj,dataAry){
-    $.plot(jQobj, [{label:"最小值", data:[dataAry]}], {
+    $.plot(jQobj, [{label:"最小值", data:dataAry}], {
       series: {
         lines: { show: true },
         points: { show: true }
