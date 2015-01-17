@@ -66,8 +66,8 @@ public abstract class JsonUtils {
      * @return Json字符串
      * @throws Jsond0101CException 异常 
      */
-    public static String Obj2AjaxJson(Object obj, int type) {
-        return JsonUtils.objToJson(JsonUtils.Obj2AjaxMap(obj, type));
+    public static String obj2AjaxJson(Object obj, int type) {
+        return JsonUtils.objToJson(JsonUtils.obj2AjaxMap(obj, type));
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class JsonUtils {
      * @return AjaxMap对象
      * @throws Exception 异常 
      */
-    public static Map<String, Object> Obj2AjaxMap(Object obj, int type) {
+    public static Map<String, Object> obj2AjaxMap(Object obj, int type) {
         Map<String, Object> m = new HashMap<String, Object>();
         m.put("jsonType", type);
         if (type==1) m.put("data", obj);

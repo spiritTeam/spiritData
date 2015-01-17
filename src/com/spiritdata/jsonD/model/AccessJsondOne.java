@@ -11,17 +11,11 @@ import com.spiritdata.jsonD.util.JsonDUtils;
 public class AccessJsondOne extends BaseObject {
     private static final long serialVersionUID = -2240704913305758719L;
 
-    private String id; //数据Id
+    private String jsondId; //具体的jsond的id，相当于类的实例的标识
     private String url; //获取数据的地址
     private String filePath; //数据地址，可能根据一定规则通过此参数计算出url
-    private String jsonDId; //也可以指定jsonD数据的id
-    private String jsonDCode; //jsonDCode
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
-        this.id = id;
-    }
+    private String jsondCode; //jsonDCode，相当于类名称
+
     public String getUrl() {
         return url;
     }
@@ -34,18 +28,18 @@ public class AccessJsondOne extends BaseObject {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
-    public String getJsonDId() {
-        return jsonDId;
+    public String getJsondId() {
+        return jsondId;
     }
-    public void setJsonDId(String jsonDId) {
-        this.jsonDId = jsonDId;
+    public void setJsondId(String jsondId) {
+        this.jsondId = jsondId;
     }
-    public String getJsonDCode() {
-        return jsonDCode;
+    public String getJsondCode() {
+        return jsondCode;
     }
-    public void setJsonDCode(String jsonDCode) {
-        if (jsonDCode==null||jsonDCode.length()==0) throw new IllegalArgumentException("jsonDCode不能为null或空串！");
-        if (!JsonDUtils.isLegalCode(jsonDCode)) throw new Jsond0003CException("jsonDCode["+jsonDCode+"]不合规！", new IllegalArgumentException("jsonDCode不合规，请参看JsonD相关文档！"));
-        this.jsonDCode = jsonDCode;
+    public void setJsondCode(String jsondCode) {
+        if (jsondCode==null||jsondCode.length()==0) throw new IllegalArgumentException("jsonDCode不能为null或空串！");
+        if (!JsonDUtils.isLegalCode(jsondCode)) throw new Jsond0003CException("jsonDCode["+jsondCode+"]不合规！", new IllegalArgumentException("jsonDCode不合规，请参看JsonD相关文档！"));
+        this.jsondCode = jsondCode;
     }
 }
