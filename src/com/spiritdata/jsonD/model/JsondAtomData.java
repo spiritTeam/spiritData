@@ -14,7 +14,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * 包括数据的类型、数据的值和数据的名称
  * @author wh
  */
-public class AtomData implements Serializable {
+public class JsondAtomData implements Serializable {
     private static final long serialVersionUID = 5914919027685891934L;
 
     private String dataName;//信息名称
@@ -48,7 +48,7 @@ public class AtomData implements Serializable {
     /**
      * 空构造函数
      */
-    public AtomData() {
+    public JsondAtomData() {
         super();
     }
 
@@ -58,7 +58,7 @@ public class AtomData implements Serializable {
      * @param dataType 数据类型
      * @param dataValue 数据值
      */
-    public AtomData(String dataName, String dataType, Object dataValue) {
+    public JsondAtomData(String dataName, String dataType, Object dataValue) {
         super();
         setAtomData(dataName, dataType, dataValue);
     }

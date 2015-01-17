@@ -14,7 +14,7 @@ import com.spiritdata.jsonD.util.JsonDUtils;
  * 参看相关文档
  * @author wh
  */
-public class HeadData implements Serializable {
+public class JsondHead implements Serializable {
     private static final long serialVersionUID = 8454602778917800099L;
 
     private String id; //UUID

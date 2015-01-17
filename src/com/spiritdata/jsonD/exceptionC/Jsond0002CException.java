@@ -3,7 +3,7 @@ package com.spiritdata.jsonD.exceptionC;
 /**
  * JsonD中头信息不规范，内部码为0002，基本信息为'_HEAD头信息不规范'
  * 请参看:
- * {@linkplain com.spiritdata.jsonD.model.AtomData AtomData}
+ * {@linkplain com.spiritdata.jsonD.model.JsondAtomData JsondAtomData}
  * @author wh
  */
 public class Jsond0002CException extends JsondCException {

@@ -12,7 +12,7 @@ public class Templet extends BaseObject {
     private static final long serialVersionUID = 518670183146944686L;
 
     private Object _HEAD;//头信息，可以是String templetHead 对象
-    private Object _DATA;//数据信息，可以是String templetHead 对象
+    private List<Ac> _DATA;//数据信息，可以是String templetHead 对象
     private Object _TEMPLET;//模板主题信息，可以是String templetHead 对象
 
     public Object get_HEAD() {
