@@ -13,11 +13,11 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
-import com.spiritdata.dataanal.dictdata.pojo.DictDetail;
-import com.spiritdata.dataanal.dictdata.pojo.DictMaster;
-import com.spiritdata.dataanal.dictdata.pojo.DictModel;
-import com.spiritdata.dataanal.dictdata.pojo._OwnerDictionary;
-import com.spiritdata.dataanal.dictdata.service.DictService;
+import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
+import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
+import com.spiritdata.dataanal.dictionary.pojo.DictModel;
+import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.dictionary.service.DictService;
 import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
