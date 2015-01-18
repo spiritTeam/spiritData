@@ -1,11 +1,11 @@
 package com.spiritdata.filemanage.ANAL.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
@@ -26,7 +26,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
  * @author wh
  */
 //今后，若有可能把分析结果和jsonD进行结合
-public class AnalResultFile extends BaseObject {
+public class AnalResultFile implements Serializable {
     private static final long serialVersionUID = 7715689049076212381L;
 
     private String id; //分析文件id

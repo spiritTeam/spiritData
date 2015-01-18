@@ -1,10 +1,10 @@
 package com.spiritdata.dataanal.templet.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
-import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.jsonD.ConvertJson;
 import com.spiritdata.jsonD.util.JsonUtils;
 
@@ -13,7 +13,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * <br/>包括：_HEAD,_DATA,_TEMPET
  * @author wh
  */
-public class Templet extends BaseObject implements ConvertJson {
+public class Templet implements Serializable, ConvertJson {
     private static final long serialVersionUID = 518670183146944686L;
 
     private Object _HEAD;//头信息，可以是String templetHead 对象

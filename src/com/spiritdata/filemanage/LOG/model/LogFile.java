@@ -1,6 +1,6 @@
 package com.spiritdata.filemanage.LOG.model;
 
-import com.spiritdata.framework.core.model.BaseObject;
+import java.io.Serializable;
 
 /**
  * 日志信息，日志统一放在一个目录下(可能是分布式存储的一个根)
@@ -14,7 +14,7 @@ import com.spiritdata.framework.core.model.BaseObject;
  * </code>
  * @author wh
  */
-public class LogFile extends BaseObject {
+public class LogFile implements Serializable {
     private static final long serialVersionUID = 956357457822723413L;
     
 }

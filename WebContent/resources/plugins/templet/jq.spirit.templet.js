@@ -353,7 +353,7 @@
     //alert(props);
     return retProps; 
   }
-  
+
   /**
    * 解析元素，根据showType进行拼接显示效果
    * jQobj:需要解析的元素
@@ -362,6 +362,13 @@
   function parseEle(jQobj, _DATA){
     //得到showType
     var showType = jQobj.attr('showType');
+    if (showType=="value") drawValue(jQobj, _DATA);
+    else if(showType=="table") drawTable(jQobj, _DATA);
+    else if(showType=="pie") drawPie(jQobj, _DATA);
+    else if(showType=="line") drawLine(jQobj, _DATA);
+    else if(showType=="bar") drawBar(jQobj, _DATA);
+    else if(showType=="first") drawFirst(jQobj, _DATA);
+
     //得到decorateView
     var decorateView = jQobj.attr('decorateView');
     //指向jsond中的数据
@@ -371,7 +378,7 @@
     //st = value
     if(showType=="value") jQobj.html(_data);
     //st = tbale
-    else if(showType=="table"){
+    else if(showType=="table") {
       //不知道table会不会有decorateView
       var table_body = _data.tableData.tableBody;
       var table_titles = _data.tableData.titles;
@@ -548,11 +555,44 @@
       }
     }
   }
+
+  //以下函数为画数据结果的方法
+  //以上函数为画数据结果的方法
   /**
    * 去除String中所有的空格
    */
   function removeSpace(exp){
     return exp.replace(/\s/g,'');
+  }
+  function sort(sortType, data, orderCol, firstNum) {
+  	var ret = new Array(firstNum);
+  	var userIndexs="";
+  	if (data==null||data.length==0) return null;
+  	var flagData=eval("data[0]."+orderCol);
+  	var _thisIndex=-1;
+  	for (var i=0; i<firstNum; i++) {
+  		for (var j=0; j<data.length; j++) {
+  			if (userIndexs.indexOf(j+"")!=-1) continue;
+  			var _thisData = eval("data[j]."+orderCol);
+  			try {
+  				_thisData = parseFloat(_thisData);
+  			}catch(e) { continue; }
+  			if (sortType==1){
+  				if (_thisData>flagData) {
+  					flagData = _thisData;
+  					_thisIndex=j;
+  				}
+  			} else {
+  				if (_thisData<flagData) {
+  					flagData = _thisData;
+  					_thisIndex=j;
+  				}
+  			}
+  		}
+  		ret[i]=eval("data["+_thisIndex+"]."+orderCol);
+  		userIndexs+=","+j;
+  	}
+    return ret;
   }
   /**
    * 排序,降序
@@ -567,14 +607,25 @@
     return retAry;
   }
   /**
+   * 升序
+   */
+  function sortUp(range,oderCol,data){
+    data = oder(oderCol,data);
+    var retAry = new Array();
+    for(var i=0;i<range;i++){
+      retAry[i] = data[i];
+    }
+    return retAry;
+  }
+  /**
    * 由小到大排序
    * oderCol：依据排序的列
    * data：数据
    */
   function oder(oderCol,data){
-    var len = data.length;i=0,k,mid
-    for(;i<len;i++){
-      for(k=0;k<len;k++){
+    var len=data.length,i,k;
+    for(i=0;i<len;i++){
+      for(k=i+1;k<len;k++){
         var max = data[i];
         var min = data[k];
         eval("var maxOCol = max."+oderCol);
@@ -589,17 +640,6 @@
       }
     }
     return data;
-  }
-  /**
-   * 升序
-   */
-  function sortUp(range,oderCol,data){
-    data = oder(oderCol,data);
-    var retAry = new Array();
-    for(var i=0;i<range;i++){
-      retAry[i] = data[i];
-    }
-    return retAry;
   }
   
   /**

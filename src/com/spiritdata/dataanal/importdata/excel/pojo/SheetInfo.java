@@ -1,17 +1,16 @@
 package com.spiritdata.dataanal.importdata.excel.pojo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Sheet;
 
-import com.spiritdata.framework.core.model.BaseObject;
-
 /**
  * Sheet信息
  * @author wh
  */
-public class SheetInfo extends BaseObject {
+public class SheetInfo implements Serializable {
     private static final long serialVersionUID = 7206180301875759481L;
 
     private String fileName; //所在文件名称

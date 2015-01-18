@@ -1,9 +1,9 @@
 package com.spiritdata.filemanage.IMP.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 
-import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
@@ -16,7 +16,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
  * 导入文件模型，用于记录导入文件，基于File管理模型
  * @author wh
  */
-public class ImportFile extends BaseObject {
+public class ImportFile implements Serializable {
     private static final long serialVersionUID = -6413748884964474948L;
 
     private String id; //文件上传id
