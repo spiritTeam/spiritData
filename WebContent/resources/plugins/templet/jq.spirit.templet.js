@@ -360,14 +360,25 @@
    * _DATA：对应的数据
    */
   function parseEle(jQobj, _DATA){
-    //得到showType
+    //指向jsond中的数据
+    var value = jQobj.attr('value');
+    //得到showType//根据value得到数据
+    eval("var _data=_DATA."+value);
+    var showType = jQobj.attr('showType');
+    if (showType=="value") drawValue(jQobj, _data);
+    else if(showType=="table") drawTable(jQobj, _data);
+    else if(showType=="pie") drawPie(jQobj, _data);
+    else if(showType=="line") drawLine(jQobj, _data);
+    else if(showType=="bars") drawBar(jQobj, _data);
+    else if(showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
+    return;
+    //得到showType//根据value得到数据
+    eval("var _data=_DATA."+value);
     var showType = jQobj.attr('showType');
     //得到decorateView
     var decorateView = jQobj.attr('decorateView');
     //指向jsond中的数据
     var value = jQobj.attr('value');
-    //根据value得到数据
-    eval("var _data=_DATA."+value);
     //st = value
     if(showType=="value") jQobj.html(_data);
     //st = tbale
@@ -611,13 +622,143 @@
     return exp.substring(start,end);
   }
   /**
+   * st=first
+   */
+  function drawFirst(showType,jQobj,_data){
+  //1、提取出first中的表达式
+    var exp = removeBrackets(showType);
+    //2、数据
+    var fData = _data.tableData.tableBody;
+    //3、解析exp:!(n|col)和(n|col)？ 
+    //去除空格处理
+    exp = removeSpace(exp);
+    var decorateView = jQobj.attr('decorateView');
+    //得到拍序列以及取数范围
+    if(decorateView){
+      var showColAry = decorateView.match(/#.*?#/g);
+      if(exp.charAt(0)=="!"){
+        //处理升序!(n|col)
+        if(exp.charAt(1)!="(") {
+          alert("缺失符号“(”");
+          return;
+        }else{
+          exp = removeBrackets(exp);
+          if(exp.lastIndexOf("|")==-1){
+            alert("缺失符号“|”");
+            return;
+          }else{
+            var range = exp.split("|")[0];
+            if(range>fData.length) range = fData.length;
+            var oderCol = exp.split("|")[1];
+            //接下来排序？
+            var ary = sortUp(range,oderCol,fData);
+            var showStr = "";
+            for(var k=0;k<ary.length;k++){
+              var tt = decorateView;
+              for(var i=0;i<showColAry.length;i++){
+                var showColExp = showColAry[i];
+                var showCol=showColExp.substring(showColExp.indexOf("#")+1,showColExp.lastIndexOf("#"));
+                eval("var sVal=ary[k]."+showCol);
+                tt = tt.replace(showColExp,sVal);
+              }
+              showStr = showStr+tt+"，";
+            }
+            jQobj.html(showStr);
+          }
+        }
+      }else{
+        //处理降序n|col？
+        if(exp.lastIndexOf("|")==-1){
+          alert("缺失符号“|”");
+          return;
+        }else{
+          var range = exp.split("|")[0];
+          if(range>fData.length) range = fData.length;
+          var oderCol = exp.split("|")[1];
+          //接下来排序？
+          var ary = sortDown(range,oderCol,fData);
+          var showStr = "";
+          for(var k=0;k<ary.length;k++){
+            var tt = decorateView;
+            for(var i=0;i<showColAry.length;i++){
+              var showColExp = showColAry[i];
+              var showCol=showColExp.substring(showColExp.indexOf("#")+1,showColExp.lastIndexOf("#"));
+              eval("var sVal=ary[k]."+showCol);
+              tt = tt.replace(showColExp,sVal);
+            }
+            showStr = showStr+tt+"，";
+          }
+          jQobj.html(showStr);
+          
+        }
+      }
+    }
+  }
+  /**
+   * st=table
+   */
+  function drawTable(jQobj,_data){
+    //不知道table会不会有decorateView
+    var table_body = _data.tableData.tableBody;
+    var table_titles = _data.tableData.titles;
+    var colAry = new Array();
+    for(var i=0;i<table_titles.length;i++){
+      //getAllPrpos得到对应的属性
+      var titlePrpos = getAllPrpos(table_titles[i]);
+      var col = new Object();
+      col.field = titlePrpos.prposName;
+      col.title = titlePrpos.prposValue;
+      col.width = 100;
+      colAry.push(col);
+    }
+    var width = (100*(table_titles.length))+50;
+    jQobj.attr('style','width:'+width+'px;');
+    jQobj.datagrid({
+      singleSelect:true,
+      collapsible:true,
+      // TODO 这数据是有问题的，取不到title
+      columns:[colAry],
+      data:table_body
+    });
+  }
+  /**
+   * st=value
+   */
+  function drawValue(jQobj,dataAry){
+    jQobj.html(dataAry);
+  }
+  /**
    * pie
    * jQobj:jquery对象
    * dataAry：数据
    * decorateView:显示修饰
    */
-  function drawPie(jQobj,dataAry,decorateView){
-    $.plot(jQobj, dataAry, {
+  function drawPie(jQobj,_data){
+    //特有属性
+    var pieLabel = jQobj.attr('label');
+    var pieData = jQobj.attr('data');
+    var ary = [];
+    var pie_dataBody = _data.tableData.tableBody;
+    //在派中解析这个不知道有没有意义
+    var decorateView = jQobj.attr('decorateView');
+    if(decorateView){
+      if(decorateView.indexOf("lableShow")==-1){
+        alert("decorateView格式有出错");
+      }else{
+        var b = decorateView.indexOf("[")+1;
+        var e = decorateView.indexOf("]");
+        var exp = decorateView.substring(b,e);
+        exp = removeSpace(exp);
+        var decorateAry = exp.split(",");
+      }
+    }
+    for(var i=0;i<pie_dataBody.length;i++){ 
+      eval("var _pie_label=pie_dataBody[i]."+pieLabel);
+      eval("var _pie_data=pie_dataBody[i]."+pieData);
+      ary[i] = {label:_pie_label,data:_pie_data};
+    }
+    jQobj.attr('style','height:150px;width:150px;');
+    $.plot(jQobj, ary, {
       series:{
         pie:{
           show:true,
@@ -644,8 +785,49 @@
    * dataAry：数据
    * decorateView:显示修饰
    */
-  function drawLine(jQobj,dataAry){
-    $.plot(jQobj, [{label:"最小值", data:dataAry}], {
+  function drawLine(jQobj,_data){
+    var label = jQobj.attr('label');
+    var data = jQobj.attr('data');
+    var line_dataBody = _data.tableData.tableBody;
+    var ary = [];
+    var height = 20*line_dataBody.length;
+    var width = 40*line_dataBody.length;
+    jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+    var decorateView = jQobj.attr('decorateView');
+    if(decorateView){
+      if(decorateView.indexOf("lableShow")==-1){
+        alert("decorateView格式有出错");
+      }else{
+        var b = decorateView.indexOf("[")+1;
+        var e = decorateView.indexOf("]");
+        var exp = decorateView.substring(b,e);
+        exp = removeSpace(exp);
+        //该数组第一个元素暂时没用。。保留项
+        decorateAry = exp.split(",");
+      }
+    }
+    eval("var showStyle = line_dataBody[0]."+decorateAry[1]);
+    if(!showStyle){
+      var sum =0;
+      for(var i=0;i<line_dataBody.length;i++){
+        eval("var _y = line_dataBody[i]."+data);
+        sum = sum+parseFloat(_y);
+      }
+      for(var i=0;i<line_dataBody.length;i++){
+        eval("var _x = line_dataBody[i]."+label);
+        eval("var _y = line_dataBody[i]."+data);
+        _y = Math.round((parseFloat(_y)/sum*10000)/100.00)+"%";
+        ary[i] = [_x,_y];
+      }
+    }else{
+      for(var i=0;i<line_dataBody.length;i++){
+        eval("var _x = line_dataBody[i]."+label);
+        eval("var _y = line_dataBody[i]."+decorateAry[1]);
+        ary[i] = [_x,_y];
+      }
+    }
+    jQobj.css({"width":"440px", "height":"220px"});
+    $.plot(jQobj, [{label:"最小值", data:ary}], {
       series: {
         lines: { show: true },
         points: { show: true }
@@ -665,13 +847,25 @@
     });
   }
   /**
-   * Bars
+   * st==Bars
    * jQobj:jquery对象
    * dataAry：数据
    * decorateView:显示修饰
    */
-  function drawBars(jQobj,dataAry){
-    $.plot(jQobj, [dataAry], {
+  function drawBar(jQobj,_data){
+    var label = jQobj.attr('label');
+    var data = jQobj.attr('data');
+    var line_dataBody = _data.tableData.tableBody;
+    var ary = [];
+    var height = 20*line_dataBody.length;
+    var width = 40*line_dataBody.length;
+    jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+    for(var i=0;i<line_dataBody.length;i++){
+      eval("var _x = line_dataBody[i]."+label);
+      eval("var _y = line_dataBody[i]."+data);
+      ary[i] = [_x,_y];
+    }
+    $.plot(jQobj, [ary], {
       series: {
         bars: {
           show: true,

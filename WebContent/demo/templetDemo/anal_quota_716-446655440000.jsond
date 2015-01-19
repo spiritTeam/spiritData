@@ -30,7 +30,7 @@
       {columnName:"col_4",
       titleName:"籍贯",
       tableData:{
-        sort:{sortCol:num,shotType：1/*0：未排序1:由大到小、2：由小到大*/},
+       sort:{sortCol:"num",shotType:"1"}, /*0：未排序1:由大到小、2：由小到大*/
         titles:[{category:"籍贯"},{num:"数量"},{percent:"百分比"}],/*这个不应该去掉*/
         tableBody:[
           {category:"其他",   num:"2",  percent:"1"},
