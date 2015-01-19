@@ -18,7 +18,7 @@
   var jsonDInfoArray = [];
   //用于存放dataId,方便最后一不进行搜索dom
   var dataIdAry = new Array();
-  
+
   /**
    * 主函数入口
    */
@@ -248,7 +248,7 @@
           parent.children[i] = treeNode;
         }
         if(treeLevel>0){
-          var pDataAry
+          var pDataAry;
           if(parent.dataAry) {
             pDataAry = parent.dataAry.toString();
             for(var v=0;v<_dataAry.length;v++){
@@ -325,8 +325,15 @@
     retObj.newContent = newContent;
     return retObj;
   }
-
+  //以下为公共方法部分
   /**
+   * 去除String中所有的空格
+   */
+  function removeSpace(exp){
+    return exp.replace(/\s/g,'');
+  }
+  /**
+   * 公共方法
    * 用来获取title中对象的属性名和属性值
    * 方便easyui table的显示
    * obj:仅限一个对象，
@@ -349,10 +356,9 @@
         retProps.prposValue = obj[p];
       } 
     } 
-    // 最后显示所有的属性
-    //alert(props);
     return retProps; 
   }
+  //以上为公共方法部分
 
   /**
    * 解析元素，根据showType进行拼接显示效果
@@ -360,288 +366,18 @@
    * _DATA：对应的数据
    */
   function parseEle(jQobj, _DATA){
-    //得到showType
-    var showType = jQobj.attr('showType');
-    if (showType=="value") drawValue(jQobj, _DATA);
-    else if(showType=="table") drawTable(jQobj, _DATA);
-    else if(showType=="pie") drawPie(jQobj, _DATA);
-    else if(showType=="line") drawLine(jQobj, _DATA);
-    else if(showType=="bar") drawBar(jQobj, _DATA);
-    else if(showType=="first") drawFirst(jQobj, _DATA);
-
-    //得到decorateView
-    var decorateView = jQobj.attr('decorateView');
     //指向jsond中的数据
     var value = jQobj.attr('value');
-    //根据value得到数据
+    //得到showType//根据value得到数据
     eval("var _data=_DATA."+value);
-    //st = value
-    if(showType=="value") jQobj.html(_data);
-    //st = tbale
-    else if(showType=="table") {
-      //不知道table会不会有decorateView
-      var table_body = _data.tableData.tableBody;
-      var table_titles = _data.tableData.titles;
-      var colAry = new Array();
-      for(var i=0;i<table_titles.length;i++){
-        //getAllPrpos得到对应的属性
-        var titlePrpos = getAllPrpos(table_titles[i]);
-        var col = new Object();
-        col.field = titlePrpos.prposName;
-        col.title = titlePrpos.prposValue;
-        col.width = 100;
-        colAry.push(col);
-      }
-      var width = (100*(table_titles.length))+50;
-      jQobj.attr('style','width:'+width+'px;');
-      jQobj.datagrid({
-        singleSelect:true,
-        collapsible:true,
-        // TODO 这数据是有问题的，取不到title
-        columns:[colAry],
-        data:table_body
-      });
-    //st = pie
-    }else if(showType=="pie"){
-      //特有属性
-      var pieLabel = jQobj.attr('label');
-      var pieData = jQobj.attr('data');
-      var ary = [];
-      var pie_dataBody = _data.tableData.tableBody;
-      //在派中解析这个不知道有没有意义
-      if(decorateView){
-        if(decorateView.indexOf("lableShow")==-1){
-          alert("decorateView格式有出错");
-        }else{
-          var b = decorateView.indexOf("[")+1;
-          var e = decorateView.indexOf("]");
-          var exp = decorateView.substring(b,e);
-          exp = removeSpace(exp);
-          var decorateAry = exp.split(",");
-        }
-      }
-      for(var i=0;i<pie_dataBody.length;i++){ 
-        eval("var _pie_label=pie_dataBody[i]."+pieLabel);
-        eval("var _pie_data=pie_dataBody[i]."+pieData);
-        ary[i] = {label:_pie_label,data:_pie_data};
-      }
-      jQobj.attr('style','height:150px;width:150px;');
-      drawPie(jQobj,ary,decorateView);
-      //st = line
-    }else if(showType=="line"){
-      var label = jQobj.attr('label');
-      var data = jQobj.attr('data');
-      var line_dataBody = _data.tableData.tableBody;
-      var ary = [];
-      var height = 20*line_dataBody.length;
-      var width = 40*line_dataBody.length;
-      jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
-      var decorateAry;
-      if(decorateView){
-        if(decorateView.indexOf("lableShow")==-1){
-          alert("decorateView格式有出错");
-        }else{
-          var b = decorateView.indexOf("[")+1;
-          var e = decorateView.indexOf("]");
-          var exp = decorateView.substring(b,e);
-          exp = removeSpace(exp);
-          //该数组第一个元素暂时没用。。保留项
-          decorateAry = exp.split(",");
-        }
-      }
-      eval("var showStyle = line_dataBody[0]."+decorateAry[1]);
-      if(!showStyle){
-        var sum =0;
-        for(var i=0;i<line_dataBody.length;i++){
-          eval("var _y = line_dataBody[i]."+data);
-          sum = sum+parseFloat(_y);
-        }
-        for(var i=0;i<line_dataBody.length;i++){
-          eval("var _x = line_dataBody[i]."+label);
-          eval("var _y = line_dataBody[i]."+data);
-          _y = Math.round((parseFloat(_y)/sum*10000)/100.00)+"%";
-          ary[i] = [_x,_y];
-        }
-      }else{
-        for(var i=0;i<line_dataBody.length;i++){
-          eval("var _x = line_dataBody[i]."+label);
-          eval("var _y = line_dataBody[i]."+decorateAry[1]);
-          ary[i] = [_x,_y];
-        }
-      }
-      jQobj.css({"width":"440px", "height":"220px"});
-      drawLine(jQobj,ary);
-    }else if(showType=="bars"){
-      var label = jQobj.attr('label');
-      var data = jQobj.attr('data');
-      var line_dataBody = _data.tableData.tableBody;
-      var ary = [];
-      var height = 20*line_dataBody.length;
-      var width = 40*line_dataBody.length;
-      jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
-      for(var i=0;i<line_dataBody.length;i++){
-        eval("var _x = line_dataBody[i]."+label);
-        eval("var _y = line_dataBody[i]."+data);
-        ary[i] = [_x,_y];
-      }
-      drawBars(jQobj,ary);
-    }else if(showType.lastIndexOf("first(")!=-1){
-      //1、提取出first中的表达式
-      var exp = removeBrackets(showType);
-      //2、数据
-      var fData = _data.tableData.tableBody;
-      //3、解析exp:!(n|col)和(n|col)？ 
-      //去除空格处理
-      exp = removeSpace(exp);
-      //得到拍序列以及取数范围
-      if(decorateView){
-        var showColAry = decorateView.match(/#.*?#/g);
-        if(exp.charAt(0)=="!"){
-          //处理升序!(n|col)
-          if(exp.charAt(1)!="(") {
-            alert("缺失符号“(”");
-            return;
-          }else{
-            exp = removeBrackets(exp);
-            if(exp.lastIndexOf("|")==-1){
-              alert("缺失符号“|”");
-              return;
-            }else{
-              var range = exp.split("|")[0];
-              if(range>fData.length) range = fData.length;
-              var oderCol = exp.split("|")[1];
-              //接下来排序？
-              var ary = sortUp(range,oderCol,fData);
-              var showStr = "";
-              for(var k=0;k<ary.length;k++){
-                var tt = decorateView;
-                for(var i=0;i<showColAry.length;i++){
-                  var showColExp = showColAry[i];
-                  var showCol=showColExp.substring(showColExp.indexOf("#")+1,showColExp.lastIndexOf("#"));
-                  eval("var sVal=ary[k]."+showCol);
-                  tt = tt.replace(showColExp,sVal);
-                }
-                showStr = showStr+tt+"，";
-              }
-              jQobj.html(showStr);
-            }
-          }
-        }else{
-          //处理降序n|col？
-          if(exp.lastIndexOf("|")==-1){
-            alert("缺失符号“|”");
-            return;
-          }else{
-            var range = exp.split("|")[0];
-            if(range>fData.length) range = fData.length;
-            var oderCol = exp.split("|")[1];
-            //接下来排序？
-            var ary = sortDown(range,oderCol,fData);
-            var showStr = "";
-            for(var k=0;k<ary.length;k++){
-              var tt = decorateView;
-              for(var i=0;i<showColAry.length;i++){
-                var showColExp = showColAry[i];
-                var showCol=showColExp.substring(showColExp.indexOf("#")+1,showColExp.lastIndexOf("#"));
-                eval("var sVal=ary[k]."+showCol);
-                tt = tt.replace(showColExp,sVal);
-              }
-              showStr = showStr+tt+"，";
-            }
-            jQobj.html(showStr);
-            
-          }
-        }
-      }
-    }
+    var showType = jQobj.attr('showType');
+    if (showType=="value") drawValue(jQobj, _data);
+    else if(showType=="table") drawTable(jQobj, _data);
+    else if(showType=="pie") drawPie(jQobj, _data);
+    else if(showType=="line") drawLine(jQobj, _data);
+    else if(showType=="bars") drawBar(jQobj, _data);
+    else if(showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
   }
-
-  //以下函数为画数据结果的方法
-  //以上函数为画数据结果的方法
-  /**
-   * 去除String中所有的空格
-   */
-  function removeSpace(exp){
-    return exp.replace(/\s/g,'');
-  }
-  function sort(sortType, data, orderCol, firstNum) {
-  	var ret = new Array(firstNum);
-  	var userIndexs="";
-  	if (data==null||data.length==0) return null;
-  	var flagData=eval("data[0]."+orderCol);
-  	var _thisIndex=-1;
-  	for (var i=0; i<firstNum; i++) {
-  		for (var j=0; j<data.length; j++) {
-  			if (userIndexs.indexOf(j+"")!=-1) continue;
-  			var _thisData = eval("data[j]."+orderCol);
-  			try {
-  				_thisData = parseFloat(_thisData);
-  			}catch(e) { continue; }
-  			if (sortType==1){
-  				if (_thisData>flagData) {
-  					flagData = _thisData;
-  					_thisIndex=j;
-  				}
-  			} else {
-  				if (_thisData<flagData) {
-  					flagData = _thisData;
-  					_thisIndex=j;
-  				}
-  			}
-  		}
-  		ret[i]=eval("data["+_thisIndex+"]."+orderCol);
-  		userIndexs+=","+j;
-  	}
-    return ret;
-  }
-  /**
-   * 排序,降序
-   */
-  function sortDown(range,oderCol,data){
-    data = oder(oderCol,data);
-    var retAry = new Array();
-    var len = data.length;
-    for(var i=len-1;i>len-range-1;i--){
-      retAry[len-1-i] = data[i];
-    }
-    return retAry;
-  }
-  /**
-   * 升序
-   */
-  function sortUp(range,oderCol,data){
-    data = oder(oderCol,data);
-    var retAry = new Array();
-    for(var i=0;i<range;i++){
-      retAry[i] = data[i];
-    }
-    return retAry;
-  }
-  /**
-   * 由小到大排序
-   * oderCol：依据排序的列
-   * data：数据
-   */
-  function oder(oderCol,data){
-    var len=data.length,i,k;
-    for(i=0;i<len;i++){
-      for(k=i+1;k<len;k++){
-        var max = data[i];
-        var min = data[k];
-        eval("var maxOCol = max."+oderCol);
-        eval("var minOCol = min."+oderCol);
-        if(parseFloat(maxOCol)<parseFloat(minOCol)){
-          var mid = max;
-          max = min;
-          min = mid;
-          data[i] = max;
-          data[k] = min; 
-        }
-      }
-    }
-    return data;
-  }
-  
   /**
    * 去除括号“()”
    */
@@ -651,13 +387,197 @@
     return exp.substring(start,end);
   }
   /**
+   * st=first
+   */
+  function drawFirst(showType,jQobj,_data){
+  //1、提取出first中的表达式
+    var exp = removeBrackets(showType);
+    //2、数据
+    var fData = _data.tableData.tableBody;
+    //3、解析exp:!(n|col)和(n|col)？ 
+    //去除空格处理
+    exp = removeSpace(exp);
+    var decorateView = jQobj.attr('decorateView');
+    //得到拍序列以及取数范围
+    if(decorateView){
+      var showColAry = decorateView.match(/#.*?#/g);
+      if(exp.charAt(0)=="!"){
+        //处理升序!(n|col)
+        if(exp.charAt(1)!="(") {
+          alert("缺失符号“(”");
+          return;
+        }else{
+          exp = removeBrackets(exp);
+          if(exp.lastIndexOf("|")==-1){
+            alert("缺失符号“|”");
+            return;
+          }else{
+            var firstNum = exp.split("|")[0];
+            var oderCol = exp.split("|")[1];
+            // TODO 调整排序
+            //接下来排序？sort
+            var ary = sort(1,fData,oderCol,firstNum);
+            var showStr = "";
+            for(var k=0;k<ary.length;k++){
+              var tt = decorateView;
+              for(var i=0;i<showColAry.length;i++){
+                var showColExp = showColAry[i];
+                var showCol=showColExp.substring(showColExp.indexOf("#")+1,showColExp.lastIndexOf("#"));
+                eval("var sVal=ary["+k+"]."+showCol);
+                tt = tt.replace(showColExp,sVal);
+              }
+              showStr = showStr+tt+"，";
+            }
+            jQobj.html(showStr);
+          }
+        }
+      }else{
+        //处理降序n|col？
+        if(exp.lastIndexOf("|")==-1){
+          alert("缺失符号“|”");
+          return;
+        }else{
+          var firstNum = exp.split("|")[0];
+          if(firstNum>fData.length) firstNum = fData.length;
+          var oderCol = exp.split("|")[1];
+          //接下来排序？
+          var ary = sort(2,fData,oderCol,firstNum);
+          var showStr = "";
+          for(var k=0;k<ary.length;k++){
+            var tt = decorateView;
+            for(var i=0;i<showColAry.length;i++){
+              var showColExp = showColAry[i];
+              var showCol=showColExp.substring(showColExp.indexOf("#")+1,showColExp.lastIndexOf("#"));
+              eval("var sVal=ary["+k+"]."+showCol);
+              tt = tt.replace(showColExp,sVal);
+            }
+            showStr = showStr+tt+"，";
+          }
+          jQobj.html(showStr);
+          
+        }
+      }
+    }
+  }
+
+  /**
+   * 排序方法
+   * orderCol:排序列(按照这列排序)
+   * data:排序数组
+   * shortType:排序方式，升序或降序
+   * sortSize:获取个数
+   */
+  function sort(sortType, data, orderCol, firstNum) {
+    if(firstNum>data.length) firstNum = data.length;
+    var ret = new Array(firstNum);
+    var usedIndexs="";
+    if (data==null||data.length==0) return null;
+    var _thisIndex=-1;
+    for (var i=0; i<firstNum; i++) {
+      var index;
+      var flagData;
+      for(var k=0;k<data.length;k++){
+        if(usedIndexs.indexOf(k)==-1) {
+          flagData=eval("data["+k+"]."+orderCol);
+          _thisIndex = k;
+          try{
+            flagData = parseFloat(flagData);
+          }catch(e){continue;}
+          break;
+        }
+      }
+      for (var j=0; j<data.length; j++) {
+        if (usedIndexs.indexOf(j)!=-1)continue;
+        var _thisData = eval("data["+j+"]."+orderCol);
+        try {
+          _thisData = parseFloat(_thisData);
+        }catch(e) { continue; }
+        if (sortType==1){
+          if (_thisData>flagData) {
+            flagData = _thisData;
+            _thisIndex=j;
+          }
+        } else {
+          if (_thisData<flagData) {
+            flagData = _thisData;
+            _thisIndex=j;
+          }
+        }
+      }
+      usedIndexs+=","+_thisIndex;
+      ret[i]=eval("data["+_thisIndex+"]");
+    }
+   return ret;
+  }
+
+  //以下方法为对showType的解析
+  /**
+   * st=table
+   */
+  function drawTable(jQobj,_data){
+    //不知道table会不会有decorateView
+    var table_body = _data.tableData.tableBody;
+    var table_titles = _data.tableData.titles;
+    var colAry = new Array();
+    for(var i=0;i<table_titles.length;i++){
+      //getAllPrpos得到对应的属性
+      var titlePrpos = getAllPrpos(table_titles[i]);
+      var col = new Object();
+      col.field = titlePrpos.prposName;
+      col.title = titlePrpos.prposValue;
+      col.width = 100;
+      colAry.push(col);
+    }
+    var width = (100*(table_titles.length))+50;
+    jQobj.attr('style','width:'+width+'px;');
+    jQobj.datagrid({
+      singleSelect:true,
+      collapsible:true,
+      // TODO 这数据是有问题的，取不到title
+      columns:[colAry],
+      data:table_body
+    });
+  }
+
+  /**
+   * st=value
+   */
+  function drawValue(jQobj,dataAry){
+    jQobj.html(dataAry);
+  }
+
+  /**
    * pie
    * jQobj:jquery对象
    * dataAry：数据
    * decorateView:显示修饰
    */
-  function drawPie(jQobj,dataAry,decorateView){
-    $.plot(jQobj, dataAry, {
+  function drawPie(jQobj,_data){
+    //特有属性
+    var pieLabel = jQobj.attr('label');
+    var pieData = jQobj.attr('data');
+    var ary = [];
+    var pie_dataBody = _data.tableData.tableBody;
+    //在派中解析这个不知道有没有意义
+    var decorateView = jQobj.attr('decorateView');
+    if(decorateView){
+      if(decorateView.indexOf("lableShow")==-1){
+        alert("decorateView格式有出错");
+      }else{
+        var b = decorateView.indexOf("[")+1;
+        var e = decorateView.indexOf("]");
+        var exp = decorateView.substring(b,e);
+        exp = removeSpace(exp);
+        var decorateAry = exp.split(",");
+      }
+    }
+    for(var i=0;i<pie_dataBody.length;i++){ 
+      eval("var _pie_label=pie_dataBody[i]."+pieLabel);
+      eval("var _pie_data=pie_dataBody[i]."+pieData);
+      ary[i] = {label:_pie_label,data:_pie_data};
+    }
+    jQobj.attr('style','height:150px;width:150px;');
+    $.plot(jQobj, ary, {
       series:{
         pie:{
           show:true,
@@ -678,14 +598,56 @@
       }
     });
   }
+
   /**
    * line
    * jQobj:jquery对象
    * dataAry：数据
    * decorateView:显示修饰
    */
-  function drawLine(jQobj,dataAry){
-    $.plot(jQobj, [{label:"最小值", data:dataAry}], {
+  function drawLine(jQobj,_data){
+    var label = jQobj.attr('label');
+    var data = jQobj.attr('data');
+    var line_dataBody = _data.tableData.tableBody;
+    var ary = [];
+    var height = 20*line_dataBody.length;
+    var width = 40*line_dataBody.length;
+    jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+    var decorateView = jQobj.attr('decorateView');
+    if(decorateView){
+      if(decorateView.indexOf("lableShow")==-1){
+        alert("decorateView格式有出错");
+      }else{
+        var b = decorateView.indexOf("[")+1;
+        var e = decorateView.indexOf("]");
+        var exp = decorateView.substring(b,e);
+        exp = removeSpace(exp);
+        //该数组第一个元素暂时没用。。保留项
+        decorateAry = exp.split(",");
+      }
+    }
+    eval("var showStyle = line_dataBody[0]."+decorateAry[1]);
+    if(!showStyle){
+      var sum =0;
+      for(var i=0;i<line_dataBody.length;i++){
+        eval("var _y = line_dataBody[i]."+data);
+        sum = sum+parseFloat(_y);
+      }
+      for(var i=0;i<line_dataBody.length;i++){
+        eval("var _x = line_dataBody[i]."+label);
+        eval("var _y = line_dataBody[i]."+data);
+        _y = Math.round((parseFloat(_y)/sum*10000)/100.00)+"%";
+        ary[i] = [_x,_y];
+      }
+    }else{
+      for(var i=0;i<line_dataBody.length;i++){
+        eval("var _x = line_dataBody[i]."+label);
+        eval("var _y = line_dataBody[i]."+decorateAry[1]);
+        ary[i] = [_x,_y];
+      }
+    }
+    jQobj.css({"width":"440px", "height":"220px"});
+    $.plot(jQobj, [{label:"最小值", data:ary}], {
       series: {
         lines: { show: true },
         points: { show: true }
@@ -704,14 +666,27 @@
       legend:{show:false}
     });
   }
+
   /**
-   * Bars
+   * st==Bars
    * jQobj:jquery对象
    * dataAry：数据
    * decorateView:显示修饰
    */
-  function drawBars(jQobj,dataAry){
-    $.plot(jQobj, [dataAry], {
+  function drawBar(jQobj,_data){
+    var label = jQobj.attr('label');
+    var data = jQobj.attr('data');
+    var line_dataBody = _data.tableData.tableBody;
+    var ary = [];
+    var height = 20*line_dataBody.length;
+    var width = 40*line_dataBody.length;
+    jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+    for(var i=0;i<line_dataBody.length;i++){
+      eval("var _x = line_dataBody[i]."+label);
+      eval("var _y = line_dataBody[i]."+data);
+      ary[i] = [_x,_y];
+    }
+    $.plot(jQobj, [ary], {
       series: {
         bars: {
           show: true,
@@ -734,6 +709,8 @@
       legend:{ show:true, position: "sw" }
     });
   }
+  //以上方法为对showType的解析
+
   /**
    * 初始化pageFrame
    */
