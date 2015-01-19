@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
+import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.jsonD.ConvertJson;
 import com.spiritdata.jsonD.util.JsonUtils;
 
@@ -86,6 +87,8 @@ public class Templet implements Serializable, ConvertJson {
         //转换体templet
         if (_TEMPLET instanceof String) {
             jsonS += "\"_TEMPLET\":"+_TEMPLET;
+        } else if (_TEMPLET instanceof SegmentList) {
+            jsonS += "\"_TEMPLET\":"+((SegmentList<TreeNode<TempletSegment>>)_TEMPLET).toJson();
         } else {
             jsonS += "\"_TEMPLET\":"+JsonUtils.objToJson(_TEMPLET);
         }
