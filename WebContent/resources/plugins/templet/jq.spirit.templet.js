@@ -11,7 +11,7 @@
  */
 (function($){
   //树
-  var segTree=[];
+  var segTree=new Array();
   //level
   var level=0;
   //用于存放jsonDInfo
