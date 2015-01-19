@@ -261,9 +261,7 @@
             for(var v=0;v<_dataAry.length;v++){
               if(pDataAry!=""){
                 if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
-              }else{
-                pDataAry = pDataAry+_dataAry[v]+",";
-              }
+              }else pDataAry = pDataAry+_dataAry[v]+",";
               if(pDataAry==",") pDataAry="";
             }
             if(pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
@@ -327,23 +325,78 @@
   }
   //以下为公共方法部分
   /**
-   * 去除String中所有的空格
+   * 排序方法
+   * orderCol:排序列(按照这列排序)
+   * data:排序数组
+   * shortType:排序方式，升序或降序
+   * sortSize:获取个数
+   */
+  function sort(sortType, data, orderCol, firstNum) {
+    if(firstNum>data.length) firstNum = data.length;
+    var ret = new Array(firstNum);
+    var usedIndexs="";
+    if (data==null||data.length==0) return null;
+    var _thisIndex=-1;
+    for (var i=0; i<firstNum; i++) {
+      var flagData = null;
+      for(var k=0;k<data.length;k++){
+        if(usedIndexs.indexOf(k)==-1) {
+          flagData=eval("data["+k+"]."+orderCol);
+          _thisIndex = k;
+          try{
+            flagData = parseFloat(flagData);
+          }catch(e){continue;}
+          break;
+        }
+      }
+      for (var j=0; j<data.length; j++) {
+        if (usedIndexs.indexOf(j)!=-1)continue;
+        var _thisData = eval("data["+j+"]."+orderCol);
+        try {
+          _thisData = parseFloat(_thisData);
+        }catch(e) { continue; }
+        if (sortType==1){
+          if (_thisData>flagData) {
+            flagData = _thisData;
+            _thisIndex=j;
+          }
+        } else {
+          if (_thisData<flagData) {
+            flagData = _thisData;
+            _thisIndex=j;
+          }
+        }
+      }
+      usedIndexs+=","+_thisIndex;
+      ret[i]=eval("data["+_thisIndex+"]");
+    }
+   return ret;
+  }
+  /**
+   * 去除括号“()”
+   * exp:带"()"的字符串
+   */
+  function removeBrackets(exp){
+    var start = exp.indexOf("(")+1;
+    var end = exp.lastIndexOf(")");
+    return exp.substring(start,end);
+  }
+  /**
+   * 去除str中的空格
+   * exp:带空格的字符串
    */
   function removeSpace(exp){
     return exp.replace(/\s/g,'');
   }
   /**
-   * 公共方法
    * 用来获取title中对象的属性名和属性值
    * 方便easyui table的显示
    * obj:仅限一个对象，
-   * return 
+   * return 返回一个由prposName(属性名)和prposValue(属性值)的新对象
    */
   function getAllPrpos (obj) { 
-    // TODO 该方法未整理
     // 用来保存所有的属性名称和值 
     var retProps = new Object();
-    var props = "" ; 
     // 开始遍历 
     for ( var p in obj ){
       // 方法 
@@ -351,7 +404,6 @@
         obj[p]();
       } else { 
         // p 为属性名称，obj[p]为对应属性的值 
-        //props += p+ " = " + obj[p] + "\t" ;
         retProps.prposName = p;
         retProps.prposValue = obj[p];
       } 
@@ -378,16 +430,14 @@
     else if(showType=="bars") drawBar(jQobj, _data);
     else if(showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
   }
-  /**
-   * 去除括号“()”
-   */
-  function removeBrackets(exp){
-    var start = exp.indexOf("(")+1;
-    var end = exp.lastIndexOf(")");
-    return exp.substring(start,end);
-  }
+
+  //以下方法为对showType的解析
   /**
    * st=first
+   * params：
+   * showType：showType
+   * jQobj:jq对象
+   * _data
    */
   function drawFirst(showType,jQobj,_data){
   //1、提取出first中的表达式
@@ -461,61 +511,9 @@
   }
 
   /**
-   * 排序方法
-   * orderCol:排序列(按照这列排序)
-   * data:排序数组
-   * shortType:排序方式，升序或降序
-   * sortSize:获取个数
-   */
-  function sort(sortType, data, orderCol, firstNum) {
-    if(firstNum>data.length) firstNum = data.length;
-    var ret = new Array(firstNum);
-    var usedIndexs="";
-    if (data==null||data.length==0) return null;
-    var _thisIndex=-1;
-    for (var i=0; i<firstNum; i++) {
-      var index;
-      var flagData;
-      for(var k=0;k<data.length;k++){
-        if(usedIndexs.indexOf(k)==-1) {
-          flagData=eval("data["+k+"]."+orderCol);
-          _thisIndex = k;
-          try{
-            flagData = parseFloat(flagData);
-          }catch(e){continue;}
-          break;
-        }
-      }
-      for (var j=0; j<data.length; j++) {
-        if (usedIndexs.indexOf(j)!=-1)continue;
-        var _thisData = eval("data["+j+"]."+orderCol);
-        try {
-          _thisData = parseFloat(_thisData);
-        }catch(e) { continue; }
-        if (sortType==1){
-          if (_thisData>flagData) {
-            flagData = _thisData;
-            _thisIndex=j;
-          }
-        } else {
-          if (_thisData<flagData) {
-            flagData = _thisData;
-            _thisIndex=j;
-          }
-        }
-      }
-      usedIndexs+=","+_thisIndex;
-      ret[i]=eval("data["+_thisIndex+"]");
-    }
-   return ret;
-  }
-
-  //以下方法为对showType的解析
-  /**
    * st=table
    */
   function drawTable(jQobj,_data){
-    //不知道table会不会有decorateView
     var table_body = _data.tableData.tableBody;
     var table_titles = _data.tableData.titles;
     var colAry = new Array();
@@ -533,7 +531,6 @@
     jQobj.datagrid({
       singleSelect:true,
       collapsible:true,
-      // TODO 这数据是有问题的，取不到title
       columns:[colAry],
       data:table_body
     });
@@ -547,7 +544,7 @@
   }
 
   /**
-   * pie
+   * st = pie
    * jQobj:jquery对象
    * dataAry：数据
    * decorateView:显示修饰
@@ -568,7 +565,7 @@
         var e = decorateView.indexOf("]");
         var exp = decorateView.substring(b,e);
         exp = removeSpace(exp);
-        var decorateAry = exp.split(",");
+        //var decorateAry = exp.split(",");
       }
     }
     for(var i=0;i<pie_dataBody.length;i++){ 
@@ -600,12 +597,13 @@
   }
 
   /**
-   * line
+   * st=line
+   * param
    * jQobj:jquery对象
    * dataAry：数据
    * decorateView:显示修饰
    */
-  function drawLine(jQobj,_data){
+  function drawLine(jQobj,_data,decorateView){
     var label = jQobj.attr('label');
     var data = jQobj.attr('data');
     var line_dataBody = _data.tableData.tableBody;
