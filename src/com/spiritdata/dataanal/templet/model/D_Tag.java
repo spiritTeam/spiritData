@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class D_Tag implements Serializable{
     private static final long serialVersionUID = -7400921505424634876L;
 
-    private String showType; //显示类型
+    private DtagShowType showType; //显示类型
 
     private String a;
     /**

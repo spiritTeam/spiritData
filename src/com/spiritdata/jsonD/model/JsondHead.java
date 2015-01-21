@@ -77,8 +77,8 @@ public class JsondHead implements Serializable, ConvertJson {
      * @return json串
      */
     public String toJson() {
-        if (this.id==null||this.id.length()==0) throw new Jsond0002CException("_id必须设置！");
-        if (this.code==null||this.code.length()==0) throw new Jsond0002CException("_code必须设置！");
+        if (this.id==null||this.id.length()==0) throw new Jsond0002CException("id必须设置！");
+        if (this.code==null||this.code.length()==0) throw new Jsond0002CException("code必须设置！");
         if (!JsonDUtils.isLegalCode(this.code)) throw new Jsond0003CException("code["+code+"]不合规，请参看JsonD相关文档！");
 
         if (this.CTime==null) CTime= new Date();
@@ -95,8 +95,8 @@ public class JsondHead implements Serializable, ConvertJson {
      * @return Map
      */
     public Map<String, Object> toMap() {
-        if (this.id==null||this.id.length()==0) throw new Jsond0002CException("_id必须设置！");
-        if (this.code==null||this.code.length()==0) throw new Jsond0002CException("_code必须设置！");
+        if (this.id==null||this.id.length()==0) throw new Jsond0002CException("id必须设置！");
+        if (this.code==null||this.code.length()==0) throw new Jsond0002CException("code必须设置！");
         if (!JsonDUtils.isLegalCode(this.code)) throw new Jsond0003CException("code["+code+"]不合规，请参看JsonD相关文档！");
 
         if (this.CTime==null) CTime= new Date();

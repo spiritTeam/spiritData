@@ -182,7 +182,6 @@ public class DealExcelFileService {
                     file.createNewFile();
                 }
                 fileOutputStream = new FileOutputStream(file);
-                fileOutputStream.write((JsonUtils.formatJsonStr(JsonUtils.beanToJson(jsonMap), null)).getBytes()); 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {

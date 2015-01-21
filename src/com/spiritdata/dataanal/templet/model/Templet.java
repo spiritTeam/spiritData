@@ -77,7 +77,7 @@ public class Templet implements Serializable, ConvertJson {
         }
         //转换dataList;模板可以没有任何dataList
         if (dataList!=null&&dataList.size()>0) {
-            jsonS += ",\"_DATA\":[";
+            jsonS += ",\"_DLIST\":[";
             for (int i=0; i<dataList.size(); i++) {
                 if (i!=0) jsonS += ",";
                 jsonS += dataList.get(i).toJson();
