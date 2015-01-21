@@ -14,7 +14,7 @@ import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
 
 /**
- * 模型化文件信息对象，包括文件的索引信息，文件的分类信息，以及文件的关系信息。
+ * 模型化文件信息，包括文件的索引信息，文件的分类信息，以及文件的关系信息。
  * 它与持久化中的FileIndex区别在于：
  * 1-持久化中的FileIndex与数据库对应，这里的类与实际模型相对应。
  * 2-持久化中类中的字段是基本字段，而这里的字段可以是枚举值。

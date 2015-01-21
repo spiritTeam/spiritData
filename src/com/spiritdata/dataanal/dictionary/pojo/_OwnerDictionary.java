@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.dictdata.pojo;
+package com.spiritdata.dataanal.dictionary.pojo;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;

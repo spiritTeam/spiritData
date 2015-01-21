@@ -27,13 +27,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
-import com.spiritdata.dataanal.dictdata.pojo._OwnerDictionary;
-import com.spiritdata.dataanal.dictdata.service.DictSessionService;
+import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.dictionary.service.DictSessionService;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
@@ -67,8 +66,6 @@ public class DealExcelFileService {
     private MdQuotaService mdQutotaService;
     @Resource
     private DataSource dataSource;
-    @Resource
-    private AanlResultFileService arfService;
     @Resource
     private FileManageService fmService;
     @Resource
@@ -185,7 +182,6 @@ public class DealExcelFileService {
                     file.createNewFile();
                 }
                 fileOutputStream = new FileOutputStream(file);
-                fileOutputStream.write((JsonUtils.formatJsonStr(JsonUtils.beanToJson(jsonMap), null)).getBytes()); 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -256,7 +252,7 @@ public class DealExcelFileService {
                             Map<String, Object> keyMap = analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
-                                FileInfo arFi = arfService.saveFile(arf);//分析jsonD存储
+                                FileInfo arFi = fmService.saveFile(arf);//分析jsonD存储
                                 //4.2-文件关系存储
                                 FileRelation fr = new FileRelation();
                                 fr.setElement1(fi.getFileCategoryList().get(0));
@@ -280,7 +276,7 @@ public class DealExcelFileService {
                             keyMap = dictKey.scanMetadata(sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
-                                FileInfo arFi = arfService.saveFile(arf);//分析jsonD存储
+                                FileInfo arFi = fmService.saveFile(arf);//分析jsonD存储
                                 //7.1.2-文件关系存储
                                 FileRelation fr = new FileRelation();
                                 fr.setElement1(fi.getFileCategoryList().get(0));

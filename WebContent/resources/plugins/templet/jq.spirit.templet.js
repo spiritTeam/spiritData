@@ -11,7 +11,7 @@
  */
 (function($){
   //树
-  var segTree=[];
+  var segTree=new Array();
   //level
   var level=0;
   //用于存放jsonDInfo
@@ -434,10 +434,9 @@
   //以下方法为对showType的解析
   /**
    * st=first
-   * params：
-   * showType：showType
-   * jQobj:jq对象
-   * _data
+   * @param showType：showType
+   * @param jQobj:jq对象
+   * @param _data
    */
   function drawFirst(showType,jQobj,_data){
   //1、提取出first中的表达式

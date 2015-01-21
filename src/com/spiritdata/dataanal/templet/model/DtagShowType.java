@@ -1,15 +1,14 @@
-package com.spiritdata.filemanage.core.enumeration;
+package com.spiritdata.dataanal.templet.model;
 
 /**
- * 文件分类中的大分类，目前只支持IMP,LOG,ANAL,TEMPLET。<br/>
+ * D标签的显示类型，目前有：<br/>
  * IMP:导入文件；<br/>
  * LOG:日志文件；<br/>
  * ANAL:分析结果文件；<br/>
  * TEMPLET:模板文件；<br/>
- * 为与数据库配合，其对应的值是String
  * @author wh
  */
-public enum FileCategoryType1 {
+public enum DtagShowType {
     IMP("IMP"), LOG("LOG"), ANAL("ANAL"), TEMPLET("TEMPLET");
 
     private String value;
@@ -17,7 +16,7 @@ public enum FileCategoryType1 {
         return this.value;
     }
 
-    private FileCategoryType1(String v) {
+    private DtagShowType(String v) {
         this.value =v;
     }
 }

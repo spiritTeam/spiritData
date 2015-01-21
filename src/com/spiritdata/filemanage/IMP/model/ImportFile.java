@@ -1,12 +1,13 @@
 package com.spiritdata.filemanage.IMP.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 
-import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
+import com.spiritdata.filemanage.core.BeManageFile;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
@@ -16,12 +17,12 @@ import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
  * 导入文件模型，用于记录导入文件，基于File管理模型
  * @author wh
  */
-public class ImportFile extends BaseObject {
+public class ImportFile implements Serializable, BeManageFile {
     private static final long serialVersionUID = -6413748884964474948L;
 
-    private String id; //文件上传id
-    private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session)）
-    private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
+    private String id; //上传文件的id
+    private int ownerType; //上传文件所对应的所有者类型（1=注册用户;2=非注册用户(session)）
+    private String ownerId; //上传文件所有者标识（可能是用户id，也可能是SessionID）
     private String serverFileName; //服务端文件全名(包括目录和文件名)
     private String clientFileName; //客户端文件全名(包括目录和文件名)
 
@@ -65,9 +66,8 @@ public class ImportFile extends BaseObject {
      * -Adata:音频数据<br/>
      * -Idata:图片数据
      * @return 模型化文件信息
-     * @throws Exception 若服务器端文件不存在
      */
-    public FileInfo convertToFileInfo() {
+    public FileInfo convert2FileInfo() {
         File f = new File(this.serverFileName);
         if (f==null||!f.isFile()) throw new Flmg0001CException(new IllegalArgumentException("导入文件对象中serverFileName所指向的文件为空或是一个目录！"));
 

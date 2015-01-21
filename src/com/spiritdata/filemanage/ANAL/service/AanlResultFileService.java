@@ -4,29 +4,36 @@ package com.spiritdata.filemanage.ANAL.service;
  * 分析文件服务类
  * @author wh
  */
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.core.model.FileInfo;
-import com.spiritdata.filemanage.core.service.FileManageService;
+import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.exceptionC.Flmg0101CException;
+import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 
 public class AanlResultFileService {
-    @Resource
-    private FileManageService fmService;
+    @Resource(name="defaultDAO")
+    private MybatisDAO<FileIndexPo> fileIndexDao;
+
+    @PostConstruct
+    public void initParam() {
+        fileIndexDao.setNamespace("fileIndex");
+    }
 
     /**
-     * 保存分析结果文件
-     * @param arFile 分析结果文件对象
-     * @return 对应该分析结果文件对象的保存后的文件信息
+     * 按条件获得分析文件列表
+     * @param m 条件参数
+     * @return
      */
-    public FileInfo saveFile(AnalResultFile arFile) {
+    public List<FileIndexPo> getAnalFiles(Map<String, Object> m) {
         try {
-            FileInfo fi = arFile.convertToFileInfo();
-            fmService.saveFileInfo(fi);
-            return fi;
+            return fileIndexDao.queryForList("getAnalList", m);
         } catch(Exception e) {
-            throw new Flmg0101CException(e);
+            new Flmg0101CException("获得分析结果文件列表", e); 
         }
+        return null;
     }
 }

@@ -1,15 +1,16 @@
 package com.spiritdata.filemanage.ANAL.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
+import com.spiritdata.filemanage.core.BeManageFile;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
@@ -26,7 +27,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
  * @author wh
  */
 //今后，若有可能把分析结果和jsonD进行结合
-public class AnalResultFile extends BaseObject {
+public class AnalResultFile implements Serializable, BeManageFile {
     private static final long serialVersionUID = 7715689049076212381L;
 
     private String id; //分析文件id
@@ -102,7 +103,7 @@ public class AnalResultFile extends BaseObject {
      * @return 模型化文件信息
      * @throws Exception 若服务器端文件不存在
      */
-    public FileInfo convertToFileInfo() {
+    public FileInfo convert2FileInfo() {
         File f = new File(this.fileName);
         if (f==null||!f.isFile()) throw new Flmg0001CException(new IllegalArgumentException("分析结果文件对象中fileName所指向的文件为空或是一个目录！"));
         FileInfo ret = new FileInfo();

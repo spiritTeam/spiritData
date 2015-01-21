@@ -1,14 +1,12 @@
 package com.spiritdata.filemanage.core.service;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
+import com.spiritdata.filemanage.core.BeManageFile;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
@@ -97,16 +95,17 @@ public class FileManageService {
     }
 
     /**
-     * 按条件获得分析文件列表
-     * @param m 条件参数
-     * @return
+     * 存储被管里的文件
+     * @param bmf 被管里的文件
+     * @return 被管里的文件对应的模型化文件信息对象
      */
-    public List<FileIndexPo> getAnalFiles(Map<String, Object> m) {
+    public FileInfo saveFile(BeManageFile bmf) {
         try {
-            return fileIndexDao.queryForList("getAnalList", m);
+            FileInfo fi = bmf.convert2FileInfo();
+            this.saveFileInfo(fi);
+            return fi;
         } catch(Exception e) {
-            new Flmg0101CException("获得分析结果文件列表", e); 
+            throw new Flmg0101CException(e);
         }
-        return null;
     }
 }

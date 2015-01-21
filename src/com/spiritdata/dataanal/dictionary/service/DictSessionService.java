@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.dictdata.service;
+package com.spiritdata.dataanal.dictionary.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +11,10 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 
 import com.spiritdata.dataanal.SDConstants;
-import com.spiritdata.dataanal.dictdata.pojo.DictDetail;
-import com.spiritdata.dataanal.dictdata.pojo.DictMaster;
-import com.spiritdata.dataanal.dictdata.pojo.DictModel;
-import com.spiritdata.dataanal.dictdata.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
+import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
+import com.spiritdata.dataanal.dictionary.pojo.DictModel;
+import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
 import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;

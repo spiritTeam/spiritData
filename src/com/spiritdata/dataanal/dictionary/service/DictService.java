@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.dictdata.service;
+package com.spiritdata.dataanal.dictionary.service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,8 +10,8 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
-import com.spiritdata.dataanal.dictdata.pojo.DictDetail;
-import com.spiritdata.dataanal.dictdata.pojo.DictMaster;
+import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
+import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
 import com.spiritdata.dataanal.exceptionC.Dtal0301CException;
 
 /**

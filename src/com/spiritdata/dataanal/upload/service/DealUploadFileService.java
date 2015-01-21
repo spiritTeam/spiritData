@@ -14,8 +14,8 @@ import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal0101CException;
 import com.spiritdata.dataanal.importdata.excel.service.DealExcelFileService;
 import com.spiritdata.filemanage.IMP.model.ImportFile;
-import com.spiritdata.filemanage.IMP.service.ImportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.service.FileManageService;
 
 /**
  * 处理上传文件
@@ -24,7 +24,7 @@ import com.spiritdata.filemanage.core.model.FileInfo;
 @Component
 public class DealUploadFileService {
     @Resource
-    private ImportFileService ifService;
+    private FileManageService fmService;
     @Resource
     private DealExcelFileService dealExcelService;
 
@@ -38,7 +38,7 @@ public class DealUploadFileService {
         //记录文件
         try {
             ImportFile ifl = getFileInfo(uploadInfoMap, session);
-            FileInfo fi = ifService.saveImportFile(ifl);
+            FileInfo fi = fmService.saveFile(ifl);
             //得到文件扩展名
             String extName = FileNameUtils.getExt(ifl.getServerFileName());
             if (extName.toUpperCase().indexOf(".XLS")==0||extName.toUpperCase().indexOf(".XLSX")==0) {

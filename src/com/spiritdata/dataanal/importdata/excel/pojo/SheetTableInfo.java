@@ -1,9 +1,9 @@
 package com.spiritdata.dataanal.importdata.excel.pojo;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
@@ -12,7 +12,7 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
  * Excel中的结构表信息
  * @author wh
  */
-public class SheetTableInfo extends BaseObject{
+public class SheetTableInfo implements Serializable {
     private static final long serialVersionUID = 4360018605351620147L;
     
     private boolean threadEnd = false;//线程指标，说明处理线程是否结束了

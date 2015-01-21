@@ -19,8 +19,8 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
-import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
 import com.spiritdata.dataanal.SDConstants;
@@ -40,7 +40,7 @@ public class MdKeyService {
     @Resource
     private MdBasisService mdBasisService;
     @Resource
-    private FileManageService fmService;
+    private AanlResultFileService arfService;
 
     /**
      * 调整元数据主键。
@@ -154,7 +154,7 @@ public class MdKeyService {
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("analType2", SDConstants.ANAL_MD_KEY);
             m.put("analType3", mm.getId());
-            List<FileIndexPo> afl = fmService.getAnalFiles(m);
+            List<FileIndexPo> afl = arfService.getAnalFiles(m);
             if (afl!=null&&afl.size()>0) {
                 for (int i=0; i<(afl.size()>10?10:afl.size()); i++) {
                     FileIndexPo fip = afl.get(i);

@@ -1,8 +1,8 @@
 package com.spiritdata.filemanage.core.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileRelationPo;
@@ -15,7 +15,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
  * 使用模型类更加规范，但开销大——结构复杂
  * @author wh
  */
-public class FileRelation extends BaseObject {
+public class FileRelation implements Serializable {
     private static final long serialVersionUID = 2171855816787994983L;
 
     private String id; //文件id
