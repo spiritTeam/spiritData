@@ -64,7 +64,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 </div>
 
 <center>
-  <div id="mainDiv" style="width:330px;height:400px;">
+  <div id="mainDiv" style="width:330px;height:400px;padding-top:20px;">
   <form>
     <table width="300px;" style="margin-right:-40px;margin-top:30px;">
       <tr style="height:50px; valign:top;">
@@ -77,8 +77,8 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         </td>
       </tr>
       <tr style="height:50px; valign:top;">
-        <td align="right"><span class="loginspan">密　码</span></td>
-        <td colspan="2" style="text-align:left;" id="pwTd">
+        <td align="right" style="padding-top: 30px;"><span class="loginspan">密　码</span></td>
+        <td colspan="2" style="text-align:left;padding-top: 30px;" id="pwTd">
         <div style="float:left;">
           <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
            onclick="changePasswordCss(password);" onBlur="validatePassword('password');"/></div>
@@ -88,8 +88,8 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         </td>
       </tr>
       <tr style="height:50px; valign:top;">
-        <td align="right"><span class="loginspan">验证码</span></td>
-        <td colspan="2">
+        <td align="right" style="padding-top: 30px;"><span class="loginspan">验证码</span></td>
+        <td colspan="2" style="padding-top: 30px;">
         <div style="float:left;">
           <input type="text"  id="checkCode" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
           onclick="changeCheckCodeCss(checkCode);" onBlur="validateValidateCode('checkCode');"/>
@@ -101,18 +101,18 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         </td>
       </tr>
       <tr style="height:70px; valign:top;">
-        <td colspan="3" align="center">
-        <div tabindex="4" style="width:250px; background-image:url(images/loginb.png); padding-left:0px;margin-left:-31px;">
+        <td colspan="3" align="center" style="padding-top: 30px;">
+        <div tabindex="4" style="width:250px;background-image:url(images/bg.png);padding-left:0px;margin-left:-31px;border-radius:5px">
           <a id="login" name="login"  onclick="loginF();"><img src="images/login.png"/></a>
         </div>
         </td>
       </tr>
     </table>
   </form>
-  <div align="right" style="width:310px;margin-top:115px;margin-right:10px;">
-    <a onclick="toRegister()" href="#">注册</a>
-    <a onclick="activeUserAgain()" href="#">&nbsp;激活</a>
-    <a onclick="modifyPassword()" href="#">&nbsp;忘记密码</a>
+  <div align="right" style="width:310px;margin-top:30px;margin-right:10px;">
+    <a onclick="toRegister()" href="#">注册</a>&nbsp;|&nbsp;
+    <a onclick="activeUserAgain()" href="#">激活</a>&nbsp;|&nbsp;
+    <a onclick="modifyPassword()" href="#">忘记密码?</a>
   </div>
   </div>
 </center>

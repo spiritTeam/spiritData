@@ -79,7 +79,7 @@
         <tr>
           <td colspan="3" align="left" style="height:50px;padding-top:10px;" valign="top">
             <div style="width:5px;height:5px;"></div>
-            <div tabindex="6" id="commitButton" style="background-image:url(images/registerb.png);">
+            <div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);border-radius:5px;">
               <a id="register" name="register" onclick="saveRegister();" href="#"><img src="images/register.png"/></a>
             </div>
           </td>
