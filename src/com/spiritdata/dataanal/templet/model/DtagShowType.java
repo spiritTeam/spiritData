@@ -9,7 +9,8 @@ package com.spiritdata.dataanal.templet.model;
  * @author wh
  */
 public enum DtagShowType {
-    IMP("IMP"), LOG("LOG"), ANAL("ANAL"), TEMPLET("TEMPLET");
+    VALUE("value"), FIRST("first"), TABLE("table"), PIE("pie"),
+    BAR("bar"), LINE("line"), RADAR("radar");
 
     private String value;
     public String getValue() {
