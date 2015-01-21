@@ -68,7 +68,7 @@ public class RegisterController {
     }
     
     /**
-     * 跟新用户信息
+     * 更新用户信息
      * @return
      */
     @RequestMapping("login/update.do")

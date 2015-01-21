@@ -15,7 +15,7 @@
   <div style="width:330px;height:400px;">
     <div id="rstDiv" style="text-align:left;margin-left:75px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
-      <table width="300px;" style="margin-right:-35px;">
+      <table width="300px;" style="margin-right:-35px;margin-top:5px;">
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="loginspan">用户名</span></td>
           <td colspan="2" rowspan="1" style="text-align:left;">
@@ -27,7 +27,7 @@
         </tr>
         <tr><td colspan="3" align="center"></td></tr>
       </table>
-      <div style="width:40px;margin-top:10px;"><a id="sendButton" onclick="sendBackPwdMail();" href="#">下一步</a></div>
+      <a href="#" onclick="sendBackPwdMail();" ><div style="margin-top:30px;width:250px;background-image:url(images/bg.png);padding-left:0px;margin-left:-8px;border-radius:5px"><img src="images/next.png"/></div></a>
       <div id="infoDiv" style="text-align:left;width:250px;margin-top:40px;margin-left:-6px;">
         <h2>重置密码流程：</h2>
         <span>1、填写用户名,系统校验用户名。</span><br/>

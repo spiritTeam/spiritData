@@ -28,7 +28,7 @@
           <td colspan="2" width="200px;">
             <div style="float:left">
               <input id="loginName" name="loginName" tabindex="1" type="text" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" value="用户账号"/></div>
+                onclick="onClick(loginName);" onBlur="" value="用户账号" disabled="disabled"/></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
@@ -38,7 +38,7 @@
           <td colspan="2" width="130px;">
             <div style="float:left">
               <input id="mail" name="mail" tabindex="2" type="text" onmouseover=this.focus();this.select(); 
-                onclick="onClick(mail);" onBlur="validateMail('mail');" value="您的邮箱"/></div>
+                onclick="onClick(mail);" onBlur="" value="您的邮箱" readonly="readonly"/></div>
             <div class="intro" style="float:left;margin-left:-3px;">
               <input id="mailEndStr" name="mailEndStr"/></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vMail'></div>
