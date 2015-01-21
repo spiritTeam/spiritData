@@ -1,11 +1,8 @@
 package com.spiritdata.filemanage.IMP.service;
 
 import java.util.List;
-
 import javax.annotation.Resource;
-
-import org.springframework.stereotype.Component;
-
+import org.springframework.stereotype.Service;
 import com.spiritdata.filemanage.IMP.model.ImportFile;
 import com.spiritdata.filemanage.core.service.FileManageService;
 
@@ -14,7 +11,7 @@ import com.spiritdata.filemanage.core.service.FileManageService;
  * @author wh
  */
 
-@Component
+@Service
 public class ImportFileService {
     @Resource
     private FileManageService fmService;

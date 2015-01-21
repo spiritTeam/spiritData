@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.CacheEle;
@@ -17,7 +17,8 @@ import com.spiritdata.jsonD.exceptionC.Jsond1001CException;
  * JsonD的web服务，主要是获取Jsond资源
  * @author wh
  */
-@Component
+
+@Service
 public class JsondService {
     /**
      * 根据Jsond实例的Id，得到Jsond串

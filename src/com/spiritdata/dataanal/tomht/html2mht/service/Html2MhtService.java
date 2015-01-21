@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.spiritdata.dataanal.tomht.html2mht.util.BriefConstants;
 import com.spiritdata.dataanal.tomht.html2mht.util.CommonUtils;
@@ -20,7 +20,8 @@ import com.spiritdata.dataanal.tomht.html2mht.util.ImageUtil;
  * 类说明 Html2Mhtservie类，
  * 提供Html2Mht的方法
  */
-@Component
+
+@Service
 public class Html2MhtService {
     CommonUtils cu = new CommonUtils();
     /**WebContent路径*/

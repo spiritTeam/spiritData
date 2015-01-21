@@ -19,7 +19,6 @@ import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.core.web.SessionLoader;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.SDConstants;
-import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
