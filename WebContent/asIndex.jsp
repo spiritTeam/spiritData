@@ -276,7 +276,6 @@ $(function() {
     var loginName = "";
     var actionUrl = "<%=path+"/"+actionUrl%>";
     var _url = actionUrl;
-    alert(_url);
     var winOption={
       url:_url,
       title:"修改密码",
@@ -554,7 +553,6 @@ function showResult() {
 }
 
 function onlyLogout(ip, mac, browser) {
-  alert("in mainPage");
   var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   $.messager.alert("提示", msg+"<br/>现返回登录页面。", "info", function(){ logout(); });

@@ -23,7 +23,7 @@
   <div style="width:330px;height:400px;">
     <div id="rstDiv" style="text-align:left;margin-left:86px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
-      <table width="300px;" style="margin-right:-10px;">
+      <table width="300px;" style="margin-right:-35px;margin-top:5px;">
         <tr style="height:35px;valign:top;">
           <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
           <td colspan="2" width="200px;" style="text-align:left;">
@@ -56,11 +56,14 @@
             <div id="cpwDiv" style="float:left;width:50px;height:25px;padding-top:10px;margin-left:-223px;" align="center">
               <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span></div>
           </td></tr>
-        <tr>
-          <td colspan="3" align="right">
-            <a id="saveButton" style="margin-top:50px;margin-right:20px;" onclick="modifyPassword();" href="#">确认修改</a></td></tr>
       </table>
     </form>
+    <div style="margin-top:50px;width: 100%">
+    <a id="saveButton"  onclick="modifyPassword();" href="#">
+      <div style="margin-left:-3px;width:250px;background-image:url(images/bg.png);border-radius:5px">
+        <img src="images/modify.png"/>
+      </div>
+    </a></div>
   </div>
 </center>
 </body>
