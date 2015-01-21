@@ -19,7 +19,7 @@
   <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
 </div>
 <center>
-  <div id="mainDiv" style="width:330px;height:400px;">
+  <div id="mainDiv" style="width:330px;height:400px;padding-top:5px;">
     <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;margin-top: 10px;"><span id="checkResult"></span></div>
     <form>
       <table width="300px;" style="margin-right:-40px;">
@@ -79,9 +79,9 @@
         <tr>
           <td colspan="3" align="left" style="height:50px;padding-top:10px;" valign="top">
             <div style="width:5px;height:5px;"></div>
-            <div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);border-radius:5px;">
-              <a id="register" name="register" onclick="saveRegister();" href="#"><img src="images/register.png"/></a>
-            </div>
+            <a id="register" name="register" onclick="saveRegister();" href="#"><div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);border-radius:5px;">
+              <img src="images/register.png"/>
+            </div></a>
           </td>
         </tr>
       </table>
@@ -209,7 +209,7 @@ function setInputCss(){
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"width":"210px","padding-left":"38px","margin-left":"9px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"width":"177px","padding-left":"70px","margin-left":"8px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
   }else{
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
@@ -218,7 +218,7 @@ function setInputCss(){
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"width":"210px","padding-left":"38px","margin-left":"12px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"width":"177px","padding-left":"70px","margin-left":"8px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"70px"});
   }
 }

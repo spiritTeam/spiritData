@@ -64,7 +64,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 </div>
 
 <center>
-  <div id="mainDiv" style="width:330px;height:400px;padding-top:20px;">
+  <div id="mainDiv" style="width:330px;height:400px;padding-top:5px;">
   <form>
     <table width="300px;" style="margin-right:-40px;margin-top:30px;">
       <tr style="height:50px; valign:top;">
@@ -77,8 +77,8 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         </td>
       </tr>
       <tr style="height:50px; valign:top;">
-        <td align="right" style="padding-top: 30px;"><span class="loginspan">密　码</span></td>
-        <td colspan="2" style="text-align:left;padding-top: 30px;" id="pwTd">
+        <td align="right" style="padding-top:15px;"><span class="loginspan">密　码</span></td>
+        <td colspan="2" style="text-align:left;padding-top:15px;" id="pwTd">
         <div style="float:left;">
           <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
            onclick="changePasswordCss(password);" onBlur="validatePassword('password');"/></div>
@@ -88,28 +88,29 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         </td>
       </tr>
       <tr style="height:50px; valign:top;">
-        <td align="right" style="padding-top: 30px;"><span class="loginspan">验证码</span></td>
-        <td colspan="2" style="padding-top: 30px;">
-        <div style="float:left;">
-          <input type="text"  id="checkCode" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
+        <td align="right" style="padding-top: 22px;"><span class="loginspan">验证码</span></td>
+        <td colspan="2" style="padding-top: 22px;">
+        <div id="ccBorder" style="float:left;border:1px solid #ABADB3;margin-left:3px;">
+          <input id="checkCode" style="float:left;border:0px;width:90px;margin-left:-1px;border-left:1px solid #ABADB3;" type="text" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
           onclick="changeCheckCodeCss(checkCode);" onBlur="validateValidateCode('checkCode');"/>
+          <div style="float:left;width:20px;height:25px;padding-top:8px;padding-left:2px;margin-left:-2px;border-top:none" align="center" id='vVC'></div>
         </div>
-        <div id="checkCodeDiv" style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;border-left:0px;">
+        <!-- 验证码验证提示图片位置 -->
+        <div id="checkCodeDiv" style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;">
           <img style="height:35px;" title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
         </div>
-        <div style="float:left;width:20px;height:25px;padding-top:8px;padding-left:2px;" align="center" id='vVC'></div>
         </td>
       </tr>
       <tr style="height:70px; valign:top;">
-        <td colspan="3" align="center" style="padding-top: 30px;">
-        <div tabindex="4" style="width:250px;background-image:url(images/bg.png);padding-left:0px;margin-left:-31px;border-radius:5px">
-          <a id="login" name="login"  onclick="loginF();"><img src="images/login.png"/></a>
-        </div>
+        <td colspan="3" align="center" style="padding-top:37px;">
+        <a id="login" name="login" onclick="loginF();" ><div tabindex="4" style="width:250px;background-image:url(images/bg.png);padding-left:0px;margin-left:-36px;border-radius:5px">
+          <img src="images/login.png"/>
+        </div></a>
         </td>
       </tr>
     </table>
   </form>
-  <div align="right" style="width:310px;margin-top:30px;margin-right:10px;">
+  <div align="right" style="width:310px;margin-top:80px;margin-right:10px;">
     <a onclick="toRegister()" href="#">注册</a>&nbsp;|&nbsp;
     <a onclick="activeUserAgain()" href="#">激活</a>&nbsp;|&nbsp;
     <a onclick="modifyPassword()" href="#">忘记密码?</a>
@@ -177,6 +178,10 @@ $(function(){
   if($('#checkCode').val()==$('#checkCode')[0].defaultValue){
     $('#checkCode').css('color','#ABCDEF');
   }
+  $('#checkCode').mouseover(function(){
+	  $('#checkCode').css("border-color","#ABCDEF");
+	  $('#ccBorder').css("border-color","#ABCDEF");
+	});
 });
 function setInputCss(){
   //遮罩层位置及样式
@@ -266,39 +271,22 @@ function verificationCheckCode(val){
   });
   return vfMsg;
 }
+//验证密码是否为空
 function validatePassword(eleId){
-  $('#pWImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-  $('#pwdSpan').html('密码');
-  psV = false;
-  }else{
-  $('#vPW').append('<img id="pWImg" align="middle" src="images/accept.png">'); 
-  psV = true;
-  }
+    $('#pwdSpan').html('密码');
+    psV = false;
+  }else psV = true;
 }
+// 验证loginName是否为空
 function validateLoginName(eleId){
-  $('#lNImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-  ele.val(ele[0].defaultValue);
-  ele.css('color','#ABCDEF');
-  lnV = false;
-  }else{
-  $('#vLN').append('<img id="lNImg" align="middle" src="images/accept.png">');
-  lnV = true;
-  }
-}
-function checkLoginName(val){
-  var vfMsg =null;
-  var pData={"loginName":val};
-  var url="<%=path%>/login/validateLoginName.do";
-  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-   success:function(json ){
-     vfMsg = json;
-   }
-  });
-  return vfMsg;
+    ele.val(ele[0].defaultValue);
+    ele.css('color','#ABCDEF');
+    lnV = false;
+  }else lnV = true;
 }
 function loginF(){
   var mainPage=getMainPage();
