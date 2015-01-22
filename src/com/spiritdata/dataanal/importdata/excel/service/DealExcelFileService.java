@@ -24,7 +24,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
@@ -56,7 +56,8 @@ import com.spiritdata.dataanal.metadata.relation.service.TableMapService;
  * 导入系统，并进行初步分析，主要是导入
  * @author wh
  */
-@Component
+
+@Service
 public class DealExcelFileService {
     private Logger logger = Logger.getLogger(DealExcelFileService.class);
 

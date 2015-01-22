@@ -11,14 +11,13 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
 import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
 import com.spiritdata.dataanal.dictionary.pojo.DictModel;
 import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
 import com.spiritdata.dataanal.dictionary.service.DictService;
-import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
@@ -32,7 +31,8 @@ import com.spiritdata.framework.util.SequenceUUID;
  * 元数据字典项调整处理服务
  * @author wh
  */
-@Component
+
+@Service
 //目前有这样一个假设：
 public class MdDictService {
     @Resource

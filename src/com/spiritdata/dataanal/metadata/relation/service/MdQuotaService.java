@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
@@ -29,7 +29,8 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
  * 计算表指标的服务，此服务直接从数据库中读取信息，而不从session中读取数据
  * @author wh
  */
-@Component
+
+@Service
 public class MdQuotaService {
     @Resource
     private BasicDataSource dataSource;
