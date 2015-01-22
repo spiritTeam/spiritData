@@ -27,8 +27,7 @@
           <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
           <td colspan="2" width="200px;">
             <div style="float:left">
-              <input id="loginName" name="loginName" tabindex="1" type="text" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="" value="用户账号" disabled="disabled"/></div>
+              <input id="loginName" name="loginName" tabindex="1" type="text" onclick="onClick(loginName);" onBlur="" value="用户账号" disabled="disabled"/></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
@@ -37,22 +36,19 @@
           <td align="right"><span class="loginspan">邮　箱</span></td>
           <td colspan="2" width="130px;">
             <div style="float:left">
-              <input id="mail" name="mail" tabindex="2" type="text" onmouseover=this.focus();this.select(); 
-                onclick="onClick(mail);" onBlur="" value="您的邮箱" readonly="readonly"/></div>
-            <div class="intro" style="float:left;margin-left:-3px;">
-              <input id="mailEndStr" name="mailEndStr"/></div>
+              <input id="mail" name="mail" tabindex="2" type="text" onclick="onClick(mail);" value="您的邮箱" disabled="disabled" style="width:195px;"/></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vMail'></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
-          <td align="right"><span class="loginspan">密　码</span></td>
+          <td align="right"><span class="loginspan">新密码</span></td>
           <td colspan="2" rowspan="1">
             <div style="float:left">
               <input id="password" name="password" tabindex="3" type="password" onmouseover="pwdMouseOver();"
                 onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPwd'></div>
-            <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
-              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span></div>
+            <div id="pwDiv" style="float:left;width:39px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
+              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">新密码</span></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -66,22 +62,12 @@
               <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span></div>
           </td>
         </tr>
-        <tr style="height:50px; valign:top;">
-          <td align="right"><span class="loginspan">验证码</span></td>
-          <td colspan="2">
-            <div style="float:left">
-              <input id="checkCode" name="checkCode" tabindex="5" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');"/>
-            </div>
-            <div style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;border-left:0px;"><img style="height:35px;" id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
-            <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vVC'></div>
-          </td>
-        </tr>
         <tr>
           <td colspan="3" align="left" style="height:50px;padding-top:10px;" valign="top">
             <div style="width:5px;height:5px;"></div>
-            <div tabindex="6" id="commitButton" style="background-image:url(images/registerb.png);">
-              <a id="register" name="register" onclick="updateUser();" href="#"><img src="images/register.png"/></a>
-            </div>
+            <a id="register" name="register" onclick="updateUser();" href="#"><div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);">
+              <img src="images/register.png"/>
+            </div></a>
           </td>
         </tr>
       </table>
@@ -90,7 +76,10 @@
 </center>
 </body>
 <script type="text/javascript">
-var psV=false,cpsV=false,lnV=false,maV=false,vcV=false;
+//各个input的变量，true代表有值，且符合标准，false则相反
+var psV=false,cpsV=false,maV=false;
+
+//以下方法为重复密码和密码的鼠标点击效果
 function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
 }
@@ -111,16 +100,17 @@ function cpwdOnActive() {
   $("#confirmPassword")[0].focus();
   $("#confirmPassword")[0].select();
 }
+//以上方法为重复密码和密码的鼠标点击效果
+
+//更新用户
 function updateUser(){
   $('#register').attr("disabled",true); 
-  $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
-  $('#checkCode').val('');
   if(psV&&cpsV&&lnV&&maV&&vcV){
     var pData={
       "loginName":$("#loginName").val(),
       "password":$("#password").val(),
       "userName":$("#userName").val(),
-      "mailAdress":$("#mail").val()+$('#mailEndStr').combobox('getText'),
+      "mailAdress":$("#mail").val()
     };
     $("#mask").show();
     var url="<%=path%>/login/update.do";
@@ -147,10 +137,6 @@ function updateUser(){
     });
   }else{
     $('#register').attr("disabled",false); 
-    if(lnV==false) {
-      $('#lnImg').remove();
-      $('#vLN').append('<img id="lnImg" align="middle" src="images/cross.png">');
-    }
     if(cpsV==false){
       $('#cpwdImg').remove();
       $('#vCPwd').append('<img id="cpwdImg" align="middle" src="images/cross.png">');
@@ -163,26 +149,13 @@ function updateUser(){
       $('#pwdImg').remove();
       $('#vPwd').append('<img id="pwdImg" align="middle" src="images/cross.png">');
     } 
-    if(vcV==false){
-      $('#vcImg').remove();
-      $('#vVC').append('<img id="vcImg" align="middle" src="images/cross.png">');
-    } 
     $.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息",'info',function () {
-      if(lnV==false){
-        $('#loginName')[0].focus();
-        $('#loginName')[0].select();
-      }else if(maV=false){
-        $('#mail')[0].focus();
-        $('#mail')[0].select();
-      }else if(psV==false){
+      if(psV==false){
         $('#password')[0].focus();
         $('#password')[0].select();
       }else if(cpsV=false){
         $('#confirmPassword')[0].focus();
         $('#confirmPassword')[0].select();
-      }else{
-        $('#checkCode')[0].focus();
-        $('#checkCode')[0].select();
       }
     });
   }
@@ -205,19 +178,15 @@ function setInputCss(){
   if(v!='msie'){
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px","height":"35px","padding-top":"0px"});
-    if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
-    if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
     if($('#commitButton')!=null) $('#commitButton').css({"width":"210px","padding-left":"38px","margin-left":"9px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
   }else{
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
-    if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
     if($('#commitButton')!=null) $('#commitButton').css({"width":"210px","padding-left":"38px","margin-left":"12px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"70px"});
   }
@@ -244,20 +213,6 @@ $(function(){
   if($('#password').val()==$('#password')[0].defaultValue){
     $('#password').css('color','#ABCDEF');
   }
-  if($('#checkCode').val()==$('#checkCode')[0].defaultValue){
-    $('#checkCode').css('color','#ABCDEF');
-  }
-  $('#mailEndStr').combobox({    
-    url:'<%=path%>/login/js/mailAdress.json',   
-    valueField:'id',   
-    textField:'text',
-    height:37,
-    onChange:function (index,o) {
-      var eleId = 'mail';
-      validateMail(eleId,index);
-    },
-    editable:false
-  });
   setInputCss();
 });
 function refresh(obj) {
@@ -298,84 +253,6 @@ function validateConfirmPassword(eleId){
     }
   }
 }
-function validateMail(eleId,index){
-  $('#mailImg').remove();
-  $('#checkResult').html("");
-  var a = $('#mailEndStr').combobox('getData');
-  var ele = $('#'+eleId);
-  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-    ele.val(ele[0].defaultValue);
-    ele.css('color','#ABCDEF');
-    maV = false;
-  }else{
-    var mailStr;
-    if(index!=null) mailStr = ele.val() +a[index-1].text;
-    else  mailStr = ele.val() +$('#mailEndStr').combobox('getText');
-    var vsMsg = checkMail(mailStr);
-    if(vsMsg==true){
-      $('#vMail').append('<img style="padding-left:5px;" id="mailImg" src="images/accept.png">');
-      maV = true;
-    }else{
-      $('#vMail').append('<img style="padding-left:5px;" id="mailImg" src="images/cross.png">');
-      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;该邮箱已被注册!</div>');
-      maV = false;
-    }
-  }
-}
-function validateValidateCode(eleId){
-  $('#vcImg').remove();
-  $('#checkResult').html('');
-  var ele = $('#'+eleId);
-  if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-    ele.val(ele[0].defaultValue);
-    ele.css('color','#ABCDEF');
-    vcV = false;
-  }else{
-    var vsMsg = verificationCheckCode(ele.val());
-    if(vsMsg==true){
-      $("#vVC").append('<img style="padding-left:5px;" id="vcImg" src="images/accept.png">');
-      vcV = true;
-    }else{
-      $("#vVC").append('<img style="padding-left:5px;" id="vcImg" src="images/cross.png">');
-      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;验证码错误!</div>');
-      vcV = false;
-    }
-  }
-}
-function verificationCheckCode(val){
-  var vfMsg =null;
-  var pData={
-    "checkCode":val
-  };
-  var url="<%=path%>/login/validateValidateCode.do";
-  $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
-    success:function(json) {
-      vfMsg = json;
-    }
-  });
-  return vfMsg;
-}
-function checkMail(val){
-  var vfMsg =null;
-  var pData={
-    "mail":val
-  };
-  var url="<%=path%>/login/validateMail.do";
-  $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
-    success:function(json) {
-      vfMsg = json;
-    }
-  });
-  return vfMsg;
-}
-function checkStr(str){
-  var re = /^[a-zA-z]\w{4,11}$/;
-  if(re.test(str)){
-    return true;
-  }else{
-    return false;
-  }       
-}
 function checkPasswordStr(str){
   var re = /[0-9a-zA-z]\w{4,11}$/;
   if(re.test(str)){
@@ -383,17 +260,6 @@ function checkPasswordStr(str){
   }else{
     return false;
   }       
-}
-function checkLoginName(val){
-  var vfMsg =null;
-  var pData={"loginName":val};
-  var url="<%=path%>/login/validateLoginName.do";
-  $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
-     success:function(json) {
-       vfMsg = json;
-     }
-  });
-  return vfMsg;
 }
 function onClick(obj){
   if(obj.value==obj.defaultValue){
