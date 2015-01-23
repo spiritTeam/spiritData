@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.templet.model;
+package com.spiritdata.dataanal.report.model;
 
 import com.spiritdata.jsonD.ConvertJson;
 import com.spiritdata.jsonD.model.AccessJsondOne;

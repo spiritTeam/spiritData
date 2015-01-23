@@ -1,11 +1,14 @@
-package com.spiritdata.dataanal.templet.model;
+package com.spiritdata.dataanal.report.model;
 
 /**
  * D标签的显示类型，目前有：<br/>
- * IMP:导入文件；<br/>
- * LOG:日志文件；<br/>
- * ANAL:分析结果文件；<br/>
- * TEMPLET:模板文件；<br/>
+ * VALUE:值；<br/>
+ * FIRST:列表中的排序；<br/>
+ * TABLE:列表；<br/>
+ * PIE:饼图；<br/>
+ * BAR:柱图；<br/>
+ * LINE:折线图；<br/>
+ * RADAR:雷达图；<br/>
  * @author wh
  */
 public enum DtagShowType {

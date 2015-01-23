@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.templet.service;
+package com.spiritdata.dataanal.report.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import com.spiritdata.dataanal.exceptionC.Dtal1001CException;
  */
 
 @Service
-public class TempletService {
+public class ReportService {
     /**
      * 根据模板Id，得到模板的Json串
      * @param templetId 模板Id

@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.templet.model;
+package com.spiritdata.dataanal.report.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.spiritdata.jsonD.ConvertJson;
-import com.spiritdata.jsonD.exceptionC.Jsond0002CException;
 import com.spiritdata.jsonD.util.JsonDUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
 
@@ -14,12 +13,13 @@ import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
  * 模板头，可能需要扩充，目前只有reportName
  * @author wh
  */
-public class TempletHead  implements Serializable, ConvertJson {
+public class ReportHead  implements Serializable, ConvertJson {
     private static final long serialVersionUID = -2739194799723001355L;
 
     private String id;//模板Id，UUID
     private String reportName;//报告名称
     private String code; //模板类型编码，此编码分为组织编码：大写的以.隔开的名称，<::>后是小类型编号，采用5位，最大为9999个类型(可扩充)
+    private String fileName; //存储JsonD的文件地址，可能需要和_node共同使用
     private Date CTime; //创建时间 此事件也是整个templet生成的时间戳
     private String desc; //描述
 
@@ -44,6 +44,12 @@ public class TempletHead  implements Serializable, ConvertJson {
         if (code==null||code.length()==0) throw new Dtal1002CException("templetD头信息不规范：code必须设置！", new IllegalArgumentException("code不能为null或空串！"));
         if (!JsonDUtils.isLegalCode(code)) throw new Dtal1002CException("templetD头信息不规范：code["+code+"]不合规！", new IllegalArgumentException("code不合规，请参看Templet相关文档！"));
         this.code = code;
+    }
+    public String getFileName() {
+        return fileName;
+    }
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
     public Date getCTime() {
         return CTime;

@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.templet.model;
+package com.spiritdata.dataanal.report.model;
 
 import java.io.Serializable;
 
@@ -8,17 +8,17 @@ import java.io.Serializable;
  * 目前只使用模板部分的功能，任务部分的功能后续再实现。
  * @author wh
  */
-public class TaskTemplet implements Serializable {
+public class TaskReport implements Serializable {
     private static final long serialVersionUID = 5088715498847593517L;
 
-    private Templet templet;//任务模板中的模板数据
+    private Reprot report;//任务模板中的模板数据
     private Object task;//task还需要设计
 
-    public Templet getTemplet() {
-        return templet;
+    public Reprot getReport() {
+        return report;
     }
-    public void setTemplet(Templet templet) {
-        this.templet = templet;
+    public void setReport(Reprot report) {
+        this.report = report;
     }
     public Object getTask() {
         return task;

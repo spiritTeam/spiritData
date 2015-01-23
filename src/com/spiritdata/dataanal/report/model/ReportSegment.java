@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.templet.model;
+package com.spiritdata.dataanal.report.model;
 
 import com.spiritdata.framework.core.model.tree.TreeNodeBean;
 
@@ -6,7 +6,7 @@ import com.spiritdata.framework.core.model.tree.TreeNodeBean;
  * 模板中段落对象，采用树框架实现
  * @author wh
  */
-public class TempletSegment extends TreeNodeBean {
+public class ReportSegment extends TreeNodeBean {
     private static final long serialVersionUID = -4825036040320277208L;
 
     //id 树对象

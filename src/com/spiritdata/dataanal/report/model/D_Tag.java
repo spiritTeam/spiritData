@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.templet.model;
+package com.spiritdata.dataanal.report.model;
 
 import java.io.Serializable;
 

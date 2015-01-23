@@ -101,11 +101,11 @@ public class AnalResultFile implements Serializable, BeManageFile {
     /**
      * 转换为模型化文件信息，注意，这里要验证服务器端文件是否存在。<br/>
      * @return 模型化文件信息
-     * @throws Exception 若服务器端文件不存在
      */
     public FileInfo convert2FileInfo() {
         File f = new File(this.fileName);
         if (f==null||!f.isFile()) throw new Flmg0001CException(new IllegalArgumentException("分析结果文件对象中fileName所指向的文件为空或是一个目录！"));
+
         FileInfo ret = new FileInfo();
         //主信息
         ret.setFile(f);

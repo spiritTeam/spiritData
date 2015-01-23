@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.templet.model;
+package com.spiritdata.dataanal.report.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,9 @@ import com.spiritdata.jsonD.ConvertJson;
  * 模板段结构列表，模板中的_TEMPLET目前就是这个结构。
  * 此结构是一个森林
  * @author wh
- * @param <E> 符合TreeNode<TempletSegment>的对象
+ * @param <E> 符合TreeNode<ReportSegment>的对象
  */
-public class SegmentList<E> extends ArrayList<TreeNode<TempletSegment>> implements ConvertJson {
+public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implements ConvertJson {
     private static final long serialVersionUID = 1123232352332618215L;
 
     @Override
@@ -24,7 +24,7 @@ public class SegmentList<E> extends ArrayList<TreeNode<TempletSegment>> implemen
         String ret = "[";
         String tempStr;
         for (int i=0; i<this.size(); i++) {
-            TreeNode<TempletSegment> oneSeg = this.get(i);
+            TreeNode<ReportSegment> oneSeg = this.get(i);
             ret +="\"id\":\""+oneSeg.getId()+"\"";
             ret +=",\"name\":\""+oneSeg.getNodeName()+"\"";
             tempStr = oneSeg.getTnEntity().getTitle();
@@ -39,12 +39,12 @@ public class SegmentList<E> extends ArrayList<TreeNode<TempletSegment>> implemen
         return ret+"]";
     }
 
-    private String convertList2Json(List<TreeNode<TempletSegment>> children) {
+    private String convertList2Json(List<TreeNode<ReportSegment>> children) {
         if (children.size()==0) return "[]";
         String ret = "[";
         String tempStr;
         for (int i=0; i<children.size(); i++) {
-            TreeNode<TempletSegment> oneSeg = this.get(i);
+            TreeNode<ReportSegment> oneSeg = this.get(i);
             ret +="\"id\":\""+oneSeg.getId()+"\"";
             ret +=",\"name\":\""+oneSeg.getNodeName()+"\"";
             tempStr = oneSeg.getTnEntity().getTitle();

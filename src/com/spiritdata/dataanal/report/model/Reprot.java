@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.templet.model;
+package com.spiritdata.dataanal.report.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,18 +14,31 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * <br/>包括：_HEAD,_DATA,_TEMPET
  * @author wh
  */
-public class Templet implements Serializable, ConvertJson {
+public class Reprot implements Serializable, ConvertJson {
     private static final long serialVersionUID = 518670183146944686L;
 
+    private String id; //模板id，应和模板头中的id相一致
     private Object _HEAD;//头信息，可以是String templetHead 对象
     private List<OneJsond> dataList;//jsond数据访问列表
     private Object _TEMPLET;//模板主题信息，可以是String templetHead 对象
 
+    public String getId() {
+        return this.id;
+    }
+    public void setId(String id) {
+        this.id = id;
+        if (this._HEAD!=null&&(this._HEAD instanceof ReportHead)) {
+            ((ReportHead)this._HEAD).setId(id);
+        }
+    }
     public Object get_HEAD() {
         return _HEAD;
     }
     public void set_HEAD(Object _HEAD) {
         this._HEAD = _HEAD;
+        if (this._HEAD!=null&&(this._HEAD instanceof ReportHead)) {
+            this.setId(((ReportHead)this._HEAD).getId());
+        }
     }
     public Object get_TEMPLET() {
         return _TEMPLET;
@@ -70,8 +83,8 @@ public class Templet implements Serializable, ConvertJson {
 
         String jsonS = "{";
         //转换头
-        if (_HEAD instanceof TempletHead) {
-            jsonS += ((TempletHead)_HEAD).toJson();
+        if (_HEAD instanceof ReportHead) {
+            jsonS += ((ReportHead)_HEAD).toJson();
         } else {
             jsonS += "\"_HEAD\":"+JsonUtils.objToJson(_HEAD);
         }
@@ -88,7 +101,7 @@ public class Templet implements Serializable, ConvertJson {
         if (_TEMPLET instanceof String) {
             jsonS += "\"_TEMPLET\":"+_TEMPLET;
         } else if (_TEMPLET instanceof SegmentList) {
-            jsonS += "\"_TEMPLET\":"+((SegmentList<TreeNode<TempletSegment>>)_TEMPLET).toJson();
+            jsonS += "\"_TEMPLET\":"+((SegmentList<TreeNode<ReportSegment>>)_TEMPLET).toJson();
         } else {
             jsonS += "\"_TEMPLET\":"+JsonUtils.objToJson(_TEMPLET);
         }

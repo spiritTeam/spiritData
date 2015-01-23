@@ -89,15 +89,6 @@ public class AnalDict implements AnalMetadata {
             }
             fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(jsonStr.getBytes());
-            //回写文件信息到返回值
-            AnalResultFile arf = new AnalResultFile();
-            arf.setFileName(storeFile);
-            arf.setJsonDCode(jsonDCode);
-            arf.setAnalType(SDConstants.ANAL_MD_DICT);
-            arf.setSubType(mm.getId());
-            arf.setObjType("metadata");
-            arf.setObjId("["+mm.getTitleName()+"("+mm.getId()+")]");
-            ret.put("resultFile", arf);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -107,6 +98,16 @@ public class AnalDict implements AnalMetadata {
                 try {fileOutputStream.close();}catch(IOException e) {e.printStackTrace();}
             }
         }
+        //回写文件信息到返回值
+        AnalResultFile arf = new AnalResultFile();
+        arf.setFileName(storeFile);
+        arf.setJsonDCode(jsonDCode);
+        arf.setAnalType(SDConstants.ANAL_MD_DICT);
+        arf.setSubType(mm.getId());
+        arf.setObjType("metadata");
+        arf.setObjId("["+mm.getTitleName()+"("+mm.getId()+")]");
+        ret.put("resultFile", arf);
+
         return ret;
     }
 
