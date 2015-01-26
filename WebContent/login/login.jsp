@@ -114,6 +114,8 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     <a onclick="toRegister()" href="#">注册</a>&nbsp;|&nbsp;
     <a onclick="activeUserAgain()" href="#">激活</a>&nbsp;|&nbsp;
     <a onclick="modifyPassword()" href="#">忘记密码?</a>
+    <a onclick="test1()" href="#">显示提示</a>
+    <a onclick="test2()" href="#">清除提示</a>
   </div>
   </div>
 </center>
@@ -381,6 +383,17 @@ function loginF(){
       }
     });
   }
+}
+
+function test1() {
+  var winId = getWinId(getMainPage());
+  var win = getSWinInMain(winId);
+  win.setMessage({color:"gray", msg:"sdfadsfadfa生生世世三sdfadsfadfa生生世世三sdfadsfadfa生生世世三sdfadsfadfa生生世世三"});
+}
+function test2() {
+  var winId = getWinId(getMainPage());
+  var win = getSWinInMain(winId);
+  win.setMessage({msg:""});
 }
 </script>
 </html>
