@@ -66,14 +66,13 @@ public class RegisterController {
         }
         return retMap;
     }
-    
     /**
      * 更新用户信息
      * @return
      */
     @RequestMapping("login/update.do")
     public Map<String,Object> update(HttpServletRequest request){
-    	// #TODO
+    	// #TODO 未完成的方法，还差一个验证密码的方法
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
         String password = request.getParameter("password");

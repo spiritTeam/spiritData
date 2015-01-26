@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.spiritdata.framework.FConstants;
@@ -17,6 +18,7 @@ import com.spiritdata.dataanal.tomht.html2mht.service.Html2MhtService;
  * @author mht
  * @version  
  */
+@Controller
 public class Html2MhtController {
     @Resource
     Html2MhtService h2mService;
