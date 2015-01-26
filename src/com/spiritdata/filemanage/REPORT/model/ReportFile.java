@@ -2,20 +2,30 @@ package com.spiritdata.filemanage.REPORT.model;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Date;
 
 import com.spiritdata.filemanage.core.BeManageFile;
+import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
+import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
+import com.spiritdata.framework.util.DateUtils;
+import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.framework.util.FileUtils;
 
+/**
+ * 报告文件对象
+ * @author wh
+ */
 public class ReportFile implements Serializable, BeManageFile {
     private static final long serialVersionUID = -1625546654030117440L;
 
-    private String id; //模板(或报告)文件的id
-    private int ownerType; //模板文件所对应的所有者类型（1=注册用户;2=非注册用户(session)）
-    private String ownerId; //模板文件所有者标识（可能是用户id，也可能是SessionID）
-    private String reportFileName; //模板文件文件全名(包括目录和文件名)
-    private String reportId; //模板对象的Id，此Id也是数据库表中report(报告)的id，存储在sa_file_category.type2中
-    private String tasksId; //任务组的Id，此Id也是taskd的id???还要设计
+    private String id; //报告文件的id
+    private int ownerType; //报告文件所对应的所有者类型（1=注册用户;2=非注册用户(session)）
+    private String ownerId; //报告文件所有者标识（可能是用户id，也可能是SessionID）
+    private String fileName; //报告文件文件全名(包括目录和文件名)
+    private String reportType; //报告的分类
+    private String tasksId; //任务组的Id，此Id也是taskd的id???还要设计，存储在sa_file_category.type3中
 
     public String getId() {
         return id;
@@ -35,11 +45,23 @@ public class ReportFile implements Serializable, BeManageFile {
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
-    public String getReportFileName() {
-        return reportFileName;
+    public String getFileName() {
+        return fileName;
     }
-    public void setReportFileName(String reportFileName) {
-        this.reportFileName = reportFileName;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+    public String getReportType() {
+        return reportType;
+    }
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
+    }
+    public String getTasksId() {
+        return tasksId;
+    }
+    public void setTasksId(String tasksId) {
+        this.tasksId = tasksId;
     }
 
     /**
@@ -47,8 +69,8 @@ public class ReportFile implements Serializable, BeManageFile {
      * @return 模型化文件信息
      */
     public FileInfo convert2FileInfo() {
-        File f = new File(this.reportFileName);
-        if (f==null||!f.isFile()) throw new Flmg0001CException(new IllegalArgumentException("分析结果文件对象中fileName所指向的文件为空或是一个目录！"));
+        File f = new File(this.fileName);
+        if (f==null||!f.isFile()) throw new Flmg0001CException(new IllegalArgumentException("报告文件对象中fileName所指向的文件为空或是一个目录！"));
 
         FileInfo ret = new FileInfo();
         //主信息
@@ -57,15 +79,15 @@ public class ReportFile implements Serializable, BeManageFile {
         ret.setOwnerId(this.getOwnerId());
         ret.setOwnerType(this.getOwnerType());
         ret.setAccessType(1);
-//        ret.setDesc("分析报告文件:"+FileNameUtils.getFileName(this.templetFileName)+"；生成报告模板时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f)))
-//                +"；报告类型："+this.analType+"::"+this.subType+"，jsonD代码："+this.jsonDCode);
-//
-//        //分类信息
-//        FileCategory fc = new FileCategory();
-//        fc.setFType1(FileCategoryType1.REPORT);
-//        fc.setFType2(this.analType);
-//        fc.setFType3(this.subType);
+        ret.setDesc("分析报告文件:"+FileNameUtils.getFileName(this.fileName)+"；生成报告时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f)))
+                +"；报告类型："+this.reportType+"，对应的任务组ID："+this.tasksId);
 
-        return null;
+        //分类信息
+        FileCategory fc = new FileCategory();
+        fc.setFType1(FileCategoryType1.REPORT);
+        fc.setFType2(this.reportType);
+        fc.setFType3(this.tasksId);
+
+        return ret;
     }
 }

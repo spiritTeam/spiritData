@@ -38,7 +38,7 @@ public class BuildReportAfterUpload extends AbstractGenerateSessionReport implem
 
     @Override
     public TaskReport preTreat(Map<String, Object> param) {
-        // TODO Auto-generated method stub
+        TaskReport tr = new TaskReport();
         return null;
     }
 }
