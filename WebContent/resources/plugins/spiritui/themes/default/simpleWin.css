@@ -25,8 +25,8 @@
 .sWin_head {
   position:absolute;
   border-bottom:1px solid #D3D3D3;
-  height:30px;
-  line-height:30px;
+  height:33px;
+  line-height:33px;
   top:0px;
   left:0px;
   padding-top:8px;
@@ -68,5 +68,5 @@
 .sWin_content {
   position:absolute;
   left:0px;
-  background:#84D935;
+  background:#fff;
 }
