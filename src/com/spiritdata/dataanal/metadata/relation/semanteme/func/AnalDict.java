@@ -12,8 +12,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Component;
-
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
@@ -34,7 +32,6 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * 分析元数据的字典语义
  * @author wh
  */
-@Component
 public class AnalDict implements AnalMetadata {
     public final static String jsonDCode = "SD.TEAM.ANAL::0002"; 
     private final static float compressThreshold = 0.7f; //压缩率的阀值，当压缩率大于此值，则认为是字典项目

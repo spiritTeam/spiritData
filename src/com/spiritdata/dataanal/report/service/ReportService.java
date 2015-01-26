@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.stereotype.Service;
 
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.CacheEle;
@@ -17,8 +16,6 @@ import com.spiritdata.dataanal.exceptionC.Dtal1001CException;
  * 模板服务，主要是获得模板信息
  * @author wh
  */
-
-@Service
 public class ReportService {
     /**
      * 根据模板Id，得到模板的Json串

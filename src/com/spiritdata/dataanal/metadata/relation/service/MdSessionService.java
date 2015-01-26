@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.stereotype.Service;
 
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
@@ -33,7 +32,6 @@ import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
  * 2-通过线程方式进行加载，并放入缓存或Session。<br/>
  * @author wh
  */
-@Service
 public class MdSessionService implements SessionLoader {
     @Resource
     private TableMapService mdTableOrgService;
@@ -81,7 +79,7 @@ public class MdSessionService implements SessionLoader {
     /**
      * 为导入数据存储元数据信息，并生成相应的数据表
      * @param mm 元数据信息，从Import文件中分析出的mm信息，此信息不必包含积累表名称
-     * @return TableMapOrg数据的第一个元素是积累表，第二个元素是临时表
+     * @return TableMapOrg数据的第一个元素是积累表，第二个元素是临时表，若有第三个元素，则表明本次的元数据是新增的
      */
     public MetadataTableMapRel[] storeMdModel4Import(MetadataModel mm, _OwnerMetadata _om) throws Exception {
         mm.setOwnerId(_om.getOwnerId());
@@ -131,11 +129,20 @@ public class MdSessionService implements SessionLoader {
         //创建临时表
         String tempTabName = "tabt_"+SequenceUUID.getPureUUID();
         tempTable = mdTableOrgService.registTabOrgMap(tempTabName, mm, 2);
-        //获得积累表
-        MetadataTableMapRel[] ret = new MetadataTableMapRel[2];
-        ret[0] = accumulationTable;
-        ret[1] = tempTable;
-        return ret;
+
+        //处理返回值
+        if (_existMm==null) {
+            MetadataTableMapRel[] ret = new MetadataTableMapRel[3];
+            ret[0] = accumulationTable;
+            ret[1] = tempTable;
+            ret[2] = null;
+            return ret;
+        } else {
+            MetadataTableMapRel[] ret = new MetadataTableMapRel[2];
+            ret[0] = accumulationTable;
+            ret[1] = tempTable;
+            return ret;
+        }
     }
 
     /**

@@ -6,8 +6,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.stereotype.Service;
-
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.util.FileNameUtils;
@@ -21,8 +19,6 @@ import com.spiritdata.filemanage.core.service.FileManageService;
  * 处理上传文件
  * @author wh, mht
  */
-
-@Service
 public class DealUploadFileService {
     @Resource
     private FileManageService fmService;

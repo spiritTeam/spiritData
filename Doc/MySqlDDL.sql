@@ -213,16 +213,38 @@ CREATE TABLE sa_file_rel (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件之间的关系';
 
-/**014 视图[vSA_FILE_INVERSEREL]*/
+/**014 反向关系视图[vSA_FILE_INVERSEREL]*/
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vsa_file_inverserel AS
   select id, bId AS aId, bType AS aType, aId AS bId, aType AS bType, 
   (0-rType1) AS rType1, rType2, descn, cTime
   from sa_file_rel;
 
-/**015 视图*/
+/**015 导入文件视图[vSA_IMP_LOG]*/
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vsa_imp_log AS
   select a.id, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.extInfo AS cFileName, descn, a.cTime
   from sa_file_index a, sa_file_category b
   where a.id=b.fid and b.type1='IMP';
+
+/**016 报告信息视图[vSA_REPORT_FILE]*/
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
+VIEW vsa_report_info AS
+  select a.id, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.type2 reportId, b.type3 tasksId,b.extInfo, descn, a.cTime
+  from sa_file_index a, sa_file_category b
+  where a.id=b.fid and b.type1='REPORT';
+
+/**017 报告信息[SA_REPORT_INFO]*/
+DROP TABLE IF EXISTS sa_report_info;
+CREATE TABLE sa_report_info (
+  id          varchar(32)      NOT NULL  COMMENT '报告信息表ID(UUID)',
+  ownerType   int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
+  ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
+  fId         varchar(32)      NOT NULL  COMMENT '对应报告文件Id(UUID)',
+  tasksId     varchar(32)      NOT NULL  COMMENT '任务组Id(UUID)',
+  reportName  varchar(100)     NOT NULL  COMMENT '报告名称',
+  descn       varchar(500)               COMMENT '报告描述',
+  cTime       timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='报告信息';

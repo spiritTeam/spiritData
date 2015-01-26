@@ -7,8 +7,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Service;
-
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
 import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
@@ -21,8 +19,6 @@ import com.spiritdata.dataanal.exceptionC.Dtal0301CException;
  * 
  * @author wh
  */
-
-@Service
 public class DictService {
     @Resource(name="defaultDAO")
     private MybatisDAO<DictMaster> dictMDao;

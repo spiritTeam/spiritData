@@ -3,8 +3,6 @@ package com.spiritdata.filemanage.core.service;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Service;
-
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.filemanage.core.BeManageFile;
 import com.spiritdata.filemanage.core.model.FileCategory;
@@ -19,8 +17,6 @@ import com.spiritdata.filemanage.exceptionC.Flmg0101CException;
  * 文件管理服务类
  * @author wh
  */
-
-@Service
 public class FileManageService {
     @Resource(name="defaultDAO")
     private MybatisDAO<FileIndexPo> fileIndexDao;

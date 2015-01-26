@@ -24,7 +24,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.stereotype.Service;
 
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
@@ -56,8 +55,6 @@ import com.spiritdata.dataanal.metadata.relation.service.TableMapService;
  * 导入系统，并进行初步分析，主要是导入
  * @author wh
  */
-
-@Service
 public class DealExcelFileService {
     private Logger logger = Logger.getLogger(DealExcelFileService.class);
 
@@ -85,6 +82,8 @@ public class DealExcelFileService {
     private AnalDict dictKey;//只分析,并计入文件
     @Resource
     private MdDictService mdDictService;//只分析,并计入文件
+    @Resource
+    private BuildReportAfterUploadService buildReport;
 
     /**
      * 处理Excel文件
@@ -293,7 +292,13 @@ public class DealExcelFileService {
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                             mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
                             //生成templet
-                            BuildReportAfterUpload buildTemplet = new BuildReportAfterUpload();
+                            Map<String, Object> param = new HashMap<String, Object>();
+                            Map<String, Object> preTreadParam = new HashMap<String, Object>();
+                            preTreadParam.put("tabMap", tabMapOrgAry); //对照关系，这里有积累表、临时表信息，并能够判断是否是新的元数据
+                            preTreadParam.put("mdInfo", sysMd); //元数据信息
+                            preTreadParam.put("sheetTableInfo", sti); //对应的页签Tab信息
+                            param.put("preTreadParam", preTreadParam);
+                            //buildReport.buildANDprocess(param);
                         } catch(Exception e) {
                             // TODO 记录日志 
                             e.printStackTrace();

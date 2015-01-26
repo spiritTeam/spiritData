@@ -5,19 +5,18 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.CacheEle;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.dataanal.tomht.html2mht.service.Html2MhtService;
+
 /** 
  * 这个controller用于吧jqplot保存成图片生成图片，
  * @author mht
  * @version  
  */
-@Controller
 public class Html2MhtController {
     @Resource
     Html2MhtService h2mService;

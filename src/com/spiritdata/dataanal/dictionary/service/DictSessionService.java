@@ -8,8 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.stereotype.Service;
-
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
 import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
@@ -30,7 +28,6 @@ import com.spiritdata.framework.util.TreeUtils;
  * 2-通过线程方式进行加载，并放入缓存或Session。<br/>
  * @author wh
  */
-@Service
 public class DictSessionService implements SessionLoader {
     @Resource
     private DictService dictService;

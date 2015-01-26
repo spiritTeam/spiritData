@@ -7,8 +7,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Service;
-
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
@@ -21,8 +19,6 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
  * 
  * @author wh
  */
-
-@Service
 public class MdBasisService {
     @Resource(name="defaultDAO")
     private MybatisDAO<MetadataModel> mmDao;

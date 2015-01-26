@@ -10,8 +10,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Service;
-
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.dataanal.metadata.relation.pojo.ImpTableMapRel;
@@ -23,8 +21,6 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
  * 元数据实体表关联、导入文件和实体表关联，功能服务
  * @author wh
  */
-
-@Service
 public class TableMapService {
     @Resource(name="defaultDAO")
     private MybatisDAO<MetadataTableMapRel> mtmrDao;
