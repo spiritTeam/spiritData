@@ -79,33 +79,33 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <tr style="height:50px; valign:top;">
         <td align="right" style="padding-top:15px;"><span class="loginspan">密　码</span></td>
         <td colspan="2" style="text-align:left;padding-top:15px;" id="pwTd">
-        <div style="float:left;">
-          <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
-           onclick="changePasswordCss(password);" onBlur="validatePassword('password');"/></div>
-        <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPW'></div>
-        <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:12spx;margin-left:-219px;" align="center">
-          <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span></div>
+          <div style="float:left;">
+            <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
+             onclick="changePasswordCss(password);" onBlur="validatePassword('password');"/></div>
+          <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPW'></div>
+          <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:12spx;margin-left:-219px;" align="center">
+            <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span></div>
         </td>
       </tr>
       <tr style="height:50px; valign:top;">
         <td align="right" style="padding-top: 22px;"><span class="loginspan">验证码</span></td>
         <td colspan="2" style="padding-top: 22px;">
-        <div id="ccBorder" style="float:left;border:1px solid #ABADB3;margin-left:3px;">
-          <input id="checkCode" style="float:left;border:0px;width:90px;margin-left:-1px;border-left:1px solid #ABADB3;" type="text" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
-          onclick="changeCheckCodeCss(checkCode);" onBlur="validateValidateCode('checkCode');"/>
-          <div style="float:left;width:20px;height:25px;padding-top:8px;padding-left:2px;margin-left:-2px;border-top:none" align="center" id='vVC'></div>
-        </div>
-        <!-- 验证码验证提示图片位置 -->
-        <div id="checkCodeDiv" style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;">
-          <img style="height:35px;" title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
-        </div>
+          <div id="ccBorder" style="float:left;border:1px solid #ABADB3;margin-left:3px;">
+            <input id="checkCode" style="float:left;border:0px;width:90px;margin-left:-1px;border-left:1px solid #ABADB3;" type="text" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
+            onclick="changeCheckCodeCss(checkCode);" onBlur="validateValidateCode('checkCode');"/>
+            <div style="float:left;width:20px;height:25px;padding-top:8px;padding-left:2px;margin-left:-2px;border-top:none" align="center" id='vVC'></div>
+          </div>
+          <!-- 验证码验证提示图片位置 -->
+          <div id="checkCodeDiv" style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;">
+            <img style="height:35px;" title="点击更换" id="vcimg" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do">
+          </div>
         </td>
       </tr>
       <tr style="height:70px; valign:top;">
         <td colspan="3" align="center" style="padding-top:37px;">
-        <a id="login" name="login" onclick="loginF();" ><div tabindex="4" style="width:250px;background-image:url(images/bg.png);padding-left:0px;margin-left:-36px;border-radius:5px">
-          <img src="images/login.png"/>
-        </div></a>
+          <a id="login" name="login" onclick="loginF();" ><div tabindex="4" style="width:250px;background-image:url(images/bg.png);padding-left:0px;margin-left:-36px;border-radius:5px">
+            <img src="images/login.png"/>
+          </div></a>
         </td>
       </tr>
     </table>
@@ -124,8 +124,8 @@ var psV=false,lnV=false,vcV=false;
 //未登录的忘记密码页面
 function modifyPassword(){
   var winId = getWinId(getMainPage());
-   var win = getSWinInMain(winId);
-   win.modify({title:"修改密码"});
+  var win = getSWinInMain(winId);
+  win.modify({title:"修改密码"});
   window.location.href="<%=path%>/login/forgetPassword.jsp?modType=2";
 }
 /**
@@ -133,15 +133,15 @@ function modifyPassword(){
  */
 function changeLoginNameCss(obj){
   if(obj.value==obj.defaultValue){
-  obj.value='';obj.style.color='#000';
+    obj.value='';obj.style.color='#000';
   }
   if($(obj).attr('id')+''=='password'){
-  $('#pwdSpan').html('');
+    $('#pwdSpan').html('');
   }
 }
 function changePasswordCss(obj){
   if(obj.value==obj.defaultValue){
-  obj.value='';obj.style.color='#000';
+    obj.value='';obj.style.color='#000';
   }
   $('#pwdSpan').html('');
 }
@@ -200,18 +200,18 @@ function setInputCss(){
   var browserType = getBrowserVersion();
   var v = browserType.substring(0,browserType.lastIndexOf(' '));
   if(v!='msie'){
-  if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-  if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-  if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-  if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
-  }else {
-  $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
-  var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
-  if(ieVersion==11.0){
     if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
-  }
+    if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
+  }else {
+    $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
+    var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
+    if(ieVersion==11.0){
+      if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
+    }
   }
 }
 //从新发送激活邮件到邮箱
@@ -219,19 +219,19 @@ function activeUserAgain(){
   var url="<%=path%>/login/activeUserAgain.do";
   var loginName = $("#loginName").val();
   if(loginName==null||loginName==""||loginName==$("#loginName")[0].defaultValue){
-  $.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
-  return;
+    $.messager.alert('提示信息',"您必须填写用户名，以便于向您的绑定邮箱发送验证!");
+    return;
   }else{
-  var pData={"loginName":$("#loginName").val()};
-  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-    success:function(json ){
-    if(json.success==true){
-      $.messager.alert('提示信息',json.retInfo);
-    }else{
-      $.messager.alert('提示信息',json.retInfo);
-    }
-    }
-  });
+    var pData={"loginName":$("#loginName").val()};
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success:function(json ){
+        if(json.success==true){
+          $.messager.alert('提示信息',json.retInfo);
+        }else{
+          $.messager.alert('提示信息',json.retInfo);
+        }
+      }
+    });
   }
 }
 //跳转到注册页面
@@ -251,19 +251,19 @@ function validateValidateCode(eleId){
   $('#vCImg').remove();
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
-  ele.val(ele[0].defaultValue);
-  ele.css('color','#ABCDEF');
-  ele.css('border-color','#ABADB3');
-  vcV = false;
-  }else{
-  var vsMsg = verificationCheckCode(ele.val());
-  if(vsMsg==true){
-    $('#vVC').append('<img id="vCImg" align="middle" src="images/accept.png">');
-    vcV = true;
-  }else{
-    $('#vVC').append('<img id="vCImg" align="middle" src="images/cross.png">');
+    ele.val(ele[0].defaultValue);
+    ele.css('color','#ABCDEF');
+    ele.css('border-color','#ABADB3');
     vcV = false;
-  }
+  }else{
+    var vsMsg = verificationCheckCode(ele.val());
+    if(vsMsg==true){
+      $('#vVC').append('<img id="vCImg" align="middle" src="images/accept.png">');
+      vcV = true;
+    }else{
+      $('#vVC').append('<img id="vCImg" align="middle" src="images/cross.png">');
+      vcV = false;
+    }
   }
 }
 function verificationCheckCode(val){
@@ -271,9 +271,9 @@ function verificationCheckCode(val){
   var pData={"checkCode":val};
   var url="<%=path%>/login/validateValidateCode.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-  success:function(json ){
-    vfMsg = json;
-  }
+    success:function(json ){
+      vfMsg = json;
+    }
   });
   return vfMsg;
 }
@@ -298,91 +298,88 @@ function loginF(){
   var mainPage=getMainPage();
   $('#login').attr('disabled',true);
   if(psV&&lnV&&vcV){
-  $("#mask").show();
-  var url="<%=path%>/login.do";
-  var pData={
-    "loginName":$("#loginName").val(),
-    "password":$("#password").val(),
-    "checkCode":$("#checkCode").val(),
-    "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
-    "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
-    "browser":getBrowserVersion()
-  };
-  var _json;
-  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-    success:function(json ){
-    $("#mask").hide();
-    $('#register').attr('disabled',false);
-    $('#checkCode').val('');
-    $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
-    _json = json;
-    var loginInfo = json.data;
-    var retInfo = loginInfo.retInfo;
-    if(json.type==-1){
-      $.messager.alert('登录信息',retInfo,'info');
-    }else if (json.type==1){
-      var activeType = loginInfo.activeType;
-      if(activeType==1){
-      $.messager.alert('登录信息',retInfo,'info');
-      }else if(activeType==2){
-      if(mainPage) {
-        var loginStatus = mainPage.document.getElementById("loginStatus");
-        var loginName = mainPage.document.getElementById("loginName");
-        $(loginStatus).val(1);
-        $(loginName).val(pData.loginName);
-        var winId = getWinId(mainPage);
-        closeSWinInMain(winId);
-        mainPage.$.messager.alert("登陆信息","登陆成功！",'info');
-        cleanWinId();
-      }else{
-        $.messager.alert("登陆信息","登陆成功！",'info');
-        window.location.href = "<%=path%>/asIndex.jsp";
+    $("#mask").show();
+    var url="<%=path%>/login.do";
+    var pData={
+      "loginName":$("#loginName").val(),
+      "password":$("#password").val(),
+      "checkCode":$("#checkCode").val(),
+      "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
+      "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
+      "browser":getBrowserVersion()
+    };
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success:function(json ){
+        $("#mask").hide();
+        $('#register').attr('disabled',false);
+        $('#checkCode').val('');
+        $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+        var loginInfo = json.data;
+        var retInfo = loginInfo.retInfo;
+        if(json.type==-1){
+          $.messager.alert('登录信息',retInfo,'info');
+        }else if (json.type==1){
+          var activeType = loginInfo.activeType;
+          if(activeType==1){
+            $.messager.alert('登录信息',retInfo,'info');
+          }else if(activeType==2){
+            if(mainPage) {
+              var loginStatus = mainPage.document.getElementById("loginStatus");
+              var loginName = mainPage.document.getElementById("loginName");
+              $(loginStatus).val(1);
+              $(loginName).val(pData.loginName);
+              var winId = getWinId(mainPage);
+              closeSWinInMain(winId);
+              mainPage.$.messager.alert("登陆信息","登陆成功！",'info');
+              cleanWinId();
+            }else{
+              $.messager.alert("登陆信息","登陆成功！",'info');
+              window.location.href = "<%=path%>/asIndex.jsp";
+            }
+          }
+        } else if(json.type==2 ){
+          mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
+        } else {
+          mainPage.$.messager.alert("登录信息", "登录异常："+json.data, "error");
+        }
+      },
+      error:function(errorData ){
+        $('#register').attr('disabled',false);
+        $('#checkCode').val('');
+        $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+        if (errorData ){
+          mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
+        } else {
+          mainPage.$("#mask").hide();
+        }
       }
-      
-      }
-    } else if(json.type==2 ){
-      mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
-    } else {
-      mainPage.$.messager.alert("登录信息", "登录异常："+json.data, "error");
-    }
-    },
-    error:function(errorData ){
-    $('#register').attr('disabled',false);
-    $('#checkCode').val('');
-    $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
-    if (errorData ){
-      mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
-    } else {
-      mainPage.$("#mask").hide();
-    }
-    }
-  });
+    });
   }else{
-  $('#register').attr('disabled',false);
-  if(lnV==false ){
-    $('#lNImg').remove();
-    $('#vLN').append('<img id="lNImg" align="middle" src="images/cross.png">');
-  }
-  if(psV==false){
-    $('#pWImg').remove();
-    $('#vPW').append('<img id="pWImg" align="middle" src="images/cross.png">');
-  } 
-  if(vcV==false){
-    $('#vCImg').remove();
-    $('#vVC').append('<img id="vCImg" align="middle" src="images/cross.png">');
-  }
-  mainPage.$.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的登陆信息", 'info',function (){
-    if(lnV==false){
-    $('#loginName')[0].focus();
-    $('#loginName')[0].select();
-    }else if(psV==false){
-    $('#password')[0].focus();
-    $('#password')[0].select();
-    }else{
-    $('#checkCode')[0].focus();
-    $('#checkCode')[0].select();
+    $('#register').attr('disabled',false);
+    if(lnV==false ){
+      $('#lNImg').remove();
+      $('#vLN').append('<img id="lNImg" align="middle" src="images/cross.png">');
     }
-  });
+    if(psV==false){
+      $('#pWImg').remove();
+      $('#vPW').append('<img id="pWImg" align="middle" src="images/cross.png">');
+    } 
+    if(vcV==false){
+      $('#vCImg').remove();
+      $('#vVC').append('<img id="vCImg" align="middle" src="images/cross.png">');
+    }
+    mainPage.$.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的登陆信息", 'info',function (){
+      if(lnV==false){
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }else if(psV==false){
+        $('#password')[0].focus();
+        $('#password')[0].select();
+      }else{
+        $('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+      }
+    });
   }
 }
 </script>
