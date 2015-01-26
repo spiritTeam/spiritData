@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.stereotype.Component;
 
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.framework.FConstants;
@@ -38,6 +39,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * 主键分析器
  * @author wh
  */
+@Component
 public class AnalKey implements AnalTable {
     public final static String jsonDCode = "SD.TEAM.ANAL::0001"; 
     @Resource

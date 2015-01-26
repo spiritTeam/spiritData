@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -16,6 +17,7 @@ import com.spiritdata.dataanal.tomht.html2mht.service.Html2MhtService;
 /**
  * @author admi
  */
+@Controller
 public class Jsp2MhtController {
     @Resource
     Html2MhtService h2mService;

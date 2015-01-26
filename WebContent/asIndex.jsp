@@ -644,6 +644,11 @@ function login(){
  * 用户信息
  */
 function updateUser(){
+  var loginStatus = $('#loginStatus').val();
+  if(loginStatus==""||loginStatus==null) {
+    $.messager.alert('登录提示','您还未登录!','info'); 
+    return;
+  }
   var _url="<%=path%>/login/update.jsp?";
   var winOption={
     url:_url,

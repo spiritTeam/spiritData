@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.stereotype.Controller;
+
 import com.spiritdata.framework.core.web.AbstractFileUploadController;
 import com.spiritdata.dataanal.upload.service.DealUploadFileService;
 
@@ -15,6 +17,7 @@ import com.spiritdata.dataanal.upload.service.DealUploadFileService;
  * 上传文件处理，是数据分析的入口
  * @author mht, wh
  */
+@Controller
 public class FileUpLoadController extends AbstractFileUploadController {
     @Resource
     private DealUploadFileService dealUploadFileService;
