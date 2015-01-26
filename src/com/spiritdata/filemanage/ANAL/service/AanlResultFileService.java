@@ -1,9 +1,5 @@
 package com.spiritdata.filemanage.ANAL.service;
 
-/**
- * 分析文件服务类
- * @author wh
- */
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +10,10 @@ import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.exceptionC.Flmg0101CException;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 
+/**
+ * 分析文件服务类
+ * @author wh
+ */
 public class AanlResultFileService {
     @Resource(name="defaultDAO")
     private MybatisDAO<FileIndexPo> fileIndexDao;

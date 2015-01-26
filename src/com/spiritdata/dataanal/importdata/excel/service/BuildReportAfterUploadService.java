@@ -5,8 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.stereotype.Service;
-
 import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
 import com.spiritdata.dataanal.report.model.TaskReport;
 
@@ -15,15 +13,13 @@ import com.spiritdata.dataanal.report.model.TaskReport;
  * 包括生成Templet+生成Task+启动Task。
  * @author wh
  */
-
-@Service
-public class BuildReportAfterUpload extends AbstractGenerateSessionReport implements Serializable {
+public class BuildReportAfterUploadService extends AbstractGenerateSessionReport implements Serializable {
     private static final long serialVersionUID = 5557763867374849717L;
 
     /**
      * 无参构造函数，用此方式创建对象，必须设置Session
      */
-    public BuildReportAfterUpload() {
+    public BuildReportAfterUploadService() {
         super();
     }
 
@@ -31,7 +27,7 @@ public class BuildReportAfterUpload extends AbstractGenerateSessionReport implem
      * 构造实例，并设置Sesion
      * @param session 所设置的对象
      */
-    public BuildReportAfterUpload(HttpSession session) {
+    public BuildReportAfterUploadService(HttpSession session) {
         super();
         super.setSession(session);
     }

@@ -8,15 +8,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 /** 
  *  用于分析数据，返回到显示页面
  * @author 
  * @version  
  */
-@Controller
 public class GetAnalysisDataController {
     @RequestMapping("/getAnalysusResult.do")
     public @ResponseBody Map<String,List<Object>> getAnalysisResult(HttpServletRequest request,HttpServletResponse response){

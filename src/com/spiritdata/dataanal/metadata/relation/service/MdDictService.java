@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.stereotype.Service;
 
 import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
 import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
@@ -31,8 +30,6 @@ import com.spiritdata.framework.util.SequenceUUID;
  * 元数据字典项调整处理服务
  * @author wh
  */
-
-@Service
 //目前有这样一个假设：
 public class MdDictService {
     @Resource

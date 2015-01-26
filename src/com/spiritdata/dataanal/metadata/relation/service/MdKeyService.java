@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
@@ -33,8 +32,6 @@ import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalKey;
  * 元数据主键处理服务
  * @author wh
  */
-
-@Service
 public class MdKeyService {
     @Resource
     private BasicDataSource dataSource;

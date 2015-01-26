@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -28,7 +27,6 @@ import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
  * 用于登陆和注册
  * @author mht
  */
-@Controller
 public class RegisterController {
     /**
      * 发送重设密码的验证邮件
