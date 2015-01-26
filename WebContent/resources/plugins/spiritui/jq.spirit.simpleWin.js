@@ -62,7 +62,7 @@
 
     //1-画里面的内容
     //a)头
-    var headDiv=$("<div class='sWin_head'><div class='sWin_icon' /><div class='sWin_title' /><div class='sWin_closeBtn' /></div>");
+    var headDiv=$("<div class='sWin_head'><div class='sWin_icon' /><div class='sWin_title' /><div class='sWin_msg' /><div class='sWin_closeBtn' /></div>");
     winDiv.append(headDiv);
     //窗口头
     if (_options.headCss) headDiv.css(headCss);
@@ -70,10 +70,20 @@
     //窗口图标
     if (_options.iconCss) headDiv.find("div.sWin_icon").css(iconCss);
     else if (_options.iconUrl) headDiv.find("div.sWin_icon").css("background-image", "url('"+_options.iconUrl+"') no-repeat");
+    if ((!options.iconCss&&!_options.iconUrl)||(options.iconCss==''&&_options.iconUrl=='')) { //没有图标
+      headDiv.find("div.sWin_icon").hide();
+      headDiv.find("div.sWin_title").css("padding-left", "20px");
+    }
     //标题区域
     if (_options.titleCss) headDiv.find("div.sWin_title").css(titleCss);
-    headDiv.find(".sWin_title").html(_options.title);
+    headDiv.find(".sWin_title").html($.trim(_options.title));
     headDiv.find(".sWin_title").spiritUtils("setWidthByViewWidth", headDiv.spiritUtils("getViewWidth"));
+    //提示区域
+    var titleTxtLength=headDiv.find(".sWin_title").html().length;
+    var fontSize = parseFloat(headDiv.find(".sWin_title").css("font-size"));
+    var titleTxtWidth=titleTxtLength*fontSize+13;
+    headDiv.find(".sWin_msg").css("left", (titleTxtWidth+parseFloat(headDiv.find(".sWin_title").css("padding-left")))+"px");
+    headDiv.find(".sWin_msg").css("width", (parseFloat(headDiv.find(".sWin_title").css("width"))-parseFloat(headDiv.find(".sWin_msg").css("left"))-20)+"px");
     //关闭按钮
     headDiv.find(".sWin_closeBtn").css({
       "left": winDiv.width()-headDiv.find(".sWin_closeBtn").width()-10
@@ -148,19 +158,51 @@
     winDiv.resize=function(){//当窗口调整大小时，resize不进行处理
       //var abc='ddd';
     };
-    winDiv.modify=function(options) {//修改参数，目前只修改标题
-    	var opt = $.data(this, "spiritSimpleWin");
-    	opt = $.extend(true, {}, opt, options);
-      $.data(this, 'spiritSimpleWin', opt);//绑定参数
-      if (opt.title&&opt.title!="") $(this).find(".sWin_head>.sWin_title").html(opt.title);
-    };
     winDiv.close=function(){
       var opt = $.data(this, "spiritSimpleWin");
       if (opt.onBeforeClose) opt.onBeforeClose(winDiv.attr("id"));
-    	winDiv.remove();
+      winDiv.remove();
       $("body>div._wMask").css("display", "none");
       //删除对象
       //resize去掉
+    };
+    /**
+     * 修改参数，目前只修改标题
+     */
+    winDiv.modify=function(options) {
+      var opt = $.data(this, "spiritSimpleWin");
+      opt = $.extend(true, {}, opt, options);
+      $.data(this, 'spiritSimpleWin', opt);//绑定参数
+      if (opt.title&&opt.title!="") {
+        var _title=$(this).find(".sWin_head>.sWin_title");
+        _title.html(opt.title);
+
+        var _msg=$(this).find(".sWin_head>.sWin_msg");
+        var titleTxtLength=_title.html().length;
+        var fontSize = parseFloat(_title.css("font-size"));
+        var titleTxtWidth=titleTxtLength*fontSize+13;
+        _msg.css("left", (titleTxtWidth+parseFloat(_title.css("padding-left")))+"px");
+        _msg.css("width", (parseFloat(_title.css("width"))-parseFloat(_msg.css("left"))-20)+"px");
+      }
+    };
+    /**
+     * 设置窗体提示栏内容，其参数是json对象，如：
+     * {
+     *   color: red|#39FA32, //可省略
+     *   msg:'提示内容' //不可省略，若为空串，则清除提示内容
+     * }
+     */
+    winDiv.setMessage=function(options){
+    	if (options) {
+      	var _msg=$(this).find(".sWin_head>.sWin_msg");
+    		if (options.msg||options.msg=='') {
+        	_msg.html(options.msg);
+        	_msg.attr("title", options.msg);
+    		}
+      	if (options.color) {
+      		_msg.css("color", options.color);
+      	}
+    	}
     };
 
     return winDiv;

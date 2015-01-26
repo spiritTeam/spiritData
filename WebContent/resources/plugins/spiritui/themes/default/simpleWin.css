@@ -46,12 +46,29 @@
 .sWin_title {
   position:absolute;
   padding-left:40px;
+  padding-top: 2px;
   height:24px;
   line-height:24px;
   valign:middle;
   vertical-align:middle;
-  font-size:14px;
+  font-size:18px;
+  font-family:微软雅黑,黑体;
   font-weight:bold;
+}
+/* 窗口提示区域 */
+.sWin_msg {
+  position:absolute;
+  padding-top: 2px;
+  height:24px;
+  line-height:24px;
+  valign:bottom;
+  vertical-align:bottom;
+  color:red;
+  margin-top: 4px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  text-decoration:inherit;
 }
 /* 窗口关闭按钮 */
 .sWin_closeBtn {
