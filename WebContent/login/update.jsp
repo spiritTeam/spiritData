@@ -1,7 +1,14 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="com.spiritdata.framework.FConstants"%>
+<%@page import="com.spiritdata.dataanal.UGA.pojo.User"%>
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
+  String modifyType = request.getParameter("modifyType");
+  User user = ((User)session.getAttribute(FConstants.SESSION_USER));
+  String userMail = user.getMailAdress();
+  String loginName = user.getLoginName();
+  String oldPwd = user.getPassword();
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -22,6 +29,7 @@
   <div id="mainDiv" style="width:330px;height:400px;">
     <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;margin-top: 10px;"><span id="checkResult"></span></div>
     <form>
+      <input id="oldPwd" type="hidden" >
       <table width="300px;" style="margin-right:-40px;">
         <tr style="height:35px; valign:top;">
           <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
@@ -38,6 +46,17 @@
             <div style="float:left">
               <input id="mail" name="mail" tabindex="2" type="text" onclick="onClick(mail);" value="您的邮箱" disabled="disabled" style="width:195px;"/></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vMail'></div>
+          </td>
+        </tr>
+         <tr style="height:50px; valign:top;">
+          <td align="right"><span class="loginspan">原密码</span></td>
+          <td colspan="2" rowspan="1">
+            <div style="float:left">
+              <input id="oldPassword" name="oldPassword" tabindex="3" type="password" onmouseover="opwdMouseOver();"
+                onclick="onClick(oldPassword);" onBlur="validateOldPassword('oldPassword');"/></div>
+            <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vOPwd'></div>
+            <div id="opwDiv" style="float:left;width:39px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
+              <span id="opwdSpan" style="color:#ABCDEF;font-size:12px;">原密码</span></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -65,8 +84,9 @@
         <tr>
           <td colspan="3" align="left" style="height:50px;padding-top:10px;" valign="top">
             <div style="width:5px;height:5px;"></div>
-            <a id="register" name="register" onclick="updateUser();" href="#"><div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);">
-              <img src="images/register.png"/>
+            <a id="save" name="save" onclick="updateUser();" href="#">
+              <div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);border-radius:5px;">
+                <img src="images/submit.jpg"/>
             </div></a>
           </td>
         </tr>
@@ -77,14 +97,40 @@
 </body>
 <script type="text/javascript">
 //各个input的变量，true代表有值，且符合标准，false则相反
-var psV=false,cpsV=false,maV=false;
-
+var psV=false,cpsV=false,maV=false,opsV=false;
+$(function(){
+  $('#loginName').val('<%=loginName%>');
+  $('#mail').val('<%=userMail%>');
+  $('#oldPwd').val('<%=oldPwd%>');
+});
+function validateOldPassword(eleId){
+  $('#oldPwdImg').remove();
+  ele = $('#'+eleId);
+  var oldPwd = $('#oldPwd').val();
+  if(ele.val()!=oldPwd){
+    $('#vOPwd').append('<img id="oldPwdImg" align="middle" src="images/cross.png">');
+    opsV = false;
+  }else {
+    $('#vOPwd').append('<img id="oldPwdImg" align="middle" src="images/accept.png">');
+    opsV = true;
+  }
+}
 //以下方法为重复密码和密码的鼠标点击效果
+function opwdMouseOver(){
+  $("#opwdSpan").toggleClass("addSelect");
+}
 function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
 }
 function cpwdMouseOver(){
   $("#cpwdSpan").toggleClass("addSelect");
+}
+function opwdOnActive() {
+  //隐藏
+  $("#opwdSpan").hide();
+  //获得焦点和选择
+  $("#oldPassword")[0].focus();
+  $("#oldPassword")[0].select();
 }
 function pwdOnActive() {
   //隐藏
@@ -104,8 +150,8 @@ function cpwdOnActive() {
 
 //更新用户
 function updateUser(){
-  $('#register').attr("disabled",true); 
-  if(psV&&cpsV&&lnV&&maV&&vcV){
+  $('#save').attr("disabled",true); 
+  if(opsV&&psV&&cpsV){
     var pData={
       "loginName":$("#loginName").val(),
       "password":$("#password").val(),
@@ -128,15 +174,15 @@ function updateUser(){
             $.messager.alert('注册提示',json.retInfo,'info');
             window.location.href = "<%=path%>/asIndex.jsp";
           }
-          $('#register').attr("disabled",false); 
+          $('#save').attr("disabled",false); 
         }else{
           $.messager.alert('提示',json.retInfo,'info');
-          $('#register').attr("disabled",false);
+          $('#save').attr("disabled",false);
         }
       }
     });
   }else{
-    $('#register').attr("disabled",false); 
+    $('#save').attr("disabled",false); 
     if(cpsV==false){
       $('#cpwdImg').remove();
       $('#vCPwd').append('<img id="cpwdImg" align="middle" src="images/cross.png">');
@@ -173,25 +219,34 @@ function setInputCss(){
   var browserType = getBrowserVersion();
   var v = browserType.substring(0,browserType.lastIndexOf(' '));
   $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
+  $('#opwDiv').css({"padding-top":"11px","margin-left":"-217px"});
   $('#cpwDiv').css({"padding-top":"11px","margin-left":"-217px"});
   $("div.intro span").css({'border-color':'#999999','border-left':'0px'});
   if(v!='msie'){
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
+    if($('#oldPassword')!=null) $('#oldPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"width":"210px","padding-left":"38px","margin-left":"9px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"line-height":"35px","width":"220px","padding-left":"30px","margin-left":"7px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
   }else{
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
+    if($('#oldPassword')!=null) $('#oldPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"width":"210px","padding-left":"38px","margin-left":"12px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"line-height":"35px","width":"220px","padding-left":"30px","margin-left":"7px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"70px"});
   }
 }
 $(function(){
+  $("#opwdSpan").mouseover(function(){opwdOnActive();});
+  $("#oldPassword").focus(function(){opwdOnActive();});
+  $("#oldPassword").mouseover(function(){opwdOnActive();});
+  $("#oldPassword").blur(function(){
+    if ($(this).val()=="") $("#opwdSpan").show();
+  });
   $("#pwdSpan").mouseover(function(){pwdOnActive();});
   $("#password").focus(function(){pwdOnActive();});
   $("#password").mouseover(function(){pwdOnActive();});

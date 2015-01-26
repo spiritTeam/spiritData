@@ -151,6 +151,7 @@
       <a id="modifyPwdButton" onclick="modifyPwd();" href="#" >修改密码</a>
       <a id="" onclick="register()" href="#">注册</a>
       <a id="test" onclick="testW();" href="#" >窗口测试</a>
+      <a id="test" onclick="updateUser();" href="#" >修改1</a>
       <input id="loginStatus" type="hidden" value="">
       <input id="loginName" type="hidden" value="">
     </div>
@@ -594,7 +595,7 @@ var wWidth = "350";
  */
 var registerWinId ="";
 function register(){
-  var loginStatus = $('#loginStatus').val();
+  //var loginStatus = $('#loginStatus').val();
   var _url ="<%=path%>/login/register.jsp";
   var winOption={
     url:_url,
@@ -639,7 +640,20 @@ function login(){
   };
   loginWinId = openSWinInMain(winOption);
 }
-
+/*
+ * 用户信息
+ */
+function updateUser(){
+  var _url="<%=path%>/login/update.jsp?";
+  var winOption={
+    url:_url,
+    title:"修改个人信息",
+    height:wHeight,
+    width:wWidth,
+    modal:true
+  };
+  loginWinId = openSWinInMain(winOption);
+}
 /**
  * 测试
  */

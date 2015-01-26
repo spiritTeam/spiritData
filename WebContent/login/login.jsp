@@ -147,7 +147,7 @@ function changePasswordCss(obj){
 }
 function changeCheckCodeCss(obj){
   if(obj.value==obj.defaultValue){
-  obj.value='';obj.style.color='#000';
+    obj.value='';obj.style.color='#000';
   }
 }
 
@@ -162,6 +162,7 @@ function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
 }
 $(function(){
+  $("#checkCode").css('background-color','#FFFFFF');
   $("#pwdSpan").mouseover(function(){pwdOnActive();});
   $("#password").focus(function(){pwdOnActive();});
   $("#password").mouseover(function(){pwdOnActive();});
@@ -179,9 +180,13 @@ $(function(){
     $('#checkCode').css('color','#ABCDEF');
   }
   $('#checkCode').mouseover(function(){
-	  $('#checkCode').css("border-color","#ABCDEF");
-	  $('#ccBorder').css("border-color","#ABCDEF");
-	});
+    $('#checkCode').css("border-color","#ABCDEF");
+    $('#ccBorder').css("border-color","#ABCDEF");
+  });
+  $('#checkCode').mouseout(function(){
+    $('#checkCode').css("border-color","#ABADB3");
+    $('#ccBorder').css("border-color","#ABADB3");
+  });
 });
 function setInputCss(){
   //遮罩层位置及样式
@@ -248,6 +253,7 @@ function validateValidateCode(eleId){
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
   ele.val(ele[0].defaultValue);
   ele.css('color','#ABCDEF');
+  ele.css('border-color','#ABADB3');
   vcV = false;
   }else{
   var vsMsg = verificationCheckCode(ele.val());
