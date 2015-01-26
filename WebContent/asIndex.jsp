@@ -633,7 +633,7 @@ function login(){
   var _url="<%=path%>/login/login.jsp?";
   var winOption={
     url:_url,
-    title:"登陆",
+    title:"登录",
     height:wHeight,
     width:wWidth,
     modal:true
