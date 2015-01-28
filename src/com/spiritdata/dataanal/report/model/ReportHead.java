@@ -10,15 +10,15 @@ import com.spiritdata.jsonD.util.JsonDUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
 
 /**
- * 模板头，可能需要扩充，目前只有reportName
+ * 报告头，可能需要扩充，目前只有reportName
  * @author wh
  */
 public class ReportHead  implements Serializable, ConvertJson {
     private static final long serialVersionUID = -2739194799723001355L;
 
-    private String id;//模板Id，UUID
+    private String id;//报告Id，UUID
     private String reportName;//报告名称
-    private String code; //模板类型编码，此编码分为组织编码：大写的以.隔开的名称，<::>后是小类型编号，采用5位，最大为9999个类型(可扩充)
+    private String code; //报告类型编码，此编码分为组织编码：大写的以.隔开的名称，<::>后是小类型编号，采用5位，最大为9999个类型(可扩充)
     private String fileName; //存储JsonD的文件地址，可能需要和_node共同使用
     private Date CTime; //创建时间 此事件也是整个templet生成的时间戳
     private String desc; //描述
@@ -71,7 +71,7 @@ public class ReportHead  implements Serializable, ConvertJson {
     public String toJson() {
         if (this.id==null||this.id.length()==0) throw new Dtal1002CException("templetD头信息不规范：id必须设置！");
         if (this.reportName==null||this.reportName.length()==0) throw new Dtal1002CException("templetD头信息不规范：报告名称(reportName)必须设置！");
-        if (this.code==null||this.code.length()==0) throw new Dtal1002CException("templetD头信息不规范：模板类型编码(code)必须设置！");
+        if (this.code==null||this.code.length()==0) throw new Dtal1002CException("templetD头信息不规范：报告类型编码(code)必须设置！");
         if (!JsonDUtils.isLegalCode(this.code)) throw new Dtal1002CException("templetD头信息不规范：code["+code+"]不合规！，请参看Templet相关文档！");
 
         if (this.CTime==null) CTime= new Date();
@@ -87,7 +87,7 @@ public class ReportHead  implements Serializable, ConvertJson {
     public Map<String, Object> toMap() {
         if (this.id==null||this.id.length()==0) throw new Dtal1002CException("templetD头信息不规范：id必须设置！");
         if (this.reportName==null||this.reportName.length()==0) throw new Dtal1002CException("templetD头信息不规范：报告名称(reportName)必须设置！");
-        if (this.code==null||this.code.length()==0) throw new Dtal1002CException("templetD头信息不规范：模板类型编码(code)必须设置！");
+        if (this.code==null||this.code.length()==0) throw new Dtal1002CException("templetD头信息不规范：报告类型编码(code)必须设置！");
         if (!JsonDUtils.isLegalCode(this.code)) throw new Dtal1002CException("templetD头信息不规范：code["+code+"]不合规！，请参看Templet相关文档！");
         
         if (this.CTime==null) CTime= new Date();

@@ -6,7 +6,7 @@ import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.FileNameUtils;
 
 /**
- * 文件索引表
+ * 文件索引表持久化对象<br/>
  * 对应持久化中数据库的表为SA_FILE_INDEX
  * @author wh
  */

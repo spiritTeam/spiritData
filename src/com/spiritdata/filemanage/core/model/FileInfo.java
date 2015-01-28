@@ -218,7 +218,7 @@ public class FileInfo extends FileIndexPo {
     
     /**
      * 把当前对象转换为Po对象，为数据库操作做准备
-     * @throws Exception 
+     * @return 文件信息Po对象
      */
     public FileIndexPo convert2Po() {
         FileIndexPo ret = new FileIndexPo();

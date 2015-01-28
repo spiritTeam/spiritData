@@ -3,7 +3,7 @@ package com.spiritdata.dataanal.report.model;
 import com.spiritdata.framework.core.model.tree.TreeNodeBean;
 
 /**
- * 模板中段落对象，采用树框架实现
+ * 报告中段落对象，采用树框架实现
  * @author wh
  */
 public class ReportSegment extends TreeNodeBean {

@@ -5,7 +5,7 @@ package com.spiritdata.filemanage.core.enumeration;
  * IMP:导入文件；<br/>
  * LOG:日志文件；<br/>
  * ANAL:分析结果文件；<br/>
- * REPORT:模板文件；<br/>
+ * REPORT:报告文件；<br/>
  * 为与数据库配合，其对应的值是String
  * @author wh
  */

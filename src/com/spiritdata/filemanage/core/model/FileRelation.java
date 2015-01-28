@@ -101,7 +101,7 @@ public class FileRelation implements Serializable {
 
     /**
      * 把当前对象转换为Po对象，为数据库操作做准备
-     * @throws Exception 
+     * @return 文件关系Po对象
      */
     public FileRelationPo convert2Po() {
         if (!(element1 instanceof FileInfo)&&!(element1 instanceof FileCategory)) {
