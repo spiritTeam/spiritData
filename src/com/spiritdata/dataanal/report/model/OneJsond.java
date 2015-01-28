@@ -10,19 +10,19 @@ import com.spiritdata.jsonD.model.AccessJsondOne;
 public class OneJsond extends AccessJsondOne implements ConvertJson {
     private static final long serialVersionUID = 336480238247137657L;
 
-    private int tdid; //此Id是在templet中进行标识用的
+    private int rdId; //此Id是在report中进行标识用的
 
-    public int getTdid() {
-        return tdid;
+    public int getRdId() {
+        return rdId;
     }
 
-    protected void setTdid(int did) {
-        this.tdid = did;
+    protected void setRdId(int rdId) {
+        this.rdId = rdId;
     }
 
     public String toJson() {
         String ret = "{";
-        ret += "\"_id\":"+this.tdid+",\"_url\":\""+(this.getUrl()==null?"":this.getUrl())+"\","
+        ret += "\"_id\":"+this.rdId+",\"_url\":\""+(this.getUrl()==null?"":this.getUrl())+"\","
              + "\"_jsonDcode\":\""+(this.getJsondCode()==null?"":this.getJsondCode())+"\","
              + "\"_jsonDid\":\""+(this.getUrl()==null?"":this.getUrl())+"\"";
         return ret+"}";

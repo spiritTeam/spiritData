@@ -2,167 +2,109 @@
 <!--
   元数据：实体表指标信息
 -->
-
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="quotaTable" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="quotaTable">
   <!-- 对象定义:实体表指标 -->
-  <resultMap id="BaseResultMap" type="QuotaTab" >
-    <id     column="id"        property="id"        jdbcType="VARCHAR" />
-    <result column="tmoId"     property="tmoId"     jdbcType="VARCHAR" />
-    <result column="tmId"      property="mdMId"     jdbcType="VARCHAR" />
-    <result column="tableName" property="tableName" jdbcType="VARCHAR" />
-    <result column="allCount"  property="allCount"  jdbcType="INTEGER" />
-    <result column="cTime"     property="CTime"     jdbcType="TIMESTAMP" />
-    <result column="lmTime"    property="lmTime"    jdbcType="TIMESTAMP" />
-    <result column="laTime"    property="laTime"    jdbcType="TIMESTAMP" />
+  <resultMap id="BaseResultMap" type="QuotaTab">
+    <id     column="id"        property="id"        jdbcType="VARCHAR"/>
+    <result column="tmoId"     property="tmoId"     jdbcType="VARCHAR"/>
+    <result column="tmId"      property="mdMId"     jdbcType="VARCHAR"/>
+    <result column="tableName" property="tableName" jdbcType="VARCHAR"/>
+    <result column="allCount"  property="allCount"  jdbcType="INTEGER"/>
+    <result column="cTime"     property="CTime"     jdbcType="TIMESTAMP"/>
+    <result column="lmTime"    property="lmTime"    jdbcType="TIMESTAMP"/>
+    <result column="laTime"    property="laTime"    jdbcType="TIMESTAMP"/>
   </resultMap>
+
   <!-- 所有列 -->
-  <sql id="Base_Column_List" >
+  <sql id="Base_Column_List">
     id, tmoId, tmId, tableName, allCount, cTime, lmTime, laTime
   </sql>
+
   <!-- 条件子句 -->
-  <sql id="WhereClauseByEntiey" >
-    <where >
-      <trim prefix="(" suffix=")" prefixOverrides="and" >
-        <if test="id != null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="mdMId != null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
-        <if test="tmoId != null" > and tmoId = #{tmoId,jdbcType=VARCHAR} </if>
-        <if test="tableName != null" > and tableName = #{tableName,jdbcType=VARCHAR} </if>
-        <if test="allCount != null" > and allCount = #{allCount,jdbcType=INTEGER} </if>
-        <if test="tableDescn != null" > and tableDescn = #{tableDescn,jdbcType=VARCHAR} </if>
-        <if test="CTime != null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
-        <if test="lmTime != null" > and lmTime = #{lmTime,jdbcType=TIMESTAMP} </if>
-        <if test="laTime != null" > and laTime = #{laTime,jdbcType=TIMESTAMP} </if>
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR} </if>
+        <if test="mdMId!=null"> and tmId=#{mdMId,jdbcType=VARCHAR} </if>
+        <if test="tmoId!=null"> and tmoId=#{tmoId,jdbcType=VARCHAR} </if>
+        <if test="tableName!=null"> and tableName=#{tableName,jdbcType=VARCHAR} </if>
+        <if test="allCount!=null"> and allCount=#{allCount,jdbcType=INTEGER} </if>
+        <if test="tableDescn!=null"> and tableDescn=#{tableDescn,jdbcType=VARCHAR} </if>
+        <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP} </if>
+        <if test="lmTime!=null"> and lmTime=#{lmTime,jdbcType=TIMESTAMP} </if>
+        <if test="laTime!=null"> and laTime=#{laTime,jdbcType=TIMESTAMP} </if>
       </trim>
     </where>
   </sql>
+
   <!-- 获得记录条数-->
-  <select id="count" parameterType="QuotaTab" resultType="java.lang.Integer" >
-    select count(*) from sa_md_tabquota
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
+  <select id="count" parameterType="QuotaTab" resultType="java.lang.Integer">
+    select count(*) from sa_md_tabquota <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </select>
 
   <!-- 获得列表 -->
-  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" /> from sa_md_tabquota
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_md_tabquota
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="orderByClause!=null">order by ${orderByClause}</if>
   </select>
 
   <!-- 获得一条数据 -->
-  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" /> from sa_md_tabquota
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_md_tabquota
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </select>
-  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" /> from sa_md_tabquota where id = #{id,jdbcType=VARCHAR}
+  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/> from sa_md_tabquota where id=#{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 新增数据 -->
-  <insert id="insert" parameterType="java.util.Map" >
+  <insert id="insert" parameterType="java.util.Map">
     insert into sa_md_tabquota
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="tmoId != null" >
-        tmoId,
-      </if>
-      <if test="mdMId != null" >
-        tmId,
-      </if>
-      <if test="tableName != null" >
-        tableName,
-      </if>
-      <if test="allCount != null" >
-        allCount,
-      </if>
-      <if test="CTime != null" >
-        cTime,
-      </if>
-      <if test="lmTime != null" >
-        lmTime,
-      </if>
-      <if test="laTime != null" >
-        laTime,
-      </if>
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!=null">id,</if>
+      <if test="tmoId!=null">tmoId,</if>
+      <if test="mdMId!=null">tmId,</if>
+      <if test="tableName!=null">tableName,</if>
+      <if test="allCount!=null">allCount,</if>
+      <if test="CTime!=null">cTime,</if>
+      <if test="lmTime!=null">lmTime,</if>
+      <if test="laTime!=null">laTime,</if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="tmoId != null" >
-        #{tmoId,jdbcType=VARCHAR},
-      </if>
-      <if test="mdMId != null" >
-        #{mdMId,jdbcType=VARCHAR},
-      </if>
-      <if test="tableName != null" >
-        #{tableName,jdbcType=VARCHAR},
-      </if>
-      <if test="allCount != null" >
-        #{allCount,jdbcType=INTEGER},
-      </if>
-      <if test="CTime != null" >
-        #{CTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="lmTime != null" >
-        #{lmTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="laTime != null" >
-        #{laTime,jdbcType=TIMESTAMP},
-      </if>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
+      <if test="tmoId!=null">#{tmoId,jdbcType=VARCHAR},</if>
+      <if test="mdMId!=null">#{mdMId,jdbcType=VARCHAR},</if>
+      <if test="tableName!=null">#{tableName,jdbcType=VARCHAR},</if>
+      <if test="allCount!=null">#{allCount,jdbcType=INTEGER},</if>
+      <if test="CTime!=null">#{CTime,jdbcType=TIMESTAMP},</if>
+      <if test="lmTime!=null">#{lmTime,jdbcType=TIMESTAMP},</if>
+      <if test="laTime!=null">#{laTime,jdbcType=TIMESTAMP},</if>
     </trim>
   </insert>
 
   <!-- 修改 根据主键 -->
-  <update id="update" parameterType="java.util.Map" >
+  <update id="update" parameterType="java.util.Map">
     update sa_md_tabquota
-    <set >
-      <if test="id != null" >
-        id = #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="tmoId != null" >
-        tmoId = #{tmoId,jdbcType=VARCHAR},
-      </if>
-      <if test="mdMId != null" >
-        tmId = #{mdMId,jdbcType=VARCHAR},
-      </if>
-      <if test="tableName != null" >
-        tableName = #{tableName,jdbcType=VARCHAR},
-      </if>
-      <if test="allCount != null" >
-        allCount = #{allCount,jdbcType=INTEGER},
-      </if>
-      <if test="CTime != null" >
-        cTime = #{CTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="lmTime != null" >
-        lmTime = #{lmTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="laTime != null" >
-        laTime = #{laTime,jdbcType=TIMESTAMP},
-      </if>
+    <set>
+      <if test="tmoId!=null">tmoId=#{tmoId,jdbcType=VARCHAR},</if>
+      <if test="mdMId!=null">tmId=#{mdMId,jdbcType=VARCHAR},</if>
+      <if test="tableName!=null">tableName=#{tableName,jdbcType=VARCHAR},</if>
+      <if test="allCount!=null">allCount=#{allCount,jdbcType=INTEGER},</if>
+      <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP},</if>
+      <if test="lmTime!=null">lmTime=#{lmTime,jdbcType=TIMESTAMP},</if>
+      <if test="laTime!=null">laTime=#{laTime,jdbcType=TIMESTAMP},</if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id=#{id,jdbcType=VARCHAR}
   </update>
 
   <!-- 删除数据 -->
-  <delete id="delete" parameterType="java.lang.String" >
-    delete from sa_md_tabquota where id = #{id,jdbcType=VARCHAR}
+  <delete id="delete" parameterType="java.lang.String">
+    delete from sa_md_tabquota where id=#{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByEntity" parameterType="java.util.Map" >
+  <delete id="deleteByEntity" parameterType="java.util.Map">
     delete from sa_md_tabquota
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </delete>
 </mapper>

@@ -20,7 +20,7 @@ public class DictMaster extends BaseObject {
     private int isValidate; //字典组是否可用 1可用，2不可用
     private int MType; //字典组类型：1系统保留；2系统；3定义；
     private String MRef; //字典组引用，当mType=3
-    private String descn; //说明
+    private String desc; //说明
     private Timestamp CTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间
 
@@ -60,11 +60,11 @@ public class DictMaster extends BaseObject {
     public void setIsValidate(int isValidate) {
         this.isValidate = isValidate;
     }
-    public String getDescn() {
-        return descn;
+    public String getDesc() {
+        return desc;
     }
-    public void setDescn(String descn) {
-        this.descn = descn;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
     public String getNPy() {
         return NPy;

@@ -3,162 +3,110 @@
   基础元数据：元数据列描述
 -->
 
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="metadataColumn" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="metadataColumn">
   <!-- 对象定义:元数据列模式 -->
-  <resultMap id="BaseResultMap" type="MdCol" >
-    <id     column="id"          property="id"          jdbcType="VARCHAR" />
-    <result column="tmId"        property="mdMId"       jdbcType="VARCHAR" />
-    <result column="columnName"  property="columnName"  jdbcType="VARCHAR" />
-    <result column="columnType"  property="columnType"  jdbcType="VARCHAR" />
-    <result column="columnIndex" property="columnIndex" jdbcType="INTEGER" />
-    <result column="titleName"   property="titleName"   jdbcType="VARCHAR" />
-    <result column="pkSign"      property="pkSign"      jdbcType="INTEGER" />
-    <result column="cTime"       property="CTime"       jdbcType="TIMESTAMP" />
+  <resultMap id="BaseResultMap" type="MdCol">
+    <id     column="id"          property="id"          jdbcType="VARCHAR"/>
+    <result column="tmId"        property="mdMId"       jdbcType="VARCHAR"/>
+    <result column="columnName"  property="columnName"  jdbcType="VARCHAR"/>
+    <result column="columnType"  property="columnType"  jdbcType="VARCHAR"/>
+    <result column="columnIndex" property="columnIndex" jdbcType="INTEGER"/>
+    <result column="titleName"   property="titleName"   jdbcType="VARCHAR"/>
+    <result column="pkSign"      property="pkSign"      jdbcType="INTEGER"/>
+    <result column="cTime"       property="CTime"       jdbcType="TIMESTAMP"/>
   </resultMap>
   <!-- 所有列 -->
-  <sql id="Base_Column_List" >
+  <sql id="Base_Column_List">
     id, tmId, columnName, columnType, columnIndex, titleName, pkSign, cTime
   </sql>
   <!-- 条件子句 -->
-  <sql id="WhereClauseByEntiey" >
-    <where >
-      <trim prefix="(" suffix=")" prefixOverrides="and" >
-        <if test="id!=null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="mdMId!=null" > and tmId = #{mdMId,jdbcType=VARCHAR} </if>
-        <if test="columnName!=null" > and columnName = #{columnName,jdbcType=VARCHAR} </if>
-        <if test="columnType!=null" > and columnType = #{columnType,jdbcType=VARCHAR} </if>
-        <if test="columnName!=null" > and columnName = #{columnName,jdbcType=VARCHAR} </if>
-        <if test="columnIndex!=null and columnIndex!=0" > and columnIndex = #{columnIndex,jdbcType=INTEGER} </if>
-        <if test="pkSign!=null and pkSign!=0" > and pkSign = #{pkSign,jdbcType=INTEGER} </if>
-        <if test="CTime!=null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
+        <if test="mdMId!=null"> and tmId=#{mdMId,jdbcType=VARCHAR}</if>
+        <if test="columnName!=null"> and columnName=#{columnName,jdbcType=VARCHAR}</if>
+        <if test="columnType!=null"> and columnType=#{columnType,jdbcType=VARCHAR}</if>
+        <if test="columnName!=null"> and columnName=#{columnName,jdbcType=VARCHAR}</if>
+        <if test="columnIndex!=null and columnIndex!=0"> and columnIndex=#{columnIndex,jdbcType=INTEGER}</if>
+        <if test="pkSign!=null and pkSign!=0"> and pkSign=#{pkSign,jdbcType=INTEGER}</if>
+        <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP}</if>
       </trim>
     </where>
   </sql>
   <!-- 获得记录条数-->
-  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
-    select count(*) from sa_md_column
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from sa_md_column <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </select>
 
   <!-- 获得列表 -->
-  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" /> from sa_md_column
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_md_column
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="orderByClause!=null">order by ${orderByClause}</if>
   </select>
 
   <!-- 按照所有者获得列表 -->
-  <select id="getListByOwnerId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="getListByOwnerId" resultMap="BaseResultMap" parameterType="java.lang.String">
     select a.* from sa_md_column a, sa_md_tabmodel b where a.tmId=b.id and b.ownerId=#{ownerId,jdbcType=VARCHAR}
     order by a.tmId, a.columnIndex
   </select>
 
   <!-- 获得一条数据 -->
-  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" /> from sa_md_column
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_md_column
+    <if test="_parameter!=null">
+      <include refid="WhereClauseByEntiey"/>
     </if>
   </select>
-  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" /> from sa_md_column where id = #{id,jdbcType=VARCHAR}
+  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/> from sa_md_column where id=#{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 新增数据 -->
-  <insert id="insert" parameterType="java.util.Map" >
+  <insert id="insert" parameterType="java.util.Map">
     insert into sa_md_column
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="mdMId != null" >
-        tmId,
-      </if>
-      <if test="columnName != null" >
-        columnName,
-      </if>
-      <if test="titleName != null" >
-        titleName,
-      </if>
-      <if test="columnType != null" >
-        columnType,
-      </if>
-      <if test="columnIndex!=null and columnIndex!=0" >
-        columnIndex,
-      </if>
-      <if test="pkSign!=null and pkSign!=0" >
-        pkSign,
-      </if>
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!=null">id,</if>
+      <if test="mdMId!=null">tmId,</if>
+      <if test="columnName!=null">columnName,</if>
+      <if test="titleName!=null">titleName,</if>
+      <if test="columnType!=null">columnType,</if>
+      <if test="columnIndex!=null and columnIndex!=0">columnIndex,</if>
+      <if test="pkSign!=null and pkSign!=0">pkSign,</if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="mdMId != null" >
-        #{mdMId,jdbcType=VARCHAR},
-      </if>
-      <if test="columnName != null" >
-        #{columnName,jdbcType=VARCHAR},
-      </if>
-      <if test="titleName != null" >
-        #{titleName,jdbcType=VARCHAR},
-      </if>
-      <if test="columnType != null" >
-        #{columnType,jdbcType=VARCHAR},
-      </if>
-      <if test="columnIndex!=null and columnIndex!=0" >
-        #{columnIndex,jdbcType=INTEGER},
-      </if>
-      <if test="pkSign!=null and pkSign!=0" >
-        #{pkSign,jdbcType=INTEGER},
-      </if>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
+      <if test="mdMId!=null">#{mdMId,jdbcType=VARCHAR},</if>
+      <if test="columnName!=null">#{columnName,jdbcType=VARCHAR},</if>
+      <if test="titleName!=null">#{titleName,jdbcType=VARCHAR},</if>
+      <if test="columnType!=null">#{columnType,jdbcType=VARCHAR},</if>
+      <if test="columnIndex!=null and columnIndex!=0">#{columnIndex,jdbcType=INTEGER},</if>
+      <if test="pkSign!=null and pkSign!=0">#{pkSign,jdbcType=INTEGER},</if>
     </trim>
   </insert>
 
   <!-- 修改 根据主键 -->
-  <update id="update" parameterType="java.util.Map" >
+  <update id="update" parameterType="java.util.Map">
     update sa_md_column
-    <set >
-      <if test="mdMId != null" >
-        tmId = #{mdMId,jdbcType=VARCHAR},
-      </if>
-      <if test="columnName != null" >
-        columnName = #{columnName,jdbcType=VARCHAR},
-      </if>
-      <if test="titleName != null" >
-        titleName = #{titleName,jdbcType=VARCHAR},
-      </if>
-      <if test="columnType != null" >
-        columnType = #{columnType,jdbcType=VARCHAR},
-      </if>
-      <if test="columnIndex!=null and columnIndex!=0" >
-        columnIndex = #{columnIndex,jdbcType=INTEGER},
-      </if>
-      <if test="pkSign!=null and pkSign!=0" >
-        pkSign = #{pkSign,jdbcType=INTEGER},
-      </if>
-      <if test="CTime != null" >
-        cTime = #{CTime,jdbcType=TIMESTAMP},
-      </if>
+    <set>
+      <if test="columnName!=null">columnName=#{columnName,jdbcType=VARCHAR},</if>
+      <if test="titleName!=null">titleName=#{titleName,jdbcType=VARCHAR},</if>
+      <if test="columnType!=null">columnType=#{columnType,jdbcType=VARCHAR},</if>
+      <if test="columnIndex!=null and columnIndex!=0">columnIndex=#{columnIndex,jdbcType=INTEGER},</if>
+      <if test="pkSign!=null and pkSign!=0">pkSign=#{pkSign,jdbcType=INTEGER},</if>
+      <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP},</if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id=#{id,jdbcType=VARCHAR}
   </update>
 
   <!-- 删除数据 -->
-  <delete id="delete" parameterType="java.lang.String" >
-    delete from sa_md_column where id = #{id,jdbcType=VARCHAR}
+  <delete id="delete" parameterType="java.lang.String">
+    delete from sa_md_column where id=#{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByEntity" parameterType="java.util.Map" >
+  <delete id="deleteByEntity" parameterType="java.util.Map">
     delete from sa_md_column
-    <if test="_parameter != null" >
-      <include refid="WhereClauseByEntiey" />
-    </if>
+    <if test="_parameter!=null">include refid="WhereClauseByEntiey"/></if>
   </delete>
 </mapper>

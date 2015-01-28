@@ -27,15 +27,15 @@
   <sql id="WhereClauseByEntiey">
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
-        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR} </if>
-        <if test="colId!=null"> and cId=#{colId,jdbcType=VARCHAR} </if>
-        <if test="tqId!=null"> and tqId=#{tqId,jdbcType=VARCHAR} </if>
-        <if test="max!=null"> and max=#{max,jdbcType=VARCHAR} </if>
-        <if test="min!=null"> and min=#{min,jdbcType=VARCHAR} </if>
-        <if test="nullCount!=null"> and nullCount=#{nullCount,jdbcType=INTEGER} </if>
-        <if test="distinctCount!=null"> and distinctCount=#{distinctCount,jdbcType=INTEGER} </if>
-        <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP} </if>
-        <if test="lmTime!=null"> and lmTime=#{lmTime,jdbcType=TIMESTAMP} </if>
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
+        <if test="colId!=null"> and cId=#{colId,jdbcType=VARCHAR}</if>
+        <if test="tqId!=null"> and tqId=#{tqId,jdbcType=VARCHAR}</if>
+        <if test="max!=null"> and max=#{max,jdbcType=VARCHAR}</if>
+        <if test="min!=null"> and min=#{min,jdbcType=VARCHAR}</if>
+        <if test="nullCount!=null"> and nullCount=#{nullCount,jdbcType=INTEGER}</if>
+        <if test="distinctCount!=null"> and distinctCount=#{distinctCount,jdbcType=INTEGER}</if>
+        <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP}</if>
+        <if test="lmTime!=null"> and lmTime=#{lmTime,jdbcType=TIMESTAMP}</if>
       </trim>
     </where>
   </sql>

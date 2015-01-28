@@ -87,7 +87,6 @@
   <update id="update" parameterType="java.util.Map">
     update sa_md_colsemanteme
     <set>
-      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
       <if test="cid!=null">cId=#{colId,jdbcType=VARCHAR},</if>
       <if test="tmid!=null">tmId=#{mdMId,jdbcType=VARCHAR},</if>
       <if test="semantemeCode!=null">semantemeCode=#{semantemeCode,jdbcType=VARCHAR},</if>

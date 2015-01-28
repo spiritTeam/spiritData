@@ -3,103 +3,103 @@
   文件：文件分类
 -->
 
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="fileCategory" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fileCategory">
   <!-- 对象定义:元数据列模式 -->
-  <resultMap id="FileCategoryMap" type="FileCategory" >
-    <id     column="id"      property="id"      jdbcType="VARCHAR" />
-    <result column="fId"     property="FId"     jdbcType="VARCHAR" />
-    <result column="type1"   property="FType1"  jdbcType="VARCHAR" />
-    <result column="type2"   property="FType2"  jdbcType="VARCHAR" />
-    <result column="type3"   property="FType3"  jdbcType="VARCHAR" />
-    <result column="extInfo" property="extInfo" jdbcType="VARCHAR" />
-    <result column="cTime"   property="CTime"   jdbcType="TIMESTAMP" />
+  <resultMap id="FileCategoryMap" type="FileCategory">
+    <id     column="id"      property="id"      jdbcType="VARCHAR"/>
+    <result column="fId"     property="FId"     jdbcType="VARCHAR"/>
+    <result column="type1"   property="FType1"  jdbcType="VARCHAR"/>
+    <result column="type2"   property="FType2"  jdbcType="VARCHAR"/>
+    <result column="type3"   property="FType3"  jdbcType="VARCHAR"/>
+    <result column="extInfo" property="extInfo" jdbcType="VARCHAR"/>
+    <result column="cTime"   property="CTime"   jdbcType="TIMESTAMP"/>
   </resultMap>
   <!-- 所有列 -->
-  <sql id="Base_Column_List" >
+  <sql id="Base_Column_List">
     id, fId, type1, type2, type3, extInfom, cTime
   </sql>
   <!-- 条件子句 -->
-  <sql id="WhereClauseByEntiey" >
-    <where >
-      <trim prefix="(" suffix=")" prefixOverrides="and" >
-        <if test="id!=null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="FId!=null" > and fId = #{FId,jdbcType=VARCHAR} </if>
-        <if test="FType1!=null" > and type1 = #{FType1,jdbcType=VARCHAR} </if>
-        <if test="FType2!=null" > and type2 = #{FType2,jdbcType=VARCHAR} </if>
-        <if test="FType3!=null" > and type3 = #{FType3,jdbcType=VARCHAR} </if>
-        <if test="extInfo!=null" > and extInfo = #{extInfo,jdbcType=VARCHAR} </if>
-        <if test="CTime!=null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
+        <if test="FId!=null"> and fId=#{FId,jdbcType=VARCHAR}</if>
+        <if test="FType1!=null"> and type1=#{FType1,jdbcType=VARCHAR}</if>
+        <if test="FType2!=null"> and type2=#{FType2,jdbcType=VARCHAR}</if>
+        <if test="FType3!=null"> and type3=#{FType3,jdbcType=VARCHAR}</if>
+        <if test="extInfo!=null"> and extInfo=#{extInfo,jdbcType=VARCHAR}</if>
+        <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP}</if>
       </trim>
     </where>
   </sql>
 
   <!-- 获得记录条数-->
-  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
     select count(*) from sa_file_category
-    <if test="_parameter!= null" ><include refid="WhereClauseByEntiey" /></if>
+    <if test="_parameter!= null"><include refid="WhereClauseByEntiey"/></if>
   </select>
 
   <!-- 获得列表 -->
-  <select id="getList" resultMap="FileCategoryMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" /> from sa_file_category
-    <if test="_parameter!=null" ><include refid="WhereClauseByEntiey" /></if>
-    <if test="orderByClause!= null" >order by ${orderByClause}</if>
+  <select id="getList" resultMap="FileCategoryMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_file_category
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="orderByClause!= null">order by ${orderByClause}</if>
   </select>
 
   <!-- 获得一条数据 -->
-  <select id="getInfo" resultMap="FileCategoryMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" /> from sa_file_category
-    <if test="_parameter!=null" ><include refid="WhereClauseByEntiey" /></if>
+  <select id="getInfo" resultMap="FileCategoryMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_file_category
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </select>
-  <select id="getInfoById" resultMap="FileCategoryMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" /> from sa_file_category where id = #{id,jdbcType=VARCHAR}
+  <select id="getInfoById" resultMap="FileCategoryMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/> from sa_file_category where id=#{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 新增数据 -->
-  <insert id="insert" parameterType="java.util.Map" >
+  <insert id="insert" parameterType="java.util.Map">
     insert into sa_file_category
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id!=null" >id,</if>
-      <if test="FId!=null" >fId,</if>
-      <if test="FType1!=null" >type1,</if>
-      <if test="FType2!=null" >type2,</if>
-      <if test="FType3!=null" >type3,</if>
-      <if test="extInfo!=null" >extInfo,</if>
-      <if test="CTime!=null" >cTime,</if>
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!=null">id,</if>
+      <if test="FId!=null">fId,</if>
+      <if test="FType1!=null">type1,</if>
+      <if test="FType2!=null">type2,</if>
+      <if test="FType3!=null">type3,</if>
+      <if test="extInfo!=null">extInfo,</if>
+      <if test="CTime!=null">cTime,</if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id!=null" >#{id,jdbcType=VARCHAR},</if>
-      <if test="FId!=null" >#{FId,jdbcType=VARCHAR},</if>
-      <if test="FType1!=null" >#{FType1,jdbcType=VARCHAR},</if>
-      <if test="FType2!=null" >#{FType2,jdbcType=VARCHAR},</if>
-      <if test="FType3!=null" >#{FType3,jdbcType=VARCHAR},</if>
-      <if test="extInfo!=null" >#{extInfo,jdbcType=VARCHAR},</if>
-      <if test="CTime!=null" >#{CTime,jdbcType=TIMESTAMP},</if>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
+      <if test="FId!=null">#{FId,jdbcType=VARCHAR},</if>
+      <if test="FType1!=null">#{FType1,jdbcType=VARCHAR},</if>
+      <if test="FType2!=null">#{FType2,jdbcType=VARCHAR},</if>
+      <if test="FType3!=null">#{FType3,jdbcType=VARCHAR},</if>
+      <if test="extInfo!=null">#{extInfo,jdbcType=VARCHAR},</if>
+      <if test="CTime!=null">#{CTime,jdbcType=TIMESTAMP},</if>
     </trim>
   </insert>
 
   <!-- 修改 根据主键 -->
-  <update id="update" parameterType="java.util.Map" >
+  <update id="update" parameterType="java.util.Map">
     update sa_file_category
-    <set >
-      <if test="id!=null" >id = #{id,jdbcType=VARCHAR},</if>
-      <if test="FId!=null" >fId = #{FId,jdbcType=VARCHAR},</if>
-      <if test="FType1!=null" >type1 = #{FType1,jdbcType=VARCHAR},</if>
-      <if test="FType2!=null" >type2 = #{FType2,jdbcType=VARCHAR},</if>
-      <if test="FType3!=null" >type3 = #{FType3,jdbcType=VARCHAR},</if>
-      <if test="extInfo!=null" >extInfo = #{extInfo,jdbcType=VARCHAR},</if>
-      <if test="CTime!=null" >cTime = #{CTime,jdbcType=TIMESTAMP},</if>
+    <set>
+      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
+      <if test="FId!=null">fId=#{FId,jdbcType=VARCHAR},</if>
+      <if test="FType1!=null">type1=#{FType1,jdbcType=VARCHAR},</if>
+      <if test="FType2!=null">type2=#{FType2,jdbcType=VARCHAR},</if>
+      <if test="FType3!=null">type3=#{FType3,jdbcType=VARCHAR},</if>
+      <if test="extInfo!=null">extInfo=#{extInfo,jdbcType=VARCHAR},</if>
+      <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP},</if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id=#{id,jdbcType=VARCHAR}
   </update>
 
   <!-- 删除数据 -->
-  <delete id="delete" parameterType="java.lang.String" >
-    delete from sa_file_category where id = #{id,jdbcType=VARCHAR}
+  <delete id="delete" parameterType="java.lang.String">
+    delete from sa_file_category where id=#{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByEntity" parameterType="java.util.Map" >
+  <delete id="deleteByEntity" parameterType="java.util.Map">
     delete from sa_file_category
-    <if test="_parameter != null" ><include refid="WhereClauseByEntiey" /></if>
+    <if test="_parameter != null"><include refid="WhereClauseByEntiey"/></if>
   </delete>
 </mapper>

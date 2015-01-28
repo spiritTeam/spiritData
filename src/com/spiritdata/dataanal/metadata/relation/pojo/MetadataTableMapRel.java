@@ -17,7 +17,7 @@ public class MetadataTableMapRel extends BaseObject {
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
     private String tableName; //数据表名称
     private Integer tableType; //表类型：1=积累表；2=临时表
-    private String tableDescn; //表说明
+    private String tableDesc; //表说明
     private Timestamp CTime; //本记录创建时间，也是表实体创建时间
 
     public String getId() {
@@ -56,11 +56,11 @@ public class MetadataTableMapRel extends BaseObject {
     public void setTableType(Integer tableType) {
         this.tableType = tableType;
     }
-    public String getTableDescn() {
-        return tableDescn;
+    public String getTableDesc() {
+        return tableDesc;
     }
-    public void setTableDescn(String tableDescn) {
-        this.tableDescn = tableDescn;
+    public void setTableDesc(String tableDesc) {
+        this.tableDesc = tableDesc;
     }
     public Timestamp getCTime() {
         return CTime;

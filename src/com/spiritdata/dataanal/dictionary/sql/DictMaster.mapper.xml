@@ -16,7 +16,7 @@
     <result column="isValidate" property="isValidate" jdbcType="INTEGER"/>
     <result column="mType"      property="MType"      jdbcType="INTEGER"/>
     <result column="mRef"       property="MRef"       jdbcType="VARCHAR"/>
-    <result column="descn"      property="descn"      jdbcType="VARCHAR"/>
+    <result column="descn"      property="desc"       jdbcType="VARCHAR"/>
     <result column="cTime"      property="CTime"      jdbcType="TIMESTAMP"/>
     <result column="lmTime"     property="lmTime"     jdbcType="TIMESTAMP"/>
   </resultMap>
@@ -37,7 +37,7 @@
         <if test="isValidate!=null and isValidate!=0"> and isValidate=#{isValidate,jdbcType=INTEGER}</if>
         <if test="MType!=null and MType!=0"> and mType=#{MType,jdbcType=INTEGER}</if>
         <if test="MRef!=null"> and mRef=#{MRef,jdbcType=VARCHAR}</if>
-        <if test="descn!=null"> and descn=#{descn,jdbcType=VARCHAR}</if>
+        <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR}</if>
         <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP}</if>
         <if test="lmTime!=null"> and lmTime=#{lmTime,jdbcType=TIMESTAMP}</if>
       </trim>
@@ -77,7 +77,7 @@
       <if test="isValidate!=null and isValidate!=0">isValidate,</if>
       <if test="MType!=null and MType!=0">mType,</if>
       <if test="MRef!=null">mRef,</if>
-      <if test="descn!=null">descn,</if>
+      <if test="desc!=null">descn,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
@@ -89,7 +89,7 @@
       <if test="isValidate!=null and isValidate!=0">#{isValidate,jdbcType=INTEGER},</if>
       <if test="MType!=null and MType!=0">#{MType,jdbcType=INTEGER},</if>
       <if test="MRef!=null">#{MRef,jdbcType=VARCHAR},</if>
-      <if test="descn!=null">#{descn,jdbcType=VARCHAR},</if>
+      <if test="desc!=null">#{desc,jdbcType=VARCHAR},</if>
     </trim>
   </insert>
 
@@ -97,7 +97,6 @@
   <update id="update" parameterType="java.util.Map">
     update plat_dictm
     <set>
-      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
       <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR},</if>
       <if test="ownerType!=null and ownerType!=0">ownerType=#{ownerType,jdbcType=VARCHAR},</if>
       <if test="dmName!=null">dmName=#{dmName,jdbcType=VARCHAR},</if>
@@ -106,7 +105,7 @@
       <if test="isValidate!=null and isValidate!=0">isValidate=#{isValidate,jdbcType=INTEGER},</if>
       <if test="MType!=null and MType!=0">mType=#{MType,jdbcType=INTEGER},</if>
       <if test="MRef!=null">mRef=#{MRef,jdbcType=VARCHAR},</if>
-      <if test="descn!=null">descn=#{descn,jdbcType=VARCHAR},</if>
+      <if test="desc!=null">descn=#{desc,jdbcType=VARCHAR},</if>
       <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP},</if>
       <if test="lmTime!=null">lmTime=#{lmTime,jdbcType=TIMESTAMP},</if>
     </set>

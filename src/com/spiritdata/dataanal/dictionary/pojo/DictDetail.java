@@ -24,7 +24,7 @@ public class DictDetail extends TreeNodeBean {
     private String BCode; //字典项业务编码
     private int DType; //字典项类型：1系统保留；2系统；3定义；4引用：其他字典项ID
     private String DRef; //字典项引用
-    private String descn; //说明
+    private String desc; //说明
     private Timestamp CTime; //记录创建时间
     private Timestamp lmTime; //记录最后修改时间
 
@@ -82,11 +82,11 @@ public class DictDetail extends TreeNodeBean {
     public void setDRef(String dRef) {
         DRef = dRef;
     }
-    public String getDescn() {
-        return descn;
+    public String getDesc() {
+        return desc;
     }
-    public void setDescn(String descn) {
-        this.descn = descn;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
     public Timestamp getLmTime() {
         return lmTime;

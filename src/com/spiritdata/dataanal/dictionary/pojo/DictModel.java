@@ -34,7 +34,7 @@ public class DictModel extends DictMaster{
         this.setIsValidate(dMaster.getIsValidate());
         this.setMType(dMaster.getMType());
         this.setMRef(dMaster.getMRef());
-        this.setDescn(dMaster.getDescn());
+        this.setDesc(dMaster.getDesc());
         this.setOwnerId(dMaster.getOwnerId());
         this.setOwnerType(dMaster.getOwnerType());
         this.setCTime(dMaster.getCTime());
@@ -53,7 +53,7 @@ public class DictModel extends DictMaster{
         dd.setIsValidate(this.getIsValidate());
         dd.setMType(this.getMType());
         dd.setMRef(this.getMRef());
-        dd.setDescn(this.getDescn());
+        dd.setDesc(this.getDesc());
         dd.setOwnerId(this.getOwnerId());
         dd.setOwnerType(this.getOwnerType());
         dd.setCTime(this.getCTime());

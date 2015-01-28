@@ -19,13 +19,13 @@ import com.spiritdata.dataanal.exceptionC.Dtal1001CException;
 public class ReportService {
     /**
      * 根据报告Id，得到报告的Json串
-     * @param templetId 报告Id
+     * @param reportId 报告Id
      * @return 报告json串
      */
-    public String getTempletJsonById(String templetId) {
-        if (templetId==null||templetId.length()==0) throw new Dtal1001CException("所给templetId参数为空，无法获取数据！");
+    public String getReportJsonById(String reportId) {
+        if (reportId==null||reportId.length()==0) throw new Dtal1001CException("所给reportId参数为空，无法获取数据！");
         //根据id获取内容，现在先不处理
-        return this.getTempletJsonByUri("demo\\templetDemo\\templet1.json");
+        return this.getReportJsonByUri("demo\\templetDemo\\templet1.json");
     }
 
     /**
@@ -33,7 +33,7 @@ public class ReportService {
      * @param uri 报告的Uri
      * @return 报告json串
      */
-    public String getTempletJsonByUri(String uri) {
+    public String getReportJsonByUri(String uri) {
         String ret = null;
         if (uri.indexOf("\\\\:")!=-1||uri.indexOf("//:")!=-1) {//走协议方式
             

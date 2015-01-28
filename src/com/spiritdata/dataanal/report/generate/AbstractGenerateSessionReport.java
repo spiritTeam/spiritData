@@ -62,7 +62,7 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         //文件处理
         //1-设置文件名称
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-        String storeFile = FileNameUtils.concatPath(root, "templetFile"+File.separator+"tpl_"+report.getId()+".json");
+        String storeFile = FileNameUtils.concatPath(root, "reportFile"+File.separator+"tpl_"+report.getId()+".json");
         ((ReportHead)report.get_HEAD()).setFileName(storeFile.replace("\\", "/"));
         //2-写文件
         FileOutputStream fileOutputStream = null;

@@ -20,29 +20,29 @@ public class ReportHead  implements Serializable, ConvertJson {
     private String reportName;//报告名称
     private String code; //报告类型编码，此编码分为组织编码：大写的以.隔开的名称，<::>后是小类型编号，采用5位，最大为9999个类型(可扩充)
     private String fileName; //存储JsonD的文件地址，可能需要和_node共同使用
-    private Date CTime; //创建时间 此事件也是整个templet生成的时间戳
+    private Date CTime; //创建时间 此事件也是整个report生成的时间戳
     private String desc; //描述
 
     public String getId() {
         return id;
     }
     public void setId(String id) {
-        if (id==null||id.length()==0) throw new Dtal1002CException("templetD头信息不规范：id必须设置！", new IllegalArgumentException("id不能为null或空串！"));
+        if (id==null||id.length()==0) throw new Dtal1002CException("reportD头信息不规范：id必须设置！", new IllegalArgumentException("id不能为null或空串！"));
         this.id = id;
     }
     public String getReportName() {
         return reportName;
     }
     public void setReportName(String reportName) {
-        if (reportName==null||reportName.length()==0) throw new Dtal1002CException("templetD头信息不规范：reportName必须设置！", new IllegalArgumentException("reportName不能为null或空串！"));
+        if (reportName==null||reportName.length()==0) throw new Dtal1002CException("reportD头信息不规范：reportName必须设置！", new IllegalArgumentException("reportName不能为null或空串！"));
         this.reportName = reportName;
     }
     public String getCode() {
         return code;
     }
     public void setCode(String code) {
-        if (code==null||code.length()==0) throw new Dtal1002CException("templetD头信息不规范：code必须设置！", new IllegalArgumentException("code不能为null或空串！"));
-        if (!JsonDUtils.isLegalCode(code)) throw new Dtal1002CException("templetD头信息不规范：code["+code+"]不合规！", new IllegalArgumentException("code不合规，请参看Templet相关文档！"));
+        if (code==null||code.length()==0) throw new Dtal1002CException("reportD头信息不规范：code必须设置！", new IllegalArgumentException("code不能为null或空串！"));
+        if (!JsonDUtils.isLegalCode(code)) throw new Dtal1002CException("reportD头信息不规范：code["+code+"]不合规！", new IllegalArgumentException("code不合规，请参看report相关文档！"));
         this.code = code;
     }
     public String getFileName() {
@@ -69,10 +69,10 @@ public class ReportHead  implements Serializable, ConvertJson {
      * @return json串
      */
     public String toJson() {
-        if (this.id==null||this.id.length()==0) throw new Dtal1002CException("templetD头信息不规范：id必须设置！");
-        if (this.reportName==null||this.reportName.length()==0) throw new Dtal1002CException("templetD头信息不规范：报告名称(reportName)必须设置！");
-        if (this.code==null||this.code.length()==0) throw new Dtal1002CException("templetD头信息不规范：报告类型编码(code)必须设置！");
-        if (!JsonDUtils.isLegalCode(this.code)) throw new Dtal1002CException("templetD头信息不规范：code["+code+"]不合规！，请参看Templet相关文档！");
+        if (this.id==null||this.id.length()==0) throw new Dtal1002CException("reportD头信息不规范：id必须设置！");
+        if (this.reportName==null||this.reportName.length()==0) throw new Dtal1002CException("reportD头信息不规范：报告名称(reportName)必须设置！");
+        if (this.code==null||this.code.length()==0) throw new Dtal1002CException("reportD头信息不规范：报告类型编码(code)必须设置！");
+        if (!JsonDUtils.isLegalCode(this.code)) throw new Dtal1002CException("reportD头信息不规范：code["+code+"]不合规！，请参看report相关文档！");
 
         if (this.CTime==null) CTime= new Date();
         String ret = "\"_HEAD\":{\"_id\":\""+this.id+"\", \"_reportName\":\""+this.reportName+"\", \"_code\":\""+this.code+"\", \"_cTime\":\""+this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime()+"\"";
@@ -85,10 +85,10 @@ public class ReportHead  implements Serializable, ConvertJson {
      * @return Map
      */
     public Map<String, Object> toMap() {
-        if (this.id==null||this.id.length()==0) throw new Dtal1002CException("templetD头信息不规范：id必须设置！");
-        if (this.reportName==null||this.reportName.length()==0) throw new Dtal1002CException("templetD头信息不规范：报告名称(reportName)必须设置！");
-        if (this.code==null||this.code.length()==0) throw new Dtal1002CException("templetD头信息不规范：报告类型编码(code)必须设置！");
-        if (!JsonDUtils.isLegalCode(this.code)) throw new Dtal1002CException("templetD头信息不规范：code["+code+"]不合规！，请参看Templet相关文档！");
+        if (this.id==null||this.id.length()==0) throw new Dtal1002CException("reportD头信息不规范：id必须设置！");
+        if (this.reportName==null||this.reportName.length()==0) throw new Dtal1002CException("reportD头信息不规范：报告名称(reportName)必须设置！");
+        if (this.code==null||this.code.length()==0) throw new Dtal1002CException("reportD头信息不规范：报告类型编码(code)必须设置！");
+        if (!JsonDUtils.isLegalCode(this.code)) throw new Dtal1002CException("reportD头信息不规范：code["+code+"]不合规！，请参看report相关文档！");
         
         if (this.CTime==null) CTime= new Date();
         Map<String, Object> retMap = new HashMap<String, Object>();
