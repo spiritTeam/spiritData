@@ -553,6 +553,7 @@ function showResult() {
   openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
 }
 
+//以下为mht js代码，勿删撒=========================================================
 function onlyLogout(ip, mac, browser) {
   var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
@@ -573,7 +574,7 @@ function logout() {
         });
       } else {
         if(json.data==null){
-          $.messager.alert("提示","您还未登陆!",'info');
+          $.messager.alert("提示","您还未登录!",'info');
         }else{
           $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
             window.location.href="<%=path%>/asIndex.jsp";
@@ -608,7 +609,7 @@ function register(){
   registerWinId = openSWinInMain(winOption);
 }
 /**
- * 修改
+ * 忘记密码
  */
 var modifyWinId = "";
 function modifyPwd(){
@@ -618,7 +619,7 @@ function modifyPwd(){
   else _url="<%=path%>/login/forgetPassword.jsp";
   var winOption={
     url:_url,
-    title:"修改密码",
+    title:"找回密码",
     height:wHeight,
     width:wWidth,
     modal:true
@@ -626,7 +627,7 @@ function modifyPwd(){
   modifyWinId = openSWinInMain(winOption);
 }
 /*
- * 登陆
+ * 登录
  */
 var loginWinId = "";
 function login(){
@@ -641,7 +642,7 @@ function login(){
   loginWinId = openSWinInMain(winOption);
 }
 /*
- * 用户信息
+ * 修改个人信息
  */
 function updateUser(){
   var loginStatus = $('#loginStatus').val();
@@ -667,6 +668,7 @@ function testW() {
   openSWinInMain({height:"400px", width:"300px", title:"测试窗口", url:"<%=path%>/templet/test/testSWin.jsp"});
   return;
 }
+//以上为mht js代码，勿删撒=========================================================
 </script>
 </body>
 </html>

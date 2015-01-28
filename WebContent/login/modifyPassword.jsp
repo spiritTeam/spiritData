@@ -27,11 +27,11 @@
         <tr style="height:35px;valign:top;">
           <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
           <td colspan="2" width="200px;" style="text-align:left;">
-          <div style="float:left;">
-            <input id="loginName" name="loginName" tabindex="1" type="text" value="账号" onmouseover=this.focus();this.select();
-              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" />
-          </div>
-          <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
+            <div style="float:left;">
+              <input id="loginName" name="loginName" tabindex="1" type="text" value="账号" onmouseover=this.focus();this.select();
+                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" />
+            </div>
+            <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr><td><div style="height:8px;width:5px;"></div></td></tr>
@@ -40,10 +40,11 @@
           <td colspan="2" style="text-align:left;">
             <div style="float:left;">
               <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
-                onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
+                onclick="onClick(password);" onBlur="validatePassword('password');"/>
+            </div>
             <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPwd'></div>
             <div id="pwDiv" style="float:left;width:40px;height:25px;padding-top:10px;margin-left:-223px;" align="center">
-              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">新密码</span></div>
+            <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">新密码</span></div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;" >
@@ -51,11 +52,14 @@
           <td colspan="2">
             <div style="float:left;">
               <input id="confirmPassword" name="confirmPassword" tabindex="4" type="password" onmouseover="cpwdMouseOver();"
-                onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');"/></div>
+                onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');"/>
+            </div>
             <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vCPwd'></div>
             <div id="cpwDiv" style="float:left;width:50px;height:25px;padding-top:10px;margin-left:-223px;" align="center">
-              <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span></div>
-          </td></tr>
+              <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span>
+            </div>
+          </td>
+        </tr>
       </table>
     </form>
     <div style="margin-top:50px;width: 100%">
@@ -129,7 +133,7 @@ function modifyPassword(){
         $('#confirmPassword')[0].focus();
         $('#confirmPassword')[0].select();
       }
-     });
+    });
   }
   $("#saveButton").attr('disabled',false);
 }
@@ -238,9 +242,9 @@ function checkLoginName(val){
   };
   var url="<%=path%>/login/validateLoginName.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-     success:function(json){
-       vfMsg = json;
-     }
+    success:function(json){
+      vfMsg = json;
+    }
   });
   return vfMsg;
 }

@@ -28,7 +28,8 @@
           <td colspan="2" width="200px;">
             <div style="float:left">
               <input id="loginName" name="loginName" tabindex="1" type="text" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" value="用户账号"/></div>
+                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" value="用户账号"/>
+            </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
@@ -38,9 +39,11 @@
           <td colspan="2" width="130px;">
             <div style="float:left">
               <input id="mail" name="mail" tabindex="2" type="text" onmouseover=this.focus();this.select(); 
-                onclick="onClick(mail);" onBlur="validateMail('mail');" value="您的邮箱"/></div>
+                onclick="onClick(mail);" onBlur="validateMail('mail');" value="您的邮箱"/>
+            </div>
             <div class="intro" style="float:left;margin-left:-3px;">
-              <input id="mailEndStr" name="mailEndStr"/></div>
+              <input id="mailEndStr" name="mailEndStr"/>
+            </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vMail'></div>
           </td>
         </tr>
@@ -49,10 +52,12 @@
           <td colspan="2" rowspan="1">
             <div style="float:left">
               <input id="password" name="password" tabindex="3" type="password" onmouseover="pwdMouseOver();"
-                onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
+                onclick="onClick(password);" onBlur="validatePassword('password');"/>
+            </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPwd'></div>
             <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
-              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span></div>
+              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span>
+            </div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -60,10 +65,12 @@
           <td colspan="2">
             <div style="float:left">
               <input id="confirmPassword" name="confirmPassword" tabindex="4" type="password" onmouseover="cpwdMouseOver();"
-                onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');"/></div>
+                onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');"/>
+            </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vCPwd'></div>
             <div id="cpwDiv" style="float:left;width:50px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
-              <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span></div>
+              <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span>
+            </div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -79,9 +86,11 @@
         <tr>
           <td colspan="3" align="left" style="height:50px;padding-top:10px;" valign="top">
             <div style="width:5px;height:5px;"></div>
-            <a id="register" name="register" onclick="saveRegister();" href="#"><div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);border-radius:5px;">
-              <img src="images/register.png"/>
-            </div></a>
+            <a id="register" name="register" onclick="saveRegister();" href="#">
+              <div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);border-radius:5px;">
+                <img src="images/register.png"/>
+              </div>
+            </a>
           </td>
         </tr>
       </table>
@@ -145,6 +154,7 @@ function saveRegister(){
         }
       }
     });
+    、、、、
   }else{
     $('#register').attr("disabled",false); 
     if(lnV==false) {

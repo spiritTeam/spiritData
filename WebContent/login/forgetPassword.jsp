@@ -19,10 +19,10 @@
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="loginspan">用户名</span></td>
           <td colspan="2" rowspan="1" style="text-align:left;">
-          <div style="float:left">
-            <input id="loginName" name="loginName" tabindex="1" style="color:#ABCDEF;" type="text" value="请填写用户名" onmouseover=this.focus();this.select();
-              onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/></div>
-          <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
+            <div style="float:left">
+              <input id="loginName" name="loginName" tabindex="1" style="color:#ABCDEF;" type="text" value="请填写用户名" onmouseover=this.focus();this.select();
+                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');"/></div>
+            <div style="float:left;width:25px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
         <tr><td colspan="3" align="center"></td></tr>
