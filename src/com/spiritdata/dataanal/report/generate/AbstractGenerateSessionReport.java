@@ -54,9 +54,9 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
     public void buildANDprocess(Map<String, Object> param) {
         if (param==null||param.size()==0) throw new Dtal1003CException(new IllegalArgumentException("构建报告及任务时，必须设置参数！"));
         if (param.get("preTreadParam")==null) throw new Dtal1003CException(new IllegalArgumentException("构建报告及任务时，Map参数中必须设置key='preTreadParam'的元素！"));
-        //1-执行预处理，得到模板及任务
+        //1-执行预处理，得到报告及任务
         TaskReport tr = preTreat((Map<String, Object>)param.get("preTreadParam"));
-        //2-处理模板，并存储文件及数据库
+        //2-处理报告，并存储文件及数据库
         Reprot report = tr.getReport();
 
         //文件处理

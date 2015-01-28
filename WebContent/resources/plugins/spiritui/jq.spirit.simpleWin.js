@@ -191,7 +191,10 @@
      *   color: red|#39FA32, //可省略
      *   msg:'提示内容' //不可省略，若为空串，则清除提示内容
      * }
+<<<<<<< HEAD
+=======
      * 
+>>>>>>> refs/remotes/origin/master
      */
     winDiv.setMessage=function(options){
     	if (options) {

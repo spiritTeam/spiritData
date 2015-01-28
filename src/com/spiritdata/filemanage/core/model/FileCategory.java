@@ -226,7 +226,7 @@ public class FileCategory implements Serializable {
 
     /**
      * 把当前对象转换为Po对象，为数据库操作做准备
-     * @throws Exception 
+     * @return 文件分类的Po对象
      */
     public FileCategoryPo convert2Po() {
         FileCategoryPo ret = new FileCategoryPo();

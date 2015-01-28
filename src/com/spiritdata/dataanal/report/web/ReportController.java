@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spiritdata.dataanal.report.service.ReportService;
 
 /**
- * 模板功能的web控制类
+ * 报告功能的web控制类
  * @author wh
  */
 @Controller

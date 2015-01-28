@@ -227,24 +227,123 @@ VIEW vsa_imp_log AS
   from sa_file_index a, sa_file_category b
   where a.id=b.fid and b.type1='IMP';
 
-/**016 报告信息视图[vSA_REPORT_FILE]*/
-CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
-VIEW vsa_report_info AS
-  select a.id, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.type2 reportId, b.type3 tasksId,b.extInfo, descn, a.cTime
-  from sa_file_index a, sa_file_category b
-  where a.id=b.fid and b.type1='REPORT';
-
-/**017 报告信息[SA_REPORT_INFO]*/
+/**016 报告信息[SA_REPORT_INFO]*/
 DROP TABLE IF EXISTS sa_report_info;
 CREATE TABLE sa_report_info (
   id          varchar(32)      NOT NULL  COMMENT '报告信息表ID(UUID)',
   ownerType   int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
   ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
   fId         varchar(32)      NOT NULL  COMMENT '对应报告文件Id(UUID)',
-  tasksId     varchar(32)      NOT NULL  COMMENT '任务组Id(UUID)',
+  taskGId     varchar(32)      NOT NULL  COMMENT '任务组Id(UUID)',
   reportName  varchar(100)     NOT NULL  COMMENT '报告名称',
   descn       varchar(500)               COMMENT '报告描述',
   cTime       timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
   PRIMARY KEY (id)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='报告信息';
+
+/**017 报告信息视图[vSA_REPORT_FILE]*/
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
+VIEW vsa_report_file AS
+  select a.id, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.type2 reportId, b.type3 tasksId,b.extInfo, descn, a.cTime
+  from sa_file_index a, sa_file_category b
+  where a.id=b.fid and b.type1='REPORT';
+
+/**018 任务组[SA_TASK_GROUP]*/
+DROP TABLE IF EXISTS sa_task_group;
+CREATE TABLE sa_task_group (
+  id          varchar(32)      NOT NULL  COMMENT '任务组表ID(UUID)',
+  ownerType   int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
+  ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
+  workName    varchar(100)     NOT NULL  COMMENT '任务组名称',
+  reportId    varchar(32)                COMMENT '对应报告信息Id(UUID)',
+  status      int(1) unsigned  NOT NULL  COMMENT '任务组状态1=准备执行；2=正在执行；3=执行成功；4=执行失败5=任务失效；',
+  descn       varchar(500)               COMMENT '任务组说明',
+  beginTime   timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '任务组开启说明',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务组信息';
+
+/**019 任务信息[SA_TASK_INFO]*/
+DROP TABLE IF EXISTS sa_task_info;
+CREATE TABLE sa_task_info (
+  id            varchar(32)      NOT NULL                  COMMENT '任务表ID(UUID)',
+  taskGId       varchar(32)                                COMMENT '外键任务组表ID(UUID)，可为空，任务可独立',
+  taskName      varchar(100)     NOT NULL                  COMMENT '任务名称',
+  resultFileId  varchar(32)                                COMMENT '结果文件Id，若没有执行结果，此字段可以为空',
+  status        int(1) unsigned  NOT NULL                  COMMENT '任务状态1=准备执行；2=正在执行；3=执行成功；4=执行失败5=任务失效；6=等待执行',
+  langType      varchar(50)      NOT NULL  DEFAULT 'java'  COMMENT '任务执行语言：目前只有Java',
+  excuteFunc    varchar(200)     NOT NULL                  COMMENT '任务执行方法，要实现一个接口',
+  param         varchar(500)                               COMMENT '任务执行所需的参数，用json处理',
+  descn         varchar(500)                               COMMENT '任务说明',
+  firstTime     timestamp                                  COMMENT '第一次放入执行队列的时间',
+  beginTime     timestamp                                  COMMENT '开始执行时间',
+  endTime       timestamp                                  COMMENT '结束执行时间',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务信息';
+
+/**020 任务关系[SA_TASK_REL]*/
+DROP TABLE IF EXISTS sa_task_rel;
+CREATE TABLE sa_task_rel (
+  id           varchar(32)      NOT NULL               COMMENT '任务关系表ID(UUID)',
+  taskId       varchar(32)      NOT NULL               COMMENT '任务Id，外键',
+  preTaskId    varchar(100)                            COMMENT '前置任务Id',
+  usedPreData  int(1) unsigned  NOT NULL  DEFAULT '2'  COMMENT '是否利用前序任务的数据1-利用;2-不利用',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务关系，前序联系，有向图';
+
+/**021 任务全信息视图[vSA_TASKS] 由于mysql不支持子查询的视图，因此需要对视图进行拆分*/
+/*
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
+VIEW vsa_tasks AS
+select t.*, concat(sf.filePath, '/', sf.fileName) PT_RFile  from (
+select
+  m.MT_Id, m.MT_RFile, m.MT_langType, m.MT_excuteFunc, m.MT_param, m.MT_status, m.MT_tName, m.MT_descn, m.MT_firstTime, m.MT_beginTime, m.MT_endTime,
+  m.TG_Id, m.reportId, m.ownerId, m.ownerType, m.TG_status, m.workName, m.TG_descn, m.TG_beginTime,
+  p.id PT_id, p.resultFileid, p.langType PT_langType, p.excuteFunc PT_excuteFunc, p.param PT_param, p.status PT_status, p.taskName PT_tName, p.descn PT_descn,
+  p.firstTime PT_firstTime, p.beginTime PT_beginTime, p.endTime PT_endTime
+from (
+  select
+    a.id MT_Id, concat(d.filePath, '/', d.fileName) MT_RFile,a.langType MT_langType, a.excuteFunc MT_excuteFunc, a.param MT_param,
+    a.status MT_status, a.taskName MT_tName, a.descn MT_descn, a.firstTime MT_firstTime, a.beginTime MT_beginTime, a.endTime MT_endTime, 
+    c.id TG_Id, c.reportId, c.ownerId, c.ownerType, c.status TG_status, c.workName, c.descn TG_descn, c.beginTime TG_beginTime,
+    b.preTaskId, b.usedPreData
+  from sa_task_info a
+  inner join sa_task_rel b on a.id=b.taskId
+  left join sa_task_group c on a.taskGId=c.id
+  left join sa_file_index d on a.resultFileid=d.id
+) m
+left join sa_task_info p on p.id=m.preTaskId
+) t
+left join sa_file_index sf on t.resultFileid=sf.id;
+*/
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
+VIEW vpsa_tasks1 AS (
+  select
+    a.id MT_Id, concat(d.filePath, '/', d.fileName) MT_RFile,a.langType MT_langType, a.excuteFunc MT_excuteFunc, a.param MT_param,
+    a.status MT_status, a.taskName MT_tName, a.descn MT_descn, a.firstTime MT_firstTime, a.beginTime MT_beginTime, a.endTime MT_endTime, 
+    c.id TG_Id, c.reportId, c.ownerId, c.ownerType, c.status TG_status, c.workName, c.descn TG_descn, c.beginTime TG_beginTime,
+    b.preTaskId, b.usedPreData
+  from sa_task_info a
+  inner join sa_task_rel b on a.id=b.taskId
+  left join sa_task_group c on a.taskGId=c.id
+  left join sa_file_index d on a.resultFileid=d.id
+);
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
+VIEW vpsa_tasks2 AS (
+  select
+    m.MT_Id, m.MT_RFile, m.MT_langType, m.MT_excuteFunc, m.MT_param, m.MT_status, m.MT_tName, m.MT_descn, m.MT_firstTime, m.MT_beginTime, m.MT_endTime,
+    m.TG_Id, m.reportId, m.ownerId, m.ownerType, m.TG_status, m.workName, m.TG_descn, m.TG_beginTime,
+    p.id PT_id, p.resultFileid, p.langType PT_langType, p.excuteFunc PT_excuteFunc, p.param PT_param, p.status PT_status, p.taskName PT_tName, p.descn PT_descn,
+    p.firstTime PT_firstTime, p.beginTime PT_beginTime, p.endTime PT_endTime
+  from vpsa_tasks1 m
+  left join sa_task_info p on p.id=m.preTaskId
+);
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
+VIEW vsa_tasks AS (
+  select t.*, concat(sf.filePath, '/', sf.fileName) PT_RFile
+  from vpsa_tasks2 t
+  left join sa_file_index sf on t.resultFileid=sf.id
+);

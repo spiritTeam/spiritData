@@ -13,14 +13,14 @@ import com.spiritdata.jsonD.util.JsonUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal1001CException;
 
 /**
- * 模板服务，主要是获得模板信息
+ * 报告服务，主要是获得报告信息
  * @author wh
  */
 public class ReportService {
     /**
-     * 根据模板Id，得到模板的Json串
-     * @param templetId 模板Id
-     * @return 模板json串
+     * 根据报告Id，得到报告的Json串
+     * @param templetId 报告Id
+     * @return 报告json串
      */
     public String getTempletJsonById(String templetId) {
         if (templetId==null||templetId.length()==0) throw new Dtal1001CException("所给templetId参数为空，无法获取数据！");
@@ -29,9 +29,9 @@ public class ReportService {
     }
 
     /**
-     * 根据Uri，得到模板的Json串。注意若Uri不带协议头，则指的是相对于服务目录根的相对地址
-     * @param uri 模板的Uri
-     * @return 模板json串
+     * 根据Uri，得到报告的Json串。注意若Uri不带协议头，则指的是相对于服务目录根的相对地址
+     * @param uri 报告的Uri
+     * @return 报告json串
      */
     public String getTempletJsonByUri(String uri) {
         String ret = null;
