@@ -64,9 +64,9 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 </div>
 
 <center>
-  <div id="mainDiv" style="width:330px;height:400px;padding-top:5px;">
+  <div id="mainDiv" style="width:330px;height:400px;">
   <form>
-    <table width="300px;" style="margin-right:-40px;margin-top:30px;">
+    <table width="300px;" style="margin-right:-5px;margin-top:30px;">
       <tr style="height:50px; valign:top;">
         <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
         <td colspan="2" rowspan="1"  style="text-align:left;">
@@ -76,7 +76,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
         </td>
       </tr>
-      <tr style="height:50px; valign:top;">
+      <tr style="height:50px;valign:top;">
         <td align="right" style="padding-top:15px;"><span class="loginspan">密　码</span></td>
         <td colspan="2" style="text-align:left;padding-top:15px;" id="pwTd">
           <div style="float:left;">
@@ -103,9 +103,11 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       </tr>
       <tr style="height:70px; valign:top;">
         <td colspan="3" align="center" style="padding-top:37px;">
-          <a id="login" name="login" onclick="loginF();" ><div tabindex="4" style="width:250px;background-image:url(images/bg.png);padding-left:0px;margin-left:-36px;border-radius:5px">
-            <img src="images/login.png"/>
-          </div></a>
+          <a id="login" name="login" onclick="loginF();" >
+            <div id="loginButton" tabindex="4" style="background-image:url(images/bg.png);border-radius:5px;">
+              <span style="font-size:16px;color:#FFFFFF;font-weight: bold;">登　录</span>
+            </div>
+          </a>
         </td>
       </tr>
     </table>
@@ -123,10 +125,11 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 <script type="text/javascript">
 //全局变量，用于判断input
 var psV=false,lnV=false,vcV=false;
+var mainPage = getMainPage(); 
+var winId = mainPage.loginWinId;
+var win = getSWinInMain(winId);
 //未登录的忘记密码页面
 function modifyPassword(){
-  var winId = getWinId(getMainPage());
-  var win = getSWinInMain(winId);
   win.modify({title:"修改密码"});
   window.location.href="<%=path%>/login/forgetPassword.jsp?modType=2";
 }
@@ -152,7 +155,6 @@ function changeCheckCodeCss(obj){
     obj.value='';obj.style.color='#000';
   }
 }
-
 function pwdOnActive(){
   //隐藏
   $("#pwdSpan").hide();
@@ -201,19 +203,27 @@ function setInputCss(){
   });
   var browserType = getBrowserVersion();
   var v = browserType.substring(0,browserType.lastIndexOf(' '));
-  if(v!='msie'){
+  if(v=='msie'){
     if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
+    if($('#loginButton')!=null )$('#loginButton').css({"width":"249px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-36px"});
+  }else if(v=='chrome'){
+    if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"32px", "padding-top":"0px"});
+    if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"32px", "padding-top":"0px"});
+    if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px","width":"92px"});
+    if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
+    if($('#loginButton')!=null )$('#loginButton').css({"width":"251px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-36px"});
   }else {
     $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
-    var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
-    if(ieVersion==11.0){
+    //var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
+    //if(ieVersion==11.0){
       if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
       if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-      if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
-    }
+      if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      if($('#loginButton')!=null )$('#loginButton').css({"width":"248px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-36px"});
+    //}
   }
 }
 //从新发送激活邮件到邮箱
@@ -241,7 +251,7 @@ function toRegister(){
   var winId = getWinId(getMainPage());
   var win = getSWinInMain(winId);
   win.modify({title:"注册"});
-  window.location.href="<%=path%>/login/register.jsp?"+Math.random();
+  window.location.href="<%=path%>/login/register.jsp?pWinId="+winId;
 }
 //刷新验证码
 function refresh(obj ){
@@ -297,7 +307,6 @@ function validateLoginName(eleId){
   }else lnV = true;
 }
 function loginF(){
-  var mainPage=getMainPage();
   $('#login').attr('disabled',true);
   if(psV&&lnV&&vcV){
     $("#mask").show();
@@ -330,7 +339,6 @@ function loginF(){
               var loginName = mainPage.document.getElementById("loginName");
               $(loginStatus).val(1);
               $(loginName).val(pData.loginName);
-              var winId = getWinId(mainPage);
               closeSWinInMain(winId);
               mainPage.$.messager.alert("登陆信息","登陆成功！",'info');
               cleanWinId();

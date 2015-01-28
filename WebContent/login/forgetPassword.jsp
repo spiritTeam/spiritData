@@ -15,7 +15,7 @@
   <div style="width:330px;height:400px;">
     <div id="rstDiv" style="text-align:left;margin-left:75px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
-      <table width="300px;" style="margin-right:-35px;margin-top:5px;">
+      <table width="300px;" style="margin-right:-15px;">
         <tr style="height:50px; valign:top;">
           <td align="right"><span class="loginspan">用户名</span></td>
           <td colspan="2" rowspan="1" style="text-align:left;">
@@ -27,7 +27,11 @@
         </tr>
         <tr><td colspan="3" align="center"></td></tr>
       </table>
-      <a href="#" onclick="sendBackPwdMail();" ><div style="margin-top:30px;width:250px;background-image:url(images/bg.png);padding-left:0px;margin-left:-8px;border-radius:5px"><img src="images/next.png"/></div></a>
+      <a href="#" onclick="sendBackPwdMail();" >
+        <div id="nextButton" style="background-image:url(images/bg.png);border-radius:5px;">
+          <span style="font-size:16px;color:#FFFFFF;font-weight: bold;">下一步</span>
+        </div>
+      </a>
       <div id="infoDiv" style="text-align:left;width:250px;margin-top:40px;margin-left:-6px;">
         <h2>重置密码流程：</h2>
         <span>1、填写用户名,系统校验用户名。</span><br/>
@@ -40,22 +44,32 @@
 </body>
 <script type="text/javascript">
 var lnV =false;
+var mainPage = getMainPage();
+var winId;
+if(mainPage!=null) winId = mainPage.modifyWinId;
+var win = getSWinInMain(winId);
 function setInputCss(){
   var browserType = getBrowserVersion();
   browserType = browserType.substring(0,browserType.lastIndexOf(' '));
-  if(browserType!='msie'){
-    $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+  if(browserType=='msie'){alert("msie");
+    $('#loginName').css({"line-height":"35px","height":"35px","padding-top":"0px"});
+    $('#nextButton').css({"padding-left":"0px","margin-left":"-28px", "height":"28px","padding-top":"10px","margin-top":"30px","width":"246px"});
+  }else if(browserType=='chrome'){
+    //var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
+    //if(ieVersion!=8.0){
+      $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+      $('#nextButton').css({"padding-left":"0px","margin-left":"-29px", "height":"28px","padding-top":"10px","margin-top":"30px","width":"250px"});
+    //}
   }else{
-    var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
-    if(ieVersion!=8.0){
-      $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
-    }
+    $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    $('#nextButton').css({"padding-left":"0px","margin-left":"-32px", "height":"28px","padding-top":"10px","margin-top":"30px","width":"250px"});
   }
 }
 $(function(){
   setInputCss();
 });
 function sendBackPwdMail(){
+  win.setMessage({'msg':''});
   $('#lnImg').remove();
   $('#checkResult').html('');
   $('#sendButton').attr('disabled',true);
@@ -75,9 +89,9 @@ function sendBackPwdMail(){
       }
     });
   }else{
-    $.messager.alert('提示','您的账号填写有误!');
     $('#vLN').append('<img id="lnImg" align="middle" src="<%=path%>/login/images/cross.png">');
-    $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;登录名错误!</div>');
+    win.setMessage({'msg':'&nbsp;&nbsp;用户名错误!'});
+    $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;用户名错误!</div>');
   }
   $('#sendButton').attr('disabled',false);
 }
@@ -88,6 +102,7 @@ function onClick(obj){
 }
 function validateLoginName(eleId){
   $('#lnImg').remove();
+  win.setMessage({'msg':''});
   $('#checkResult').html('');
   var ele = $('#'+eleId);
   if(ele.val()==''||ele.val()==null||ele.val()==ele[0].defaultValue){
@@ -97,7 +112,8 @@ function validateLoginName(eleId){
   }else{
     var vsMsg = checkLoginName(ele.val());
     if(vsMsg==true){
-      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;你输入的用户名有误！</div>');
+      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;您输入的用户名有误！</div>');
+      win.setMessage({'msg':'&nbsp;&nbsp;您输入的用户名有误'});
       $('#vLN').append('<img id="lnImg" align="middle" src="<%=path%>/login/images/cross.png">');
       lnV = false;
     }else{

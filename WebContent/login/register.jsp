@@ -2,6 +2,7 @@
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
+  String pWinId = request.getParameter("pWinId");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -19,10 +20,10 @@
   <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，注册中...</span>
 </div>
 <center>
-  <div id="mainDiv" style="width:330px;height:400px;padding-top:5px;">
+  <div id="mainDiv" style="width:330px;height:400px;">
     <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;margin-top: 10px;"><span id="checkResult"></span></div>
     <form>
-      <table width="300px;" style="margin-right:-40px;">
+      <table width="300px;" style="margin-right:-5px;">
         <tr style="height:35px; valign:top;">
           <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
           <td colspan="2" width="200px;">
@@ -77,7 +78,7 @@
           <td align="right"><span class="loginspan">验证码</span></td>
           <td colspan="2">
             <div style="float:left">
-              <input id="checkCode" name="checkCode" tabindex="5" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateValidateCode('checkCode');"/>
+              <input id="checkCode" name="checkCode" tabindex="5" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateCheckCode('checkCode');"/>
             </div>
             <div style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;border-left:0px;"><img style="height:35px;" id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vVC'></div>
@@ -87,8 +88,8 @@
           <td colspan="3" align="left" style="height:50px;padding-top:10px;" valign="top">
             <div style="width:5px;height:5px;"></div>
             <a id="register" name="register" onclick="saveRegister();" href="#">
-              <div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);border-radius:5px;">
-                <img src="images/register.png"/>
+              <div tabindex="6" id="commitButton" style="height:28px;padding-top:10px;background-image:url(images/bg.png);border-radius:5px;">
+                <span style="font-size:16px;color:#FFFFFF;font-weight: bold;">注　册</span>
               </div>
             </a>
           </td>
@@ -100,6 +101,11 @@
 </body>
 <script type="text/javascript">
 var psV=false,cpsV=false,lnV=false,maV=false,vcV=false;
+var mainPage = getMainPage();
+var pWinId = '<%=pWinId%>';
+var winId = mainPage.registerWinId;
+if(winId==null||winId=="") winId = pWinId;
+var win = getSWinInMain(winId);
 function pwdMouseOver(){
   $("#pwdSpan").toggleClass("addSelect");
 }
@@ -137,9 +143,7 @@ function saveRegister(){
       success:function(json) {
         $("#mask").hide();
         if(json.success){
-          var mainPage = getMainPage();
           if(mainPage){
-            var winId = getWinId(mainPage);
             closeSWinInMain(winId);
             mainPage.$.messager.alert('注册提示',json.retInfo,'info');
             cleanWinId(mainPage);
@@ -154,7 +158,6 @@ function saveRegister(){
         }
       }
     });
-    、、、、
   }else{
     $('#register').attr("disabled",false); 
     if(lnV==false) {
@@ -212,14 +215,23 @@ function setInputCss(){
   $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
   $('#cpwDiv').css({"padding-top":"11px","margin-left":"-217px"});
   $("div.intro span").css({'border-color':'#999999','border-left':'0px'});
-  if(v!='msie'){
+  if(v=='msie'){
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"width":"177px","padding-left":"70px","margin-left":"8px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"width":"150px","padding-left":"100px","margin-left":"10px"});
+    if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
+  }else if(v=='chrome'){alert('chrome');
+    if($('#loginName')!=null) $('#loginName').css({"line-height":"35px","height":"33px","padding-top":"0px"});
+    if($('#password')!=null) $('#password').css({"line-height":"35px","height":"33px","padding-top":"0px"});
+    if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px","height":"33px","padding-top":"0px"});
+    if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"33px","padding-top":"0px","width":"112px;"});
+    if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"33px","padding-top":"0px"});
+    if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"width":"153px","padding-left":"97px","margin-left":"8px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
   }else{
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
@@ -228,7 +240,7 @@ function setInputCss(){
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"width":"177px","padding-left":"70px","margin-left":"8px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"width":"151px","padding-left":"97px","margin-left":"8px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"70px"});
   }
 }
@@ -283,10 +295,12 @@ function validatePassword(eleId){
   }else{
     if(!checkPasswordStr(ele.val())){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;密码应是5~12位的字母、数字、下划线!</div>');
+      win.setMessage({'msg':'&nbsp;&nbsp;密码应是5~12位的字母、数字、下划线!'});
       $('#vPwd').append('<img id="pwdImg" align="middle" src="images/cross.png">');
       psV = false;
     }else{
       $('#vPwd').append('<img id="pwdImg" align="middle" src="images/accept.png">');
+      win.setMessage({'msg':''});
       psV = true;
     }
   }
@@ -304,19 +318,25 @@ function validateLoginName(eleId){
       var vsMsg = checkLoginName(ele.val());
       if(vsMsg==true){
         $('#vLN').append('<img id="lnImg" src="images/accept.png">');
+        win.setMessage({'msg':''});
         lnV = true;
       }else{
         $('#vLN').append('<img id="lnImg" src="images/cross.png">');
-        $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;该登录名已被使用!</div>');
+        win.setMessage({'msg':'该登录名已被使用!'});
+        $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;该登录名已被使用!</div>');
         lnV = false;
       }
     }else{
       $('#vLN').append('<img id="lnImg" src="images/cross.png">');
+      win.setMessage({'msg':'&nbsp;&nbsp;账号应为5~11位的字母、数字、下划线!'});
       $('#checkResult').html('<div style="width:370;height:40px; font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;账号应为5~11位字母、数字、下划线!</div>');
       lnV = false;
     }
   }
 }
+/**
+ * 验证确认密码
+ */
 function validateConfirmPassword(eleId){
   $("#cpwdImg").remove();
   $('#checkResult').html("");
@@ -326,14 +346,19 @@ function validateConfirmPassword(eleId){
   }else{
     if($('#password').val()!=ele.val()){
       $('#vCPwd').append('<img id="cpwdImg" src="images/cross.png">');
+      win.setMessage({'msg':'&nbsp;&nbsp;账号应为5~11位的字母、数字、下划线!'});
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;密码不一致!</div>');
       cpsV =false;
     }else{
       $('#vCPwd').append('<img id="cpwdImg" src="images/accept.png">');
+      win.setMessage({'msg':''});
       cpsV =true;
     }
   }
 }
+/**
+ * 验证邮箱
+ */
 function validateMail(eleId,index){
   $('#mailImg').remove();
   $('#checkResult').html("");
@@ -350,15 +375,20 @@ function validateMail(eleId,index){
     var vsMsg = checkMail(mailStr);
     if(vsMsg==true){
       $('#vMail').append('<img style="padding-left:5px;" id="mailImg" src="images/accept.png">');
+      win.setMessage({'msg':''});
       maV = true;
     }else{
+      win.setMessage({'msg':'&nbsp;&nbsp;&nbsp;&nbsp;该邮箱已被注册!'});
       $('#vMail').append('<img style="padding-left:5px;" id="mailImg" src="images/cross.png">');
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;该邮箱已被注册!</div>');
       maV = false;
     }
   }
 }
-function validateValidateCode(eleId){
+/**
+ * 验证码
+ */
+function validateCheckCode(eleId){
   $('#vcImg').remove();
   $('#checkResult').html('');
   var ele = $('#'+eleId);
@@ -370,9 +400,11 @@ function validateValidateCode(eleId){
     var vsMsg = verificationCheckCode(ele.val());
     if(vsMsg==true){
       $("#vVC").append('<img style="padding-left:5px;" id="vcImg" src="images/accept.png">');
+      win.setMessage({'msg':''});
       vcV = true;
     }else{
       $("#vVC").append('<img style="padding-left:5px;" id="vcImg" src="images/cross.png">');
+      win.setMessage({'msg':'&nbsp;&nbsp;验证码错误!'});
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;验证码错误!</div>');
       vcV = false;
     }
