@@ -543,14 +543,14 @@ function showDemo() {
 
       i=0;
       stepStr="...";
-      //singleAnalysis();
-     // showResult();
+      singleAnalysis();
+      showResult();
     }
   }
 }
 
 function showResult() {
-  //openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
+  openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
 }
 
 function onlyLogout(ip, mac, browser) {
