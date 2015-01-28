@@ -1,7 +1,7 @@
 .loginspan { width:100px;font-size:14px;padding-right:5px;color:#999999;}
 input[type="text"], input[type="password"] {width:195px;}
 #loginName {padding-top:8px;height:25px;font-size:12px;}
-#mail {width:114px;padding-top:8px;height:25px;font-size:12px;}
+#mail {width:114px;font-size:12px;}
 #mailEndStr {width:80px;padding-left:-10px;font-size:12px;margin-left:-2px;}
 #password {padding-top:8px;height:25px;font-size:12px;}
 #oldPassword {padding-top:8px;height:25px;font-size:12px;}

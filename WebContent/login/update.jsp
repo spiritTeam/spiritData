@@ -6,9 +6,18 @@
   String sid = request.getSession().getId();
   String modifyType = request.getParameter("modifyType");
   User user = ((User)session.getAttribute(FConstants.SESSION_USER));
-  String userMail = user.getMailAdress();
-  String loginName = user.getLoginName();
-  String oldPwd = user.getPassword();
+  String userMail;
+  String loginName;
+  String oldPwd;
+  if(user==null||user.equals("")){
+      userMail = "";
+      loginName = "";
+      oldPwd = "";
+  }else{
+      userMail = user.getMailAdress();
+      loginName = user.getLoginName();
+      oldPwd = user.getPassword();
+  }
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -30,12 +39,13 @@
     <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;margin-top: 10px;"><span id="checkResult"></span></div>
     <form>
       <input id="oldPwd" type="hidden" >
-      <table width="300px;" style="margin-right:-40px;">
+      <table id="tbId" width="300px;" style="margin-right:-5px;">
         <tr style="height:35px; valign:top;">
           <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
           <td colspan="2" width="200px;">
             <div style="float:left">
-              <input id="loginName" name="loginName" tabindex="1" type="text" onclick="onClick(loginName);" onBlur="" value="用户账号" disabled="disabled"/></div>
+              <input id="loginName" name="loginName" tabindex="1" type="text" onclick="onClick(loginName);" onBlur="" value="用户账号" disabled="disabled"/>
+            </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
           </td>
         </tr>
@@ -44,7 +54,8 @@
           <td align="right"><span class="loginspan">邮　箱</span></td>
           <td colspan="2" width="130px;">
             <div style="float:left">
-              <input id="mail" name="mail" tabindex="2" type="text" onclick="onClick(mail);" value="您的邮箱" disabled="disabled" style="width:195px;"/></div>
+              <input id="mail" name="mail" tabindex="2" type="text" onclick="onClick(mail);" value="您的邮箱" disabled="disabled" style="width:195px;"/>
+            </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vMail'></div>
           </td>
         </tr>
@@ -53,10 +64,12 @@
           <td colspan="2" rowspan="1">
             <div style="float:left">
               <input id="oldPassword" name="oldPassword" tabindex="3" type="password" onmouseover="opwdMouseOver();"
-                onclick="onClick(oldPassword);" onBlur="validateOldPassword('oldPassword');"/></div>
+                onclick="onClick(oldPassword);" onBlur="validateOldPassword('oldPassword');"/>
+            </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vOPwd'></div>
             <div id="opwDiv" style="float:left;width:39px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
-              <span id="opwdSpan" style="color:#ABCDEF;font-size:12px;">原密码</span></div>
+              <span id="opwdSpan" style="color:#ABCDEF;font-size:12px;">原密码</span>
+            </div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -64,10 +77,12 @@
           <td colspan="2" rowspan="1">
             <div style="float:left">
               <input id="password" name="password" tabindex="3" type="password" onmouseover="pwdMouseOver();"
-                onclick="onClick(password);" onBlur="validatePassword('password');"/></div>
+                onclick="onClick(password);" onBlur="validatePassword('password');"/>
+            </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPwd'></div>
             <div id="pwDiv" style="float:left;width:39px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
-              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">新密码</span></div>
+              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">新密码</span>
+            </div>
           </td>
         </tr>
         <tr style="height:50px; valign:top;">
@@ -75,22 +90,21 @@
           <td colspan="2">
             <div style="float:left">
               <input id="confirmPassword" name="confirmPassword" tabindex="4" type="password" onmouseover="cpwdMouseOver();"
-                onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');"/></div>
+                onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');"/>
+            </div>
             <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vCPwd'></div>
             <div id="cpwDiv" style="float:left;width:50px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
-              <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span></div>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3" align="left" style="height:50px;padding-top:10px;" valign="top">
-            <div style="width:5px;height:5px;"></div>
-            <a id="save" name="save" onclick="updateUser();" href="#">
-              <div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);border-radius:5px;">
-                <img src="images/submit.jpg"/>
-            </div></a>
+              <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span>
+            </div>
           </td>
         </tr>
       </table>
+      <div style="width:5px;height:5px;"></div>
+      <a id="save" name="save" onclick="updateUser();" href="#">
+        <div tabindex="6" id="commitButton" style="background-image:url(images/bg.png);border-radius:5px;">
+          <span style="font-size:16px;color:#FFFFFF;font-weight: bold;">提　交</span>
+        </div>
+      </a>
     </form>
   </div>
 </center>
@@ -98,6 +112,10 @@
 <script type="text/javascript">
 //各个input的变量，true代表有值，且符合标准，false则相反
 var psV=false,cpsV=false,maV=false,opsV=false;
+var mainPage = getMainPage(); 
+var winId;
+if(mainPage!=null) winId = mainPage.modifyWinId;
+var win = getSWinInMain(winId);
 $(function(){
   $('#loginName').val('<%=loginName%>');
   $('#mail').val('<%=userMail%>');
@@ -109,9 +127,11 @@ function validateOldPassword(eleId){
   var oldPwd = $('#oldPwd').val();
   if(ele.val()!=oldPwd){
     $('#vOPwd').append('<img id="oldPwdImg" align="middle" src="images/cross.png">');
+    win.setMessage({'msg':'&nbsp;&nbsp;原密码填写错误!'});
     opsV = false;
   }else {
     $('#vOPwd').append('<img id="oldPwdImg" align="middle" src="images/accept.png">');
+    win.setMessage({'msg':''});
     opsV = true;
   }
 }
@@ -222,21 +242,30 @@ function setInputCss(){
   $('#opwDiv').css({"padding-top":"11px","margin-left":"-217px"});
   $('#cpwDiv').css({"padding-top":"11px","margin-left":"-217px"});
   $("div.intro span").css({'border-color':'#999999','border-left':'0px'});
-  if(v!='msie'){
+  if(v=='msie'){
+    $('#tbId').css({"margin-right":"10px"});
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#oldPassword')!=null) $('#oldPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"line-height":"35px","width":"220px","padding-left":"30px","margin-left":"7px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"height":"38px","line-height":"35px","width":"220px","padding-left":"30px","margin-left":"-31px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
+  }else if(v=='chrome'){
+    if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
+    if($('#oldPassword')!=null) $('#oldPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
+    if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"height":"38px","line-height":"35px","width":"220px","padding-left":"30px","margin-left":"28px"});
+    if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"70px"});
   }else{
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#oldPassword')!=null) $('#oldPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
     if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px","height":"35px","padding-top":"0px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"line-height":"35px","width":"220px","padding-left":"30px","margin-left":"7px"});
+    if($('#commitButton')!=null) $('#commitButton').css({"height":"38px","line-height":"35px","width":"250px","padding-left":"0px","margin-left":"-33px"});
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"70px"});
   }
 }
@@ -284,9 +313,11 @@ function validatePassword(eleId){
     if(!checkPasswordStr(ele.val())){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;密码应是5~12位的字母、数字、下划线!</div>');
       $('#vPwd').append('<img id="pwdImg" align="middle" src="images/cross.png">');
+      win.setMessage({'msg':'&nbsp;&nbsp;密码应是5~12位的字母、数字、下划线!'});
       psV = false;
     }else{
       $('#vPwd').append('<img id="pwdImg" align="middle" src="images/accept.png">');
+      win.setMessage({'msg':''});
       psV = true;
     }
   }
@@ -301,9 +332,11 @@ function validateConfirmPassword(eleId){
     if($('#password').val()!=ele.val()){
       $('#vCPwd').append('<img id="cpwdImg" src="images/cross.png">');
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;密码不一致!</div>');
+      win.setMessage({'msg':'&nbsp;&nbsp;密码不一致!'});
       cpsV =false;
     }else{
       $('#vCPwd').append('<img id="cpwdImg" src="images/accept.png">');
+      win.setMessage({'msg':''});
       cpsV =true;
     }
   }

@@ -590,7 +590,7 @@ function logout() {
   });
 };
 var wHeight = "430";
-var wWidth = "350";
+var wWidth = "300";
 /**
  * 注册
  */
@@ -601,7 +601,7 @@ function register(){
   var winOption={
     url:_url,
     title:"注册",
-    height:wHeight,
+    height:"400",
     width:wWidth,
     modal:true,
     zIndex:-1
@@ -615,11 +615,17 @@ var modifyWinId = "";
 function modifyPwd(){
   var loginStatus = $('#loginStatus').val();
   var _url;
-  if(loginStatus!=""&&loginStatus!=null) _url="<%=path%>/login/modifyPassword.jsp?modifyType=1&loginName="+$('#loginName').val();
-  else _url="<%=path%>/login/forgetPassword.jsp";
+  var tt = "";
+  if(loginStatus!=""&&loginStatus!=null){
+    _url="<%=path%>/login/update.jsp?";
+    tt = "修改个人信息";
+  }else{
+    _url="<%=path%>/login/forgetPassword.jsp";
+    tt = "找回密码";
+  }
   var winOption={
     url:_url,
-    title:"找回密码",
+    title:tt,
     height:wHeight,
     width:wWidth,
     modal:true
@@ -644,6 +650,7 @@ function login(){
 /*
  * 修改个人信息
  */
+var updateUserWinId = "";
 function updateUser(){
   var loginStatus = $('#loginStatus').val();
   if(loginStatus==""||loginStatus==null) {
@@ -658,7 +665,7 @@ function updateUser(){
     width:wWidth,
     modal:true
   };
-  loginWinId = openSWinInMain(winOption);
+  updateUserWinId = openSWinInMain(winOption);
 }
 /**
  * 测试

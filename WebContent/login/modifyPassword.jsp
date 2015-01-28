@@ -23,7 +23,7 @@
   <div style="width:330px;height:400px;">
     <div id="rstDiv" style="text-align:left;margin-left:86px;height:20px;padding-top:5px;"><span id="checkResult"></span></div>
     <form>
-      <table width="300px;" style="margin-right:-35px;margin-top:5px;">
+      <table width="300px;" style="margin-right:-5px;margin-top:5px;">
         <tr style="height:35px;valign:top;">
           <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
           <td colspan="2" width="200px;" style="text-align:left;">
@@ -64,15 +64,18 @@
     </form>
     <div style="margin-top:50px;width: 100%">
     <a id="saveButton"  onclick="modifyPassword();" href="#">
-      <div style="margin-left:-3px;width:250px;background-image:url(images/bg.png);border-radius:5px">
-        <img src="images/modify.png"/>
+      <div id="modifyButton" style="background-image:url(images/bg.png);border-radius:5px">
+        <span style="font-size:16px;color:#FFFFFF;font-weight: bold;">修改密码</span>
       </div>
     </a></div>
   </div>
 </center>
 </body>
 <script type="text/javascript">
-var mainPage=getMainPage();
+var mainPage = getMainPage(); 
+var winId;
+if(mainPage!=null) winId = mainPage.modifyWinId;
+var win = getSWinInMain(winId);
 var modifyType=<%=modifyType%>,psV=false,lnV=false,cpsV=false;
 var loginName = '<%=loginName%>';
 function pwdMouseOver(){
@@ -94,7 +97,6 @@ function modifyPassword(){
         if(json){
           var mainPage = getMainPage();
           if(mainPage){
-            var winId = getWinId(mainPage);
             closeSWinInMain(winId);
             mainPage.$.messager.alert('修改提示',json.retInfo,'info');
             cleanWinId(mainPage);
@@ -140,19 +142,27 @@ function modifyPassword(){
 function setInputCss(){
   var browserType = getBrowserVersion();
   var v = browserType.substring(0,browserType.lastIndexOf(' '));
-  if(v!='msie'){
+  if(v=='msie'){
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"78px"});
     if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});  
-  }else{
-    var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
-    if(ieVersion!=8.0){
+    if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#modifyButton')!=null) $('#modifyButton').css({"height":"28px","padding-top":"10px","margin-left":"-12px","width":"248px"});
+  }else if(v=='chrome'){
+    //var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
+    //if(ieVersion!=8.0){
       if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"89px"});
       if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
       if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
       if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    }
+      if($('#modifyButton')!=null) $('#modifyButton').css({"height":"28px","padding-top":"10px","margin-left":"-28px","width":"249px"});
+    //}
+  }else{
+    if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"89px"});
+    if($('#loginName')!=null) $('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#password')!=null) $('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#confirmPassword')!=null) $('#confirmPassword').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
+    if($('#modifyButton')!=null) $('#modifyButton').css({"height":"28px","padding-top":"10px","margin-left":"-34px","width":"250px"});
   }
 }
 //如果不是ie浏览器，从新初始化inputcsss
@@ -182,10 +192,12 @@ function validateConfirmPassword(eleId){
   }else{
     if($('#password').val()!=ele.val()){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">密码不一致!</div>');
+      win.setMessage({'msg':'&nbsp;&nbsp;密码不一致!'});
       $('#vCPwd').append('<img id="cpwdImg" align="middle" src="images/cross.png">');
       cpsV =false;
     }else{
       $('#vCPwd').append('<img id="cpwdImg" align="middle" src="images/accept.png">');
+      win.setMessage({'msg':''});
       cpsV =true;
     }
   }
@@ -207,10 +219,12 @@ function validatePassword(eleId){
   }else{
     if(!checkPasswordStr(ele.val())){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">密码应是6~12位字母、数字、下划线!</div>');
+      win.setMessage({'msg':'&nbsp;&nbsp;密码应是6~12位字母、数字、下划线!'});
       $('#vPwd').append('<img id="pwdImg" align="middle" src="images/cross.png">');
       psV = false;
     }else{
       $('#vPwd').append('<img id="pwdImg" align="middle" src="images/accept.png">');
+      win.setMessage({'msg':''});
       psV = true;
     }
   }
@@ -227,10 +241,12 @@ function validateLoginName(eleId){
     var vsMsg = checkLoginName(ele.val());
     if(vsMsg==true){
       $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">该用户不存在!</div>');
+      win.setMessage({'msg':'&nbsp;&nbsp;该用户不存在!'});
       $('#vLN').append('<img id="lnImg" align="middle" src="images/cross.png">');
       lnV = false;
     }else{
       $('#vLN').append('<img id="lnImg" align="middle" src="images/accept.png">');
+      win.setMessage({'msg':''});
       lnV = true;
     }
   }
