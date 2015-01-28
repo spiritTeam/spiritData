@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <!-- 类别名设置 -->
+  <typeAliases>
+    <typeAlias alias="taskGroup" type="com.spiritdata.dataanal.task.persistence.pojo.TaskGroupPo"/>
+    <typeAlias alias="taskInfo" type="com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo"/>
+    <typeAlias alias="taskRel" type="com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo"/>
+  </typeAliases>
+  <mappers>
+    <mapper resource="com/spiritdata/dataanal/task/persistence/sql/TaskGroup.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/task/persistence/sql/TaskInfo.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/task/persistence/sql/TaskRel.mapper.xml"/>
+  </mappers>
+</configuration>
