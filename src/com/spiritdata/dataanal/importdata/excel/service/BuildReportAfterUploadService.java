@@ -9,8 +9,8 @@ import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
 import com.spiritdata.dataanal.report.model.TaskReport;
 
 /**
- * 在上传一个Excel文件后，生成templet。<br/>
- * 包括生成Templet+生成Task+启动Task。
+ * 在上传一个Excel文件后，生成Report。<br/>
+ * 包括生成Report+生成Task+启动Task。
  * @author wh
  */
 public class BuildReportAfterUploadService extends AbstractGenerateSessionReport implements Serializable {

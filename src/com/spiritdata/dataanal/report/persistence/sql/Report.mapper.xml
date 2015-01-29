@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  报告
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="report">
+  <!-- 对象定义:元数据模式 -->
+  <resultMap id="BaseResultMap" type="report">
+    <id     column="id"         property="id"         jdbcType="VARCHAR"/>
+    <result column="ownerType"  property="ownerType"  jdbcType="INTEGER"/>
+    <result column="ownerId"    property="ownerId"    jdbcType="VARCHAR"/>
+    <result column="taskGId"    property="taskGId"    jdbcType="VARCHAR"/>
+    <result column="fId"        property="FId"        jdbcType="VARCHAR"/>
+    <result column="reportName" property="reportName" jdbcType="VARCHAR"/>
+    <result column="descn"      property="desc"       jdbcType="VARCHAR"/>
+    <result column="cTime"      property="CTime"      jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 所有列 -->
+  <sql id="Base_Column_List">
+    id, ownerType, ownerId, taskGId, fId, reportName, descn, cTime
+  </sql>
+
+  <!-- 条件子句 -->
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
+        <if test="ownerType!=null and ownerType!=0"> and ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="ownerId!=null"> and ownerId=#{ownerId,jdbcType=VARCHAR}</if>
+        <if test="taskGId!=null"> and taskGId=#{taskGId,jdbcType=VARCHAR}</if>
+        <if test="FId!=null"> and fId=#{FId,jdbcType=VARCHAR}</if>
+        <if test="reportName!=null"> and reportName=#{reportName,jdbcType=VARCHAR}</if>
+        <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR}</if>
+        <if test="fcTime!=null"> and fcTime=#{fcTime,jdbcType=TIMESTAMP}</if>
+      </trim>
+    </where>
+  </sql>
+
+  <!-- 获得记录条数-->
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from sa_report_info <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </select>
+
+  <!-- 获得列表 -->
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_report_info
+    <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="orderByClause!=null">order by ${orderByClause}</if>
+  </select>
+
+  <!-- 获得一条数据 -->
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_report_info <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </select>
+  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/> from sa_report_info where id=#{id,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 新增数据 -->
+  <insert id="insert" parameterType="java.util.Map">
+    insert into sa_report_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!=null">id,</if>
+      <if test="ownerType!=null and ownerType!=0">ownerType,</if>
+      <if test="ownerId!=null">ownerId,</if>
+      <if test="taskGId!=null">taskGId,</if>
+      <if test="FId!=null">fId,</if>
+      <if test="reportName!=null">reportName,</if>
+      <if test="desc!=null">descn,</if>
+      <if test="fcTime!=null">fcTime,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
+      <if test="ownerType!=null and ownerType!=0">#{ownerType,jdbcType=INTEGER},</if>
+      <if test="ownerId!=null">#{ownerId,jdbcType=VARCHAR},</if>
+      <if test="taskGId!=null">#{taskGId,jdbcType=VARCHAR},</if>
+      <if test="FId!=null">fId=#{FId,jdbcType=VARCHAR},</if>
+      <if test="reportName!=null">#{reportName,jdbcType=VARCHAR},</if>
+      <if test="desc!=null">#{desc,jdbcType=VARCHAR},</if>
+      <if test="fcTime!=null">#{fcTime,jdbcType=TIMESTAMP},</if>
+    </trim>
+  </insert>
+
+  <!-- 修改 根据主键-->
+  <update id="update" parameterType="java.util.Map">
+    update sa_report_info
+    <set>
+      <if test="ownerType!=null and ownerType!=0">ownerType=#{ownerType,jdbcType=INTEGER},</if>
+      <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR},</if>
+      <if test="taskGId!=null">taskGId=#{taskGId,jdbcType=VARCHAR},</if>
+      <if test="FId!=null">fId=#{FId,jdbcType=VARCHAR},</if>
+      <if test="reportName!=null">reportName=#{reportName,jdbcType=VARCHAR},</if>
+      <if test="desc!=null">descn=#{desc,jdbcType=VARCHAR},</if>
+      <if test="fcTime!=null">fcTime=#{fcTime,jdbcType=TIMESTAMP},</if>
+    </set>
+    where id=#{id,jdbcType=VARCHAR}
+  </update>
+
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.String">
+    delete from sa_report_info where id=#{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByEntity" parameterType="java.util.Map">
+    delete from sa_report_info <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </delete>
+</mapper>

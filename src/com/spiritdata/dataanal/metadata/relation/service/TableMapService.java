@@ -90,8 +90,8 @@ public class TableMapService {
             }
         }
         btm.put("columnStr", columnStr);
-        if (mm.getDescn()!=null&&mm.getDescn().length()>0) {
-            btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDescn());
+        if (mm.getDesc()!=null&&mm.getDesc().length()>0) {
+            btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDesc());
         }
         mtmrDao.excute("createTable", btm);
         //修改mm中的积累表名称

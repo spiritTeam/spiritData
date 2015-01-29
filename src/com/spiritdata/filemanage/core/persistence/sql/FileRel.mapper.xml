@@ -3,113 +3,113 @@
   文件：文件关联关系
 -->
 
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="fileRelation" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fileRelation">
   <!-- 对象定义:元数据列模式 -->
-  <resultMap id="FileRelMap" type="FileRelation" >
-    <id     column="id"     property="id"     jdbcType="VARCHAR" />
-    <result column="aType"  property="AType"  jdbcType="INTEGER" />
-    <result column="aId"    property="AId"    jdbcType="VARCHAR" />
-    <result column="bType"  property="BType"  jdbcType="INTEGER" />
-    <result column="bId"    property="BId"    jdbcType="VARCHAR" />
-    <result column="rType1" property="RType1" jdbcType="INTEGER" />
-    <result column="rType2" property="RType2" jdbcType="VARCHAR" />
-    <result column="descn"  property="desc"   jdbcType="VARCHAR" />
-    <result column="cTime"  property="CTime"  jdbcType="TIMESTAMP" />
+  <resultMap id="FileRelMap" type="FileRelation">
+    <id     column="id"     property="id"     jdbcType="VARCHAR"/>
+    <result column="aType"  property="AType"  jdbcType="INTEGER"/>
+    <result column="aId"    property="AId"    jdbcType="VARCHAR"/>
+    <result column="bType"  property="BType"  jdbcType="INTEGER"/>
+    <result column="bId"    property="BId"    jdbcType="VARCHAR"/>
+    <result column="rType1" property="RType1" jdbcType="INTEGER"/>
+    <result column="rType2" property="RType2" jdbcType="VARCHAR"/>
+    <result column="descn"  property="desc"   jdbcType="VARCHAR"/>
+    <result column="cTime"  property="CTime"  jdbcType="TIMESTAMP"/>
   </resultMap>
   <!-- 所有列 -->
-  <sql id="Base_Column_List" >
+  <sql id="Base_Column_List">
     id, aType, aId, bType, bId, rType1, rType2, descn, cTime
   </sql>
   <!-- 条件子句 -->
-  <sql id="WhereClauseByEntiey" >
-    <where >
-      <trim prefix="(" suffix=")" prefixOverrides="and" >
-        <if test="id!=null" > and id = #{id,jdbcType=VARCHAR} </if>
-        <if test="AType!=null and AType!=0" > and aType = #{AType, jdbcType=INTEGER} </if>
-        <if test="AId!=null" > and aId = #{AId, jdbcType=VARCHAR} </if>
-        <if test="BType!=null and BType!=0" > and bType = #{BType, jdbcType=INTEGER} </if>
-        <if test="BId!=null" > and bId = #{BId, jdbcType=VARCHAR} </if>
-        <if test="RType1!=null" > and rType1 = #{RType1, jdbcType=INTEGER} </if>
-        <if test="RType2!=null" > and rType2 = #{RType2, jdbcType=VARCHAR} </if>
-        <if test="desc!=null" > and descn = #{desc,jdbcType=VARCHAR} </if>
-        <if test="CTime!=null" > and cTime = #{CTime,jdbcType=TIMESTAMP} </if>
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
+        <if test="AType!=null and AType!=0"> and aType=#{AType, jdbcType=INTEGER}</if>
+        <if test="AId!=null"> and aId=#{AId, jdbcType=VARCHAR}</if>
+        <if test="BType!=null and BType!=0"> and bType=#{BType, jdbcType=INTEGER}</if>
+        <if test="BId!=null"> and bId=#{BId, jdbcType=VARCHAR}</if>
+        <if test="RType1!=null"> and rType1=#{RType1, jdbcType=INTEGER}</if>
+        <if test="RType2!=null"> and rType2=#{RType2, jdbcType=VARCHAR}</if>
+        <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR}</if>
+        <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP}</if>
       </trim>
     </where>
   </sql>
 
   <!-- 获得记录条数-->
-  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer" >
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
     select count(*) from sa_file_rel
-    <if test="_parameter!= null" ><include refid="WhereClauseByEntiey" /></if>
+    <if test="_parameter!= null"><include refid="WhereClauseByEntiey"/></if>
   </select>
 
   <!-- 获得列表 -->
-  <select id="getList" resultMap="FileRelMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" /> from sa_file_rel
-    <if test="_parameter!=null" ><include refid="WhereClauseByEntiey" /></if>
-    <if test="orderByClause!= null" >order by ${orderByClause}</if>
+  <select id="getList" resultMap="FileRelMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_file_rel
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="orderByClause!= null">order by ${orderByClause}</if>
   </select>
 
   <!-- 获得一条数据 -->
-  <select id="getInfo" resultMap="FileRelMap" parameterType="java.util.Map" >
-    select <include refid="Base_Column_List" /> from sa_file_rel
-    <if test="_parameter!=null" ><include refid="WhereClauseByEntiey" /></if>
+  <select id="getInfo" resultMap="FileRelMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_file_rel
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </select>
-  <select id="getInfoById" resultMap="FileRelMap" parameterType="java.lang.String" >
-    select <include refid="Base_Column_List" /> from sa_file_rel where id = #{id,jdbcType=VARCHAR}
+  <select id="getInfoById" resultMap="FileRelMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/> from sa_file_rel where id=#{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 新增数据 -->
-  <insert id="insert" parameterType="java.util.Map" >
+  <insert id="insert" parameterType="java.util.Map">
     insert into sa_file_rel
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id!=null" >id,</if>
-      <if test="AType!=null and AType!=0" >aType,</if>
-      <if test="AId!=null" >aId,</if>
-      <if test="BType!=null and BType!=0" >bType,</if>
-      <if test="BId!=null" >bId,</if>
-      <if test="RType1!=null" >rType1,</if>
-      <if test="RType2!=null" >rType2,</if>
-      <if test="desc!=null" >descn,</if>
-      <if test="CTime!=null" >cTime,</if>
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!=null">id,</if>
+      <if test="AType!=null and AType!=0">aType,</if>
+      <if test="AId!=null">aId,</if>
+      <if test="BType!=null and BType!=0">bType,</if>
+      <if test="BId!=null">bId,</if>
+      <if test="RType1!=null">rType1,</if>
+      <if test="RType2!=null">rType2,</if>
+      <if test="desc!=null">descn,</if>
+      <if test="CTime!=null">cTime,</if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id!=null" >#{id,jdbcType=VARCHAR},</if>
-      <if test="AType!=null and AType!=0" >#{AType, jdbcType=INTEGER},</if>
-      <if test="AId!=null" >#{AId, jdbcType=VARCHAR},</if>
-      <if test="BType!=null and BType!=0" >#{BType, jdbcType=INTEGER},</if>
-      <if test="BId!=null" >#{BId, jdbcType=VARCHAR},</if>
-      <if test="RType1!=null" >#{RType1, jdbcType=INTEGER},</if>
-      <if test="RType2!=null" >#{RType2, jdbcType=VARCHAR},</if>
-      <if test="desc!=null" >#{desc,jdbcType=VARCHAR},</if>
-      <if test="CTime!=null" >#{CTime,jdbcType=TIMESTAMP},</if>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
+      <if test="AType!=null and AType!=0">#{AType, jdbcType=INTEGER},</if>
+      <if test="AId!=null">#{AId, jdbcType=VARCHAR},</if>
+      <if test="BType!=null and BType!=0">#{BType, jdbcType=INTEGER},</if>
+      <if test="BId!=null">#{BId, jdbcType=VARCHAR},</if>
+      <if test="RType1!=null">#{RType1, jdbcType=INTEGER},</if>
+      <if test="RType2!=null">#{RType2, jdbcType=VARCHAR},</if>
+      <if test="desc!=null">#{desc,jdbcType=VARCHAR},</if>
+      <if test="CTime!=null">#{CTime,jdbcType=TIMESTAMP},</if>
     </trim>
   </insert>
 
   <!-- 修改 根据主键 -->
-  <update id="update" parameterType="java.util.Map" >
+  <update id="update" parameterType="java.util.Map">
     update sa_file_rel
-    <set >
-      <if test="id!=null" >id = #{id,jdbcType=VARCHAR} </if>
-      <if test="AType!=null and AType!=0" >aType = #{AType, jdbcType=INTEGER} </if>
-      <if test="AId!=null" >aId = #{AId, jdbcType=VARCHAR} </if>
-      <if test="BType!=null and BType!=0" >bType = #{BType, jdbcType=INTEGER} </if>
-      <if test="BId!=null" >bId = #{BId, jdbcType=VARCHAR} </if>
-      <if test="RType1!=null" >rType1 = #{RType1, jdbcType=INTEGER} </if>
-      <if test="RType2!=null" >rType2 = #{RType2, jdbcType=VARCHAR} </if>
-      <if test="desc!=null" >descn = #{desc,jdbcType=VARCHAR} </if>
-      <if test="CTime!=null" >cTime = #{CTime,jdbcType=TIMESTAMP} </if>
+    <set>
+      <if test="id!=null">id=#{id,jdbcType=VARCHAR}</if>
+      <if test="AType!=null and AType!=0">aType=#{AType, jdbcType=INTEGER}</if>
+      <if test="AId!=null">aId=#{AId, jdbcType=VARCHAR}</if>
+      <if test="BType!=null and BType!=0">bType=#{BType, jdbcType=INTEGER}</if>
+      <if test="BId!=null">bId=#{BId, jdbcType=VARCHAR}</if>
+      <if test="RType1!=null">rType1=#{RType1, jdbcType=INTEGER}</if>
+      <if test="RType2!=null">rType2=#{RType2, jdbcType=VARCHAR}</if>
+      <if test="desc!=null">descn=#{desc,jdbcType=VARCHAR}</if>
+      <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP}</if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id=#{id,jdbcType=VARCHAR}
   </update>
 
   <!-- 删除数据 -->
-  <delete id="delete" parameterType="java.lang.String" >
-    delete from sa_file_rel where id = #{id,jdbcType=VARCHAR}
+  <delete id="delete" parameterType="java.lang.String">
+    delete from sa_file_rel where id=#{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByEntity" parameterType="java.util.Map" >
+  <delete id="deleteByEntity" parameterType="java.util.Map">
     delete from sa_file_rel
-    <if test="_parameter != null" ><include refid="WhereClauseByEntiey" /></if>
+    <if test="_parameter != null"><include refid="WhereClauseByEntiey"/></if>
   </delete>
 </mapper>

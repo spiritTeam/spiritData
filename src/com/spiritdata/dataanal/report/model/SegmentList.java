@@ -7,7 +7,7 @@ import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.jsonD.ConvertJson;
 
 /**
- * 报告段结构列表，报告中的_TEMPLET目前就是这个结构。
+ * 报告段结构列表，报告中的_REPORT目前就是这个结构。
  * 此结构是一个森林
  * @author wh
  * @param <E> 符合TreeNode<ReportSegment>的对象

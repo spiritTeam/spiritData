@@ -13,7 +13,7 @@
     <result column="ownerId"    property="ownerId"    jdbcType="VARCHAR"/>
     <result column="tableName"  property="tableName"  jdbcType="VARCHAR"/>
     <result column="tableType"  property="tableType"  jdbcType="INTEGER"/>
-    <result column="tableDescn" property="tableDescn" jdbcType="VARCHAR"/>
+    <result column="tableDescn" property="tableDesc"  jdbcType="VARCHAR"/>
     <result column="cTime"      property="CTime"      jdbcType="TIMESTAMP"/>
   </resultMap>
 
@@ -32,7 +32,7 @@
         <if test="ownerId!=null"> and ownerId=#{ownerId,jdbcType=VARCHAR} </if>
         <if test="tableName!=null"> and tableName=#{tableName,jdbcType=VARCHAR} </if>
         <if test="tableType!=null and tableType!=0"> and tableType=#{tableType,jdbcType=INTEGER} </if>
-        <if test="tableDescn!=null"> and tableDescn=#{tableDescn,jdbcType=VARCHAR} </if>
+        <if test="tableDesc!=null"> and tableDescn=#{tableDesc,jdbcType=VARCHAR} </if>
         <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP} </if>
       </trim>
     </where>
@@ -68,7 +68,7 @@
       <if test="ownerId!=null">ownerId,</if>
       <if test="tableName!=null">tableName,</if>
       <if test="tableType!=null and tableType!=0">tableType,</if>
-      <if test="tableDescn!=null">tableDescn,</if>
+      <if test="tableDesc!=null">tableDescn,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
@@ -77,7 +77,7 @@
       <if test="ownerId!=null">#{ownerId,jdbcType=VARCHAR},</if>
       <if test="tableName!=null">#{tableName,jdbcType=VARCHAR},</if>
       <if test="tableType!=null and tableType!=0">#{tableType,jdbcType=INTEGER},</if>
-      <if test="tableDescn!=null">#{tableDescn,jdbcType=VARCHAR},</if>
+      <if test="tableDesc!=null">#{tableDesc,jdbcType=VARCHAR},</if>
     </trim>
   </insert>
 
@@ -85,13 +85,12 @@
   <update id="update" parameterType="java.util.Map">
     update sa_md_tabmap_rel
     <set>
-      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
       <if test="mdMId!=null">tmId=#{mdMId,jdbcType=VARCHAR},</if>
       <if test="ownerType!=null and ownerType!=0">ownerType=#{ownerType,jdbcType=INTEGER},</if>
       <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR},</if>
       <if test="tableName!=null">tableName=#{tableName,jdbcType=VARCHAR},</if>
       <if test="tableType!=null and tableType!=0">tableType=#{tableType,jdbcType=INTEGER},</if>
-      <if test="tableDescn!=null">tableName=#{tableDescn,jdbcType=VARCHAR},</if>
+      <if test="tableDesc!=null">tableName=#{tableDesc,jdbcType=VARCHAR},</if>
       <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP},</if>
     </set>
     where id=#{id,jdbcType=VARCHAR}

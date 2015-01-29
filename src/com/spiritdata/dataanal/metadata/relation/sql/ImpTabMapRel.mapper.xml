@@ -85,7 +85,6 @@
   <update id="update" parameterType="java.util.Map">
     update sa_imp_tabmap_rel
     <set>
-      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
       <if test="FId!=null">fId=#{FId,jdbcType=VARCHAR},</if>
       <if test="tmoId!=null">tmoId=#{tmoId,jdbcType=VARCHAR},</if>
       <if test="mdMId!=null">tmId=#{mdMId,jdbcType=VARCHAR},</if>

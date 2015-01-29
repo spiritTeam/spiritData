@@ -64,7 +64,7 @@ public class Reprot implements Serializable, ConvertJson {
         CTime = cTime;
     }
 
-    private Object _HEAD;//头信息，可以是String templetHead 对象
+    private Object _HEAD;//头信息，可以是String reportHead 对象
     private List<OneJsond> dataList;//jsond数据访问列表
     private Object _REPORT;//报告主题信息，可以是String reportHead 对象
 
@@ -94,12 +94,12 @@ public class Reprot implements Serializable, ConvertJson {
     }
 
     /**
-     * 向templet中加入一个jsond的访问信息
+     * 向report中加入一个jsond的访问信息
      * @param one
      */
     public void addOneJsond(OneJsond one) {
         if (dataList==null) dataList=new ArrayList<OneJsond>();
-        one.setTdid(dataList.size());
+        one.setRdId(dataList.size());
         dataList.add(one);
     }
 
@@ -113,7 +113,7 @@ public class Reprot implements Serializable, ConvertJson {
         if (dataList==null||dataList.size()==0) {
             for (int i=0; i<dataList.size(); i++) {
                 OneJsond oj = dataList.get(i);
-                if (oj.equals(jsondId)) return oj.getTdid();
+                if (oj.equals(jsondId)) return oj.getRdId();
             }
         }
         return ret;
@@ -124,8 +124,8 @@ public class Reprot implements Serializable, ConvertJson {
      * @return json字符串
      */
     public String toJson() {
-        if (_HEAD==null) throw new Dtal1002CException("templetD不规范：头信息(_HEAD)必须设置！");
-        if (_REPORT==null) throw new Dtal1002CException("templetD不规范：报告主题信息(_TEMPLET)必须设置！");
+        if (_HEAD==null) throw new Dtal1002CException("reportD不规范：头信息(_HEAD)必须设置！");
+        if (_REPORT==null) throw new Dtal1002CException("reportD不规范：报告主题信息(_report)必须设置！");
 
         String jsonS = "{";
         //转换头
@@ -143,7 +143,7 @@ public class Reprot implements Serializable, ConvertJson {
             }
             jsonS += "],";
         }
-        //转换体templet
+        //转换体report
         if (_REPORT instanceof String) {
             jsonS += "\"_REPORT\":"+_REPORT;
         } else if (_REPORT instanceof SegmentList) {

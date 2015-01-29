@@ -25,7 +25,7 @@ public class ReportController {
         String reportId = request.getParameter("reportId");
         if (reportId!=null) {
             try {
-                ret="{jsonType:1, data:"+reportService.getTempletJsonById(reportId)+"}";
+                ret="{jsonType:1, data:"+reportService.getReportJsonById(reportId)+"}";
             } catch(Exception e) {
                 ret="{jsonType:0, message:'"+e.getMessage()+"'}";
             }
@@ -33,7 +33,7 @@ public class ReportController {
         String uri = request.getParameter("uri");
         if (uri!=null) {
             try {
-                ret="{jsonType:1, data:"+reportService.getTempletJsonByUri(uri)+"}";
+                ret="{jsonType:1, data:"+reportService.getReportJsonByUri(uri)+"}";
             } catch(Exception e) {
                 ret="{jsonType:0, message:'"+e.getMessage()+"'}";
             }

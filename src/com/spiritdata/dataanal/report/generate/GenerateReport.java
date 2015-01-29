@@ -5,8 +5,8 @@ import java.util.Map;
 import com.spiritdata.dataanal.report.model.TaskReport;
 
 /**
- * 生成templet的接口，所有生成templet的内容都需要以此类为基础。<br/>
- * 包括生成templet和其对应的任务tasks。
+ * 生成report的接口，所有生成report的内容都需要以此类为基础。<br/>
+ * 包括生成report和其对应的任务tasks。
  * @author wh
  */
 public interface GenerateReport {
