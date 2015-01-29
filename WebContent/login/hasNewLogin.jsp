@@ -14,7 +14,7 @@
 </head>
 <body>
 <script>
-$(function(){
+$(function(){alert(111);
   var topWin = getTopWin();
   var url=window.location.href;
   var ip = getUrlParam(url, "clientIp");

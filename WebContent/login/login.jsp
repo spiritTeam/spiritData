@@ -214,7 +214,7 @@ function setInputCss(){
     if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"32px", "padding-top":"0px"});
     if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px","width":"92px"});
     if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
-    if($('#loginButton')!=null )$('#loginButton').css({"width":"251px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-36px"});
+    if($('#loginButton')!=null )$('#loginButton').css({"width":"251px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-35px"});
   }else {
     $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
     //var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
