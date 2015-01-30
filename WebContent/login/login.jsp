@@ -73,7 +73,6 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <div style="float:left;">
             <input id="loginName" name="loginName" tabindex="1" type="text"  value="账号/QQ/手机号" onmouseover=this.focus();this.select();
               onclick="changeLoginNameCss(loginName);" onBlur="validateLoginName('loginName');"/></div>
-          <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vLN'></div>
         </td>
       </tr>
       <tr style="height:50px;valign:top;">
@@ -82,7 +81,6 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <div style="float:left;">
             <input id="password" name="password" tabindex="2" type="password" onmouseover="pwdMouseOver();"
              onclick="changePasswordCss(password);" onBlur="validatePassword('password');"/></div>
-          <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPW'></div>
           <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:12spx;margin-left:-219px;" align="center">
             <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span></div>
         </td>
@@ -91,7 +89,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
         <td align="right" style="padding-top: 22px;"><span class="loginspan">验证码</span></td>
         <td colspan="2" style="padding-top: 22px;">
           <div id="ccBorder" style="float:left;border:1px solid #ABADB3;margin-left:3px;">
-            <input id="checkCode" style="float:left;border:0px;width:90px;margin-left:-1px;border-left:1px solid #ABADB3;" type="text" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
+            <input id="checkCode" style="float:left;border:0px;margin-left:-1px;border-left:1px solid #ABADB3;" type="text" name="checkCode" tabindex="3" value="验证码" onmouseover=this.focus();this.select();
             onclick="changeCheckCodeCss(checkCode);" onBlur="validateValidateCode('checkCode');"/>
             <div style="float:left;width:20px;height:25px;padding-top:8px;padding-left:2px;margin-left:-2px;border-top:none" align="center" id='vVC'></div>
           </div>
@@ -116,8 +114,6 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     <a onclick="toRegister()" href="#">注册</a>&nbsp;|&nbsp;
     <a onclick="activeUserAgain()" href="#">激活</a>&nbsp;|&nbsp;
     <a onclick="modifyPassword()" href="#">忘记密码?</a>
-    <a onclick="test1()" href="#">显示提示</a>
-    <a onclick="test2()" href="#">清除提示</a>
   </div>
   </div>
 </center>
@@ -206,23 +202,24 @@ function setInputCss(){
   if(v=='msie'){
     if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
     if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-    if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
-    if($('#loginButton')!=null )$('#loginButton').css({"width":"249px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-36px"});
+    if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px","width":"120px"});
+    if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-230px"});
+    if($('#loginButton')!=null )$('#loginButton').css({"width":"278px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-6px"});
   }else if(v=='chrome'){
     if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"32px", "padding-top":"0px"});
     if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"32px", "padding-top":"0px"});
-    if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px","width":"92px"});
-    if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-217px"});
-    if($('#loginButton')!=null )$('#loginButton').css({"width":"251px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-35px"});
+    if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px","width":"122px"});
+    if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-230px"});
+    if($('#loginButton')!=null )$('#loginButton').css({"width":"280px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-3px"});
   }else {
     $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
     //var ieVersion = browserType.substring(browserType.lastIndexOf(' '),browserType.length);
     //if(ieVersion==11.0){
       if($('#loginName')!=null )$('#loginName').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
       if($('#password')!=null )$('#password').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-      if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px"});
-      if($('#loginButton')!=null )$('#loginButton').css({"width":"248px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-36px"});
+      if($('#checkCode')!=null )$('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px","width":"120px"});
+      if($('#loginButton')!=null )$('#loginButton').css({"width":"278px","height":"28px","padding-top":"10px","padding-left":"0px","margin-left":"-6px"});
+      if($('#pwDiv')!=null )$('#pwDiv').css({"padding-top":"10px","margin-left":"-230px"});
     //}
   }
 }
@@ -391,17 +388,6 @@ function loginF(){
       }
     });
   }
-}
-
-function test1() {
-  var winId = getWinId(getMainPage());
-  var win = getSWinInMain(winId);
-  win.setMessage({color:"gray", msg:"sdfadsfadfa生生世世三sdfadsfadfa生生世世三sdfadsfadfa生生世世三sdfadsfadfa生生世世三"});
-}
-function test2() {
-  var winId = getWinId(getMainPage());
-  var win = getSWinInMain(winId);
-  win.setMessage({msg:""});
 }
 </script>
 </html>
