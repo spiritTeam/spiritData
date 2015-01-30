@@ -16,8 +16,8 @@ public class TaskGroupPo extends BaseObject {
     private String reportId; //所对应的报告Id,可为空,可以不对应任何报告
     private int ownerType; //任务组所对应的所有者类型（1=注册用户;2=非注册用户(session);3=系统生成）
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID，也可能是'Sys'）
-    private int status; //任务组状态
     private String workName; //任务组工作名称
+    private int status; //任务组状态
     private String desc; //任务组说明
     private Timestamp beginTime; //记录创建时间
 
@@ -45,17 +45,17 @@ public class TaskGroupPo extends BaseObject {
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
-    public int getStatus() {
-        return status;
-    }
-    public void setStatus(int status) {
-        this.status = status;
-    }
     public String getWorkName() {
         return workName;
     }
     public void setWorkName(String workName) {
         this.workName = workName;
+    }
+    public int getStatus() {
+        return status;
+    }
+    public void setStatus(int status) {
+        this.status = status;
     }
     public String getDesc() {
         return desc;

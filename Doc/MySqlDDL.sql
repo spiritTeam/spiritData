@@ -1,4 +1,4 @@
-/**001 PLAT_USER（用户）*/
+﻿/**001 PLAT_USER（用户）*/
 DROP TABLE IF EXISTS plat_user;
 CREATE TABLE plat_user (
   id                varchar(32)      NOT NULL                COMMENT 'uuid（用户id）',
@@ -255,7 +255,7 @@ CREATE TABLE sa_task_group (
   id          varchar(32)      NOT NULL  COMMENT '任务组表ID(UUID)',
   ownerType   int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
   ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
-  workName    varchar(100)     NOT NULL  COMMENT '任务组名称',
+  workName    varchar(100)               COMMENT '任务组名称',
   reportId    varchar(32)                COMMENT '对应报告信息Id(UUID)',
   status      int(1) unsigned  NOT NULL  COMMENT '任务组状态1=准备执行；2=正在执行；3=执行成功；4=执行失败5=任务失效；',
   descn       varchar(500)               COMMENT '任务组说明',

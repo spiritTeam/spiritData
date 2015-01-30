@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  任务信息
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="taskInfo">
+  <!-- 对象定义:任务信息 -->
+  <resultMap id="BaseResultMap" type="TaskInfo">
+    <id     column="id"           property="id"         jdbcType="VARCHAR"/>
+    <result column="taskGId"      property="taskGId"    jdbcType="VARCHAR"/>
+    <result column="taskName"     property="taskName"   jdbcType="VARCHAR"/>
+    <result column="resultFileId" property="rfId"       jdbcType="VARCHAR"/>
+    <result column="langType"     property="langType"   jdbcType="VARCHAR"/>
+    <result column="excuteFunc"   property="excuteFunc" jdbcType="VARCHAR"/>
+    <result column="param"        property="param"      jdbcType="VARCHAR"/>
+    <result column="status"       property="status"     jdbcType="INTEGER"/>
+    <result column="descn"        property="desc"       jdbcType="VARCHAR"/>
+    <result column="firstTime"    property="firstTime"  jdbcType="TIMESTAMP"/>
+    <result column="beginTime"    property="beginTime"  jdbcType="TIMESTAMP"/>
+    <result column="endTime"      property="endTime"    jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 所有列 -->
+  <sql id="Base_Column_List">
+    id, taskGId, taskName, resultFileId, langType, excuteFunc, param, status, descn, firstTime, beginTime, endTime
+  </sql>
+
+  <!-- 条件子句 -->
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
+        <if test="taskGId!=null"> and taskGId=#{taskGId,jdbcType=VARCHAR}</if>
+        <if test="taskName!=null"> and taskName=#{taskName,jdbcType=VARCHAR}</if>
+        <if test="rfId!=null"> and resultFileId=#{rfId,jdbcType=VARCHAR}</if>
+        <if test="langType!=null"> and langType=#{langType,jdbcType=VARCHAR}</if>
+        <if test="excuteFunc!=null"> and excuteFunc=#{excuteFunc,jdbcType=VARCHAR}</if>
+        <if test="param!=null"> and param=#{param,jdbcType=VARCHAR}</if>
+        <if test="status!=null and status!=0"> and status=#{status,jdbcType=INTEGER}</if>
+        <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR}</if>
+        <if test="firstTime!=null"> and firstTime=#{firstTime,jdbcType=TIMESTAMP}</if>
+        <if test="beginTime!=null"> and beginTime=#{beginTime,jdbcType=TIMESTAMP}</if>
+        <if test="endTime!=null"> and endTime=#{endTime,jdbcType=TIMESTAMP}</if>
+      </trim>
+    </where>
+  </sql>
+
+  <!-- 获得记录条数-->
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from sa_report_info <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </select>
+
+  <!-- 获得列表 -->
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_report_info
+    <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="orderByClause!=null">order by ${orderByClause}</if>
+  </select>
+
+  <!-- 获得一条数据 -->
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_report_info <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </select>
+  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/> from sa_report_info where id=#{id,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 新增数据 -->
+  <insert id="insert" parameterType="java.util.Map">
+    insert into sa_report_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id!=null">id,</if>
+      <if test="taskGId!=null">taskGId,</if>
+      <if test="taskName!=null">taskName,</if>
+      <if test="rfId!=null">resultFileId,</if>
+      <if test="langType!=null">langType</if>
+      <if test="excuteFunc!=null">excuteFunc,</if>
+      <if test="param!=null">param,</if>
+      <if test="status!=null and status!=0">status,</if>
+      <if test="desc!=null">descn,</if>
+      <if test="firstTime!=null">firstTime,</if>
+      <if test="beginTime!=null">beginTime,</if>
+      <if test="endTime!=null">endTime,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
+      <if test="taskGId!=null">#{taskGId,jdbcType=VARCHAR},</if>
+      <if test="taskName!=null">#{taskName,jdbcType=VARCHAR},</if>
+      <if test="rfId!=null">#{rfId,jdbcType=VARCHAR},</if>
+      <if test="langType!=null">#{langType,jdbcType=VARCHAR},</if>
+      <if test="excuteFunc!=null">#{excuteFunc,jdbcType=VARCHAR},</if>
+      <if test="param!=null">#{param,jdbcType=VARCHAR},</if>
+      <if test="status!=null and status!=0">#{status,jdbcType=INTEGER},</if>
+      <if test="desc!=null">#{desc,jdbcType=VARCHAR},</if>
+      <if test="firstTime!=null">#{firstTime,jdbcType=TIMESTAMP},</if>
+      <if test="beginTime!=null">#{beginTime,jdbcType=TIMESTAMP},</if>
+      <if test="endTime!=null">#{endTime,jdbcType=TIMESTAMP},</if>
+    </trim>
+  </insert>
+
+  <!-- 修改 根据主键-->
+  <update id="update" parameterType="java.util.Map">
+    update sa_report_info
+    <set>
+      <if test="taskGId!=null">taskGId=#{taskGId,jdbcType=VARCHAR},</if>
+      <if test="taskName!=null">taskName=#{taskName,jdbcType=VARCHAR},</if>
+      <if test="rfId!=null">resultFileId=#{rfId,jdbcType=VARCHAR},</if>
+      <if test="langType!=null">langType=#{langType,jdbcType=VARCHAR},</if>
+      <if test="excuteFunc!=null">excuteFunc=#{excuteFunc,jdbcType=VARCHAR},</if>
+      <if test="param!=null">param=#{param,jdbcType=VARCHAR},</if>
+      <if test="status!=null and status!=0">status=#{status,jdbcType=INTEGER},</if>
+      <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR},</if>
+      <if test="firstTime!=null">firstTime=#{firstTime,jdbcType=TIMESTAMP},</if>
+      <if test="beginTime!=null">beginTime=#{beginTime,jdbcType=TIMESTAMP},</if>
+      <if test="endTime!=null">endTime=#{endTime,jdbcType=TIMESTAMP},</if>
+    </set>
+    where id=#{id,jdbcType=VARCHAR}
+  </update>
+
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.String">
+    delete from sa_report_info where id=#{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByEntity" parameterType="java.util.Map">
+    delete from sa_report_info <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </delete>
+</mapper>

@@ -7,7 +7,7 @@ import com.spiritdata.framework.core.model.BaseObject;
  * 对应持久化中数据库的表为SA_TASK_REF
  * @author wh
  */
-public class TaskRefPo extends BaseObject {
+public class TaskRelPo extends BaseObject {
     private static final long serialVersionUID = -8722868318345923626L;
 
     private String id; //任务关系id

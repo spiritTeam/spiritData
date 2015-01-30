@@ -3,9 +3,9 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="taskGroup" type="com.spiritdata.dataanal.task.persistence.pojo.TaskGroupPo"/>
-    <typeAlias alias="taskInfo" type="com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo"/>
-    <typeAlias alias="taskRel" type="com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo"/>
+    <typeAlias alias="TaskGroup" type="com.spiritdata.dataanal.task.persistence.pojo.TaskGroupPo"/>
+    <typeAlias alias="TaskInfo" type="com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo"/>
+    <typeAlias alias="TaskRel" type="com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo"/>
   </typeAliases>
   <mappers>
     <mapper resource="com/spiritdata/dataanal/task/persistence/sql/TaskGroup.mapper.xml"/>

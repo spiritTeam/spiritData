@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  任务关系表
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="taskRel">
+  <!-- 对象定义:任务关系 -->
+  <resultMap id="BaseResultMap" type="TaskRel">
+    <id     column="id"          property="id"          jdbcType="VARCHAR"/>
+    <result column="taskId"      property="taskId"      jdbcType="VARCHAR"/>
+    <result column="preTaskId"   property="preTaskId"   jdbcType="VARCHAR"/>
+    <result column="usedPreData" property="usedPreData" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <!-- 所有列 -->
+  <sql id="Base_Column_List">
+    id, taskId, preTaskId, usedPreData
+  </sql>
+
+  <!-- 条件子句 -->
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
+        <if test="taskId!=null"> and taskId=#{taskId,jdbcType=VARCHAR}</if>
+        <if test="preTaskId!=null"> and preTaskId=#{preTaskId,jdbcType=VARCHAR}</if>
+        <if test="usedPreData!=null and usedPreData!=0"> and usedPreData=#{usedPreData,jdbcType=INTEGER}</if>
+      </trim>
+    </where>
+  </sql>
+
+  <!-- 获得记录条数-->
+  <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from sa_task_rel <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </select>
+
+  <!-- 获得列表 -->
+  <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_task_rel
+    <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="orderByClause!=null">order by ${orderByClause}</if>
+  </select>
+
+  <!-- 获得一条数据 -->
+  <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> from sa_task_rel <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </select>
+  <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/> from sa_task_rel where id=#{id,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 新增数据 -->
+  <insert id="insert" parameterType="java.util.Map">
+    insert into sa_task_rel
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+     <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
+      <if test="taskId!=null">taskId=#{taskId,jdbcType=VARCHAR},</if>
+      <if test="preTaskId!=null">preTaskId=#{preTaskId,jdbcType=VARCHAR},</if>
+      <if test="usedPreData!=null and usedPreData!=0">usedPreData=#{usedPreData,jdbcType=INTEGER},</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
+      <if test="taskId!=null">#{taskId,jdbcType=VARCHAR},</if>
+      <if test="preTaskId!=null">#{preTaskId,jdbcType=VARCHAR},</if>
+      <if test="usedPreData!=null and usedPreData!=0">#{usedPreData,jdbcType=INTEGER},</if>
+    </trim>
+  </insert>
+
+  <!-- 修改 根据主键-->
+  <update id="update" parameterType="java.util.Map">
+    update sa_task_rel
+    <set>
+      <if test="taskId!=null">taskId=#{taskId,jdbcType=VARCHAR},</if>
+      <if test="preTaskId!=null">preTaskId=#{preTaskId,jdbcType=VARCHAR},</if>
+      <if test="usedPreData!=null and usedPreData!=0">usedPreData=#{usedPreData,jdbcType=INTEGER},</if>
+    </set>
+    where id=#{id,jdbcType=VARCHAR}
+  </update>
+
+  <!-- 删除数据 -->
+  <delete id="delete" parameterType="java.lang.String">
+    delete from sa_task_rel where id=#{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByEntity" parameterType="java.util.Map">
+    delete from sa_task_rel <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </delete>
+</mapper>

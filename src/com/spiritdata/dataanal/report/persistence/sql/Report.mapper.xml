@@ -5,8 +5,8 @@
 -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="report">
-  <!-- 对象定义:元数据模式 -->
-  <resultMap id="BaseResultMap" type="report">
+  <!-- 对象定义:报告信息 -->
+  <resultMap id="BaseResultMap" type="Report">
     <id     column="id"         property="id"         jdbcType="VARCHAR"/>
     <result column="ownerType"  property="ownerType"  jdbcType="INTEGER"/>
     <result column="ownerId"    property="ownerId"    jdbcType="VARCHAR"/>
