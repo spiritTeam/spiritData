@@ -13,7 +13,7 @@ public class TaskInfoPo extends BaseObject {
     private static final long serialVersionUID = -1573157497712228072L;
 
     private String id; //任务id
-    private String taskGId; //任务id
+    private String taskGId; //任务组id
     private String rfId; //结果jsonD文件Id
     private String langType; //执行语言，默认为java
     private String excuteFunc; //任务执行方法

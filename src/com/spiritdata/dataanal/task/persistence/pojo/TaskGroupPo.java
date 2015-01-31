@@ -19,7 +19,7 @@ public class TaskGroupPo extends BaseObject {
     private String workName; //任务组工作名称
     private int status; //任务组状态
     private String desc; //任务组说明
-    private Timestamp beginTime; //记录创建时间
+    private Timestamp beginTime; //任务组启动时间
 
     public String getId() {
         return id;
