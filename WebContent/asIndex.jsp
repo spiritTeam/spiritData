@@ -590,7 +590,7 @@ function logout() {
   });
 };
 var wHeight = "430";
-var wWidth = "300";
+var wWidth = "330";
 /**
  * 注册
  */
