@@ -6,7 +6,9 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
+import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.TaskReport;
+import com.spiritdata.dataanal.task.model.TaskGroup;
 
 /**
  * 在上传一个Excel文件后，生成Report。<br/>
@@ -35,6 +37,13 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
     @Override
     public TaskReport preTreat(Map<String, Object> param) {
         TaskReport tr = new TaskReport();
-        return null;
+        Report report = new Report();
+        TaskGroup tg = new TaskGroup();
+
+        //报告头生成
+
+        tr.setReport(report);
+        tr.setTaskGroup(tg);
+        return tr;
     }
 }

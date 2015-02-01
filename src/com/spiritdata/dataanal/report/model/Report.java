@@ -16,7 +16,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * 包括：_HEAD,_DATA,_REPORT
  * @author wh
  */
-public class Reprot implements Serializable, ConvertJson {
+public class Report implements Serializable, ConvertJson {
     private static final long serialVersionUID = 518670183146944686L;
  
     private String id; //报告id，应和报告头中的id相一致

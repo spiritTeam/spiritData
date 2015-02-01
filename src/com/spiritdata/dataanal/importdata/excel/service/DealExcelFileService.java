@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -49,6 +47,10 @@ import com.spiritdata.dataanal.metadata.relation.service.MdKeyService;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.metadata.relation.service.MdSessionService;
 import com.spiritdata.dataanal.metadata.relation.service.TableMapService;
+
+//import java.util.Enumeration;
+//import org.apache.log4j.FileAppender;
+
 
 /**
  * 处理excel文件。
@@ -91,6 +93,7 @@ public class DealExcelFileService {
      * @param session 用户Session
      */
     public void process(FileInfo fi, HttpSession session) {
+        /*
         Enumeration ea = logger.getAllAppenders();
         Logger l = logger.getRootLogger();
         ea = l.getAllAppenders();
@@ -104,12 +107,12 @@ public class DealExcelFileService {
         ea = logger.getAllAppenders();
         myLogAppender.activateOptions();
         logger.info("abcd");
+        */
 
         File excelFile = new File(fi.getAllFileName());
         Workbook book = null;
         int excelType = 0;
         FileInputStream fis = null;
-
         try {
             //获得处理excel的workbook
             try {
@@ -139,14 +142,14 @@ public class DealExcelFileService {
             //1-分析文件，得到元数据信息，并把分析结果存入si
             List<PoiParseUtils> excelParseList = new ArrayList<PoiParseUtils>();
 
-            Map<SheetInfo, Object> sheetLogMap = new HashMap<SheetInfo, Object>();
+//            Map<SheetInfo, Object> sheetLogMap = new HashMap<SheetInfo, Object>();
             for (; i<book.getNumberOfSheets(); i++) {
                 try {//处理每个Sheet，并保证某个Sheet处理失败后，继续处理后续Sheet
                     Sheet sheet = book.getSheetAt(i);
                     si = initSheetInfo(sheet, excelType, i);
                     si.setFileName(fi.getAllFileName());
                     parseExcel = new PoiParseUtils(si);
-                    List<String> logl = parseExcel.analSheetMetadata();
+//                    List<String> logl = parseExcel.analSheetMetadata();
                     excelParseList.add(parseExcel);
                 } catch(Exception e) {
                     
@@ -291,14 +294,15 @@ public class DealExcelFileService {
                             //7.1.3-字典分析结果调整
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                             mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
-                            //生成report
+
+                            //8-生成report，这个也可以不在这里处理
                             Map<String, Object> param = new HashMap<String, Object>();
                             Map<String, Object> preTreadParam = new HashMap<String, Object>();
                             preTreadParam.put("tabMap", tabMapOrgAry); //对照关系，这里有积累表、临时表信息，并能够判断是否是新的元数据
                             preTreadParam.put("mdInfo", sysMd); //元数据信息
                             preTreadParam.put("sheetTableInfo", sti); //对应的页签Tab信息
                             param.put("preTreadParam", preTreadParam);
-                            //buildReport.buildANDprocess(param);
+                            buildReport.buildANDprocess(param);
                         } catch(Exception e) {
                             // TODO 记录日志 
                             e.printStackTrace();
@@ -367,7 +371,7 @@ public class DealExcelFileService {
 
         Map<String, Object> titleCol = null;
         //日志信息准备
-        int _log_readAllCount/*读取总行数*/, _log_insertOkCount=0/*新增成功行数*/, _log_insertFailCount=0/*新增失败行数*/, _log_ignoreCount=0/*忽略行数*/;
+//        int _log_readAllCount/*读取总行数*/, _log_insertOkCount=0/*新增成功行数*/, _log_insertFailCount=0/*新增失败行数*/, _log_ignoreCount=0/*忽略行数*/;
         Map<Integer, String> _log_failMap = new HashMap<Integer, String>();//新增失败的行及其原因
         Map<Integer, String> _log_ignoreMap = new HashMap<Integer, String>();//忽略行及其原因
 
@@ -379,12 +383,12 @@ public class DealExcelFileService {
             ps = conn.prepareStatement(insertSql);
             
             List<Map<String, Object>> rowData = null;
-            _log_readAllCount = sti.getEndY()-sti.getBeginY()+1;
+//            _log_readAllCount = sti.getEndY()-sti.getBeginY()+1;
             for (int i=sti.getBeginY(); i<=sti.getEndY(); i++) {
                 rowData = parse.readOneRow(i);
                 rowData = parse.convert2DataRow(rowData);
                 if (parse.isEmptyRow(rowData)) {
-                    _log_ignoreCount++;
+  //                  _log_ignoreCount++;
                     _log_ignoreMap.put(i, "第"+i+"行为空行。");
                     continue;
                 }
@@ -430,7 +434,7 @@ public class DealExcelFileService {
                     }
                 }
                 if (!canInsert) {
-                    _log_ignoreCount++;
+//                    _log_ignoreCount++;
                     _log_ignoreMap.put(i, "第"+i+"行数据与元数据不匹配，行数据为<<>>，元数据为<<>>。");
                     continue;
                 }
@@ -440,13 +444,13 @@ public class DealExcelFileService {
                     }
                     int insertOk = ps.executeUpdate();
                     if (insertOk>0) {
-                        _log_insertOkCount += insertOk;
+  //                      _log_insertOkCount += insertOk;
                     } else {
-                        _log_insertFailCount++;
+    //                    _log_insertFailCount++;
                         _log_failMap.put(i,  "第"+i+"行数据新增失败，原因未知！");
                     }
                 } catch(SQLException sqlE) {
-                    _log_insertFailCount++;
+      //              _log_insertFailCount++;
                     _log_failMap.put(i,  "第"+i+"行数据新增失败，原因为："+sqlE.getMessage());
                 }
             }

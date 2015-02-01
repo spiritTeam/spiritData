@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1003CException;
 import com.spiritdata.dataanal.report.model.TaskReport;
-import com.spiritdata.dataanal.report.model.Reprot;
+import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.filemanage.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.core.model.FileInfo;
@@ -57,7 +57,7 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         //1-执行预处理，得到报告及任务
         TaskReport tr = preTreat((Map<String, Object>)param.get("preTreadParam"));
         //2-处理报告，并存储文件及数据库
-        Reprot report = tr.getReport();
+        Report report = tr.getReport();
 
         //文件处理
         //1-设置文件名称

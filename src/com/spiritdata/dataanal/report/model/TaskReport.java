@@ -19,13 +19,13 @@ import com.spiritdata.framework.util.SequenceUUID;
 public class TaskReport implements Serializable {
     private static final long serialVersionUID = 5088715498847593517L;
 
-    private Reprot report; //任务报告中的报告信息
+    private Report report; //任务报告中的报告信息
     private TaskGroup taskGroup;//任务报告中的任务信息
 
-    public Reprot getReport() {
+    public Report getReport() {
         return report;
     }
-    public void setReport(Reprot report) {
+    public void setReport(Report report) {
         this.report = report;
     }
     public TaskGroup getTaskGroup() {
