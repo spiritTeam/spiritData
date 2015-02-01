@@ -36,7 +36,6 @@ public class AnalResultFile implements Serializable, BeManageFile {
 
     private String analType; //分析类型-METADATA:元数据结构分析，又可分为key/dict/sement，今后根据情况再扩充，用于确定保存的目录
     private String subType; //下级分类又可分为key/dict/sement，今后根据情况再扩充，用于确定保存的目录
-    private String describe; //分析描述，包括分类等信息，是一个json复合数据
 
     private String objId; //所分析的对象Id，MetadataModelId
     private String objType; //分析对象类型
@@ -66,12 +65,6 @@ public class AnalResultFile implements Serializable, BeManageFile {
     }
     public void setSubType(String subType) {
         this.subType = subType;
-    }
-    public String getDescribe() {
-        return describe;
-    }
-    public void setDescribe(String describe) {
-        this.describe = describe;
     }
     public String getJsonDCode() {
         return jsonDCode;

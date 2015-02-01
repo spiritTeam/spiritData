@@ -14,7 +14,6 @@ import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.filemanage.REPORT.model.ReportFile;
-import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
