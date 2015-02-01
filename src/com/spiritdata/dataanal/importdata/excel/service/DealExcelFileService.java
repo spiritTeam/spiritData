@@ -81,7 +81,7 @@ public class DealExcelFileService {
     @Resource
     private DictSessionService dictSessionService;
     @Resource
-    private AnalDict dictKey;//只分析,并计入文件
+    private AnalDict analDict;//只分析,并计入文件
     @Resource
     private MdDictService mdDictService;//只分析,并计入文件
     @Resource
@@ -149,7 +149,7 @@ public class DealExcelFileService {
                     si = initSheetInfo(sheet, excelType, i);
                     si.setFileName(fi.getAllFileName());
                     parseExcel = new PoiParseUtils(si);
-//                    List<String> logl = parseExcel.analSheetMetadata();
+                    List<String> logl = parseExcel.analSheetMetadata();
                     excelParseList.add(parseExcel);
                 } catch(Exception e) {
                     
@@ -276,7 +276,7 @@ public class DealExcelFileService {
                             // TODO 分析元数据语义，目前想到——字典项/身份证/经纬度/URL分析/mail地址分析/姓名分析；另外（列之间关系，如数值的比例等）
                             //7.1-分析字典
                             //7.1.1-积累表字典分析
-                            keyMap = dictKey.scanMetadata(sysMd, null);
+                            keyMap = analDict.scanMetadata(sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
                                 FileInfo arFi = fmService.saveFile(arf);//分析jsonD存储

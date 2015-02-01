@@ -5,11 +5,10 @@
 /WebContent/analData
 /WebContent/tempUpload
 /WebContent/uploadFiles
+/WebContent/test
 /pom.xml
 
 /.classpath
 /.project
 /target
-/test
-/build
 
