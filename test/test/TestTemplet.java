@@ -3,19 +3,19 @@ package test;
 import com.spiritdata.dataanal.report.model.D_Tag;
 import com.spiritdata.dataanal.report.model.DtagShowType;
 import com.spiritdata.dataanal.report.model.OneJsond;
-import com.spiritdata.dataanal.report.model.Reprot;
+import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 
 public class TestTemplet {
 
     public static void main(String[] args) {
-        Reprot t = new Reprot();
+        Report t = new Report();
         ReportHead th = new ReportHead();
         th.setId("abc");
         th.setCode("T.TEST::0002");
         th.setReportName("test");
         t.set_HEAD(th);
-        t.set_TEMPLET("");
+        t.set_REPORT("");
         OneJsond oj = new OneJsond();
         oj.setJsondId("001");
         oj.setFilePath("001FilePath");
