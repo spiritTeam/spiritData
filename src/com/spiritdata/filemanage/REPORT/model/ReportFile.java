@@ -15,6 +15,8 @@ import com.spiritdata.framework.util.FileUtils;
 
 /**
  * 报告文件对象
+ * 注意：<br/>
+ * 1-这些有实际意义的文件都要在文件分类表中有对应
  * @author wh
  */
 public class ReportFile implements Serializable, BeManageFile {
@@ -24,7 +26,7 @@ public class ReportFile implements Serializable, BeManageFile {
     private int ownerType; //报告文件所对应的所有者类型（1=注册用户;2=非注册用户(session)）
     private String ownerId; //报告文件所有者标识（可能是用户id，也可能是SessionID）
     private String fileName; //报告文件文件全名(包括目录和文件名)
-    private String reportType; //报告的分类
+    private String reportId; //报告所对应的Id，记录在表中
     private String tasksId; //任务组的Id，此Id也是taskd的id???还要设计，存储在sa_file_category.type3中
 
     public String getId() {
@@ -51,11 +53,11 @@ public class ReportFile implements Serializable, BeManageFile {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-    public String getReportType() {
-        return reportType;
+    public String getReportId() {
+        return reportId;
     }
-    public void setReportType(String reportType) {
-        this.reportType = reportType;
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
     }
     public String getTasksId() {
         return tasksId;
@@ -80,12 +82,12 @@ public class ReportFile implements Serializable, BeManageFile {
         ret.setOwnerType(this.getOwnerType());
         ret.setAccessType(1);
         ret.setDesc("分析报告文件:"+FileNameUtils.getFileName(this.fileName)+"；生成报告时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f)))
-                +"；报告类型："+this.reportType+"，对应的任务组ID："+this.tasksId);
+                +"；报告文件Id："+this.reportId+"，对应的任务组ID："+this.tasksId);
 
         //分类信息
         FileCategory fc = new FileCategory();
         fc.setFType1(FileCategoryType1.REPORT);
-        fc.setFType2(this.reportType);
+        fc.setFType2(this.reportId);
         fc.setFType3(this.tasksId);
 
         return ret;

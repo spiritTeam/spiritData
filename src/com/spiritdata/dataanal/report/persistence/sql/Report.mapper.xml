@@ -8,10 +8,11 @@
   <!-- 对象定义:报告信息 -->
   <resultMap id="BaseResultMap" type="Report">
     <id     column="id"         property="id"         jdbcType="VARCHAR"/>
-    <result column="ownerType"  property="ownerType"  jdbcType="INTEGER"/>
-    <result column="ownerId"    property="ownerId"    jdbcType="VARCHAR"/>
     <result column="taskGId"    property="taskGId"    jdbcType="VARCHAR"/>
     <result column="fId"        property="FId"        jdbcType="VARCHAR"/>
+    <result column="ownerType"  property="ownerType"  jdbcType="INTEGER"/>
+    <result column="ownerId"    property="ownerId"    jdbcType="VARCHAR"/>
+    <result column="reportType" property="reportType" jdbcType="VARCHAR"/>
     <result column="reportName" property="reportName" jdbcType="VARCHAR"/>
     <result column="descn"      property="desc"       jdbcType="VARCHAR"/>
     <result column="cTime"      property="CTime"      jdbcType="TIMESTAMP"/>
@@ -19,7 +20,7 @@
 
   <!-- 所有列 -->
   <sql id="Base_Column_List">
-    id, ownerType, ownerId, taskGId, fId, reportName, descn, cTime
+    id, taskGId, fId, ownerType, ownerId, reportType, reportName, descn, cTime
   </sql>
 
   <!-- 条件子句 -->
@@ -27,10 +28,11 @@
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
         <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
-        <if test="ownerType!=null and ownerType!=0"> and ownerType=#{ownerType,jdbcType=INTEGER}</if>
-        <if test="ownerId!=null"> and ownerId=#{ownerId,jdbcType=VARCHAR}</if>
         <if test="taskGId!=null"> and taskGId=#{taskGId,jdbcType=VARCHAR}</if>
         <if test="FId!=null"> and fId=#{FId,jdbcType=VARCHAR}</if>
+        <if test="ownerType!=null and ownerType!=0"> and ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="ownerId!=null"> and ownerId=#{ownerId,jdbcType=VARCHAR}</if>
+        <if test="reportType!=null"> and reportType=#{reportType,jdbcType=VARCHAR}</if>
         <if test="reportName!=null"> and reportName=#{reportName,jdbcType=VARCHAR}</if>
         <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR}</if>
         <if test="fcTime!=null"> and fcTime=#{fcTime,jdbcType=TIMESTAMP}</if>
@@ -63,20 +65,22 @@
     insert into sa_report_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id!=null">id,</if>
-      <if test="ownerType!=null and ownerType!=0">ownerType,</if>
-      <if test="ownerId!=null">ownerId,</if>
       <if test="taskGId!=null">taskGId,</if>
       <if test="FId!=null">fId,</if>
+      <if test="ownerType!=null and ownerType!=0">ownerType,</if>
+      <if test="ownerId!=null">ownerId,</if>
+      <if test="reportType!=null">reportType,</if>
       <if test="reportName!=null">reportName,</if>
       <if test="desc!=null">descn,</if>
       <if test="fcTime!=null">fcTime,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
-      <if test="ownerType!=null and ownerType!=0">#{ownerType,jdbcType=INTEGER},</if>
-      <if test="ownerId!=null">#{ownerId,jdbcType=VARCHAR},</if>
       <if test="taskGId!=null">#{taskGId,jdbcType=VARCHAR},</if>
       <if test="FId!=null">fId=#{FId,jdbcType=VARCHAR},</if>
+      <if test="ownerType!=null and ownerType!=0">#{ownerType,jdbcType=INTEGER},</if>
+      <if test="ownerId!=null">#{ownerId,jdbcType=VARCHAR},</if>
+      <if test="reportType!=null">#{reportType,jdbcType=VARCHAR},</if>
       <if test="reportName!=null">#{reportName,jdbcType=VARCHAR},</if>
       <if test="desc!=null">#{desc,jdbcType=VARCHAR},</if>
       <if test="fcTime!=null">#{fcTime,jdbcType=TIMESTAMP},</if>
@@ -87,10 +91,11 @@
   <update id="update" parameterType="java.util.Map">
     update sa_report_info
     <set>
-      <if test="ownerType!=null and ownerType!=0">ownerType=#{ownerType,jdbcType=INTEGER},</if>
-      <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR},</if>
       <if test="taskGId!=null">taskGId=#{taskGId,jdbcType=VARCHAR},</if>
       <if test="FId!=null">fId=#{FId,jdbcType=VARCHAR},</if>
+      <if test="ownerType!=null and ownerType!=0">ownerType=#{ownerType,jdbcType=INTEGER},</if>
+      <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR},</if>
+      <if test="reportType!=null">reportType=#{reportType,jdbcType=VARCHAR},</if>
       <if test="reportName!=null">reportName=#{reportName,jdbcType=VARCHAR},</if>
       <if test="desc!=null">descn=#{desc,jdbcType=VARCHAR},</if>
       <if test="fcTime!=null">fcTime=#{fcTime,jdbcType=TIMESTAMP},</if>

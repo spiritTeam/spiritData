@@ -17,6 +17,7 @@ public class ReportPo extends BaseObject {
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID，也可能是'Sys'）
     private String taskGId; //报告对应的任务组Id
     private String FId; //对应文件id，文件信息，报告对应的文件report.json
+    private String reportType; //报告分类
     private String reportName; //报告id
     private String desc; //报告说明
     private Timestamp CTime; //记录创建时间
@@ -50,6 +51,12 @@ public class ReportPo extends BaseObject {
     }
     public void setFId(String fId) {
         FId = fId;
+    }
+    public String getReportType() {
+        return reportType;
+    }
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
     }
     public String getReportName() {
         return reportName;

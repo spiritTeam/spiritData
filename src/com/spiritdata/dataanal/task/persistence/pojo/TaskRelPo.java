@@ -13,7 +13,7 @@ public class TaskRelPo extends BaseObject {
     private String id; //任务关系id
     private String taskId; //任务id
     private String preTaskId; //前置任务id
-    private int usedPreData; //是否使用前置任务生成的数据
+    private int usedPreData; //是否使用前置任务生成的数据，1=使用；2=不使用
 
     public String getId() {
         return id;

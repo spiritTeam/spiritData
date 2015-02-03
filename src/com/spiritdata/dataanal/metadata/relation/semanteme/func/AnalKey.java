@@ -1,9 +1,6 @@
 package com.spiritdata.dataanal.metadata.relation.semanteme.func;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,21 +16,22 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
-import com.spiritdata.framework.FConstants;
-import com.spiritdata.framework.util.SequenceUUID;
-import com.spiritdata.framework.core.cache.SystemCache;
-import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
 import com.spiritdata.dataanal.SDConstants;
-import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
+import com.spiritdata.framework.util.SequenceUUID;
+
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable;
 import com.spiritdata.dataanal.metadata.relation.semanteme.AnalTable;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.util.Arithmetic;
+
+import com.spiritdata.jsonD.model.JsonD;
 import com.spiritdata.jsonD.model.JsondAtomData;
 import com.spiritdata.jsonD.model.JsondHead;
-import com.spiritdata.jsonD.util.JsonUtils;
+
+import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 
 /**
  * 主键分析器
@@ -46,6 +44,8 @@ public class AnalKey implements AnalTable {
     private BasicDataSource dataSource;
     @Resource
     private MdQuotaService mdQuotaService;
+    @Resource
+    private AanlResultFileService arfService;
 
     /**
      * 分析某一个表主键。
@@ -172,56 +172,36 @@ public class AnalKey implements AnalTable {
             }
         }
 
-        //写jsonD文件，此方法目前为测试方法，今后把他变为一个更好用的包
-        JsondHead jsonDHead = new JsondHead();
-        jsonDHead.setId(SequenceUUID.getPureUUID());
-        jsonDHead.setCode(jsonDCode);
-        jsonDHead.setCTime(new Date());
-        jsonDHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键");
-        //文件名
-        String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-        //文件格式：analData\{用户名}\MM_{模式Id}\keyAnal\tab_{TABId}.json
-        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+"METADATA"+File.separator+"key"+File.separator+tableName+".json");
-        jsonDHead.setFileName(storeFile.replace("\\", "/"));
-
+        //组织JsonD，并写入文件
+        JsonD analKeyJsond = new JsonD();
+        //头
+        JsondHead jsondHead = new JsondHead();
+        jsondHead.setId(SequenceUUID.getPureUUID());
+        jsondHead.setCode(jsonDCode);
+        jsondHead.setCTime(new Date());
+        jsondHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键");
+        //数据体
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
         JsondAtomData _dataElement = new JsondAtomData("_tableName", "string", tableName);
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _dataElement.setAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _DATA_Map.put("_keyAnals", convertToList(ret));
+        //设置JsonD
+        analKeyJsond.set_HEAD(jsondHead);
+        analKeyJsond.set_DATA(_DATA_Map);
+        //分析结果文件种子设置
+        AnalResultFile arfSeed = new AnalResultFile();
+        arfSeed.setAnalType(SDConstants.ANAL_MD_KEY);
+        arfSeed.setSubType(mm.getId());
+        arfSeed.setObjType("table");
+        arfSeed.setObjId(tableName);
 
-        String jsonStr=JsonUtils.formatJsonStr("{"+jsonDHead.toJson()+",\"_DATA\":"+JsonUtils.objToJson(_DATA_Map)+"}", null);
+        arfService.setFileNameSeed("METADATA"+File.separator+"key"+File.separator+"md_"+mm.getId());
+        AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJsonD(analKeyJsond, arfSeed);
+        //回写文件信息到返回值
+        ret.put("resultFile", arf);
 
-        //写文件
-        FileOutputStream fileOutputStream = null;
-        try {
-            File file = new File(storeFile);
-            if (!file.exists()) {
-                File dirs = new File(FileNameUtils.getFilePath(storeFile));
-                if (!dirs.exists()) dirs.mkdirs();
-                file.createNewFile();
-            }
-            fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(jsonStr.getBytes());
-            //回写文件信息到返回值
-            AnalResultFile arf = new AnalResultFile();
-            arf.setFileName(storeFile);
-            arf.setJsonDCode(jsonDCode);
-            arf.setAnalType(SDConstants.ANAL_MD_KEY);
-            arf.setSubType(mm.getId());
-            arf.setObjType("table");
-            arf.setObjId(tableName);
-            ret.put("resultFile", arf);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fileOutputStream!=null) {
-                try {fileOutputStream.close();}catch(IOException e) {e.printStackTrace();}
-            }
-        }
         return ret;
     }
 

@@ -1,7 +1,7 @@
 package com.spiritdata.jsonD.exceptionC;
 
 /**
- * 对象向Json串转换异常，内部码为0001，基本信息为'对象转换为json串'
+ * 对象向Json串转换异常，内部码为0101，基本信息为'对象转换为json串'
  * 请参看:
  * {@linkplain com.spiritdata.jsonD.util.JsonUtils JsonUtils}
  * @author wh

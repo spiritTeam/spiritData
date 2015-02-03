@@ -23,7 +23,9 @@ import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
  * 若为-METEDATA，则第三分类为元数据的Id及MetadataModelId<br/>
  * <br/>
  * 所分析对象，在这里用objId,objType,objAdress标识，若是excel文件，则objId为元数据id，objType="file"，objAdress="文件地址"
- * 注意：这里的分析结构，都按照
+ * 注意：<br/>
+ * 1-这里的分析结构，都按照JsonD处理<br/>
+ * 2-这些有实际意义的文件都要在文件分类表中有对应
  * @author wh
  */
 //今后，若有可能把分析结果和jsonD进行结合
@@ -36,7 +38,6 @@ public class AnalResultFile implements Serializable, BeManageFile {
 
     private String analType; //分析类型-METADATA:元数据结构分析，又可分为key/dict/sement，今后根据情况再扩充，用于确定保存的目录
     private String subType; //下级分类又可分为key/dict/sement，今后根据情况再扩充，用于确定保存的目录
-    private String describe; //分析描述，包括分类等信息，是一个json复合数据
 
     private String objId; //所分析的对象Id，MetadataModelId
     private String objType; //分析对象类型
@@ -66,12 +67,6 @@ public class AnalResultFile implements Serializable, BeManageFile {
     }
     public void setSubType(String subType) {
         this.subType = subType;
-    }
-    public String getDescribe() {
-        return describe;
-    }
-    public void setDescribe(String describe) {
-        this.describe = describe;
     }
     public String getJsonDCode() {
         return jsonDCode;

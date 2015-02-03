@@ -231,10 +231,11 @@ VIEW vsa_imp_log AS
 DROP TABLE IF EXISTS sa_report_info;
 CREATE TABLE sa_report_info (
   id          varchar(32)      NOT NULL  COMMENT '报告信息表ID(UUID)',
+  taskGId     varchar(32)      NOT NULL  COMMENT '任务组Id(UUID)',
+  fId         varchar(32)      NOT NULL  COMMENT '对应报告文件Id(UUID)',
   ownerType   int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
   ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
-  fId         varchar(32)      NOT NULL  COMMENT '对应报告文件Id(UUID)',
-  taskGId     varchar(32)      NOT NULL  COMMENT '任务组Id(UUID)',
+  reportType  varchar(100)               COMMENT '报告分类',
   reportName  varchar(100)     NOT NULL  COMMENT '报告名称',
   descn       varchar(500)               COMMENT '报告描述',
   cTime       timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
