@@ -28,20 +28,23 @@ public class JsonD implements Serializable, ConvertJson {
     @Override
     public String toJson() {
         if (_HEAD==null) throw new Jsond0004CException("jsondD不规范：头信息(_HEAD)必须设置！");
-        if (_DATA==null) throw new Jsond0004CException("jsondD不规范：数据内容(_DATA)必须设置！");
 
         String jsonS = "{";
         //转换头
         if (_HEAD instanceof JsondHead) {
             jsonS += ((JsondHead)_HEAD).toJson();
         } else {
-            jsonS += "\"_HEAD\":"+JsonUtils.objToJson(_HEAD)+",";
+            jsonS += "\"_HEAD\":"+JsonUtils.objToJson(_HEAD);
         }
+        jsonS += ",";
         //转换体report
-        if (_DATA instanceof String) {
-            jsonS += "\"_DATA\":"+_DATA;
-        } else {
-            jsonS += "\"_DATA\":"+JsonUtils.objToJson(_DATA);
+        if (_DATA==null) jsonS += "\"_DATA\":\"\"";
+        else {
+            if (_DATA instanceof String) {
+                jsonS += "\"_DATA\":"+_DATA;
+            } else {
+                jsonS += "\"_DATA\":"+JsonUtils.objToJson(_DATA);
+            }
         }
         return jsonS+"}";
     }

@@ -146,7 +146,6 @@ public class Report implements Serializable, ConvertJson {
      */
     public String toJson() {
         if (_HEAD==null) throw new Dtal1002CException("reportD不规范：头信息(_HEAD)必须设置！");
-        if (_REPORT==null) throw new Dtal1002CException("reportD不规范：报告内容(_report)必须设置！");
 
         String jsonS = "{";
         //转换头
@@ -163,14 +162,17 @@ public class Report implements Serializable, ConvertJson {
                 jsonS += dataList.get(i).toJson();
             }
             jsonS += "],";
-        }
+        } else jsonS += ",";
         //转换体report
-        if (_REPORT instanceof String) {
-            jsonS += "\"_REPORT\":"+_REPORT;
-        } else if (_REPORT instanceof SegmentList) {
-            jsonS += "\"_REPORT\":"+((SegmentList<TreeNode<ReportSegment>>)_REPORT).toJson();
-        } else {
-            jsonS += "\"_REPORT\":"+JsonUtils.objToJson(_REPORT);
+        if (_REPORT==null) jsonS += "\"_REPORT\":\"\"";
+        else {
+            if (_REPORT instanceof String) {
+                jsonS += "\"_REPORT\":"+_REPORT;
+            } else if (_REPORT instanceof SegmentList) {
+                jsonS += "\"_REPORT\":"+((SegmentList<TreeNode<ReportSegment>>)_REPORT).toJson();
+            } else {
+                jsonS += "\"_REPORT\":"+JsonUtils.objToJson(_REPORT);
+            }
         }
         return jsonS+"}";
     }
