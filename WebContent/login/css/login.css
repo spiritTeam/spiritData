@@ -1,11 +1,19 @@
-.loginspan { width:100px;font-size:14px;padding-right:5px;color:#999999;}
-input[type="text"], input[type="password"] {width:225px;float:left;}
-#loginName {padding-top:8px;height:25px;font-size:12px;}
-#mail {width:114px;font-size:12px;}
-#mailEndStr {width:80px;padding-left:-10px;font-size:12px;margin-left:-2px;}
-#password {padding-top:8px;height:25px;font-size:12px;}
-#oldPassword {padding-top:8px;height:25px;font-size:12px;}
-#confirmPassword {width:195px;padding-top:8px;height:25px;font-size:12px;}
-#checkCode {padding-top:8px;height:25px;font-size:12px;}
-#otherButCss {width:210px;background-image:url(img/registerb.png);padding-left:45px;border:1px solid red;margin-left:48px;}
 #mask {border-radius:0px; -moz-border-radius:10px; filter:alpha(opacity=70); opacity:0.7; background:#E7F1F5; z-index:1000;}
+#mainDiv {width:330px; padding-top:25px;}
+
+#mainDiv table {margin-right:-3px;width:280px;}
+
+/*按钮*/
+.commitDiv {height:28px;background-image:url(../images/bg.png);border-radius:5px; text-align:center; padding-top:10px;}
+
+/*标签咧*/
+.labelTd {width:50px;font-size:14px;padding-right:5px;color:#999999;height:50px; line-height:50px; text-align:right;border:0px red solid;}
+.inputTd {width:230px;}
+/*提交按钮样式*/
+.commitBottonTd {height:45px; padding-top:5px; border:0px solid black;}
+/*td下div的css*/
+.alertInput-Text {border:1px solid #ABADB3;width:225px;line-height:37px;height:37px;}
+/*div中input样式*/
+.alertInput-Text input {float:left;width:223px;font-size:12px;line-height:35px;height:35px;margin-left:0px;}
+/*验证的图片提示css*/
+.alertImg {float:left;position:absolute;width:16px;height:16px;border:1px solid gray;}

@@ -19,85 +19,64 @@
   <img id="waittingImg" align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
   <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，数据提交中...</span>
 </div>
-<center>
-  <div id="mainDiv" style="width:330px;height:400px;">
-    <div id="rstDiv" style="text-align:left;margin-left:80px;height:20px;padding-top:5px;margin-top: 10px;"><span id="checkResult"></span></div>
-    <form>
-      <table width="300px;" style="margin-right:-5px;">
-        <tr style="height:35px; valign:top;">
-          <td align="right" width="56px;"><span class="loginspan">账　号</span></td>
-          <td colspan="2" width="200px;">
-            <div style="float:left;border:1px solid #ABADB3;">
-              <input style="float:left;" id="loginName" name="loginName" tabindex="1" type="text" onmouseover=this.focus();this.select();
-                onclick="onClick(loginName);" onBlur="validateLoginName('loginName');" value="用户账号"/>
-              <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:0px;" align="center" id='vLN'></div>
-            </div>
-          </td>
-        </tr>
-        <tr><td><div style="height:8px;width:5px;"></div></td></tr>
-        <tr style="height:50px; valign:top;">
-          <td align="right"><span class="loginspan">邮　箱</span></td>
-          <td colspan="2" width="130px;">
-            <div style="float:left;border:1px solid #ABADB3;">
-              <input id="mail" name="mail" tabindex="2" type="text" onmouseover=this.focus();this.select(); 
-                onclick="onClick(mail);" onBlur="validateMail('mail');" value="您的邮箱"/>
-              <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vMail'></div>
-            </div>
-            <div class="intro" style="float:left;margin-left:-3px;">
-              <input id="mailEndStr" name="mailEndStr"/>
-            </div>
-          </td>
-        </tr>
-        <tr style="height:50px; valign:top;">
-          <td align="right"><span class="loginspan">密　码</span></td>
-          <td colspan="2" rowspan="1">
-            <div style="float:left;border:1px solid #ABADB3;">
-              <input id="password" name="password" tabindex="3" type="password" onmouseover="pwdMouseOver();"
-                onclick="onClick(password);" onBlur="validatePassword('password');"/>
-              <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vPwd'></div>
-            </div>
-            <div id="pwDiv" style="float:left;width:25px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
-              <span id="pwdSpan" style="color:#ABCDEF;font-size:12px;">密码</span>
-            </div>
-          </td>
-        </tr>
-        <tr style="height:50px; valign:top;">
-          <td align="right"><span class="loginspan" style="font-size:12px;margin-right:-5px;">确认密码</span></td>
-          <td colspan="2">
-            <div style="float:left;border:1px solid #ABADB3;">
-              <input id="confirmPassword" name="confirmPassword" tabindex="4" type="password" onmouseover="cpwdMouseOver();"
-                onclick="onClick(confirmPassword);" onBlur="validateConfirmPassword('confirmPassword');"/>
-              <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vCPwd'></div>
-            </div>
-            <div id="cpwDiv" style="float:left;width:50px;height:25px;padding-top:10px;margin-left:-220px;" align="center">
-              <span id="cpwdSpan" style="color:#ABCDEF;font-size:12px;">确认密码</span>
-            </div>
-          </td>
-        </tr>
-        <tr style="height:50px; valign:top;">
-          <td align="right"><span class="loginspan">验证码</span></td>
-          <td colspan="2">
-            <div style="float:left;border:1px solid #ABADB3;">
-              <input id="checkCode" name="checkCode" tabindex="5" type="text" value="请输入验证码" onmouseover=this.focus();this.select(); onclick="onClick(checkCode);" onBlur="validateCheckCode('checkCode');"/>
-              <div style="float:left;width:20px;height:25px;padding-top:8px;margin-left:-2px;" align="center" id='vVC'></div>
-            </div>
-            <div style="float:left;border:1px solid #999999;width:83px;margin-left:-3px;border-left:0px;"><img style="height:35px;" id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3" align="left" style="height:50px;padding-top:10px;" valign="top">
-            <div style="width:5px;height:5px;"></div>
-            <a id="register" name="register" onclick="saveRegister();" href="#">
-              <div tabindex="6" id="commitButton" style="height:28px;padding-top:10px;background-image:url(images/bg.png);border-radius:5px;">
-                <span style="font-size:16px;color:#FFFFFF;font-weight: bold;">注　册</span>
-              </div>
-            </a>
-          </td>
-        </tr>
-      </table>
-    </form>
-  </div>
-</center>
+<center><div id="mainDiv">
+  <form><table>
+    <tr style="height:35px; valign:top;">
+      <td class="labelTd">账　号</td>
+      <td class="inputTd">
+        <div class="alertInput-Text">
+          <input id="loginName" name="loginName" tabindex="1" type="text" value="用户账号" onclick="onClick(loginName);" onBlur="validateLoginName();"/>
+          <div class="alertImg"></div>
+        </div>
+      </td>
+    </tr>
+    <tr style="height:35px; valign:top;">
+      <td class="labelTd">邮　箱</td>
+      <td class="inputTd">
+        <div class="alertInput-Text">
+          <input id="loginName" name="loginName" tabindex="1" type="text" value="邮箱" onclick="onClick(loginName);" onBlur="validateLoginName();"/>
+          <div class="alertImg"></div>
+        </div>
+      </td>
+    </tr>
+    <tr style="height:35px; valign:top;">
+      <td class="labelTd">密　码</td>
+      <td class="inputTd">
+        <div class="alertInput-Text">
+          <input id="loginName" name="loginName" tabindex="1" type="text" value="" onclick="onClick(loginName);" onBlur="validateLoginName();"/>
+          <div class="alertImg"></div>
+        </div>
+      </td>
+    </tr>
+    <tr style="height:35px; valign:top;">
+      <td class="labelTd">确　认</td>
+      <td class="inputTd">
+        <div class="alertInput-Text">
+          <input id="loginName" name="loginName" tabindex="1" type="text" value="" onclick="onClick(loginName);" onBlur="validateLoginName();"/>
+          <div class="alertImg"></div>
+        </div>
+      </td>
+    </tr>
+    <tr style="height:35px; valign:top;">
+      <td class="labelTd">验证码</td>
+      <td class="inputTd">
+        <div class="alertInput-Text">
+          <input id="loginName" name="loginName" tabindex="1" type="text" value="验证码" onclick="onClick(loginName);" onBlur="validateLoginName();"/>
+          <div class="alertImg"></div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" class="commitBottonTd">
+        <a id="register" name="register" onclick="saveRegister();" href="#">
+        <div tabindex="6" id="commitButton" class="commitDiv">
+          <span style="font-size:16px;color:#FFFFFF;font-weight: bold;">注　册</span>
+        </div>
+        </a>
+      </td>
+    </tr>
+  </table></form>
+</div></center>
 </body>
 <script type="text/javascript">
 var psV=false,cpsV=false,lnV=false,maV=false,vcV=false;
@@ -210,41 +189,91 @@ function setInputCss(){
     "width": (parseInt($("#mainDiv").css("width"))+20)+"px",
     "height": (parseInt($("#mainDiv").css("height"))+40)+"px"
   });
+  //解决combox的border颜色问题
+  $(".combo").css('border-color','#FFF');
+  $(".combo").css('border-left-color','#ABADB3');
+  //针对浏览器问题
   var browserType = getBrowserVersion();
   var v = browserType.substring(0,browserType.lastIndexOf(' '));
-  $('#pwDiv').css({"padding-top":"11px","margin-left":"-217px"});
-  $('#cpwDiv').css({"padding-top":"11px","margin-left":"-217px"});
   $("div.intro span").css({'border-color':'#999999','border-left':'0px'});
   if(v=='msie'){
-    if($('#loginName')!=null) $('#loginName').css({"width":"200px","line-height":"35px","height":"35px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#password')!=null) $('#password').css({"width":"200px","line-height":"35px","height":"35px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px","height":"35px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#confirmPassword')!=null) $('#confirmPassword').css({"width":"200px","line-height":"35px","height":"35px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"width":"150px","padding-left":"100px","margin-left":"10px"});
+    if($('#loginName')!=null) $('#loginName').css({"width":"215px"});
+    if($('#mail')!=null) {
+      $('#mail').css({"width":"130px"});
+      $('#vMail').css({"left":"79px"});
+    }
+    if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"100px"});
+    if($('#password')!=null) $('#password').css({"width":"215px"});
+    if($('#confirmPassword')!=null) $('#confirmPassword').css({"width":"215px"});
+    if($('#checkCode')!=null) {
+      $('#checkCode').css({"width":"130px"});
+      $('#vVC').css({"left":"79px"});
+    }
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
+    if($('#commitButton')!=null) $('#commitButton').css({"width":"177px","padding-left":"100px","margin-left":"8px"});
   }else if(v=='chrome'){alert('chrome');
-    if($('#loginName')!=null) $('#loginName').css({"width":"200px","line-height":"35px","height":"33px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#password')!=null) $('#password').css({"width":"200px","line-height":"35px","height":"33px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px","height":"33px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"33px","padding-top":"0px","width":"112px;","background-color":"#FFFFFF","border":"0px"});
-    if($('#confirmPassword')!=null) $('#confirmPassword').css({"width":"200px","line-height":"35px","height":"33px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"width":"153px","padding-left":"97px","margin-left":"8px"});
+    if($('#loginName')!=null) {
+      $('#loginName').css({"width":"225px"});
+      $('#loginName').parent().css({"width":"225px"});
+    }
+    if($('#mail')!=null) {
+      $('#mail').css({"width":"130px"});
+      $('#vMail').css({"left":"79px"});
+      ggMouse($('#mail'));
+    }
+    if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"100px"});
+    if($('#password')!=null) $('#password').css({"width":"215px"});
+    if($('#confirmPassword')!=null) $('#confirmPassword').css({"width":"215px"});
+    if($('#checkCode')!=null) {
+      $('#checkCode').css({"width":"130px"});
+      $('#vVC').css({"left":"79px"});
+    }
     if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
+    if($('#commitButton')!=null) $('#commitButton').css({"width":"177px","padding-left":"100px","margin-left":"8px"});
   }else{
-    if($('#loginName')!=null) $('#loginName').css({"width":"200px","line-height":"35px", "height":"35px", "padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#password')!=null) $('#password').css({"width":"200px","line-height":"35px", "height":"35px", "padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#checkCode')!=null) $('#checkCode').css({"line-height":"35px", "height":"35px", "padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#mail')!=null) $('#mail').css({"line-height":"35px","height":"35px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#confirmPassword')!=null) $('#confirmPassword').css({"width":"200px","line-height":"35px","height":"35px","padding-top":"0px","background-color":"#FFFFFF","border":"0px"});
-    if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"84px"});
-    if($('#commitButton')!=null) $('#commitButton').css({"width":"151px","padding-left":"97px","margin-left":"8px"});
-    if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"70px"});
+    if($('#loginName')!=null) $('#loginName').css({"width":"215px"});
+    if($('#mail')!=null) {
+      $('#mail').css({"width":"130px"});
+      $('#vMail').css({"left":"79px"});
+    }
+    if($('#mailEndStr')!=null) $('#mailEndStr').css({"width":"100px"});
+    if($('#password')!=null) $('#password').css({"width":"215px"});
+    if($('#confirmPassword')!=null) $('#confirmPassword').css({"width":"215px"});
+    if($('#checkCode')!=null) {
+      $('#checkCode').css({"width":"130px"});
+      $('#vVC').css({"left":"79px"});
+    }
+    if($('#rstDiv')!=null) $('#rstDiv').css({"margin-left":"76px;"});
+    if($('#commitButton')!=null) $('#commitButton').css({"width":"177px","padding-left":"100px","margin-left":"8px"});
   }
 }
+function ggMouse(jQobj){
+  var jqP = jQobj.parent();
+  jQobj.bind('mouseover',function(){
+    jqP.css("border","1px red solid");
+  });return;
+  jQobj.mouseover(function(){
+    jqP.focus();return;
+    jqP.css("border","1px red solid");
+  });
+  jQobj.mouseout(function(){
+    jqP.css("border","1px solid yellow");
+  });
+}
+
+/*主函数*/
 $(function(){
+  $(":input").bind('mouseover',function(){
+    var _self = this;
+    var p = $(_self).parent();
+    p.css("border","1px #ABCDEF solid");
+  });
+  $(":input").bind('mouseout',function(){
+    var _self = this;
+    var p = $(_self).parent();
+    p.css("border","1px #ABADB3 solid");
+  });
+  return;
   $("#pwdSpan").mouseover(function(){pwdOnActive();});
   $("#password").focus(function(){pwdOnActive();});
   $("#password").mouseover(function(){pwdOnActive();});
@@ -274,6 +303,7 @@ $(function(){
     valueField:'id',   
     textField:'text',
     height:37,
+    width:85,
     onChange:function (index,o) {
       var eleId = 'mail';
       validateMail(eleId,index);
@@ -305,7 +335,7 @@ function validatePassword(eleId){
     }
   }
 }
-function validateLoginName(eleId){
+function validateLoginName(eleId){return;
   $('#lnImg').remove();
   $('#checkCode').html('');
   var ele = $('#'+eleId);
