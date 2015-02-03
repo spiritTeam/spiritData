@@ -14,7 +14,7 @@
 /*td下div的css*/
 .alertInput-Text {width:225px;line-height:35px;height:35px;border: 1px solid #ABADB3;}
 /*div中input样式*/
-.alertInput-Text input {float:left;width:223px;font-size:12px;line-height:35px;height:35px;margin-left:0px;border:0px;}
+.alertInput-Text input {float:left;width:203px;font-size:12px;line-height:35px;height:35px;margin-left:0px;border:0px;}
 /*验证的图片提示css*/
-.alertImg {float:left;width:16px;height:16px;position:relative;border:1px solid red;left:215px;top:-35px;}
+.alertImg {float:left;width:16px;height:16px;position:absolute;border:1px solid red;left:9px;top:-9px;}
 .vdImg {float:left;width:16px;height:16px;margin-right:-9px;margin-top:-9px;position:relative;left:0px;top:0px;z-index:1000;}
