@@ -22,6 +22,7 @@ public class Report implements Serializable, ConvertJson {
     private String id; //报告id，应和报告头中的id相一致
     private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session);3=系统生成）
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID，也可能是'Sys'）
+    private String reportType; //报告分类
     private String reportName; //报告名称
     private ReportFile reportFile; //报告所对应的文件信息
     private String desc; //文件说明
@@ -38,6 +39,15 @@ public class Report implements Serializable, ConvertJson {
     }
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
+    }
+    public String getReportType() {
+        return reportType;
+    }
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
+        if (this._HEAD!=null&&(this._HEAD instanceof ReportHead)) {
+            ((ReportHead)this._HEAD).setReportType(reportType);
+        }
     }
     public String getReportName() {
         return reportName;
@@ -60,12 +70,18 @@ public class Report implements Serializable, ConvertJson {
     }
     public void setDesc(String desc) {
         this.desc = desc;
+        if (this._HEAD!=null&&(this._HEAD instanceof ReportHead)) {
+            ((ReportHead)this._HEAD).setDesc(desc);
+        }
     }
     public Timestamp getCTime() {
         return CTime;
     }
     public void setCTime(Timestamp cTime) {
         CTime = cTime;
+        if (this._HEAD!=null&&(this._HEAD instanceof ReportHead)) {
+            ((ReportHead)this._HEAD).setCTime(cTime);
+        }
     }
 
     private Object _HEAD;//头信息，可以是String reportHead 对象
@@ -87,7 +103,8 @@ public class Report implements Serializable, ConvertJson {
     public void set_HEAD(Object _HEAD) {
         this._HEAD = _HEAD;
         if (this._HEAD!=null&&(this._HEAD instanceof ReportHead)) {
-            this.setId(((ReportHead)this._HEAD).getId());
+            String _id = ((ReportHead)this._HEAD).getId();
+            if (_id!=null&&_id.trim().length()>0) this.setId(((ReportHead)this._HEAD).getId());
         }
     }
     public Object get_REPORT() {

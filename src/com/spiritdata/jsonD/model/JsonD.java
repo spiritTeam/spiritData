@@ -35,11 +35,11 @@ public class JsonD implements Serializable, ConvertJson {
         if (_HEAD instanceof JsondHead) {
             jsonS += ((JsondHead)_HEAD).toJson();
         } else {
-            jsonS += "\"_HEAD\":"+JsonUtils.objToJson(_HEAD);
+            jsonS += "\"_HEAD\":"+JsonUtils.objToJson(_HEAD)+",";
         }
         //转换体report
         if (_DATA instanceof String) {
-            jsonS += ",\"_DATA\":"+_DATA;
+            jsonS += "\"_DATA\":"+_DATA;
         } else {
             jsonS += "\"_DATA\":"+JsonUtils.objToJson(_DATA);
         }

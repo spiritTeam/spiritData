@@ -24,10 +24,13 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
+import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
+import com.spiritdata.framework.FConstants;
+import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
 import com.spiritdata.dataanal.dictionary.service.DictSessionService;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
@@ -67,8 +70,6 @@ public class DealExcelFileService {
     @Resource
     private DataSource dataSource;
     @Resource
-    private FileManageService fmService;
-    @Resource
     private TableMapService tmServier;
     @Resource
     private MdBasisService mdBasisServcie;
@@ -86,6 +87,11 @@ public class DealExcelFileService {
     private MdDictService mdDictService;//只分析,并计入文件
     @Resource
     private BuildReportAfterUploadService buildReport;
+    //文件操作
+    @Resource
+    private FileManageService fmService;
+    @Resource
+    private AanlResultFileService arFileService;
 
     /**
      * 处理Excel文件
@@ -142,7 +148,7 @@ public class DealExcelFileService {
             //1-分析文件，得到元数据信息，并把分析结果存入si
             List<PoiParseUtils> excelParseList = new ArrayList<PoiParseUtils>();
 
-//            Map<SheetInfo, Object> sheetLogMap = new HashMap<SheetInfo, Object>();
+//          Map<SheetInfo, Object> sheetLogMap = new HashMap<SheetInfo, Object>();
             for (; i<book.getNumberOfSheets(); i++) {
                 try {//处理每个Sheet，并保证某个Sheet处理失败后，继续处理后续Sheet
                     Sheet sheet = book.getSheetAt(i);
@@ -200,17 +206,28 @@ public class DealExcelFileService {
                 //准备缓存或Session
                 _OwnerMetadata _om = mdSessionService.loadcheckData(session);
                 _OwnerDictionary _od = dictSessionService.loadcheckData(session);
+                //为生成报告准备的数据
+                Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam=null;
 
                 for (i=0; i<excelParseList.size(); i++) {
+                    if (reportParam==null) reportParam = new HashMap<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>();
+
                     parseExcel = excelParseList.get(i);
                     si = parseExcel.getSheetInfo();
                     if (si.getStiList()==null||si.getStiList().size()==0) continue;
                     for (SheetTableInfo sti: si.getStiList()) {
+                        //准备报告数据:1:begin
+                        Map<SheetTableInfo, Map<String, Object>> m = reportParam.get(si);
+                        if (m==null) {
+                            m = new HashMap<SheetTableInfo, Map<String, Object>>();
+                            reportParam.put(si, m);
+                        }
+                        //准备报告数据:1:end
+
                         try {//--处理sheet中的每个元数据
                             //--保存分析后的元数据信息，包括数据表的注册与创建
                             //-- 若元数据信息在系统中已经存在，则只生成临时表
                             //-- 否则，创建新的元数据，并生成积累表和临时表
-
                             MetadataTableMapRel[] tabMapOrgAry = mdSessionService.storeMdModel4Import(sti.getMm(), _om);
                             //处理sa_imp_tablog_rel表，只记录临时表，不记录积累表，通过临时表或元数据ID可以查到积累表
                             ImpTableMapRel itmr = new ImpTableMapRel();
@@ -222,10 +239,24 @@ public class DealExcelFileService {
                             itmr.setTableTitleName(sti.getTableTitleName());
                             tmServier.bindImpTabMap(itmr);
 
+                            //准备报告数据:2:begin
+                            Map<String, Object> m2 = m.get(sti);
+                            if (m2==null) {
+                                m2 = new HashMap<String, Object>();
+                                m.put(sti, m2);
+                            }
+                            m2.put("tabMapOrgAry", tabMapOrgAry);
+                            //准备报告数据:2:end
+
                             // TODO 为了有更好的处理响应时间，以下逻辑可以采用多线程处理
 
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                             MetadataModel sysMd = _om.getMetadataById(tabMapOrgAry[0].getMdMId());
+
+                            //准备报告数据:3:begin
+                            m2.put("sysMd", sysMd);
+                            //准备报告数据:3:end
+
                             //处理Title内容
                             String maxTitle = sti.getTableTitleName();
                             if (sysMd.titleMap==null) sysMd.titleMap= new HashMap<String, Integer>();
@@ -255,7 +286,7 @@ public class DealExcelFileService {
                             Map<String, Object> keyMap = analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
-                                FileInfo arFi = fmService.saveFile(arf);//分析jsonD存储
+                                FileInfo arFi = arFileService.saveFile(arf);//分析jsonD存储
                                 //4.2-文件关系存储
                                 FileRelation fr = new FileRelation();
                                 fr.setElement1(fi.getFileCategoryList().get(0));
@@ -279,7 +310,7 @@ public class DealExcelFileService {
                             keyMap = analDict.scanMetadata(sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
-                                FileInfo arFi = fmService.saveFile(arf);//分析jsonD存储
+                                FileInfo arFi = arFileService.saveFile(arf);//分析jsonD存储
                                 //7.1.2-文件关系存储
                                 FileRelation fr = new FileRelation();
                                 fr.setElement1(fi.getFileCategoryList().get(0));
@@ -294,21 +325,29 @@ public class DealExcelFileService {
                             //7.1.3-字典分析结果调整
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                             mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
-
-                            //8-生成report，这个也可以不在这里处理
-                            Map<String, Object> param = new HashMap<String, Object>();
-                            Map<String, Object> preTreadParam = new HashMap<String, Object>();
-                            preTreadParam.put("tabMap", tabMapOrgAry); //对照关系，这里有积累表、临时表信息，并能够判断是否是新的元数据
-                            preTreadParam.put("mdInfo", sysMd); //元数据信息
-                            preTreadParam.put("sheetTableInfo", sti); //对应的页签Tab信息
-                            param.put("preTreadParam", preTreadParam);
-                            buildReport.buildANDprocess(param);
                         } catch(Exception e) {
                             // TODO 记录日志 
                             e.printStackTrace();
                         }
                     }
                 }
+                //8-生成report，这个也可以不在这里处理，而通过任务启动
+                //这个报告是对文件的，而不是对文件中的某一个表或Seet的
+                Map<String, Object> param = new HashMap<String, Object>();
+                Map<String, Object> preTreadParam = new HashMap<String, Object>();
+                preTreadParam.put("reportParam", reportParam);
+                String ownerId = session.getId();
+                int ownerType = 2;
+                UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+                if (user!=null) {
+                    ownerId = user.getUserId();
+                    ownerType = 1;
+                }
+                preTreadParam.put("ownerType", ownerType);
+                preTreadParam.put("ownerId", ownerId);
+                preTreadParam.put("impFileInfo", fi);
+                param.put("preTreadParam", preTreadParam);
+                buildReport.buildANDprocess(param);
             }
         } catch(Exception e) {
             // TODO 写日志

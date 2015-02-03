@@ -51,6 +51,7 @@ public class TaskReport implements Serializable {
         rp.setTaskGId(this.getTaskGroup().getId());
         rp.setOwnerType(this.report.getOwnerType());
         rp.setOwnerId(this.report.getOwnerId());
+        rp.setReportType(this.report.getReportType());
         rp.setReportName(this.report.getReportName());
         rp.setDesc(this.report.getDesc());
         rp.setCTime(new Timestamp(new Date().getTime()));

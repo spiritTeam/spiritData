@@ -23,7 +23,9 @@ import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
  * 若为-METEDATA，则第三分类为元数据的Id及MetadataModelId<br/>
  * <br/>
  * 所分析对象，在这里用objId,objType,objAdress标识，若是excel文件，则objId为元数据id，objType="file"，objAdress="文件地址"
- * 注意：这里的分析结构，都按照
+ * 注意：<br/>
+ * 1-这里的分析结构，都按照JsonD处理<br/>
+ * 2-这些有实际意义的文件都要在文件分类表中有对应
  * @author wh
  */
 //今后，若有可能把分析结果和jsonD进行结合

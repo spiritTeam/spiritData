@@ -88,7 +88,7 @@ public class AnalDict implements AnalMetadata {
         arfSeed.setObjId("["+mm.getTitleName()+"("+mm.getId()+")]"); //所分析对象的ID
 
         arfService.setFileNameSeed("METADATA"+File.separator+"dict"+File.separator+"md_"+mm.getId());
-        AnalResultFile arf = arfService.write2FileAsJsonD(analDictJsond, arfSeed);
+        AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJsonD(analDictJsond, arfSeed);
         //回写文件信息到返回值
         ret.put("resultFile", arf);
 

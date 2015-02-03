@@ -17,6 +17,7 @@ public class ReportHead  implements Serializable, ConvertJson {
     private static final long serialVersionUID = -2739194799723001355L;
 
     private String id;//报告Id，UUID
+    private String reportType;//报告分类
     private String reportName;//报告名称
     private String code; //报告类型编码，此编码分为组织编码：大写的以.隔开的名称，<::>后是小类型编号，采用5位，最大为9999个类型(可扩充)
     private String fileName; //存储JsonD的文件地址，可能需要和_node共同使用
@@ -29,6 +30,12 @@ public class ReportHead  implements Serializable, ConvertJson {
     public void setId(String id) {
         if (id==null||id.length()==0) throw new Dtal1002CException("reportD头信息不规范：id必须设置！", new IllegalArgumentException("id不能为null或空串！"));
         this.id = id;
+    }
+    public String getReportType() {
+        return reportType;
+    }
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
     }
     public String getReportName() {
         return reportName;
@@ -75,7 +82,8 @@ public class ReportHead  implements Serializable, ConvertJson {
         if (!JsonDUtils.isLegalCode(this.code)) throw new Dtal1002CException("reportD头信息不规范：code["+code+"]不合规！，请参看report相关文档！");
 
         if (this.CTime==null) CTime= new Date();
-        String ret = "\"_HEAD\":{\"_id\":\""+this.id+"\", \"_reportName\":\""+this.reportName+"\", \"_code\":\""+this.code+"\", \"_cTime\":\""+this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime()+"\"";
+        String ret = "\"_HEAD\":{\"_id\":\""+this.id+"\", \"_reportType\":\""+this.reportType+"\", \"_reportName\":\""+this.reportName+"\", "
+                    +"\"_code\":\""+this.code+"\", \"_cTime\":\""+this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime()+"\"";
         if (this.desc!=null&&this.desc.length()>0) ret +=", \"_desc\":\""+this.desc+"\"";
         return ret+"}";
     }
@@ -93,6 +101,7 @@ public class ReportHead  implements Serializable, ConvertJson {
         if (this.CTime==null) CTime= new Date();
         Map<String, Object> retMap = new HashMap<String, Object>();
         retMap.put("_id", this.id);
+        retMap.put("_reportType", this.reportType);
         retMap.put("_reportName", this.reportName);
         retMap.put("_code", this.code);
         retMap.put("_cTime", this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime());
