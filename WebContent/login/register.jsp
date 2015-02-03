@@ -260,19 +260,27 @@ function ggMouse(jQobj){
     jqP.css("border","1px solid yellow");
   });
 }
-
-/*主函数*/
-$(function(){
+/**
+ * input鼠标移入移出效果
+ */
+function inputMouseEffect(){
   $(":input").bind('mouseover',function(){
     var _self = this;
-    var p = $(_self).parent();
-    p.css("border","1px #ABCDEF solid");
+    var parent = $(_self).parent();
+    parent.css('border','2px #ABCDEF solid');
   });
   $(":input").bind('mouseout',function(){
     var _self = this;
-    var p = $(_self).parent();
-    p.css("border","1px #ABADB3 solid");
+    var parent = $(_self).parent();
+    parent.css('border','1px #ABADB3 solid');
   });
+}
+
+/**
+ * 主函数
+ */
+$(function(){
+  inputMouseEffect();
   return;
   $("#pwdSpan").mouseover(function(){pwdOnActive();});
   $("#password").focus(function(){pwdOnActive();});
