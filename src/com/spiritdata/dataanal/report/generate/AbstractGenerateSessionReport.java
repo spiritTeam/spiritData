@@ -11,6 +11,7 @@ import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.task.model.TaskGroup;
 import com.spiritdata.filemanage.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.REPORT.service.ReportFileService;
+import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.util.SequenceUUID;
 
 
@@ -54,8 +55,17 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
     public void buildANDprocess(Map<String, Object> param) {
         if (param==null||param.size()==0) throw new Dtal1003CException(new IllegalArgumentException("构建报告及任务时，必须设置参数！"));
         if (param.get("preTreadParam")==null) throw new Dtal1003CException(new IllegalArgumentException("构建报告及任务时，Map参数中必须设置key='preTreadParam'的元素！"));
+
         //1-执行预处理，得到报告及任务
-        TaskReport tr = preTreat((Map<String, Object>)param.get("preTreadParam"));
+        Map<String, Object> preTreatResult = preTreat((Map<String, Object>)param.get("preTreadParam"));
+        if (preTreatResult==null) return; //预处理没有返回任何内容，不能进行任何处理
+        TaskReport tr = null;
+        try {
+            tr = (TaskReport)preTreatResult.get("taskReport");
+            if (tr==null) throw new Dtal1003CException("预处理结果未包含key='taskReport'的元素，无法进行后续处理");
+        } catch(Exception e) {
+            throw new Dtal1003CException("预处理结果异常，无法进行后续处理！", e);
+        }
         Report report = tr.getReport();
         TaskGroup tg = tr.getTaskGroup();
 
@@ -67,11 +77,14 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         rfSeed.setOwnerType(report.getOwnerType());
         rfSeed.setReportId(report.getId());
         rfSeed.setTasksId(tg.getId());
-        rfService.setFileNameSeed("");
+
+        FileInfo impFi = (FileInfo)param.get("impFileInfo");
+        rfService.setFileNameSeed("afterImport(IMPFID="+impFi.getId()+"_RID="+report.getId()+")");
         ReportFile rf = (ReportFile)rfService.write2FileAsJsonD(report, rfSeed); //保存文件，并把文件信息回写到report对象中
         report.setReportFile(rf);
         //2.2-报告文件数据库存储
         rfService.saveFile(rf);//报告的json存储
-        //2.3-报告文件的文件关系数据库存储，有则存储，无则不存储
+
+        //3-处理任务
     }
 }

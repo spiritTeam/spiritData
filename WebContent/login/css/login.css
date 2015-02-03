@@ -6,7 +6,7 @@
 /*按钮*/
 .commitDiv {height:28px;background-image:url(../images/bg.png);border-radius:5px; text-align:center; padding-top:10px;}
 
-/*标签咧*/
+/*标签列*/
 .labelTd {width:50px;font-size:14px;padding-right:5px;color:#999999;height:50px; line-height:50px; text-align:right;border:0px red solid;}
 .inputTd {width:230px;}
 /*提交按钮样式*/
