@@ -1,20 +1,41 @@
 #mask {border-radius:0px; -moz-border-radius:10px; filter:alpha(opacity=70); opacity:0.7; background:#E7F1F5; z-index:1000;}
-#mainDiv {width:330px; padding-top:25px;}
 
+/*主容器*/
+#mainDiv {width:330px; padding-top:20px;}
+
+/*主table*/
 #mainDiv table {margin-right:-3px;width:280px;}
 
-/*按钮*/
-.commitDiv {height:28px;background-image:url(../images/bg.png);border-radius:5px; text-align:center; padding-top:10px;}
 
 /*标签列*/
-.labelTd {width:50px;font-size:14px;padding-right:5px;color:#999999;height:50px; line-height:50px; text-align:right;border:0px red solid;}
-.inputTd {width:230px;}
-/*提交按钮样式*/
-.commitBottonTd {height:45px; padding-top:5px; border:0px solid black;}
-/*td下div的css*/
-.alertInput-Text {width:225px;line-height:35px;height:35px;border: 1px solid #ABADB3;}
-/*div中input样式*/
-.alertInput-Text input {float:left;width:223px;font-size:12px;line-height:35px;height:35px;margin-left:0px;border:0px;}
-/*验证的图片提示css*/
-.alertImg {float:left;width:16px;height:16px;position:relative;border:1px solid red;left:215px;top:-35px;}
-.vdImg {float:left;width:16px;height:16px;margin-right:-9px;margin-top:-9px;position:relative;left:0px;top:0px;z-index:1000;}
+.labelTd {width:50px; font-size:14px; padding-right:5px; color:#999999; height:50px; line-height:50px; text-align:right; border:0px red solid;}
+/*输入列*/
+.inputTd {width:230px; border:0px red solid;}
+
+/*提示控件设置开始=====================*/
+/*图片提示*/
+.alertImg {width:16px; height:16px; position:absolute; left:215px; top:-5px; display:block;}
+.maskTitle {position:absolute; color:#999999; padding-left:2px;}
+
+/*提示输入控件*/
+.alertInput-Text {width:225px; height:35px; line-height:35px;}/*主Div*/
+.alertInput-Text input {width:223px; font-size:12px; height:35px; line-height:35px; margin-left:0px; border:0px;border: 1px solid #ABADB3; padding-left:2px;}/*输入*/
+
+/*提示邮件控件*/
+.alertInput-mail {width:227px; line-height:35px; height:35px;}/*主Div*/
+.alertInput-mail #mailPrefix {float:left; width:130px;} /*前缀Div*/
+.alertInput-mail #mailPrefix input {z-index:100; width:126px; font-size:12px; height:35px; line-height:35px; margin-left:0px; border: 1px solid #ABADB3; padding-left:2px;}/*前缀输入*/
+.alertInput-mail #mailSuffix {float:left; width:97px;} /*后缀Div*/
+
+/*提示验证码控件*/
+.alertInput-vCode {width:227px; height:35px; line-height:35px;}/*主Div*/
+.alertInput-vCode #vCodeInput {float:left; width:130px;} 
+.alertInput-vCode #vCodeInput input { z-index:100; width:127px; font-size:12px; height:35px; line-height:35px; margin-left:0px; border: 1px solid #ABADB3; padding-left:2px;}
+.alertInput-vCode #vCodeImg {float:left; width:95px; height:35px; line-height:35px; border:1px solid #ABADB3;}
+/*提示控件设置结束=====================*/
+
+/*提交按钮TD*/
+.commitBottonTd {height:70px; padding-top:5px; border:0px solid black;}
+/*提交按钮*/
+.commitDiv {height:28px; background-image:url(../images/bg.png); border-radius:5px; text-align:center; padding-top:10px; cursor:pointer;}
+.commitDiv span {font-family:微软雅黑,黑体; color:#fff; font-weight:bold; font-size:16px;}
