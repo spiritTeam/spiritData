@@ -196,22 +196,22 @@
      * }
      */
     winDiv.setMessage=function(options) {
-    	if (options) {
-  			var opt = $.data(this, "spiritSimpleWin");
-    		if (options.defaultColor) {
-    			opt.msgFontColor = options.defaultColor;
-    		}
-      	var _msg=$(this).find(".sWin_head>.sWin_msg");
-      	//设置颜色
-      	_msg.css("color", opt.msgFontColor);
-    		if (options.msg||options.msg=='') {
-        	_msg.html(options.msg);
-        	_msg.attr("title", options.msg);
-    		}
-      	if (options.color) {
-      		_msg.css("color", options.color);
-      	}
-    	}
+      if (options) {
+        var opt = $.data(this, "spiritSimpleWin");
+        if (options.defaultColor) {
+          opt.msgFontColor = options.defaultColor;
+        }
+        var _msg=$(this).find(".sWin_head>.sWin_msg");
+        //设置颜色
+        _msg.css("color", opt.msgFontColor);
+        if (options.msg||options.msg=='') {
+          _msg.html(options.msg);
+          _msg.attr("title", options.msg);
+        }
+        if (options.color) {
+          _msg.css("color", options.color);
+        }
+      }
     };
 
     return winDiv;

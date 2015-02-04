@@ -25,7 +25,7 @@
       <td class="labelTd">账　号</td>
       <td class="inputTd">
         <div class="alertInput-Text">
-          <input class="alertInputComp" id="loginName" name="loginName" tabindex="1" type="text"/>
+          <input class="alertInputComp" id="loginName" name="loginName" tabindex="1" type="text" onBlur="validateLoginName();"/>
           <div class="maskTitle">请输入您的账号</div>
           <div class="alertImg"></div>
         </div>
@@ -35,7 +35,7 @@
       <td class="labelTd">邮　箱</td>
       <td class="inputTd">
         <div class="alertInput-mail">
-          <div id="mailPrefix"><input class="alertInputComp" id="mail" name="mail" tabindex="2" type="text"/></div>
+          <div id="mailPrefix"><input class="alertInputComp" id="mail" name="mail" tabindex="2" type="text" onBlur="validateMail('mail')"/></div>
           <div id="mailSuffix"><input id="mailSel" name="mailSel"/></div>
           <div class="alertImg"></div>
           <div class="maskTitle">请输入您的邮箱</div>
@@ -56,7 +56,7 @@
       <td class="labelTd" style="height:35px; line-height:35px;">确　认</td>
       <td class="inputTd" style="height:35px; line-height:35px;">
         <div class="alertInput-Text">
-          <input id="confirmPassowrd" class="alertInputComp" name="confirmPassowrd" tabindex="4" type="text" onBlur="comfirmPassword();"/>
+          <input id="confirmPassword" class="alertInputComp" name="confirmPassword" tabindex="4" type="text" onBlur="comfirmPassword();"/>
           <div class="alertImg"></div>
           <div class="maskTitle">请再次输入密码以确认</div>
         </div>
@@ -66,7 +66,7 @@
       <td class="labelTd" style="height:64px; line-height:64px;">验证码</td>
       <td class="inputTd" style="height:64px; line-height:64px;">
         <div class="alertInput-vCode">
-          <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="5" type="text"/></div>
+          <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="5" type="text" onBlur="validateCheckCode();"/></div>
           <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
           <div class="alertImg"></div>
           <div class="maskTitle">按右图输入验证码</div>
@@ -103,13 +103,15 @@ $(function() {
 //=以下初始化设置=============================================
 //邮件地址后缀设置
 function initMailSuffix() {
-  $('#mailSuffix').combobox({    
+  $('#mailSel').combobox({    
     url:'<%=path%>/login/js/mailAdress.json',   
     valueField:'id',   
     textField:'text',
     height:37,
     width:97,
     onChange:function (index,o) {
+      var eleId = 'mail';
+      validateMail(eleId,index);
     },
     editable:false
   });
@@ -242,6 +244,7 @@ function validatePassword() {
   } else {
     $("#password").parent().find(".alertImg").hide();
   }
+  //验证密码是否复合规则
   function checkPasswordStr(str) {
     var re = /[0-9a-zA-z]\w{4,11}$/;
     if(re.test(str)){
@@ -251,13 +254,15 @@ function validatePassword() {
     }       
   }
 }
+/*
+ * 确认密码和密码是否一致
+ */
 function comfirmPassword() {
   var val = $("#confirmPassword").val();
   if (val) {
-    alert(val);
     var pass = $("#password").val();
     $("#confirmPassword").parent().find(".alertImg").show();
-    if (val!=pass) {
+    if (pval!=pass) {
       //提示文字
       win.setMessage({'msg':'&nbsp;&nbsp;确认密码与密码不一致!'});
       //提示图标
@@ -272,8 +277,144 @@ function comfirmPassword() {
     $("#confirmPassword").parent().find(".alertImg").hide();
   }
 }
+/**
+ * 账号验证
+ */
+function validateLoginName(){
+  var val = $('#loginName').val();
+  if(val){
+    $("#loginName").parent().find(".alertImg").show();
+    if(checkLoginNameStr(val)){
+      if(checkLoginName(val)){
+        win.setMessage({'msg':'&nbsp;&nbsp;该账号可以使用!','color':'green'});
+        $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+      }else{
+        win.setMessage({'msg':'&nbsp;&nbsp;该账号已被使用!'});
+        $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      }
+    }else{
+      win.setMessage({'msg':'&nbsp;&nbsp;账号应为5~11位的字母、数字、下划线组成!'});
+      $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+    }
+  }else{
+    $("#loginName").parent().find(".alertImg").hide();
+  }
+  //验证账号是否符合规则
+  function checkLoginNameStr(str){
+    var re = /^[a-zA-z]\w{4,11}$/;
+    if(re.test(str)){
+      return true;
+    }else{
+      return false;
+    }       
+  }
+  //后台验证账号是否重复
+  function checkLoginName(str){
+    var vfMsg =null;
+    var pData={"loginName":str};
+    var url="<%=path%>/login/validateLoginName.do";
+    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
+       success:function(json) {
+         vfMsg = json;
+       }
+    });
+    return vfMsg;
+  }
+}
+/**
+ * 验证邮箱
+ */
+function validateMail(eleId,index){
+  var a = $('#mailSel').combobox('getData');
+  var val = $('#mail').val();
+  if(val){
+    var mailStr;
+    $("#mail").parent().parent().find(".alertImg").show();
+    if(val.lastIndexOf('@')!=-1) mailStr = val;
+    else{
+      if(index!=null) mailStr = val +a[index-1].text;
+      else mailStr = val +$('#mailSel').combobox('getText');
+    }
+    if(checkMailStr(mailStr)){
+      if(checkMail(mailStr)){
+        //提示文字
+        win.setMessage({'msg':'&nbsp;&nbsp;该邮箱可以使用!','color':'green'});
+        //提示图标
+        $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+      }else{
+        //提示文字
+        win.setMessage({'msg':'&nbsp;&nbsp;该邮箱已被注册!'});
+        //提示图标
+        $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      }
+    }else{
+      //提示文字
+      win.setMessage({'msg':'&nbsp;&nbsp;不正确的邮箱格式!'});
+      //提示图标
+      $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+    }
+  }else{
+    $("#mail").parent().parent().find(".alertImg").hide();
+  }
+  //验证邮箱是否符合规则
+  function checkMailStr(str){
+    var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+    return reg.test(str); 
+  }
+  //验证邮箱是否已经注册
+  function checkMail(str){
+    var vfMsg =null;
+    var pData={
+      "mail":str
+    };
+    var url="<%=path%>/login/validateMail.do";
+    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
+      success:function(json) {
+        vfMsg = json;
+      }
+    });
+    return vfMsg;
+  }
+}
 
+/**
+ * 验证码验证
+ */
+function validateCheckCode(eleId){
+  var val = $('#checkCode').val();
+  if(val){
+    $("#checkCode").parent().parent().find(".alertImg").show();
+    var vMsg =null;
+    var pData={
+      "checkCode":val
+    };
+    var url="<%=path%>/login/validateValidateCode.do";
+    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
+      success:function(json) {
+        vMsg = json;
+      }
+    });
+    if(vMsg){
+      //提示文字
+      win.setMessage({'msg':'&nbsp;&nbsp;验证码填写正确!','color':'green'});
+      //提示图标
+      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+    }else{
+      //提示文字
+      win.setMessage({'msg':'&nbsp;&nbsp;验证码填写错误!'});
+      //提示图标
+      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+    }
+  }else{
+    $("#checkCode").parent().parent().find(".alertImg").hide();
+  }
+}
 //=以上初验证=============================================
+
+function refresh(obj) {
+  obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+  $('#checkCode').val('');
+}
 
 </script>
 </html>
