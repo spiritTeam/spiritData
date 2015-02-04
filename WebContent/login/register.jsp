@@ -262,7 +262,7 @@ function comfirmPassword() {
   if (val) {
     var pass = $("#password").val();
     $("#confirmPassword").parent().find(".alertImg").show();
-    if (pval!=pass) {
+    if (val!=pass) {
       //提示文字
       win.setMessage({'msg':'&nbsp;&nbsp;确认密码与密码不一致!'});
       //提示图标
