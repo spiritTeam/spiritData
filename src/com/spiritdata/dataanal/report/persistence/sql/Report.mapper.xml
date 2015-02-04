@@ -35,7 +35,7 @@
         <if test="reportType!=null"> and reportType=#{reportType,jdbcType=VARCHAR}</if>
         <if test="reportName!=null"> and reportName=#{reportName,jdbcType=VARCHAR}</if>
         <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR}</if>
-        <if test="fcTime!=null"> and fcTime=#{fcTime,jdbcType=TIMESTAMP}</if>
+        <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP}</if>
       </trim>
     </where>
   </sql>
@@ -72,7 +72,7 @@
       <if test="reportType!=null">reportType,</if>
       <if test="reportName!=null">reportName,</if>
       <if test="desc!=null">descn,</if>
-      <if test="fcTime!=null">fcTime,</if>
+      <if test="CTime!=null">CTime,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
@@ -83,7 +83,7 @@
       <if test="reportType!=null">#{reportType,jdbcType=VARCHAR},</if>
       <if test="reportName!=null">#{reportName,jdbcType=VARCHAR},</if>
       <if test="desc!=null">#{desc,jdbcType=VARCHAR},</if>
-      <if test="fcTime!=null">#{fcTime,jdbcType=TIMESTAMP},</if>
+      <if test="CTime!=null">#{CTime,jdbcType=TIMESTAMP},</if>
     </trim>
   </insert>
 
@@ -98,7 +98,7 @@
       <if test="reportType!=null">reportType=#{reportType,jdbcType=VARCHAR},</if>
       <if test="reportName!=null">reportName=#{reportName,jdbcType=VARCHAR},</if>
       <if test="desc!=null">descn=#{desc,jdbcType=VARCHAR},</if>
-      <if test="fcTime!=null">fcTime=#{fcTime,jdbcType=TIMESTAMP},</if>
+      <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP},</if>
     </set>
     where id=#{id,jdbcType=VARCHAR}
   </update>

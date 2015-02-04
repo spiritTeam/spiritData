@@ -89,6 +89,7 @@ public class ReportFile implements Serializable, BeManageFile {
         fc.setFType1(FileCategoryType1.REPORT);
         fc.setFType2(this.reportId);
         fc.setFType3(this.tasksId);
+        ret.addFileCategoryList(fc);
 
         return ret;
     }

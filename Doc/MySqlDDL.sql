@@ -189,9 +189,9 @@ CREATE TABLE sa_file_category (
   id      varchar(32)  NOT NULL  COMMENT '文件分类表ID(UUID)',
   fId     varchar(32)  NOT NULL  COMMENT '主文件id，指向文件表',
   type1   varchar(10)  NOT NULL  COMMENT '文件大类型：目前支持持三种,IMP、LOG和ANAL，即导入文件、日志和分析，日志是文本文件，分析是jsonD格式',
-  type2   varchar(30)  NOT NULL  COMMENT '文件中类型：文件的二级类型,当时IMP时，可以是rdata（关系型数据）',
+  type2   varchar(60)  NOT NULL  COMMENT '文件中类型：文件的二级类型,当时IMP时，可以是rdata（关系型数据）',
   type3   varchar(60)            COMMENT '文件子类型：文件的三级类型',
-  extInfo varchar(200)           COMMENT '扩展信息，比如jsonD的一些说明',
+  extInfo varchar(2000)          COMMENT '扩展信息，比如jsonD的一些说明',
   cTime   timestamp    NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '文件创建时间',
   PRIMARY KEY (id)
 )

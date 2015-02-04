@@ -81,7 +81,7 @@
       <if test="desc!=null">descn,</if>
       <if test="fcTime!=null">fcTime,</if>
       <if test="flmTime!=null">flmTime,</if>
-      <if test="CTime!=null">CTime,</if>
+      <if test="CTime!=null">cTime,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id!=null">#{id,jdbcType=VARCHAR},</if>

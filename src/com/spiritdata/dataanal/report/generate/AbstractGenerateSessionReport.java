@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import com.spiritdata.dataanal.exceptionC.Dtal1003CException;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.report.model.Report;
+import com.spiritdata.dataanal.report.service.ReportService;
 import com.spiritdata.dataanal.task.model.TaskGroup;
 import com.spiritdata.filemanage.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.REPORT.service.ReportFileService;
@@ -22,6 +23,8 @@ import com.spiritdata.framework.util.SequenceUUID;
 public abstract class AbstractGenerateSessionReport implements GenerateReport {
     @Resource
     private ReportFileService rfService;
+    @Resource
+    private ReportService reportService;
 
     private HttpSession session;//session用来缓存与该会话相关的信息
 
@@ -57,7 +60,8 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         if (param.get("preTreadParam")==null) throw new Dtal1003CException(new IllegalArgumentException("构建报告及任务时，Map参数中必须设置key='preTreadParam'的元素！"));
 
         //1-执行预处理，得到报告及任务
-        Map<String, Object> preTreatResult = preTreat((Map<String, Object>)param.get("preTreadParam"));
+        Map<String, Object> preTreadParam = (Map<String, Object>)param.get("preTreadParam");
+        Map<String, Object> preTreatResult = preTreat(preTreadParam);
         if (preTreatResult==null) return; //预处理没有返回任何内容，不能进行任何处理
         TaskReport tr = null;
         try {
@@ -78,13 +82,14 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         rfSeed.setReportId(report.getId());
         rfSeed.setTasksId(tg.getId());
 
-        FileInfo impFi = (FileInfo)param.get("impFileInfo");
-        rfService.setFileNameSeed("afterImport(IMPFID="+impFi.getId()+"_RID="+report.getId()+")");
+        FileInfo impFi = (FileInfo)preTreadParam.get("impFileInfo");
+        rfService.setFileNameSeed("afterImport(IMPFID-"+impFi.getId()+"_RID-"+report.getId()+")");
         ReportFile rf = (ReportFile)rfService.write2FileAsJsonD(report, rfSeed); //保存文件，并把文件信息回写到report对象中
         report.setReportFile(rf);
         //2.2-报告文件数据库存储
         rfService.saveFile(rf);//报告的json存储
-
+        //2.3-报告信息数据库存储
+        reportService.saveReport(tr);
         //3-处理任务
     }
 }
