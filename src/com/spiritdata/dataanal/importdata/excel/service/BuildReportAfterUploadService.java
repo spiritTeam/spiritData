@@ -68,12 +68,14 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
 
         //2-报告生成
         //2.1-设置数据
+        //2.1.1-得到客户端文件名称
+        String clientFileName = impFi.getFileCategoryList().get(0).getExtInfo();
         ReportHead rHead = new ReportHead();
         report.set_HEAD(rHead);
         report.setId(SequenceUUID.getPureUUID()); //生成新的Id，头的id也设置了
         report.setOwnerType(ownerType);
         report.setOwnerId(ownerId);
-        String reportName = FileNameUtils.getPureFileName(impFi.getAllFileName())+"——文件导入后数据分析报告";
+        String reportName = "["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后数据分析报告";
         report.setReportName(reportName); //设置报告名称，头的reportName也设置了
         report.setCTime(new Timestamp((new Date()).getTime())); //设置报告生成时间，同时也设置了头的时间
         report.setDesc(reportName); //设置报告说明，同时也设置了报告头的说明
@@ -81,6 +83,10 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         rHead.setCode(SDConstants.RP_AFTER_IMP);
         //2.2-报告文件，文件在基础类中处理，这里略过
 
+        //3-任务处理
+        tg.setId(SequenceUUID.getPureUUID());
+
+        //4-组装
         tr.setReport(report);
         tr.setTaskGroup(tg);
 

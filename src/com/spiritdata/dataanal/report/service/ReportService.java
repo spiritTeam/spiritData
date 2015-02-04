@@ -3,20 +3,62 @@ package com.spiritdata.dataanal.report.service;
 import java.io.File;
 import java.io.IOException;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
 import org.apache.commons.io.FileUtils;
 
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.CacheEle;
 import com.spiritdata.framework.core.cache.SystemCache;
+import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal1001CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1004CException;
+import com.spiritdata.dataanal.report.model.Report;
+import com.spiritdata.dataanal.report.model.TaskReport;
+import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 
 /**
  * 报告服务，主要是获得报告信息
  * @author wh
  */
 public class ReportService {
+    @Resource(name="defaultDAO")
+    private MybatisDAO<ReportPo> reportDao;
+
+    @PostConstruct
+    public void initParam() {
+        reportDao.setNamespace("report");
+    }
+
+    /**
+     * 保存报告信息
+     * @param report 报告对象
+     */
+    public void saveReport(Report report) {
+        try {
+            ReportPo rPo = report.convert2Po();
+            reportDao.insert(rPo);
+        } catch(Exception e) {
+            throw new Dtal1004CException(e);
+        }
+    }
+
+    /**
+     * 保存报告信息
+     * @param taskReport 任务报告对象
+     */
+    public void saveReport(TaskReport taskReport) {
+        try {
+            ReportPo rPo = taskReport.convert2ReportPo();
+            reportDao.insert(rPo);
+        } catch(Exception e) {
+            throw new Dtal1004CException(e);
+        }
+    }
+
     /**
      * 根据报告Id，得到报告的Json串
      * @param reportId 报告Id

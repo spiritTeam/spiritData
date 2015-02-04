@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
+import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.filemanage.REPORT.model.ReportFile;
 import com.spiritdata.framework.core.model.tree.TreeNode;
+import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.jsonD.ConvertJson;
 import com.spiritdata.jsonD.util.JsonUtils;
 
@@ -175,5 +177,27 @@ public class Report implements Serializable, ConvertJson {
             }
         }
         return jsonS+"}";
+    }
+
+    public ReportPo convert2Po() {
+        ReportPo ret = new ReportPo();
+        //id处理
+        if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
+            ret.setId(SequenceUUID.getPureUUID());
+        } else {
+            ret.setId(this.id);
+        }
+        //所有者
+        ret.setOwnerId(this.ownerId);
+        ret.setOwnerType(this.ownerType);
+        //TaskId 在这里不设置
+        //文件Id
+        if (reportFile!=null) ret.setFId(reportFile.getId());
+        //其他
+        ret.setReportType(this.getReportType());
+        ret.setReportName(this.getReportName());
+        ret.setDesc(this.getDesc());
+        ret.setCTime(this.CTime);
+        return ret;
     }
 }
