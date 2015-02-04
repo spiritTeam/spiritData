@@ -3,6 +3,7 @@ package com.spiritdata.dataanal.importdata.excel.service;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -50,7 +51,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
     }
 
     @Override
-    public TaskReport preTreat(Map<String, Object> param) {
+    public Map<String, Object> preTreat(Map<String, Object> param) {
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
         if (param.get("reportParam")==null) return null;//若参数中的reportParam为空，无法生成报告，返回空
@@ -82,6 +83,9 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
 
         tr.setReport(report);
         tr.setTaskGroup(tg);
-        return tr;
+
+        Map<String, Object> ret = new HashMap<String, Object>();
+        ret.put("taskReport", tr);
+        return ret;
     }
 }
