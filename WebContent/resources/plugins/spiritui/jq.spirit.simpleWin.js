@@ -47,6 +47,7 @@
   function initSimpleWin(options) {
     //参数合并，传入的参数和默认参数
     var _options = $.extend(true, {}, defaults, options);
+    if (!_options.msgFontColor) _options.msgFontColor="red";//若没有设置字体颜色默认为红色
     var swinId = "sui-sWinID-"+getUuid(6);
     var winDiv = $("<div class='sWin'></div>");//窗口主对象
     $("body").append(winDiv);
@@ -84,6 +85,7 @@
     var titleTxtWidth=titleTxtLength*fontSize+13;
     headDiv.find(".sWin_msg").css("left", (titleTxtWidth+parseFloat(headDiv.find(".sWin_title").css("padding-left")))+"px");
     headDiv.find(".sWin_msg").css("width", (parseFloat(headDiv.find(".sWin_title").css("width"))-parseFloat(headDiv.find(".sWin_msg").css("left"))-20)+"px");
+    headDiv.find(".sWin_msg").css("color", _options.msgFontColor);
     //关闭按钮
     headDiv.find(".sWin_closeBtn").css({
       "left": winDiv.width()-headDiv.find(".sWin_closeBtn").width()-10
@@ -188,17 +190,20 @@
     /**
      * 设置窗体提示栏内容，其参数是json对象，如：
      * {
+     *   defaultColor: red|#39FA32, //默认提示颜色，若设置了这个参数，本窗口今后的提示字体颜色都是这里设置的
      *   color: red|#39FA32, //可省略
      *   msg:'提示内容' //不可省略，若为空串，则清除提示内容
      * }
-<<<<<<< HEAD
-=======
-     * 
->>>>>>> refs/remotes/origin/master
      */
-    winDiv.setMessage=function(options){
+    winDiv.setMessage=function(options) {
     	if (options) {
+  			var opt = $.data(this, "spiritSimpleWin");
+    		if (options.defaultColor) {
+    			opt.msgFontColor = options.defaultColor;
+    		}
       	var _msg=$(this).find(".sWin_head>.sWin_msg");
+      	//设置颜色
+      	_msg.css("color", opt.msgFontColor);
     		if (options.msg||options.msg=='') {
         	_msg.html(options.msg);
         	_msg.attr("title", options.msg);
@@ -250,6 +255,7 @@
     titleCss: "", //标题样式
     iconCss: "", //窗口图标的css
     iconUrl: "", //窗口图标的url
+    msgFontColor: "", //窗口提示区字体默认颜色
 
     onBeforeClose: null, //窗口关闭之前
     zIndex:1000,
