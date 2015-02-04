@@ -286,7 +286,7 @@ function validateLoginName(){
     $("#loginName").parent().find(".alertImg").show();
     if(checkLoginNameStr(val)){
       if(checkLoginName(val)){
-        win.setMessage({'msg':'&nbsp;&nbsp;该账号可以使用!','color':'green'});
+        win.setMessage({'msg':''});
         $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
       }else{
         win.setMessage({'msg':'&nbsp;&nbsp;该账号已被使用!'});
@@ -338,7 +338,7 @@ function validateMail(eleId,index){
     if(checkMailStr(mailStr)){
       if(checkMail(mailStr)){
         //提示文字
-        win.setMessage({'msg':'&nbsp;&nbsp;该邮箱可以使用!','color':'green'});
+        win.setMessage({'msg':''});
         //提示图标
         $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
       }else{
@@ -396,7 +396,7 @@ function validateCheckCode(eleId){
     });
     if(vMsg){
       //提示文字
-      win.setMessage({'msg':'&nbsp;&nbsp;验证码填写正确!','color':'green'});
+      win.setMessage({'msg':''});
       //提示图标
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
     }else{
