@@ -99,7 +99,7 @@ $(function() {
   win=getSWinInMain(winId);
 
   initMailSuffix();//邮件地址后缀设置
-  inputOverOutEffect();//设置input效果，鼠标划过
+  inputEffect();//设置input效果，鼠标划过
   commitOverOutEffect();//设置按钮效果，鼠标划过
   maskTitleOverOutEffect();//mask效果，鼠标划过
 
@@ -126,50 +126,6 @@ function initMailSuffix() {
   $(".combo").css('border-left','none');
 }
 //设置input效果，鼠标划过
-function inputOverOutEffect() {
-  //对focus处理,使tab隐藏maskTitle
-  $(".alertInputComp").bind('focus',function(){
-    var mainAlert=$(this).parent();
-    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
-    mainAlert.find(".maskTitle").hide();
-  });
-  //对blur处理,使tab隐藏maskTitle
-  $(".alertInputComp").bind('blur',function(){
-    var mainAlert=$(this).parent();
-    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
-    mainAlert.find(".maskTitle").show();
-  });
-  //对鼠标移入移出进行处理
-  $(".alertInputComp").bind('mouseover',function(){
-    $(this).focus();
-    $(this)[0].select();
-    var width = parseFloat($(this).css("width"));
-    var height = parseFloat($(this).css("height"));
-    var lineheight = parseFloat($(this).css("line-height"));
-    var paddingLeft = parseFloat($(this).css("padding-left"));
-    //更改
-    $(this).css({"width":(width-1)+"px", "height":(height-2)+"px", "border": "2px #ABCDEF solid"});
-    if (lineheight) $(this).css({"line-height":(lineheight-2)+"px"});
-    if (paddingLeft) $(this).css({"padding-left":(paddingLeft-1)+"px"});
-    var mainAlert=$(this).parent();
-    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
-    $(mainAlert).find(".maskTitle").hide();
-  }).bind('mouseout',function(){
-    var width = parseFloat($(this).css("width"));
-    var height = parseFloat($(this).css("height"));
-    var lineheight = parseFloat($(this).css("line-height"));
-    var paddingLeft = parseFloat($(this).css("padding-left"));
-
-    $(this).css({"width":(width+1)+"px", "height":(height+2)+"px", "border": "1px #ABADB3 solid"});
-    if (lineheight) $(this).css({"line-height":(lineheight+2)+"px"});
-    if (paddingLeft) $(this).css({"padding-left":(paddingLeft+1)+"px"});
-    if (!$(this).val()) {
-      var mainAlert=$(this).parent();
-      if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
-      $(mainAlert).find(".maskTitle").show();
-    }
-  });
-}
 //设置按钮效果，鼠标划过
 function commitOverOutEffect() {
   $("#commitButton").bind('mouseover',function(){
