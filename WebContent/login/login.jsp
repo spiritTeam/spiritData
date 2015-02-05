@@ -126,7 +126,7 @@ $(function() {
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
 
-  inputOverOutEffect();//设置input效果，鼠标划过
+  inputEffect();//设置input效果，鼠标划过
   commitOverOutEffect();//设置按钮效果，鼠标划过
   maskTitleOverOutEffect();//mask效果，鼠标划过
 
