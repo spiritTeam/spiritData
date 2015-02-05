@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.spiritdata.dataanal.task.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo;
 import com.spiritdata.filemanage.core.model.FileInfo;
@@ -19,7 +20,7 @@ public class TaskInfo implements Serializable {
 
     private String id; //任务
     private String taskName; //任务名称
-    private String langType; //执行语言，默认为java
+    private TaskLangType langType; //执行语言，默认为java
     private String excuteFunc; //任务执行方法
     private String param; //任务执行所需的参数
     private int status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
@@ -45,10 +46,10 @@ public class TaskInfo implements Serializable {
     public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
-    public String getLangType() {
+    public TaskLangType getLangType() {
         return langType;
     }
-    public void setLangType(String langType) {
+    public void setLangType(TaskLangType langType) {
         this.langType = langType;
     }
     public String getExcuteFunc() {
@@ -167,7 +168,7 @@ public class TaskInfo implements Serializable {
             ret.setId(this.getId());
         }
         ret.setTaskName(this.taskName);
-        ret.setLangType(this.langType);
+        ret.setLangType(this.langType.getValue());
         ret.setExcuteFunc(this.excuteFunc);
         ret.setParam(this.param);
         ret.setParam(this.param);
