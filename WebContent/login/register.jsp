@@ -46,7 +46,7 @@
       <td class="labelTd">密　码</td>
       <td class="inputTd">
         <div class="alertInput-Text">
-          <input id="password" class="alertInputComp" name="password" tabindex="3" type="text" onBlur="validatePassword();"/>
+          <input id="password" class="alertInputComp" name="password" tabindex="3" type="password" onBlur="validatePassword();"/>
           <div class="alertImg"></div>
           <div class="maskTitle">请输入密码</div>
         </div>
@@ -56,7 +56,7 @@
       <td class="labelTd" style="height:35px; line-height:35px;">确　认</td>
       <td class="inputTd" style="height:35px; line-height:35px;">
         <div class="alertInput-Text">
-          <input id="confirmPassword" class="alertInputComp" name="confirmPassword" tabindex="4" type="text" onBlur="comfirmPassword();"/>
+          <input id="confirmPassword" class="alertInputComp" name="confirmPassword" tabindex="4" type="password" onBlur="comfirmPassword();"/>
           <div class="alertImg"></div>
           <div class="maskTitle">请再次输入密码以确认</div>
         </div>
@@ -75,7 +75,7 @@
     </tr>
     <tr>
       <td colspan="2" class="commitBottonTd">
-        <div id="commitButton" class="commitDiv">
+        <div id="commitButton" class="commitDiv" onclick="commit();">
           <span>注　册</span>
         </div>
       </td>
@@ -84,7 +84,10 @@
 </div></center>
 </body>
 <script type="text/javascript">
+//win
 var win;
+//用于判断是否可以提交
+var lnV=false,maV=false,psV=false,cpsV=false,vcV=false;
 /**
  * 主函数
  */
@@ -212,17 +215,18 @@ function validatePassword() {
     $("#password").parent().find(".alertImg").show();
     var confirmVal = $("#confirmPassword").val();
     if(!checkPasswordStr(val)){
-      //提示文字
       win.setMessage({'msg':'&nbsp;&nbsp;密码应是5~12位的字母、数字、下划线!'});
-      //提示图标
       $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      psV = false;
       //与确认码比较
       if (confirmVal) {
         $("#confirmPassword").parent().find(".alertImg").show();
         if (confirmVal==val) {
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+          cpsV=true;
         } else {
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+          cpsV=false;
         }
       }
     } else {
@@ -230,19 +234,23 @@ function validatePassword() {
       win.setMessage({'msg':''});
       //提示图标
       $("#password").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+      psV = true;
       //与确认码比较
       if (confirmVal) {
         $("#confirmPassword").parent().find(".alertImg").show();
         if (confirmVal==val) {
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+          cpsV=true;
         } else {
           win.setMessage({'msg':'&nbsp;&nbsp;确认密码与密码不一致!'});
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+          cpsV=false;
         }
       }
     }
   } else {
     $("#password").parent().find(".alertImg").hide();
+    psV = false;
   }
   //验证密码是否复合规则
   function checkPasswordStr(str) {
@@ -263,18 +271,17 @@ function comfirmPassword() {
     var pass = $("#password").val();
     $("#confirmPassword").parent().find(".alertImg").show();
     if (val!=pass) {
-      //提示文字
       win.setMessage({'msg':'&nbsp;&nbsp;确认密码与密码不一致!'});
-      //提示图标
       $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      cpsV=false;
     } else {
-      //提示文字
       win.setMessage({'msg':''});
-      //提示图标
       $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+      cpsV=true;
     }
   } else {
     $("#confirmPassword").parent().find(".alertImg").hide();
+    cpsV=true;
   }
 }
 /**
@@ -288,16 +295,20 @@ function validateLoginName(){
       if(checkLoginName(val)){
         win.setMessage({'msg':''});
         $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+        lnV = true;
       }else{
         win.setMessage({'msg':'&nbsp;&nbsp;该账号已被使用!'});
         $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+        lnV = false;
       }
     }else{
       win.setMessage({'msg':'&nbsp;&nbsp;账号应为5~11位的字母、数字、下划线组成!'});
       $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      lnV = false;
     }
   }else{
     $("#loginName").parent().find(".alertImg").hide();
+    lnV = false;
   }
   //验证账号是否符合规则
   function checkLoginNameStr(str){
@@ -337,24 +348,26 @@ function validateMail(eleId,index){
     }
     if(checkMailStr(mailStr)){
       if(checkMail(mailStr)){
-        //提示文字
         win.setMessage({'msg':''});
-        //提示图标
         $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+        maV = true;
       }else{
         //提示文字
         win.setMessage({'msg':'&nbsp;&nbsp;该邮箱已被注册!'});
         //提示图标
         $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+        maV = false;
       }
     }else{
       //提示文字
       win.setMessage({'msg':'&nbsp;&nbsp;不正确的邮箱格式!'});
       //提示图标
       $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      maV = false;
     }
   }else{
     $("#mail").parent().parent().find(".alertImg").hide();
+    maV = false;
   }
   //验证邮箱是否符合规则
   function checkMailStr(str){
@@ -395,25 +408,97 @@ function validateCheckCode(eleId){
       }
     });
     if(vMsg){
-      //提示文字
       win.setMessage({'msg':''});
-      //提示图标
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+      vcV=true;
     }else{
-      //提示文字
       win.setMessage({'msg':'&nbsp;&nbsp;验证码填写错误!'});
-      //提示图标
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      vcV=false;
     }
   }else{
     $("#checkCode").parent().parent().find(".alertImg").hide();
+    vcV=false;
   }
 }
 //=以上初验证=============================================
 
+//刷新验证码
 function refresh(obj) {
   obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
   $('#checkCode').val('');
+}
+
+//提交注册信息
+function commit(){
+  $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+  $('#checkCode').val('');
+  if(psV&&cpsV&&lnV&&maV&&vcV){
+    var mailAdress = $("#mail").val();
+    if(mailAdress.lastIndexOf("@")==-1) mailAdress = mailAdress+$('#mailEndStr').combobox('getText');
+    var pData={
+      "loginName":$("#loginName").val(),
+      "password":$("#password").val(),
+      "userName":$("#userName").val(),
+      "mailAdress":mailAdress,
+    };
+    $("#mask").show();
+    var url="<%=path%>/login/register.do";
+    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
+      success:function(json) {
+        $("#mask").hide();
+        if(json.success){
+          if(mainPage){
+            closeSWinInMain(winId);
+            mainPage.$.messager.alert('注册提示',json.retInfo,'info');
+            cleanWinId(mainPage);
+          }else{
+            $.messager.alert('注册提示',json.retInfo,'info');
+            window.location.href = "<%=path%>/asIndex.jsp";
+          }
+          $('#register').attr("disabled",false); 
+        }else{
+          $.messager.alert('提示',json.retInfo,'info');
+          $('#register').attr("disabled",false);
+        }
+      }
+    });
+  }else{
+    $('#register').attr("disabled",false); 
+    if(lnV==false) {
+      $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+    }
+    if(cpsV==false){
+      $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+    }
+    if(maV==false){
+      $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+    }
+    if(psV==false){
+      $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+    } 
+    if(vcV==false){
+      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");nd('<img id="vcImg" align="middle" src="images/cross.png">');
+    } 
+    $.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息",'info',function () {
+      if(lnV==false){
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }else if(maV=false){
+        $('#mail')[0].focus();
+        $('#mail')[0].select();
+      }else if(psV==false){
+        $('#password')[0].focus();
+        $('#password')[0].select();
+      }else if(cpsV=false){
+        $('#confirmPassword')[0].focus();
+        $('#confirmPassword')[0].select();
+      }else{
+        $('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+      }
+    });
+  }
 }
 
 </script>

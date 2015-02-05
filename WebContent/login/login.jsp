@@ -78,7 +78,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <td class="labelTd">密　码</td>
       <td class="inputTd">
         <div class="alertInput-Text">
-          <input id="password" class="alertInputComp" name="password" tabindex="3" type="text" onBlur="validatePassword();"/>
+          <input id="password" class="alertInputComp" name="password" tabindex="2" type="password" onBlur="validatePassword();"/>
           <div class="alertImg"></div>
           <div class="maskTitle">请输入密码</div>
         </div>
@@ -88,7 +88,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <td class="labelTd">验证码</td>
       <td class="inputTd">
         <div class="alertInput-vCode">
-          <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="5" type="text" onBlur="validateCheckCode();"/></div>
+          <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="3" type="text" onBlur="validateCheckCode();"/></div>
           <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
           <div class="alertImg"></div>
           <div class="maskTitle">按右图输入验证码</div>
@@ -98,7 +98,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     <tr>
       <td colspan="2" class="commitBottonTd">
         <div id="commitButton" class="commitDiv">
-          <span>注　册</span>
+          <span>登　录</span>
         </div>
       </td>
     </tr>
@@ -107,6 +107,8 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 </body>
 <script type="text/javascript">
 var win;
+//用于判断是否可以提交
+var lnV=false,psV=false,vcV=false;
 /**
  * 主函数
  */
@@ -205,5 +207,66 @@ function initMaskTitle() {
   }
 }
 //=以上初始化设置=============================================
+
+//=以下初验证=============================================
+//验证密码是否为空
+function validatePassword() {
+  $("#password").parent().find(".alertImg").show();
+  var val = $("#password").val();
+  if(val){
+    psV = true;
+    $("#password").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+  }else{
+    psV = false;
+    $("#password").parent().find(".alertImg").hide();
+  }
+}
+/**
+ * 账号验证
+ */
+function validateLoginName(){
+  var val = $('#loginName').val();
+  $("#loginName").parent().find(".alertImg").show();
+  //验证loginName是否为空
+  if(val){
+    lnV = true;
+    $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+  }else {
+    lnV = false;
+    $("#loginName").parent().find(".alertImg").hide();
+  }
+}
+/**
+ * 验证码验证
+ */
+function validateCheckCode(eleId){
+  var val = $('#checkCode').val();
+  if(val){
+    $("#checkCode").parent().parent().find(".alertImg").show();
+    var vMsg =null;
+    var pData={
+      "checkCode":val
+    };
+    var url="<%=path%>/login/validateValidateCode.do";
+    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
+      success:function(json) {
+        vMsg = json;
+      }
+    });
+    if(vMsg){
+      win.setMessage({'msg':''});
+      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+      vcV=true;
+    }else{
+      win.setMessage({'msg':'&nbsp;&nbsp;验证码填写错误!'});
+      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      vcV=false;
+    }
+  }else{
+    $("#checkCode").parent().parent().find(".alertImg").hide();
+    vcV=false;
+  }
+}
+//=以上初验证=============================================
 </script>
 </html>
