@@ -23,14 +23,18 @@ function inputEffect() {
   //对tab到input处理
   $(".alertInputComp").bind('focus',function(){
     dealInput_Tab($(this),"_focus");
+    dealInput_Border($(this),"_focus");
   });$(".alertInputComp").bind('blur',function(){
     dealInput_Tab($(this),"_blur");
+    dealInput_Border($(this),"_blur");
   });
   //对鼠标移入移出进行处理
   $(".alertInputComp").bind('mouseover',function(){
     dealInput_Mouse($(this),'_mouseover');
+    dealInput_Border($(this),"_mouseover");
   });$(".alertInputComp").bind('mouseout',function(){
     dealInput_Mouse($(this),'_mouseout');
+    dealInput_Border($(this),"_mouseout");
   });
   /**
    * 处理tab移入移出时对input的mask处理
@@ -39,7 +43,6 @@ function inputEffect() {
    */
   function dealInput_Tab(_jQobj,dealType){
     if(_jQobj){
-      dealInput_Border(_jQobj,dealType);
       //得到mainAlert
       var mainAlert=_jQobj.parent();
       if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
@@ -60,12 +63,9 @@ function inputEffect() {
    */
   function dealInput_Mouse(_jQobj,dealType){
     if(_jQobj){
-      dealInput_Border(_jQobj,dealType);
       var mainAlert=_jQobj.parent();
         if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
       if(dealType=='_mouseover'){
-        _jQobj.focus();
-        _jQobj[0].select();
         $(mainAlert).find(".maskTitle").hide();
       }else{
         if (_jQobj.val()) $(mainAlert).find(".maskTitle").hide();
