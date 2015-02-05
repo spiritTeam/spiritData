@@ -106,11 +106,44 @@ public class TaskInfo implements Serializable {
         this.resultFile = resultFile;
     }
 
+    //任务组状态设置
     /**
-     * 加入前序任务
-     * @param task 前序任务
-     * @param isUsed 是否利用前置任务的结果
+     * 设置为准备状态
      */
+    public void setPrepared() {
+        this.status=1;
+    }
+    /**
+     * 设置为等待状态
+     */
+    public void setWaiting() {
+        this.status=6;
+    }
+    /**
+     * 设置为正在执行
+     */
+    public void setProcessing() {
+        this.status=2;
+    }
+    /**
+     * 设置为失效
+     */
+    public void setAbatement() {
+        this.status=3;
+    }
+    /**
+     * 设置为执行成功
+     */
+    public void setSuccessed() {
+        this.status=4;
+    }
+    /**
+     * 设置为执行失败
+     */
+    public void setFailed() {
+        this.status=5;
+    }
+
     public void addPreTask(TaskInfo task, boolean isUsed) {
         if (this.preTasks==null) this.preTasks = new ArrayList<PreTask>();
         PreTask pt = new PreTask();

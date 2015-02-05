@@ -18,6 +18,7 @@ import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.task.model.TaskGroup;
+import com.spiritdata.dataanal.task.model.TaskInfo;
 import com.spiritdata.filemanage.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.util.FileNameUtils;
@@ -66,7 +67,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         Report report = new Report();
         TaskGroup tg = new TaskGroup();
 
-        //2-报告生成
+        //2-报告主体生成
         //2.1-设置数据
         //2.1.1-得到客户端文件名称
         String clientFileName = impFi.getFileCategoryList().get(0).getExtInfo();
@@ -83,10 +84,24 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         rHead.setCode(SDConstants.RP_AFTER_IMP);
         //2.2-报告文件，文件在基础类中处理，这里略过
 
-        //3-任务处理
+        //3-任务组处理——构建任务组
+        //3.1-构建组
         tg.setId(SequenceUUID.getPureUUID());
+        tg.setOwnerId(ownerId);
+        tg.setOwnerType(ownerType);
+        tg.setWorkName("["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后分析任务");
+        tg.setStatus(0);
+        tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\", 子任务}");
+        
+        //4-构建报告体，并生成相关的任务
+        //4.a.1-获得所有本次对应的元数据信息
+        TaskInfo getAllMetadataInfos_Task = new TaskInfo();
+        getAllMetadataInfos_Task.setId(SequenceUUID.getPureUUID());
+        tg.addTask2Graph(getAllMetadataInfos_Task);
+        //4.1-分不同元数据，进行分析，目前包括()
+        //4.2-导入日志，第一部分，都导入了那些内容
 
-        //4-组装
+        //5-组装
         tr.setReport(report);
         tr.setTaskGroup(tg);
 

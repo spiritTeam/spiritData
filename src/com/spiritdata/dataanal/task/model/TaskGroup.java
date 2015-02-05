@@ -69,12 +69,46 @@ public class TaskGroup implements Serializable {
     public TaskGraph getTasks() {
         return tasks;
     }
+
+    //任务组状态设置
+    /**
+     * 设置为准备状态
+     */
+    public void setPrepared() {
+        this.status=1;
+    }
+    /**
+     * 设置为正在执行
+     */
+    public void setProcessing() {
+        this.status=2;
+    }
+    /**
+     * 设置为失效
+     */
+    public void setAbatement() {
+        this.status=3;
+    }
+    /**
+     * 设置为执行成功
+     */
+    public void setSuccessed() {
+        this.status=4;
+    }
+    /**
+     * 设置为执行失败：其子任务图没有完全执行成功
+     */
+    public void setFailed() {
+        this.status=5;
+    }
+
     /**
      * 新增一个子任务到任务图
      * @param task
      */
     public void addTask2Graph(TaskInfo task) {
         this.tasks.addTaskInfo(task);
+        task.setTaskGroup(this);
     }
 
     /**
