@@ -288,6 +288,7 @@ function comfirmPassword() {
     var pass = $("#password").val();
     $("#confirmPassword").parent().find(".alertImg").show();
     if (val!=pass) {
+      //提示文字
       win.setMessage({'msg':'&nbsp;&nbsp;确认密码与密码不一致!'});
       $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       cpsV=false;
@@ -406,7 +407,6 @@ function validateMail(eleId,index){
     return vfMsg;
   }
 }
-
 /**
  * 验证码验证
  */
