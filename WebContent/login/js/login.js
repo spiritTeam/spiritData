@@ -1,99 +1,140 @@
 /**
- * 得到mainPage中打开窗口的winId
- */
-function getWinId(mainPage){
-  var winId = "";
-  if(mainPage.registerWinId!=null&&mainPage.registerWinId!="") winId = mainPage.registerWinId;
-  if(mainPage.modifyWinId!=null&&mainPage.modifyWinId!="") winId = mainPage.modifyWinId;
-  if(mainPage.loginWinId!=null&&mainPage.loginWinId!="") winId = mainPage.loginWinId;
-  return winId;
-}
-/**
- * 清除mainPage中打开窗口的winId
- */
-function cleanWinId(mainPage){
-  mainPage.loginWinId = "";
-  mainPage.modifyWinId = "";
-  mainPage.registerWinId = "";
-}
-/**
- * 
+ * 设置input控件效果
  */
 function inputEffect() {
   //对tab到input处理
-  $(".alertInputComp").bind('focus',function(){
-    dealInput_Tab($(this),"_focus");
-    dealInput_Border($(this),"_focus");
-  });$(".alertInputComp").bind('blur',function(){
-    dealInput_Tab($(this),"_blur");
-    dealInput_Border($(this),"_blur");
+  $(".alertInputComp").bind('focus',function() {
+  	focusInput($(this));
+  }).bind('blur',function() {
+  	blurInput($(this));
   });
   //对鼠标移入移出进行处理
   $(".alertInputComp").bind('mouseover',function(){
-    dealInput_Mouse($(this),'_mouseover');
-    dealInput_Border($(this),"_mouseover");
-  });$(".alertInputComp").bind('mouseout',function(){
-    dealInput_Mouse($(this),'_mouseout');
-    dealInput_Border($(this),"_mouseout");
+  	$(this).focus();
+  }).bind('mouseout',function(){
+  	$(this).blur();
   });
   /**
-   * 处理tab移入移出时对input的mask处理
+   * input的获得焦点
    * @param _jQobj：jq对象
-   * @param dealType：处理方式？_blur显示,_focus隐藏
    */
-  function dealInput_Tab(_jQobj,dealType){
-    if(_jQobj){
-      //得到mainAlert
-      var mainAlert=_jQobj.parent();
-      if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
-      //分dealType处理
-      if(dealType=='_blur'){
-        if(_jQobj.val()){
-          mainAlert.find(".maskTitle").hide();
-        }else mainAlert.find(".maskTitle").show();
-      }else{
-        mainAlert.find(".maskTitle").hide();
-      }
-    }
-  }
-  /**
-   * 处理input移入移出时对input的mask处理
-   * @param _jQobj：jq对象
-   * @param dealType：处理方式？_mouseover隐藏,_mouseout显示，
-   */
-  function dealInput_Mouse(_jQobj,dealType){
-    if(_jQobj){
-      var mainAlert=_jQobj.parent();
-        if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
-      if(dealType=='_mouseover'){
-        $(mainAlert).find(".maskTitle").hide();
-      }else{
-        if (_jQobj.val()) $(mainAlert).find(".maskTitle").hide();
-        else $(mainAlert).find(".maskTitle").show();
-      }
-    }
-  }
-  /**
-   * 处理边框效果
-   * 当dealType=_mouseover,_mouseout时，处理mouse移入移出时边框效果
-   * 当dealType=_focus,_blur处理tab移入移出边框效果
-   * @param _jQobj：jq对象
-   * @param dealType：处理方式？_mouseover,_mouseout，_focus,_blur
-   */
-  function dealInput_Border(_jQobj,dealType){
+  function focusInput(_jQobj) {
+  	_jQobj[0].select();
+  	//设置为选中样式
     var width = parseFloat(_jQobj.css("width"));
     var height = parseFloat(_jQobj.css("height"));
     var lineheight = parseFloat(_jQobj.css("line-height"));
     var paddingLeft = parseFloat(_jQobj.css("padding-left"));
-    if(dealType=='_mouseover'||dealType=='_focus'){
-      _jQobj.css({"width":(width-1)+"px", "height":(height-2)+"px", "border": "2px #ABCDEF solid"});
-      if (lineheight) _jQobj.css({"line-height":(lineheight-2)+"px"});
-      if (paddingLeft) _jQobj.css({"padding-left":(paddingLeft-1)+"px"});
-    }else{
-      _jQobj.css({"width":(width+1)+"px", "height":(height+2)+"px", "border": "1px #ABADB3 solid"});
-      if (lineheight) _jQobj.css({"line-height":(lineheight+2)+"px"});
-      if (paddingLeft) _jQobj.css({"padding-left":(paddingLeft+1)+"px"});
-    }
+    _jQobj.css({"width":(width-1)+"px", "height":(height-2)+"px", "border": "2px #ABCDEF solid"});
+    if (lineheight) _jQobj.css({"line-height":(lineheight-2)+"px"});
+    if (paddingLeft) _jQobj.css({"padding-left":(paddingLeft-1)+"px"});
+    //处理maskTitle
+    //得到mainAlert
+    var mainAlert=_jQobj.parent();
+    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
+    mainAlert.find(".maskTitle").hide();
+  }
+  /**
+   * 处理tab移入移出时对input的mask处理
+   * @param _jQobj：jq对象
+   */
+  function blurInput(_jQobj) {
+  	//设置为选中样式
+    var width = parseFloat(_jQobj.css("width"));
+    var height = parseFloat(_jQobj.css("height"));
+    var lineheight = parseFloat(_jQobj.css("line-height"));
+    var paddingLeft = parseFloat(_jQobj.css("padding-left"));
+    _jQobj.css({"width":(width+1)+"px", "height":(height+2)+"px", "border": "1px #ABADB3 solid"});
+    if (lineheight) _jQobj.css({"line-height":(lineheight+2)+"px"});
+    if (paddingLeft) _jQobj.css({"padding-left":(paddingLeft+1)+"px"});
+    //处理maskTitle
+    //得到mainAlert
+    var mainAlert=_jQobj.parent();
+    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
+    if(_jQobj.val()) mainAlert.find(".maskTitle").hide();
+    else mainAlert.find(".maskTitle").show();
   }
 }
 
+/**
+ * 邮件地址后缀设置
+ */
+function initMailSuffix() {
+  $('#mailSel').combobox({    
+    url:'mailAdress.json',   
+    valueField:'id',   
+    textField:'text',
+    height:37,
+    width:97,
+    onChange:function (index,o) {
+      var eleId = 'mail';
+      validateMail(eleId,index);
+    },
+    editable:false
+  });
+  $(".combo").css('border-color','#ABADB3');
+  $(".combo").css('border-left','none');
+}
+
+/**
+ * 设置按钮效果，鼠标划过
+ */
+function commitOverOutEffect() {
+  $("#commitButton").bind('mouseover',function(){
+    $(this).css({"background-color":"#81FC6A"});
+    $(this).find("span").css("color", "yellow");
+  }).bind('mouseout',function(){
+    $(this).css({"background-image":"url(../images/bg.png)"});
+    $(this).find("span").css("color", "#fff");
+  });
+}
+
+/**
+ * mask效果，鼠标划过
+ */
+function maskTitleOverOutEffect() {
+  $(".maskTitle").bind('mouseover',function(){
+    $(this).hide();
+  });
+}
+
+/**
+ * 设置提示图标位置，根据不同的控件
+ */
+function setCorrectPosition() {
+  //1-提示图标
+  var imgList = $(".alertImg");
+  var i=0, len=imgList.length;
+  for (;i<len; i++) {
+    var top = $(imgList[i]).parent().offset().top;
+    var left = $(imgList[i]).parent().offset().left;
+    var pWidth = parseFloat($(imgList[i]).parent().css("width"));
+    $(imgList[i]).css("top", (top-(parseFloat($(imgList[i]).css("height"))/2)));
+    $(imgList[i]).css("left", (left+pWidth-(parseFloat($(imgList[i]).css("width"))/2)));
+  }
+  //2-提示文字
+  var maskTitleList = $(".maskTitle");
+  var i=0, len=maskTitleList.length;
+  for (;i<len; i++) {
+    var top = $(maskTitleList[i]).parent().offset().top;
+    var left = $(maskTitleList[i]).parent().offset().left;
+    $(maskTitleList[i]).css("top", top);
+    $(maskTitleList[i]).css("left", left);
+  }
+}
+
+/**
+ * 初始化maskTitle
+ */
+function initMaskTitle() {
+  var flagCompList = $(".alertInputComp");
+  var i=0, len=flagCompList.length;
+  for (;i<len; i++) {
+    var _this = flagCompList[i];
+    if ($(_this).val()&&$(_this).val().trim()!="") {
+      var mainAlert=$(_this).parent();
+      if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
+      mainAlert.find(".maskTitle").hide();
+    }
+  }
+}

@@ -17,7 +17,9 @@ import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.dataanal.report.model.TaskReport;
+import com.spiritdata.dataanal.task.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.model.TaskGroup;
+import com.spiritdata.dataanal.task.model.TaskInfo;
 import com.spiritdata.filemanage.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.util.FileNameUtils;
@@ -66,7 +68,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         Report report = new Report();
         TaskGroup tg = new TaskGroup();
 
-        //2-报告生成
+        //2-报告主体生成
         //2.1-设置数据
         //2.1.1-得到客户端文件名称
         String clientFileName = impFi.getFileCategoryList().get(0).getExtInfo();
@@ -83,10 +85,37 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         rHead.setCode(SDConstants.RP_AFTER_IMP);
         //2.2-报告文件，文件在基础类中处理，这里略过
 
-        //3-任务处理
+        //3-任务组处理——构建任务组
+        //3.1-构建组
         tg.setId(SequenceUUID.getPureUUID());
+        tg.setOwnerId(ownerId);
+        tg.setOwnerType(ownerType);
+        tg.setWorkName("["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后分析任务");
+        tg.setStatus(0);
+        tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\", 子任务}");
+        
+        //4-构建报告体，并生成相关的任务
+        //4.a.1-获得所有本次对应的元数据信息
+        TaskInfo getMDInfos_Task = new TaskInfo();
+        getMDInfos_Task.setId(SequenceUUID.getPureUUID());
+        getMDInfos_Task.setTaskName("获得元数据信息");
+        getMDInfos_Task.setLangType(TaskLangType.JAVA);
+        getMDInfos_Task.setExcuteFunc("");
+        tg.addTask2Graph(getMDInfos_Task);
+        //4.1-分不同元数据，进行分析，目前包括()
+//        private String id; //任务
+//        private String taskName; //任务名称
+//        private String langType; //执行语言，默认为java
+//        private String excuteFunc; //任务执行方法
+//        private String param; //任务执行所需的参数
+//        private int status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
+//        private String desc; //任务说明
+//        private Timestamp firstTime; //任务第一次准备执行时间
+//        private Timestamp beginTime; //本次开始执行时间
+//        private Timestamp endTime; //本次结束执行时间
+        //4.2-导入日志，第一部分，都导入了那些内容
 
-        //4-组装
+        //5-组装
         tr.setReport(report);
         tr.setTaskGroup(tg);
 

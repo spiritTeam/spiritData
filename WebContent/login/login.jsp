@@ -13,7 +13,8 @@
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
 <script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
 <style type="text/css">
-.labelTd{height:70px; line-height:70px;}
+#mainDiv {padding-top:30px;}
+.labelTd{height:60px; line-height:60px;}
 .commitBottonTd {height:90px;}
 </style>
 </head>
@@ -125,7 +126,7 @@ $(function() {
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
 
-  inputOverOutEffect();//设置input效果，鼠标划过
+  inputEffect();//设置input效果，鼠标划过
   commitOverOutEffect();//设置按钮效果，鼠标划过
   maskTitleOverOutEffect();//mask效果，鼠标划过
 
@@ -294,10 +295,10 @@ function validateCheckCode(eleId){
 //以下为页面跳转部分============
 //跳转到注册页面
 function toRegister(){
-  var winId = getWinId(getMainPage());
+  var winId = getUrlParam(window.location.href, "_winID");
   var win = getSWinInMain(winId);
   win.modify({title:"注册"});
-  window.location.href="<%=path%>/login/register.jsp?pWinId="+winId;
+  window.location.href="<%=path%>/login/register.jsp?_winID="+winId;
 }
 //从新发送激活邮件到邮箱
 function activeUserAgain(){

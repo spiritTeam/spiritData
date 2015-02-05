@@ -258,7 +258,7 @@ CREATE TABLE sa_task_group (
   ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
   workName    varchar(100)               COMMENT '任务组名称',
   reportId    varchar(32)                COMMENT '对应报告信息Id(UUID)',
-  status      int(1) unsigned  NOT NULL  COMMENT '任务组状态1=准备执行；2=正在执行；3=执行成功；4=执行失败5=任务失效；',
+  status      int(1) unsigned  NOT NULL  COMMENT '任务组状态1=准备执行；2=正在执行；3=任务失效；4=执行成功；5=执行失败',
   descn       varchar(500)               COMMENT '任务组说明',
   beginTime   timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '任务组开启说明',
   PRIMARY KEY (id)
@@ -272,7 +272,7 @@ CREATE TABLE sa_task_info (
   taskGId       varchar(32)                                COMMENT '外键任务组表ID(UUID)，可为空，任务可独立',
   taskName      varchar(100)     NOT NULL                  COMMENT '任务名称',
   resultFileId  varchar(32)                                COMMENT '结果文件Id，若没有执行结果，此字段可以为空',
-  status        int(1) unsigned  NOT NULL                  COMMENT '任务状态1=准备执行；2=正在执行；3=执行成功；4=执行失败5=任务失效；6=等待执行',
+  status        int(1) unsigned  NOT NULL                  COMMENT '任务状态1=准备执行；2=等待执行；3=正在执行；4=任务失效；5=执行成功；6=执行失败；',
   langType      varchar(50)      NOT NULL  DEFAULT 'java'  COMMENT '任务执行语言：目前只有Java',
   excuteFunc    varchar(200)     NOT NULL                  COMMENT '任务执行方法，要实现一个接口',
   param         varchar(500)                               COMMENT '任务执行所需的参数，用json处理',
