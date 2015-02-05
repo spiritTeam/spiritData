@@ -58,10 +58,10 @@
       </td>
     </tr>
     <tr>
-      <td class="labelTd">原密码</td>
-      <td class="inputTd">
+      <td class="labelTd" style="height:35px; line-height:35px;">原密码</td>
+      <td class="inputTd" style="height:35px; line-height:35px;">
         <div class="alertInput-Text">
-          <input id="oldPassword" name="oldPassword" tabindex="3" type="password" onBlur="validateOldPassword('oldPassword');"/>
+          <input id="oldPassword" class="alertInputComp" name="oldPassword" tabindex="3" type="password" onBlur="validateOldPassword('oldPassword');"/>
           <div class="alertImg"></div>
           <div class="maskTitle">请输入原密码</div>
         </div>

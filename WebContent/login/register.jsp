@@ -98,14 +98,32 @@ $(function() {
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
 
-  initMailSuffix();//邮件地址后缀设置
   inputEffect();//设置input效果，鼠标划过
   commitOverOutEffect();//设置按钮效果，鼠标划过
   maskTitleOverOutEffect();//mask效果，鼠标划过
+  initMailSuffix();//邮件地址后缀设置
 
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100); //初始化maskTitle
 });
+
+//初始化邮箱后缀
+function initMailSuffix() {
+  $('#mailSel').combobox({    
+    url:"<%=path%>/login/js/mailAdress.json",   
+    valueField:'id',   
+    textField:'text',
+    height:37,
+    width:97,
+    onChange:function (index,o) {
+      var eleId = 'mail';
+      validateMail(eleId,index);
+    },
+    editable:false
+  });
+  $(".combo").css('border-color','#ABADB3');
+  $(".combo").css('border-left','none');
+}
 
 //=以下初验证=============================================
 //密码验证，验证密码是否足够复杂
