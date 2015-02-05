@@ -37,5 +37,5 @@
 /*提交按钮TD*/
 .commitBottonTd {height:70px; padding-top:5px; border:0px solid black;}
 /*提交按钮*/
-.commitDiv {height:28px; background-image:url(../images/bg.png); border-radius:5px; text-align:center; padding-top:10px; cursor:pointer;}
+.commitDiv {height:28px;width:275px;margin-left:2px;background-image:url(../images/bg.png); border-radius:5px; text-align:center; padding-top:10px; cursor:pointer;}
 .commitDiv span {font-family:微软雅黑,黑体; color:#fff; font-weight:bold; font-size:16px;}
