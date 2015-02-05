@@ -86,13 +86,17 @@
 <script type="text/javascript">
 //win
 var win;
+var mainPage;
+var winId;
 //用于判断是否可以提交
 var lnV=false,maV=false,psV=false,cpsV=false,vcV=false;
 /**
  * 主函数
  */
 $(function() {
-  win=getSWinInMain(getUrlParam(window.location.href, "_winID"));
+  mainPage = getMainPage();
+  winId = getUrlParam(window.location.href, "_winID");
+  win=getSWinInMain(winId);
 
   initMailSuffix();//邮件地址后缀设置
   inputOverOutEffect();//设置input效果，鼠标划过
@@ -123,6 +127,19 @@ function initMailSuffix() {
 }
 //设置input效果，鼠标划过
 function inputOverOutEffect() {
+  //对focus处理,使tab隐藏maskTitle
+  $(".alertInputComp").bind('focus',function(){
+    var mainAlert=$(this).parent();
+    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
+    mainAlert.find(".maskTitle").hide();
+  });
+  //对blur处理,使tab隐藏maskTitle
+  $(".alertInputComp").bind('blur',function(){
+    var mainAlert=$(this).parent();
+    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
+    mainAlert.find(".maskTitle").show();
+  });
+  //对鼠标移入移出进行处理
   $(".alertInputComp").bind('mouseover',function(){
     $(this).focus();
     $(this)[0].select();
@@ -130,7 +147,7 @@ function inputOverOutEffect() {
     var height = parseFloat($(this).css("height"));
     var lineheight = parseFloat($(this).css("line-height"));
     var paddingLeft = parseFloat($(this).css("padding-left"));
-
+    //更改
     $(this).css({"width":(width-1)+"px", "height":(height-2)+"px", "border": "2px #ABCDEF solid"});
     if (lineheight) $(this).css({"line-height":(lineheight-2)+"px"});
     if (paddingLeft) $(this).css({"padding-left":(paddingLeft-1)+"px"});
@@ -435,7 +452,7 @@ function commit(){
   $('#checkCode').val('');
   if(psV&&cpsV&&lnV&&maV&&vcV){
     var mailAdress = $("#mail").val();
-    if(mailAdress.lastIndexOf("@")==-1) mailAdress = mailAdress+$('#mailEndStr').combobox('getText');
+    if(mailAdress.lastIndexOf("@")==-1) mailAdress = mailAdress+$('#mailSel').combobox('getText');
     var pData={
       "loginName":$("#loginName").val(),
       "password":$("#password").val(),
@@ -467,20 +484,25 @@ function commit(){
     $('#register').attr("disabled",false); 
     if(lnV==false) {
       $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      $("#loginName").parent().find(".alertImg").show();
     }
     if(cpsV==false){
       $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      $("#confirmPassword").parent().find(".alertImg").show();
     }
     if(maV==false){
       $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      $("#mail").parent().parent().find(".alertImg").show();
     }
     if(psV==false){
       $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      $("#password").parent().find(".alertImg").show();
     } 
     if(vcV==false){
-      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");nd('<img id="vcImg" align="middle" src="images/cross.png">');
+      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      $("#checkCode").parent().parent().show();
     } 
-    $.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息",'info',function () {
+    mainPage.$.messager.alert('注册提示',"您的注册信息某些地方有误，请完善您的注册信息",'info',function () {
       if(lnV==false){
         $('#loginName')[0].focus();
         $('#loginName')[0].select();

@@ -13,10 +13,11 @@
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
 <script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
 <style type="text/css">
+.labelTd{height:70px; line-height:70px;}
+.commitBottonTd {height:90px;}
 </style>
 </head>
 <body>
-
 <object id="locator" classid="CLSID:76A64158-CB41-11D1-8B02-00600806D9B6" style="display:none;visibility:hidden"></object>
 <object id="foo" classid="CLSID:75718C9A-F029-11d1-A1AC-00C04FB6C223" style="display:none;visibility:hidden"></object>
 <form id="fooform" name="fooForm" style="display:none">
@@ -97,23 +98,32 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     </tr>
     <tr>
       <td colspan="2" class="commitBottonTd">
-        <div id="commitButton" class="commitDiv">
+        <div id="commitButton" class="commitDiv" onclick="commit();">
           <span>登　录</span>
         </div>
       </td>
     </tr>
   </table></form>
+  <div align="right" style="width:310px;margin-top:50px;margin-right:10px;">
+    <a onclick="toRegister()" href="#">没有账号?</a>&nbsp;|&nbsp;
+    <a onclick="activeUserAgain()" href="#">激活</a>&nbsp;|&nbsp;
+    <a onclick="modifyPassword()" href="#">忘记密码?</a>
+  </div>
 </div></center>
 </body>
 <script type="text/javascript">
 var win;
+var mainPage;
+var winId;
 //用于判断是否可以提交
 var lnV=false,psV=false,vcV=false;
 /**
  * 主函数
  */
 $(function() {
-  win=getSWinInMain(getUrlParam(window.location.href, "_winID"));
+  mainPage = getMainPage();
+  winId = getUrlParam(window.location.href, "_winID");
+  win=getSWinInMain(winId);
 
   inputOverOutEffect();//设置input效果，鼠标划过
   commitOverOutEffect();//设置按钮效果，鼠标划过
@@ -125,6 +135,18 @@ $(function() {
 //=以下初始化设置=============================================
 //设置input效果，鼠标划过
 function inputOverOutEffect() {
+  //对focus处理,使tab隐藏maskTitle
+  $(".alertInputComp").bind('focus',function(){
+    var mainAlert=$(this).parent();
+    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
+    mainAlert.find(".maskTitle").hide();
+  });
+  //对blur处理,使tab隐藏maskTitle
+  $(".alertInputComp").bind('blur',function(){
+    var mainAlert=$(this).parent();
+    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
+    mainAlert.find(".maskTitle").show();
+  });
   $(".alertInputComp").bind('mouseover',function(){
     $(this).focus();
     $(this)[0].select();
@@ -268,5 +290,134 @@ function validateCheckCode(eleId){
   }
 }
 //=以上初验证=============================================
+
+//以下为页面跳转部分============
+//跳转到注册页面
+function toRegister(){
+  var winId = getWinId(getMainPage());
+  var win = getSWinInMain(winId);
+  win.modify({title:"注册"});
+  window.location.href="<%=path%>/login/register.jsp?pWinId="+winId;
+}
+//从新发送激活邮件到邮箱
+function activeUserAgain(){
+  var url="<%=path%>/login/activeUserAgain.do";
+  var loginName = $("#loginName").val();
+  if(loginName){
+    mainPage.$.messager.alert('提示信息',"您必须填写账号，以便于向您的绑定邮箱发送验证!",'info');
+    return;
+  }else{
+    var pData={"loginName":$("#loginName").val()};
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success:function(json ){
+        if(json.success==true){
+          mainPage.$.messager.alert('提示信息',json.retInfo,'info');
+        }else{
+          mainPage.$.messager.alert('提示信息',json.retInfo,'info');
+        }
+      }
+    });
+  }
+}
+//未登录的忘记密码页面
+function modifyPassword(){
+  win.modify({title:"修改密码"});
+  window.location.href="<%=path%>/login/forgetPassword.jsp?modType=2";
+}
+//以上为页面跳转部分============
+
+//刷新验证码
+function refresh(obj) {
+  obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+  $('#checkCode').val('');
+}
+
+//提交登陆信息
+function commit(){
+  $('#commitButton').attr('disabled',false);
+  if(psV&&lnV&&vcV){
+    $("#mask").show();
+    var url="<%=path%>/login.do";
+    var pData={
+      "loginName":$("#loginName").val(),
+      "password":$("#password").val(),
+      "checkCode":$("#checkCode").val(),
+      "clientMacAddr":fooForm.txtMACAddr.value?(fooForm.txtMACAddr.value=="undefined"?"":fooForm.txtMACAddr.value):"",
+      "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
+      "browser":getBrowserVersion()
+    };
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success:function(json){
+        $("#mask").hide();
+        $('#commitButton').attr('disabled',false);
+        $('#checkCode').val('');
+        $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+        var loginInfo = json.data;
+        var retInfo = loginInfo.retInfo;
+        if(json.type==-1){
+          $.messager.alert('登录信息',retInfo,'info');
+        }else if (json.type==1){
+          var activeType = loginInfo.activeType;
+          if(activeType==1){
+            $.messager.alert('登录信息',retInfo,'info');
+          }else if(activeType==2){
+            if(mainPage) {
+              var loginStatus = mainPage.document.getElementById("loginStatus");
+              var loginName = mainPage.document.getElementById("loginName");
+              $(loginStatus).val(1);
+              $(loginName).val(pData.loginName);
+              closeSWinInMain(winId);
+              mainPage.$.messager.alert("登陆信息","登陆成功！",'info');
+              cleanWinId();
+            }else{
+              $.messager.alert("登陆信息","登陆成功！",'info');
+              window.location.href = "<%=path%>/asIndex.jsp";
+            }
+          }
+        } else if(json.type==2 ){
+          mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
+        } else {
+          mainPage.$.messager.alert("登录信息", "登录异常："+json.data, "error");
+        }
+      },
+      error:function(errorData ){
+        $('#commitButton').attr('disabled',false);
+        $('#checkCode').val('');
+        $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
+        if (errorData ){
+          mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
+        } else {
+          mainPage.$("#mask").hide();
+        }
+      }
+    });
+  }else{
+    $('#commitButton').attr('disabled',false);
+    if(lnV==false ){
+      $('#lNImg').remove();
+      $('#vLN').append('<img id="lNImg" align="middle" src="images/cross.png">');
+    }
+    if(psV==false){
+      $('#pWImg').remove();
+      $('#vPW').append('<img id="pWImg" align="middle" src="images/cross.png">');
+    } 
+    if(vcV==false){
+      $('#vCImg').remove();
+      $('#vVC').append('<img id="vCImg" align="middle" src="images/cross.png">');
+    }
+    mainPage.$.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的登陆信息", 'info',function (){
+      if(lnV==false){
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }else if(psV==false){
+        $('#password')[0].focus();
+        $('#password')[0].select();
+      }else{
+        $('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+      }
+    });
+  }
+}
 </script>
 </html>
