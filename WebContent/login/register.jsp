@@ -118,7 +118,7 @@ function validatePassword() {
     $("#password").parent().find(".alertImg").show();
     var confirmVal = $("#confirmPassword").val();
     if(!checkPasswordStr(val)){
-      win.setMessage({'msg':'&nbsp;&nbsp;密码应是5~12位的字母、数字、下划线!'});
+      win.setMessage({'msg':'密码应是5~12位的字母、数字、下划线!'});
       $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       psV = false;
       //与确认码比较
@@ -145,7 +145,7 @@ function validatePassword() {
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
           cpsV=true;
         } else {
-          win.setMessage({'msg':'&nbsp;&nbsp;确认密码与密码不一致!'});
+          win.setMessage({'msg':'确认密码与密码不一致!'});
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
           cpsV=false;
         }
@@ -175,7 +175,7 @@ function comfirmPassword() {
     $("#confirmPassword").parent().find(".alertImg").show();
     if (val!=pass) {
       //提示文字
-      win.setMessage({'msg':'&nbsp;&nbsp;确认密码与密码不一致!'});
+      win.setMessage({'msg':'确认密码与密码不一致!'});
       $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       cpsV=false;
     } else {
@@ -201,12 +201,12 @@ function validateLoginName(){
         $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
         lnV = true;
       }else{
-        win.setMessage({'msg':'&nbsp;&nbsp;该账号已被使用!'});
+        win.setMessage({'msg':'该账号已被使用!'});
         $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
         lnV = false;
       }
     }else{
-      win.setMessage({'msg':'&nbsp;&nbsp;账号应为5~11位的字母、数字、下划线组成!'});
+      win.setMessage({'msg':'账号应为5~11位的字母、数字、下划线组成!'});
       $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       lnV = false;
     }
@@ -257,14 +257,14 @@ function validateMail(eleId,index){
         maV = true;
       }else{
         //提示文字
-        win.setMessage({'msg':'&nbsp;&nbsp;该邮箱已被注册!'});
+        win.setMessage({'msg':'该邮箱已被注册!'});
         //提示图标
         $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
         maV = false;
       }
     }else{
       //提示文字
-      win.setMessage({'msg':'&nbsp;&nbsp;不正确的邮箱格式!'});
+      win.setMessage({'msg':'不正确的邮箱格式!'});
       //提示图标
       $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       maV = false;
@@ -315,7 +315,7 @@ function validateCheckCode(eleId){
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
       vcV=true;
     }else{
-      win.setMessage({'msg':'&nbsp;&nbsp;验证码填写错误!'});
+      win.setMessage({'msg':'验证码填写错误!'});
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       vcV=false;
     }
@@ -346,44 +346,42 @@ function commit(){
       "mailAdress":mailAdress,
     };
     $("#mask").show();
-    var url="<%=path%>/login/register.do";
+    var url="<%=path%>/login/commitButton.do";
     $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
       success:function(json) {
         $("#mask").hide();
         if(json.success){
-          if(mainPage){
-            closeSWinInMain(winId);
-            mainPage.$.messager.alert('注册提示',json.retInfo,'info');
-            cleanWinId(mainPage);
-          }else{
-            $.messager.alert('注册提示',json.retInfo,'info');
-            window.location.href = "<%=path%>/asIndex.jsp";
-          }
-          $('#register').attr("disabled",false); 
-        }else{
-          $.messager.alert('提示',json.retInfo,'info');
-          $('#register').attr("disabled",false);
-        }
+          if(mainPage) mainPage.$.messager.alert('注册提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
+          else $.messager.alert('注册提示',json.retInfo,'info',function(){window.location.href = "<%=path%>/asIndex.jsp";});
+          $('#commitButton').attr("disabled",false); 
+        }else $.messager.alert('提示',json.retInfo,'info',function(){$('#commitButton').attr("disabled",false);});
       }
     });
   }else{
-    $('#register').attr("disabled",false); 
+    $('#commitButton').attr("disabled",false);
+    var alertMessage = "您的";
     if(lnV==false) {
-      $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      $("#loginName").parent().find(".alertImg").show();
+      //$("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      //$("#loginName").parent().find(".alertImg").show();
+      if($("#loginName").val()) alertMessage = alertMessage + "账号应由、";
+      else alertMessage = alertMessage + "账号未填写、";
     }
+    if(psV==false){
+      //$("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      //$("#password").parent().find(".alertImg").show();
+      if($("#password").val()) alertMessage = alertMessage + "账号未填写、";
+      else alertMessage = alertMessage + "账号未填写、";
+    } 
     if(cpsV==false){
-      $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      $("#confirmPassword").parent().find(".alertImg").show();
+      //$("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      //$("#confirmPassword").parent().find(".alertImg").show();
+      if($("#loginName").val()) alertMessage = alertMessage + "账号未填写、";
+      else alertMessage = alertMessage + "账号未填写、";
     }
     if(maV==false){
       $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       $("#mail").parent().parent().find(".alertImg").show();
     }
-    if(psV==false){
-      $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      $("#password").parent().find(".alertImg").show();
-    } 
     if(vcV==false){
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       $("#checkCode").parent().parent().show();

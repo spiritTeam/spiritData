@@ -134,4 +134,5 @@ function initMailSuffix(jsonPath) {
   });
   $(".combo").css('border-color','#ABADB3');
   $(".combo").css('border-left','none');
+  $(".panel-header, .panel-body").css('border-color','#ABADB3');
 }

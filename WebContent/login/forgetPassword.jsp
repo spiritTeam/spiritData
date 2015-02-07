@@ -76,8 +76,7 @@ function validateLoginName(){
   if(val){
     $("#loginName").parent().find(".alertImg").show();
     if(checkLoginName(val)){
-      $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;您输入的用户名有误！</div>');
-      win.setMessage({'msg':'&nbsp;&nbsp;您输入的用户名有误'});
+      win.setMessage({'msg':'您输入的用户名有误'});
       $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       lnV = false;
     }else{
@@ -117,9 +116,8 @@ function commit(){
       $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
         success:function(json) {
           if(json.success){
-            if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info');
-            else $.messager.alert('提示',json.retInfo,'info');
-            closeSWinInMain(winId);
+            if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
+            else $.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
           }else{
             if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info');
             else $.messager.alert('提示',json.retInfo,'info');
@@ -128,9 +126,24 @@ function commit(){
       });
     }
   }else{
-    $('#vLN').append('<img id="lnImg" align="middle" src="<%=path%>/login/images/cross.png">');
-    win.setMessage({'msg':'&nbsp;&nbsp;用户名错误!'});
-    $('#checkResult').html('<div style="width:370;font-size:12px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;用户名错误!</div>');
+    var alertMessage = "您的";
+    if(lnV==false){
+      if($('#loginName').val()) alterMessage = alterMessage + "原密码填写有误、";
+      else alertMessage = alertMessage + "原密码还未填写、";
+    }
+    alertMessage = alertMessage.substring(0, alertMessage.lastIndexOf("、"));
+    if(mainPage) mainPage.$.messager.alert("提示",alertMessage+"请检查!",'info',function (){
+      if(lnV==false){
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }
+    });
+    else $.messager.alert("提示","您还有未完善的信息!",'info',function (){
+      if(lnV==false){
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }
+    });
   }
   $('#sendButton').attr('disabled',false);
 }
