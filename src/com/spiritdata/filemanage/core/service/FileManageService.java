@@ -4,10 +4,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
-import com.spiritdata.filemanage.core.BeManageFile;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
+import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
 import com.spiritdata.filemanage.core.persistence.pojo.FileCategoryPo;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.core.persistence.pojo.FileRelationPo;

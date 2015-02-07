@@ -1,4 +1,4 @@
-package com.spiritdata.filemanage.core.service;
+package com.spiritdata.filemanage.core.pattern.service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -93,8 +93,7 @@ public abstract class AbstractWriteString2File {
 
     //虚拟方法
     /**
-     * 得到存储文件名称，全路径名
-     * @param fileNameSeed 存储文件的种子，根据种子，继承此类的服务类生成存储文件名称
+     * 得到存储文件名称(全路径名)
      * @return 存储文件名称
      */
     public abstract String buildFileName();

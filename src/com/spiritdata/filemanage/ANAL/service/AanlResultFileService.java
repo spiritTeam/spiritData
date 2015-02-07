@@ -8,11 +8,12 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.core.BeManageFile;
-import com.spiritdata.filemanage.core.WriteJsonD;
 import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
+import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;
+import com.spiritdata.filemanage.core.pattern.service.AbstractWriteString2File;
+import com.spiritdata.filemanage.core.pattern.service.WriteJsonD;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
-import com.spiritdata.filemanage.core.service.AbstractWriteString2File;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.filemanage.exceptionC.Flmg0003CException;
 import com.spiritdata.filemanage.exceptionC.Flmg0101CException;
@@ -39,6 +40,7 @@ public class AanlResultFileService extends AbstractWriteString2File implements W
         fileIndexDao.setNamespace("fileIndex");
     }
 
+    //=以下数据库处理==================
     /**
      * 按条件获得分析文件列表
      * @param m 条件参数
@@ -53,6 +55,16 @@ public class AanlResultFileService extends AbstractWriteString2File implements W
         return null;
     }
 
+    /**
+     * 存储分析结果文件信息到数据库
+     * @param arf 分析结果文件模型
+     * @return 分析结果文件对应的模型化文件信息对象
+     */
+    public FileInfo saveFile(AnalResultFile arf) {
+        return fmService.saveFile(arf);
+    }
+
+    //=以下文件处理==================
     @Override
     public String buildFileName() {
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
@@ -67,7 +79,7 @@ public class AanlResultFileService extends AbstractWriteString2File implements W
      * @return 分析结果文件，根据种子生成，并补充jsondCode和名称信息
      */
     @Override
-    public BeManageFile write2FileAsJsonD(Object jsonD, BeManageFile fileSeed) {
+    public BeManageFile write2FileAsJsonD(Object jsonD, ToBeStoreFile fileSeed) {
         JsonD jsond = (JsonD)jsonD;
         AnalResultFile analResultSeed = (AnalResultFile)fileSeed;
         if ((analResultSeed.getFileNameSeed()==null||analResultSeed.getFileNameSeed().trim().length()==0)
@@ -85,6 +97,7 @@ public class AanlResultFileService extends AbstractWriteString2File implements W
             this.setFullFileName(_fullFileName);
         }
 
+        //文件存储
         String storeFileName = this.getStoreFileName();
         Object _HEAD = jsond.get_HEAD();
         if (_HEAD instanceof JsondHead) {
@@ -92,20 +105,12 @@ public class AanlResultFileService extends AbstractWriteString2File implements W
         }
         this.writeJson2File(jsond.toJson()); //存储为文件
 
+        //返回值处理
         if (_HEAD instanceof JsondHead) {
             analResultSeed.setJsonDCode(((JsondHead)_HEAD).getCode());
         }
         analResultSeed.setFileName(storeFileName);
 
         return analResultSeed;
-    }
-
-    /**
-     * 存储分析结果文件信息到数据库
-     * @param arf 分析结果文件模型
-     * @return 分析结果文件对应的模型化文件信息对象
-     */
-    public FileInfo saveFile(AnalResultFile arf) {
-        return fmService.saveFile(arf);
     }
 }

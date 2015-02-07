@@ -6,10 +6,11 @@ import javax.annotation.Resource;
 
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.filemanage.REPORT.model.ReportFile;
-import com.spiritdata.filemanage.core.BeManageFile;
-import com.spiritdata.filemanage.core.WriteJsonD;
 import com.spiritdata.filemanage.core.model.FileInfo;
-import com.spiritdata.filemanage.core.service.AbstractWriteString2File;
+import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
+import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;
+import com.spiritdata.filemanage.core.pattern.service.AbstractWriteString2File;
+import com.spiritdata.filemanage.core.pattern.service.WriteJsonD;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.filemanage.exceptionC.Flmg0003CException;
 import com.spiritdata.framework.FConstants;
@@ -34,7 +35,7 @@ public class ReportFileService extends AbstractWriteString2File implements Write
      * @return 
      */
     @Override
-    public BeManageFile write2FileAsJsonD(Object content, BeManageFile fileSeed) {
+    public BeManageFile write2FileAsJsonD(Object content, ToBeStoreFile fileSeed) {
         Report report = (Report)content;
         ReportFile reportFileSeed = (ReportFile)fileSeed;
         if ((reportFileSeed.getFileNameSeed()==null||reportFileSeed.getFileNameSeed().trim().length()==0)
@@ -52,11 +53,13 @@ public class ReportFileService extends AbstractWriteString2File implements Write
             this.setFullFileName(_fullFileName);
         }
 
+        //文件存储
         String storeFileName = this.getStoreFileName();
-        reportFileSeed.setFileName(storeFileName);
         report.setReportFile(reportFileSeed);
-
         this.writeJson2File(report.toJson());
+
+        //返回值处理
+        reportFileSeed.setFileName(storeFileName);
         return reportFileSeed;
     }
 

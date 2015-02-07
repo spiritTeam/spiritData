@@ -7,10 +7,10 @@ import java.util.Date;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
-import com.spiritdata.filemanage.core.BeManageFile;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
 import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
 
 /**

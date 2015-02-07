@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.spiritdata.filemanage.core.BeManageFile;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.pattern.model.AbstractToBeStoreFile;
+import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
 import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
@@ -19,7 +20,7 @@ import com.spiritdata.framework.util.FileUtils;
  * 1-这些有实际意义的文件都要在文件分类表中有对应
  * @author wh
  */
-public class ReportFile implements Serializable, BeManageFile {
+public class ReportFile extends AbstractToBeStoreFile implements Serializable, BeManageFile {
     private static final long serialVersionUID = -1625546654030117440L;
 
     private String id; //报告文件的id
@@ -64,21 +65,6 @@ public class ReportFile implements Serializable, BeManageFile {
     }
     public void setTasksId(String tasksId) {
         this.tasksId = tasksId;
-    }
-
-    private String fileNameSeed; //文件名称种子
-    public String getFileNameSeed() {
-        return fileNameSeed;
-    }
-    public void setFileNameSeed(String fileNameSeed) {
-        this.fileNameSeed = fileNameSeed;
-    }
-    private String fullFileName; //文件名全名
-    public String getFullFileName() {
-        return fullFileName;
-    }
-    public void setFullFileName(String fullFileName) {
-        this.fullFileName = fullFileName;
     }
 
     /**

@@ -10,10 +10,11 @@ import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
-import com.spiritdata.filemanage.core.BeManageFile;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.pattern.model.AbstractToBeStoreFile;
+import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
 import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
 
 /**
@@ -29,7 +30,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
  * @author wh
  */
 //今后，若有可能把分析结果和jsonD进行结合
-public class AnalResultFile implements Serializable, BeManageFile {
+public class AnalResultFile extends AbstractToBeStoreFile implements Serializable, BeManageFile {
     private static final long serialVersionUID = 7715689049076212381L;
 
     private String id; //分析文件id
@@ -91,21 +92,6 @@ public class AnalResultFile implements Serializable, BeManageFile {
     }
     public void setExtInfo(Map<String, Object> extInfo) {
         this.extInfo = extInfo;
-    }
-
-    private String fileNameSeed; //文件名称种子
-    public String getFileNameSeed() {
-        return fileNameSeed;
-    }
-    public void setFileNameSeed(String fileNameSeed) {
-        this.fileNameSeed = fileNameSeed;
-    }
-    private String fullFileName; //文件名全名
-    public String getFullFileName() {
-        return fullFileName;
-    }
-    public void setFullFileName(String fullFileName) {
-        this.fullFileName = fullFileName;
     }
 
     /**

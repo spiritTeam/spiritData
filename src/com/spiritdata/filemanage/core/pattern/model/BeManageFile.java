@@ -1,4 +1,4 @@
-package com.spiritdata.filemanage.core;
+package com.spiritdata.filemanage.core.pattern.model;
 
 import com.spiritdata.filemanage.core.model.FileInfo;
 
