@@ -33,6 +33,7 @@ public abstract class AbstractWriteString2File {
     public void setFullFileName(String fullFileName) {
         this.fullFileName = fullFileName;
     }
+
     /**
      * 写字符串内容content到文件
      * @param content 字符串内容

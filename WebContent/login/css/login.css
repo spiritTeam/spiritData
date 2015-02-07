@@ -30,8 +30,8 @@
 /*提示验证码控件*/
 .alertInput-vCode {width:227px; height:35px; line-height:35px;}/*主Div*/
 .alertInput-vCode #vCodeInput {float:left; width:130px;} 
-.alertInput-vCode #vCodeInput input { z-index:100; width:127px; font-size:12px; height:35px; line-height:35px; margin-left:0px; border: 1px solid #ABADB3; padding-left:2px;}
-.alertInput-vCode #vCodeImg {float:left; width:95px; height:35px; line-height:35px; border:1px solid #ABADB3;}
+.alertInput-vCode #vCodeInput input { z-index:100; width:126px; font-size:12px; height:35px; line-height:35px; margin-left:0px; border: 1px solid #ABADB3; padding-left:2px;}
+.alertInput-vCode #vCodeImg {float:left; width:95px; height:35px; line-height:35px; border:1px solid #ABADB3; border-left:0px;}
 /*提示控件设置结束=====================*/
 
 /*提交按钮TD*/

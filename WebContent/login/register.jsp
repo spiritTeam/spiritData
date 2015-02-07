@@ -191,7 +191,7 @@ function comfirmPassword() {
 /**
  * 账号验证
  */
-function validateLoginName(){
+function validateLoginName(){return;
   var val = $('#loginName').val();
   if(val){
     $("#loginName").parent().find(".alertImg").show();
@@ -239,7 +239,7 @@ function validateLoginName(){
 /**
  * 验证邮箱
  */
-function validateMail(eleId,index){
+function validateMail(eleId,index){return;
   var a = $('#mailSel').combobox('getData');
   var val = $('#mail').val();
   if(val){

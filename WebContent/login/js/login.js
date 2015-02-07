@@ -1,3 +1,20 @@
+
+/**
+ * 得到提示输入控件的主容器
+ * @param _jQobj 提示控件中的某个控件
+ * @returns 主容器
+ */
+function getMainAlert(_jQobj) {
+  var mainAlert=_jQobj;
+  var i=10;
+  while (((i--)>0)
+    &&(!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-")==-1)) {
+    mainAlert=$(mainAlert).parent(); //10次结束
+  }
+  if ($(mainAlert).attr("class").indexOf("alertInput-")!=-1) return  $(mainAlert);
+  else return null;
+}
+
 /**
  * 设置input控件效果
  */
@@ -19,40 +36,52 @@ function inputEffect() {
    * @param _jQobj：jq对象
    */
   function focusInput(_jQobj) {
-  	_jQobj[0].select();
-  	//设置为选中样式
-    var width = parseFloat(_jQobj.css("width"));
-    var height = parseFloat(_jQobj.css("height"));
-    var lineheight = parseFloat(_jQobj.css("line-height"));
-    var paddingLeft = parseFloat(_jQobj.css("padding-left"));
-    _jQobj.css({"width":(width-1)+"px", "height":(height-2)+"px", "border": "2px #ABCDEF solid"});
-    if (lineheight) _jQobj.css({"line-height":(lineheight-2)+"px"});
-    if (paddingLeft) _jQobj.css({"padding-left":(paddingLeft-1)+"px"});
-    //处理maskTitle
-    //得到mainAlert
-    var mainAlert=_jQobj.parent();
-    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
-    mainAlert.find(".maskTitle").hide();
+    //得到主容器
+    var mainAlert=getMainAlert(_jQobj);
+    if (mainAlert) {
+    	_jQobj[0].select();
+    	//设置为选中样式
+    	var width = parseFloat(mainAlert.css("width"))-2;
+      var height = parseFloat(mainAlert.css("height"));
+      var lineheight = mainAlert.css("line-height")?parseFloat(mainAlert.css("line-height")):null;
+      var paddingLeft = mainAlert.css("padding-left")?parseFloat(mainAlert.css("padding-left")):null;
+      if (mainAlert.attr("class").indexOf("alertInput-mail")!=-1) {
+      	width -= parseFloat(mainAlert.find("#mailSuffix").css("width"))+2;
+      } else if (mainAlert.attr("class").indexOf("alertInput-vCode")!=-1) {
+      	width -= parseFloat(mainAlert.find("#vCodeImg").css("width"))+4;
+      }
+    	_jQobj.css({"width":(width-2)+"px", "height":(height-2)+"px", "border": "2px #ABCDEF solid"});
+      if (lineheight) _jQobj.css({"line-height":(lineheight-2)+"px"});
+      if (paddingLeft) _jQobj.css({"padding-left":(paddingLeft-1)+"px"});
+      //处理maskTitle
+      mainAlert.find(".maskTitle").hide();
+    }
   }
   /**
    * 处理tab移入移出时对input的mask处理
    * @param _jQobj：jq对象
    */
   function blurInput(_jQobj) {
-  	//设置为选中样式
-    var width = parseFloat(_jQobj.css("width"));
-    var height = parseFloat(_jQobj.css("height"));
-    var lineheight = parseFloat(_jQobj.css("line-height"));
-    var paddingLeft = parseFloat(_jQobj.css("padding-left"));
-    _jQobj.css({"width":(width+1)+"px", "height":(height+2)+"px", "border": "1px #ABADB3 solid"});
-    if (lineheight) _jQobj.css({"line-height":(lineheight+2)+"px"});
-    if (paddingLeft) _jQobj.css({"padding-left":(paddingLeft+1)+"px"});
-    //处理maskTitle
-    //得到mainAlert
-    var mainAlert=_jQobj.parent();
-    if (!$(mainAlert).attr("class")||$(mainAlert).attr("class").indexOf("alertInput-Text")!=-1) mainAlert=$(mainAlert).parent();
-    if(_jQobj.val()) mainAlert.find(".maskTitle").hide();
-    else mainAlert.find(".maskTitle").show();
+    //得到主容器
+    var mainAlert=getMainAlert(_jQobj);
+    if (mainAlert) {
+    	//设置为选中样式
+    	var width = parseFloat(mainAlert.css("width"))-2;
+      var height = parseFloat(mainAlert.css("height"));
+      var lineheight = mainAlert.css("line-height")?parseFloat(mainAlert.css("line-height")):null;
+      var paddingLeft = mainAlert.css("padding-left")?parseFloat(mainAlert.css("padding-left")):null;
+      if (mainAlert.attr("class").indexOf("alertInput-mail")!=-1) {
+      	width -= parseFloat(mainAlert.find("#mailSuffix").css("width"))+2;
+      } else if (mainAlert.attr("class").indexOf("alertInput-vCode")!=-1) {
+      	width -= parseFloat(mainAlert.find("#vCodeImg").css("width"))+4;
+      }
+    	_jQobj.css({"width":width+"px", "height":height+"px", "border": "1px #ABADB3 solid"});
+      if (lineheight) _jQobj.css({"line-height":lineheight+"px"});
+      if (paddingLeft) _jQobj.css({"padding-left":paddingLeft+"px"});
+      //处理maskTitle
+      if (_jQobj.val()) mainAlert.find(".maskTitle").hide();
+      else mainAlert.find(".maskTitle").show();
+    }
   }
 }
 
