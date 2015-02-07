@@ -23,6 +23,7 @@ import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.model.TaskGroup;
 import com.spiritdata.dataanal.task.model.TaskInfo;
+import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.util.FileNameUtils;
@@ -99,7 +100,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\", 子任务}");
         
         //4-构建报告体，并生成相关的任务
-        Map<String, Object> taskParam = new HashMap<String, Object>();
+        Map<String, Object> taskParam = new HashMap<String, Object>();//任务参数结构，所有的任务都用此函数作为
         //4.a.1-获得所有本次对应的元数据信息
         TaskInfo getMDInfos_Task = new TaskInfo();
         getMDInfos_Task.setId(SequenceUUID.getPureUUID());
@@ -112,6 +113,10 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         taskParam.put("metadataList", getMDIdList(reportParam));
         getMDInfos_Task.setParam(JsonUtils.objToJson(taskParam));
         tg.addTask2Graph(getMDInfos_Task);
+          //设置文件
+        AnalResultFile arf = new AnalResultFile();
+        arf.setId(SequenceUUID.getPureUUID());
+        getMDInfos_Task.setResultFile(arf);
         //处理report中的数据访问列表
         ReportSegment rs1 = new ReportSegment();
         

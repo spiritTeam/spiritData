@@ -8,7 +8,7 @@ import java.util.List;
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo;
-import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.framework.util.SequenceUUID;
 
 /**
@@ -30,7 +30,7 @@ public class TaskInfo implements Serializable {
     private Timestamp endTime; //本次结束执行时间
 
     private TaskGroup taskGroup; //所属任务组，可为空
-    private FileInfo resultFile; //结果文件，可为空
+    private AnalResultFile resultFile; //分析结果文件，可为空
 
     private List<PreTask> preTasks; //前序任务列表
 
@@ -100,10 +100,10 @@ public class TaskInfo implements Serializable {
     public void setTaskGroup(TaskGroup taskGroup) {
         this.taskGroup = taskGroup;
     }
-    public FileInfo getResultFile() {
+    public AnalResultFile getResultFile() {
         return resultFile;
     }
-    public void setResultFile(FileInfo resultFile) {
+    public void setResultFile(AnalResultFile resultFile) {
         this.resultFile = resultFile;
     }
 
