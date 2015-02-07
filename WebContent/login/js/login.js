@@ -4,23 +4,23 @@
 function inputEffect() {
   //对tab到input处理
   $(".alertInputComp").bind('focus',function() {
-  	focusInput($(this));
+    focusInput($(this));
   }).bind('blur',function() {
-  	blurInput($(this));
+    blurInput($(this));
   });
   //对鼠标移入移出进行处理
   $(".alertInputComp").bind('mouseover',function(){
-  	$(this).focus();
+    $(this).focus();
   }).bind('mouseout',function(){
-  	$(this).blur();
+    $(this).blur();
   });
   /**
    * input的获得焦点
    * @param _jQobj：jq对象
    */
   function focusInput(_jQobj) {
-  	_jQobj[0].select();
-  	//设置为选中样式
+    _jQobj[0].select();
+    //设置为选中样式
     var width = parseFloat(_jQobj.css("width"));
     var height = parseFloat(_jQobj.css("height"));
     var lineheight = parseFloat(_jQobj.css("line-height"));
@@ -39,7 +39,7 @@ function inputEffect() {
    * @param _jQobj：jq对象
    */
   function blurInput(_jQobj) {
-  	//设置为选中样式
+    //设置为选中样式
     var width = parseFloat(_jQobj.css("width"));
     var height = parseFloat(_jQobj.css("height"));
     var lineheight = parseFloat(_jQobj.css("line-height"));
@@ -118,7 +118,10 @@ function initMaskTitle() {
     }
   }
 }
-//初始化邮箱后缀
+/**
+ * 初始化邮箱后缀
+ * @param jsonPath json路径
+ */
 function initMailSuffix(jsonPath) {
   $('#mailSel').combobox({    
     url:jsonPath,   
@@ -135,4 +138,16 @@ function initMailSuffix(jsonPath) {
   $(".combo").css('border-color','#ABADB3');
   $(".combo").css('border-left','none');
   $(".panel-header, .panel-body").css('border-color','#ABADB3');
+}
+/**
+ * 初始化遮罩样式
+ */
+function initMask(){
+  $("#mask").css({
+    "padding-top": ($(window).height()-95)/3,
+    "top": parseInt($("#mainDiv").css("top"))-10,
+    "left": parseInt($("#mainDiv").css("left"))-10,
+    "width": $(window).width(),
+    "height": $(window).height()
+  });
 }

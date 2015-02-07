@@ -16,6 +16,11 @@
 </style>
 </head>
 <body>
+<!-- 遮罩层 -->
+<div id="mask" style="display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
+  <img id="waittingImg" align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
+  <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，数据提交中...</span>
+</div>
 <center><div id="mainDiv">
   <form><table>
     <tr>
@@ -48,18 +53,20 @@
 var win;
 var mainPage;
 var winId;
+var vdInfoAry = new Array(1);
 var lnV =false;/**
  * 主函数
  */
 $(function() {
   initPageParam();//初始化页面全局参数
+  initMask();
 
   inputEffect();//设置input效果，鼠标划过
   commitOverOutEffect();//设置按钮效果，鼠标划过
   maskTitleOverOutEffect();//mask效果，鼠标划过
 
   setCorrectPosition();//设置正确的位置
-  setTimeout(initMaskTitle, 100); //初始化maskTitle
+  setTimeout(initMaskTitle, 100);//初始化maskTitle
 });
 
 // 初始化页面全局参数
@@ -73,20 +80,24 @@ function initPageParam(){
 //账号验证
 function validateLoginName(){
   var val = $('#loginName').val();
+  var vdL = 0;
   if(val){
     $("#loginName").parent().find(".alertImg").show();
     if(checkLoginName(val)){
       win.setMessage({'msg':'您输入的用户名有误'});
       $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       lnV = false;
+      vdL = 2;
     }else{
       $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
       lnV = true;
+      vdL = 1;
     }
   }else{
     $("#loginName").parent().find(".alertImg").hide();
     lnV = false;
   }
+  vdInfoAry[0] = vdL;
   function checkLoginName(str){
     var vfMsg =null;
     var pData={
@@ -105,6 +116,7 @@ function validateLoginName(){
 
 //提交信息
 function commit(){
+  $('#mask').show();
   $('#commitButton').attr('disabled',true);
   if(lnV){
     var val = $('#loginName').val();
@@ -115,6 +127,7 @@ function commit(){
       };
       $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
         success:function(json) {
+          $('#mask').hide();
           if(json.success){
             if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
             else $.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
@@ -126,10 +139,11 @@ function commit(){
       });
     }
   }else{
+    $('#mask').hide();
     var alertMessage = "您的";
     if(lnV==false){
-      if($('#loginName').val()) alterMessage = alterMessage + "原密码填写有误、";
-      else alertMessage = alertMessage + "原密码还未填写、";
+      if(vdInfoAry[0]==0) alertMessage = alertMessage + "账号未填写、";
+      if(vdInfoAry[0]==2) alertMessage = "不存在账号["+$('#loginName').val()+"]、";
     }
     alertMessage = alertMessage.substring(0, alertMessage.lastIndexOf("、"));
     if(mainPage) mainPage.$.messager.alert("提示",alertMessage+"请检查!",'info',function (){
