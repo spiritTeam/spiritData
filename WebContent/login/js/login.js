@@ -57,26 +57,6 @@ function inputEffect() {
 }
 
 /**
- * 邮件地址后缀设置
- */
-function initMailSuffix() {
-  $('#mailSel').combobox({    
-    url:'mailAdress.json',   
-    valueField:'id',   
-    textField:'text',
-    height:37,
-    width:97,
-    onChange:function (index,o) {
-      var eleId = 'mail';
-      validateMail(eleId,index);
-    },
-    editable:false
-  });
-  $(".combo").css('border-color','#ABADB3');
-  $(".combo").css('border-left','none');
-}
-
-/**
  * 设置按钮效果，鼠标划过
  */
 function commitOverOutEffect() {
@@ -84,7 +64,7 @@ function commitOverOutEffect() {
     $(this).css({"background-color":"#81FC6A"});
     $(this).find("span").css("color", "yellow");
   }).bind('mouseout',function(){
-    $(this).css({"background-image":"url(../images/bg.png)"});
+    $(this).css({"background-image":"url(images/bg.png)"});
     $(this).find("span").css("color", "#fff");
   });
 }

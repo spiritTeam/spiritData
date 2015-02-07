@@ -70,8 +70,8 @@ public class RegisterController {
      * 更新用户信息
      * @return
      */
-    @RequestMapping("login/update.do")
-    public Map<String,Object> update(HttpServletRequest request){
+    @RequestMapping("/login/update.do")
+    public @ResponseBody Map<String,Object> update(HttpServletRequest request){
     	// #TODO 未完成的方法，还差一个验证密码的方法
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
@@ -79,7 +79,7 @@ public class RegisterController {
         String userName = request.getParameter("userName");
         String mailAdress = request.getParameter("mailAdress");
         User user = userService.getUserByLoginName(loginName);
-        if(user!=null||!user.equals("")){
+        if(user==null||user.equals("")){
             retMap.put("success", false);
             retMap.put("retInfo", "修改异常,请重试"+loginName+"的用户，请重新");
         }else{
@@ -88,6 +88,9 @@ public class RegisterController {
             user.setUserName(userName);
             int rst = userService.updateUser(user);
             if(rst==1){
+            	HttpSession session = request.getSession();
+            	User userInfo = ((User)session.getAttribute(FConstants.SESSION_USER));
+            	userInfo.setPassword(password);
                 retMap.put("success", true);
                 retMap.put("retInfo", "修改成功");
             }else{
