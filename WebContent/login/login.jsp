@@ -106,9 +106,9 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     </tr>
   </table></form>
   <div align="right" style="width:310px;margin-top:50px;margin-right:10px;">
-    <a onclick="toRegister()" href="#">没有账号?</a>&nbsp;|&nbsp;
-    <a onclick="activeUserAgain()" href="#">激活</a>&nbsp;|&nbsp;
-    <a onclick="modifyPassword()" href="#">忘记密码?</a>
+    <a onclick="toRegister();" href="#">没有账号</a>&nbsp;|&nbsp;
+    <a onclick="activeUserAgain();" href="#">激活</a>&nbsp;|&nbsp;
+    <a onclick="modifyPassword();" href="#">忘记密码?</a>
   </div>
 </div></center>
 </body>
@@ -140,28 +140,16 @@ function initPageParam(){
 //=以下初验证=============================================
 //验证密码是否为空
 function validatePassword() {
-  $("#password").parent().find(".alertImg").show();
   var val = $("#password").val();
-  if(val){
-    psV = true;
-    $("#password").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-  }else{
-    psV = false;
-    $("#password").parent().find(".alertImg").hide();
-  }
+  if(val) psV = true;
+  else psV = false;
 }
 // 账号验证
 function validateLoginName(){
   var val = $('#loginName').val();
-  $("#loginName").parent().find(".alertImg").show();
   //验证loginName是否为空
-  if(val){
-    lnV = true;
-    $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-  }else {
-    lnV = false;
-    $("#loginName").parent().find(".alertImg").hide();
-  }
+  if(val) lnV = true;
+  else lnV = false;
 }
 //验证码验证
 function validateCheckCode(eleId){
@@ -174,16 +162,14 @@ function validateCheckCode(eleId){
     };
     var url="<%=path%>/login/validateValidateCode.do";
     $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
-      success:function(json) {
-        vMsg = json;
-      }
+      success:function(json) {vMsg = json;}
     });
     if(vMsg){
       win.setMessage({'msg':''});
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
       vcV=true;
     }else{
-      win.setMessage({'msg':'&nbsp;&nbsp;验证码填写错误!'});
+      win.setMessage({'msg':'验证码填写错误!'});
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       vcV=false;
     }
@@ -265,13 +251,13 @@ function commit(){
             $.messager.alert('登录信息',retInfo,'info');
           }else if(activeType==2){
             if(mainPage) {
-              var loginStatus = mainPage.document.getElementById("loginStatus");
-              var loginName = mainPage.document.getElementById("loginName");
-              $(loginStatus).val(1);
-              $(loginName).val(pData.loginName);
-              closeSWinInMain(winId);
-              mainPage.$.messager.alert("登陆信息","登陆成功！",'info');
-              cleanWinId();
+              mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
+                var loginStatus = mainPage.document.getElementById("loginStatus");
+                var loginName = mainPage.document.getElementById("loginName");
+                $(loginStatus).val(1);
+                $(loginName).val(pData.loginName);
+                closeSWinInMain(winId);
+              });
             }else{
               $.messager.alert("登陆信息","登陆成功！",'info');
               window.location.href = "<%=path%>/asIndex.jsp";
@@ -292,31 +278,22 @@ function commit(){
         if (errorData ){
           if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
           else $.messager.alert("登录信息", "登录异常：未知！", "error");
-        } else {
-          mainPage.$("#mask").hide();
-        }
+        } else mainPage.$("#mask").hide();
       }
     });
   }else{
     $('#commitButton').attr('disabled',false);
-    var alertMessge = "您的";
-    if(lnV==false ){
-      $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      $("#loginName").parent().find(".alertImg").show();
-      alertMessge = alertMessge+"账号、";
-    }
-    if(psV==false){
-      $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      $("#password").parent().find(".alertImg").show();
-      alertMessge = alertMessge+"密码、";
-    } 
+    var alertMessage = "您的";
+    if(lnV==false ) alertMessage = alertMessage+"账号未填写、";
+    if(psV==false) alertMessage = alertMessage+"密码未填写、";
     if(vcV==false){
-      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      $("#checkCode").parent().find(".alertImg").show();
-      alertMessge = alertMessge+"验证码、";
+      //$("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      //$("#checkCode").parent().find(".alertImg").show();
+      if($("#checkCode").val()) alertMessage = alertMessage+"验证码填写错误、";
+      else alertMessage = alertMessage+"验证码未填写、";
     }
-    alertMessge = alertMessge.substring(0,alertMessge.lastIndexOf(","))+"有误，请从新检查!";
-    if(mainPage) mainPage.$.messager.alert("登录提示",alertMessge, 'info',function (){
+    alertMessage = alertMessage.substring(0,alertMessage.lastIndexOf("、"));
+    if(mainPage) mainPage.$.messager.alert("登录提示",alertMessage+"请检查!", 'info',function (){
       if(lnV==false){
         $('#loginName')[0].focus();
         $('#loginName')[0].select();
