@@ -93,6 +93,21 @@ public class AnalResultFile implements Serializable, BeManageFile {
         this.extInfo = extInfo;
     }
 
+    private String fileNameSeed; //文件名称种子
+    public String getFileNameSeed() {
+        return fileNameSeed;
+    }
+    public void setFileNameSeed(String fileNameSeed) {
+        this.fileNameSeed = fileNameSeed;
+    }
+    private String fullFileName; //文件名全名
+    public String getFullFileName() {
+        return fullFileName;
+    }
+    public void setFullFileName(String fullFileName) {
+        this.fullFileName = fullFileName;
+    }
+
     /**
      * 转换为模型化文件信息，注意，这里要验证服务器端文件是否存在。<br/>
      * @return 模型化文件信息

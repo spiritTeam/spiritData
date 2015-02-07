@@ -349,12 +349,14 @@ function commit(){
     var url="<%=path%>/login/register.do";
     $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
       success:function(json) {
+      	alert("abc::"+json.success);
         $("#mask").hide();
         if(json.success){
           if(mainPage){
-            closeSWinInMain(winId);
-            mainPage.$.messager.alert('注册提示',json.retInfo,'info');
-            cleanWinId(mainPage);
+            mainPage.$.messager.alert('注册提示',json.retInfo,'info',function(){
+              closeSWinInMain(winId);0
+              cleanWinId(mainPage);
+            });
           }else{
             $.messager.alert('注册提示',json.retInfo,'info');
             window.location.href = "<%=path%>/asIndex.jsp";

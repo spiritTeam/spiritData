@@ -16,6 +16,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
  */
 public abstract class AbstractWriteString2File {
     protected String fileNameSeed; //文件名种子，根据这个种子生成存储文件全路径名
+    protected String fullFileName; //文件名全名
 
     /**
      * 设置文件名种子
@@ -26,12 +27,21 @@ public abstract class AbstractWriteString2File {
     }
 
     /**
+     * 设置文件名全名
+     * @param fullFileName
+     */
+    public void setFullFileName(String fullFileName) {
+        this.fullFileName = fullFileName;
+    }
+    /**
      * 写字符串内容content到文件
      * @param content 字符串内容
      * @return 若文件存储成功，返回文件的全路径名称
      */
     public String write2File(String content) {
-        if (this.fileNameSeed==null||this.fileNameSeed.trim().length()==0) throw new Flmg0003CException("未设置文件名生成种子");
+        if ((this.fileNameSeed==null||this.fileNameSeed.trim().length()==0)&&(this.fullFileName==null||this.fullFileName.trim().length()==0)) {
+            throw new Flmg0003CException("'文件名生成种子'或'文件全名'至少设定一个");
+        }
 
         //写文件
         FileOutputStream fileOutputStream = null;
@@ -68,11 +78,24 @@ public abstract class AbstractWriteString2File {
         return write2File(JsonUtils.formatJsonStr(jsonStr, null));
     }
 
+    /**
+     * 得到存储文件名称，全路径名
+     * @param fileNameSeed 存储文件的种子，根据种子，继承此类的服务类生成存储文件名称
+     * @return 存储文件名称
+     */
+    public String getStoreFileName() {
+        if (this.fullFileName==null||this.fullFileName.trim().length()==0) {
+            return buildFileName();
+        } else {
+            return this.fullFileName;
+        }
+    }
+
     //虚拟方法
     /**
      * 得到存储文件名称，全路径名
      * @param fileNameSeed 存储文件的种子，根据种子，继承此类的服务类生成存储文件名称
      * @return 存储文件名称
      */
-    public abstract String getStoreFileName();
+    public abstract String buildFileName();
 }

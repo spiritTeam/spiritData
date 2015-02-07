@@ -196,8 +196,8 @@ public class AnalKey implements AnalTable {
         arfSeed.setSubType(mm.getId());
         arfSeed.setObjType("table");
         arfSeed.setObjId(tableName);
+        arfSeed.setFileNameSeed("METADATA"+File.separator+"key"+File.separator+"md_"+mm.getId());
 
-        arfService.setFileNameSeed("METADATA"+File.separator+"key"+File.separator+"md_"+mm.getId());
         AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJsonD(analKeyJsond, arfSeed);
         //回写文件信息到返回值
         ret.put("resultFile", arf);
