@@ -11,7 +11,7 @@ import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
 import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;
-import com.spiritdata.filemanage.core.pattern.service.AbstractWriteString2File;
+import com.spiritdata.filemanage.core.pattern.service.AbstractWriteString2FileByToBeStoreFile;
 import com.spiritdata.filemanage.core.pattern.service.WriteJsonD;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.core.service.FileManageService;
@@ -28,7 +28,7 @@ import com.spiritdata.jsonD.model.JsondHead;
  * 分析文件服务类
  * @author wh
  */
-public class AanlResultFileService extends AbstractWriteString2File implements WriteJsonD {
+public class AanlResultFileService extends AbstractWriteString2FileByToBeStoreFile implements WriteJsonD {
     @Resource
     private FileManageService fmService;
 
@@ -66,9 +66,9 @@ public class AanlResultFileService extends AbstractWriteString2File implements W
 
     //=以下文件处理==================
     @Override
-    public String buildFileName() {
+    public String buildFileName(String fileNameSeed) {
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+this.fileNameSeed+".json");
+        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+fileNameSeed+".json");
         return storeFile.replace("\\", "/");
     }
 
@@ -87,23 +87,13 @@ public class AanlResultFileService extends AbstractWriteString2File implements W
             throw new Flmg0003CException(new IllegalArgumentException("文件种子对象中'文件名生成种子(fileNameSeed)'或'文件全名(fullFileName)'至少设定一个"));
         }
 
-        //文件名处理
-        String _fileNameSeed = analResultSeed.getFileNameSeed();
-        if (_fileNameSeed!=null&&_fileNameSeed.trim().length()>0) {
-            this.setFileNameSeed(_fileNameSeed);
-        }
-        String _fullFileName = analResultSeed.getFullFileName();
-        if (_fullFileName!=null&&_fullFileName.trim().length()>0) {
-            this.setFullFileName(_fullFileName);
-        }
-
         //文件存储
-        String storeFileName = this.getStoreFileName();
+        String storeFileName = this.getStoreFileName(fileSeed);
         Object _HEAD = jsond.get_HEAD();
         if (_HEAD instanceof JsondHead) {
             ((JsondHead)_HEAD).setFileName(storeFileName);
         }
-        this.writeJson2File(jsond.toJson()); //存储为文件
+        this.writeJson2File(jsond.toJson(), fileSeed); //存储为文件
 
         //返回值处理
         if (_HEAD instanceof JsondHead) {

@@ -9,7 +9,7 @@ import com.spiritdata.filemanage.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
 import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;
-import com.spiritdata.filemanage.core.pattern.service.AbstractWriteString2File;
+import com.spiritdata.filemanage.core.pattern.service.AbstractWriteString2FileByToBeStoreFile;
 import com.spiritdata.filemanage.core.pattern.service.WriteJsonD;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.filemanage.exceptionC.Flmg0003CException;
@@ -17,14 +17,14 @@ import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileNameUtils;
 
-public class ReportFileService extends AbstractWriteString2File implements WriteJsonD {
+public class ReportFileService extends AbstractWriteString2FileByToBeStoreFile implements WriteJsonD {
     @Resource
     private FileManageService fmService;
 
     @Override
-    public String buildFileName() {
+    public String buildFileName(String fileNameSeed) {
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-        String storeFile = FileNameUtils.concatPath(root, "reportJson"+File.separator+this.fileNameSeed+".json");
+        String storeFile = FileNameUtils.concatPath(root, "reportJson"+File.separator+fileNameSeed+".json");
         return storeFile.replace("\\", "/");
     }
 
@@ -39,24 +39,14 @@ public class ReportFileService extends AbstractWriteString2File implements Write
         Report report = (Report)content;
         ReportFile reportFileSeed = (ReportFile)fileSeed;
         if ((reportFileSeed.getFileNameSeed()==null||reportFileSeed.getFileNameSeed().trim().length()==0)
-                &&(reportFileSeed.getFullFileName()==null||reportFileSeed.getFullFileName().trim().length()==0)) {
-                  throw new Flmg0003CException(new IllegalArgumentException("文件种子对象中'文件名生成种子(fileNameSeed)'或'文件全名(fullFileName)'至少设定一个"));
-              }
-
-        //文件名处理
-        String _fileNameSeed = reportFileSeed.getFileNameSeed();
-        if (_fileNameSeed!=null&&_fileNameSeed.trim().length()>0) {
-            this.setFileNameSeed(_fileNameSeed);
-        }
-        String _fullFileName = reportFileSeed.getFullFileName();
-        if (_fullFileName!=null&&_fullFileName.trim().length()>0) {
-            this.setFullFileName(_fullFileName);
+          &&(reportFileSeed.getFullFileName()==null||reportFileSeed.getFullFileName().trim().length()==0)) {
+            throw new Flmg0003CException(new IllegalArgumentException("文件种子对象中'文件名生成种子(fileNameSeed)'或'文件全名(fullFileName)'至少设定一个"));
         }
 
         //文件存储
-        String storeFileName = this.getStoreFileName();
+        String storeFileName = this.getStoreFileName(fileSeed);
         report.setReportFile(reportFileSeed);
-        this.writeJson2File(report.toJson());
+        this.writeJson2File(report.toJson(), fileSeed);
 
         //返回值处理
         reportFileSeed.setFileName(storeFileName);

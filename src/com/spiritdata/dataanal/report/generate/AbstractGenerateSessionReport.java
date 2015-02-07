@@ -81,9 +81,9 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         rfSeed.setOwnerType(report.getOwnerType());
         rfSeed.setReportId(report.getId());
         rfSeed.setTasksId(tg.getId());
-
         FileInfo impFi = (FileInfo)preTreadParam.get("impFileInfo");
-        rfService.setFileNameSeed("afterImport(IMPFID-"+impFi.getId()+"_RID-"+report.getId()+")");
+        rfSeed.setFileNameSeed("afterImport(IMPFID-"+impFi.getId()+"_RID-"+report.getId()+")");
+
         ReportFile rf = (ReportFile)rfService.write2FileAsJsonD(report, rfSeed); //保存文件，并把文件信息回写到report对象中
         report.setReportFile(rf);
         //2.2-报告文件数据库存储
