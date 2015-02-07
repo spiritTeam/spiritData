@@ -55,9 +55,9 @@
       </td>
     </tr>
     <tr>
-      <td class="labelTd" style="height:35px; line-height:35px;">原密码</td>
-      <td class="inputTd" style="height:35px; line-height:35px;">
-        <div class="alertInput-Text">
+      <td class="labelTd">原密码</td>
+      <td class="inputTd">
+        <div class="alertInput-Text" style="margin-top:1px;">
           <input id="oldPassword" class="alertInputComp" name="oldPassword" tabindex="3" type="password" onBlur="validateOldPassword();"/>
           <div class="alertImg"></div>
           <div class="maskTitle">请输入原密码</div>
@@ -65,8 +65,8 @@
       </td>
     </tr>
     <tr>
-      <td class="labelTd">新密码</td>
-      <td class="inputTd">
+      <td class="labelTd" style="height:35px; line-height:35px;">新密码</td>
+      <td class="inputTd" style="height:35px; line-height:35px;">
         <div class="alertInput-Text">
           <input id="password" class="alertInputComp" name="password" tabindex="4" type="password" onBlur="validatePassword();"/>
           <div class="alertImg"></div>
@@ -75,8 +75,8 @@
       </td>
     </tr>
     <tr>
-      <td class="labelTd" style="height:35px; line-height:35px;">确　认</td>
-      <td class="inputTd" style="height:35px; line-height:35px;">
+      <td class="labelTd" >确　认</td>
+      <td class="inputTd" >
         <div class="alertInput-Text">
           <input id="confirmPassword" class="alertInputComp" name="confirmPassword" tabindex="5" type="password" onBlur="comfirmPassword();"/>
           <div class="alertImg"></div>
@@ -85,9 +85,9 @@
       </td>
     </tr>
     <tr>
-      <td class="labelTd" style="height:64px; line-height:64px;">验证码</td>
-      <td class="inputTd" style="height:64px; line-height:64px;">
-        <div class="alertInput-vCode">
+      <td class="labelTd" >验证码</td>
+      <td class="inputTd" >
+        <div class="alertInput-vCode" style="margin-top:1px;">
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="6" type="text" onBlur="validateCheckCode();"/></div>
           <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
           <div class="alertImg"></div>
@@ -117,7 +117,6 @@ var psV=false,cpsV=false,opsV=false;
 $(function() {
   initPageParam();
 
-  initMailSuffix();//邮件地址后缀设置
   inputEffect();//设置input效果，鼠标划过
   commitOverOutEffect();//设置按钮效果，鼠标划过
   maskTitleOverOutEffect();//mask效果，鼠标划过
@@ -125,9 +124,6 @@ $(function() {
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100); //初始化maskTitle
 });
-/**
- * @param
- */
 //=以下初始化设置=============================================
 // 初始化页面全局参数
 function initPageParam(){
@@ -137,23 +133,6 @@ function initPageParam(){
   $('#loginName').val('<%=loginName%>');
   $('#mail').val('<%=userMail%>');
   $('#oldPwd').val('<%=oldPwd%>');
-}
-//邮件地址后缀设置
-function initMailSuffix() {
-  $('#mailSel').combobox({    
-    url:'<%=path%>/login/js/mailAdress.json',   
-    valueField:'id',   
-    textField:'text',
-    height:37,
-    width:97,
-    onChange:function (index,o) {
-      var eleId = 'mail';
-      validateMail(eleId,index);
-    },
-    editable:false
-  });
-  $(".combo").css('border-color','#ABADB3');
-  $(".combo").css('border-left','none');
 }
 //=以上初始化设置=============================================
 

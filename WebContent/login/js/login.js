@@ -118,3 +118,20 @@ function initMaskTitle() {
     }
   }
 }
+//初始化邮箱后缀
+function initMailSuffix(jsonPath) {
+  $('#mailSel').combobox({    
+    url:jsonPath,   
+    valueField:'id',   
+    textField:'text',
+    height:37,
+    width:97,
+    onChange:function (index,o) {
+      var eleId = 'mail';
+      validateMail(eleId,index);
+    },
+    editable:false
+  });
+  $(".combo").css('border-color','#ABADB3');
+  $(".combo").css('border-left','none');
+}

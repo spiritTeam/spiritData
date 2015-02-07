@@ -122,9 +122,7 @@ var lnV=false,psV=false,vcV=false;
  * 主函数
  */
 $(function() {
-  mainPage = getMainPage();
-  winId = getUrlParam(window.location.href, "_winID");
-  win=getSWinInMain(winId);
+  initPageParam();
 
   inputEffect();//设置input效果，鼠标划过
   commitOverOutEffect();//设置按钮效果，鼠标划过
@@ -133,7 +131,12 @@ $(function() {
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100); //初始化maskTitle
 });
-
+//初始化页面全局参数
+function initPageParam(){
+  mainPage = getMainPage();
+  winId = getUrlParam(window.location.href, "_winID");
+  win=getSWinInMain(winId);
+}
 //=以下初验证=============================================
 //验证密码是否为空
 function validatePassword() {
@@ -147,9 +150,7 @@ function validatePassword() {
     $("#password").parent().find(".alertImg").hide();
   }
 }
-/**
- * 账号验证
- */
+// 账号验证
 function validateLoginName(){
   var val = $('#loginName').val();
   $("#loginName").parent().find(".alertImg").show();
@@ -162,9 +163,7 @@ function validateLoginName(){
     $("#loginName").parent().find(".alertImg").hide();
   }
 }
-/**
- * 验证码验证
- */
+//验证码验证
 function validateCheckCode(eleId){
   var val = $('#checkCode').val();
   if(val){
@@ -279,9 +278,11 @@ function commit(){
             }
           }
         } else if(json.type==2 ){
-          mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
+          if(mainPage) mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
+          else $.messager.alert("登录信息", "登录失败："+json.data, "error");
         } else {
-          mainPage.$.messager.alert("登录信息", "登录异常："+json.data, "error");
+          if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常："+json.data, "error");
+          else $.messager.alert("登录信息", "登录异常："+json.data, "error");
         }
       },
       error:function(errorData ){
@@ -289,7 +290,8 @@ function commit(){
         $('#checkCode').val('');
         $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
         if (errorData ){
-          mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
+          if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
+          else $.messager.alert("登录信息", "登录异常：未知！", "error");
         } else {
           mainPage.$("#mask").hide();
         }
@@ -297,19 +299,36 @@ function commit(){
     });
   }else{
     $('#commitButton').attr('disabled',false);
+    var alertMessge = "您的";
     if(lnV==false ){
-      $('#lNImg').remove();
-      $('#vLN').append('<img id="lNImg" align="middle" src="images/cross.png">');
+      $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      $("#loginName").parent().find(".alertImg").show();
+      alertMessge = alertMessge+"账号、";
     }
     if(psV==false){
-      $('#pWImg').remove();
-      $('#vPW').append('<img id="pWImg" align="middle" src="images/cross.png">');
+      $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      $("#password").parent().find(".alertImg").show();
+      alertMessge = alertMessge+"密码、";
     } 
     if(vcV==false){
-      $('#vCImg').remove();
-      $('#vVC').append('<img id="vCImg" align="middle" src="images/cross.png">');
+      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      $("#checkCode").parent().find(".alertImg").show();
+      alertMessge = alertMessge+"验证码、";
     }
-    mainPage.$.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的登陆信息", 'info',function (){
+    alertMessge = alertMessge.substring(0,alertMessge.lastIndexOf(","))+"有误，请从新检查!";
+    if(mainPage) mainPage.$.messager.alert("登录提示",alertMessge, 'info',function (){
+      if(lnV==false){
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }else if(psV==false){
+        $('#password')[0].focus();
+        $('#password')[0].select();
+      }else{
+        $('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+      }
+    });
+    else $.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的登陆信息", 'info',function (){
       if(lnV==false){
         $('#loginName')[0].focus();
         $('#loginName')[0].select();

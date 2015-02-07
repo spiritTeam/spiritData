@@ -45,7 +45,7 @@
     <tr>
       <td class="labelTd">密　码</td>
       <td class="inputTd">
-        <div class="alertInput-Text">
+        <div class="alertInput-Text" style="margin-top:-4px;">
           <input id="password" class="alertInputComp" name="password" tabindex="3" type="password" onBlur="validatePassword();"/>
           <div class="alertImg"></div>
           <div class="maskTitle">请输入密码</div>
@@ -65,7 +65,7 @@
     <tr>
       <td class="labelTd" style="height:64px; line-height:64px;">验证码</td>
       <td class="inputTd" style="height:64px; line-height:64px;">
-        <div class="alertInput-vCode">
+        <div class="alertInput-vCode" style="margin-top:1px;">
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="5" type="text" onBlur="validateCheckCode();"/></div>
           <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
           <div class="alertImg"></div>
@@ -94,38 +94,23 @@ var lnV=false,maV=false,psV=false,cpsV=false,vcV=false;
  * 主函数
  */
 $(function() {
-  mainPage = getMainPage();
-  winId = getUrlParam(window.location.href, "_winID");
-  win=getSWinInMain(winId);
+  initPageParam();
 
   inputEffect();//设置input效果
   commitOverOutEffect();//设置按钮效果，鼠标划过
   maskTitleOverOutEffect();//mask效果，鼠标划过
-  initMailSuffix();//邮件地址后缀设置
+  initMailSuffix("<%=path%>/login/js/mailAdress.json");//邮件地址后缀设置
 
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100); //初始化maskTitle
 });
-
-//初始化邮箱后缀
-function initMailSuffix() {
-  $('#mailSel').combobox({    
-    url:"<%=path%>/login/js/mailAdress.json",   
-    valueField:'id',   
-    textField:'text',
-    height:37,
-    width:97,
-    onChange:function (index,o) {
-      var eleId = 'mail';
-      validateMail(eleId,index);
-    },
-    editable:false
-  });
-  $(".combo").css('border-color','#ABADB3');
-  $(".combo").css('border-left','none');
-}
-
 //=以下初验证=============================================
+// 初始化页面全局参数
+function initPageParam(){
+  mainPage = getMainPage();
+  winId = getUrlParam(window.location.href, "_winID");
+  win=getSWinInMain(winId);
+}
 //密码验证，验证密码是否足够复杂
 function validatePassword() {
   var val = $("#password").val();
