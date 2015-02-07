@@ -116,20 +116,22 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 var win;
 var mainPage;
 var winId;
+var vdInfoAry = new Array(3);
 //用于判断是否可以提交
 var lnV=false,psV=false,vcV=false;
 /**
  * 主函数
  */
 $(function() {
-  initPageParam();
+  initPageParam();//初始化全局参数
+  initMask();//初始化遮罩
 
   inputEffect();//设置input效果，鼠标划过
   commitOverOutEffect();//设置按钮效果，鼠标划过
   maskTitleOverOutEffect();//mask效果，鼠标划过
 
   setCorrectPosition();//设置正确的位置
-  setTimeout(initMaskTitle, 100); //初始化maskTitle
+  setTimeout(initMaskTitle, 100);//初始化maskTitle
 });
 //初始化页面全局参数
 function initPageParam(){
@@ -141,19 +143,24 @@ function initPageParam(){
 //验证密码是否为空
 function validatePassword() {
   var val = $("#password").val();
-  if(val) psV = true;
+  var vdP = 0;
+  if(val) {psV = true; vdP = 1;}
   else psV = false;
+  vdInfoAry[1] = vdP;
 }
 // 账号验证
 function validateLoginName(){
   var val = $('#loginName').val();
+  var vdL = 0;
   //验证loginName是否为空
-  if(val) lnV = true;
+  if(val) {lnV = true; vdL=1;}
   else lnV = false;
+  vdInfoAry[0] = vdL;
 }
 //验证码验证
 function validateCheckCode(eleId){
   var val = $('#checkCode').val();
+  var vdC = 0;
   if(val){
     $("#checkCode").parent().parent().find(".alertImg").show();
     var vMsg =null;
@@ -167,16 +174,19 @@ function validateCheckCode(eleId){
     if(vMsg){
       win.setMessage({'msg':''});
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+      vdC = 1;
       vcV=true;
     }else{
       win.setMessage({'msg':'验证码填写错误!'});
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      vdC = 2;
       vcV=false;
     }
   }else{
     $("#checkCode").parent().parent().find(".alertImg").hide();
     vcV=false;
   }
+  vdInfoAry[2] = vdC;
 }
 //=以上初验证=============================================
 
@@ -284,13 +294,15 @@ function commit(){
   }else{
     $('#commitButton').attr('disabled',false);
     var alertMessage = "您的";
-    if(lnV==false ) alertMessage = alertMessage+"账号未填写、";
-    if(psV==false) alertMessage = alertMessage+"密码未填写、";
+    if(lnV==false) {
+      if(vdInfoAry[0]==0) alertMessage = alertMessage + "账号未填写、";
+    }
+    if(psV==false){
+      if(vdInfoAry[1]==0) alertMessage = alertMessage + "密码未填写、";
+    } 
     if(vcV==false){
-      //$("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      //$("#checkCode").parent().find(".alertImg").show();
-      if($("#checkCode").val()) alertMessage = alertMessage+"验证码填写错误、";
-      else alertMessage = alertMessage+"验证码未填写、";
+      if(vdInfoAry[2]==0) alertMessage = alertMessage + "验证码未填写、";
+      if(vdInfoAry[2]==2) alertMessage = alertMessage + "验证码不正确、";
     }
     alertMessage = alertMessage.substring(0,alertMessage.lastIndexOf("、"));
     if(mainPage) mainPage.$.messager.alert("登录提示",alertMessage+"请检查!", 'info',function (){

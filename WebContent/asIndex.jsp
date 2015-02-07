@@ -240,7 +240,7 @@ function uploadF() {
     $(form).attr('action', _PATH+'/fileUpLoad.do');
     $(form).attr('method', 'POST');
     $(form).attr('target', 'tframe');
-    if (form.encoding) form.encoding = 'multipart/form-data';    
+    if (form.encoding) form.encoding = 'multipart/form-data';
     else form.enctype = 'multipart/form-data';
     $(form).submit();
     //演示
@@ -564,13 +564,14 @@ function onlyLogout(ip, mac, browser) {
  */
 function logout() {
   $("#loginStatus").val("");
+  $("#loginName").val("");
   var url=_PATH+"/logout.do";
   $.ajax({type:"post", async:true, url:url, data:null, dataType:"json",
     success: function(json) {
       if (json.type==1) {
         $.messager.alert("注销信息","注销成功!",'info',function(){
           //window.location.href="<%=path%>/login/login.jsp?noAuth";
-          window.location.href="<%=path%>/asIndex.jsp";          
+          window.location.href="<%=path%>/asIndex.jsp";
         });
       } else {
         if(json.data==null){
@@ -578,7 +579,7 @@ function logout() {
         }else{
           $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
             window.location.href="<%=path%>/asIndex.jsp";
-          });  
+          });
         }
       }
     },
@@ -594,24 +595,22 @@ var wWidth = "330";
 /**
  * 注册
  */
-var registerWinId ="";
 function register(){
   //var loginStatus = $('#loginStatus').val();
   var _url ="<%=path%>/login/register.jsp";
   var winOption={
     url:_url,
     title:"注册",
-    height:"400",
+    height:wHeight,
     width:wWidth,
     modal:true,
     zIndex:-1
   };
-  registerWinId = openSWinInMain(winOption);
+  openSWinInMain(winOption);
 }
 /**
  * 忘记密码
  */
-var modifyWinId = "";
 function modifyPwd(){
   var loginStatus = $('#loginStatus').val();
   var _url;
@@ -630,13 +629,16 @@ function modifyPwd(){
     width:wWidth,
     modal:true
   };
-  modifyWinId = openSWinInMain(winOption);
+  openSWinInMain(winOption);
 }
 /*
  * 登录
  */
-var loginWinId = "";
 function login(){
+  if($("#loginStatus").val()==1) {
+    $.messager.alert('提示','您已经在登陆状态了，如想切换用户请先注销！','info');
+    return;
+  }
   var _url="<%=path%>/login/login.jsp?";
   var winOption={
     url:_url,
@@ -645,16 +647,15 @@ function login(){
     width:wWidth,
     modal:true
   };
-  loginWinId = openSWinInMain(winOption);
+  openSWinInMain(winOption);
 }
 /*
  * 修改个人信息
  */
-var updateUserWinId = "";
 function updateUser(){
   var loginStatus = $('#loginStatus').val();
   if(loginStatus==""||loginStatus==null) {
-    $.messager.alert('登录提示','您还未登录!','info'); 
+    $.messager.alert('登录提示','您还未登录!','info');
     return;
   }
   var _url="<%=path%>/login/update.jsp?";
@@ -665,7 +666,7 @@ function updateUser(){
     width:wWidth,
     modal:true
   };
-  updateUserWinId = openSWinInMain(winOption);
+  openSWinInMain(winOption);
 }
 /**
  * 测试
