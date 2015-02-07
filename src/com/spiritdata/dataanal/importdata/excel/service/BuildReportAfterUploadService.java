@@ -2,8 +2,10 @@ package com.spiritdata.dataanal.importdata.excel.service;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -16,6 +18,7 @@ import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
+import com.spiritdata.dataanal.report.model.ReportSegment;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.model.TaskGroup;
@@ -24,6 +27,7 @@ import com.spiritdata.filemanage.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
  * 在上传一个Excel文件后，生成Report。<br/>
@@ -95,13 +99,22 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\", 子任务}");
         
         //4-构建报告体，并生成相关的任务
+        Map<String, Object> taskParam = new HashMap<String, Object>();
         //4.a.1-获得所有本次对应的元数据信息
         TaskInfo getMDInfos_Task = new TaskInfo();
         getMDInfos_Task.setId(SequenceUUID.getPureUUID());
         getMDInfos_Task.setTaskName("获得元数据信息");
         getMDInfos_Task.setLangType(TaskLangType.JAVA);
-        getMDInfos_Task.setExcuteFunc("");
+        getMDInfos_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.getMDInfos");
+        getMDInfos_Task.setPrepared();
+          //设置参数
+        taskParam.clear();
+        taskParam.put("metadataList", getMDIdList(reportParam));
+        getMDInfos_Task.setParam(JsonUtils.objToJson(taskParam));
         tg.addTask2Graph(getMDInfos_Task);
+        //处理report中的数据访问列表
+        ReportSegment rs1 = new ReportSegment();
+        
         //4.1-分不同元数据，进行分析，目前包括()
 //        private String id; //任务
 //        private String taskName; //任务名称
@@ -121,6 +134,19 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
 
         Map<String, Object> ret = new HashMap<String, Object>();
         ret.put("taskReport", tr);
+        return ret;
+    }
+
+    /*
+     * 从报告参数中得到元数据Id的列表
+     * @param reportParam
+     * @return
+     */
+    private List<String> getMDIdList(Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam) {
+        if (reportParam==null||reportParam.size()==0) return null;
+        List<String> ret = new ArrayList<String>();
+        
+        if (ret.size()==0) return null;
         return ret;
     }
 }
