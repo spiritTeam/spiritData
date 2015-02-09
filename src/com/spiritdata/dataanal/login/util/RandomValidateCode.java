@@ -4,6 +4,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -11,13 +16,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.spiritdata.framework.FConstants;
+import com.spiritdata.framework.core.cache.SystemCache;
+import com.spiritdata.framework.util.FileNameUtils;
+
 public class RandomValidateCode {
     public static final String RANDOMCODEKEY = "RANDOMVALIDATECODEKEY";//放到session中的key
     private Random random = new Random();
     private String randString = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";//随机产生的字符串
     
-    private int width = 80;//图片宽
-    private int height = 34;//图片高
+    private int width = 93;//图片宽
+    private int height = 33;//图片高
     private int lineSize = 38;//干扰线数量
     private int stringNum = 4;//随机产生字符数量
     //获得字体
@@ -63,6 +72,52 @@ public class RandomValidateCode {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 存储验证码图片到文件
+     * @param request 得到session的request
+     * @return 验证码字符串
+     */
+    public Map<String, String> saveImg2File(HttpServletRequest request) {
+        HttpSession session = request.getSession();        
+        BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_BGR);
+        Graphics g = image.getGraphics();//产生Image对象的Graphics对象,改对象可以在图像上进行各种绘制操作
+        g.fillRect(0, 0, width, height);
+        g.setFont(new Font("Times New Roman",Font.ROMAN_BASELINE,18));
+        g.setColor(getRandColor(110, 133));
+        //绘制干扰线
+        for(int i=0;i<=lineSize;i++){
+            drowLine(g);
+        }
+        //绘制随机字符
+        String randomString = "";
+        for(int i=1;i<=stringNum;i++){
+            randomString=drowString(g,randomString,i);
+        }
+        g.dispose();
+
+        Map<String, String> retM = new HashMap<String, String>();
+        FileOutputStream fos = null;
+        try {
+            String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
+            String fileUrl = "checkCodeImges/"+session.getId()+"/"+(new Date()).getTime()+".JPEG";
+            String storeFile = FileNameUtils.concatPath(root, fileUrl);
+            File dirs = new File(FileNameUtils.getFilePath(storeFile));
+            if (!dirs.exists()) dirs.mkdirs();
+            fos = new FileOutputStream(new File(storeFile));
+            ImageIO.write(image, "JPEG", fos);//将内存中的图片通过流动形式输出到客户端
+            retM.put("imgSrc", fileUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (fos!=null) {
+                try {fos.close();} catch(Exception e) {};
+            }
+        }
+        retM.put("checkCode", randomString.toUpperCase());
+        return retM;
+    }
+
     //绘制字符串
     private String drowString(Graphics g,String randomString,int i){
         g.setFont(getFont());
