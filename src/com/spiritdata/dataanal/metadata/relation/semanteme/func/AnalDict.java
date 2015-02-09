@@ -34,7 +34,7 @@ import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
  */
 @Component
 public class AnalDict implements AnalMetadata {
-    public final static String jsonDCode = "SD.TEAM.ANAL::0002"; 
+    public final static String jsonDCode = "SD.TEAM.ANAL::0002";
     private final static float compressThreshold = 0.7f; //压缩率的阀值，当压缩率大于此值，则认为是字典项目
 
     @Resource

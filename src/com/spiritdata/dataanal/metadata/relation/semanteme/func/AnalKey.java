@@ -39,7 +39,7 @@ import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
  */
 @Component
 public class AnalKey implements AnalTable {
-    public final static String jsonDCode = "SD.TEAM.ANAL::0001"; 
+    public final static String jsonDCode = "SD.TEAM.ANAL::0001";
     @Resource
     private BasicDataSource dataSource;
     @Resource

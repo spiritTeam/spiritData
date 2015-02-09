@@ -157,16 +157,15 @@ function initMailSuffix(jsonPath) {
     valueField:'id',   
     textField:'text',
     height:37,
-    width:97,
+    width:98,
     onChange:function (index,o) {
-      var eleId = 'mail';
-      validateMail(eleId,index);
+      validateMail();
     },
     editable:false
   });
   $(".combo").css('border-color','#ABADB3');
   $(".combo").css('border-left','none');
-  $(".panel-header, .panel-body").css('border-color','#ABADB3');
+  $(".panel-header, .panel-body").css({'border-color':'#ABADB3'}).parent().css({'margin-left':'-1px','margin-top':'-1px'});
 }
 
 /**

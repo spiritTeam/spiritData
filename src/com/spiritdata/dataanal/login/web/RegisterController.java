@@ -1,5 +1,6 @@
 package com.spiritdata.dataanal.login.web;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -317,6 +318,29 @@ public class RegisterController {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 得到验证码
+     * @throws ServletException
+     * @throws IOException
+     */
+    @RequestMapping("login/refreshValidateCode.do")
+    public @ResponseBody Map<String,Object> refreshValidateCode(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+        Map<String,Object> retMap = new HashMap<String,Object>();
+        String retInfo = "";
+        try {
+            RandomValidateCode randomValidateCode = new RandomValidateCode();
+            retMap.put("success", true);
+            retMap.putAll(randomValidateCode.saveImg2File(request));
+            return retMap;
+        } catch (Exception e) {
+            retMap.put("success", false);
+            retMap.put("retInfo", e.getMessage());
+            return retMap;
+        }
+        
+    }
+
     /**
      * 验证登录名
      */
@@ -363,46 +387,68 @@ public class RegisterController {
      */
     @RequestMapping("login/register.do")
     public @ResponseBody Map<String,Object> saveRegisterInfo(HttpServletRequest request) {
-        Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
         String password = request.getParameter("password");
         String userName = request.getParameter("userName");
         String mailAdress = request.getParameter("mailAdress");
-        String validatsaSequence = SequenceUUID.getPureUUID();
-        User user = new User();
-        user.setLoginName(loginName);
-        user.setPassword(password);
-        user.setMailAdress(mailAdress);
-        user.setUserName(userName);
-        user.setUserId(SequenceUUID.getPureUUID());
-        user.setUserState(0);
-        user.setUserType(1);
-        user.setValidataSequence(validatsaSequence);
-        int rst = userService.insertUser(user);
+
+        Map<String,Object> retMap = new HashMap<String,Object>();
         String retInfo = "";
-        if(rst==1){
-            String deployName = request.getContextPath();
-            int  serverPort = request.getServerPort();
-            String serverName = request.getServerName();
-            String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
-                    + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
-            try{
-                SendValidataUrlToMail svu = new SendValidataUrlToMail();
-                svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
-                retMap.put("success", true);
-                retInfo = "注册成功，已经向您的邮箱发送一封邮件，请登陆邮箱激活账号";
-                retMap.put("retInfo", retInfo);
-                return retMap;
-            }catch(MessagingException mex){
-                retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
+
+        try {
+            User user = userService.getUserByLoginName(loginName);
+            if (user!=null) retInfo+= "<br/>["+loginName+"]账号已被使用";
+
+            user = userService.getUserByMailAdress(mailAdress);
+            if (user!=null) retInfo+= "<br/>["+mailAdress+"]邮箱已被注册";
+
+            if (retInfo.length()>0) {
                 retMap.put("success", false);
+                retMap.put("retInfo", retInfo.substring(5));
+                return retMap;
+            }
+
+            String validatsaSequence = SequenceUUID.getPureUUID();
+            user = new User();
+            user.setLoginName(loginName);
+            user.setPassword(password);
+            user.setMailAdress(mailAdress);
+            user.setUserName(userName);
+            user.setUserId(SequenceUUID.getPureUUID());
+            user.setUserState(0);
+            user.setUserType(1);
+            user.setValidataSequence(validatsaSequence);
+            int rst = userService.insertUser(user);
+            if (rst==1) {
+                String deployName = request.getContextPath();
+                int  serverPort = request.getServerPort();
+                String serverName = request.getServerName();
+                String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
+                        + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+                try{
+                    SendValidataUrlToMail svu = new SendValidataUrlToMail();
+                    svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
+                    retMap.put("success", true);
+                    retInfo = "注册成功，已经向您的邮箱发送一封邮件，请登陆邮箱激活账号";
+                    retMap.put("retInfo", retInfo);
+                    //删除验证码
+                    
+                    return retMap;
+                }catch(MessagingException mex){
+                    retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
+                    retMap.put("success", false);
+                    retMap.put("retInfo", retInfo);
+                    return retMap;
+                }
+            }else{
+                retMap.put("success", false);
+                retInfo = "注册不成功，请稍后重试！";
                 retMap.put("retInfo", retInfo);
                 return retMap;
             }
-        }else{
+        } catch(Exception e) {
             retMap.put("success", false);
-            retInfo = "注册不成功，请稍后重试！";
-            retMap.put("retInfo", retInfo);
+            retMap.put("retInfo", e.getMessage());
             return retMap;
         }
     }

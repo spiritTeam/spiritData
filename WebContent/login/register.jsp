@@ -17,7 +17,7 @@
 <!-- 遮罩层 -->
 <div id="mask" style="display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
   <img id="waittingImg" align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
-  <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，数据提交中...</span>
+  <span id="waittingText" style="font-weight:bold;">请稍候，数据提交中...</span>
 </div>
 <center><div id="mainDiv">
   <form><table>
@@ -35,7 +35,7 @@
       <td class="labelTd">邮　箱</td>
       <td class="inputTd">
         <div class="alertInput-mail">
-          <div id="mailPrefix"><input class="alertInputComp" id="mail" name="mail" tabindex="2" type="text" onBlur="validateMail('mail')"/></div>
+          <div id="mailPrefix"><input class="alertInputComp" id="mail" name="mail" tabindex="2" type="text" onBlur="validateMail()"/></div>
           <div id="mailSuffix"><input id="mailSel" name="mailSel"/></div>
           <div class="alertImg"></div>
           <div class="maskTitle">请输入您的邮箱</div>
@@ -67,7 +67,7 @@
       <td class="inputTd" style="height:64px; line-height:64px;">
         <div class="alertInput-vCode" style="margin-top:1px;">
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="5" type="text" onBlur="validateCheckCode();"/></div>
-          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
+          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src=""></div>
           <div class="alertImg"></div>
           <div class="maskTitle">按右图输入验证码</div>
         </div>
@@ -88,11 +88,11 @@
 var win;
 var mainPage;
 var winId;
+var checkCode="";
 //此数组有5个元素，分别代表5个需要验证的输入框
-//0-null，1-true，2-规则不对，3-已被占用(邮箱和账号验证的时候会用到，其他的用0-2即可)，
-var vdInfoAry = new Array(5);
+var vdInfoAry = ['账号不能为空','邮箱不能为空','密码不能为空','确认密码不能为空','验证码不能为空'];
+
 //用于判断是否可以提交
-var lnV=false,maV=false,psV=false,cpsV=false,vcV=false;
 /**
  * 主函数
  */
@@ -107,71 +107,102 @@ $(function() {
 
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100); //初始化maskTitle
+  //提示图标效果
+  $(".alertImg").bind('mouseover',function() {
+  	win.setMessage({'msg':$(this).attr("title")});
+  }).bind('mouseout',function() {
+  	win.setMessage({'msg':''});
+  });
+  refresh();
 });
-//=以下初验证=============================================
-// 初始化页面全局参数
+
+//初始化页面全局参数
 function initPageParam(){
   mainPage = getMainPage();
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
 }
+
+//=以下验证=============================================
+/**
+ * 账号验证
+ */
+function validateLoginName(){
+  var val = $('#loginName').val();
+  if(val){
+    $("#loginName").parent().find(".alertImg").show();
+    $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+    win.setMessage({'msg':''});
+    vdInfoAry[0] = "";
+    if (!checkLoginNameStr(val)) {
+      $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+      vdInfoAry[0] = "账号应由5~11位的字母、数字、下划线组成";
+      win.setMessage({'msg':vdInfoAry[0]});
+    }
+  }else{
+    $("#loginName").parent().find(".alertImg").hide();
+    vdInfoAry[0] = "账号为必填项";
+  }
+  ma = getMainAlert($("#loginName"));
+  ma.find(".alertImg").attr("title", vdInfoAry[0]);
+  //验证账号是否符合规则
+  function checkLoginNameStr(str){
+    var re = /^[a-zA-z]\w{4,11}$/;
+    if(re.test(str)) return true;
+    else return false;
+  }
+}
+/**
+ * 验证邮箱
+ */
+function validateMail() {
+  var val = $('#mail').val();
+  if(val){
+    $("#mail").parent().parent().find(".alertImg").show();
+    $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+    win.setMessage({'msg':''});
+    vdInfoAry[1] = "";
+    var mailAdress = val;
+    if (val.lastIndexOf('@')==-1) mailAdress = val+$('#mailSel').combobox('getText');
+
+    if (!checkMailAdress(mailAdress)) {
+      vdInfoAry[1] = "邮箱格式不正确";
+      win.setMessage({'msg': vdInfoAry[1]});
+      $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+    }
+  }else{
+    $("#mail").parent().parent().find(".alertImg").hide();
+    vdInfoAry[1] = "邮箱为必填项";
+  }
+  ma = getMainAlert($("#mail"));
+  ma.find(".alertImg").attr("title", vdInfoAry[1]);
+  //验证邮箱是否符合规则
+  function checkMailAdress(mailAdress){
+    var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+    return reg.test(mailAdress); 
+  }
+}
+
 //密码验证，验证密码是否足够复杂
 function validatePassword() {
   var val = $("#password").val();
-  //密码验证信息，
-  var vdInfoP = 0;
-  //重复密码验证信息
-  var vdInfoCP = 0;
   if (val) {
     $("#password").parent().find(".alertImg").show();
-    var confirmVal = $("#confirmPassword").val();
-    if(!checkPasswordStr(val)){
-      win.setMessage({'msg':'密码应由5~12位的字母、数字、下划线组成!'});
+    $("#password").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+    win.setMessage({'msg':''});
+    vdInfoAry[2] = "";
+    if (!checkPasswordStr(val)) {
+      vdInfoAry[2] = "密码应由5~12位的字母、数字、下划线组成";
+      win.setMessage({'msg':vdInfoAry[2]});
       $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      psV = false;
-      vdInfoP = 2;
-      //与确认码比较
-      if (confirmVal) {
-        $("#confirmPassword").parent().find(".alertImg").show();
-        if (confirmVal==val) {
-          $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-          cpsV=true;
-          vdInfoCP = 1;
-        } else {
-          $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-          cpsV=false;
-          vdInfoCP = 2;
-        }
-      }else vdInfoCP = 0;
-    } else {
-      //提示文字
-      win.setMessage({'msg':''});
-      //提示图标
-      $("#password").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-      psV = true;
-      vdInfoP = 1;
-      //与确认码比较
-      if (confirmVal) {
-        $("#confirmPassword").parent().find(".alertImg").show();
-        if (confirmVal==val) {
-          $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-          cpsV=true;
-          vdInfoCP = 1;
-        } else {
-          win.setMessage({'msg':'确认密码与密码不一致!'});
-          $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-          cpsV=false;
-          vdInfoCP = 2;
-        }
-      }else vdInfoCP = 0;
     }
+    comfirmPassword();
   } else {
+    vdInfoAry[2] = "密码为必填项";
     $("#password").parent().find(".alertImg").hide();
-    psV = false;
-    vdInfoP = 0;
   }
-  vdInfoAry[2] = vdInfoP;
-  vdInfoAry[3] = vdInfoCP;
+  ma = getMainAlert($("#password"));
+  ma.find(".alertImg").attr("title", vdInfoAry[2]);
   //验证密码是否复合规则
   function checkPasswordStr(str) {
     var re = /[0-9a-zA-z]\w{4,11}$/;
@@ -182,254 +213,136 @@ function validatePassword() {
 // 确认密码和密码是否一致
 function comfirmPassword() {
   var val = $("#confirmPassword").val();
-  var vdInfoCP = 0;
   if (val) {
-    var pass = $("#password").val();
     $("#confirmPassword").parent().find(".alertImg").show();
+    $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+    win.setMessage({'msg':''});
+    vdInfoAry[3] = "";
+    var pass = $("#password").val();
     if (val!=pass) {
-      //提示文字
-      win.setMessage({'msg':'确认密码与密码不一致!'});
+      vdInfoAry[3] = "确认密码与密码不一致";
+      win.setMessage({'msg': vdInfoAry[3]});
       $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      cpsV=false;
-      vdInfoCP = 2;
     } else {
       win.setMessage({'msg':''});
       $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-      cpsV=true;
-      vdInfoCP = 1;
     }
   } else {
     $("#confirmPassword").parent().find(".alertImg").hide();
-    cpsV=false;
-    vdInfoCP = 0;
+    vdInfoAry[3] = "确认密码不能为空";
   }
-  vdInfoAry[3] = vdInfoCP;
+  ma = getMainAlert($("#confirmPassword"));
+  ma.find(".alertImg").attr("title", vdInfoAry[3]);
 }
-/**
- * 账号验证
- */
-function validateLoginName(){return;
-  var val = $('#loginName').val();
-  var vdInfoL = 0;
-  if(val){
-    $("#loginName").parent().find(".alertImg").show();
-    if(checkLoginNameStr(val)){
-      if(checkLoginName(val)){
-        win.setMessage({'msg':''});
-        $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-        vdInfoL = 1;
-        lnV = true;
-      }else{
-        win.setMessage({'msg':'该账号已被使用!'});
-        $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-        lnV = false;
-        vdInfoL = 3;
-      }
-    }else{
-      win.setMessage({'msg':'账号应由5~11位的字母、数字、下划线组成!'});
-      $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      lnV = false;
-      vdInfoL = 2;
-    }
-  }else{
-    $("#loginName").parent().find(".alertImg").hide();
-    lnV = false;
-    vdInfoL = 0;
-  }
-  vdInfoAry[0] = vdInfoL;
-  //验证账号是否符合规则
-  function checkLoginNameStr(str){
-    var re = /^[a-zA-z]\w{4,11}$/;
-    if(re.test(str)) return true;
-    else return false;
-  }
-  //后台验证账号是否重复
-  function checkLoginName(str){
-    var vfMsg =null;
-    var pData={"loginName":str};
-    var url="<%=path%>/login/validateLoginName.do";
-    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
-       success:function(json) {
-         vfMsg = json;
-       }
-    });
-    return vfMsg;
-  }
-}
-/**
- * 验证邮箱
- */
-function validateMail(eleId,index){return;
-  var a = $('#mailSel').combobox('getData');
-  var vdInfoM = 0;
-  var val = $('#mail').val();
-  if(val){
-    var mailStr;
-    $("#mail").parent().parent().find(".alertImg").show();
-    if(val.lastIndexOf('@')!=-1) mailStr = val;
-    else{
-      if(index!=null) mailStr = val +a[index-1].text;
-      else mailStr = val +$('#mailSel').combobox('getText');
-    }
-    if(checkMailStr(mailStr)){
-      if(checkMail(mailStr)){
-        win.setMessage({'msg':''});
-        $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-        maV = true;
-        vdInfoM = 1;
-      }else{
-        //提示文字
-        win.setMessage({'msg':'该邮箱已被注册!'});
-        //提示图标
-        $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-        maV = false;
-        vdInfoM = 3;
-      }
-    }else{
-      //提示文字
-      win.setMessage({'msg':'不正确的邮箱格式!'});
-      //提示图标
-      $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      maV = false;
-      vdInfoM = 2;
-    }
-  }else{
-    $("#mail").parent().parent().find(".alertImg").hide();
-    maV = false;
-  }
-  vdInfoAry[1] = vdInfoM;
-  //验证邮箱是否符合规则
-  function checkMailStr(str){
-    var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
-    return reg.test(str); 
-  }
-  //验证邮箱是否已经注册
-  function checkMail(str){
-    var vfMsg =null;
-    var pData={
-      "mail":str
-    };
-    var url="<%=path%>/login/validateMail.do";
-    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
-      success:function(json) {
-        vfMsg = json;
-      }
-    });
-    return vfMsg;
-  }
-}
-// 验证码验证
+
+//验证码验证
 function validateCheckCode(){
   var val = $('#checkCode').val();
-  var vdInfoC = 0;
-  if(val){
+  if (val) {
     $("#checkCode").parent().parent().find(".alertImg").show();
-    var vMsg =null;
-    var pData={
-      "checkCode":val
-    };
-    var url="<%=path%>/login/validateValidateCode.do";
-    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
-      success:function(json) {
-        vMsg = json;
-      }
-    });
-    if(vMsg){
-      win.setMessage({'msg':''});
-      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-      vcV=true;
-      vdInfoC = 1;
-    }else{
-      win.setMessage({'msg':'验证码填写错误!'});
+    $("#checkCode").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+    win.setMessage({'msg':''});
+    vdInfoAry[4] = "";
+    if(val!=checkCode){
+      vdInfoAry[4] = "验证码填写错误";
+      win.setMessage({'msg':vdInfoAry[4]});
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      vcV=false;
-      vdInfoC = 2;
     }
   }else{
     $("#checkCode").parent().parent().find(".alertImg").hide();
-    vcV=false;
+    vdInfoAry[4] = "验证码为必填项";
   }
-  vdInfoAry[4] = vdInfoC;
+  ma = getMainAlert($("#checkCode"));
+  ma.find(".alertImg").attr("title", vdInfoAry[4]);
 }
-//=以上初验证=============================================
+//=以上为验证=============================================
 
 //刷新验证码
-function refresh(obj) {
-  obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
-  $('#checkCode').val('');
+function refresh() {
+  $("#waittingText").html("请稍候，获取验证码图片...");
+  $("#mask").show();
+  $.ajax({type:"post", async:true, url:"<%=path%>/login/refreshValidateCode.do?"+Math.random(), dataType:"json",
+    success: function(json) {
+      if (json.success) {
+        $('#checkCode').val('');
+        checkCode = json.checkCode;
+        $("#vcimg").attr("src", "<%=path%>/"+json.imgSrc+"?"+Math.random());
+        $("#mask").hide();
+        $("#waittingText").html("请稍候，数据提交中...");
+      }else {
+        if(mainPage) {
+          mainPage.$.messager.alert('验证码获取异常',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'error');
+        } else {
+          $.messager.alert('验证码获取异常',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'error');
+        }
+        $("#waittingText").html("请稍候，数据提交中...");
+      }
+    }
+  });
 }
 
 //提交注册信息
-function commit(){
-  $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
-  $('#checkCode').val('');
-  if(psV&&cpsV&&lnV&&maV&&vcV){
+function commit() {
+  var msgs = "";
+  for (var i=0; i<vdInfoAry.length; i++) {
+  	if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
+  }
+  if (msgs.length>0) {
+  	msgs = msgs.substr(5);
+  	msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
+  }
+  if (msgs.length>0) {
+  	mainPage.$.messager.alert('注册提示', msgs,'info',function(){
+  	  for (var i=0; i<vdInfoAry.length; i++) {
+  	    if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
+  	  }
+      if (i==0) {
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }else if (i==1) {
+        $('#mail')[0].focus();
+        $('#mail')[0].select();
+      }else if (i==2) {
+        $('#password')[0].focus();
+        $('#password')[0].select();
+      }else if (i==3) {
+        $('#confirmPassword')[0].focus();
+        $('#confirmPassword')[0].select();
+      } else {
+        $('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+      }
+    });
+  } else {
     var mailAdress = $("#mail").val();
     if(mailAdress.lastIndexOf("@")==-1) mailAdress = mailAdress+$('#mailSel').combobox('getText');
     var pData={
       "loginName":$("#loginName").val(),
       "password":$("#password").val(),
       "userName":$("#userName").val(),
-      "mailAdress":mailAdress,
+      "mailAdress":mailAdress
     };
     $("#mask").show();
-    var url="<%=path%>/login/commitButton.do";
-    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
-      success:function(json) {
+    var url="<%=path%>/login/register.do";
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success: function(json) {
         $("#mask").hide();
-        if(json.success){
-          if(mainPage) mainPage.$.messager.alert('注册提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
-          else $.messager.alert('注册提示',json.retInfo,'info',function(){window.location.href = "<%=path%>/asIndex.jsp";});
-          $('#commitButton').attr("disabled",false); 
-        }else $.messager.alert('提示',json.retInfo,'info',function(){$('#commitButton').attr("disabled",false);});
-      }
-    });
-  }else{
-    $('#commitButton').attr("disabled",false);
-    var alertMessage = "您的";
-    if(lnV==false) {
-      if(vdInfoAry[0]==0) alertMessage = alertMessage + "账号未填写、";
-      if(vdInfoAry[0]==2) alertMessage = alertMessage + "账号应由5~11位的字母、数字、下划线组成、";
-      if(vdInfoAry[0]==3) alertMessage = alertMessage + "账号已被使用、";
-    }
-    if(maV==false){
-      if(vdInfoAry[1]==0) alertMessage = alertMessage + "邮箱为填写、";
-      if(vdInfoAry[1]==2) alertMessage = alertMessage + "邮箱格式不正确、";
-      if(vdInfoAry[1]==3) alertMessage = alertMessage + "邮箱已被注册、";
-    }
-    if(psV==false){
-      if(vdInfoAry[2]==0) alertMessage = alertMessage + "密码未填写、";
-      if(vdInfoAry[2]==2) alertMessage = alertMessage + "密码应由5~12位的字母、数字、下划线组成、";
-    } 
-    if(cpsV==false){
-      if(vdInfoAry[3]==0) alertMessage = alertMessage + "确认密码未填写、";
-      if(vdInfoAry[3]==2) alertMessage = alertMessage + "确认密码与密码不一致、";
-    }
-    if(vcV==false){
-      if(vdInfoAry[4]==0) alertMessage = alertMessage + "验证码未填写、";
-      if(vdInfoAry[4]==2) alertMessage = alertMessage + "验证码不正确、";
-    }
-    alertMessage = alertMessage.substring(0,alertMessage.lastIndexOf("、"));
-    mainPage.$.messager.alert('注册提示',alertMessage+"请检查！",'info',function () {
-      if(lnV==false){
-        $('#loginName')[0].focus();
-        $('#loginName')[0].select();
-      }else if(maV=false){
-        $('#mail')[0].focus();
-        $('#mail')[0].select();
-      }else if(psV==false){
-        $('#password')[0].focus();
-        $('#password')[0].select();
-      }else if(cpsV=false){
-        $('#confirmPassword')[0].focus();
-        $('#confirmPassword')[0].select();
-      }else{
-        $('#checkCode')[0].focus();
-        $('#checkCode')[0].select();
+        if (json.success) {
+          if(mainPage) {
+            mainPage.$.messager.alert('注册提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info',function(){
+              closeSWinInMain(winId);
+            });
+          } else {
+          	$.messager.alert('注册提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info',function(){
+          	  window.location.href = "<%=path%>/asIndex.jsp";
+          	});
+          }
+        }else {
+          $.messager.alert('提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info');
+        }
       }
     });
   }
 }
-
 </script>
 </html>
