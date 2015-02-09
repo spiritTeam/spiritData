@@ -92,4 +92,4 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         reportService.saveReport(tr);
         //3-处理任务
     }
-}
+ }

@@ -159,8 +159,7 @@ function initMailSuffix(jsonPath) {
     height:37,
     width:98,
     onChange:function (index,o) {
-      var eleId = 'mail';
-      validateMail(eleId,index);
+      validateMail();
     },
     editable:false
   });
