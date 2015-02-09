@@ -120,7 +120,7 @@ function validateLoginName(){
 function commit(){
   $('#mask').show();
   $('#commitButton').attr('disabled',true);
-  if(lnV){
+  if(vdInfoAry[0].vd){
     var val = $('#loginName').val();
     if(val){
       var url = '<%=path%>/login/sendBackPasswordMail.do';

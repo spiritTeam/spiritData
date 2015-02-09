@@ -97,7 +97,7 @@ function initPageParam(){
   if(modifyType==1){
     $('#loginName').val(loginName);
     $('#loginName').attr('disabled',true);
-    lnV = true;
+    //lnV = true;
   }
   for(var i=0;i<vdInfoAry.length;i++){
     var vdInfo = new Object();
@@ -118,47 +118,44 @@ function validatePassword() {
     if(!checkPasswordStr(val)){
       win.setMessage({'msg':'密码应为5~12位的字母、数字、下划线组成!'});
       $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      vdP = 2;
+      vdInfoAry[0].message = "密码应为5~12位的字母、数字、下划线组成、";
       //与确认码比较
       if (confirmVal) {
         $("#confirmPassword").parent().find(".alertImg").show();
         if (confirmVal==val) {
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
           vdInfoAry[1].vd=true;
-          vdCP = 1;
         } else {
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-          vdCP = 2;
+          vdInfoAry[1].message = "确认密码与密码不一致、";
         }
+      }else {
+        vdInfoAry[1].message = "确认密码不能为空、";
       }
     } else {
       //提示文字
       win.setMessage({'msg':''});
       //提示图标
       $("#password").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-      psV = true;
-      vdP = 1;
+      vdInfoAry[0].vd = true;
       //与确认码比较
       if (confirmVal) {
         $("#confirmPassword").parent().find(".alertImg").show();
         if (confirmVal==val) {
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
           cpsV=true;
-          vdCP = 1;
+          vdInfoAry[1].message = 1;
         } else {
           win.setMessage({'msg':'确认密码与密码不一致!'});
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-          cpsV=false;
-          vdCP = 2;
+          vdInfoAry[1].message = 2;
         }
       }
     }
   } else {
     $("#password").parent().find(".alertImg").hide();
-    psV = false;
+    vdInfoAry[0].message = "密码未必填项、";
   }
-  vdInfoAry [0] = vdP;
-  vdInfoAry [1] = vdCP;
   //验证密码是否复合规则
   function checkPasswordStr(str) {
     var re = /[0-9a-zA-z]\w{4,11}$/;
@@ -172,7 +169,6 @@ function validatePassword() {
 // 确认密码和密码是否一致
 function comfirmPassword() {
   var val = $("#confirmPassword").val();
-  var vdCP = 0;
   if (val) {
     var pass = $("#password").val();
     $("#confirmPassword").parent().find(".alertImg").show();
@@ -180,18 +176,17 @@ function comfirmPassword() {
       win.setMessage({'msg':'确认密码与密码不一致!'});
       $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       cpsV=false;
-      vdCP = 2;
+      vdInfoAry[1].message = 2;
     } else {
       win.setMessage({'msg':''});
       $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
       cpsV=true;
-      vdCP = 1;
+      vdInfoAry[1].message = 1;
     }
   } else {
     $("#confirmPassword").parent().find(".alertImg").hide();
     cpsV=true;
   }
-  vdInfoAry[1] = vdCP; 
 }
 //=以上初验证=============================================
 //提交方法
