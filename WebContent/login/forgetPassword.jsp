@@ -43,7 +43,7 @@
   </table></form>
   <div id="infoDiv" class="prompt">
     <h2>重置密码流程：</h2>
-    <span>1、填写用户名,系统校验用户名。</span><br/>
+    <span>1、填写账号,系统校验账号。</span><br/>
     <span>2、成功后点击下一步,将发送邮件至您的邮箱。</span><br/>
     <span>3、登录邮箱,根据提示重置密码。</span><br/>
   </div>
@@ -54,7 +54,7 @@ var win;
 var mainPage;
 var winId;
 var vdInfoAry = new Array(1);
-var lnV =false;/**
+/**
  * 主函数
  */
 $(function() {
@@ -74,30 +74,32 @@ function initPageParam(){
   mainPage = getMainPage();
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
+  for(var i=0;i<vdInfoAry.length;i++){
+    var vdInfo = new Object();
+    vdInfo.vd = false;
+    vdInfo.message = "";
+    vdInfoAry[i] = vdInfo; 
+  }
 }
 
 //=以下初验证=============================================
 //账号验证
 function validateLoginName(){
   var val = $('#loginName').val();
-  var vdL = 0;
   if(val){
     $("#loginName").parent().find(".alertImg").show();
     if(checkLoginName(val)){
-      win.setMessage({'msg':'您输入的用户名有误'});
+      win.setMessage({'msg':'没有账号为“'+val+'”的用户!'});
       $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      lnV = false;
-      vdL = 2;
+      vdInfoAry[0].message = '没有账号为“'+val+'”的用户、';
     }else{
       $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-      lnV = true;
-      vdL = 1;
+      vdInfoAry[0].vd = true;
     }
   }else{
     $("#loginName").parent().find(".alertImg").hide();
-    lnV = false;
+    vdInfoAry[0].message = "账号为必填项、";
   }
-  vdInfoAry[0] = vdL;
   function checkLoginName(str){
     var vfMsg =null;
     var pData={
@@ -141,19 +143,18 @@ function commit(){
   }else{
     $('#mask').hide();
     var alertMessage = "您的";
-    if(lnV==false){
-      if(vdInfoAry[0]==0) alertMessage = alertMessage + "账号未填写、";
-      if(vdInfoAry[0]==2) alertMessage = "不存在账号["+$('#loginName').val()+"]、";
+    if(vdInfoAry[0].vd==false){
+      alertMessage = alertMessage + vdInfoAry[0].message;
     }
     alertMessage = alertMessage.substring(0, alertMessage.lastIndexOf("、"));
     if(mainPage) mainPage.$.messager.alert("提示",alertMessage+"请检查!",'info',function (){
-      if(lnV==false){
+      if(vdInfoAry[0].vd==false){
         $('#loginName')[0].focus();
         $('#loginName')[0].select();
       }
     });
     else $.messager.alert("提示","您还有未完善的信息!",'info',function (){
-      if(lnV==false){
+      if(vdInfoAry[0].vd==false){
         $('#loginName')[0].focus();
         $('#loginName')[0].select();
       }

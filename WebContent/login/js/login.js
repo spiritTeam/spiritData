@@ -39,18 +39,18 @@ function inputEffect() {
     //得到主容器
     var mainAlert=getMainAlert(_jQobj);
     if (mainAlert) {
-    	_jQobj[0].select();
-    	//设置为选中样式
-    	var width = parseFloat(mainAlert.css("width"))-2;
+      _jQobj[0].select();
+      //设置为选中样式
+      var width = parseFloat(mainAlert.css("width"))-2;
       var height = parseFloat(mainAlert.css("height"));
       var lineheight = mainAlert.css("line-height")?parseFloat(mainAlert.css("line-height")):null;
       var paddingLeft = mainAlert.css("padding-left")?parseFloat(mainAlert.css("padding-left")):null;
       if (mainAlert.attr("class").indexOf("alertInput-mail")!=-1) {
-      	width -= parseFloat(mainAlert.find("#mailSuffix").css("width"))+2;
+        width -= parseFloat(mainAlert.find("#mailSuffix").css("width"))+2;
       } else if (mainAlert.attr("class").indexOf("alertInput-vCode")!=-1) {
-      	width -= parseFloat(mainAlert.find("#vCodeImg").css("width"))+4;
+        width -= parseFloat(mainAlert.find("#vCodeImg").css("width"))+4;
       }
-    	_jQobj.css({"width":(width-2)+"px", "height":(height-2)+"px", "border": "2px #ABCDEF solid"});
+      _jQobj.css({"width":(width-2)+"px", "height":(height-2)+"px", "border": "2px #ABCDEF solid"});
       if (lineheight) _jQobj.css({"line-height":(lineheight-2)+"px"});
       if (paddingLeft) _jQobj.css({"padding-left":(paddingLeft-1)+"px"});
       //处理maskTitle
@@ -65,17 +65,17 @@ function inputEffect() {
     //得到主容器
     var mainAlert=getMainAlert(_jQobj);
     if (mainAlert) {
-    	//设置为选中样式
-    	var width = parseFloat(mainAlert.css("width"))-2;
+      //设置为选中样式
+      var width = parseFloat(mainAlert.css("width"))-2;
       var height = parseFloat(mainAlert.css("height"));
       var lineheight = mainAlert.css("line-height")?parseFloat(mainAlert.css("line-height")):null;
       var paddingLeft = mainAlert.css("padding-left")?parseFloat(mainAlert.css("padding-left")):null;
       if (mainAlert.attr("class").indexOf("alertInput-mail")!=-1) {
-      	width -= parseFloat(mainAlert.find("#mailSuffix").css("width"))+2;
+        width -= parseFloat(mainAlert.find("#mailSuffix").css("width"))+2;
       } else if (mainAlert.attr("class").indexOf("alertInput-vCode")!=-1) {
-      	width -= parseFloat(mainAlert.find("#vCodeImg").css("width"))+4;
+        width -= parseFloat(mainAlert.find("#vCodeImg").css("width"))+4;
       }
-    	_jQobj.css({"width":width+"px", "height":height+"px", "border": "1px #ABADB3 solid"});
+      _jQobj.css({"width":width+"px", "height":height+"px", "border": "1px #ABADB3 solid"});
       if (lineheight) _jQobj.css({"line-height":lineheight+"px"});
       if (paddingLeft) _jQobj.css({"padding-left":paddingLeft+"px"});
       //处理maskTitle
@@ -157,7 +157,7 @@ function initMailSuffix(jsonPath) {
     valueField:'id',   
     textField:'text',
     height:37,
-    width:97,
+    width:98,
     onChange:function (index,o) {
       var eleId = 'mail';
       validateMail(eleId,index);
@@ -166,7 +166,7 @@ function initMailSuffix(jsonPath) {
   });
   $(".combo").css('border-color','#ABADB3');
   $(".combo").css('border-left','none');
-  $(".panel-header, .panel-body").css('border-color','#ABADB3');
+  $(".panel-header, .panel-body").css({'border-color':'#ABADB3'}).parent().css({'margin-left':'-1px','margin-top':'-1px'});
 }
 
 /**

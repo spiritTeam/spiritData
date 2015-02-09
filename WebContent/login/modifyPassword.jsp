@@ -70,7 +70,6 @@
 var win;
 var mainPage;
 var winId;
-var psV=false,lnV=false,cpsV=false;
 var vdInfoAry = new Array(2);
 /**
  * 主函数
@@ -100,6 +99,12 @@ function initPageParam(){
     $('#loginName').attr('disabled',true);
     lnV = true;
   }
+  for(var i=0;i<vdInfoAry.length;i++){
+    var vdInfo = new Object();
+    vdInfo.vd = false;
+    vdInfo.message = "";
+    vdInfoAry[i] = vdInfo; 
+  }
 }
 //=以上初始化设置=============================================
 
@@ -107,8 +112,6 @@ function initPageParam(){
 //密码验证，验证密码是否足够复杂
 function validatePassword() {
   var val = $("#password").val();
-  var vdP = 0;
-  var vdCP = 0;
   if (val) {
     $("#password").parent().find(".alertImg").show();
     var confirmVal = $("#confirmPassword").val();
@@ -116,17 +119,15 @@ function validatePassword() {
       win.setMessage({'msg':'密码应为5~12位的字母、数字、下划线组成!'});
       $("#password").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
       vdP = 2;
-      psV = false;
       //与确认码比较
       if (confirmVal) {
         $("#confirmPassword").parent().find(".alertImg").show();
         if (confirmVal==val) {
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-          cpsV=true;
+          vdInfoAry[1].vd=true;
           vdCP = 1;
         } else {
           $("#confirmPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-          cpsV=false;
           vdCP = 2;
         }
       }
