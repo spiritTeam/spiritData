@@ -122,7 +122,7 @@ public class AnalResultFile extends AbstractToBeStoreFile implements Serializabl
         fc.setFType3(this.subType);
         //分类扩展信息是一个json，包括jsonD的编码
         Map<String, Object> _extInfo = new HashMap<String, Object>();
-        if (this.extInfo!=null&&this.extInfo.size()>0)_extInfo.putAll(this.extInfo);
+        if (this.extInfo!=null&&this.extInfo.size()>0) _extInfo.putAll(this.extInfo);
         _extInfo.put("JSOND", this.jsonDCode);
         _extInfo.put(this.objType, this.objId);
 

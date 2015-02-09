@@ -9,10 +9,10 @@ import com.spiritdata.jsonD.util.JsonDUtils;
  * 访问某一个JsonD的访问描述对象
  * @author wh
  */
-public class AccessJsondOne implements Serializable {
+public class AccessJsond implements Serializable {
     private static final long serialVersionUID = -2240704913305758719L;
 
-    private String jsondId; //具体的jsond的id，相当于类的实例的标识
+    private String jsondId; //具体的jsond的id，相当于类的实例的标识，就是jsond文件的id
     private String url; //获取数据的地址
     private String filePath; //数据地址，可能根据一定规则通过此参数计算出url
     private String jsondCode; //jsonDCode，相当于类名称

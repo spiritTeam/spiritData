@@ -1,10 +1,12 @@
 package com.spiritdata.dataanal.importdata.excel.service;
 
+import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,8 @@ import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal1003CException;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
+import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
+import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
 import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
@@ -62,6 +66,9 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
         if (param.get("reportParam")==null) return null;//若参数中的reportParam为空，无法生成报告，返回空
+        List<String> mdl = getMDIdList(reportParam);
+        if (mdl==null||mdl.size()==0) return null; //若报告参数中不包含任何元数据信息，无法生成报告，返回空
+
         String ownerId = (String)param.get("ownerId");
         if (ownerId==null||ownerId.trim().length()==0) throw new Dtal1003CException(new IllegalArgumentException("Map参数中没有所有者Id[owenrId]的信息！"));
         int ownerType = Integer.parseInt(param.get("ownerType")+"");
@@ -110,13 +117,46 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         getMDInfos_Task.setPrepared();
           //设置参数
         taskParam.clear();
-        taskParam.put("metadataList", getMDIdList(reportParam));
+        taskParam.put("metadataList", mdl);
         getMDInfos_Task.setParam(JsonUtils.objToJson(taskParam));
         tg.addTask2Graph(getMDInfos_Task);
           //设置文件
         AnalResultFile arf = new AnalResultFile();
         arf.setId(SequenceUUID.getPureUUID());
+        arf.setJsonDCode(SDConstants.JDC_MDINFO);
+        arf.setAnalType(SDConstants.ANAL_MD_GETINFO); //分析类型
+        arf.setSubType("multiple"); //下级分类
+        arf.setObjType("metadatas"); //所分析对象
+        arf.setObjId(JsonUtils.objToJson(mdl)); //所分析对象的ID
+        arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
+        arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
         getMDInfos_Task.setResultFile(arf);
+        //4.b.1-生成必要的
+        for (String idinfo: mdl) {
+            //4.a.2-单项字典项分析
+            TaskInfo analSingleDict_Task = new TaskInfo();
+            analSingleDict_Task.setId(SequenceUUID.getPureUUID());
+            analSingleDict_Task.setTaskName("??单项指标分析");
+            analSingleDict_Task.setLangType(TaskLangType.JAVA);
+            analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.analSingleDict");
+            analSingleDict_Task.setPrepared();
+              //设置参数
+            taskParam.clear();
+            taskParam.put("metadata", mdl);
+            analSingleDict_Task.setParam(JsonUtils.objToJson(taskParam));
+            tg.addTask2Graph(analSingleDict_Task);
+              //设置文件
+            arf = new AnalResultFile();
+            arf.setId(SequenceUUID.getPureUUID());
+            arf.setJsonDCode(SDConstants.JDC_MDINFO);
+            arf.setAnalType(SDConstants.ANAL_MD_GETINFO); //分析类型
+            arf.setSubType("multiple"); //下级分类
+            arf.setObjType("metadatas"); //所分析对象
+            arf.setObjId(JsonUtils.objToJson(mdl)); //所分析对象的ID
+            arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
+            arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
+            getMDInfos_Task.setResultFile(arf);
+        }
         //处理report中的数据访问列表
         ReportSegment rs1 = new ReportSegment();
         
@@ -150,7 +190,17 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
     private List<String> getMDIdList(Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam) {
         if (reportParam==null||reportParam.size()==0) return null;
         List<String> ret = new ArrayList<String>();
-        
+        Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
+        while (iter.hasNext()) {
+            Map<SheetTableInfo, Map<String, Object>> value = iter.next();
+            for (SheetTableInfo key : value.keySet()) {
+                Map<String, Object> _value = value.get(key);
+                MetadataModel mm = (MetadataModel)_value.get("sysMd");
+                MetadataTableMapRel[] tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
+                if (tabMapOrgAry.length==3) ret.add("new::"+mm.getId());
+                else if (tabMapOrgAry.length==2) ret.add("had::"+mm.getId());
+            }
+        }
         if (ret.size()==0) return null;
         return ret;
     }

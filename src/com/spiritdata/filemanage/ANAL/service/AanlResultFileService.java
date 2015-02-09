@@ -15,7 +15,6 @@ import com.spiritdata.filemanage.core.pattern.service.AbstractWriteString2FileBy
 import com.spiritdata.filemanage.core.pattern.service.WriteJsonD;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.core.service.FileManageService;
-import com.spiritdata.filemanage.exceptionC.Flmg0003CException;
 import com.spiritdata.filemanage.exceptionC.Flmg0101CException;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
@@ -82,10 +81,6 @@ public class AanlResultFileService extends AbstractWriteString2FileByToBeStoreFi
     public BeManageFile write2FileAsJsonD(Object jsonD, ToBeStoreFile fileSeed) {
         JsonD jsond = (JsonD)jsonD;
         AnalResultFile analResultSeed = (AnalResultFile)fileSeed;
-        if ((analResultSeed.getFileNameSeed()==null||analResultSeed.getFileNameSeed().trim().length()==0)
-          &&(analResultSeed.getFullFileName()==null||analResultSeed.getFullFileName().trim().length()==0)) {
-            throw new Flmg0003CException(new IllegalArgumentException("文件种子对象中'文件名生成种子(fileNameSeed)'或'文件全名(fullFileName)'至少设定一个"));
-        }
 
         //文件存储
         String storeFileName = this.getStoreFileName(fileSeed);

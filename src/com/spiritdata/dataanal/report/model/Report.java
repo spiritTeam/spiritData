@@ -128,8 +128,8 @@ public class Report implements Serializable, ConvertJson {
 
     /**
      * 根据jsondId获取访问信息在本报告中的id
-     * @param jsondId
-     * @return
+     * @param jsondId jsonD的id，就是jsond文件的id，对应数据库中file_index中的id
+     * @return 所对应的report中的jsonD的标识
      */
     public int getDid(String jsondId) {
         int ret = -1;
