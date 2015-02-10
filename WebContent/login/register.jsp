@@ -124,9 +124,7 @@ function initPageParam(){
 }
 
 //=以下验证=============================================
-/**
- * 账号验证
- */
+// 账号验证
 function validateLoginName(){
   var val = $('#loginName').val();
   if(val){
@@ -152,9 +150,7 @@ function validateLoginName(){
     else return false;
   }
 }
-/**
- * 验证邮箱
- */
+// 验证邮箱
 function validateMail() {
   var val = $('#mail').val();
   if(val){
@@ -237,7 +233,7 @@ function comfirmPassword() {
 
 //验证码验证
 function validateCheckCode(){
-  var val = $('#checkCode').val();
+  var val = ($('#checkCode').val()).toUpperCase();alert("val=" + val);
   if (val) {
     $("#checkCode").parent().parent().find(".alertImg").show();
     $("#checkCode").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
@@ -316,11 +312,13 @@ function commit() {
   } else {
     var mailAdress = $("#mail").val();
     if(mailAdress.lastIndexOf("@")==-1) mailAdress = mailAdress+$('#mailSel').combobox('getText');
+    alert("src="+$('#vcimg').attr('src'));
     var pData={
       "loginName":$("#loginName").val(),
       "password":$("#password").val(),
       "userName":$("#userName").val(),
-      "mailAdress":mailAdress
+      "mailAdress":mailAdress,
+      "checkCodeImgFolder":$('#vcimg').attr('src'),
     };
     $("#mask").show();
     var url="<%=path%>/login/register.do";

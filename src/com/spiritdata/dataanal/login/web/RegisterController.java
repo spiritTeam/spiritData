@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spiritdata.framework.FConstants;
+import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
@@ -391,6 +392,7 @@ public class RegisterController {
         String password = request.getParameter("password");
         String userName = request.getParameter("userName");
         String mailAdress = request.getParameter("mailAdress");
+        String checkCodeImgFolder = request.getParameter("checkCodeImgFolder");
 
         Map<String,Object> retMap = new HashMap<String,Object>();
         String retInfo = "";
@@ -420,9 +422,13 @@ public class RegisterController {
             user.setValidataSequence(validatsaSequence);
             int rst = userService.insertUser(user);
             if (rst==1) {
+            	//删除储存验证码的文件夹
+            	checkCodeImgFolder = checkCodeImgFolder.substring(0,checkCodeImgFolder.lastIndexOf("/"));
                 String deployName = request.getContextPath();
                 int  serverPort = request.getServerPort();
                 String serverName = request.getServerName();
+                checkCodeImgFolder = System.getProperty("user.dir") + checkCodeImgFolder;
+                FileUtils.deleteFile(new File(serverName+":"+serverPort+checkCodeImgFolder));
                 String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
                         + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
                 try{
