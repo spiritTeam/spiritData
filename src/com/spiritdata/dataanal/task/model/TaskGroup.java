@@ -107,6 +107,7 @@ public class TaskGroup implements Serializable {
      * @param task
      */
     public void addTask2Graph(TaskInfo task) {
+        if (this.tasks==null) this.tasks = new TaskGraph();
         this.tasks.addTaskInfo(task);
         task.setTaskGroup(this);
     }
