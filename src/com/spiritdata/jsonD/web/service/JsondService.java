@@ -27,6 +27,12 @@ public class JsondService {
      */
     public String getJsondById(String jsondId) {
         if (jsondId==null||jsondId.length()==0) throw new Jsond1001CException("所给jsondId参数为空，无法获取数据！");
+        //先从内存中取
+        String ret = "";
+        //再从数据库和文件系统中取
+        if (ret==null||ret.trim().length()==0) {
+            
+        }
         //根据id获取内容，现在先不处理
         return this.getJsondByUri("demo\\templetDemo\\templet1.json");
     }

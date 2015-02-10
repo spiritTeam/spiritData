@@ -24,6 +24,7 @@ import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.dataanal.report.model.ReportSegment;
 import com.spiritdata.dataanal.report.model.TaskReport;
+import com.spiritdata.dataanal.task.TaskUtils;
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.model.TaskGroup;
 import com.spiritdata.dataanal.task.model.TaskInfo;
@@ -119,7 +120,6 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         taskParam.clear();
         taskParam.put("metadataList", mdl);
         getMDInfos_Task.setParam(JsonUtils.objToJson(taskParam));
-        tg.addTask2Graph(getMDInfos_Task);
           //设置文件
         AnalResultFile arf = new AnalResultFile();
         arf.setId(SequenceUUID.getPureUUID());
@@ -131,6 +131,9 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
         arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
         getMDInfos_Task.setResultFile(arf);
+          //任务组装：组装进任务组+组装进report的dlist
+        tg.addTask2Graph(getMDInfos_Task);
+        report.addOneJsond(TaskUtils.convert2AccessJsondOne(getMDInfos_Task));
         //4.b.1-生成必要的
         for (String idinfo: mdl) {
             //4.a.2-单项字典项分析
@@ -159,6 +162,9 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         }
         //处理report中的数据访问列表
         ReportSegment rs1 = new ReportSegment();
+        rs1.setId(SequenceUUID.getPureUUID());
+        rs1.setContent("");
+        rs1.setTitle("");
         
         //4.1-分不同元数据，进行分析，目前包括()
 //        private String id; //任务

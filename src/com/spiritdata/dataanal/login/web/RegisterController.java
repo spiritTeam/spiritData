@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spiritdata.framework.FConstants;
+import com.spiritdata.framework.core.cache.SystemCache;
+import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
@@ -327,7 +329,6 @@ public class RegisterController {
     @RequestMapping("login/refreshValidateCode.do")
     public @ResponseBody Map<String,Object> refreshValidateCode(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
         Map<String,Object> retMap = new HashMap<String,Object>();
-        String retInfo = "";
         try {
             RandomValidateCode randomValidateCode = new RandomValidateCode();
             retMap.put("success", true);
@@ -340,7 +341,6 @@ public class RegisterController {
         }
         
     }
-
     /**
      * 验证登录名
      */
@@ -420,6 +420,10 @@ public class RegisterController {
             user.setValidataSequence(validatsaSequence);
             int rst = userService.insertUser(user);
             if (rst==1) {
+            	//删除储存验证码的文件夹
+                String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
+                FileUtils.deleteFile(new File(toDeletURI));
+
                 String deployName = request.getContextPath();
                 int  serverPort = request.getServerPort();
                 String serverName = request.getServerName();

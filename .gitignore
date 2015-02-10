@@ -7,6 +7,8 @@
 /WebContent/tempUpload
 /WebContent/uploadFiles
 /WebContent/test
+/WebContent/log
+/WebContent/checkCodeImges
 /pom.xml
 
 /.classpath
