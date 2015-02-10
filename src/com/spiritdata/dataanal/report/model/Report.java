@@ -11,6 +11,7 @@ import com.spiritdata.filemanage.REPORT.model.ReportFile;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.jsonD.ConvertJson;
+import com.spiritdata.jsonD.model.AccessJsond;
 import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
@@ -120,10 +121,11 @@ public class Report implements Serializable, ConvertJson {
      * 向report中加入一个jsond的访问信息
      * @param one
      */
-    public void addOneJsond(OneJsond one) {
+    public void addOneJsond(AccessJsond one) {
         if (dataList==null) dataList=new ArrayList<OneJsond>();
-        one.setRdId(dataList.size());
-        dataList.add(one);
+        OneJsond oj = new OneJsond(one);
+        oj.setRdId(dataList.size());
+        dataList.add(oj);
     }
 
     /**
