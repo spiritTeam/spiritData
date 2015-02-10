@@ -66,7 +66,6 @@ public class Report implements Serializable, ConvertJson {
     }
     public void setReportFile(ReportFile reportFile) {
         this.reportFile = reportFile;
-        //  TODO 
     }
     public String getDesc() {
         return desc;

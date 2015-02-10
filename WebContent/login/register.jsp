@@ -317,8 +317,7 @@ function commit() {
       "loginName":$("#loginName").val(),
       "password":$("#password").val(),
       "userName":$("#userName").val(),
-      "mailAdress":mailAdress,
-      "checkCodeImgFolder":$('#vcimg').attr('src'),
+      "mailAdress":mailAdress
     };
     $("#mask").show();
     var url="<%=path%>/login/register.do";

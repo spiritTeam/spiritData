@@ -134,7 +134,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
           //任务组装：组装进任务组+组装进report的dlist
         tg.addTask2Graph(getMDInfos_Task);
         report.addOneJsond(TaskUtils.convert2AccessJsondOne(getMDInfos_Task));
-        //4.b.1-生成必要的
+
         for (String idinfo: mdl) {
             //4.a.2-单项字典项分析
             TaskInfo analSingleDict_Task = new TaskInfo();
@@ -160,12 +160,24 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
             arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
             getMDInfos_Task.setResultFile(arf);
         }
-        //处理report中的数据访问列表
-        ReportSegment rs1 = new ReportSegment();
-        rs1.setId(SequenceUUID.getPureUUID());
-        rs1.setContent("");
-        rs1.setTitle("");
-        
+
+        //组织报告的内容
+        if (mdl!=null&&mdl.size()>0) {
+            Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
+            while (iter.hasNext()) {
+                Map<SheetTableInfo, Map<String, Object>> value = iter.next();
+                for (SheetTableInfo key : value.keySet()) {
+                    Map<String, Object> _value = value.get(key);
+                    MetadataModel mm = (MetadataModel)_value.get("sysMd");
+                    MetadataTableMapRel[] tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
+                    //处理report中的数据访问列表
+                    ReportSegment rs1 = new ReportSegment();
+                    rs1.setTitle(mm.getTitleName()+"分析");
+                    rs1.setId(SequenceUUID.getPureUUID());
+                }
+            }
+        }
+        report.set_REPORT(null);
         //4.1-分不同元数据，进行分析，目前包括()
 //        private String id; //任务
 //        private String taskName; //任务名称
@@ -202,9 +214,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
             for (SheetTableInfo key : value.keySet()) {
                 Map<String, Object> _value = value.get(key);
                 MetadataModel mm = (MetadataModel)_value.get("sysMd");
-                MetadataTableMapRel[] tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
-                if (tabMapOrgAry.length==3) ret.add("new::"+mm.getId());
-                else if (tabMapOrgAry.length==2) ret.add("had::"+mm.getId());
+                ret.add(mm.getId());
             }
         }
         if (ret.size()==0) return null;
