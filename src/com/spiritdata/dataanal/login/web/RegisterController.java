@@ -328,7 +328,6 @@ public class RegisterController {
     @RequestMapping("login/refreshValidateCode.do")
     public @ResponseBody Map<String,Object> refreshValidateCode(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
         Map<String,Object> retMap = new HashMap<String,Object>();
-        String retInfo = "";
         try {
             RandomValidateCode randomValidateCode = new RandomValidateCode();
             retMap.put("success", true);
