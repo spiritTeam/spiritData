@@ -53,7 +53,7 @@
 var win;
 var mainPage;
 var winId;
-var vdInfoAry = new Array(1);
+var vdInfoAry = ['账号不能为空'];
 /**
  * 主函数
  */
@@ -74,93 +74,67 @@ function initPageParam(){
   mainPage = getMainPage();
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
-  for(var i=0;i<vdInfoAry.length;i++){
-    var vdInfo = new Object();
-    vdInfo.vd = false;
-    vdInfo.message = "";
-    vdInfoAry[i] = vdInfo; 
-  }
 }
 
-//=以下初验证=============================================
+//=以下为验证=============================================
 //账号验证
 function validateLoginName(){
   var val = $('#loginName').val();
+  $("#loginName").parent().find(".alertImg").show();
   if(val){
-    $("#loginName").parent().find(".alertImg").show();
-    if(checkLoginName(val)){
-      win.setMessage({'msg':'没有账号为“'+val+'”的用户!'});
-      $("#loginName").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      vdInfoAry[0].message = '没有账号为“'+val+'”的用户、';
-    }else{
-      $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-      vdInfoAry[0].vd = true;
-    }
+    $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+    vdInfoAry[0] = "";
   }else{
     $("#loginName").parent().find(".alertImg").hide();
-    vdInfoAry[0].message = "账号为必填项、";
-  }
-  function checkLoginName(str){
-    var vfMsg =null;
-    var pData={
-      "loginName":str
-    };
-    var url="<%=path%>/login/validateLoginName.do";
-    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-       success:function(json) {
-         vfMsg = json;
-       }
-    });
-    return vfMsg;
   }
 }
-//=以上初验证=============================================
+//=以上为验证=============================================
 
 //提交信息
 function commit(){
-  $('#mask').show();
-  $('#commitButton').attr('disabled',true);
-  if(vdInfoAry[0].vd){
-    var val = $('#loginName').val();
-    if(val){
-      var url = '<%=path%>/login/sendBackPasswordMail.do';
-      var pData = {
-        loginName:val
-      };
-      $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-        success:function(json) {
-          $('#mask').hide();
-          if(json.success){
-            if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
-            else $.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
-          }else{
-            if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info');
-            else $.messager.alert('提示',json.retInfo,'info');
-          }
-        }
-      });
-    }
-  }else{
-    $('#mask').hide();
-    var alertMessage = "您的";
-    if(vdInfoAry[0].vd==false){
-      alertMessage = alertMessage + vdInfoAry[0].message;
-    }
-    alertMessage = alertMessage.substring(0, alertMessage.lastIndexOf("、"));
-    if(mainPage) mainPage.$.messager.alert("提示",alertMessage+"请检查!",'info',function (){
-      if(vdInfoAry[0].vd==false){
-        $('#loginName')[0].focus();
-        $('#loginName')[0].select();
+  var msgs = "";
+  for (var i=0; i<vdInfoAry.length; i++) {
+    if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
+  }
+  if (msgs.length>0) {
+    msgs = msgs.substr(5);
+    msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
+  }
+  if (msgs.length>0) {
+    if (mainPage) mainPage.$.messager.alert('提示', msgs,'info',function(){
+      for (var i=0; i<vdInfoAry.length; i++) {
+        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
       }
+      $('#loginName')[0].focus();
+      $('#loginName')[0].select();
     });
-    else $.messager.alert("提示","您还有未完善的信息!",'info',function (){
-      if(vdInfoAry[0].vd==false){
-        $('#loginName')[0].focus();
-        $('#loginName')[0].select();
+    else $.messager.alert('提示', msgs,'info',function(){
+      for (var i=0; i<vdInfoAry.length; i++) {
+        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
+      }
+      $('#loginName')[0].focus();
+      $('#loginName')[0].select();
+    });
+  } else {
+    $('#mask').show();
+    var val = $('#loginName').val();
+    var url = '<%=path%>/login/sendBackPasswordMail.do';
+    var pData = {
+      loginName:val
+    };
+    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+      success:function(json) {
+        $('#mask').hide();
+        if(json.success){
+          if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
+          else $.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
+        }else{
+          if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info');
+          else $.messager.alert('提示',json.retInfo,'info');
+        }
       }
     });
   }
-  $('#sendButton').attr('disabled',false);
 }
 </script>
 </html>

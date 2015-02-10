@@ -62,7 +62,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 <!-- 遮罩层 -->
 <div id="mask" style="border:1px;display:none; position:absolute;vertical-align:middle;text-align:center; align:center;">
   <img id="waittingImg" align="middle" src="<%=path%>/resources/images/waiting_circle.gif"/><br/><br/>
-  <span id="waittingText" style="font-weight:bold;" id="maskTitle">请稍候，登录中...</span>
+  <span id="waittingText" style="font-weight:bold;">请稍候，登录中...</span>
 </div>
 <center><div id="mainDiv">
   <form><table>
@@ -91,7 +91,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <td class="inputTd">
         <div class="alertInput-vCode">
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="3" type="text" onBlur="validateCheckCode();"/></div>
-          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src="<%=path%>/login/getValidateCode.do"></div>
+          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh('<%=path %>');" src=""></div>
           <div class="alertImg"></div>
           <div class="maskTitle">按右图输入验证码</div>
         </div>
@@ -116,7 +116,9 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 var win;
 var mainPage;
 var winId;
-var vdInfoAry = new Array(3);
+var checkCode="";
+//此数组有5个元素，分别代表5个需要验证的输入框
+var vdInfoAry = ['账号为必填项','密码为必填项','验证码为必填项'];
 /**
  * 主函数
  */
@@ -130,68 +132,45 @@ $(function() {
 
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100);//初始化maskTitle
+  refresh('<%=path%>');
 });
 //初始化页面全局参数
 function initPageParam(){
   mainPage = getMainPage();
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
-  //初始化验证数组
-  for(var i=0;i<vdInfoAry.length;i++){
-    var vdInfo = new Object();
-    vdInfo.vd = false;
-    vdInfo.message = "";
-    vdInfoAry[i] = vdInfo; 
-  }
 }
-//=以下初验证=============================================
+//=以下为验证=============================================
 //验证密码是否为空
 function validatePassword() {
   var val = $("#password").val();
-  if(val) vdInfoAry[1].vd = true;
-  else {
-    vdInfoAry[1].vd = false;
-    vdInfoAry[1].message = "密码为必填项、";
-  }
+  if (val) vdInfoAry[1] = "";
+  else vdInfoAry[1] = "密码为必填项";
 }
 // 账号验证
 function validateLoginName(){
   var val = $('#loginName').val();
   //验证loginName是否为空
-  if(val) vdInfoAry[0].vd=true;
-  else {
-    vdInfoAry[0].vd=false;
-    vdInfoAry[0].message = "账号为必填项、";
-  }
+  if (val) vdInfoAry[0] = "";
+  else vdInfoAry[0] = "账号为必填项";
 }
 //验证码验证
 function validateCheckCode(eleId){
-  var val = $('#checkCode').val();
-  if(val){
-    $("#checkCode").parent().parent().find(".alertImg").show();
-    var vMsg =null;
-    var pData={
-      "checkCode":val
-    };
-    var url="<%=path%>/login/validateValidateCode.do";
-    $.ajax({type:"post",async:false,url:url,data:pData,dataType:"json",
-      success:function(json) {vMsg = json;}
-    });
-    if(vMsg){
-      win.setMessage({'msg':''});
-      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-      vdInfoAry[2].vd=true;
-    }else{
-      win.setMessage({'msg':'验证码填写错误!'});
-      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      vdInfoAry[2].message = "验证码错误、";
+  var val = ($('#checkCode').val()).toUpperCase();
+  if (val) {
+    win.setMessage({'msg':''});
+    vdInfoAry[2] = "";
+    if(val!=checkCode){
+      vdInfoAry[2] = "验证码填写错误";
     }
   }else{
     $("#checkCode").parent().parent().find(".alertImg").hide();
-    vdInfoAry[2].message = "验证码为必填项、";
+    vdInfoAry[2] = "验证码为必填项";
   }
+  ma = getMainAlert($("#checkCode"));
+  ma.find(".alertImg").attr("title", vdInfoAry[2]);
 }
-//=以上初验证=============================================
+//=以上为验证=============================================
 
 //以下为页面跳转部分============
 //跳转到注册页面
@@ -228,18 +207,50 @@ function modifyPassword(){
 }
 //以上为页面跳转部分============
 
-//刷新验证码
-function refresh(obj) {
-  obj.src = "<%=path%>/login/getValidateCode.do?"+Math.random();
-  $('#checkCode').val('');
-}
-
 //提交登陆信息
 function commit(){
-  $('#commitButton').attr('disabled',false);
-  if(vdInfoAry[0].vd&&vdInfoAry[1].vd&&vdInfoAry[2].vd){
-    $("#mask").show();
-    var url="<%=path%>/login.do";
+  var msgs = "";
+  for (var i=0; i<vdInfoAry.length; i++) {
+    if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
+  }
+  if (msgs.length>0) {
+    msgs = msgs.substr(5);
+    msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
+  }
+  if (msgs.length>0) {
+    if (mainPage) mainPage.$.messager.alert('登陆提示', msgs,'info',function(){
+      for (var i=0; i<vdInfoAry.length; i++) {
+        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
+      }
+      if (i==0) {
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      } else if (i==1) {
+        $('#password')[0].focus();
+        $('#password')[0].select();
+      } else {
+        $('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+      }
+    });
+    else $.messager.alert('登陆提示', msgs,'info',function(){
+      for (var i=0; i<vdInfoAry.length; i++) {
+        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
+      }
+      if (i==0) {
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      } else if (i==1) {
+        $('#password')[0].focus();
+        $('#password')[0].select();
+      } else {
+        $('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+      }
+    });
+  } else {
+    var mailAdress = $("#mail").val();
+    if(mailAdress.lastIndexOf("@")==-1) mailAdress = mailAdress+$('#mailSel').combobox('getText');
     var pData={
       "loginName":$("#loginName").val(),
       "password":$("#password").val(),
@@ -248,12 +259,13 @@ function commit(){
       "clientIp":fooForm.txtIPAddr.value?(fooForm.txtIPAddr.value=="undefined"?"":fooForm.txtIPAddr.value):"",
       "browser":getBrowserVersion()
     };
+    $("#mask").show();
+    var url="<%=path%>/login.do";
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json){
         $("#mask").hide();
-        $('#commitButton').attr('disabled',false);
+        refresh('<%=path%>');
         $('#checkCode').val('');
-        $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
         var loginInfo = json.data;
         var retInfo = loginInfo.retInfo;
         if(json.type==-1){
@@ -276,7 +288,7 @@ function commit(){
               window.location.href = "<%=path%>/asIndex.jsp";
             }
           }
-        } else if(json.type==2 ){
+        } else if(json.type==2){
           if(mainPage) mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
           else $.messager.alert("登录信息", "登录失败："+json.data, "error");
         } else {
@@ -285,52 +297,15 @@ function commit(){
         }
       },
       error:function(errorData ){
-        $('#commitButton').attr('disabled',false);
-        $('#checkCode').val('');
-        $('#vcimg')[0].src = "<%=path%>/login/getValidateCode.do?"+Math.random();
         if (errorData ){
           if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
           else $.messager.alert("登录信息", "登录异常：未知！", "error");
-        } else mainPage.$("#mask").hide();
+        }
       }
     });
-  }else{
-    $('#commitButton').attr('disabled',false);
-    var alertMessage = "您的";
-    if(vdInfoAry[0].vd==false) {
-      alertMessage = alertMessage + vdInfoAry[0].message;
-    }
-    if(vdInfoAry[1].vd==false){
-      alertMessage = alertMessage + vdInfoAry[1].message;
-    } 
-    if(vdInfoAry[2].vd==false){
-      alertMessage = alertMessage + vdInfoAry[2].message;
-    }
-    alertMessage = alertMessage.substring(0,alertMessage.lastIndexOf("、"));
-    if(mainPage) mainPage.$.messager.alert("登录提示",alertMessage+"请检查!", 'info',function (){
-      if(vdInfoAry[0].vd==false){
-        $('#loginName')[0].focus();
-        $('#loginName')[0].select();
-      }else if(vdInfoAry[1].vd==false){
-        $('#password')[0].focus();
-        $('#password')[0].select();
-      }else{
-        $('#checkCode')[0].focus();
-        $('#checkCode')[0].select();
-      }
-    });
-    else $.messager.alert("登录提示","您的登录信息某些地方有误，请完善您的登陆信息", 'info',function (){
-      if(vdInfoAry[0].vd==false){
-        $('#loginName')[0].focus();
-        $('#loginName')[0].select();
-      }else if(vdInfoAry[1].vd==false){
-        $('#password')[0].focus();
-        $('#password')[0].select();
-      }else{
-        $('#checkCode')[0].focus();
-        $('#checkCode')[0].select();
-      }
-    });
+    mainPage.$("#mask").hide();
+    refresh('<%=path%>');
+    $('#checkCode').val('');
   }
 }
 </script>
