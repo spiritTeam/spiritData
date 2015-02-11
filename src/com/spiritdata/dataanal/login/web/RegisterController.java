@@ -226,9 +226,9 @@ public class RegisterController {
         User user = (User) session.getAttribute(FConstants.SESSION_USER);
         String password = request.getParameter("password");
         if (user!=null&&!user.equals("")){
-        	user.setPassword(password);
+            user.setPassword(password);
         }else {
-        	user = userService.getUserByLoginName(loginName);
+            user = userService.getUserByLoginName(loginName);
         }
         user.setPassword(password);
         int i = userService.updateUser(user);
@@ -487,5 +487,33 @@ public class RegisterController {
             retMap.put("retInfo", e.getMessage());
             return retMap;
         }
+    }
+    @RequestMapping("/login/modifyMail.do")
+    public @ResponseBody Map<String,Object> modifyMail(HttpServletRequest request){
+        Map<String,Object> retMap = new HashMap<String,Object>();
+        retMap.put("success", false);
+        String loginName = request.getParameter("loginName");
+        String password = request.getParameter("password");
+        try{
+            User user = userService.getUserByLoginName(loginName);
+            if (user!=null&&!user.equals("")) {
+                if (user.getPassword().equals(password)){
+                    if ( user.getUserType()==0) {
+                        retMap.put("retInfo", "登陆成功!");
+                        retMap.put("success", true);
+                        retMap.put("userType", user.getUserType());
+                    } else {
+                        retMap.put("retInfo", "登陆成功!");
+                        retMap.put("success", true);
+                        retMap.put("userType", user.getUserType());
+                    }
+                } else {
+                    retMap.put("retInfo", "密码不正确!");
+                }
+            } else retMap.put("retInfo", "账号不正确!");
+        } catch(Exception e) {
+            retMap.put("retInfo", "登陆异常:"+e.getMessage());
+        }
+        return retMap;
     }
 }

@@ -173,8 +173,8 @@ function validateMail() {
   ma.find(".alertImg").attr("title", vdInfoAry[1]);
   //验证邮箱是否符合规则
   function checkMailAdress(mailAdress){
-    var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
-    return reg.test(mailAdress); 
+    var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+    return reg.test(mailAdress);
   }
 }
 

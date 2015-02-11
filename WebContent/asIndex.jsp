@@ -608,9 +608,7 @@ function register(){
   };
   openSWinInMain(winOption);
 }
-/**
- * 忘记密码
- */
+// 忘记密码
 function modifyPwd(){
   var loginStatus = $('#loginStatus').val();
   var _url;
@@ -631,15 +629,14 @@ function modifyPwd(){
   };
   openSWinInMain(winOption);
 }
-/*
- * 登录
- */
+// 登录
 function login(){
   if($("#loginStatus").val()==1) {
     $.messager.alert('提示','您已经在登陆状态了，如想切换用户请先注销！','info');
     return;
   }
-  var _url="<%=path%>/login/login.jsp?";
+  var loginType = 1;
+  var _url="<%=path%>/login/login.jsp?loginType="+loginType;
   var winOption={
     url:_url,
     title:"登录",
@@ -649,19 +646,13 @@ function login(){
   };
   openSWinInMain(winOption);
 }
-/*
- * 修改个人信息
- */
-function updateUser(){
-  var loginStatus = $('#loginStatus').val();
-  if(loginStatus==""||loginStatus==null) {
-    $.messager.alert('登录提示','您还未登录!','info');
-    return;
-  }
-  var _url="<%=path%>/login/update.jsp?";
+//修改邮箱
+function modifyMail(){
+  var loginType = 2;
+  var _url="<%=path%>/login/login.jsp?loginType="+loginType;
   var winOption={
     url:_url,
-    title:"修改个人信息",
+    title:"重置邮箱",
     height:wHeight,
     width:wWidth,
     modal:true

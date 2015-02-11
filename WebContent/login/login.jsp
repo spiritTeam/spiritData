@@ -31,6 +31,8 @@ var MACAddr;
 var IPAddr;
 var DomainAddr;
 var sDNSName;
+//1表示为正常登陆，2表示非正常登陆，为激活邮箱而要修改邮箱
+var loginType;
 //uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
 //uTMessage表示要提示的信息
 var uT=<%=uT%>,uTMessage = "";
@@ -138,6 +140,7 @@ function initPageParam(){
   mainPage = getMainPage();
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
+  loginType = parseFloat(getUrlParam(window.location.href, "loginType"));
 }
 //=以下为验证=============================================
 //验证密码是否为空
@@ -257,53 +260,103 @@ function commit(){
       "browser":getBrowserVersion()
     };
     $("#mask").show();
-    var url="<%=path%>/login.do";
-    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success:function(json){
-        $("#mask").hide();
-        refresh('<%=path%>');
-        $('#checkCode').val('');
-        var loginInfo = json.data;
-        var retInfo = loginInfo.retInfo;
-        if(json.type==-1){
+    if (loginType==1) login(pData);
+    else modifyMail(pData);
+  }
+}
+//用于提交
+function login(pData){
+  var url="<%=path%>/login.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+    success:function(json){
+      $("#mask").hide();
+      refresh('<%=path%>');
+      $('#checkCode').val('');
+      var loginInfo = json.data;
+      var retInfo = loginInfo.retInfo;
+      if(json.type==-1){
+        $.messager.alert('登录信息',retInfo,'info');
+      }else if (json.type==1){
+        var activeType = loginInfo.activeType;
+        if(activeType==1){
           $.messager.alert('登录信息',retInfo,'info');
-        }else if (json.type==1){
-          var activeType = loginInfo.activeType;
-          if(activeType==1){
-            $.messager.alert('登录信息',retInfo,'info');
-          }else if(activeType==2){
-            if(mainPage) {
-              mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
-                var loginStatus = mainPage.document.getElementById("loginStatus");
-                var loginName = mainPage.document.getElementById("loginName");
-                $(loginStatus).val(1);
-                $(loginName).val(pData.loginName);
-                closeSWinInMain(winId);
-              });
-            }else{
-              $.messager.alert("登陆信息","登陆成功！",'info');
-              window.location.href = "<%=path%>/asIndex.jsp";
-            }
+        }else if(activeType==2){
+          if(mainPage) {
+            mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
+              var loginStatus = mainPage.document.getElementById("loginStatus");
+              var loginName = mainPage.document.getElementById("loginName");
+              $(loginStatus).val(1);
+              $(loginName).val(pData.loginName);
+              closeSWinInMain(winId);
+            });
+          }else{
+            $.messager.alert("登陆信息","登陆成功！",'info');
+            window.location.href = "<%=path%>/asIndex.jsp";
           }
-        } else if(json.type==2){
-          if(mainPage) mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
-          else $.messager.alert("登录信息", "登录失败："+json.data, "error");
-        } else {
-          if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常："+json.data, "error");
-          else $.messager.alert("登录信息", "登录异常："+json.data, "error");
         }
-      },
-      error:function(errorData ){
-        if (errorData ){
-          if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
-          else $.messager.alert("登录信息", "登录异常：未知！", "error");
+      } else if(json.type==2){
+        if(mainPage) mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
+        else $.messager.alert("登录信息", "登录失败："+json.data, "error");
+      } else {
+        if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常："+json.data, "error");
+        else $.messager.alert("登录信息", "登录异常："+json.data, "error");
+      }
+    },
+    error:function(errorData ){
+      if (errorData ){
+        if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
+        else $.messager.alert("登录信息", "登录异常：未知！", "error");
+      }
+    }
+  });
+  mainPage.$("#mask").hide();
+  refresh('<%=path%>');
+  $('#checkCode').val('');
+}
+//用于修改邮箱的登陆
+function modifyMail(pData){
+  var url="<%=path%>/login/modifyMail.do";
+  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
+    success:function(json){
+      $("#mask").hide();
+      if(mainPage){
+        if (json.success){
+          if (json.userType == 0){
+            mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
+              win.modify({title:"重置邮箱"});
+              window.location.href="<%=path%>/login/modifyMail.jsp?_winID="+winId;
+            });
+          } else {
+            mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
+              win.modify({title:"修改个人信息"});
+              window.location.href="<%=path%>/login/update.jsp?_winID="+winId;
+            });
+          } 
+        } else {
+          mainPage.$.messager.alert("登陆信息",json.retInfo,'info');
+        }
+      } else {
+        if (json.success){
+          if (json.userType == 0){
+            $.messager.alert("登陆信息","登陆成功！",'info',function(){
+              win.modify({title:"重置邮箱"});
+              window.location.href="<%=path%>/login/modifyMail.jsp?_winID="+winId;
+            });
+          } else {
+            $.messager.alert("登陆信息","登陆成功！",'info',function(){
+              win.modify({title:"修改个人信息"});
+              window.location.href="<%=path%>/login/update.jsp?_winID="+winId;
+            });
+          } 
+        } else {
+          $.messager.alert("登陆信息",json.retInfo,'info');
         }
       }
-    });
-    mainPage.$("#mask").hide();
-    refresh('<%=path%>');
-    $('#checkCode').val('');
-  }
+    }
+  });
+  mainPage.$("#mask").hide();
+  refresh('<%=path%>');
+  $('#checkCode').val('');
 }
 </script>
 </html>
