@@ -148,7 +148,7 @@ public class MdKeyService {
 
         if (needAnalKey(mm)) {//若需要分析主键
             List<Map<String, Double>> keyList = new ArrayList<Map<String, Double>>();
-            //从新的文件系统中得到分析的文件
+            //重新的文件系统中得到分析的文件
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("analType2", SDConstants.ANAL_MD_KEY);
             m.put("analType3", mm.getId());
