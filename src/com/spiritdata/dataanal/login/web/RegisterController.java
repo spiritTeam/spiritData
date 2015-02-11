@@ -44,21 +44,39 @@ public class RegisterController {
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
         User user = userService.getUserByLoginName(loginName);
+        String retInfo = "";
+        if (user==null||user.equals("")) {
+            retInfo = "没有账号为"+loginName+"的用户";
+            retMap.put("success", false);
+            retMap.put("retInfo", retInfo);
+            return retMap;
+        }
+        if (user.getUserType() == 0){
+            retInfo = "您的账号还未激活，请先激活！";
+            retMap.put("success", false);
+            retMap.put("retInfo", retInfo);
+            return retMap;
+        }
         String validatsaSequence = SequenceUUID.getPureUUID();
         user.setValidataSequence(validatsaSequence);
-        //发布名
-        String deployName = request.getContextPath();
-        //serverPort
-        int  serverPort = request.getServerPort();
-        //serverName
-        String serverName = request.getServerName();
-        //验证url=serverName+deployName+servletPath
-        String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+"/login/activeModifyPassword.do?authCode="+user.getUserId()+"~"+validatsaSequence;
-        SendValidataUrlToMail svu = new SendValidataUrlToMail();
-        String retInfo = "";
+        user.setUserType(3);
+        User suser = (User) request.getSession().getAttribute("FConstants.SESSION_USER");
+        if (suser!=null&&!suser.equals("")){
+            suser.setUserType(3);
+            suser.setValidataSequence(validatsaSequence);
+        }
         try {
-            svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
             userService.updateUser(user);
+            //发布名
+            String deployName = request.getContextPath();
+            //serverPort
+            int  serverPort = request.getServerPort();
+            //serverName
+            String serverName = request.getServerName();
+            //验证url=serverName+deployName+servletPath
+            String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+"/login/activeModifyPassword.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+            SendValidataUrlToMail svu = new SendValidataUrlToMail();
+            svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
             retMap.put("success", true);
             retInfo = "已经向您的邮箱发送一封邮件，请注意查看!";
             retMap.put("retInfo", retInfo);
@@ -75,7 +93,6 @@ public class RegisterController {
      */
     @RequestMapping("/login/update.do")
     public @ResponseBody Map<String,Object> update(HttpServletRequest request){
-    	// #TODO 未完成的方法，还差一个验证密码的方法
         Map<String,Object> retMap = new HashMap<String,Object>();
         String loginName = request.getParameter("loginName");
         String password = request.getParameter("password");
@@ -91,9 +108,9 @@ public class RegisterController {
             user.setUserName(userName);
             int rst = userService.updateUser(user);
             if(rst==1){
-            	HttpSession session = request.getSession();
-            	User userInfo = ((User)session.getAttribute(FConstants.SESSION_USER));
-            	userInfo.setPassword(password);
+                HttpSession session = request.getSession();
+                User userInfo = ((User)session.getAttribute(FConstants.SESSION_USER));
+                userInfo.setPassword(password);
                 retMap.put("success", true);
                 retMap.put("retInfo", "修改成功");
             }else{
@@ -165,25 +182,34 @@ public class RegisterController {
             retMap.put("success", false);
             retMap.put("retInfo", "验证码缺失!");
         }else{
-            if(user.getValidataSequence().equals(code)){
-                user.setUserState(1);
-                user.setUserType(1);
-                HttpSession session = request.getSession();
-                session.removeAttribute(FConstants.SESSION_USER);
-                session.setAttribute(FConstants.SESSION_USER, user);
-                userService.updateUser(user);
-                try {
-                    //在重定向的基础上修改为转发
-                    String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
-                    request.setAttribute("action", "1");
-                    request.setAttribute("actionUrl", actionUrl);
-                    request.getRequestDispatcher("../asIndex.jsp").forward(request, response);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }//转发到apage.jsp
-            }else{
+            if (user.getUserType()==1){
                 retMap.put("success", false);
-                retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
+                retMap.put("retInfo", "链接已失效！");
+                return retMap;
+            }else{
+                if (user.getValidataSequence().equals(code)) {
+                    user.setUserType(1);
+                    user.setValidataSequence("");
+                    HttpSession session = request.getSession();
+                    User suser = (User) session.getAttribute(FConstants.SESSION_USER);
+                    if ( suser!=null&&!suser.equals("")) {
+                        suser.setUserType(1);
+                        suser.setValidataSequence("");
+                    }
+                    userService.updateUser(user);
+                    try {
+                        //在重定向的基础上修改为转发
+                        String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
+                        request.setAttribute("action", "1");
+                        request.setAttribute("actionUrl", actionUrl);
+                        request.getRequestDispatcher("../asIndex.jsp").forward(request, response);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }//转发到apage.jsp
+                }else{
+                    retMap.put("success", false);
+                    retMap.put("retInfo", "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!");
+                }
             }
         }
         return retMap;
@@ -196,8 +222,14 @@ public class RegisterController {
         Map<String,Object> retMap = new HashMap<String,Object>();
         String retInfo = "";
         HttpSession session =request.getSession();
+        String loginName = request.getParameter("loginName");
         User user = (User) session.getAttribute(FConstants.SESSION_USER);
         String password = request.getParameter("password");
+        if (user!=null&&!user.equals("")){
+        	user.setPassword(password);
+        }else {
+        	user = userService.getUserByLoginName(loginName);
+        }
         user.setPassword(password);
         int i = userService.updateUser(user);
         if(i==1){
@@ -420,7 +452,7 @@ public class RegisterController {
             user.setValidataSequence(validatsaSequence);
             int rst = userService.insertUser(user);
             if (rst==1) {
-            	//删除储存验证码的文件夹
+                //删除储存验证码的文件夹
                 String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
                 FileUtils.deleteFile(new File(toDeletURI));
 
