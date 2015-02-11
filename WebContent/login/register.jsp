@@ -1,7 +1,6 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
   String path = request.getContextPath();
-  String sid = request.getSession().getId();
   String pWinId = request.getParameter("pWinId");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -67,7 +66,7 @@
       <td class="inputTd" style="height:64px; line-height:64px;">
         <div class="alertInput-vCode" style="margin-top:1px;">
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="5" type="text" onBlur="validateCheckCode();"/></div>
-          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh(this);" src=""></div>
+          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh('<%=path %>');" src=""></div>
           <div class="alertImg"></div>
           <div class="maskTitle">按右图输入验证码</div>
         </div>
@@ -109,11 +108,11 @@ $(function() {
   setTimeout(initMaskTitle, 100); //初始化maskTitle
   //提示图标效果
   $(".alertImg").bind('mouseover',function() {
-  	win.setMessage({'msg':$(this).attr("title")});
+    win.setMessage({'msg':$(this).attr("title")});
   }).bind('mouseout',function() {
-  	win.setMessage({'msg':''});
+    win.setMessage({'msg':''});
   });
-  refresh();
+  refresh('<%=path%>');
 });
 
 //初始化页面全局参数
@@ -233,7 +232,7 @@ function comfirmPassword() {
 
 //验证码验证
 function validateCheckCode(){
-  var val = ($('#checkCode').val()).toUpperCase();alert("val=" + val);
+  var val = ($('#checkCode').val()).toUpperCase();
   if (val) {
     $("#checkCode").parent().parent().find(".alertImg").show();
     $("#checkCode").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
@@ -253,45 +252,42 @@ function validateCheckCode(){
 }
 //=以上为验证=============================================
 
-//刷新验证码
-function refresh() {
-  $("#waittingText").html("请稍候，获取验证码图片...");
-  $("#mask").show();
-  $.ajax({type:"post", async:true, url:"<%=path%>/login/refreshValidateCode.do?"+Math.random(), dataType:"json",
-    success: function(json) {
-      if (json.success) {
-        $('#checkCode').val('');
-        checkCode = json.checkCode;
-        $("#vcimg").attr("src", "<%=path%>/"+json.imgSrc+"?"+Math.random());
-        $("#mask").hide();
-        $("#waittingText").html("请稍候，数据提交中...");
-      }else {
-        if(mainPage) {
-          mainPage.$.messager.alert('验证码获取异常',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'error');
-        } else {
-          $.messager.alert('验证码获取异常',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'error');
-        }
-        $("#waittingText").html("请稍候，数据提交中...");
-      }
-    }
-  });
-}
-
 //提交注册信息
 function commit() {
   var msgs = "";
   for (var i=0; i<vdInfoAry.length; i++) {
-  	if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
+    if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
   }
   if (msgs.length>0) {
-  	msgs = msgs.substr(5);
-  	msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
+    msgs = msgs.substr(5);
+    msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
   }
   if (msgs.length>0) {
-  	mainPage.$.messager.alert('注册提示', msgs,'info',function(){
-  	  for (var i=0; i<vdInfoAry.length; i++) {
-  	    if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
-  	  }
+    if(mainPage) mainPage.$.messager.alert('注册提示', msgs,'info',function(){
+      for (var i=0; i<vdInfoAry.length; i++) {
+        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
+      }
+      if (i==0) {
+        $('#loginName')[0].focus();
+        $('#loginName')[0].select();
+      }else if (i==1) {
+        $('#mail')[0].focus();
+        $('#mail')[0].select();
+      }else if (i==2) {
+        $('#password')[0].focus();
+        $('#password')[0].select();
+      }else if (i==3) {
+        $('#confirmPassword')[0].focus();
+        $('#confirmPassword')[0].select();
+      } else {
+        $('#checkCode')[0].focus();
+        $('#checkCode')[0].select();
+      }
+    });
+    else $.messager.alert('注册提示', msgs,'info',function(){
+      for (var i=0; i<vdInfoAry.length; i++) {
+        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
+      }
       if (i==0) {
         $('#loginName')[0].focus();
         $('#loginName')[0].select();
@@ -312,7 +308,6 @@ function commit() {
   } else {
     var mailAdress = $("#mail").val();
     if(mailAdress.lastIndexOf("@")==-1) mailAdress = mailAdress+$('#mailSel').combobox('getText');
-    alert("src="+$('#vcimg').attr('src'));
     var pData={
       "loginName":$("#loginName").val(),
       "password":$("#password").val(),
@@ -330,12 +325,13 @@ function commit() {
               closeSWinInMain(winId);
             });
           } else {
-          	$.messager.alert('注册提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info',function(){
-          	  window.location.href = "<%=path%>/asIndex.jsp";
-          	});
+            $.messager.alert('注册提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info',function(){
+              window.location.href = "<%=path%>/asIndex.jsp";
+            });
           }
         }else {
-          $.messager.alert('提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info');
+          if (mainPage)  mainPage.$.messager.alert('提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info');
+          else $.messager.alert('提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info');
         }
       }
     });
