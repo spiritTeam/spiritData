@@ -664,7 +664,7 @@ function modifyMail(){
  */
 function testW() {
   //newSWin({height:"400px", width:"300px", title:"测试窗口", content:"http://blog.csdn.net/oldwolf1987/article/details/4031534"});
-  openSWinInMain({height:"400px", width:"300px", title:"测试窗口", url:"<%=path%>/templet/test/testSWin.jsp"});
+  openSWinInMain({height:"400px", width:"300px", title:"测试窗口", url:"<%=path%>/jsp2mht/view/cc1.html"});
   return;
 }
 //以上为mht js代码，勿删撒=========================================================
