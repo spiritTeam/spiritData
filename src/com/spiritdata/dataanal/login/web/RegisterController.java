@@ -59,10 +59,10 @@ public class RegisterController {
         }
         String validatsaSequence = SequenceUUID.getPureUUID();
         user.setValidataSequence(validatsaSequence);
-        user.setUserType(3);
+        user.setUserState(3);
         User suser = (User) request.getSession().getAttribute("FConstants.SESSION_USER");
         if (suser!=null&&!suser.equals("")){
-            suser.setUserType(3);
+            suser.setUserState(3);
             suser.setValidataSequence(validatsaSequence);
         }
         try {
@@ -108,9 +108,15 @@ public class RegisterController {
             user.setUserName(userName);
             int rst = userService.updateUser(user);
             if(rst==1){
+                String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
+                FileUtils.deleteFile(new File(toDeletURI));
                 HttpSession session = request.getSession();
                 User userInfo = ((User)session.getAttribute(FConstants.SESSION_USER));
-                userInfo.setPassword(password);
+                if (userInfo!=null&&!userInfo.equals("")){
+                    userInfo.setPassword(password);
+                    userInfo.setMailAdress(mailAdress);
+                    userInfo.setUserName(userName);
+                }
                 retMap.put("success", true);
                 retMap.put("retInfo", "修改成功");
             }else{
@@ -188,12 +194,12 @@ public class RegisterController {
                 return retMap;
             }else{
                 if (user.getValidataSequence().equals(code)) {
-                    user.setUserType(1);
+                    user.setUserState(1);
                     user.setValidataSequence("");
                     HttpSession session = request.getSession();
                     User suser = (User) session.getAttribute(FConstants.SESSION_USER);
                     if ( suser!=null&&!suser.equals("")) {
-                        suser.setUserType(1);
+                        suser.setUserState(1);
                         suser.setValidataSequence("");
                     }
                     userService.updateUser(user);
@@ -498,14 +504,16 @@ public class RegisterController {
             User user = userService.getUserByLoginName(loginName);
             if (user!=null&&!user.equals("")) {
                 if (user.getPassword().equals(password)){
+                    String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
+                    FileUtils.deleteFile(new File(toDeletURI));
                     if ( user.getUserType()==0) {
                         retMap.put("retInfo", "登陆成功!");
                         retMap.put("success", true);
-                        retMap.put("userType", user.getUserType());
+                        retMap.put("userState", user.getUserState());
                     } else {
                         retMap.put("retInfo", "登陆成功!");
                         retMap.put("success", true);
-                        retMap.put("userType", user.getUserType());
+                        retMap.put("userState", user.getUserState());
                     }
                 } else {
                     retMap.put("retInfo", "密码不正确!");

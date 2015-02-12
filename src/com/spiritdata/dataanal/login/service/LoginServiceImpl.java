@@ -1,5 +1,6 @@
 package com.spiritdata.dataanal.login.service;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,8 +13,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
+import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.component.login.service.LoginService;
+import com.spiritdata.framework.core.cache.SystemCache;
+import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.dataanal.UGA.pojo.User;
 
 public class LoginServiceImpl implements LoginService {
@@ -43,6 +47,8 @@ public class LoginServiceImpl implements LoginService {
         Map<String,Object> retMap = new HashMap<String,Object>();
         //激活邮箱
         User u = (User)user;
+        String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
+        FileUtils.deleteFile(new File(toDeletURI));
         //==0,未发邮箱激活
         if(u.getUserState()==0){
             retMap.put("success", "success");

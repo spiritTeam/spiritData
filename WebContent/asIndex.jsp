@@ -151,7 +151,7 @@
       <a id="modifyPwdButton" onclick="modifyPwd();" href="#" >修改密码</a>
       <a id="" onclick="register()" href="#">注册</a>
       <a id="test" onclick="testW();" href="#" >窗口测试</a>
-      <a id="test" onclick="updateUser();" href="#" >修改1</a>
+      <a id="test" onclick="modifyMail();" href="#" >修改1</a>
       <input id="loginStatus" type="hidden" value="">
       <input id="loginName" type="hidden" value="">
     </div>
