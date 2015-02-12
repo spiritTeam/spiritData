@@ -321,10 +321,10 @@ function modifyMail(pData){
       $("#mask").hide();
       if(mainPage){
         if (json.success){
-          if (json.userType == 0){
+          if (json.userState == 0){
             mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
               win.modify({title:"重置邮箱"});
-              window.location.href="<%=path%>/login/modifyMail.jsp?_winID="+winId;
+              window.location.href="<%=path%>/login/modifyMail.jsp?_winID="+winId+"&loginName="+$('#loginName').val();
             });
           } else {
             mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
@@ -337,10 +337,10 @@ function modifyMail(pData){
         }
       } else {
         if (json.success){
-          if (json.userType == 0){
+          if (parseFloat(json.userState) == 0){
             $.messager.alert("登陆信息","登陆成功！",'info',function(){
               win.modify({title:"重置邮箱"});
-              window.location.href="<%=path%>/login/modifyMail.jsp?_winID="+winId;
+              window.location.href="<%=path%>/login/modifyMail.jsp?_winID="+winId+"&loginName="+$('#loginName').val();
             });
           } else {
             $.messager.alert("登陆信息","登陆成功！",'info',function(){

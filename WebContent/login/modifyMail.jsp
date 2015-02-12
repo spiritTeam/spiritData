@@ -11,7 +11,7 @@
   String oldPwd;
   if(user==null||user.equals("")){
       userMail = "";
-      loginName = "";
+      loginName = request.getParameter("loginName");
       oldPwd = "";
   }else{
       userMail = user.getMailAdress();
@@ -102,7 +102,7 @@
 var win;
 var mainPage;
 var winId;
-var vdInfoAry = ['原密码不能为空','密码不能为空','确认密码不能为空','验证码不能为空'];
+var vdInfoAry = ['邮箱不能为空','密码不能为空','确认密码不能为空','验证码不能为空'];
 /**
  * 主函数
  */
@@ -132,24 +132,6 @@ function initPageParam(){
 //=以上初始化设置=============================================
 
 //=以下为验证=============================================
-function validateOldPassword(){
-  //oldPassword为用户输入的原密码，
-  var val = $('#oldPassword').val();
-  //oldPwd为session中密码
-  var oldPwd = $('#oldPwd').val();
-  $("#oldPassword").parent().find(".alertImg").show();
-  if(val){
-    if(val!=oldPwd){
-      $("#oldPassword").parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-      vdInfoAry[0] = '原密码填写错误';
-      win.setMessage({'msg':vdInfoAry[0]});
-    }else {
-      $("#oldPassword").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-      vdInfoAry[0] = "";
-      win.setMessage({'msg':''});
-    }
-  }else $("#oldPassword").parent().find(".alertImg").hide();
-}
 //验证邮箱
 function validateMail() {
   var val = $('#mail').val();
@@ -157,21 +139,21 @@ function validateMail() {
     $("#mail").parent().parent().find(".alertImg").show();
     $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
     win.setMessage({'msg':''});
-    vdInfoAry[1] = "";
+    vdInfoAry[0] = "";
     var mailAdress = val;
     if (val.lastIndexOf('@')==-1) mailAdress = val+$('#mailSel').combobox('getText');
 
     if (!checkMailAdress(mailAdress)) {
-      vdInfoAry[1] = "邮箱格式不正确";
-      win.setMessage({'msg': vdInfoAry[1]});
+      vdInfoAry[0] = "邮箱格式不正确";
+      win.setMessage({'msg': vdInfoAry[0]});
       $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
     }
   }else{
     $("#mail").parent().parent().find(".alertImg").hide();
-    vdInfoAry[1] = "邮箱为必填项";
+    vdInfoAry[0] = "邮箱为必填项";
   }
   ma = getMainAlert($("#mail"));
-  ma.find(".alertImg").attr("title", vdInfoAry[1]);
+  ma.find(".alertImg").attr("title", vdInfoAry[0]);
   //验证邮箱是否符合规则
   function checkMailAdress(mailAdress){
     var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
@@ -267,8 +249,8 @@ function commit(){
         if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
       }
       if (i==0) {
-        $('#oldPassword')[0].focus();
-        $('#oldPassword')[0].select();
+        $('#mail')[0].focus();
+        $('#mail')[0].select();
       }else if (i==1) {
         $('#password')[0].focus();
         $('#password')[0].select();
@@ -285,8 +267,8 @@ function commit(){
         if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
       }
       if (i==0) {
-        $('#oldPassword')[0].focus();
-        $('#oldPassword')[0].select();
+        $('#mail')[0].focus();
+        $('#mail')[0].select();
       }else if (i==1) {
         $('#password')[0].focus();
         $('#password')[0].select();
@@ -299,11 +281,13 @@ function commit(){
       }
     });
   } else {
+    var mailAdress = $("#mail").val();
+    if(mailAdress.lastIndexOf("@")==-1) mailAdress = mailAdress+$('#mailSel').combobox('getText');
     var pData={
      "loginName":$("#loginName").val(),
      "password":$("#password").val(),
      "userName":$("#userName").val(),
-     "mailAdress":$("#mail").val()
+     "mailAdress":mailAdress
    };
    $("#mask").show();
    var _url="<%=path%>/login/update.do";
