@@ -81,6 +81,7 @@ public class RegisterController {
             retInfo = "已经向您的邮箱发送一封邮件，请注意查看!";
             retMap.put("retInfo", retInfo);
         }catch (MessagingException mex) {
+            
             retInfo = dwMEXException(mex);
             retMap.put("success", false);
             retMap.put("retInfo", retInfo);
@@ -165,7 +166,7 @@ public class RegisterController {
                 }
             }
             ex = null;
-        }while (ex != null);
+        } while (ex != null);
         return retInfo;
     }
     /**
