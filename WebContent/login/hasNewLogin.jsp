@@ -14,20 +14,19 @@
 </head>
 <body>
 <script>
-$(function(){alert(111);
+$(function(){
   var topWin = getTopWin();
   var url=window.location.href;
   var ip = getUrlParam(url, "clientIp");
   var mac = getUrlParam(url, "clientMacAddr");
   var browser = decodeURI(getUrlParam(url, "browser"));
-  alert("hasNew");
   var mainPage = getMainPage();
   if (!mainPage) {
     var url="<%=path%>/logout.do";
     $.ajax({type:"post", async:false, url:url, data:null, dataType:"json",
       success: function(json) {
-        var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
-        if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
+        var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！<br/>请重新登录！";
+        if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！<br/>请重新登录！";
         $.messager.alert("提示", msg, "info", function(){topWin.location.href="<%=path%>/asIndex.jsp";});
       },
       error: function(errorData) {
