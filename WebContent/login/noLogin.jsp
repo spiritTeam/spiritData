@@ -17,7 +17,9 @@
 var noLoginUrl="<%=path%>/asIndex.jsp?nolog";
 
 var mainPage=getMainPage();
-if (mainPage) mainPage.location.href=noLoginUrl;
+if (mainPage) {
+  mainPage.location.href=noLoginUrl;
+}
 else {
   var topWin = getTopWin();
   topWin.location.href=noLoginUrl;

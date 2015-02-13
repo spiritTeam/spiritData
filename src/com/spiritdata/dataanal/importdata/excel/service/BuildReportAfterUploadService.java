@@ -17,6 +17,8 @@ import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal1003CException;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
+import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
+import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
 import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
@@ -174,6 +176,21 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                     ReportSegment rs1 = new ReportSegment();
                     rs1.setTitle(mm.getTitleName()+"分析");
                     rs1.setId(SequenceUUID.getPureUUID());
+                    rs1.setContent("");
+                    //字典处理
+                    for (MetadataColumn mc: mm.getColumnList()) {
+                        List<MetadataColSemanteme> csl = mc.getColSemList();
+                        if (csl!=null&&csl.size()>0) {
+                            for (MetadataColSemanteme mcs: csl) {
+                                if (mcs.getSemantemeType()==2) {//是字典
+                                    ReportSegment rs2 = new ReportSegment();
+                                    rs2.setTitle("["+mc.getTitleName()+"]字典项<数量>分布");
+                                    rs2.setId(SequenceUUID.getPureUUID());
+                                    rs2.setContent("");
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
