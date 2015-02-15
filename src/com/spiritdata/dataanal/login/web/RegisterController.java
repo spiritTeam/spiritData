@@ -452,7 +452,7 @@ public class RegisterController {
                 user.setValidataSequence(validatsaSequence);
                 rst = userService.insertUser(user);
             } catch(Exception e) {
-            	throw new Data1102Exception(e.getMessage());
+            	throw new Data1102CException(e.getMessage());
                 retMap.put("success", false);
                 retMap.put("retInfo", e.getMessage());
                 return retMap;
