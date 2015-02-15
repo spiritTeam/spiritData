@@ -1,7 +1,7 @@
 package com.spiritdata.dataanal.exceptionC;
 
 /**
- * DataAnal邮件发送失败，内部码为1101，基本信息为'邮件发送失败'
+ * DataAnal邮件发送失败，内部码为1103，基本信息为'邮件发送失败'
  * 请参看:
  * {@linkplain com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel MetadataModel} 包
  * @author wh,mht
@@ -10,7 +10,7 @@ public class Dtal1103CException extends DtalCException {
     private static final long serialVersionUID = 7076807147636335529L;
 
     private static String myBaseMsg = "邮件发送失败";
-    private static int myCode = 1101;
+    private static int myCode = 1103;
 
     /**
      * 构造没有详细消息内容的——'邮件发送失败'异常

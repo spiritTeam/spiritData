@@ -19,6 +19,7 @@ import com.spiritdata.framework.component.login.service.LoginService;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.dataanal.UGA.pojo.User;
+import com.spiritdata.dataanal.exceptionC.Dtal1105CException;
 
 public class LoginServiceImpl implements LoginService {
     @Resource
@@ -98,10 +99,10 @@ public class LoginServiceImpl implements LoginService {
                     conn.rollback();
                     conn.setAutoCommit(autoCommitFlag);
                 } catch (SQLException sqlE) {
-                    sqlE.printStackTrace();
+                	//TODO 需测试这个异常是否能正常抛出？修改列名？
+                    throw new Dtal1105CException(sqlE.getMessage());
                 }
             }
-            e.printStackTrace();
         } finally {
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
             try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};

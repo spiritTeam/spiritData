@@ -1,7 +1,7 @@
 package com.spiritdata.dataanal.exceptionC;
 
 /**
- * DataAnal更新用户信息失败，内部码为1101，基本信息为'更新用户信息失败'
+ * DataAnal更新用户信息失败，内部码为1102，基本信息为'更新用户信息失败'
  * 请参看:
  * {@linkplain com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel MetadataModel} 包
  * @author wh,mht
@@ -10,7 +10,7 @@ public class Dtal1102CException extends DtalCException {
     private static final long serialVersionUID = 7076807147636335529L;
 
     private static String myBaseMsg = "更新用户信息失败";
-    private static int myCode = 1101;
+    private static int myCode = 1102;
 
     /**
      * 构造没有详细消息内容的——'更新用户信息失败'异常

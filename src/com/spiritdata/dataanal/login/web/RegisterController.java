@@ -26,6 +26,9 @@ import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
 import com.spiritdata.dataanal.exceptionC.Dtal0001CException;
 import com.spiritdata.dataanal.exceptionC.Dtal1101CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1102CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1103CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1104CException;
 import com.spiritdata.dataanal.login.util.RandomValidateCode;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
 
@@ -51,17 +54,19 @@ public class RegisterController {
             retInfo = "没有账号为"+loginName+"的用户";
             retMap.put("success", false);
             retMap.put("retInfo", retInfo);
+            throw new Dtal1104CException(retInfo);
         }
-        if (user.getUserType() == 0){
+        if (user.getUserType() == 0) {
             retInfo = "您的账号还未激活，请先激活！";
             retMap.put("success", false);
             retMap.put("retInfo", retInfo);
+            throw new Dtal1104CException(retInfo);
         }
         String validatsaSequence = SequenceUUID.getPureUUID();
         user.setValidataSequence(validatsaSequence);
         user.setUserState(3);
         User suser = (User) request.getSession().getAttribute("FConstants.SESSION_USER");
-        if (suser!=null&&!suser.equals("")){
+        if (suser!=null&&!suser.equals("")) {
             suser.setUserState(3);
             suser.setValidataSequence(validatsaSequence);
         }
@@ -81,10 +86,10 @@ public class RegisterController {
             retInfo = "已经向您的邮箱发送一封邮件，请注意查看!";
             retMap.put("retInfo", retInfo);
         }catch (MessagingException mex) {
-            
             retInfo = dwMEXException(mex);
             retMap.put("success", false);
             retMap.put("retInfo", retInfo);
+            throw new Dtal1103CException(retInfo);
         }
         return retMap;
     }
@@ -100,9 +105,12 @@ public class RegisterController {
         String userName = request.getParameter("userName");
         String mailAdress = request.getParameter("mailAdress");
         User user = userService.getUserByLoginName(loginName);
+        String retInfo = "";
         if(user==null||user.equals("")){
             retMap.put("success", false);
-            retMap.put("retInfo", "修改异常,请重试"+loginName+"的用户，请重新");
+            retInfo = "修改异常,请重试"+loginName+"的用户，请重新";
+            retMap.put("retInfo", retInfo);
+            throw new Dtal1104CException(retInfo);
         }else{
             user.setPassword(password);
             user.setMailAdress(mailAdress);
@@ -121,8 +129,10 @@ public class RegisterController {
                 retMap.put("success", true);
                 retMap.put("retInfo", "修改成功");
             }else{
+            	retInfo = "修改用户信息失败";
                 retMap.put("success", false);
-                retMap.put("retInfo", "修改失败");
+                retMap.put("retInfo", retInfo);
+                throw new Dtal1102CException(retInfo);
             }
         }
         return retMap;
@@ -136,7 +146,7 @@ public class RegisterController {
         Exception ex = mex;
         String retInfo = "";
         ex.printStackTrace();
-        do {
+        if (ex != null) {
             if ((ex instanceof SendFailedException)) {
                 SendFailedException sfex = (SendFailedException)ex;
                 //无效的地址
@@ -166,7 +176,7 @@ public class RegisterController {
                 }
             }
             ex = null;
-        } while (ex != null);
+        }
         return retInfo;
     }
     /**
@@ -450,7 +460,7 @@ public class RegisterController {
                 user.setValidataSequence(validatsaSequence);
                 rst = userService.insertUser(user);
             } catch(Exception e) {
-            	throw new Data1102CException(e.getMessage());
+            	throw new Dtal(e.getMessage());
                 retMap.put("success", false);
                 retMap.put("retInfo", e.getMessage());
                 return retMap;
