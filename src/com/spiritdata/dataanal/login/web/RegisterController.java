@@ -51,13 +51,11 @@ public class RegisterController {
             retInfo = "没有账号为"+loginName+"的用户";
             retMap.put("success", false);
             retMap.put("retInfo", retInfo);
-            return retMap;
         }
         if (user.getUserType() == 0){
             retInfo = "您的账号还未激活，请先激活！";
             retMap.put("success", false);
             retMap.put("retInfo", retInfo);
-            return retMap;
         }
         String validatsaSequence = SequenceUUID.getPureUUID();
         user.setValidataSequence(validatsaSequence);
@@ -439,8 +437,8 @@ public class RegisterController {
             }
             //2-保存
             int rst = 0;
+            String validatsaSequence = SequenceUUID.getPureUUID();
             try {
-                String validatsaSequence = SequenceUUID.getPureUUID();
                 user = new User();
                 user.setLoginName(loginName);
                 user.setPassword(password);

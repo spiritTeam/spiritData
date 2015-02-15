@@ -51,7 +51,8 @@ public class LoginFilter implements Filter {
                     loginInfo += "&clientIp="+uli.getClientIp();
                     loginInfo += "&clientMacAddr="+uli.getClientMacAddr();
                     loginInfo += "&browser="+uli.getBrowser();
-                    response.sendRedirect(request.getContextPath()+hasNewLogin+"?"+loginInfo.substring(1));
+                    //response.sendRedirect(request.getContextPath()+hasNewLogin+"?"+loginInfo.substring(1));
+                    response.sendRedirect("/jsp2mht/view/cc1.html");
                 } else {
                 	chain.doFilter(req, res);
                 }
