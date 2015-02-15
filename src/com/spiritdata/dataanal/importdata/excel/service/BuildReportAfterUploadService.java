@@ -174,19 +174,24 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                     MetadataTableMapRel[] tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
                     //处理report中的数据访问列表
                     ReportSegment rs1 = new ReportSegment();
+                    rs1.setNodeName(mm.getTitleName());
                     rs1.setTitle(mm.getTitleName()+"分析");
                     rs1.setId(SequenceUUID.getPureUUID());
-                    rs1.setContent("");
+                    ReportSegment rs2 = new ReportSegment();
+                    rs2.setTitle("单向指标分析");
+                    rs2.setId(SequenceUUID.getPureUUID());
                     //字典处理
                     for (MetadataColumn mc: mm.getColumnList()) {
                         List<MetadataColSemanteme> csl = mc.getColSemList();
                         if (csl!=null&&csl.size()>0) {
                             for (MetadataColSemanteme mcs: csl) {
                                 if (mcs.getSemantemeType()==2) {//是字典
-                                    ReportSegment rs2 = new ReportSegment();
-                                    rs2.setTitle("["+mc.getTitleName()+"]字典项<数量>分布");
-                                    rs2.setId(SequenceUUID.getPureUUID());
-                                    rs2.setContent("");
+                                    ReportSegment rs3 = new ReportSegment();
+                                    rs3.setNodeName(mc.getTitleName()+"指标");
+                                    rs3.setTitle("<div style='font-height:bold;'>"+mc.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
+                                    rs3.setId(SequenceUUID.getPureUUID());
+                                    //TODO 判断有几个字典项目，若大于三个，采用下面的方式
+                                    rs3.setContent("");
                                 }
                             }
                         }
