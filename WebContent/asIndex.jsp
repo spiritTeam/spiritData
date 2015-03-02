@@ -265,6 +265,16 @@ function uploadF() {
 $(function() {
   //初始化按钮
   initButton();
+  var url = window.location.href;
+  if (url.indexOf("?nolog")>0) {
+  	var nologType = getUrlParam(window.location.href, "type");
+  	if (nologType=="1") login();
+  	else if (nologType=="2") {
+      $.messager.alert("提示", "请先登录！", "info", function(){
+      	login();
+      });
+  	}
+  }
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
     $.messager.alert("页面初始化失败", initStr, "error");

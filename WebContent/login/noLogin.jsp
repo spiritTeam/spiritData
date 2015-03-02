@@ -17,12 +17,23 @@
 var noLoginUrl="<%=path%>/asIndex.jsp?nolog";
 
 var mainPage=getMainPage();
-if (mainPage) {
-  mainPage.location.href=noLoginUrl;
-}
-else {
-  var topWin = getTopWin();
-  topWin.location.href=noLoginUrl;
+winId = getUrlParam(window.location.href, "_winID");
+if (winId) {
+  if (mainPage) {
+  	mainPage.$.messager.alert("提示", "请先登录！", "info", function() {
+      mainPage.location.href=noLoginUrl+"&type=1";
+    });
+  } else {
+    $.messager.alert("提示", "请先登录！", "info", function() {
+      window.location.href=noLoginUrl+"&type=1";
+    });
+  }
+} else {
+  if (mainPage) {
+    mainPage.location.href=noLoginUrl+"&type=2";
+  } else {
+    window.location.href=noLoginUrl+"&type=2";
+  }
 }
 </script>
 </body>

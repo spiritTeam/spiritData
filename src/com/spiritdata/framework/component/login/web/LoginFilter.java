@@ -51,13 +51,13 @@ public class LoginFilter implements Filter {
                     loginInfo += "&clientIp="+uli.getClientIp();
                     loginInfo += "&clientMacAddr="+uli.getClientMacAddr();
                     loginInfo += "&browser="+uli.getBrowser();
-                    //response.sendRedirect(request.getContextPath()+hasNewLogin+"?"+loginInfo.substring(1));
-                    response.sendRedirect("/jsp2mht/view/cc1.html");
-                } else {
-                	chain.doFilter(req, res);
-                }
+                    loginInfo += "&"+request.getQueryString();
+                    response.sendRedirect(request.getContextPath()+hasNewLogin+"?"+loginInfo.substring(1));
+                } else chain.doFilter(req, res);
             } else {
-            	response.sendRedirect(request.getContextPath()+noLogin);
+                String newUrl = request.getContextPath()+noLogin;
+                newUrl = (newUrl.indexOf("?")==-1?newUrl+"?"+request.getQueryString():newUrl+"&"+request.getQueryString());
+                response.sendRedirect(newUrl);
             }
         } catch (Exception e) {
             logger.error("登录验证过滤器产生异常：",e);
