@@ -24,8 +24,6 @@ import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
-import com.spiritdata.dataanal.exceptionC.Dtal0001CException;
-import com.spiritdata.dataanal.exceptionC.Dtal1101CException;
 import com.spiritdata.dataanal.exceptionC.Dtal1102CException;
 import com.spiritdata.dataanal.exceptionC.Dtal1103CException;
 import com.spiritdata.dataanal.exceptionC.Dtal1104CException;
@@ -108,9 +106,9 @@ public class RegisterController {
         String retInfo = "";
         if(user==null||user.equals("")){
             retMap.put("success", false);
-            retInfo = "修改异常,请重试"+loginName+"的用户，请重新";
+            retInfo = "修改异常,请重试,未找到账号为"+loginName+"的用户，请重新填写账号！";
             retMap.put("retInfo", retInfo);
-            throw new Dtal1104CException(retInfo);
+            throw new Dtal1104CException("为找到该账号对应的用户！");
         }else{
             user.setPassword(password);
             user.setMailAdress(mailAdress);
@@ -129,7 +127,7 @@ public class RegisterController {
                 retMap.put("success", true);
                 retMap.put("retInfo", "修改成功");
             }else{
-            	retInfo = "修改用户信息失败";
+                retInfo = "保存用户信息失败!";
                 retMap.put("success", false);
                 retMap.put("retInfo", retInfo);
                 throw new Dtal1102CException(retInfo);
@@ -428,6 +426,7 @@ public class RegisterController {
         String userName = request.getParameter("userName");
         String mailAdress = request.getParameter("mailAdress");
         Map<String,Object> retMap = new HashMap<String,Object>();
+        Exception ee = null;
         String retInfo = "";
         try {
             //1-检查
@@ -440,10 +439,10 @@ public class RegisterController {
                 if (retInfo.length()>0) {
                     retMap.put("success", false);
                     retMap.put("retInfo", retInfo.substring(5));
-                    return retMap;
                 }
             } catch(Exception e) {
-            	throw new Dtal0001CException("检查是否可以保存注册人信息是，逻辑异常",e);
+                ee = new Dtal1104CException(retInfo,e);
+                return retMap;
             }
             //2-保存
             int rst = 0;
@@ -460,10 +459,11 @@ public class RegisterController {
                 user.setValidataSequence(validatsaSequence);
                 rst = userService.insertUser(user);
             } catch(Exception e) {
-            	throw new Dtal(e.getMessage());
                 retMap.put("success", false);
                 retMap.put("retInfo", e.getMessage());
+                ee = new Dtal1102CException(e.getMessage());
                 return retMap;
+                
             }
             if (rst==1) {
                 //删除储存验证码的文件夹
@@ -482,26 +482,33 @@ public class RegisterController {
                     retInfo = "注册成功，已经向您的邮箱发送一封邮件，请登陆邮箱激活账号";
                     retMap.put("retInfo", retInfo);
                     //删除验证码
-                    
                     return retMap;
                 }catch(MessagingException mex){
-                	throw new Data1101Exception(mex.getMessage());
-//                    retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
-//                    retMap.put("success", false);
-//                    retMap.put("retInfo", retInfo);
-//                    return retMap;
+                    retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
+                    retMap.put("success", false);
+                    retMap.put("retInfo", retInfo);
+                    ee = new Dtal1103CException(retInfo);
+                    return retMap;
                 }
             }else{
                 retMap.put("success", false);
                 retInfo = "注册不成功，请稍后重试！";
                 retMap.put("retInfo", retInfo);
+                ee = new Dtal1102CException(retInfo);
                 return retMap;
             }
         } catch(Exception e) {
             retMap.put("success", false);
-            retInfo = "注册不成功，请稍后重试！";
+            retInfo = "注册失败，请稍后重试！";
             retMap.put("retInfo", retInfo);
+            ee = new Dtal1102CException(retInfo);
             return retMap;
+        }finally{
+            try {
+                if (ee!=null) throw ee;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     /**
@@ -513,6 +520,7 @@ public class RegisterController {
         retMap.put("success", false);
         String loginName = request.getParameter("loginName");
         String password = request.getParameter("password");
+        Exception ee = null;
         try{
             User user = userService.getUserByLoginName(loginName);
             if (user!=null&&!user.equals("")) {
@@ -523,19 +531,33 @@ public class RegisterController {
                         retMap.put("retInfo", "登陆成功!");
                         retMap.put("success", true);
                         retMap.put("userState", user.getUserState());
+                        return retMap;
                     } else {
                         retMap.put("retInfo", "登陆成功!");
                         retMap.put("success", true);
                         retMap.put("userState", user.getUserState());
+                        return retMap;
                     }
                 } else {
                     retMap.put("retInfo", "密码不正确!");
+                    ee = new Dtal1104CException("密码不正确!");
+                    return retMap;
                 }
-            } else retMap.put("retInfo", "账号不正确!");
+            } else {
+                retMap.put("retInfo", "账号不正确!");
+                ee = new Dtal1104CException("账号不正确!");
+                return retMap;
+            }
         } catch(Exception e) {
             retMap.put("retInfo", "登陆异常:"+e.getMessage());
-            throw new Dtal1101CException(msg);
+            e.printStackTrace();
+            return retMap;
+        }finally{
+            try {
+                if (ee!=null) throw ee;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return retMap;
     }
 }

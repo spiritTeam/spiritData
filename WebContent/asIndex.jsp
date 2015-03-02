@@ -1,5 +1,7 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="java.util.*"%>
+<%@page import="com.spiritdata.framework.FConstants"%>
+<%@page import="com.spiritdata.dataanal.UGA.pojo.User"%>
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
@@ -7,8 +9,14 @@
   String action = (String)request.getAttribute("action");
   String actionUrl = "";
   if(action!=null&&!action.equals("")) actionUrl = (String)request.getAttribute("actionUrl");
-  //String loginName = request.getParameter("loginName");
-  //
+  User user = ((User)session.getAttribute(FConstants.SESSION_USER));
+  String loginName = "";
+  int userState = 0;
+  if (user != null) {
+    loginName = user.getLoginName();
+    userState = user.getUserState();
+  }
+  
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -146,12 +154,12 @@
 <!-- 头部:悬浮 -->
 <div id="topSegment">
   <div style="float:right;">
-    <div ><%=sid %>||<a id="loginButton" onclick="login();" href="#">登录</a>
-      <a id="logoutButton" onclick="logout();" href="#">注销</a>
-      <a id="modifyPwdButton" onclick="modifyPwd();" href="#" >修改密码</a>
-      <a id="" onclick="register()" href="#">注册</a>
+    <div ><%=sid %>||<a id="login" onclick="login();" href="#">登录</a>
+      <a id="logout" onclick="logout();" href="#">注销</a>
+      <a id="modifyPassword" onclick="modifyPwd();" href="#" >修改密码</a>
+      <a id=register onclick="register()" href="#">注册</a>
       <a id="test" onclick="testW();" href="#" >窗口测试</a>
-      <a id="test" onclick="modifyMail();" href="#" >修改1</a>
+      <a id="modifyMail" onclick="modifyMail();" href="#" >修改邮箱</a>
       <input id="loginStatus" type="hidden" value="">
       <input id="loginName" type="hidden" value="">
     </div>
@@ -255,6 +263,8 @@ function uploadF() {
 }
 //主函数
 $(function() {
+  //初始化按钮
+  initButton();
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
     $.messager.alert("页面初始化失败", initStr, "error");
@@ -559,6 +569,29 @@ function onlyLogout(ip, mac, browser) {
   if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   $.messager.alert("提示", msg+"<br/>现返回登录页面。", "info", function(){ logout(); });
 }
+
+//初始化按钮======
+function initButton(){
+  var lgName = '<%=loginName%>';
+  var uState = '<%=userState %>';
+  if (lgName!=null&&lgName!="") {
+    $('#loginStatus').val(1);
+    $('#loginName').val(lgName);
+    $('#logout').css('display','null');
+    $('#login').css('display','none');
+    $('#modifyMail').css('display','none');
+    $('#register').css('display','none');
+    if (uState!=0) $('modifyMail').css('display','none');
+    $('#modifyPassword').html("");
+    $('#modifyPassword').html("修改密码");
+  }else{
+    $('#logout').css('display','none');
+    $('#login').css('display','null');
+    $('#modifyPassword').html("");
+    $('#modifyPassword').html("忘记密码");
+  }
+  
+}
 /**
  * 注销
  */
@@ -572,6 +605,10 @@ function logout() {
         $.messager.alert("注销信息","注销成功!",'info',function(){
           //window.location.href="<%=path%>/login/login.jsp?noAuth";
           window.location.href="<%=path%>/asIndex.jsp";
+          $('#logout').css('display','none');
+          $('#login').css('display','null');
+          $('#modifyPassword').html("");
+          $('#modifyPassword').html("忘记密码");
         });
       } else {
         if(json.data==null){
