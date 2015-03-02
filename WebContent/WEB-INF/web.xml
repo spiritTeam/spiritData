@@ -102,6 +102,6 @@
   </servlet-mapping>
   <!-- end Servlet设置 -->
   <welcome-file-list>
-    <welcome-file>asIndex1.jsp</welcome-file>
+    <welcome-file>asIndex.jsp</welcome-file>
   </welcome-file-list>
 </web-app>
