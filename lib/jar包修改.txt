@@ -1,4 +1,4 @@
-1-把plugin删除，目前plugin中是UGA的内容，目前不需要
+﻿1-把plugin删除，目前plugin中是UGA的内容不需要
 2-配置文件删除
   a)mybatisConfig/dcSys.mapper.cfg.xml
   b)springConfig/gisSmSpring.xml
