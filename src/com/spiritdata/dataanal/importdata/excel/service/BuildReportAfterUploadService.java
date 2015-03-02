@@ -177,6 +177,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                     rs1.setNodeName(mm.getTitleName());
                     rs1.setTitle(mm.getTitleName()+"分析");
                     rs1.setId(SequenceUUID.getPureUUID());
+
                     ReportSegment rs2 = new ReportSegment();
                     rs2.setTitle("单向指标分析");
                     rs2.setId(SequenceUUID.getPureUUID());

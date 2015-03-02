@@ -94,7 +94,7 @@ public class MdDictService {
                         mcs.setId(SequenceUUID.getPureUUID());
                         mcs.setColId(mm.getColumnByCName(key).getId());
                         mcs.setMdMId(mm.getId());
-                        mcs.setSemantemeType(2);//字典型
+                        mcs.setSemantemeType(1);//字典型
                         mcs.setSemantemeCode(dm.getId());
                         mcs.setSemantemeWeight((Float)v);
                         //数据库处理

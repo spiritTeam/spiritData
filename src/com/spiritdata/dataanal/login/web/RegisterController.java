@@ -24,6 +24,11 @@ import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;
+import com.spiritdata.dataanal.exceptionC.Dtal0001CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1101CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1102CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1103CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1104CException;
 import com.spiritdata.dataanal.login.util.RandomValidateCode;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
 
@@ -49,19 +54,19 @@ public class RegisterController {
             retInfo = "没有账号为"+loginName+"的用户";
             retMap.put("success", false);
             retMap.put("retInfo", retInfo);
-            return retMap;
+            throw new Dtal1104CException(retInfo);
         }
-        if (user.getUserType() == 0){
+        if (user.getUserType() == 0) {
             retInfo = "您的账号还未激活，请先激活！";
             retMap.put("success", false);
             retMap.put("retInfo", retInfo);
-            return retMap;
+            throw new Dtal1104CException(retInfo);
         }
         String validatsaSequence = SequenceUUID.getPureUUID();
         user.setValidataSequence(validatsaSequence);
         user.setUserState(3);
         User suser = (User) request.getSession().getAttribute("FConstants.SESSION_USER");
-        if (suser!=null&&!suser.equals("")){
+        if (suser!=null&&!suser.equals("")) {
             suser.setUserState(3);
             suser.setValidataSequence(validatsaSequence);
         }
@@ -81,10 +86,10 @@ public class RegisterController {
             retInfo = "已经向您的邮箱发送一封邮件，请注意查看!";
             retMap.put("retInfo", retInfo);
         }catch (MessagingException mex) {
-            
             retInfo = dwMEXException(mex);
             retMap.put("success", false);
             retMap.put("retInfo", retInfo);
+            throw new Dtal1103CException(retInfo);
         }
         return retMap;
     }
@@ -100,9 +105,12 @@ public class RegisterController {
         String userName = request.getParameter("userName");
         String mailAdress = request.getParameter("mailAdress");
         User user = userService.getUserByLoginName(loginName);
+        String retInfo = "";
         if(user==null||user.equals("")){
             retMap.put("success", false);
-            retMap.put("retInfo", "修改异常,请重试"+loginName+"的用户，请重新");
+            retInfo = "修改异常,请重试"+loginName+"的用户，请重新";
+            retMap.put("retInfo", retInfo);
+            throw new Dtal1104CException(retInfo);
         }else{
             user.setPassword(password);
             user.setMailAdress(mailAdress);
@@ -121,8 +129,10 @@ public class RegisterController {
                 retMap.put("success", true);
                 retMap.put("retInfo", "修改成功");
             }else{
+            	retInfo = "修改用户信息失败";
                 retMap.put("success", false);
-                retMap.put("retInfo", "修改失败");
+                retMap.put("retInfo", retInfo);
+                throw new Dtal1102CException(retInfo);
             }
         }
         return retMap;
@@ -136,7 +146,7 @@ public class RegisterController {
         Exception ex = mex;
         String retInfo = "";
         ex.printStackTrace();
-        do {
+        if (ex != null) {
             if ((ex instanceof SendFailedException)) {
                 SendFailedException sfex = (SendFailedException)ex;
                 //无效的地址
@@ -166,7 +176,7 @@ public class RegisterController {
                 }
             }
             ex = null;
-        } while (ex != null);
+        }
         return retInfo;
     }
     /**
@@ -381,19 +391,6 @@ public class RegisterController {
         
     }
     /**
-     * 验证登录名
-     */
-    @RequestMapping("login/validateLoginName.do")
-    public @ResponseBody boolean validateLoginName(HttpServletRequest request) {
-        String loginName = request.getParameter("loginName");
-        User user = userService.getUserByLoginName(loginName);
-        if(user!=null){
-            return false;
-        }else{
-            return true;
-        }
-    }
-    /**
      * 验证邮箱
      */
     @RequestMapping("login/validateMail.do")
@@ -430,34 +427,44 @@ public class RegisterController {
         String password = request.getParameter("password");
         String userName = request.getParameter("userName");
         String mailAdress = request.getParameter("mailAdress");
-
         Map<String,Object> retMap = new HashMap<String,Object>();
         String retInfo = "";
-
         try {
-            User user = userService.getUserByLoginName(loginName);
-            if (user!=null) retInfo+= "<br/>["+loginName+"]账号已被使用";
-
-            user = userService.getUserByMailAdress(mailAdress);
-            if (user!=null) retInfo+= "<br/>["+mailAdress+"]邮箱已被注册";
-
-            if (retInfo.length()>0) {
+            //1-检查
+            User user = null;
+            try {
+                user = userService.getUserByLoginName(loginName);
+                if (user!=null) retInfo+= "<br/>["+loginName+"]账号已被使用";
+                user = userService.getUserByMailAdress(mailAdress);
+                if (user!=null) retInfo+= "<br/>["+mailAdress+"]邮箱已被注册";
+                if (retInfo.length()>0) {
+                    retMap.put("success", false);
+                    retMap.put("retInfo", retInfo.substring(5));
+                    return retMap;
+                }
+            } catch(Exception e) {
+            	throw new Dtal0001CException("检查是否可以保存注册人信息是，逻辑异常",e);
+            }
+            //2-保存
+            int rst = 0;
+            String validatsaSequence = SequenceUUID.getPureUUID();
+            try {
+                user = new User();
+                user.setLoginName(loginName);
+                user.setPassword(password);
+                user.setMailAdress(mailAdress);
+                user.setUserName(userName);
+                user.setUserId(SequenceUUID.getPureUUID());
+                user.setUserState(0);
+                user.setUserType(1);
+                user.setValidataSequence(validatsaSequence);
+                rst = userService.insertUser(user);
+            } catch(Exception e) {
+            	//throw new Dtal(e.getMessage());
                 retMap.put("success", false);
-                retMap.put("retInfo", retInfo.substring(5));
+                retMap.put("retInfo", e.getMessage());
                 return retMap;
             }
-
-            String validatsaSequence = SequenceUUID.getPureUUID();
-            user = new User();
-            user.setLoginName(loginName);
-            user.setPassword(password);
-            user.setMailAdress(mailAdress);
-            user.setUserName(userName);
-            user.setUserId(SequenceUUID.getPureUUID());
-            user.setUserState(0);
-            user.setUserType(1);
-            user.setValidataSequence(validatsaSequence);
-            int rst = userService.insertUser(user);
             if (rst==1) {
                 //删除储存验证码的文件夹
                 String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
@@ -478,10 +485,11 @@ public class RegisterController {
                     
                     return retMap;
                 }catch(MessagingException mex){
-                    retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
-                    retMap.put("success", false);
-                    retMap.put("retInfo", retInfo);
-                    return retMap;
+                	//throw new Data1101Exception(mex.getMessage());
+//                    retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
+//                    retMap.put("success", false);
+//                    retMap.put("retInfo", retInfo);
+//                    return retMap;
                 }
             }else{
                 retMap.put("success", false);
@@ -491,10 +499,15 @@ public class RegisterController {
             }
         } catch(Exception e) {
             retMap.put("success", false);
-            retMap.put("retInfo", e.getMessage());
+            retInfo = "注册不成功，请稍后重试！";
+            retMap.put("retInfo", retInfo);
             return retMap;
         }
+        return null;
     }
+    /**
+     * 修改邮箱
+     */
     @RequestMapping("/login/modifyMail.do")
     public @ResponseBody Map<String,Object> modifyMail(HttpServletRequest request){
         Map<String,Object> retMap = new HashMap<String,Object>();
@@ -522,6 +535,7 @@ public class RegisterController {
             } else retMap.put("retInfo", "账号不正确!");
         } catch(Exception e) {
             retMap.put("retInfo", "登陆异常:"+e.getMessage());
+            //throw new Dtal1101CException(msg);
         }
         return retMap;
     }
