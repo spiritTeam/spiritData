@@ -285,7 +285,6 @@ function login(pData){
             mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
               var loginStatus = mainPage.document.getElementById("loginStatus");
               var loginName = mainPage.document.getElementById("loginName");
-              var logout = mainPage.document.getElementById("logout");
               var login = mainPage.document.getElementById("login");
               var modifyMail = mainPage.document.getElementById("modifyMail");
               var register = mainPage.document.getElementById("register");
