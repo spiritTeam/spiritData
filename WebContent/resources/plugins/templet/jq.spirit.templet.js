@@ -463,7 +463,6 @@
           }else{
             var firstNum = exp.split("|")[0];
             var oderCol = exp.split("|")[1];
-            // TODO 调整排序
             //接下来排序？sort
             var ary = sort(1,fData,oderCol,firstNum);
             var showStr = "";

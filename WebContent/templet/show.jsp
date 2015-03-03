@@ -31,7 +31,7 @@ body {
 var k=10000;
 var y = 1;
 $(function(){
-  var templetId = "2323e";alert('aaa');
+  var templetId = "2323e";
   var templetUrl = "<%=path%>/report/getReport.do";
   $.templetJD(templetUrl,templetId);
 });
