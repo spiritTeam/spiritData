@@ -31,8 +31,8 @@ body {
 var k=10000;
 var y = 1;
 $(function(){
-  var templetId = "2323e";
-  var templetUrl = "<%=path%>/templet/getTemplet.do";
+  var templetId = "2323e";alert('aaa');
+  var templetUrl = "<%=path%>/report/getReport.do";
   $.templetJD(templetUrl,templetId);
 });
 </script>
