@@ -48,9 +48,9 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
      * @param param 完成本过程需要的数据，必须包括预处理需要的数据，应放入preTreadParam参数中
      */
     /*
-     * 1-通过与处理过程获得需要的数据
+     * 1-通过预处理过程获得需要的数据
      * 2-生成报告 OK
-     * 3-生成任务
+     * 3-处理任务
      * 4-进行持久化存储——报告+任务
      * 5-以Session为容器，构建任务执行的上下文
      * 6-启动任务
@@ -91,5 +91,8 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         //2.3-报告信息数据库存储
         reportService.saveReport(tr);
         //3-处理任务
+        //4-进行持久化存储——报告+任务
+        //5-以Session为容器，构建任务执行的上下文
+        //6-启动任务
     }
  }
