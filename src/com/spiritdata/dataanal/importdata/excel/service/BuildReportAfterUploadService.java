@@ -33,6 +33,8 @@ import com.spiritdata.dataanal.task.model.TaskInfo;
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.framework.FConstants;
+import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.jsonD.util.JsonUtils;
@@ -65,6 +67,27 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
     }
 
     @Override
+    /*
+     * 参数中的preTreadParam键的值还是Map，包括：
+     * ownerType——所有者类型
+     * ownerId——所有者Id
+     * impFileInfo——导入文件
+     *                 Map<String, Object> preTreadParam = new HashMap<String, Object>();
+                preTreadParam.put("reportParam", reportParam);
+                String ownerId = session.getId();
+                int ownerType = 2;
+                UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
+                if (user!=null) {
+                    ownerId = user.getUserId();
+                    ownerType = 1;
+                }
+                preTreadParam.put("ownerType", ownerType);
+                preTreadParam.put("ownerId", ownerId);
+                preTreadParam.put("impFileInfo", fi);
+                param.put("preTreadParam", preTreadParam);
+ 
+     * @see com.spiritdata.dataanal.report.generate.GenerateReport#preTreat(java.util.Map)
+     */
     public Map<String, Object> preTreat(Map<String, Object> param) {
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
@@ -160,7 +183,8 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
             arf.setObjId(JsonUtils.objToJson(mdl)); //所分析对象的ID
             arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
             arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
-            getMDInfos_Task.setResultFile(arf);
+            analSingleDict_Task.setResultFile(arf);
+            report.addOneJsond(TaskUtils.convert2AccessJsondOne(analSingleDict_Task));
         }
 
         //组织报告的内容
