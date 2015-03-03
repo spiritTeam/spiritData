@@ -22,12 +22,12 @@
   /**
    * 主函数入口
    */
-  $.templetJD = function(templetUrl,templetId,deployPath){
+  $.templetJD = function(reportUrl,reportId,deployPath){
     //1,画pageFrame
     initPageFrame();
     //2，从后台请求数据
-    var pData = {'templetId':templetId};
-    $.ajax({type:"post",url:templetUrl,data:pData,dataType:"json",
+    var pData = {'reportId':reportId};
+    $.ajax({type:"post",url:reportUrl,data:pData,dataType:"json",
       success:function(json){
         var templetJsonObj=str2JsonObj(json);
         if(templetJsonObj.jsonType==1){
@@ -47,6 +47,13 @@
           //显示树的部分
           $('#catalogTree').tree({animate:true});
           $('#catalogTree').tree("loadData", segTree);
+          //为树结点绑定锚点
+          $('#catalogTree').tree({
+            onClick: function(node){alert(node.eleId);
+              $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top});
+              //TODO
+            }
+          });
         }else{
           $.messager.alert("提示",jsonData.message,'info');
         }
@@ -176,15 +183,18 @@
       var segId = segArray[i].id;
       //第一层的时候title中没有style标签，第二层有 ,可以跟晖哥商量下title标签问题？
       //title是放在div下面的span中还是直接放在div中
-      var _dataAry;
+      var _dataAry = null;
+      var eleId;
       if(segArray[i].title){
         //segTitle
-        var segTitle = $('<div id="'+segId+'_title" class="segTitle_'+treeLevel+'"></div>');
+        eleId = segId+'_title';
+        var segTitle = $('<div id="'+eleId+'" class="segTitle_'+treeLevel+'"></div>');
         segTitle.html(segArray[i].title);
         segGroup.append(segTitle);
-      }else if(segArray[i].content){
+      }else{ //if(segArray[i].content)
         //segContent
-        var segContent= $('<div id="'+segId+'_frag'+i+'" class="segContent_'+treeLevel+'"/></div>');
+        eleId = segId+'_frag'+i;
+        var segContent= $('<div id="'+eleId+'" class="segContent_'+treeLevel+'"/></div>');
         var content = segArray[i].content;
         if(content) {
           var eleS = content.match(/<d\s./g);
@@ -242,6 +252,7 @@
         treeNode.segId = segArray[i].id;
         treeNode.children = new Array();
         treeNode.dataAry = _dataAry;
+        treeNode.eleId = eleId;
         if (parent==null) {
           segTree[i]=treeNode;
         } else {
