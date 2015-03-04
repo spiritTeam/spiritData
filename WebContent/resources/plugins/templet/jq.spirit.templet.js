@@ -16,13 +16,13 @@
   var level=0;
   //用于存放jsonDInfo
   var jsonDInfoArray = [];
-  //用于存放dataId,方便最后一不进行搜索dom
+  //用于存放dataId,方便最后一步进行搜索dom
   var dataIdAry = new Array();
 
   /**
    * 主函数入口
    */
-  $.templetJD = function(reportUrl,reportId,deployPath){
+  $.templetJD = function(reportUrl,reportId) {
     //1,画pageFrame
     initPageFrame();
     //2，从后台请求数据
@@ -30,18 +30,18 @@
     $.ajax({type:"post",url:reportUrl,data:pData,dataType:"json",
       success:function(json){
         var templetJsonObj=str2JsonObj(json);
-        if(templetJsonObj.jsonType==1){
+        if (templetJsonObj.jsonType==1) {
           var templetJD = templetJsonObj.data;
           //3，根据templetD构造出树和框
           //主体
-          var _TEMPLET = templetJD._TEMPLET;
+          var _REPORT = templetJD._REPORT;
           //标题
           var _HEAD = templetJD._HEAD;
           //jsonDurl 用于请求jsond
           var _DATA = templetJD._DATA;
           dataIdAry = getJsonD(_DATA);
           $('#rTitle').html(_HEAD.reportName);
-          buildSegmentGroup($('#reportFrame'), _TEMPLET, level, null);
+          buildSegmentGroup($('#reportFrame'), _REPORT, level, null);
           //显示 
           resolveAndDraw();
           //显示树的部分
@@ -49,9 +49,8 @@
           $('#catalogTree').tree("loadData", segTree);
           //为树结点绑定锚点
           $('#catalogTree').tree({
-            onClick: function(node){alert(node.eleId);
+            onClick: function(node){
               $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top});
-              //TODO
             }
           });
         }else{
@@ -71,31 +70,31 @@
   function resolveAndDraw(){
     //根据dataIdAry中的id抓取dom
     var domAry = new Array();
-    for(var i=0;i<dataIdAry.length;i++) {
-      var attr = "_data="+dataIdAry[i];
+    for (var i=0;i<dataIdAry.length;i++) {
+      var attr = "_did="+dataIdAry[i];
       var _domAry = $('['+attr+']').toArray();
       domAry[i] = _domAry;
     }
     //用于判断执行和关闭setInterval
     var _dataIdAry = new Array();
     //起setInterval
-    var intervalId = setInterval(function(){
-      if(_dataIdAry.length==dataIdAry.length) {
+    var intervalId = setInterval(function() {
+      if (_dataIdAry.length==dataIdAry.length) {
         //关闭setInterval
         clearInterval(intervalId);
       }
       //循环jsonDInfoArray，看是否已经取到jsond
-      for(var i=0;i<jsonDInfoArray.length;i++){
+      for (var i=0;i<jsonDInfoArray.length;i++) {
         var jsondInfo = jsonDInfoArray[i];
-        if(_dataIdAry.toString().indexOf(jsondInfo.id)==-1){
+        if (_dataIdAry.toString().indexOf(jsondInfo.id)==-1) {
           //起setInterval,检查d元素是否到位
-          if(jsondInfo.jsond!=null&&jsondInfo.jsond!=""){
-            for(var k=0;k<domAry.length;k++){
+          if (jsondInfo.jsond!=null&&jsondInfo.jsond!="") {
+            for (var k=0;k<domAry.length;k++) {
               var _domAry = domAry[k];
               var _DATA = jsondInfo.jsond._DATA;
-              if(jsondInfo.id == $(_domAry[0]).attr('_data')){
+              if (jsondInfo.id == $(_domAry[0]).attr('_did')) {
                 //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
-                for(var j=0;j<_domAry.length;j++){
+                for (var j=0;j<_domAry.length;j++) {
                   parseEle($(_domAry[j]),_DATA);
                 }
                 _dataIdAry.push(jsondInfo.id);
@@ -113,17 +112,17 @@
    * _DATA:jsondUrl的请求数组
    */
   function getJsonD(_DATA){
-    if(_DATA==null||_DATA==""||_DATA[0]==null||_DATA[0]=="") return null;
+    if (_DATA==null||_DATA==""||_DATA[0]==null||_DATA[0]=="") return null;
     var i=0;
     //所有的jsonId
-    for(;i<_DATA.length;i++){
+    for (;i<_DATA.length;i++) {
       //jsondInfo
       var jsondInfo = new Object();
       jsondInfo.id = _DATA[i]._id;
       dataIdAry[i] = jsondInfo.id;
       jsondInfo.url =  _DATA[i]._url;
       //jsonD_code有时有，有时没有，负值的时候判断下
-      if(_DATA[i]._jsonD_code!=""&&_DATA[i]._jsonD_code!=null) jsondInfo.jsonD_code = _DATA[i]._jsonD_code;
+      if (_DATA[i]._jsonD_code!=""&&_DATA[i]._jsonD_code!=null) jsondInfo.jsonD_code = _DATA[i]._jsonD_code;
       else jsondInfo.jsonD_code = "";
       jsondInfo.jsond = null;
       jsonDInfoArray[i] = jsondInfo;
@@ -133,16 +132,16 @@
     //启动请求数据线程
     var intervalId = setInterval(function(){
       //如果两个数组长度一样,关闭线程
-      if(jsonDIdAry.length==jsonDInfoArray.length) clearInterval(intervalId);
+      if (jsonDIdAry.length==jsonDInfoArray.length) clearInterval(intervalId);
       //每次循环都将id拼起来，方便查找，
-      for(var k =0;k<jsonDInfoArray.length;k++){
+      for (var k =0;k<jsonDInfoArray.length;k++) {
         var str = "";
-        if(jsonDIdAry.length>0){
+        if (jsonDIdAry.length>0) {
           for(var y = 0;y<jsonDIdAry.length;y++) str+= jsonDIdAry[y]+"";
         }
         var id = jsonDInfoArray[k].id;
         //=-1表示未请求过，
-        if(str.lastIndexOf(id)==-1){
+        if (str.lastIndexOf(id)==-1) {
           $.ajax({type:"post",url:jsonDInfoArray[k].url,async:false,dataType:"json",
             success:function(json){
               var jsondJsonObj=str2JsonObj(json);
@@ -174,9 +173,9 @@
    */
   function buildSegmentGroup(jObj, segArray, treeLevel, parent) {
     //判断segArray
-    if(segArray==null||segArray=="") return "segArry 为空!";
+    if (segArray==null||segArray=="") return "segArry 为空!";
     //判断eleId
-    if(jObj==null) return "未知的eleId";
+    if (jObj==null) return "未知的eleId";
     //segGroup
     var segGroup = $('<div id="segGroup_'+treeLevel+'" class="segGroup_'+treeLevel+'"/></div>');
     for (var i=0;i<segArray.length;i++) {
@@ -185,48 +184,48 @@
       //title是放在div下面的span中还是直接放在div中
       var _dataAry = null;
       var eleId;
-      if(segArray[i].title){
+      if (segArray[i].title) {
         //segTitle
         eleId = segId+'_title';
         var segTitle = $('<div id="'+eleId+'" class="segTitle_'+treeLevel+'"></div>');
         segTitle.html(segArray[i].title);
         segGroup.append(segTitle);
-      }else{ //if(segArray[i].content)
+      } else { //if(segArray[i].content)
         //segContent
         eleId = segId+'_frag'+i;
         var segContent= $('<div id="'+eleId+'" class="segContent_'+treeLevel+'"/></div>');
         var content = segArray[i].content;
-        if(content) {
+        if (content) {
           var eleS = content.match(/<d\s./g);
           var reg = /<d\s.*?(><\/d>|\/>)/g;
           var pendingAry = new Array();
           var subAry = new Array();
           var subStart=0; 
-          for(var s=0;s<eleS.length;s++){
+          for (var s=0;s<eleS.length;s++) {
             var pendingStr = reg.exec(content);
             var start = pendingStr.index;
             var end = reg.lastIndex;
             pendingAry[s] = pendingStr[0];
             //每次只取前面的
             var subStr;
-            if(s!=eleS.length-1){
+            if (s!=eleS.length-1) {
               //不是最后一个d元素的时候
-              if(subStart==start) {
+              if (subStart==start) {
                 //subStart==end说明content是从d元素开始的,也可能是两个d连着的
                 subStr = "";
                 subAry[s] = subStr;
-              }else{
+              } else {
                 subStr = content.substring(subStart,start);
                 subAry[s] = subStr;
               }
-            }else{
+            } else {
               //是最后一个d元素的时候
-              if(subStart==start) {
+              if (subStart==start) {
                 //subStart==end说明content是从d元素开始的,也可能是两个d连着的
                 subStr = "";
                 subAry[s] = subStr;
                 subAry[s+1] = ""; 
-              }else{
+              } else {
                 subStr = content.substring(subStart,start);
                 subAry[s] = subStr;
                 var ending = content.substring(end,content.length);
@@ -258,24 +257,24 @@
         } else {
           parent.children[i] = treeNode;
         }
-        if(treeLevel>0){
+        if (treeLevel>0) {
           var pDataAry;
-          if(parent.dataAry) {
+          if (parent.dataAry) {
             pDataAry = parent.dataAry.toString();
-            for(var v=0;v<_dataAry.length;v++){
-              if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+","+_dataAry[v];
+            for (var v=0;v<_dataAry.length;v++) {
+              if (pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+","+_dataAry[v];
             }
-            if(pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
+            if (pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
             parent.dataAry = pDataAry.split(",");
-          }else{
+          } else {
             pDataAry = "";
-            for(var v=0;v<_dataAry.length;v++){
-              if(pDataAry!=""){
-                if(pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
-              }else pDataAry = pDataAry+_dataAry[v]+",";
-              if(pDataAry==",") pDataAry="";
+            for (var v=0;v<_dataAry.length;v++) {
+              if (pDataAry!="") {
+                if (pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
+              } else pDataAry = pDataAry+_dataAry[v]+",";
+              if (pDataAry==",") pDataAry="";
             }
-            if(pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
+            if (pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
             parent.dataAry = pDataAry.split(",");
           }
         }
@@ -296,29 +295,29 @@
   function templetContentParse(pendingAry,subAry){
     var newContent="";
     var _dataStr = "";
-    for(var i=0;i<pendingAry.length;i++){
+    for (var i=0;i<pendingAry.length;i++) {
       var ele = $(pendingAry[i]);
       //为找到的ele设id
       var id = ele.attr('showType')+i;
       ele.attr('id',id);
-      var _data = ele.attr('data')+",";
-      if(_dataStr=="") _dataStr = _dataStr +_data;
-      else if(_dataStr.indexOf(_data)==-1) _dataStr = _dataStr +_data;
+      var _data = ele.attr('did')+",";
+      if (_dataStr=="") _dataStr = _dataStr +_data;
+      else if (_dataStr.indexOf(_data)==-1) _dataStr = _dataStr +_data;
       var pendingStr = pendingAry[i];
-      pendingStr = pendingStr.replace(/data/,"id='"+id+"' _data");
-      if(ele.attr('showType')=="value"){
-        if(pendingStr.match(/></)!=null){
+      pendingStr = pendingStr.replace(/did/,"id='"+id+"' _did");
+      if (ele.attr('showType')=="value"){
+        if (pendingStr.match(/></)!=null){
           pendingStr = pendingStr.replace(/<d\s{1}/,"<span ");
           pendingStr = pendingStr.replace(/\/d>/,"/span>");
-        }else{
+        } else {
           pendingStr = pendingStr.replace(/<d\s{1}/,"<span ");
           pendingStr = pendingStr.replace(/\/>/,"></span>");
         }
-      }else{
-        if(pendingStr.match(/></)!=null){
+      } else {
+        if (pendingStr.match(/></)!=null){
           pendingStr = pendingStr.replace(/<d\s{1}/,"<div ");
           pendingStr = pendingStr.replace(/\/d>/,"/div>");
-        }else{
+        } else {
           pendingStr = pendingStr.replace(/<d\s{1}/,"<div ");
           pendingStr = pendingStr.replace(/\/>/,"></div>");
         }
@@ -326,10 +325,10 @@
       newContent = (newContent.concat(subAry[i],pendingStr));
     }
     newContent = newContent.concat(subAry[subAry.length-1]);
-    if(_dataStr.lastIndexOf(",")==_dataStr.length-1) _dataStr = _dataStr.substring(0, _dataStr.lastIndexOf(","));
+    if (_dataStr.lastIndexOf(",")==_dataStr.length-1) _dataStr = _dataStr.substring(0, _dataStr.lastIndexOf(","));
     var _dataAry = _dataStr.split(",");
     var retObj = new Object();
-    if(_dataAry==null) _dataAry.push("");
+    if (_dataAry==null) _dataAry.push("");
     retObj._dataAry = _dataAry;
     retObj.newContent = newContent;
     return retObj;
@@ -343,20 +342,20 @@
    * sortSize:获取个数
    */
   function sort(sortType, data, orderCol, firstNum) {
-    if(firstNum>data.length) firstNum = data.length;
+    if (firstNum>data.length) firstNum = data.length;
     var ret = new Array(firstNum);
     var usedIndexs="";
     if (data==null||data.length==0) return null;
     var _thisIndex=-1;
     for (var i=0; i<firstNum; i++) {
       var flagData = null;
-      for(var k=0;k<data.length;k++){
-        if(usedIndexs.indexOf(k)==-1) {
+      for (var k=0;k<data.length;k++) {
+        if (usedIndexs.indexOf(k)==-1) {
           flagData=eval("data["+k+"]."+orderCol);
           _thisIndex = k;
-          try{
+          try {
             flagData = parseFloat(flagData);
-          }catch(e){continue;}
+          } catch (e) {continue;}
           break;
         }
       }
@@ -365,7 +364,7 @@
         var _thisData = eval("data["+j+"]."+orderCol);
         try {
           _thisData = parseFloat(_thisData);
-        }catch(e) { continue; }
+        } catch (e) { continue; }
         if (sortType==1){
           if (_thisData>flagData) {
             flagData = _thisData;
@@ -409,9 +408,9 @@
     // 用来保存所有的属性名称和值 
     var retProps = new Object();
     // 开始遍历 
-    for ( var p in obj ){
+    for ( var p in obj ) {
       // 方法 
-      if ( typeof (obj[p]) == " function " ){
+      if ( typeof (obj[p]) == " function " ) {
         obj[p]();
       } else { 
         // p 为属性名称，obj[p]为对应属性的值 
@@ -435,11 +434,11 @@
     eval("var _data=_DATA."+value);
     var showType = jQobj.attr('showType');
     if (showType=="value") drawValue(jQobj, _data);
-    else if(showType=="table") drawTable(jQobj, _data);
-    else if(showType=="pie") drawPie(jQobj, _data);
-    else if(showType=="line") drawLine(jQobj, _data);
-    else if(showType=="bars") drawBar(jQobj, _data);
-    else if(showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
+    else if (showType=="table") drawTable(jQobj, _data);
+    else if (showType=="pie") drawPie(jQobj, _data);
+    else if (showType=="line") drawLine(jQobj, _data);
+    else if (showType=="bars") drawBar(jQobj, _data);
+    else if (showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
   }
 
   //以下方法为对showType的解析
@@ -459,27 +458,27 @@
     exp = removeSpace(exp);
     var decorateView = jQobj.attr('decorateView');
     //得到拍序列以及取数范围
-    if(decorateView){
+    if (decorateView) {
       var showColAry = decorateView.match(/#.*?#/g);
-      if(exp.charAt(0)=="!"){
+      if (exp.charAt(0)=="!") {
         //处理升序!(n|col)
-        if(exp.charAt(1)!="(") {
+        if (exp.charAt(1)!="(") {
           alert("缺失符号“(”");
           return;
-        }else{
+        } else {
           exp = removeBrackets(exp);
-          if(exp.lastIndexOf("|")==-1){
+          if (exp.lastIndexOf("|")==-1) {
             alert("缺失符号“|”");
             return;
-          }else{
+          } else {
             var firstNum = exp.split("|")[0];
             var oderCol = exp.split("|")[1];
             //接下来排序？sort
             var ary = sort(1,fData,oderCol,firstNum);
             var showStr = "";
-            for(var k=0;k<ary.length;k++){
+            for (var k=0;k<ary.length;k++) {
               var tt = decorateView;
-              for(var i=0;i<showColAry.length;i++){
+              for (var i=0;i<showColAry.length;i++) {
                 var showColExp = showColAry[i];
                 var showCol=showColExp.substring(showColExp.indexOf("#")+1,showColExp.lastIndexOf("#"));
                 eval("var sVal=ary["+k+"]."+showCol);
@@ -490,21 +489,21 @@
             jQobj.html(showStr);
           }
         }
-      }else{
+      } else {
         //处理降序n|col？
-        if(exp.lastIndexOf("|")==-1){
+        if (exp.lastIndexOf("|")==-1) {
           alert("缺失符号“|”");
           return;
-        }else{
+        } else {
           var firstNum = exp.split("|")[0];
-          if(firstNum>fData.length) firstNum = fData.length;
+          if (firstNum>fData.length) firstNum = fData.length;
           var oderCol = exp.split("|")[1];
           //接下来排序？
           var ary = sort(2,fData,oderCol,firstNum);
           var showStr = "";
-          for(var k=0;k<ary.length;k++){
+          for (var k=0;k<ary.length;k++) {
             var tt = decorateView;
-            for(var i=0;i<showColAry.length;i++){
+            for (var i=0;i<showColAry.length;i++) {
               var showColExp = showColAry[i];
               var showCol=showColExp.substring(showColExp.indexOf("#")+1,showColExp.lastIndexOf("#"));
               eval("var sVal=ary["+k+"]."+showCol);
@@ -513,7 +512,6 @@
             showStr = showStr+tt+"，";
           }
           jQobj.html(showStr);
-          
         }
       }
     }
@@ -526,7 +524,7 @@
     var table_body = _data.tableData.tableBody;
     var table_titles = _data.tableData.titles;
     var colAry = new Array();
-    for(var i=0;i<table_titles.length;i++){
+    for (var i=0;i<table_titles.length;i++) {
       //getAllPrpos得到对应的属性
       var titlePrpos = getAllPrpos(table_titles[i]);
       var col = new Object();
@@ -566,10 +564,10 @@
     var pie_dataBody = _data.tableData.tableBody;
     //在派中解析这个不知道有没有意义
     var decorateView = jQobj.attr('decorateView');
-    if(decorateView){
-      if(decorateView.indexOf("lableShow")==-1){
+    if (decorateView) {
+      if (decorateView.indexOf("lableShow")==-1) {
         alert("decorateView格式有出错");
-      }else{
+      } else {
         var b = decorateView.indexOf("[")+1;
         var e = decorateView.indexOf("]");
         var exp = decorateView.substring(b,e);
@@ -577,7 +575,7 @@
         //var decorateAry = exp.split(",");
       }
     }
-    for(var i=0;i<pie_dataBody.length;i++){ 
+    for (var i=0;i<pie_dataBody.length;i++) { 
       eval("var _pie_label=pie_dataBody[i]."+pieLabel);
       eval("var _pie_data=pie_dataBody[i]."+pieData);
       ary[i] = {label:_pie_label,data:_pie_data};
@@ -621,10 +619,10 @@
     var width = 40*line_dataBody.length;
     jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
     var decorateView = jQobj.attr('decorateView');
-    if(decorateView){
-      if(decorateView.indexOf("lableShow")==-1){
+    if (decorateView) {
+      if (decorateView.indexOf("lableShow")==-1) {
         alert("decorateView格式有出错");
-      }else{
+      } else {
         var b = decorateView.indexOf("[")+1;
         var e = decorateView.indexOf("]");
         var exp = decorateView.substring(b,e);
@@ -634,20 +632,20 @@
       }
     }
     eval("var showStyle = line_dataBody[0]."+decorateAry[1]);
-    if(!showStyle){
+    if (!showStyle) {
       var sum =0;
-      for(var i=0;i<line_dataBody.length;i++){
+      for (var i=0;i<line_dataBody.length;i++) {
         eval("var _y = line_dataBody[i]."+data);
         sum = sum+parseFloat(_y);
       }
-      for(var i=0;i<line_dataBody.length;i++){
+      for (var i=0;i<line_dataBody.length;i++) {
         eval("var _x = line_dataBody[i]."+label);
         eval("var _y = line_dataBody[i]."+data);
         _y = Math.round((parseFloat(_y)/sum*10000)/100.00)+"%";
         ary[i] = [_x,_y];
       }
-    }else{
-      for(var i=0;i<line_dataBody.length;i++){
+    } else {
+      for (var i=0;i<line_dataBody.length;i++) {
         eval("var _x = line_dataBody[i]."+label);
         eval("var _y = line_dataBody[i]."+decorateAry[1]);
         ary[i] = [_x,_y];
@@ -688,7 +686,7 @@
     var height = 20*line_dataBody.length;
     var width = 40*line_dataBody.length;
     jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
-    for(var i=0;i<line_dataBody.length;i++){
+    for (var i=0;i<line_dataBody.length;i++) {
       eval("var _x = line_dataBody[i]."+label);
       eval("var _y = line_dataBody[i]."+data);
       ary[i] = [_x,_y];
