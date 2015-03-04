@@ -50,7 +50,7 @@
           //为树结点绑定锚点
           $('#catalogTree').tree({
             onClick: function(node){
-              $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top});
+              $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top-70});
             }
           });
         }else{
