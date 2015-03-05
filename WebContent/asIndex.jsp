@@ -713,6 +713,14 @@ function testW() {
   openSWinInMain({height:"400px", width:"300px", title:"测试窗口", url:"<%=path%>/jsp2mht/view/cc1.html"});
   return;
 }
+
+//===根据登录状态，修改页面显示
+function setNoLogin() {
+	
+}
+function setLogined() {
+	
+}
 //以上为mht js代码，勿删撒=========================================================
 </script>
 </body>

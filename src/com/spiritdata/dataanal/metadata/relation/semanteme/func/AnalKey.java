@@ -28,8 +28,8 @@ import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.util.Arithmetic;
 
 import com.spiritdata.jsonD.model.JsonD;
-import com.spiritdata.jsonD.model.JsondAtomData;
-import com.spiritdata.jsonD.model.JsondHead;
+import com.spiritdata.jsonD.model.JsonDAtomData;
+import com.spiritdata.jsonD.model.JsonDHead;
 
 import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 
@@ -173,23 +173,23 @@ public class AnalKey implements AnalTable {
         }
 
         //组织JsonD，并写入文件
-        JsonD analKeyJsond = new JsonD();
+        JsonD analKeyJsonD = new JsonD();
         //头
-        JsondHead jsondHead = new JsondHead();
-        jsondHead.setId(SequenceUUID.getPureUUID());
-        jsondHead.setCode(jsonDCode);
-        jsondHead.setCTime(new Date());
-        jsondHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键");
+        JsonDHead jsonDHead = new JsonDHead();
+        jsonDHead.setId(SequenceUUID.getPureUUID());
+        jsonDHead.setCode(jsonDCode);
+        jsonDHead.setCTime(new Date());
+        jsonDHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键");
         //数据体
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
-        JsondAtomData _dataElement = new JsondAtomData("_tableName", "string", tableName);
+        JsonDAtomData _dataElement = new JsonDAtomData("_tableName", "string", tableName);
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _dataElement.setAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _DATA_Map.put("_keyAnals", convertToList(ret));
         //设置JsonD
-        analKeyJsond.set_HEAD(jsondHead);
-        analKeyJsond.set_DATA(_DATA_Map);
+        analKeyJsonD.set_HEAD(jsonDHead);
+        analKeyJsonD.set_DATA(_DATA_Map);
         //分析结果文件种子设置
         AnalResultFile arfSeed = new AnalResultFile();
         arfSeed.setAnalType(SDConstants.ANAL_MD_KEY);
@@ -198,7 +198,7 @@ public class AnalKey implements AnalTable {
         arfSeed.setObjId(tableName);
         arfSeed.setFileNameSeed("METADATA"+File.separator+"key"+File.separator+"md_"+mm.getId());
 
-        AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJsonD(analKeyJsond, arfSeed);
+        AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJsonD(analKeyJsonD, arfSeed);
         //回写文件信息到返回值
         ret.put("resultFile", arf);
 
@@ -211,7 +211,7 @@ public class AnalKey implements AnalTable {
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (String cols: keyAnalResultMap.keySet()) {
             Map<String, Object> oneEle = new HashMap<String, Object>();
-            JsondAtomData _dataElement = new JsondAtomData("keyCols", "string", cols);
+            JsonDAtomData _dataElement = new JsonDAtomData("keyCols", "string", cols);
             oneEle.putAll(_dataElement.toJsonMap());
             _dataElement.setAtomData("rate", "double", keyAnalResultMap.get(cols));
             oneEle.putAll(_dataElement.toJsonMap());

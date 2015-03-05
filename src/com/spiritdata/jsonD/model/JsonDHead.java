@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.spiritdata.jsonD.ConvertJson;
-import com.spiritdata.jsonD.exceptionC.Jsond0002CException;
-import com.spiritdata.jsonD.exceptionC.Jsond0003CException;
+import com.spiritdata.jsonD.exceptionC.JsonD0002CException;
+import com.spiritdata.jsonD.exceptionC.JsonD0003CException;
 import com.spiritdata.jsonD.util.JsonDUtils;
 
 /**
@@ -15,7 +15,7 @@ import com.spiritdata.jsonD.util.JsonDUtils;
  * 参看相关文档
  * @author wh
  */
-public class JsondHead implements Serializable, ConvertJson {
+public class JsonDHead implements Serializable, ConvertJson {
     private static final long serialVersionUID = 8454602778917800099L;
 
     private String id; //UUID
@@ -30,15 +30,15 @@ public class JsondHead implements Serializable, ConvertJson {
         return id;
     }
     public void setId(String id) {
-        if (id==null||id.length()==0) throw new Jsond0002CException("id必须设置！", new IllegalArgumentException("id不能为null或空串！"));
+        if (id==null||id.length()==0) throw new JsonD0002CException("id必须设置！", new IllegalArgumentException("id不能为null或空串！"));
         this.id = id;
     }
     public String getCode() {
         return code;
     }
     public void setCode(String code) {
-        if (code==null||code.length()==0) throw new Jsond0002CException("code必须设置！", new IllegalArgumentException("code不能为null或空串！"));
-        if (!JsonDUtils.isLegalCode(code)) throw new Jsond0003CException("code["+code+"]不合规！", new IllegalArgumentException("code不合规，请参看JsonD相关文档！"));
+        if (code==null||code.length()==0) throw new JsonD0002CException("code必须设置！", new IllegalArgumentException("code不能为null或空串！"));
+        if (!JsonDUtils.isLegalCode(code)) throw new JsonD0003CException("code["+code+"]不合规！", new IllegalArgumentException("code不合规，请参看JsonD相关文档！"));
         this.code = code;
     }
     public String getParseFun() {
@@ -77,9 +77,9 @@ public class JsondHead implements Serializable, ConvertJson {
      * @return json串
      */
     public String toJson() {
-        if (this.id==null||this.id.length()==0) throw new Jsond0002CException("id必须设置！");
-        if (this.code==null||this.code.length()==0) throw new Jsond0002CException("code必须设置！");
-        if (!JsonDUtils.isLegalCode(this.code)) throw new Jsond0003CException("code["+code+"]不合规，请参看JsonD相关文档！");
+        if (this.id==null||this.id.length()==0) throw new JsonD0002CException("id必须设置！");
+        if (this.code==null||this.code.length()==0) throw new JsonD0002CException("code必须设置！");
+        if (!JsonDUtils.isLegalCode(this.code)) throw new JsonD0003CException("code["+code+"]不合规，请参看JsonD相关文档！");
 
         if (this.CTime==null) CTime= new Date();
         String ret = "\"_HEAD\":{\"_id\":\""+this.id+"\", \"_code\":\""+this.code+"\", \"_cTime\":\""+this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime()+"\"";
@@ -95,9 +95,9 @@ public class JsondHead implements Serializable, ConvertJson {
      * @return Map
      */
     public Map<String, Object> toMap() {
-        if (this.id==null||this.id.length()==0) throw new Jsond0002CException("id必须设置！");
-        if (this.code==null||this.code.length()==0) throw new Jsond0002CException("code必须设置！");
-        if (!JsonDUtils.isLegalCode(this.code)) throw new Jsond0003CException("code["+code+"]不合规，请参看JsonD相关文档！");
+        if (this.id==null||this.id.length()==0) throw new JsonD0002CException("id必须设置！");
+        if (this.code==null||this.code.length()==0) throw new JsonD0002CException("code必须设置！");
+        if (!JsonDUtils.isLegalCode(this.code)) throw new JsonD0003CException("code["+code+"]不合规，请参看JsonD相关文档！");
 
         if (this.CTime==null) CTime= new Date();
         Map<String, Object> retMap = new HashMap<String, Object>();

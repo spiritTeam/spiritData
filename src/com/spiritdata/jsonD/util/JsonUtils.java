@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spiritdata.jsonD.exceptionC.Jsond0101CException;
-import com.spiritdata.jsonD.exceptionC.Jsond0102CException;
+import com.spiritdata.jsonD.exceptionC.JsonD0101CException;
+import com.spiritdata.jsonD.exceptionC.JsonD0102CException;
 
 /**
  * 处理Json的方法类
@@ -29,7 +29,7 @@ public abstract class JsonUtils {
      * 将java对象转换成json字符串
      * @param obj 准备转换的对象
      * @return json字符串
-     * @throws Jsond0101CException
+     * @throws JsonD0101CException
      */
     public static String objToJson(Object obj) {
         try {
@@ -37,7 +37,7 @@ public abstract class JsonUtils {
             String json=objectMapper.writeValueAsString(obj);
             return json;
         } catch (Exception e) {
-            throw new Jsond0101CException(e);
+            throw new JsonD0101CException(e);
         }
     }
 
@@ -46,7 +46,7 @@ public abstract class JsonUtils {
      * @param obj 准备转换的对象
      * @param createNew ObjectMapper实例方式:true，新实例;false,存在的mapper实例
      * @return json字符串
-     * @throws Jsond0101CException
+     * @throws JsonD0101CException
      */
     public static String objToJson(Object obj, Boolean createNew) {
         try {
@@ -54,7 +54,7 @@ public abstract class JsonUtils {
             String json=objectMapper.writeValueAsString(obj);
             return json;
         } catch (Exception e) {
-            throw new Jsond0101CException(e);
+            throw new JsonD0101CException(e);
         }
     }
 
@@ -64,7 +64,7 @@ public abstract class JsonUtils {
      * @param obj 欲转换的对象，如果是String 则直接返回到data中
      * @param type 类型：1是成功，0是失败，其他整型类型可自己定义
      * @return Json字符串
-     * @throws Jsond0101CException 异常 
+     * @throws JsonD0101CException 异常 
      */
     public static String obj2AjaxJson(Object obj, int type) {
         return JsonUtils.objToJson(JsonUtils.obj2AjaxMap(obj, type));
@@ -75,7 +75,7 @@ public abstract class JsonUtils {
      * @param json 准备转换的json字符串
      * @param cls  准备转换的类
      * @return java对象
-     * @throws Jsond0102CException
+     * @throws JsonD0102CException
      */
     public static Object jsonToObj(String json, Class<?> cls) {
         try {
@@ -83,7 +83,7 @@ public abstract class JsonUtils {
             Object vo=objectMapper.readValue(json, cls);
             return vo;
         } catch (Exception e) {
-            throw new Jsond0102CException(e);
+            throw new JsonD0102CException(e);
         }
     }
 
@@ -93,7 +93,7 @@ public abstract class JsonUtils {
      * @param cls  准备转换的类
      * @param createNew ObjectMapper实例方式:true，新实例;false,存在的mapper实例
      * @return java对象
-     * @throws Jsond0102CException
+     * @throws JsonD0102CException
      */
     public static Object jsonToObj(String json, Class<?> cls,Boolean createNew) {
         try {
@@ -101,7 +101,7 @@ public abstract class JsonUtils {
             Object vo=objectMapper.readValue(json, cls);
             return vo;
         } catch (Exception e) {
-            throw new Jsond0102CException(e);
+            throw new JsonD0102CException(e);
         }
     }
 

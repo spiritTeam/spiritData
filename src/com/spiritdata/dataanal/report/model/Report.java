@@ -11,7 +11,7 @@ import com.spiritdata.filemanage.REPORT.model.ReportFile;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.jsonD.ConvertJson;
-import com.spiritdata.jsonD.model.AccessJsond;
+import com.spiritdata.jsonD.model.AccessJsonD;
 import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
@@ -87,7 +87,7 @@ public class Report implements Serializable, ConvertJson {
     }
 
     private Object _HEAD;//头信息，可以是String reportHead 对象
-    private List<OneJsond> dataList;//jsond数据访问列表
+    private List<OneJsonD> dataList;//jsonD数据访问列表
     private Object _REPORT;//报告主题信息，可以是String reportHead 对象
 
     public String getId() {
@@ -117,27 +117,27 @@ public class Report implements Serializable, ConvertJson {
     }
 
     /**
-     * 向report中加入一个jsond的访问信息
+     * 向report中加入一个jsonD的访问信息
      * @param one
      */
-    public void addOneJsond(AccessJsond one) {
-        if (dataList==null) dataList=new ArrayList<OneJsond>();
-        OneJsond oj = new OneJsond(one);
+    public void addOneJsonD(AccessJsonD one) {
+        if (dataList==null) dataList=new ArrayList<OneJsonD>();
+        OneJsonD oj = new OneJsonD(one);
         oj.setRdId(dataList.size());
         dataList.add(oj);
     }
 
     /**
-     * 根据jsondId获取访问信息在本报告中的id
-     * @param jsondId jsonD的id，就是jsond文件的id，对应数据库中file_index中的id
+     * 根据jsonDId获取访问信息在本报告中的id
+     * @param jsonDId jsonD的id，就是jsonD文件的id，对应数据库中file_index中的id
      * @return 所对应的report中的jsonD的标识
      */
-    public int getDid(String jsondId) {
+    public int getDid(String jsonDId) {
         int ret = -1;
         if (dataList==null||dataList.size()==0) {
             for (int i=0; i<dataList.size(); i++) {
-                OneJsond oj = dataList.get(i);
-                if (oj.equals(jsondId)) return oj.getRdId();
+                OneJsonD oj = dataList.get(i);
+                if (oj.equals(jsonDId)) return oj.getRdId();
             }
         }
         return ret;

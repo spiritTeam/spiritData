@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.spiritdata.framework.CodeException;
 import com.spiritdata.jsonD.ConvertJson;
-import com.spiritdata.jsonD.exceptionC.Jsond0001CException;
+import com.spiritdata.jsonD.exceptionC.JsonD0001CException;
 import com.spiritdata.jsonD.util.JsonUtils;
 
 
@@ -15,7 +15,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * 包括数据的类型、数据的值和数据的名称
  * @author wh
  */
-public class JsondAtomData implements Serializable, ConvertJson {
+public class JsonDAtomData implements Serializable, ConvertJson {
     private static final long serialVersionUID = 5914919027685891934L;
 
     private String dataName;//信息名称
@@ -49,7 +49,7 @@ public class JsondAtomData implements Serializable, ConvertJson {
     /**
      * 空构造函数
      */
-    public JsondAtomData() {
+    public JsonDAtomData() {
         super();
     }
 
@@ -59,7 +59,7 @@ public class JsondAtomData implements Serializable, ConvertJson {
      * @param dataType 数据类型
      * @param dataValue 数据值
      */
-    public JsondAtomData(String dataName, String dataType, Object dataValue) {
+    public JsonDAtomData(String dataName, String dataType, Object dataValue) {
         super();
         setAtomData(dataName, dataType, dataValue);
     }
@@ -118,6 +118,6 @@ public class JsondAtomData implements Serializable, ConvertJson {
      * @throws CodeException
      */
     private void checkAttributes() throws CodeException {
-        if (this.dataName==null||this.dataName.trim().length()==0) throw new Jsond0001CException("名称dataName必须设置！");
+        if (this.dataName==null||this.dataName.trim().length()==0) throw new JsonD0001CException("名称dataName必须设置！");
     }
 }

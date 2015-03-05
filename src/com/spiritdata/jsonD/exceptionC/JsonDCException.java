@@ -6,7 +6,7 @@ import com.spiritdata.framework.CodeException;
  * JsonD“带码异常”，其分类码为"JSND"
  * @author wh
  */
-public abstract class JsondCException extends CodeException {
+public abstract class JsonDCException extends CodeException {
     private static final long serialVersionUID = -2801278037489953741L;
     private static String category = "JSND"; //分类码
 
@@ -16,7 +16,7 @@ public abstract class JsondCException extends CodeException {
      * @param c 内部码
      * @param bMsg 基础信息
      */
-    protected JsondCException(int c, String bMsg) {
+    protected JsonDCException(int c, String bMsg) {
         super(category, c, bMsg);
     }
 
@@ -26,7 +26,7 @@ public abstract class JsondCException extends CodeException {
      * @param bMsg 基础信息
      * @param message 详细消息
      */
-    protected JsondCException(int c, String bMsg, String message) {
+    protected JsonDCException(int c, String bMsg, String message) {
         super(category, c, bMsg, message);
     }
 
@@ -36,7 +36,7 @@ public abstract class JsondCException extends CodeException {
      * @param bMsg 基础信息
      * @param cause 异常原因，以后通过Throwable.getCause()方法获取它。允许使用null值，指出原因不存在或者是未知的异常
      */
-    protected JsondCException(int c, String bMsg, Throwable cause) {
+    protected JsonDCException(int c, String bMsg, Throwable cause) {
         super(category, c, bMsg, cause);
     }
 
@@ -47,11 +47,11 @@ public abstract class JsondCException extends CodeException {
      * @param message 详细消息
      * @param cause 异常原因，以后通过Throwable.getCause()方法获取它。允许使用null值，指出原因不存在或者是未知的异常
      */
-    protected JsondCException(int c, String bMsg, String message, Throwable cause) {
+    protected JsonDCException(int c, String bMsg, String message, Throwable cause) {
         super(category, c, bMsg, message, cause);
     }
 
-    protected JsondCException(int c, String bMsg, String message,Throwable cause, boolean enableSuppression,
+    protected JsonDCException(int c, String bMsg, String message,Throwable cause, boolean enableSuppression,
             boolean writableStackTrace) {
         super(category, c, bMsg, message, cause, enableSuppression, writableStackTrace);
     }

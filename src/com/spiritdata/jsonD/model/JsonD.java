@@ -3,7 +3,7 @@ package com.spiritdata.jsonD.model;
 import java.io.Serializable;
 
 import com.spiritdata.jsonD.ConvertJson;
-import com.spiritdata.jsonD.exceptionC.Jsond0004CException;
+import com.spiritdata.jsonD.exceptionC.JsonD0004CException;
 import com.spiritdata.jsonD.util.JsonUtils;
 
 public class JsonD implements Serializable, ConvertJson {
@@ -27,12 +27,12 @@ public class JsonD implements Serializable, ConvertJson {
     
     @Override
     public String toJson() {
-        if (_HEAD==null) throw new Jsond0004CException("jsondD不规范：头信息(_HEAD)必须设置！");
+        if (_HEAD==null) throw new JsonD0004CException("jsonD不规范：头信息(_HEAD)必须设置！");
 
         String jsonS = "{";
         //转换头
-        if (_HEAD instanceof JsondHead) {
-            jsonS += ((JsondHead)_HEAD).toJson();
+        if (_HEAD instanceof JsonDHead) {
+            jsonS += ((JsonDHead)_HEAD).toJson();
         } else {
             jsonS += "\"_HEAD\":"+JsonUtils.objToJson(_HEAD);
         }

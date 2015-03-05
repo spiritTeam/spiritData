@@ -23,8 +23,8 @@ import com.spiritdata.dataanal.metadata.relation.semanteme.AnalMetadata;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 
 import com.spiritdata.jsonD.model.JsonD;
-import com.spiritdata.jsonD.model.JsondAtomData;
-import com.spiritdata.jsonD.model.JsondHead;
+import com.spiritdata.jsonD.model.JsonDAtomData;
+import com.spiritdata.jsonD.model.JsonDHead;
 
 import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 
@@ -65,21 +65,21 @@ public class AnalDict implements AnalMetadata {
         }
 
         //组织JsonD，并写入文件
-        JsonD analDictJsond = new JsonD();
+        JsonD analDictJsonD = new JsonD();
         //头
-        JsondHead jsondHead = new JsondHead();
-        jsondHead.setId(SequenceUUID.getPureUUID());
-        jsondHead.setCode(jsonDCode);
-        jsondHead.setCTime(new Date());
-        jsondHead.setDesc("分析元数据["+mm.getTitleName()+"("+mm.getId()+")]的字典信息");
+        JsonDHead jsonDHead = new JsonDHead();
+        jsonDHead.setId(SequenceUUID.getPureUUID());
+        jsonDHead.setCode(jsonDCode);
+        jsonDHead.setCTime(new Date());
+        jsonDHead.setDesc("分析元数据["+mm.getTitleName()+"("+mm.getId()+")]的字典信息");
         //数据体
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
-        JsondAtomData _dataElement = new JsondAtomData("_mdMId", "string", mm.getId());
+        JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _DATA_Map.put("_dictAnals", convertToList(ret));
         //设置JsonD
-        analDictJsond.set_HEAD(jsondHead);
-        analDictJsond.set_DATA(_DATA_Map);
+        analDictJsonD.set_HEAD(jsonDHead);
+        analDictJsonD.set_DATA(_DATA_Map);
         //分析结果文件种子设置
         AnalResultFile arfSeed = new AnalResultFile();
         arfSeed.setAnalType(SDConstants.ANAL_MD_DICT); //分析类型
@@ -88,7 +88,7 @@ public class AnalDict implements AnalMetadata {
         arfSeed.setObjId("["+mm.getTitleName()+"("+mm.getId()+")]"); //所分析对象的ID
         arfSeed.setFileNameSeed("METADATA"+File.separator+"dict"+File.separator+"md_"+mm.getId());
 
-        AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJsonD(analDictJsond, arfSeed);
+        AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJsonD(analDictJsonD, arfSeed);
         //回写文件信息到返回值
         ret.put("resultFile", arf);
 
@@ -101,7 +101,7 @@ public class AnalDict implements AnalMetadata {
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (String cols: dictAnalResultMap.keySet()) {
             Map<String, Object> oneEle = new HashMap<String, Object>();
-            JsondAtomData _dataElement = new JsondAtomData("keyCols", "string", cols);
+            JsonDAtomData _dataElement = new JsonDAtomData("keyCols", "string", cols);
             oneEle.putAll(_dataElement.toJsonMap());
             _dataElement.setAtomData("rate", "double", dictAnalResultMap.get(cols));
             oneEle.putAll(_dataElement.toJsonMap());

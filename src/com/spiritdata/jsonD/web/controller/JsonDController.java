@@ -8,25 +8,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.spiritdata.jsonD.web.service.JsondService;
+import com.spiritdata.jsonD.web.service.JsonDService;
 
 /**
- * Jsond功能的web控制类
+ * jsonD功能的web控制类
  * @author wh
  */
 @Controller
-public class JsondController {
+public class JsonDController {
     @Resource
-    private JsondService jsondService;
+    private JsonDService jsonDService;
 
     @RequestMapping(value="/jsonD/getJsonD.do")
     @ResponseBody
-    public String getJsond(HttpServletRequest request, HttpServletResponse response) {
+    public String getJsonD(HttpServletRequest request, HttpServletResponse response) {
         String ret = null;
-        String jsondId = request.getParameter("jsondId");
-        if (jsondId!=null) {
+        String jsonDId = request.getParameter("jsonDId");
+        if (jsonDId!=null) {
             try {
-                ret="{jsonType:1, data:"+jsondService.getJsondById(jsondId)+"}";
+                ret="{jsonType:1, data:"+jsonDService.getJsonDById(jsonDId)+"}";
             } catch(Exception e) {
                 ret="{jsonType:0, message:'"+e.getMessage()+"'}";
             }
@@ -34,7 +34,7 @@ public class JsondController {
         String uri = request.getParameter("uri");
         if (uri!=null) {
             try {
-                ret="{jsonType:1, data:"+jsondService.getJsondByUri(uri)+"}";
+                ret="{jsonType:1, data:"+jsonDService.getJsonDByUri(uri)+"}";
             } catch(Exception e) {
                 ret="{jsonType:0, message:'"+e.getMessage()+"'}";
             }

@@ -70,20 +70,13 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
      * ownerType——所有者类型
      * ownerId——所有者Id
      * impFileInfo——导入文件，FileInfo对象，此信息用于保存文件关系
-     *                 Map<String, Object> preTreadParam = new HashMap<String, Object>();
-                preTreadParam.put("reportParam", reportParam);
-                String ownerId = session.getId();
-                int ownerType = 2;
-                UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-                if (user!=null) {
-                    ownerId = user.getUserId();
-                    ownerType = 1;
-                }
-                preTreadParam.put("ownerType", ownerType);
-                preTreadParam.put("ownerId", ownerId);
-                preTreadParam.put("impFileInfo", fi);
-                param.put("preTreadParam", preTreadParam);
- 
+     * reportParam——在初次分析文件时，所提取的为报告声称所需要的信息，包括：也是一个Map，包括
+     *   HashMap<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>
+     *   每个sheet的信息，及其对应的每个数据表
+     *   每个数据表的信息，又对应一个map，此Map为：
+     *     tabMapOrgAry：实体表愿数据对应数据，通过此可以判断是否是新增元数据
+     *     sysMd：本数据表元数据
+     *
      * @see com.spiritdata.dataanal.report.generate.GenerateReport#preTreat(java.util.Map)
      */
     public Map<String, Object> preTreat(Map<String, Object> param) {
@@ -156,7 +149,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         getMDInfos_Task.setResultFile(arf);
           //任务组装：组装进任务组+组装进report的dlist
         tg.addTask2Graph(getMDInfos_Task);
-        report.addOneJsond(TaskUtils.convert2AccessJsondOne(getMDInfos_Task));
+        report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(getMDInfos_Task));
 
         for (String idinfo: mdl) {
             //4.a.2-单项字典项分析
@@ -182,7 +175,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
             arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
             arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
             analSingleDict_Task.setResultFile(arf);
-            report.addOneJsond(TaskUtils.convert2AccessJsondOne(analSingleDict_Task));
+            report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
         }
 
         //组织报告的内容

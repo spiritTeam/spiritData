@@ -21,7 +21,7 @@ import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.jsonD.model.JsonD;
-import com.spiritdata.jsonD.model.JsondHead;
+import com.spiritdata.jsonD.model.JsonDHead;
 
 /**
  * 分析文件服务类
@@ -73,26 +73,26 @@ public class AanlResultFileService extends AbstractWriteString2FileByToBeStoreFi
 
     /**
      * 把JsonD写入文件，并返回分析结果对象文件。<br/>
-     * @param content jsond数据
+     * @param content jsonD数据
      * @param analResultSeed 分析结果文件的种子，需要设置分类和说，返回值将根据这个种子进行设置
-     * @return 分析结果文件，根据种子生成，并补充jsondCode和名称信息
+     * @return 分析结果文件，根据种子生成，并补充jsonDCode和名称信息
      */
     @Override
     public BeManageFile write2FileAsJsonD(Object jsonD, ToBeStoreFile fileSeed) {
-        JsonD jsond = (JsonD)jsonD;
+        JsonD _jsonD = (JsonD)jsonD;
         AnalResultFile analResultSeed = (AnalResultFile)fileSeed;
 
         //文件存储
         String storeFileName = this.getStoreFileName(fileSeed);
-        Object _HEAD = jsond.get_HEAD();
-        if (_HEAD instanceof JsondHead) {
-            ((JsondHead)_HEAD).setFileName(storeFileName);
+        Object _HEAD = _jsonD.get_HEAD();
+        if (_HEAD instanceof JsonDHead) {
+            ((JsonDHead)_HEAD).setFileName(storeFileName);
         }
-        this.writeJson2File(jsond.toJson(), fileSeed); //存储为文件
+        this.writeJson2File(_jsonD.toJson(), fileSeed); //存储为文件
 
         //返回值处理
-        if (_HEAD instanceof JsondHead) {
-            analResultSeed.setJsonDCode(((JsondHead)_HEAD).getCode());
+        if (_HEAD instanceof JsonDHead) {
+            analResultSeed.setJsonDCode(((JsonDHead)_HEAD).getCode());
         }
         analResultSeed.setFileName(storeFileName);
 
