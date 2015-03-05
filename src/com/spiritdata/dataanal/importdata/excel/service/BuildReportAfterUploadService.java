@@ -83,7 +83,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
         if (param.get("reportParam")==null) return null;//若参数中的reportParam为空，无法生成报告，返回空
-        List<String> mdl = getMDIdList(reportParam);
+        List<MetadataModel> mdl = getMDIdList(reportParam);
         if (mdl==null||mdl.size()==0) return null; //若报告参数中不包含任何元数据信息，无法生成报告，返回空
 
         String ownerId = (String)param.get("ownerId");
@@ -151,7 +151,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tg.addTask2Graph(getMDInfos_Task);
         report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(getMDInfos_Task));
 
-        for (String idinfo: mdl) {
+        for (MetadataModel mm: mdl) {
             //4.a.2-单项字典项分析
             TaskInfo analSingleDict_Task = new TaskInfo();
             analSingleDict_Task.setId(SequenceUUID.getPureUUID());
@@ -161,7 +161,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
             analSingleDict_Task.setPrepared();
               //设置参数
             taskParam.clear();
-            taskParam.put("metadata", mdl);
+            taskParam.put("metadata", mm.getId());
             analSingleDict_Task.setParam(JsonUtils.objToJson(taskParam));
             tg.addTask2Graph(analSingleDict_Task);
               //设置文件
@@ -242,16 +242,16 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
      * @param reportParam
      * @return
      */
-    private List<String> getMDIdList(Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam) {
+    private List<MetadataModel> getMDIdList(Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam) {
         if (reportParam==null||reportParam.size()==0) return null;
-        List<String> ret = new ArrayList<String>();
+        List<MetadataModel> ret = new ArrayList<MetadataModel>();
         Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
         while (iter.hasNext()) {
             Map<SheetTableInfo, Map<String, Object>> value = iter.next();
             for (SheetTableInfo key : value.keySet()) {
                 Map<String, Object> _value = value.get(key);
                 MetadataModel mm = (MetadataModel)_value.get("sysMd");
-                ret.add(mm.getId());
+                ret.add(mm);
             }
         }
         if (ret.size()==0) return null;
