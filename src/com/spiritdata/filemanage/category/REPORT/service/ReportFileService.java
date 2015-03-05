@@ -1,11 +1,11 @@
-package com.spiritdata.filemanage.REPORT.service;
+package com.spiritdata.filemanage.category.REPORT.service;
 
 import java.io.File;
 
 import javax.annotation.Resource;
 
 import com.spiritdata.dataanal.report.model.Report;
-import com.spiritdata.filemanage.REPORT.model.ReportFile;
+import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
 import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;

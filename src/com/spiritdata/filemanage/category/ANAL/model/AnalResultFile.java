@@ -1,4 +1,4 @@
-package com.spiritdata.filemanage.ANAL.model;
+package com.spiritdata.filemanage.category.ANAL.model;
 
 import java.io.File;
 import java.io.Serializable;

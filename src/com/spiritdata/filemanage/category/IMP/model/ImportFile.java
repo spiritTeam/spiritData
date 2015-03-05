@@ -1,4 +1,4 @@
-package com.spiritdata.filemanage.IMP.model;
+package com.spiritdata.filemanage.category.IMP.model;
 
 import java.io.File;
 import java.io.Serializable;

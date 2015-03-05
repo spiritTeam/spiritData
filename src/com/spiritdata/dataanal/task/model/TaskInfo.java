@@ -8,7 +8,7 @@ import java.util.List;
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo;
-import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
+import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.framework.util.SequenceUUID;
 
 /**

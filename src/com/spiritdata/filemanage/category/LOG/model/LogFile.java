@@ -1,4 +1,4 @@
-package com.spiritdata.filemanage.LOG.model;
+package com.spiritdata.filemanage.category.LOG.model;
 
 import java.io.Serializable;
 

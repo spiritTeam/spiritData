@@ -1,7 +1,7 @@
 package com.spiritdata.dataanal.task;
 
 import com.spiritdata.dataanal.task.model.TaskInfo;
-import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
+import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.jsonD.exceptionC.JsonD0103CException;
 import com.spiritdata.jsonD.model.AccessJsonD;
 

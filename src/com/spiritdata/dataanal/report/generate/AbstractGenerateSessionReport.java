@@ -10,8 +10,8 @@ import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.service.ReportService;
 import com.spiritdata.dataanal.task.model.TaskGroup;
-import com.spiritdata.filemanage.REPORT.model.ReportFile;
-import com.spiritdata.filemanage.REPORT.service.ReportFileService;
+import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
+import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.util.SequenceUUID;
 

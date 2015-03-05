@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
+import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;

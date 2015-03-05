@@ -15,22 +15,19 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
-import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
+import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
+import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.framework.util.SequenceUUID;
-
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable;
 import com.spiritdata.dataanal.metadata.relation.semanteme.AnalTable;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.util.Arithmetic;
-
 import com.spiritdata.jsonD.model.JsonD;
 import com.spiritdata.jsonD.model.JsonDAtomData;
 import com.spiritdata.jsonD.model.JsonDHead;
-
 import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 
 /**

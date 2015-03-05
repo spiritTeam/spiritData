@@ -11,7 +11,7 @@ import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal0101CException;
 import com.spiritdata.dataanal.importdata.excel.service.DealExcelFileService;
-import com.spiritdata.filemanage.IMP.model.ImportFile;
+import com.spiritdata.filemanage.category.IMP.model.ImportFile;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.service.FileManageService;
 

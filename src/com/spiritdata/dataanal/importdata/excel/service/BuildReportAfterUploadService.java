@@ -30,8 +30,8 @@ import com.spiritdata.dataanal.task.TaskUtils;
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.model.TaskGroup;
 import com.spiritdata.dataanal.task.model.TaskInfo;
-import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.REPORT.service.ReportFileService;
+import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
+import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
@@ -130,7 +130,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         getMDInfos_Task.setId(SequenceUUID.getPureUUID());
         getMDInfos_Task.setTaskName("获得元数据信息");
         getMDInfos_Task.setLangType(TaskLangType.JAVA);
-        getMDInfos_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.getMDInfos");
+        getMDInfos_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.GetMDInfos");
         getMDInfos_Task.setPrepared();
           //设置参数
         taskParam.clear();
@@ -157,7 +157,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
             analSingleDict_Task.setId(SequenceUUID.getPureUUID());
             analSingleDict_Task.setTaskName("??单项指标分析");
             analSingleDict_Task.setLangType(TaskLangType.JAVA);
-            analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.analSingleDict");
+            analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
             analSingleDict_Task.setPrepared();
               //设置参数
             taskParam.clear();
@@ -179,42 +179,41 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         }
 
         //组织报告的内容
-        if (mdl!=null&&mdl.size()>0) {
-            Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
-            while (iter.hasNext()) {
-                Map<SheetTableInfo, Map<String, Object>> value = iter.next();
-                for (SheetTableInfo key : value.keySet()) {
-                    Map<String, Object> _value = value.get(key);
-                    MetadataModel mm = (MetadataModel)_value.get("sysMd");
-                    MetadataTableMapRel[] tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
-                    //处理report中的数据访问列表
-                    ReportSegment rs1 = new ReportSegment();
-                    rs1.setNodeName(mm.getTitleName());
-                    rs1.setTitle(mm.getTitleName()+"分析");
-                    rs1.setId(SequenceUUID.getPureUUID());
+        Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
+        while (iter.hasNext()) {
+            Map<SheetTableInfo, Map<String, Object>> value = iter.next();
+            for (SheetTableInfo key : value.keySet()) {
+                Map<String, Object> _value = value.get(key);
+                MetadataModel mm = (MetadataModel)_value.get("sysMd");
+                MetadataTableMapRel[] tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
+                //处理report中的数据访问列表
+                ReportSegment rs1 = new ReportSegment();
+                rs1.setNodeName(mm.getTitleName());
+                rs1.setTitle(mm.getTitleName()+"分析");
+                rs1.setId(SequenceUUID.getPureUUID());
 
-                    ReportSegment rs2 = new ReportSegment();
-                    rs2.setTitle("单向指标分析");
-                    rs2.setId(SequenceUUID.getPureUUID());
-                    //字典处理
-                    for (MetadataColumn mc: mm.getColumnList()) {
-                        List<MetadataColSemanteme> csl = mc.getColSemList();
-                        if (csl!=null&&csl.size()>0) {
-                            for (MetadataColSemanteme mcs: csl) {
-                                if (mcs.getSemantemeType()==2) {//是字典
-                                    ReportSegment rs3 = new ReportSegment();
-                                    rs3.setNodeName(mc.getTitleName()+"指标");
-                                    rs3.setTitle("<div style='font-height:bold;'>"+mc.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
-                                    rs3.setId(SequenceUUID.getPureUUID());
-                                    //TODO 判断有几个字典项目，若大于三个，采用下面的方式
-                                    rs3.setContent("");
-                                }
+                ReportSegment rs2 = new ReportSegment();
+                rs2.setTitle("单向指标分析");
+                rs2.setId(SequenceUUID.getPureUUID());
+                //字典处理
+                for (MetadataColumn mc: mm.getColumnList()) {
+                    List<MetadataColSemanteme> csl = mc.getColSemList();
+                    if (csl!=null&&csl.size()>0) {
+                        for (MetadataColSemanteme mcs: csl) {
+                            if (mcs.getSemantemeType()==2) {//是字典
+                                ReportSegment rs3 = new ReportSegment();
+                                rs3.setNodeName(mc.getTitleName()+"指标");
+                                rs3.setTitle("<div style='font-height:bold;'>"+mc.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
+                                rs3.setId(SequenceUUID.getPureUUID());
+                                //TODO 判断有几个字典项目，若大于三个，采用下面的方式
+                                rs3.setContent("");
                             }
                         }
                     }
                 }
             }
         }
+
         report.set_REPORT(null);
         //4.1-分不同元数据，进行分析，目前包括()
 //        private String id; //任务

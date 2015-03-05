@@ -1,4 +1,4 @@
-package com.spiritdata.filemanage.ANAL.service;
+package com.spiritdata.filemanage.category.ANAL.service;
 
 import java.io.File;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
+import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
 import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;

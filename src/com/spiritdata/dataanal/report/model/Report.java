@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
 import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
-import com.spiritdata.filemanage.REPORT.model.ReportFile;
+import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.jsonD.ConvertJson;

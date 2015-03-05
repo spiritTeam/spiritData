@@ -1,8 +1,10 @@
-package com.spiritdata.filemanage.IMP.service;
+package com.spiritdata.filemanage.category.IMP.service;
 
 import java.util.List;
+
 import javax.annotation.Resource;
-import com.spiritdata.filemanage.IMP.model.ImportFile;
+
+import com.spiritdata.filemanage.category.IMP.model.ImportFile;
 import com.spiritdata.filemanage.core.service.FileManageService;
 
 /**

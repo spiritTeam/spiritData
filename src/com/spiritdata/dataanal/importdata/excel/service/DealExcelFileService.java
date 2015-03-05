@@ -23,8 +23,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.ANAL.service.AanlResultFileService;
+import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
+import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;

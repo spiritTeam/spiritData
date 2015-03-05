@@ -1,4 +1,4 @@
-package com.spiritdata.filemanage.REPORT.model;
+package com.spiritdata.filemanage.category.REPORT.model;
 
 import java.io.File;
 import java.io.Serializable;
