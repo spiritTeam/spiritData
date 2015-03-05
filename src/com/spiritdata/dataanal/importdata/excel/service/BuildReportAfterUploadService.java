@@ -33,8 +33,6 @@ import com.spiritdata.dataanal.task.model.TaskInfo;
 import com.spiritdata.filemanage.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
-import com.spiritdata.framework.FConstants;
-import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.jsonD.util.JsonUtils;
@@ -71,7 +69,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
      * 参数中的preTreadParam键的值还是Map，包括：
      * ownerType——所有者类型
      * ownerId——所有者Id
-     * impFileInfo——导入文件
+     * impFileInfo——导入文件，FileInfo对象，此信息用于保存文件关系
      *                 Map<String, Object> preTreadParam = new HashMap<String, Object>();
                 preTreadParam.put("reportParam", reportParam);
                 String ownerId = session.getId();
