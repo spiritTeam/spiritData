@@ -274,35 +274,20 @@ function login(pData){
       $('#checkCode').val('');
       var loginInfo = json.data;
       var retInfo = loginInfo.retInfo;
-      alert(json.type);
       if(json.type==-1){
         $.messager.alert('登录信息',retInfo,'info');
       }else if (json.type==1){
         var activeType = loginInfo.activeType;
-        alert(activeType);
         if(activeType==1){
           $.messager.alert('登录信息',retInfo,'info');
         }else if(activeType==2){
           if(mainPage) {
             mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
-            	alert("ddd");
               var loginStatus = mainPage.document.getElementById("loginStatus");
               var loginName = mainPage.document.getElementById("loginName");
-              var login = mainPage.document.getElementById("login");
-              var modifyMail = mainPage.document.getElementById("modifyMail");
-              var register = mainPage.document.getElementById("register");
-              var modifyPassword = mainPage.document.getElementById("modifyPassword");
-              
               $(loginStatus).val(1);
               $(loginName).val(pData.loginName);
-              $(logout).css('display','null');
-              $(login).css('display','none');
-              $(register).css('display','none');
-              if (mainPage.uState!=0) $(modifyMail).css('display','none');
-              alert("ddd1");
-              $(modifyPassword).html("");
-              $(modifyPassword).html("修改密码");
-              alert(winId);
+              mainPage.setLogined();
               closeSWinInMain(winId);
             });
           }else{
