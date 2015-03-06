@@ -10,7 +10,7 @@ import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.SequenceUUID;
-import com.spiritdata.jsonD.ConvertJson;
+import com.spiritdata.jsonD.Convert2Json;
 import com.spiritdata.jsonD.model.AccessJsonD;
 import com.spiritdata.jsonD.util.JsonUtils;
 
@@ -19,7 +19,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * 包括：_HEAD,_DATA,_REPORT
  * @author wh
  */
-public class Report implements Serializable, ConvertJson {
+public class Report implements Serializable, Convert2Json {
     private static final long serialVersionUID = 518670183146944686L;
  
     private String id; //报告id，应和报告头中的id相一致

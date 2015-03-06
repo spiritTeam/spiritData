@@ -2,11 +2,11 @@ package com.spiritdata.jsonD.model;
 
 import java.io.Serializable;
 
-import com.spiritdata.jsonD.ConvertJson;
+import com.spiritdata.jsonD.Convert2Json;
 import com.spiritdata.jsonD.exceptionC.JsonD0004CException;
 import com.spiritdata.jsonD.util.JsonUtils;
 
-public class JsonD implements Serializable, ConvertJson {
+public class JsonD implements Serializable, Convert2Json {
     private static final long serialVersionUID = 7880103785898374745L;
 
     private Object _HEAD;//头信息，可以是String reportHead 对象

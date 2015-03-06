@@ -1,13 +1,13 @@
 package com.spiritdata.dataanal.report.model;
 
-import com.spiritdata.jsonD.ConvertJson;
+import com.spiritdata.jsonD.Convert2Json;
 import com.spiritdata.jsonD.model.AccessJsonD;
 
 /**
  * 某一jsonD数据的访问对象
  * @author wh
  */
-public class OneJsonD extends AccessJsonD implements ConvertJson {
+public class OneJsonD extends AccessJsonD implements Convert2Json {
     private static final long serialVersionUID = 336480238247137657L;
 
     private int rdId; //此Id是在report中进行标识用的
