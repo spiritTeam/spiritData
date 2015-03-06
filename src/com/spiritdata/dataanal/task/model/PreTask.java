@@ -7,6 +7,10 @@ import java.io.Serializable;
  * @author wh
  */
 public class PreTask implements Serializable {
+    private TaskInfo preTask;
+    private boolean isUseResult; //是否利用前置任务的结果
+    private static final long serialVersionUID = 3145870992211118527L;
+
     public TaskInfo getPreTask() {
         return preTask;
     }
@@ -19,8 +23,4 @@ public class PreTask implements Serializable {
     public void setUseResult(boolean isUseResult) {
         this.isUseResult = isUseResult;
     }
-    private static final long serialVersionUID = 3145870992211118527L;
-
-    private TaskInfo preTask;
-    private boolean isUseResult; //是否利用前置任务的结果
 }

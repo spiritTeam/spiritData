@@ -34,7 +34,7 @@ public class ReportFileService extends AbstractWriteString2FileByToBeStoreFile i
      * @return 
      */
     @Override
-    public BeManageFile write2FileAsJsonD(Object content, ToBeStoreFile fileSeed) {
+    public BeManageFile write2FileAsJson(Object content, ToBeStoreFile fileSeed) {
         Report report = (Report)content;
         ReportFile reportFileSeed = (ReportFile)fileSeed;
 

@@ -55,14 +55,14 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
      * 5-以Session为容器，构建任务执行的上下文
      * 6-启动任务
      */
-    public void buildANDprocess(Map<String, Object> param) {
+    public String buildANDprocess(Map<String, Object> param) {
         if (param==null||param.size()==0) throw new Dtal1003CException(new IllegalArgumentException("构建报告及任务时，必须设置参数！"));
         if (param.get("preTreadParam")==null) throw new Dtal1003CException(new IllegalArgumentException("构建报告及任务时，Map参数中必须设置key='preTreadParam'的元素！"));
 
         //1-执行预处理，得到报告及任务
         Map<String, Object> preTreadParam = (Map<String, Object>)param.get("preTreadParam");
         Map<String, Object> preTreatResult = preTreat(preTreadParam);
-        if (preTreatResult==null) return; //预处理没有返回任何内容，不能进行任何处理
+        if (preTreatResult==null) return null; //预处理没有返回任何内容，不能进行任何处理
         TaskReport tr = null;
         try {
             tr = (TaskReport)preTreatResult.get("taskReport");
@@ -84,7 +84,7 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         FileInfo impFi = (FileInfo)preTreadParam.get("impFileInfo");
         rfSeed.setFileNameSeed("afterImport(IMPFID-"+impFi.getId()+"_RID-"+report.getId()+")");
 
-        ReportFile rf = (ReportFile)rfService.write2FileAsJsonD(report, rfSeed); //保存文件，并把文件信息回写到report对象中
+        ReportFile rf = (ReportFile)rfService.write2FileAsJson(report, rfSeed); //保存文件，并把文件信息回写到report对象中
         report.setReportFile(rf);
         //2.2-报告文件数据库存储
         rfService.saveFile(rf);//报告的json存储
@@ -94,5 +94,7 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         //4-进行持久化存储——报告+任务
         //5-以Session为容器，构建任务执行的上下文
         //6-启动任务
+
+        return report.getId();
     }
  }

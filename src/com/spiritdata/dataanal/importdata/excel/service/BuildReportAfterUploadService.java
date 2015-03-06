@@ -3,7 +3,6 @@ package com.spiritdata.dataanal.importdata.excel.service;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -80,12 +79,10 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
      * @see com.spiritdata.dataanal.report.generate.GenerateReport#preTreat(java.util.Map)
      */
     public Map<String, Object> preTreat(Map<String, Object> param) {
+        //判断数据可用性
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
-        if (param.get("reportParam")==null) return null;//若参数中的reportParam为空，无法生成报告，返回空
-        List<MetadataModel> mdl = getMDIdList(reportParam);
-        if (mdl==null||mdl.size()==0) return null; //若报告参数中不包含任何元数据信息，无法生成报告，返回空
-
+        if (isEmptyParam(reportParam)) return null; //若报告参数中不包含任何元数据信息，无法生成报告，返回空
         String ownerId = (String)param.get("ownerId");
         if (ownerId==null||ownerId.trim().length()==0) throw new Dtal1003CException(new IllegalArgumentException("Map参数中没有所有者Id[owenrId]的信息！"));
         int ownerType = Integer.parseInt(param.get("ownerType")+"");
@@ -121,64 +118,13 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tg.setOwnerType(ownerType);
         tg.setWorkName("["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后分析任务");
         tg.setStatus(0);
-        tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\", 子任务}");
+        tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\"}");
         
         //4-构建报告体，并生成相关的任务
+        AnalResultFile arf;
         Map<String, Object> taskParam = new HashMap<String, Object>();//任务参数结构，所有的任务都用此函数作为
-        //4.a.1-获得所有本次对应的元数据信息
-        TaskInfo getMDInfos_Task = new TaskInfo();
-        getMDInfos_Task.setId(SequenceUUID.getPureUUID());
-        getMDInfos_Task.setTaskName("获得元数据信息");
-        getMDInfos_Task.setLangType(TaskLangType.JAVA);
-        getMDInfos_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.GetMDInfos");
-        getMDInfos_Task.setPrepared();
-          //设置参数
-        taskParam.clear();
-        taskParam.put("metadataList", mdl);
-        getMDInfos_Task.setParam(JsonUtils.objToJson(taskParam));
-          //设置文件
-        AnalResultFile arf = new AnalResultFile();
-        arf.setId(SequenceUUID.getPureUUID());
-        arf.setJsonDCode(SDConstants.JDC_MDINFO);
-        arf.setAnalType(SDConstants.ANAL_MD_GETINFO); //分析类型
-        arf.setSubType("multiple"); //下级分类
-        arf.setObjType("metadatas"); //所分析对象
-        arf.setObjId(JsonUtils.objToJson(mdl)); //所分析对象的ID
-        arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
-        arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
-        getMDInfos_Task.setResultFile(arf);
-          //任务组装：组装进任务组+组装进report的dlist
-        tg.addTask2Graph(getMDInfos_Task);
-        report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(getMDInfos_Task));
+        String mids = ""; //元数据id列表字符串，以,隔开
 
-        for (MetadataModel mm: mdl) {
-            //4.a.2-单项字典项分析
-            TaskInfo analSingleDict_Task = new TaskInfo();
-            analSingleDict_Task.setId(SequenceUUID.getPureUUID());
-            analSingleDict_Task.setTaskName("??单项指标分析");
-            analSingleDict_Task.setLangType(TaskLangType.JAVA);
-            analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
-            analSingleDict_Task.setPrepared();
-              //设置参数
-            taskParam.clear();
-            taskParam.put("metadata", mm.getId());
-            analSingleDict_Task.setParam(JsonUtils.objToJson(taskParam));
-            tg.addTask2Graph(analSingleDict_Task);
-              //设置文件
-            arf = new AnalResultFile();
-            arf.setId(SequenceUUID.getPureUUID());
-            arf.setJsonDCode(SDConstants.JDC_MDINFO);
-            arf.setAnalType(SDConstants.ANAL_MD_GETINFO); //分析类型
-            arf.setSubType("multiple"); //下级分类
-            arf.setObjType("metadatas"); //所分析对象
-            arf.setObjId(JsonUtils.objToJson(mdl)); //所分析对象的ID
-            arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
-            arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
-            analSingleDict_Task.setResultFile(arf);
-            report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
-        }
-
-        //组织报告的内容
         Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
         while (iter.hasNext()) {
             Map<SheetTableInfo, Map<String, Object>> value = iter.next();
@@ -186,6 +132,36 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                 Map<String, Object> _value = value.get(key);
                 MetadataModel mm = (MetadataModel)_value.get("sysMd");
                 MetadataTableMapRel[] tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
+                mids += ","+mm.getId();
+
+                //任务处理
+                //4.a.2-单项字典项分析
+                TaskInfo analSingleDict_Task = new TaskInfo();
+                analSingleDict_Task.setId(SequenceUUID.getPureUUID());
+                analSingleDict_Task.setTaskName(mm.getTitleName()+"单项指标分析");
+                analSingleDict_Task.setLangType(TaskLangType.JAVA);
+                analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
+                analSingleDict_Task.setPrepared();
+                  //设置参数
+                taskParam.clear();
+                taskParam.put("pType", "metadata");
+                taskParam.put("mid", mm.getId());
+                analSingleDict_Task.setParam(JsonUtils.objToJson(taskParam));
+                tg.addTask2Graph(analSingleDict_Task);
+                  //设置文件
+                arf = new AnalResultFile();
+                arf.setId(SequenceUUID.getPureUUID());
+                arf.setJsonDCode(SDConstants.JDC_MD_SDICT);
+                arf.setAnalType(SDConstants.ANAL_MD_SDICT); //分析类型
+                arf.setSubType("SingleDict"); //下级分类
+                arf.setObjType("metadata"); //所分析对象
+                arf.setObjId(mm.getId()); //所分析对象的ID
+                arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdSingleDict_"+arf.getId());
+                arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
+                analSingleDict_Task.setResultFile(arf);
+                report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
+                //任务处理end
+
                 //处理report中的数据访问列表
                 ReportSegment rs1 = new ReportSegment();
                 rs1.setNodeName(mm.getTitleName());
@@ -213,6 +189,34 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                 }
             }
         }
+        
+        //4.a.1-获得所有本次对应的元数据信息
+        mids = mids.substring(1);
+        TaskInfo getMDInfos_Task = new TaskInfo();
+        getMDInfos_Task.setId(SequenceUUID.getPureUUID());
+        getMDInfos_Task.setTaskName("获得元数据信息");
+        getMDInfos_Task.setLangType(TaskLangType.JAVA);
+        getMDInfos_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.GetMDInfos");
+        getMDInfos_Task.setPrepared();
+          //设置参数
+        taskParam.clear();
+        taskParam.put("pType", "metadatas");
+        taskParam.put("mids", mids);
+        getMDInfos_Task.setParam(JsonUtils.objToJson(taskParam));
+          //设置文件
+        arf = new AnalResultFile();
+        arf.setId(SequenceUUID.getPureUUID());
+        arf.setJsonDCode(SDConstants.JDC_MD_INFO);
+        arf.setAnalType(SDConstants.ANAL_MD_GETINFO); //分析类型
+        arf.setSubType("multiple"); //下级分类
+        arf.setObjType("metadatas"); //所分析对象
+        arf.setObjId(mids); //所分析对象的ID
+        arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
+        arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
+        getMDInfos_Task.setResultFile(arf);
+          //任务组装：组装进任务组+组装进report的dlist
+        tg.addTask2Graph(getMDInfos_Task);
+        report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(getMDInfos_Task));
 
         report.set_REPORT(null);
         //4.1-分不同元数据，进行分析，目前包括()
@@ -238,23 +242,21 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
     }
 
     /*
-     * 从报告参数中得到元数据Id的列表
-     * @param reportParam
-     * @return
+     * 判断参数是否可用
+     * @param reportParam 报告所需参数
+     * @return 若参数有效 返回true，否则返回false
      */
-    private List<MetadataModel> getMDIdList(Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam) {
-        if (reportParam==null||reportParam.size()==0) return null;
-        List<MetadataModel> ret = new ArrayList<MetadataModel>();
+    private boolean isEmptyParam(Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam) {
+        if (reportParam==null||reportParam.size()==0) return false;
         Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
         while (iter.hasNext()) {
             Map<SheetTableInfo, Map<String, Object>> value = iter.next();
             for (SheetTableInfo key : value.keySet()) {
                 Map<String, Object> _value = value.get(key);
                 MetadataModel mm = (MetadataModel)_value.get("sysMd");
-                ret.add(mm);
+                if (mm!=null) return true;
             }
         }
-        if (ret.size()==0) return null;
-        return ret;
+        return false;
     }
 }
