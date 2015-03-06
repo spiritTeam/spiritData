@@ -24,6 +24,7 @@ import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.dataanal.report.model.ReportSegment;
+import com.spiritdata.dataanal.report.model.SegmentList;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.task.TaskUtils;
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
@@ -32,6 +33,7 @@ import com.spiritdata.dataanal.task.model.TaskInfo;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.jsonD.util.JsonUtils;
@@ -124,6 +126,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         AnalResultFile arf;
         Map<String, Object> taskParam = new HashMap<String, Object>();//任务参数结构，所有的任务都用此函数作为
         String mids = ""; //元数据id列表字符串，以,隔开
+        SegmentList<ReportSegment> reportBody = new SegmentList<ReportSegment>();
 
         Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
         while (iter.hasNext()) {
@@ -167,29 +170,35 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                 rs1.setNodeName(mm.getTitleName());
                 rs1.setTitle(mm.getTitleName()+"分析");
                 rs1.setId(SequenceUUID.getPureUUID());
+                TreeNode<ReportSegment> rsTn1 = new TreeNode<ReportSegment>(rs1);
+                reportBody.add(rsTn1);
 
-                ReportSegment rs2 = new ReportSegment();
-                rs2.setTitle("单向指标分析");
-                rs2.setId(SequenceUUID.getPureUUID());
+                ReportSegment rs1_1 = new ReportSegment();
+                rs1_1.setTitle("单向指标分析");
+                rs1_1.setId(SequenceUUID.getPureUUID());
+                TreeNode<ReportSegment> rsTn1_1 = new TreeNode<ReportSegment>(rs1_1);
+                rsTn1.addChild(rsTn1_1);
                 //字典处理
                 for (MetadataColumn mc: mm.getColumnList()) {
                     List<MetadataColSemanteme> csl = mc.getColSemList();
                     if (csl!=null&&csl.size()>0) {
                         for (MetadataColSemanteme mcs: csl) {
                             if (mcs.getSemantemeType()==2) {//是字典
-                                ReportSegment rs3 = new ReportSegment();
-                                rs3.setNodeName(mc.getTitleName()+"指标");
-                                rs3.setTitle("<div style='font-height:bold;'>"+mc.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
-                                rs3.setId(SequenceUUID.getPureUUID());
+                                ReportSegment rs1_1_loop = new ReportSegment();
+                                rs1_1_loop.setNodeName(mc.getTitleName()+"指标");
+                                rs1_1_loop.setTitle("<div style='font-height:bold;'>"+mc.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
+                                rs1_1_loop.setId(SequenceUUID.getPureUUID());
                                 //TODO 判断有几个字典项目，若大于三个，采用下面的方式
-                                rs3.setContent("");
+                                rs1_1_loop.setContent("");
+                                TreeNode<ReportSegment> rsTn1_1_loop = new TreeNode<ReportSegment>(rs1_1_loop);
+                                rsTn1_1.addChild(rsTn1_1_loop);
                             }
                         }
                     }
                 }
             }
         }
-        
+
         //4.a.1-获得所有本次对应的元数据信息
         mids = mids.substring(1);
         TaskInfo getMDInfos_Task = new TaskInfo();
@@ -218,18 +227,8 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tg.addTask2Graph(getMDInfos_Task);
         report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(getMDInfos_Task));
 
-        report.set_REPORT(null);
+        report.set_REPORT(reportBody);
         //4.1-分不同元数据，进行分析，目前包括()
-//        private String id; //任务
-//        private String taskName; //任务名称
-//        private String langType; //执行语言，默认为java
-//        private String excuteFunc; //任务执行方法
-//        private String param; //任务执行所需的参数
-//        private int status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
-//        private String desc; //任务说明
-//        private Timestamp firstTime; //任务第一次准备执行时间
-//        private Timestamp beginTime; //本次开始执行时间
-//        private Timestamp endTime; //本次结束执行时间
         //4.2-导入日志，第一部分，都导入了那些内容
 
         //5-组装
