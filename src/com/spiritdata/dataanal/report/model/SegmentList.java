@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.spiritdata.framework.core.model.tree.TreeNode;
-import com.spiritdata.jsonD.ConvertJson;
+import com.spiritdata.jsonD.Convert2Json;
 
 /**
  * 报告段结构列表，报告中的_REPORT目前就是这个结构。
@@ -12,7 +12,7 @@ import com.spiritdata.jsonD.ConvertJson;
  * @author wh
  * @param <E> 符合TreeNode<ReportSegment>的对象
  */
-public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implements ConvertJson {
+public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implements Convert2Json {
     private static final long serialVersionUID = 1123232352332618215L;
 
     @Override

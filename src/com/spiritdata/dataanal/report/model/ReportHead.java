@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.spiritdata.jsonD.ConvertJson;
+import com.spiritdata.jsonD.Convert2Json;
 import com.spiritdata.jsonD.util.JsonDUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
 
@@ -13,7 +13,7 @@ import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
  * 报告头，可能需要扩充，目前只有reportName
  * @author wh
  */
-public class ReportHead  implements Serializable, ConvertJson {
+public class ReportHead  implements Serializable, Convert2Json {
     private static final long serialVersionUID = -2739194799723001355L;
 
     private String id;//报告Id，UUID

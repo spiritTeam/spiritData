@@ -21,6 +21,7 @@ public interface GenerateReport {
     /**
      * 构建报告对象，生成task任务，并启动分析任务。
      * @param param 完成本过程需要的数据，必须包括预处理需要的数据，应放入preTreadParam参数中
+     * @return 报告所对应的报告id
      */
-    public void buildANDprocess(Map<String, Object> param);
+    public String buildANDprocess(Map<String, Object> param);
 }

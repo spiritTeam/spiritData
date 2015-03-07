@@ -14,5 +14,5 @@ public interface WriteJsonD {
      * @param fileSeed 文件的种子，以此为参照，写入文件，如必须规定文件的写入路径
      * @return 写入后，返回文件信息，应该是被管理文件实现类的实例
      */
-    public BeManageFile write2FileAsJsonD(Object content, ToBeStoreFile fileSeed);
+    public BeManageFile write2FileAsJson(Object content, ToBeStoreFile fileSeed);
 }

@@ -145,6 +145,11 @@ public class TaskInfo implements Serializable {
         this.status=5;
     }
 
+    /**
+     * 新增前置任务
+     * @param task 任务信息
+     * @param isUsed 是否使用前置任务的分析结果
+     */
     public void addPreTask(TaskInfo task, boolean isUsed) {
         if (this.preTasks==null) this.preTasks = new ArrayList<PreTask>();
         PreTask pt = new PreTask();

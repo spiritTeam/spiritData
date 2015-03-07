@@ -78,7 +78,7 @@ public class AanlResultFileService extends AbstractWriteString2FileByToBeStoreFi
      * @return 分析结果文件，根据种子生成，并补充jsonDCode和名称信息
      */
     @Override
-    public BeManageFile write2FileAsJsonD(Object jsonD, ToBeStoreFile fileSeed) {
+    public BeManageFile write2FileAsJson(Object jsonD, ToBeStoreFile fileSeed) {
         JsonD _jsonD = (JsonD)jsonD;
         AnalResultFile analResultSeed = (AnalResultFile)fileSeed;
 

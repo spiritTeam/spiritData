@@ -332,7 +332,7 @@ public class DealExcelFileService {
                     }
                 }
                 //8-生成report，这个也可以不在这里处理，而通过任务启动
-                //这个报告是对文件的，而不是对文件中的某一个表或Seet的
+                //这个报告是对整个excel文件的，而不是对文件中的某一个表或Seet的
                 Map<String, Object> param = new HashMap<String, Object>();
                 Map<String, Object> preTreadParam = new HashMap<String, Object>();
                 preTreadParam.put("reportParam", reportParam);
