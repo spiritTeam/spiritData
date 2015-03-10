@@ -581,47 +581,28 @@ function onlyLogout(ip, mac, browser) {
 //以下为初始化按钮方法
 function initButton(initType) {
   var lgName;
-  var uState;
   if(initType) lgName = $('#loginName').val();
-  else {
-    $('#loginName').val('<%=loginName%>');
-  }
-  uState = '<%=userState%>';
+  else $('#loginName').val('<%=loginName%>');
   lgName = $('#loginName').val();
   if (lgName!=null&&lgName!="") {
-	  alert("ABC");
-    $('#loginStatus').val(1);
-    alert(lgName);
-    $('#loginName').val(lgName);
-    alert("aaa");
-    $('#_logout').css('display','yes');
-    alert("bbb");
-    $('#login').css('display','none');
-    $('#modifyMail').css('display','none');
-    $('#register').css('display','none');
-    if (uState!=0) $('#modifyMail').css('display','none');
-    $('#modifyPassword').css('display','yes');
-    $('#modifyPassword').html("");
-    $('#modifyPassword').html("修改密码");
+    setLogined();
   } else {
-    $('#_logout').css('display','none');
-    $('#login').css('display','yes');
-    $('#modifyMail').css('display','none');
-    $('#modifyPassword').css('display','none');
-    $('#register').css('display','none');
-    $('#modifyPassword').html("");
-    $('#modifyPassword').html("忘记密码");
+    setNoLogin(lgName);
   }
 }
 //===根据登录状态，修改页面显示
-function setNoLogin() {
-  
+function setNoLogin(lgName) {
+  $('#_logout').css('display','none');
+  $('#login').css('display','');
+  $('#register').css('display','');
+  $('#modifyMail').css('display','none');
+  $('#register').css('display','none');
+  $('#modifyPassword').css('display','yes');
+  $('#modifyPassword').html("");
+  $('#modifyPassword').html("修改密码");
 }
-function setLogined() {
-  alert($('#_logout').css("display"));
+function setLogined() {alert('yes');
   $('#_logout').css("display", "yes");
-  alert($('#_logout').css("display"));
-  
 }
 //以上为初始化按钮方法
 
