@@ -50,14 +50,14 @@ public class LoginServiceImpl implements LoginService {
             //激活邮箱
             User u = (User)user;
             String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
-            FileUtils.deleteFile(new File(toDeletURI));
             //==0,未发邮箱激活
             if(u.getUserState()==0){
-                retMap.put("success", "success");
                 retMap.put("activeType",1);
-                retMap.put("retInfo", "您未通过邮箱激活账号,请转至邮箱激活,如果验证信息误删，请点击验证邮箱，我们将会重新发送一封验证邮件");
+                retMap.put("retInfo", "您未通过邮箱激活账号,请登录邮箱激活,如果验证信息误删，请点击“激活”");
+                retMap.put("user", user);
             }else{
                 changeOwnerId(request.getSession(), user.getUserId());
+                FileUtils.deleteFile(new File(toDeletURI));
                 retMap.put("activeType",2);
                 retMap.put("retInfo", "登录成功!");
                 retMap.put("success", "success");

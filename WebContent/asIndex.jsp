@@ -5,6 +5,7 @@
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
+  String activeSuccess = request.getParameter("activeSuccess");
   //用于验证邮箱后直接转发到主界面并打开修改密码页面。
   String action = (String)request.getAttribute("action");
   String actionUrl = "";
@@ -261,8 +262,11 @@ function uploadF() {
 }
 //主函数
 $(function() {
+  //mht代码=============
   //初始化按钮
   initButton(null);
+  initPageWin();
+  //mht代码=======
   var url = window.location.href;
   if (url.indexOf("?nolog")>0) {
     var nologType = getUrlParam(window.location.href, "type");
@@ -289,21 +293,6 @@ $(function() {
   }).mouseout(function(){
     $(this).css({"color":"white", "background-color":"#36B148"});
   });
-  //是否需要打开修改密码页面
-  var action = "<%=action%>";
-  if(action==1){
-    var loginName = "";
-    var actionUrl = "<%=path+"/"+actionUrl%>";
-    var _url = actionUrl;
-    var winOption={
-      url:_url,
-      title:"修改密码",
-      height:wHeight,
-      width:wWidth,
-      modal:true
-    };
-    modifyWinId = openSWinInMain(winOption);
-  }
 });
 
 //初始化界面
@@ -572,6 +561,25 @@ function showResult() {
 }
 
 //以下为mht js代码，勿删撒=========================================================
+function initPageWin(){
+  //是否需要打开修改密码页面
+  var action = "<%=action%>";
+  if(action==1){
+    var loginName = "";
+    var actionUrl = "<%=path+"/"+actionUrl%>";
+    var _url = actionUrl;
+    var winOption={
+      url:_url,
+      title:"修改密码",
+      height:wHeight,
+      width:wWidth,
+      modal:true
+    };
+    modifyWinId = openSWinInMain(winOption);
+  }
+  var activeSuccess  = "<%=activeSuccess%>";
+  if(activeSuccess=='true') $.messager.alert("提示", "激活成功！", "info", function(){ login(); });
+}
 function onlyLogout(ip, mac, browser) {
   var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
@@ -587,22 +595,23 @@ function initButton(initType) {
   if (lgName!=null&&lgName!="") {
     setLogined();
   } else {
-    setNoLogin(lgName);
+    setNoLogin();
   }
 }
 //===根据登录状态，修改页面显示
-function setNoLogin(lgName) {
+function setNoLogin() {
   $('#_logout').css('display','none');
   $('#login').css('display','');
   $('#register').css('display','');
   $('#modifyMail').css('display','none');
-  $('#register').css('display','none');
-  $('#modifyPassword').css('display','yes');
-  $('#modifyPassword').html("");
-  $('#modifyPassword').html("修改密码");
+  $('#modifyPassword').css('display','none');
 }
-function setLogined() {alert('yes');
-  $('#_logout').css("display", "yes");
+function setLogined() {
+  $('#_logout').css("display", "");
+  $('#login').css('display','none');
+  $('#register').css('display','none');
+  $('#modifyMail').css('display','none');
+  $('#modifyPassword').css("display", "");
 }
 //以上为初始化按钮方法
 
@@ -619,10 +628,7 @@ function logout() {
         $.messager.alert("注销信息","注销成功!",'info',function(){
           //window.location.href="<%=path%>/login/login.jsp?noAuth";
           window.location.href="<%=path%>/asIndex.jsp";
-          $('#logout').css('display','none');
-          $('#login').css('display','yes');
-          $('#modifyPassword').html("");
-          $('#modifyPassword').html("忘记密码");
+          setNoLogin();
         });
       } else {
         if(json.data==null){
