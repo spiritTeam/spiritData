@@ -246,16 +246,16 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
      * @return 若参数有效 返回true，否则返回false
      */
     private boolean isEmptyParam(Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam) {
-        if (reportParam==null||reportParam.size()==0) return false;
+        if (reportParam==null||reportParam.size()==0) return true;
         Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
         while (iter.hasNext()) {
             Map<SheetTableInfo, Map<String, Object>> value = iter.next();
             for (SheetTableInfo key : value.keySet()) {
                 Map<String, Object> _value = value.get(key);
                 MetadataModel mm = (MetadataModel)_value.get("sysMd");
-                if (mm!=null) return true;
+                if (mm!=null) return false;
             }
         }
-        return false;
+        return true;
     }
 }
