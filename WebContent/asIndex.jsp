@@ -5,6 +5,7 @@
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
+  String activeSuccess = request.getParameter("activeSuccess");
   //用于验证邮箱后直接转发到主界面并打开修改密码页面。
   String action = (String)request.getAttribute("action");
   String actionUrl = "";
@@ -153,11 +154,10 @@
 <!-- 头部:悬浮 -->
 <div id="topSegment">
   <div style="float:right;">
-    <div ><%=sid %>||<a id="login" onclick="login();" href="#">登录</a>
-      <a id="logout" onclick="logout();" href="#">注销</a>
+    <div ><a id="login" onclick="login();" href="#">登录</a>
+      <a id="_logout" onclick="logout();" href="#">注销</a>
       <a id="modifyPassword" onclick="modifyPwd();" href="#" >修改密码</a>
       <a id=register onclick="register()" href="#">注册</a>
-      <a id="test" onclick="testW();" href="#" >窗口测试</a>
       <a id="modifyMail" onclick="modifyMail();" href="#" >修改邮箱</a>
       <input id="loginStatus" type="hidden" value="">
       <input id="loginName" type="hidden" value="">
@@ -262,17 +262,20 @@ function uploadF() {
 }
 //主函数
 $(function() {
+  //mht代码=============
   //初始化按钮
-  initButton();
+  initButton(null);
+  initPageWin();
+  //mht代码=======
   var url = window.location.href;
   if (url.indexOf("?nolog")>0) {
-  	var nologType = getUrlParam(window.location.href, "type");
-  	if (nologType=="1") login();
-  	else if (nologType=="2") {
+    var nologType = getUrlParam(window.location.href, "type");
+    if (nologType=="1") login();
+    else if (nologType=="2") {
       $.messager.alert("提示", "请先登录！", "info", function(){
-      	login();
+        login();
       });
-  	}
+    }
   }
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
@@ -290,21 +293,6 @@ $(function() {
   }).mouseout(function(){
     $(this).css({"color":"white", "background-color":"#36B148"});
   });
-  //是否需要打开修改密码页面
-  var action = "<%=action%>";
-  if(action==1){
-    var loginName = "";
-    var actionUrl = "<%=path+"/"+actionUrl%>";
-    var _url = actionUrl;
-    var winOption={
-      url:_url,
-      title:"修改密码",
-      height:wHeight,
-      width:wWidth,
-      modal:true
-    };
-    modifyWinId = openSWinInMain(winOption);
-  }
 });
 
 //初始化界面
@@ -573,34 +561,60 @@ function showResult() {
 }
 
 //以下为mht js代码，勿删撒=========================================================
+function initPageWin(){
+  //是否需要打开修改密码页面
+  var action = "<%=action%>";
+  if(action==1){
+    var loginName = "";
+    var actionUrl = "<%=path+"/"+actionUrl%>";
+    var _url = actionUrl;
+    var winOption={
+      url:_url,
+      title:"修改密码",
+      height:wHeight,
+      width:wWidth,
+      modal:true
+    };
+    modifyWinId = openSWinInMain(winOption);
+  }
+  var activeSuccess  = "<%=activeSuccess%>";
+  if(activeSuccess=='true') $.messager.alert("提示", "激活成功！", "info", function(){ login(); });
+}
 function onlyLogout(ip, mac, browser) {
   var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
   $.messager.alert("提示", msg+"<br/>现返回登录页面。", "info", function(){ logout(); });
 }
 
-//初始化按钮======
-function initButton(){
-  var lgName = '<%=loginName%>';
-  var uState = '<%=userState %>';
+//以下为初始化按钮方法
+function initButton(initType) {
+  var lgName;
+  if(initType) lgName = $('#loginName').val();
+  else $('#loginName').val('<%=loginName%>');
+  lgName = $('#loginName').val();
   if (lgName!=null&&lgName!="") {
-    $('#loginStatus').val(1);
-    $('#loginName').val(lgName);
-    $('#logout').css('display','null');
-    $('#login').css('display','none');
-    $('#modifyMail').css('display','none');
-    $('#register').css('display','none');
-    if (uState!=0) $('modifyMail').css('display','none');
-    $('#modifyPassword').html("");
-    $('#modifyPassword').html("修改密码");
-  }else{
-    $('#logout').css('display','none');
-    $('#login').css('display','null');
-    $('#modifyPassword').html("");
-    $('#modifyPassword').html("忘记密码");
+    setLogined();
+  } else {
+    setNoLogin();
   }
-  
 }
+//===根据登录状态，修改页面显示
+function setNoLogin() {
+  $('#_logout').css('display','none');
+  $('#login').css('display','');
+  $('#register').css('display','');
+  $('#modifyMail').css('display','none');
+  $('#modifyPassword').css('display','none');
+}
+function setLogined() {
+  $('#_logout').css("display", "");
+  $('#login').css('display','none');
+  $('#register').css('display','none');
+  $('#modifyMail').css('display','none');
+  $('#modifyPassword').css("display", "");
+}
+//以上为初始化按钮方法
+
 /**
  * 注销
  */
@@ -614,10 +628,7 @@ function logout() {
         $.messager.alert("注销信息","注销成功!",'info',function(){
           //window.location.href="<%=path%>/login/login.jsp?noAuth";
           window.location.href="<%=path%>/asIndex.jsp";
-          $('#logout').css('display','none');
-          $('#login').css('display','null');
-          $('#modifyPassword').html("");
-          $('#modifyPassword').html("忘记密码");
+          setNoLogin();
         });
       } else {
         if(json.data==null){
@@ -712,14 +723,6 @@ function testW() {
   //newSWin({height:"400px", width:"300px", title:"测试窗口", content:"http://blog.csdn.net/oldwolf1987/article/details/4031534"});
   openSWinInMain({height:"400px", width:"300px", title:"测试窗口", url:"<%=path%>/jsp2mht/view/cc1.html"});
   return;
-}
-
-//===根据登录状态，修改页面显示
-function setNoLogin() {
-	
-}
-function setLogined() {
-	
 }
 //以上为mht js代码，勿删撒=========================================================
 </script>

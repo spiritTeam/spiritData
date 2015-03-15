@@ -107,9 +107,9 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     </tr>
   </table></form>
   <div align="right" style="width:310px;margin-top:50px;margin-right:10px;">
-    <a onclick="toRegister();" href="#">没有账号</a>&nbsp;|&nbsp;
-    <a onclick="activeUserAgain();" href="#">激活</a>&nbsp;|&nbsp;
-    <a onclick="modifyPassword();" href="#">忘记密码?</a>
+    <a id="forgetPassword" onclick="forgetPassword();" href="#">忘记密码&nbsp;|&nbsp;</a>
+    <a id="register" onclick="register();" href="#">注册</a>
+    <a id="activeUser" onclick="activeUser();" href="#">&nbsp;|&nbsp;激活</a>
   </div>
 </div></center>
 </body>
@@ -118,6 +118,8 @@ var win;
 var mainPage;
 var winId;
 var checkCode="";
+//用于记录未激活用户的信息
+var userInfo = null;
 //此数组有5个元素，分别代表5个需要验证的输入框
 var vdInfoAry = ['账号为必填项','密码为必填项','验证码为必填项'];
 /**
@@ -141,6 +143,7 @@ function initPageParam(){
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
   loginType = parseFloat(getUrlParam(window.location.href, "loginType"));
+  $('#activeUser').css('display','none');
 }
 //=以下为验证=============================================
 //验证密码是否为空
@@ -176,14 +179,28 @@ function validateCheckCode(eleId){
 
 //以下为页面跳转部分============
 //跳转到注册页面
-function toRegister(){
+function register(){
   var winId = getUrlParam(window.location.href, "_winID");
   var win = getSWinInMain(winId);
   win.modify({title:"注册"});
   window.location.href="<%=path%>/login/register.jsp?_winID="+winId;
 }
+//未登录的忘记密码页面
+function forgetPassword(){
+  var winId = getUrlParam(window.location.href, "_winID");
+  var win = getSWinInMain(winId);
+  win.modify({title:"忘记密码"});
+  window.location.href="<%=path%>/login/forgetPassword.jsp?modType=2&_winID="+winId;
+}
 //从新发送激活邮件到邮箱
-function activeUserAgain(){
+function activeUser(){
+  var winId = getUrlParam(window.location.href, "_winID");
+  var win = getSWinInMain(winId);
+  win.modify({title:"激活"});
+  var _userInfo = "";
+  if (userInfo!=null) _userInfo = userInfo.loginName+","+userInfo.mailAdress+","+userInfo.password;
+  window.location.href="<%=path%>/login/activeUser.jsp?_winID="+winId+"&_userInfo="+_userInfo;
+  return;
   var url="<%=path%>/login/activeUserAgain.do";
   var loginName = $("#loginName").val();
   if(loginName){
@@ -201,11 +218,6 @@ function activeUserAgain(){
       }
     });
   }
-}
-//未登录的忘记密码页面
-function modifyPassword(){
-  win.modify({title:"修改密码"});
-  window.location.href="<%=path%>/login/forgetPassword.jsp?modType=2";
 }
 //以上为页面跳转部分============
 
@@ -260,8 +272,7 @@ function commit(){
       "browser":getBrowserVersion()
     };
     $("#mask").show();
-    if (loginType==1) login(pData);
-    else modifyMail(pData);
+    login(pData);
   }
 }
 //用于提交
@@ -274,35 +285,33 @@ function login(pData){
       $('#checkCode').val('');
       var loginInfo = json.data;
       var retInfo = loginInfo.retInfo;
-      alert(json.type);
       if(json.type==-1){
-        $.messager.alert('登录信息',retInfo,'info');
+        if(loginInfo.activeType!=""&&loginInfo.activeType!=null){
+          var activeType = loginInfo.activeType;
+          if(activeType==1){
+            $('#activeUser').css('display','');
+            userInfo = loginInfo.user;
+            if(mainPage) mainPage.$.messager.confirm('确认对话框', "您的账号未激活，点击确定激活账号！", function(r){
+              if (r) activeUser();
+            });
+            else $.messager.confirm('确认对话框', "您的账号未激活，点击确定激活账号！", function(r){
+              if (r) activeUser();
+            });
+          }
+        }else {
+          if(mainPage) mainPage.$.messager.alert('登录信息',retInfo,'info');
+          else $.messager.alert('登录信息',retInfo,'info');
+        }
       }else if (json.type==1){
         var activeType = loginInfo.activeType;
-        alert(activeType);
-        if(activeType==1){
-          $.messager.alert('登录信息',retInfo,'info');
-        }else if(activeType==2){
+        if(activeType==2){
           if(mainPage) {
             mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
-            	alert("ddd");
               var loginStatus = mainPage.document.getElementById("loginStatus");
               var loginName = mainPage.document.getElementById("loginName");
-              var login = mainPage.document.getElementById("login");
-              var modifyMail = mainPage.document.getElementById("modifyMail");
-              var register = mainPage.document.getElementById("register");
-              var modifyPassword = mainPage.document.getElementById("modifyPassword");
-              
               $(loginStatus).val(1);
               $(loginName).val(pData.loginName);
-              $(logout).css('display','null');
-              $(login).css('display','none');
-              $(register).css('display','none');
-              if (mainPage.uState!=0) $(modifyMail).css('display','none');
-              alert("ddd1");
-              $(modifyPassword).html("");
-              $(modifyPassword).html("修改密码");
-              alert(winId);
+              mainPage.setLogined();
               closeSWinInMain(winId);
             });
           }else{
@@ -322,51 +331,6 @@ function login(pData){
       if (errorData ){
         if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
         else $.messager.alert("登录信息", "登录异常：未知！", "error");
-      }
-    }
-  });
-  mainPage.$("#mask").hide();
-  refresh('<%=path%>');
-  $('#checkCode').val('');
-}
-//用于修改邮箱的登陆
-function modifyMail(pData){
-  var url="<%=path%>/login/modifyMail.do";
-  $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-    success:function(json){
-      $("#mask").hide();
-      if(mainPage){
-        if (json.success){
-          if (json.userState == 0){
-            mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
-              win.modify({title:"重置邮箱"});
-              window.location.href="<%=path%>/login/modifyMail.jsp?_winID="+winId+"&loginName="+$('#loginName').val();
-            });
-          } else {
-            mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
-              win.modify({title:"修改个人信息"});
-              window.location.href="<%=path%>/login/update.jsp?_winID="+winId;
-            });
-          } 
-        } else {
-          mainPage.$.messager.alert("登陆信息",json.retInfo,'info');
-        }
-      } else {
-        if (json.success){
-          if (parseFloat(json.userState) == 0){
-            $.messager.alert("登陆信息","登陆成功！",'info',function(){
-              win.modify({title:"重置邮箱"});
-              window.location.href="<%=path%>/login/modifyMail.jsp?_winID="+winId+"&loginName="+$('#loginName').val();
-            });
-          } else {
-            $.messager.alert("登陆信息","登陆成功！",'info',function(){
-              win.modify({title:"修改个人信息"});
-              window.location.href="<%=path%>/login/update.jsp?_winID="+winId;
-            });
-          } 
-        } else {
-          $.messager.alert("登陆信息",json.retInfo,'info');
-        }
       }
     }
   });
