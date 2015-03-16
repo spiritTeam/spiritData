@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>重置邮箱</title>
+<title>激活账号</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css">
 <script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
@@ -37,7 +37,7 @@
         <div class="alertInput-Text">
           <input class="alertInputComp" id="mail" name="mail" tabindex="2" type="text" onblur="validateMail();" />
         </div>
-        <div class="alertImg"></div>
+        <div id="mailAlertImg" style="width:16px;height:16px;position:absolute;left:295px;top:70px;display:block;"></div>
       </td>
     </tr>
     <tr>
@@ -95,6 +95,7 @@ function initPageParam(){
     $('#loginName').val(s[0]);
     $('#mail').val(s[1]);
     $('#password').val(s[2]);
+    validateMail();
   }
 }
 //=以上初始化设置=============================================
@@ -104,17 +105,17 @@ function initPageParam(){
 function validateMail() {
   var val = $('#mail').val();
   if(val){
-    $("#mail").parent().parent().find(".alertImg").show();
+    $("#mailAlertImg").show();
     win.setMessage({'msg':''});
     vdInfoAry[0] = "";
     var mailAdress = val;
     if (!checkMailAdress(mailAdress)) {
       vdInfoAry[0] = "邮箱格式不正确";
       win.setMessage({'msg': vdInfoAry[0]});
-      $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
-    }else $("#mail").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
+      $("#mailAlertImg").css("background-image", "url(images/cross.png)");
+    }else $("#mailAlertImg").css({"background-image":"url(images/accept.png)"});
   }else{
-    $("#mail").parent().parent().find(".alertImg").hide();
+    $("#mailAlertImg").hide();
     vdInfoAry[0] = "邮箱不能为空";
   }
   var ma = getMainAlert($("#mail"));
