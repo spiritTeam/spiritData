@@ -66,8 +66,8 @@ public class ReportService {
      */
     public String getReportJsonById(String reportId) {
         if (reportId==null||reportId.length()==0) throw new Dtal1001CException("所给reportId参数为空，无法获取数据！");
-        //根据id获取内容，现在先不处理
-        return this.getReportJsonByUri("demo\\templetDemo\\templet1.json");
+        //根据id获取内容，现在先不处理//原文件名templet1.json
+        return this.getReportJsonByUri("demo\\templetDemo\\afterImport(IMPFID-c56873f1ff954637be9609ee1bc67a40_RID-63f78f9a12b748e5ae442e8e647baa0f).json");
     }
 
     /**
