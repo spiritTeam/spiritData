@@ -26,7 +26,8 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
         for (int i=0; i<this.size(); i++) {
             TreeNode<ReportSegment> oneSeg = this.get(i);
             ret +="{\"id\":\""+oneSeg.getId()+"\"";
-            ret +=",\"name\":\""+oneSeg.getNodeName()+"\"";
+            tempStr = oneSeg.getTnEntity().getNodeName();
+            if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"name\":\""+tempStr+"\"";
             tempStr = oneSeg.getTnEntity().getTitle();
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"title\":\""+tempStr+"\"";
             tempStr = oneSeg.getTnEntity().getContent();
@@ -47,7 +48,8 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
         for (int i=0; i<children.size(); i++) {
             TreeNode<ReportSegment> oneSeg = children.get(i);
             ret +="{\"id\":\""+oneSeg.getId()+"\"";
-            ret +=",\"name\":\""+oneSeg.getNodeName()+"\"";
+            tempStr = oneSeg.getTnEntity().getNodeName();
+            if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"name\":\""+tempStr+"\"";
             tempStr = oneSeg.getTnEntity().getTitle();
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"title\":\""+tempStr+"\"";
             tempStr = oneSeg.getTnEntity().getContent();

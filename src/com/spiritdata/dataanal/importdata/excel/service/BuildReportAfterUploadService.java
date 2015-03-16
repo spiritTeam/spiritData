@@ -183,12 +183,13 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                     List<MetadataColSemanteme> csl = mc.getColSemList();
                     if (csl!=null&&csl.size()>0) {
                         for (MetadataColSemanteme mcs: csl) {
-                            if (mcs.getSemantemeType()==2) {//是字典
+                            if (mcs.getSemantemeType()==1) {//是字典
                                 ReportSegment rs1_1_loop = new ReportSegment();
                                 rs1_1_loop.setNodeName(mc.getTitleName()+"指标");
-                                rs1_1_loop.setTitle("<div style='font-height:bold;'>"+mc.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
+                                rs1_1_loop.setTitle("<div style='font-height:bold;'>"+mm.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
                                 rs1_1_loop.setId(SequenceUUID.getPureUUID());
                                 //TODO 判断有几个字典项目，若大于三个，采用下面的方式
+                                
                                 rs1_1_loop.setContent("");
                                 TreeNode<ReportSegment> rsTn1_1_loop = new TreeNode<ReportSegment>(rs1_1_loop);
                                 rsTn1_1.addChild(rsTn1_1_loop);
