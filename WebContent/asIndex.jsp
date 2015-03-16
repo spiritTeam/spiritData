@@ -605,6 +605,7 @@ function setNoLogin() {
   $('#register').css('display','');
   $('#modifyMail').css('display','none');
   $('#modifyPassword').css('display','none');
+
 }
 function setLogined() {
   $('#_logout').css("display", "");
