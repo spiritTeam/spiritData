@@ -47,8 +47,8 @@ public class JsonDService {
             String fileUri = FileNameUtils.concatPath(fip.getPath(), fip.getFileName());
             return this.getJsonDByUri(fileUri);
         }
-        //根据id获取内容，现在先不处理
-        return this.getJsonDByUri("demo\\templetDemo\\templet1.json");
+        //根据id获取内容，现在先不处理原文件名templet1.json
+        return this.getJsonDByUri("demo\\templetDemo\\afterImport(IMPFID-c56873f1ff954637be9609ee1bc67a40_RID-63f78f9a12b748e5ae442e8e647baa0f).json");
     }
 
     /**

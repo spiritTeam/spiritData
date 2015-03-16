@@ -38,7 +38,7 @@
           //标题
           var _HEAD = templetJD._HEAD;
           //jsonDurl 用于请求jsond
-          var _DATA = templetJD._DATA;
+          var _DATA = templetJD._DLIST;
           dataIdAry = getJsonD(_DATA);
           $('#rTitle').html(_HEAD.reportName);
           buildSegmentGroup($('#reportFrame'), _REPORT, level, null);
@@ -268,14 +268,16 @@
             parent.dataAry = pDataAry.split(",");
           } else {
             pDataAry = "";
-            for (var v=0;v<_dataAry.length;v++) {
-              if (pDataAry!="") {
-                if (pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
-              } else pDataAry = pDataAry+_dataAry[v]+",";
-              if (pDataAry==",") pDataAry="";
+            if(_dataAry){
+              for (var v=0;v<_dataAry.length;v++) {
+                if (pDataAry!="") {
+                  if (pDataAry.indexOf(_dataAry[v])==-1) pDataAry = pDataAry+_dataAry[v]+",";
+                } else pDataAry = pDataAry+_dataAry[v]+",";
+                if (pDataAry==",") pDataAry="";
+              }
+              if (pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
+              parent.dataAry = pDataAry.split(",");
             }
-            if (pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
-            parent.dataAry = pDataAry.split(",");
           }
         }
       }
