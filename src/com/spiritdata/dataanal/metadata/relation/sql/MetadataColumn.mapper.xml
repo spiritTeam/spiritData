@@ -29,7 +29,7 @@
         <if test="columnName!=null"> and columnName=#{columnName,jdbcType=VARCHAR}</if>
         <if test="columnType!=null"> and columnType=#{columnType,jdbcType=VARCHAR}</if>
         <if test="columnName!=null"> and columnName=#{columnName,jdbcType=VARCHAR}</if>
-        <if test="columnIndex!=null and columnIndex!=0"> and columnIndex=#{columnIndex,jdbcType=INTEGER}</if>
+        <if test="columnIndex!=null"> and columnIndex=#{columnIndex,jdbcType=INTEGER}</if>
         <if test="pkSign!=null and pkSign!=0"> and pkSign=#{pkSign,jdbcType=INTEGER}</if>
         <if test="CTime!=null"> and cTime=#{CTime,jdbcType=TIMESTAMP}</if>
       </trim>
@@ -73,7 +73,7 @@
       <if test="columnName!=null">columnName,</if>
       <if test="titleName!=null">titleName,</if>
       <if test="columnType!=null">columnType,</if>
-      <if test="columnIndex!=null and columnIndex!=0">columnIndex,</if>
+      <if test="columnIndex!=null">columnIndex,</if>
       <if test="pkSign!=null and pkSign!=0">pkSign,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -82,7 +82,7 @@
       <if test="columnName!=null">#{columnName,jdbcType=VARCHAR},</if>
       <if test="titleName!=null">#{titleName,jdbcType=VARCHAR},</if>
       <if test="columnType!=null">#{columnType,jdbcType=VARCHAR},</if>
-      <if test="columnIndex!=null and columnIndex!=0">#{columnIndex,jdbcType=INTEGER},</if>
+      <if test="columnIndex!=null">#{columnIndex,jdbcType=INTEGER},</if>
       <if test="pkSign!=null and pkSign!=0">#{pkSign,jdbcType=INTEGER},</if>
     </trim>
   </insert>
@@ -94,7 +94,7 @@
       <if test="columnName!=null">columnName=#{columnName,jdbcType=VARCHAR},</if>
       <if test="titleName!=null">titleName=#{titleName,jdbcType=VARCHAR},</if>
       <if test="columnType!=null">columnType=#{columnType,jdbcType=VARCHAR},</if>
-      <if test="columnIndex!=null and columnIndex!=0">columnIndex=#{columnIndex,jdbcType=INTEGER},</if>
+      <if test="columnIndex!=null">columnIndex=#{columnIndex,jdbcType=INTEGER},</if>
       <if test="pkSign!=null and pkSign!=0">pkSign=#{pkSign,jdbcType=INTEGER},</if>
       <if test="CTime!=null">cTime=#{CTime,jdbcType=TIMESTAMP},</if>
     </set>
