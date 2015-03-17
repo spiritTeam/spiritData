@@ -187,10 +187,20 @@ function register(){
 }
 //未登录的忘记密码页面
 function forgetPassword(){
-  var winId = getUrlParam(window.location.href, "_winID");
-  var win = getSWinInMain(winId);
-  win.modify({title:"忘记密码"});
-  window.location.href="<%=path%>/login/forgetPassword.jsp?modType=2&_winID="+winId;
+  //var winId = getUrlParam(window.location.href, "_winID");
+  //var win = getSWinInMain(winId);
+  //win.modify({title:"忘记密码",height:'300px'});
+  //window.location.href="<%=path%>/login/forgetPassword.jsp?modType=2&_winID="+winId;
+  ///////
+  var _url="<%=path%>/login/forgetPassword.jsp?modType=2";
+  var winOption={
+    url:_url,
+    title:"忘记密码",
+    height:'330',
+    width:'330',
+    modal:true
+  };
+  openSWinInMain(winOption);
 }
 //从新发送激活邮件到邮箱
 function activeUser(){
