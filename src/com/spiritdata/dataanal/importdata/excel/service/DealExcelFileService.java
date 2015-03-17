@@ -349,6 +349,7 @@ public class DealExcelFileService {
                 preTreadParam.put("ownerType", ownerType);
                 preTreadParam.put("ownerId", ownerId);
                 preTreadParam.put("impFileInfo", fi);
+                preTreadParam.put("ownerDict", _od);
                 param.put("preTreadParam", preTreadParam);
                 buildReport.buildANDprocess(param);
             }

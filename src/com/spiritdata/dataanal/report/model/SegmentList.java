@@ -25,6 +25,7 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
         String tempStr;
         for (int i=0; i<this.size(); i++) {
             TreeNode<ReportSegment> oneSeg = this.get(i);
+            if (i>0) ret +=",";
             ret +="{\"id\":\""+oneSeg.getId()+"\"";
             tempStr = oneSeg.getTnEntity().getNodeName();
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"name\":\""+tempStr+"\"";
@@ -47,6 +48,7 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
         String tempStr;
         for (int i=0; i<children.size(); i++) {
             TreeNode<ReportSegment> oneSeg = children.get(i);
+            if (i>0) ret +=",";
             ret +="{\"id\":\""+oneSeg.getId()+"\"";
             tempStr = oneSeg.getTnEntity().getNodeName();
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"name\":\""+tempStr+"\"";
