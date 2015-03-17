@@ -1,0 +1,37 @@
+{
+  "_HEAD": {
+    "_id": "63f78f9a12b748e5ae442e8e647baa0f",
+    "_reportType": "导入后即时报告",
+    "_reportName": "[test002.xls]——文件导入后数据分析报告",
+    "_code": "SD.TEAM.REPORT::0001",
+    "_cTime": "-480::1425718344824",
+    "_desc": "[test002.xls]——文件导入后数据分析报告"
+  },
+  "_DLIST": [
+    {
+      "_id": 0,
+      "_url": "jsonD/getJsonD.do?jsonDId=e9c2e02cacd948c5a3782e069e3a4344",
+      "_jsonDCode": "SD.TEAM.ANAL::0004",
+      "_jsonDId": "e9c2e02cacd948c5a3782e069e3a4344"
+    },{
+      "_id": 1,
+      "_url": "jsonD/getJsonD.do?jsonDId=0928b1288bf841dda543a9af22d7d70d",
+      "_jsonDCode": "SD.TEAM.ANAL::0003",
+      "_jsonDId": "0928b1288bf841dda543a9af22d7d70d"
+    }
+  ],
+  "_REPORT": [
+    {
+      "id": "1e5c027523bf46df9cd1babd61ca7cdc",
+      "name": "学生成绩",
+      "title": "学生成绩分析",
+      "subSeg": [
+        {
+          "id": "e21f7fef9bd5475bb06abb0e4aeb6a2d",
+          "name": "null",
+          "title": "单向指标分析"
+        }
+      ]
+    }
+  ]
+}

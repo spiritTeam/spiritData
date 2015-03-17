@@ -12,7 +12,7 @@
 <script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
 <!--样式处理  -->
 <style type="text/css">
-.prompt{text-align:left;width:270px;margin-top:40px;margin-left:0px;}
+.prompt{text-align:left;width:250px;margin-top:20px;margin-left:10px;font-size:12px;color:#999999;}
 </style>
 </head>
 <body>
@@ -34,19 +34,20 @@
       </td>
     </tr>
     <tr>
+      <td colspan="2">
+        <div id="infoDiv" class="prompt">
+                    　　您在输入完账号后，请点击“发送邮件”按钮，我们将为您从新发送一封邮件到您的邮箱。请注意查收。
+        </div>
+      </td>
+    </tr>
+    <tr>
       <td colspan="2" class="commitBottonTd">
         <div id="commitButton" class="commitDiv" onclick="commit();">
-          <span>下一步</span>
+          <span>发送邮件</span>
         </div>
       </td>
     </tr>
   </table></form>
-  <div id="infoDiv" class="prompt">
-    <h2>重置密码流程：</h2>
-    <span>1、填写账号,系统校验账号。</span><br/>
-    <span>2、成功后点击下一步,将发送邮件至您的邮箱。</span><br/>
-    <span>3、登录邮箱,根据提示重置密码。</span><br/>
-  </div>
 </div></center>
 </body>
 <script type="text/javascript">

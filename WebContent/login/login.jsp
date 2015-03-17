@@ -107,9 +107,9 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     </tr>
   </table></form>
   <div align="right" style="width:310px;margin-top:50px;margin-right:10px;">
-    <a id="forgetPassword" onclick="forgetPassword();" href="#">忘记密码&nbsp;|&nbsp;</a>
-    <a id="register" onclick="register();" href="#">注册</a>
-    <a id="activeUser" onclick="activeUser();" href="#">&nbsp;|&nbsp;激活</a>
+    <a id="forgetPassword" onclick="forgetPassword();" href="#">忘记密码</a>&nbsp;|&nbsp;
+    <a id="register" onclick="register();" href="#">注册</a><span id="delimiter" >&nbsp;|&nbsp;</span>
+    <a id="activeUser" onclick="activeUser();" href="#">激活</a>
   </div>
 </div></center>
 </body>
@@ -143,6 +143,7 @@ function initPageParam(){
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
   loginType = parseFloat(getUrlParam(window.location.href, "loginType"));
+  $('#delimiter').css('display','none');
   $('#activeUser').css('display','none');
 }
 //=以下为验证=============================================
@@ -181,20 +182,27 @@ function validateCheckCode(eleId){
 //跳转到注册页面
 function register(){
   var winId = getUrlParam(window.location.href, "_winID");
+  if(winId.indexOf('#')!=-1) winId = formatWid(winId);
   var win = getSWinInMain(winId);
   win.modify({title:"注册"});
   window.location.href="<%=path%>/login/register.jsp?_winID="+winId;
 }
 //未登录的忘记密码页面
 function forgetPassword(){
-  var winId = getUrlParam(window.location.href, "_winID");
-  var win = getSWinInMain(winId);
-  win.modify({title:"忘记密码"});
-  window.location.href="<%=path%>/login/forgetPassword.jsp?modType=2&_winID="+winId;
+  var _url="<%=path%>/login/forgetPassword.jsp?modType=2";
+  var winOption={
+    url:_url,
+    title:"忘记密码",
+    height:'330',
+    width:'330',
+    modal:true
+  };
+  openSWinInMain(winOption);
 }
 //从新发送激活邮件到邮箱
 function activeUser(){
   var winId = getUrlParam(window.location.href, "_winID");
+  if (winId.indexOf('#')!=-1) winId = formatWid(winId);
   var win = getSWinInMain(winId);
   win.modify({title:"激活"});
   var _userInfo = "";
@@ -290,6 +298,7 @@ function login(pData){
           var activeType = loginInfo.activeType;
           if(activeType==1){
             $('#activeUser').css('display','');
+            $('#delimiter').css('display','');
             userInfo = loginInfo.user;
             if(mainPage) mainPage.$.messager.confirm('确认对话框', "您的账号未激活，点击确定激活账号！", function(r){
               if (r) activeUser();
@@ -307,11 +316,7 @@ function login(pData){
         if(activeType==2){
           if(mainPage) {
             mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
-              var loginStatus = mainPage.document.getElementById("loginStatus");
-              var loginName = mainPage.document.getElementById("loginName");
-              $(loginStatus).val(1);
-              $(loginName).val(pData.loginName);
-              mainPage.setLogined();
+              mainPage.setLogined(pData.loginName);
               closeSWinInMain(winId);
             });
           }else{
