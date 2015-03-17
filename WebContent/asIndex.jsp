@@ -156,10 +156,9 @@
   <div style="float:right;">
     <div ><a id="login" onclick="login();" href="#">登录</a>
       <a id="_logout" onclick="logout();" href="#">注销</a>
-      <a id="modifyPassword" onclick="modifyPwd();" href="#" >修改密码</a>
-      <a id=register onclick="register()" href="#">注册</a>
-      <a id="modifyMail" onclick="modifyMail();" href="#" >修改邮箱</a>
-      <input id="loginStatus" type="hidden" value="">
+      <a id="forgetPassword" onclick="forgetPassword();" href="#" >忘记密码</a>
+      <a id="updateUser" onclick="updateUser();" href="#" >修改基本信息</a>
+      <a id=register onclick="register()" href="#">注册</a>&nbsp;&nbsp;&nbsp;&nbsp;
       <input id="loginName" type="hidden" value="">
     </div>
   </div>
@@ -593,7 +592,7 @@ function initButton(initType) {
   else $('#loginName').val('<%=loginName%>');
   lgName = $('#loginName').val();
   if (lgName!=null&&lgName!="") {
-    setLogined();
+    setLogined(null);
   } else {
     setNoLogin();
   }
@@ -603,16 +602,16 @@ function setNoLogin() {
   $('#_logout').css('display','none');
   $('#login').css('display','');
   $('#register').css('display','');
-  $('#modifyMail').css('display','none');
-  $('#modifyPassword').css('display','none');
-
+  $('#forgetPassword').css('display','none');
+  $('#updateUser').css('display','none');
 }
-function setLogined() {
+function setLogined(loginName) {
   $('#_logout').css("display", "");
   $('#login').css('display','none');
   $('#register').css('display','none');
-  $('#modifyMail').css('display','none');
-  $('#modifyPassword').css("display", "");
+  $('#forgetPassword').css("display", "none");
+  $('#updateUser').css('display','');
+  if(loginName!=""&&loginName!=null) $('loginName').val(loginName);
 }
 //以上为初始化按钮方法
 
@@ -620,7 +619,6 @@ function setLogined() {
  * 注销
  */
 function logout() {
-  $("#loginStatus").val("");
   $("#loginName").val("");
   var url=_PATH+"/logout.do";
   $.ajax({type:"post", async:true, url:url, data:null, dataType:"json",
@@ -654,7 +652,6 @@ var wWidth = "330";
  * 注册
  */
 function register(){
-  //var loginStatus = $('#loginStatus').val();
   var _url ="<%=path%>/login/register.jsp";
   var winOption={
     url:_url,
@@ -667,17 +664,22 @@ function register(){
   openSWinInMain(winOption);
 }
 // 忘记密码
-function modifyPwd(){
-  var loginStatus = $('#loginStatus').val();
-  var _url;
-  var tt = "";
-  if(loginStatus!=""&&loginStatus!=null){
-    _url="<%=path%>/login/update.jsp?";
-    tt = "修改个人信息";
-  }else{
-    _url="<%=path%>/login/forgetPassword.jsp";
-    tt = "找回密码";
-  }
+function forgetPassword(){
+  var _url="<%=path%>/login/forgetPassword.jsp";
+  var tt = "忘记密码";
+  var winOption={
+    url:_url,
+    title:tt,
+    height:wHeight,
+    width:wWidth,
+    modal:true
+  };
+  openSWinInMain(winOption);
+}
+//修改个人信息
+function updateUser(){
+  var _url="<%=path%>/login/update.jsp?";alert("update");
+  var tt = "修改个人信息";
   var winOption={
     url:_url,
     title:tt,
@@ -689,28 +691,11 @@ function modifyPwd(){
 }
 // 登录
 function login(){
-  if($("#loginStatus").val()==1) {
-    $.messager.alert('提示','您已经在登陆状态了，如想切换用户请先注销！','info');
-    return;
-  }
   var loginType = 1;
   var _url="<%=path%>/login/login.jsp?loginType="+loginType;
   var winOption={
     url:_url,
     title:"登录",
-    height:wHeight,
-    width:wWidth,
-    modal:true
-  };
-  openSWinInMain(winOption);
-}
-//修改邮箱
-function modifyMail(){
-  var loginType = 2;
-  var _url="<%=path%>/login/login.jsp?loginType="+loginType;
-  var winOption={
-    url:_url,
-    title:"重置邮箱",
     height:wHeight,
     width:wWidth,
     modal:true

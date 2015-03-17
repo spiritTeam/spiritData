@@ -11,9 +11,9 @@ public class LoginConstants {
      */
     public final static String HOST_MAIL_SMTP="smtp.qq.com";
     //发件箱用户名
-    public final static String HOST_MAIL_NAME="3231990142@qq.com";
+    public final static String HOST_MAIL_NAME="3546509521@qq.com";
     //邮箱密码
-    public final static String HOST_MAIL_PASSWORD="MHTandLJJ1314";
+    public final static String HOST_MAIL_PASSWORD="MHT7415963LJJ";
     //是否打印dug信息
     public final static boolean HOST_MAIL_DEBUG=false;
 }
