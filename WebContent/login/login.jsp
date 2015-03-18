@@ -199,7 +199,7 @@ function forgetPassword(){
   };
   openSWinInMain(winOption);
 }
-//从新发送激活邮件到邮箱
+//重新发送激活邮件到邮箱
 function activeUser(){
   var winId = getUrlParam(window.location.href, "_winID");
   if (winId.indexOf('#')!=-1) winId = formatWid(winId);

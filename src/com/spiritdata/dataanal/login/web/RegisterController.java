@@ -241,7 +241,7 @@ public class RegisterController {
                     }//转发到apage.jsp
                 } else {
                     retMap.put("success", false);
-                    retInfo = "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!";
+                    retInfo = "激活码不完整!请重新点击激活链接或从登录页面再次发送激活邮件!";
                     ee = new Dtal1101CException(retInfo);
                     retMap.put("retInfo",ee.getMessage());
                     return retMap;
@@ -278,7 +278,7 @@ public class RegisterController {
         return retMap;
     }
     /**
-     * 从新发送激活邮件，并保存修改后的邮箱
+     * 重新发送激活邮件，并保存修改后的邮箱
      */
     @RequestMapping("login/activeUserAgain.do")
     public @ResponseBody Map<String,Object> activeUserAgain(HttpServletRequest request, HttpServletResponse response){

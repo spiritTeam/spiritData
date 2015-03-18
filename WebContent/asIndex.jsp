@@ -632,9 +632,11 @@ function logout() {
       } else {
         if(json.data==null){
           $.messager.alert("提示","您还未登录!",'info');
+          setNoLogin();
         }else{
           $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
             window.location.href="<%=path%>/asIndex.jsp";
+            setNoLogin();
           });
         }
       }
@@ -642,6 +644,7 @@ function logout() {
     error: function(errorData) {
       $.messager.alert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
         window.location.href="<%=path%>/asIndex.jsp?noAuth";
+        setNoLogin();
       });
     }
   });
@@ -666,10 +669,10 @@ function register(){
 // 忘记密码
 function forgetPassword(){
   var _url="<%=path%>/login/forgetPassword.jsp";
-  var tt = "忘记密码";
+  var title = "忘记密码";
   var winOption={
     url:_url,
-    title:tt,
+    title:title,
     height:wHeight,
     width:wWidth,
     modal:true
@@ -678,11 +681,11 @@ function forgetPassword(){
 }
 //修改个人信息
 function updateUser(){
-  var _url="<%=path%>/login/update.jsp?";alert("update");
-  var tt = "修改个人信息";
+  var _url="<%=path%>/login/update.jsp?";
+  var title = "修改个人信息";
   var winOption={
     url:_url,
-    title:tt,
+    title:title,
     height:wHeight,
     width:wWidth,
     modal:true
