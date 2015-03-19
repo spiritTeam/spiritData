@@ -153,7 +153,7 @@ function mouseOut(obj){
 }
 function sendPkAndCacheId(){
   if((nullMessage!=""&&nullMessage!=null)||(repeatMessage!=""&&repeatMessage!=null)){
-    $.messager.alert('上传数据提示',nbsp+nbsp+'您上传的excel主键位可能为空值或重复，请修改后从新上传，详情请查看执行结果','info');
+    $.messager.alert('上传数据提示',nbsp+nbsp+'您上传的excel主键位可能为空值或重复，请修改后重新上传，详情请查看执行结果','info');
     return;
   }
   for(var i=0;i<selectAndCacheIdArry.length;i++){
@@ -210,7 +210,7 @@ function initStep2(resultData){
 		if(saveResult==true){
 			step2Mesage = step2Mesage+'在sheet名为"'+sheetName+'"的sheet中，执行保存数据成功，本次一共上传'+allRows+'条数据，其中新增'+insertRows+'条，更新'+updataRows+'条。<br>'+nbsp+nbsp;
 		}else{
-			$.messager.alert('保存数据提示',nbsp+nbsp+'您上传的excel主键位可能为空值或重复，请修改后从新上传，详情请查看执行结果','info');
+			$.messager.alert('保存数据提示',nbsp+nbsp+'您上传的excel主键位可能为空值或重复，请修改后重新上传，详情请查看执行结果','info');
 	    if(nullMessage!=""&&nullMessage!=null){
 	      step2Mesage = step2Mesage+nullMessage;
 	    }
@@ -280,7 +280,7 @@ function initSelectAndStpe1(pkCacheMapList){
 	afterUpload();
   $('#step1ResultTitle').css("display","");
   if((nullMessage!=""&&nullMessage!=null)||(repeatMessage!=""&&repeatMessage!=null)){
-    $.messager.alert('上传提示',nbsp+nbsp+'您上传的excel主键位可能为空值或重复，请修改后从新上传，详情请查看执行结果。','info');
+    $.messager.alert('上传提示',nbsp+nbsp+'您上传的excel主键位可能为空值或重复，请修改后重新上传，详情请查看执行结果。','info');
   }
   var step1Mesage = nbsp+nbsp;
   if(nullMessage!=""&&nullMessage!=null){

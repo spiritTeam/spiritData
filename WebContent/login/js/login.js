@@ -1,3 +1,10 @@
+//处理winId,把id后面的"#"去掉
+function formatWid(winId){
+  if(winId.indexOf('#')!=-1){
+    winId = winId.substring(0,winId.indexOf('#'));
+  }
+  return winId;
+}
 
 /**
  * 得到提示输入控件的主容器

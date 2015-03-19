@@ -55,7 +55,7 @@ public class RegisterController {
             retMap.put("retInfo", ee.getMessage());
             return retMap;
         }
-        if (user.getUserType() == 0) {
+        if (user.getUserState() == 0) {
             retInfo = "您的账号还未激活，请先激活！";
             ee = new Dtal1104CException(retInfo);
             retMap.put("success", false);
@@ -207,7 +207,7 @@ public class RegisterController {
             retMap.put("retInfo", ee.getMessage());
             return retMap;
         } else {
-            if (user.getUserType()==1) {
+            if (user.getUserState()==1) {
                 retMap.put("success", false);
                 retInfo = "链接已失效！";
                 ee = new Dtal1101CException(retInfo);
@@ -241,7 +241,7 @@ public class RegisterController {
                     }//转发到apage.jsp
                 } else {
                     retMap.put("success", false);
-                    retInfo = "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!";
+                    retInfo = "激活码不完整!请重新点击激活链接或从登录页面再次发送激活邮件!";
                     ee = new Dtal1101CException(retInfo);
                     retMap.put("retInfo",ee.getMessage());
                     return retMap;
@@ -278,7 +278,7 @@ public class RegisterController {
         return retMap;
     }
     /**
-     * 从新发送激活邮件，并保存修改后的邮箱
+     * 重新发送激活邮件，并保存修改后的邮箱
      */
     @RequestMapping("login/activeUserAgain.do")
     public @ResponseBody Map<String,Object> activeUserAgain(HttpServletRequest request, HttpServletResponse response){
@@ -503,54 +503,6 @@ public class RegisterController {
             retInfo = "注册失败，请稍后重试！";
             ee = new Dtal1102CException(retInfo);
             retMap.put("retInfo", ee.getMessage());
-            return retMap;
-        }
-    }
-    /**
-     * 修改邮箱
-     */
-    @RequestMapping("/login/modifyMail.do")
-    public @ResponseBody Map<String,Object> modifyMail(HttpServletRequest request){
-        Map<String,Object> retMap = new HashMap<String,Object>();
-        retMap.put("success", false);
-        String loginName = request.getParameter("loginName");
-        String password = request.getParameter("password");
-        String retInfo;
-        Exception ee = null;
-        try{
-            User user = userService.getUserByLoginName(loginName);
-            if (user!=null&&!user.equals("")) {
-                if (user.getPassword().equals(password)) {
-                    String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
-                    FileUtils.deleteFile(new File(toDeletURI));
-                    if ( user.getUserType()==0) {
-                        retMap.put("retInfo", "登陆成功!");
-                        retMap.put("success", true);
-                        retMap.put("userState", user.getUserState());
-                        return retMap;
-                    } else {
-                        retMap.put("retInfo", "登陆成功!");
-                        retMap.put("success", true);
-                        retMap.put("userState", user.getUserState());
-                        return retMap;
-                    }
-                } else {
-                    retInfo = "密码不正确！";
-                    ee = new Dtal1104CException(retInfo);
-                    retMap.put("retInfo", ee.getMessage());
-                    return retMap;
-                }
-            } else {
-                retInfo = "账号不正确！";
-                ee = new Dtal1104CException(retInfo);
-                retMap.put("retInfo", ee.getMessage());
-                return retMap;
-            }
-        } catch(Exception e) {
-            retInfo = "登陆异常:"+e.getMessage();
-            ee = new Dtal1104CException(retInfo);
-            retMap.put("retInfo",ee.getMessage());
-            e.printStackTrace();
             return retMap;
         }
     }
