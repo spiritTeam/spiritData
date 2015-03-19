@@ -215,15 +215,6 @@ public class RegisterController {
                 return retMap;
             } else {
                 if (user.getValidataSequence().equals(code)) {
-                    user.setUserState(1);
-                    user.setValidataSequence("");
-                    HttpSession session = request.getSession();
-                    User suser = (User) session.getAttribute(FConstants.SESSION_USER);
-                    if ( suser!=null&&!suser.equals("")) {
-                        suser.setUserState(1);
-                        suser.setValidataSequence("");
-                    }
-                    userService.updateUser(user);
                     try {
                         //在重定向的基础上修改为转发
                         String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
@@ -264,6 +255,8 @@ public class RegisterController {
         if (user!=null&&!user.equals("")) user.setPassword(password);
         else user = userService.getUserByLoginName(loginName);
         user.setPassword(password);
+        user.setUserState(1);
+        user.setValidataSequence("");
         int i = userService.updateUser(user);
         if (i==1) {
             retInfo = "修改密码成功!";
@@ -467,37 +460,43 @@ public class RegisterController {
                 retMap.put("retInfo", ee.getMessage());
                 return retMap;
             }
-            if (rst==1) {
-                //删除储存验证码的文件夹
-                String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
-                FileUtils.deleteFile(new File(toDeletURI));
-                String deployName = request.getContextPath();
-                int  serverPort = request.getServerPort();
-                String serverName = request.getServerName();
-                String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
-                        + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
-                try {
-                    SendValidataUrlToMail svu = new SendValidataUrlToMail();
-                    svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
-                    retMap.put("success", true);
-                    retInfo = "注册成功，已经向您的邮箱发送一封邮件，请登陆邮箱激活账号";
-                    retMap.put("retInfo", retInfo);
-                    //删除验证码
-                    return retMap;
-                } catch (MessagingException mex) {
-                    retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
-                    ee = new Dtal1103CException(retInfo);
-                    retMap.put("success", false);
-                    retMap.put("retInfo", ee.getMessage());
-                    return retMap;
-                }
-            } else {
-                retMap.put("success", false);
-                retInfo = "注册不成功，请稍后重试！";
-                ee = new Dtal1102CException(retInfo);
-                retMap.put("retInfo", ee.getMessage());
-                return retMap;
+            if(rst==1){
+            	
             }
+//            if (rst==1) {
+//                //删除储存验证码的文件夹
+//                String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
+//                FileUtils.deleteFile(new File(toDeletURI));
+//                
+//                String deployName = request.getContextPath();
+//                int  serverPort = request.getServerPort();
+//                String serverName = request.getServerName();
+//                String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
+//                        + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+//                try {
+//                	SendMail smMail = new SendMail();
+//                	smMail.run();
+//                    SendValidataUrlToMail svu = new SendValidataUrlToMail();
+//                    svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
+//                    retMap.put("success", true);
+//                    retInfo = "注册成功，已经向您的邮箱发送一封邮件，请登陆邮箱激活账号";
+//                    retMap.put("retInfo", retInfo);
+//                    //删除验证码
+//                    return retMap;
+//                } catch (MessagingException mex) {
+//                    retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
+//                    ee = new Dtal1103CException(retInfo);
+//                    retMap.put("success", false);
+//                    retMap.put("retInfo", ee.getMessage());
+//                    return retMap;
+//                }
+//            } else {
+//                retMap.put("success", false);
+//                retInfo = "注册不成功，请稍后重试！";
+//                ee = new Dtal1102CException(retInfo);
+//                retMap.put("retInfo", ee.getMessage());
+//                return retMap;
+//            }
         } catch(Exception e) {
             retMap.put("success", false);
             retInfo = "注册失败，请稍后重试！";
@@ -507,3 +506,11 @@ public class RegisterController {
         }
     }
 }
+class SendMail extends Thread{
+	public void run(){
+		for(int i=0;i<10;i++){
+			System.out.println(i);
+		}
+	}
+}
+

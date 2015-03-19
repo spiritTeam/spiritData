@@ -56,7 +56,7 @@
     </tr>
     <tr>
       <td colspan="2" class="commitBottonTd">
-        <div id="commitButton" class="commitDiv" onclick="commit();">
+        <div id="commitButton" style="margin-top: 30px;" class="commitDiv" onclick="commit();">
           <span>修改密码</span>
         </div>
       </td>

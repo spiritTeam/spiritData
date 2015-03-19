@@ -570,8 +570,8 @@ function initPageWin(){
     var winOption={
       url:_url,
       title:"修改密码",
-      height:wHeight,
-      width:wWidth,
+      height:360,
+      width:330,
       modal:true
     };
     modifyWinId = openSWinInMain(winOption);
