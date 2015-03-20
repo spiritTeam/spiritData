@@ -52,7 +52,10 @@
           //为树结点绑定锚点
           $('#catalogTree').tree({
             onClick: function(node){
-              $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top-70});
+              try{
+            	  var topSegHeight = $("#topSegment").height()+3;	
+                  $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top - topSegHeight});  
+              }catch(e){}
             }
           });
         }else{
