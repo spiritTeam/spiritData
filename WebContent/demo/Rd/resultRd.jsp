@@ -333,7 +333,7 @@ body {
 <div class="rptSegment">
   <div id="seg2Title" class="segTitle"><span>积累数据</span></div>
   <div id="seg2frag1" class="segConteent">
-    <div class="subTitle">1、单项指标分析</div>
+    <div id="seg2frag1_1" class="subTitle">1、单项指标分析</div>
     <ul>
     </ul>
   </div>
@@ -368,7 +368,7 @@ body {
 <div class="rptSegment">
   <div id="seg4Title" class="segTitle"><span>高级</span></div>
   <div id="seg4frag1" class="segContent">
-    <div class="subTitle">数据质量及结构</div>
+    <div class="subTitle">1、数据质量及结构</div>
     <ul>
       <li>
         <div>“人员”元数据结构如下：</div>
@@ -459,17 +459,28 @@ $(function() {
 
   //树
   var treeData=[{
-    "id":1, "text":"上传数据",
-    "children":[{"id":11, "text":"结构分析"},{"id":12, "text":"单项指标分析"},{"id":13, "text":"类别指标分析"},{"id":14, "text":"数值指标分析"},{"id":15, "text":"时间指标分析"}]
+    "id":1, "text":"上传数据", "eleId":"seg1Title",
+    "children":[{"id":11, "text":"结构分析", "eleId":"seg1frag1"},{"id":12, "text":"单项指标分析", "eleId":"seg1frag2"},{"id":13, "text":"类别指标分析", "eleId":"seg1frag3"},{"id":14, "text":"数值指标分析", "eleId":"seg1frag4"},{"id":15, "text":"时间指标分析", "eleId":"seg1frag5"}]
   },{
-    "id":2, "text":"积累数据",
-    "children":[{"id":21, "text":"单项指标分析"},{"id":22, "text":"类别指标分析"},{"id":23, "text":"数值指标分析"},{"id":24, "text":"时间指标分析"}]
+    "id":2, "text":"积累数据", "eleId":"seg2Title",
+    "children":[{"id":"21", "text":"单项指标分析", "eleId":"seg2frag1"},{"id":22, "text":"类别指标分析", "eleId":"seg2frag2"},{"id":23, "text":"数值指标分析", "eleId":"seg2frag3"},{"id":24, "text":"时间指标分析", "eleId":"seg2frag4"}]
   },{
-    "id":3, "text":"高级",
-    "children":[{"id":31, "text":"数据质量及结构"},{"id":32, "text":"时间关联分析"},{"id":33, "text":"分布统计"},{"id":34, "text":"关联分析"}]
+    "id":3, "text":"高级", "eleId":"seg4Title",
+    "children":[{"id":31, "text":"数据质量及结构", "eleId":"seg4frag1"},{"id":32, "text":"时间关联分析", "eleId":"seg4frag2"},{"id":33, "text":"分布统计", "eleId":"seg4frag3"},{"id":34, "text":"关联分析", "eleId":"seg4frag4"}]
   }];
   $("#catalogTree").tree({animate:true});
   $("#catalogTree").tree("loadData", treeData);
+  //为树结点绑定锚点
+  $('#catalogTree').tree({
+    onClick: function(node){    
+    	try{
+    		var topHeight = $("#topSegment").height()+5;	
+    		$("body,html").animate({scrollTop:$("#"+node.eleId).offset().top-topHeight});	
+    	}catch(e){
+    		
+    	}      
+    }
+  });
   //准备数据:人员性别
   var A1_2_a = [{label:'男', data:156},{label:'女', data:40}, {label:'未知', data:4}];
   $.plot($("#chartA1_2_a"), A1_2_a, {
