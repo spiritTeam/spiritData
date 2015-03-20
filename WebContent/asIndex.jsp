@@ -210,6 +210,7 @@ var INIT_PARAM = {
 
   top_height: 30, //顶部高度
   top_peg: false,
+  top_shadow_color:"#1AE517",//颜色
 
   foot_height: 75, //脚部高度
   foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
