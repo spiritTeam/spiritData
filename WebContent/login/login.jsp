@@ -199,33 +199,19 @@ function forgetPassword(){
   };
   openSWinInMain(winOption);
 }
-//从新发送激活邮件到邮箱
+//重新发送激活邮件到邮箱
 function activeUser(){
-  var winId = getUrlParam(window.location.href, "_winID");
-  if (winId.indexOf('#')!=-1) winId = formatWid(winId);
-  var win = getSWinInMain(winId);
-  win.modify({title:"激活"});
   var _userInfo = "";
   if (userInfo!=null) _userInfo = userInfo.loginName+","+userInfo.mailAdress+","+userInfo.password;
-  window.location.href="<%=path%>/login/activeUser.jsp?_winID="+winId+"&_userInfo="+_userInfo;
-  return;
-  var url="<%=path%>/login/activeUserAgain.do";
-  var loginName = $("#loginName").val();
-  if(loginName){
-    mainPage.$.messager.alert('提示信息',"您必须填写账号，以便于向您的绑定邮箱发送验证!",'info');
-    return;
-  }else{
-    var pData={"loginName":$("#loginName").val()};
-    $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
-      success:function(json ){
-        if(json.success==true){
-          mainPage.$.messager.alert('提示信息',json.retInfo,'info');
-        }else{
-          mainPage.$.messager.alert('提示信息',json.retInfo,'info');
-        }
-      }
-    });
-  }
+  var _url="<%=path%>/login/activeUser.jsp?_winID="+winId+"&_userInfo="+_userInfo;
+  var winOption={
+    url:_url,
+    title:"激活",
+    height:'330',
+    width:'330',
+    modal:true
+  };
+  openSWinInMain(winOption);
 }
 //以上为页面跳转部分============
 

@@ -6,13 +6,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>找回密码</title>
+<title>忘记密码</title>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css"/>
 <script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
 <!--样式处理  -->
 <style type="text/css">
-.prompt{text-align:left;width:250px;margin-top:20px;margin-left:10px;font-size:12px;color:#999999;}
+.prompt{text-align:left;width:255px;margin-top:20px;margin-left:15px;font-size:12px;color:#999999;}
 </style>
 </head>
 <body>
@@ -29,14 +29,13 @@
         <div class="alertInput-Text">
           <input class="alertInputComp" id="loginName" name="loginName" tabindex="1" type="text" onBlur="validateLoginName();"/>
           <div class="maskTitle">请输入您的账号</div>
-          <div class="alertImg"></div>
         </div>
       </td>
     </tr>
     <tr>
       <td colspan="2">
         <div id="infoDiv" class="prompt">
-                    　　您在输入完账号后，请点击“发送邮件”按钮，我们将为您从新发送一封邮件到您的邮箱。请注意查收。
+                    　　您在输入完账号后，请点击“发送邮件”按钮，我们将为您重新发送一封邮件到您的邮箱。请注意查收。
         </div>
       </td>
     </tr>
@@ -81,13 +80,7 @@ function initPageParam(){
 //账号验证
 function validateLoginName(){
   var val = $('#loginName').val();
-  $("#loginName").parent().find(".alertImg").show();
-  if(val){
-    $("#loginName").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
-    vdInfoAry[0] = "";
-  }else{
-    $("#loginName").parent().find(".alertImg").hide();
-  }
+  if(val) vdInfoAry[0] = "";
 }
 //=以上为验证=============================================
 

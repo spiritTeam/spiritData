@@ -614,7 +614,7 @@
    * dataAry：数据
    * decorateView:显示修饰
    */
-  function drawLine(jQobj,_data,decorateView){
+  function drawLine(jQobj,_data){
     var label = jQobj.attr('label');
     var data = jQobj.attr('data');
     var line_dataBody = _data.tableData.tableBody;

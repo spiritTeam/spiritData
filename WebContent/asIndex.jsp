@@ -210,6 +210,7 @@ var INIT_PARAM = {
 
   top_height: 30, //顶部高度
   top_peg: false,
+  top_shadow_color:"#1AE517",//颜色
 
   foot_height: 75, //脚部高度
   foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
@@ -570,8 +571,8 @@ function initPageWin(){
     var winOption={
       url:_url,
       title:"修改密码",
-      height:wHeight,
-      width:wWidth,
+      height:360,
+      width:330,
       modal:true
     };
     modifyWinId = openSWinInMain(winOption);
@@ -632,9 +633,11 @@ function logout() {
       } else {
         if(json.data==null){
           $.messager.alert("提示","您还未登录!",'info');
+          setNoLogin();
         }else{
           $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
             window.location.href="<%=path%>/asIndex.jsp";
+            setNoLogin();
           });
         }
       }
@@ -642,6 +645,7 @@ function logout() {
     error: function(errorData) {
       $.messager.alert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
         window.location.href="<%=path%>/asIndex.jsp?noAuth";
+        setNoLogin();
       });
     }
   });
@@ -666,10 +670,10 @@ function register(){
 // 忘记密码
 function forgetPassword(){
   var _url="<%=path%>/login/forgetPassword.jsp";
-  var tt = "忘记密码";
+  var title = "忘记密码";
   var winOption={
     url:_url,
-    title:tt,
+    title:title,
     height:wHeight,
     width:wWidth,
     modal:true
@@ -678,11 +682,11 @@ function forgetPassword(){
 }
 //修改个人信息
 function updateUser(){
-  var _url="<%=path%>/login/update.jsp?";alert("update");
-  var tt = "修改个人信息";
+  var _url="<%=path%>/login/update.jsp?";
+  var title = "修改个人信息";
   var winOption={
     url:_url,
-    title:tt,
+    title:title,
     height:wHeight,
     width:wWidth,
     modal:true

@@ -235,13 +235,14 @@ function validateCheckCode(){
   var val = ($('#checkCode').val()).toUpperCase();
   if (val) {
     $("#checkCode").parent().parent().find(".alertImg").show();
-    $("#checkCode").parent().find(".alertImg").css("background-image", "url(images/accept.png)");
     win.setMessage({'msg':''});
     vdInfoAry[4] = "";
     if(val!=checkCode){
       vdInfoAry[4] = "验证码填写错误";
       win.setMessage({'msg':vdInfoAry[4]});
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");
+    }else {
+      $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/accept.png)");
     }
   }else{
     $("#checkCode").parent().parent().find(".alertImg").hide();

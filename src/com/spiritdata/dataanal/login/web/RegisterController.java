@@ -79,15 +79,14 @@ public class RegisterController {
             //serverName
             String serverName = request.getServerName();
             //验证url=serverName+deployName+servletPath
-            String url = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+"/login/activeModifyPassword.do?authCode="+user.getUserId()+"~"+validatsaSequence;
-            SendValidataUrlToMail svu = new SendValidataUrlToMail();
-            svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
+            String mailMessage = "请前往以下地址修改密码\n"+serverName+":"+serverPort+deployName+"/login/activeModifyPassword.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+            SendMail sendMail = new SendMail(user.getMailAdress(), mailMessage);
+            sendMail.start();
             retMap.put("success", true);
-            retInfo = "已经向您的邮箱发送一封邮件，请注意查看!";
+            retInfo = "已经向您的邮箱发送一封用于找回密码的邮件!";
             retMap.put("retInfo", retInfo);
             return retMap;
-        } catch (MessagingException mex) {
-            retInfo = dwMEXException(mex);
+        } catch (Exception e) {
             ee = new Dtal1103CException(retInfo);
             retMap.put("success", false);
             retMap.put("retInfo", ee.getMessage());
@@ -145,7 +144,7 @@ public class RegisterController {
      * @param mex MessagingException异常
      * @return 返回错误信息
      */
-    private String dwMEXException(MessagingException mex) {
+    protected String dwMEXException(MessagingException mex) {
         Exception ex = mex;
         String retInfo = "";
         ex.printStackTrace();
@@ -215,15 +214,6 @@ public class RegisterController {
                 return retMap;
             } else {
                 if (user.getValidataSequence().equals(code)) {
-                    user.setUserState(1);
-                    user.setValidataSequence("");
-                    HttpSession session = request.getSession();
-                    User suser = (User) session.getAttribute(FConstants.SESSION_USER);
-                    if ( suser!=null&&!suser.equals("")) {
-                        suser.setUserState(1);
-                        suser.setValidataSequence("");
-                    }
-                    userService.updateUser(user);
                     try {
                         //在重定向的基础上修改为转发
                         String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
@@ -241,7 +231,7 @@ public class RegisterController {
                     }//转发到apage.jsp
                 } else {
                     retMap.put("success", false);
-                    retInfo = "激活码不完整!请从新点击激活链接或从登录页面再次发送激活邮件!";
+                    retInfo = "激活码不完整!请重新点击激活链接或从登录页面再次发送激活邮件!";
                     ee = new Dtal1101CException(retInfo);
                     retMap.put("retInfo",ee.getMessage());
                     return retMap;
@@ -264,6 +254,8 @@ public class RegisterController {
         if (user!=null&&!user.equals("")) user.setPassword(password);
         else user = userService.getUserByLoginName(loginName);
         user.setPassword(password);
+        user.setUserState(1);
+        user.setValidataSequence("");
         int i = userService.updateUser(user);
         if (i==1) {
             retInfo = "修改密码成功!";
@@ -278,7 +270,7 @@ public class RegisterController {
         return retMap;
     }
     /**
-     * 从新发送激活邮件，并保存修改后的邮箱
+     * 重新发送激活邮件，并保存修改后的邮箱
      */
     @RequestMapping("login/activeUserAgain.do")
     public @ResponseBody Map<String,Object> activeUserAgain(HttpServletRequest request, HttpServletResponse response){
@@ -289,7 +281,7 @@ public class RegisterController {
         String retInfo = "";
         Exception ee = null;
         if (user==null||user.getLoginName().equals(loginName)) {
-        	if (user==null) user = userService.getUserByLoginName(loginName);
+            if (user==null) user = userService.getUserByLoginName(loginName);
             if (user==null) {
                 retInfo = "登录名错误！";
                 ee = new Dtal1104CException(retInfo);
@@ -313,29 +305,20 @@ public class RegisterController {
                     //验证url=serverName+deployName+servletPath
                     String validatsaSequence = SequenceUUID.getPureUUID();
                     user.setValidataSequence(validatsaSequence);
-                    String url = "请前往以下地址激活账号\n"+serverName+":"+serverPort+deployName+"/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
-                    SendValidataUrlToMail svu = new SendValidataUrlToMail();
-                    try {
-                        //更新邮箱并储存
-                        if (!user.getMailAdress().equals(newMail)) user.setMailAdress(newMail);
-                        userService.updateUser(user);
-                        svu.send(newMail, "北京灵派诺达股份有限公司", url);
-                        userService.updateUser(user);
-                        retMap.put("success", true);
-                        retInfo = "已经向您的邮箱发送一封邮件，请激活账号";
-                        retMap.put("retInfo", "已经向您的邮箱发送一封邮件，请激活账号");
-                        return retMap;
-                    } catch (MessagingException mex) {
-                        retInfo = dwMEXException(mex);
-                        ee = new Dtal1103CException(retInfo);
-                        retMap.put("success", true);
-                        retMap.put("retInfo", ee.getMessage());
-                        return retMap;
-                    }
+                    String mailMessage = "请前往以下地址激活账号\n"+serverName+":"+serverPort+deployName+"/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+                    //更新邮箱并储存
+                    if (!user.getMailAdress().equals(newMail)) user.setMailAdress(newMail);
+                    userService.updateUser(user);
+                    SendMail sendMail = new SendMail(user.getMailAdress(),mailMessage);
+                    sendMail.start();
+                    retMap.put("success", true);
+                    retInfo = "已经向您的邮箱发送一封邮件，请激活账号";
+                    retMap.put("retInfo", retInfo);
+                    return retMap;
                 }
             }
         }else {
-        	retInfo = "该邮箱已经被使用！";
+            retInfo = "该邮箱已经被使用！";
             ee = new Dtal1103CException(retInfo);
             retMap.put("success", false);
             retMap.put("retInfo", ee.getMessage());
@@ -447,7 +430,6 @@ public class RegisterController {
                 return retMap;
             }
             //2-保存
-            int rst = 0;
             String validatsaSequence = SequenceUUID.getPureUUID();
             try {
                 user = new User();
@@ -459,43 +441,35 @@ public class RegisterController {
                 user.setUserState(0);
                 user.setUserType(1);
                 user.setValidataSequence(validatsaSequence);
-                rst = userService.insertUser(user);
+                int rst = userService.insertUser(user);
+                if(rst==1){
+                    //删除图片
+                    String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
+                    FileUtils.deleteFile(new File(toDeletURI));
+                    //
+                    String deployName = request.getContextPath();
+                    int  serverPort = request.getServerPort();
+                    String serverName = request.getServerName();
+                    String mailMessage = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
+                            + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+user.getValidataSequence();
+                    //调用发送邮件线程减少前台相应时间
+                    SendMail sendMail = new SendMail(user.getMailAdress(),mailMessage);
+                    sendMail.start();
+                    retMap.put("success", true);
+                    retInfo = "注册成功！";
+                    retMap.put("retInfo", retInfo);
+                    return retMap;
+                }else{
+                    retMap.put("success", false);
+                    retInfo = "注册失败，请稍后重试！";
+                    retMap.put("retInfo", retInfo);
+                    return retMap;
+                }
             } catch(Exception e) {
                 retMap.put("success", false);
                 retInfo = e.getMessage();
                 ee = new Dtal1102CException(retInfo);
-                retMap.put("retInfo", ee.getMessage());
-                return retMap;
-            }
-            if (rst==1) {
-                //删除储存验证码的文件夹
-                String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
-                FileUtils.deleteFile(new File(toDeletURI));
-                String deployName = request.getContextPath();
-                int  serverPort = request.getServerPort();
-                String serverName = request.getServerName();
-                String url = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
-                        + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
-                try {
-                    SendValidataUrlToMail svu = new SendValidataUrlToMail();
-                    svu.send(user.getMailAdress(), "北京灵派诺达股份有限公司", url);
-                    retMap.put("success", true);
-                    retInfo = "注册成功，已经向您的邮箱发送一封邮件，请登陆邮箱激活账号";
-                    retMap.put("retInfo", retInfo);
-                    //删除验证码
-                    return retMap;
-                } catch (MessagingException mex) {
-                    retInfo = "注册成功,验证邮箱发送失败，"+dwMEXException(mex);
-                    ee = new Dtal1103CException(retInfo);
-                    retMap.put("success", false);
-                    retMap.put("retInfo", ee.getMessage());
-                    return retMap;
-                }
-            } else {
-                retMap.put("success", false);
-                retInfo = "注册不成功，请稍后重试！";
-                ee = new Dtal1102CException(retInfo);
-                retMap.put("retInfo", ee.getMessage());
+                retMap.put("retInfo", retInfo);
                 return retMap;
             }
         } catch(Exception e) {
@@ -507,3 +481,30 @@ public class RegisterController {
         }
     }
 }
+/**
+ * 用于发送邮件，减少等待时间
+ * @author mht
+ */
+class SendMail extends Thread{
+    //邮件地址
+    String mailAdress;
+    //邮件内容
+    String mailMessage;
+    /**
+     * @param mailAdress 发送地址
+     * @param mailMessage 发送信息
+     */
+    public SendMail(String mailAdress,String mailMessage){
+        this.mailMessage = mailMessage;
+        this.mailAdress = mailAdress;
+    }
+    public void run(){
+        SendValidataUrlToMail svu = new SendValidataUrlToMail();
+            try {
+                svu.send(mailAdress, "北京灵派诺达股份有限公司", mailMessage);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+    }
+}
+
