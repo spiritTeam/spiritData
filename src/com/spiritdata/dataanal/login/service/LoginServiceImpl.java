@@ -20,10 +20,14 @@ import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.exceptionC.Dtal1105CException;
+import com.spiritdata.dataanal.task.service.TaskManageService;
 
 public class LoginServiceImpl implements LoginService {
     @Resource
     private BasicDataSource dataSource;
+    @Resource
+    private TaskManageService tmService;
+
     @Override
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
@@ -49,14 +53,14 @@ public class LoginServiceImpl implements LoginService {
         try {
             //激活邮箱
             User u = (User)user;
-            String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
             //==0,未发邮箱激活
-            if(u.getUserState()==0){
+            if (u.getUserState()==0) {
                 retMap.put("activeType",1);
                 retMap.put("retInfo", "您未通过邮箱激活账号,请登录邮箱激活,如果验证信息误删，请点击“激活”");
                 retMap.put("user", user);
-            }else{
+            } else {
                 changeOwnerId(request.getSession(), user.getUserId());
+                String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
                 FileUtils.deleteFile(new File(toDeletURI));
                 retMap.put("activeType",2);
                 retMap.put("retInfo", "登录成功!");
@@ -90,16 +94,18 @@ public class LoginServiceImpl implements LoginService {
             st.execute("update sa_file_index set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
             st.execute("update sa_md_tabmodel set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
             st.execute("update sa_md_tabmap_rel set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
-            //修改文件夹信息
             conn.commit();
             conn.setAutoCommit(autoCommitFlag);
+            //修改任务所有者
+            //TODO 若修改失败，怎样处理，这里还未考虑
+            tmService.changeOwnerId(session.getId(), newOwnerId);
         } catch (Exception e) {
             if (conn!=null) {
                 try {
                     conn.rollback();
                     conn.setAutoCommit(autoCommitFlag);
                 } catch (SQLException sqlE) {
-                	//TODO 需测试这个异常是否能正常抛出？修改列名？
+                	//TODO 需测试这个异常是否能正常抛出？
                     throw new Dtal1105CException(sqlE.getMessage());
                 }
             }

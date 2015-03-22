@@ -85,7 +85,13 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
      * @see com.spiritdata.dataanal.report.generate.GenerateReport#preTreat(java.util.Map)
      */
     public Map<String, Object> preTreat(Map<String, Object> param) {
-        String tempStr = "", tempContent = "";
+        //准备通用变量
+        String tempStr = "", tempContent = "", mids = ""; //元数据id列表字符串，以,隔开
+        Map<String, Object> _value = null;
+        MetadataModel mm = null;
+        MetadataTableMapRel[] tabMapOrgAry = null;
+        boolean hasDictTask = false;
+        
         //判断数据可用性
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
@@ -131,46 +137,17 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         //4-构建报告体，并生成相关的任务
         AnalResultFile arf;
         Map<String, Object> taskParam = new HashMap<String, Object>();//任务参数结构，所有的任务都用此函数作为
-        String mids = ""; //元数据id列表字符串，以,隔开
         SegmentList<ReportSegment> reportBody = new SegmentList<ReportSegment>();
 
         Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
         while (iter.hasNext()) {
             Map<SheetTableInfo, Map<String, Object>> value = iter.next();
             for (SheetTableInfo key : value.keySet()) {
-                Map<String, Object> _value = value.get(key);
-                MetadataModel mm = (MetadataModel)_value.get("sysMd");
-                MetadataTableMapRel[] tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
+                _value = value.get(key);
+                mm = (MetadataModel)_value.get("sysMd");
+                tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
                 mids += ","+mm.getId();
                 tempStr = SequenceUUID.getPureUUID();
-
-                //任务处理
-                //4.a.1-单项字典项分析
-                TaskInfo analSingleDict_Task = new TaskInfo();
-                analSingleDict_Task.setId(tempStr);
-                analSingleDict_Task.setTaskName(mm.getTitleName()+"单项指标分析");
-                analSingleDict_Task.setLangType(TaskLangType.JAVA);
-                analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
-                analSingleDict_Task.setPrepared();
-                  //设置参数
-                taskParam.clear();
-                taskParam.put("pType", "metadata");
-                taskParam.put("mid", mm.getId());
-                analSingleDict_Task.setParam(JsonUtils.objToJson(taskParam));
-                tg.addTask2Graph(analSingleDict_Task);
-                  //设置文件
-                arf = new AnalResultFile();
-                arf.setId(tempStr);
-                arf.setJsonDCode(SDConstants.JDC_MD_SDICT);
-                arf.setAnalType(SDConstants.ANAL_MD_SDICT); //分析类型
-                arf.setSubType("SingleDict"); //下级分类
-                arf.setObjType("metadata"); //所分析对象
-                arf.setObjId(mm.getId()); //所分析对象的ID
-                arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdSingleDict_"+arf.getId());
-                arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
-                analSingleDict_Task.setResultFile(arf);
-                report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
-                //任务处理end
 
                 //处理report中的字典项目
                 ReportSegment rs1 = new ReportSegment();
@@ -182,14 +159,46 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                 //字典内容处理——某一个表
                 ReportSegment rs1_1 = new ReportSegment();
                 rs1_1.setTitle("单向指标分析");
-                rs1_1.setId(SequenceUUID.getPureUUID());
+                rs1_1.setId(tempStr);
                 TreeNode<ReportSegment> rsTn1_1 = new TreeNode<ReportSegment>(rs1_1);
                 //字典处理——表内各字典项，可能没有字典项
+                hasDictTask = false;
                 for (MetadataColumn mc: mm.getColumnList()) {
                     List<MetadataColSemanteme> csl = mc.getColSemList();
                     if (csl!=null&&csl.size()>0) {
-                        for (MetadataColSemanteme mcs: csl) {
+                        for (int i=0; i<csl.size(); i++) {
+                            MetadataColSemanteme mcs = csl.get(i);
                             if (mcs.getSemantemeType()==1&&_od!=null&&_od.getDictModelById(mcs.getSemantemeCode())!=null) {//是字典
+                                if (!hasDictTask) { //有字典项，生成字典项任务
+                                    //任务处理
+                                    //4.a.1-单项字典项分析
+                                    TaskInfo analSingleDict_Task = new TaskInfo();
+                                    analSingleDict_Task.setId(tempStr);
+                                    analSingleDict_Task.setTaskName(mm.getTitleName()+"单项指标分析");
+                                    analSingleDict_Task.setLangType(TaskLangType.JAVA);
+                                    analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
+                                    analSingleDict_Task.setPrepared();
+                                      //设置参数
+                                    taskParam.clear();
+                                    taskParam.put("pType", "metadata");
+                                    taskParam.put("mid", mm.getId());
+                                    analSingleDict_Task.setParam(JsonUtils.objToJson(taskParam));
+                                    tg.addTask2Graph(analSingleDict_Task);
+                                      //设置文件
+                                    arf = new AnalResultFile();
+                                    arf.setId(tempStr);
+                                    arf.setJsonDCode(SDConstants.JDC_MD_SDICT);
+                                    arf.setAnalType(SDConstants.ANAL_MD_SDICT); //分析类型
+                                    arf.setSubType("SingleDict"); //下级分类
+                                    arf.setObjType("metadata"); //所分析对象
+                                    arf.setObjId(mm.getId()); //所分析对象的ID
+                                    arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdSingleDict_"+arf.getId());
+                                    arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
+                                    analSingleDict_Task.setResultFile(arf);
+                                    report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
+                                    //任务处理end
+                                    hasDictTask=true;
+                                }
                                 if (rsTn1.getChild(tempStr)==null) rsTn1.addChild(rsTn1_1);
                                 ReportSegment rs1_1_loop = new ReportSegment();
                                 rs1_1_loop.setNodeName(mc.getTitleName()+"指标");

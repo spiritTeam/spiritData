@@ -11,22 +11,23 @@
  */
 (function($){
   //树
-  var segTree=new Array();
+  var segTree=[];
   //level
   var level=0;
   //用于存放jsonDInfo
-  var jsonDInfoArray = [];
+  var jsonDInfoArray=[];
   //用于存放dataId,方便最后一步进行搜索dom
-  var dataIdAry = new Array();
+  var dataIdAry=[];
 
   /**
    * 主函数入口
    */
-  $.templetJD = function(reportUrl,reportId) {
+  $.templetJD = function(reportUrl, reportId) {
     //1,画pageFrame
     initPageFrame();
     //2，从后台请求数据
     var pData = {'reportId':reportId};
+    alert(reportUrl);
     $.ajax({type:"post",url:reportUrl,data:pData,dataType:"json",
       success:function(json){
         var templetJsonObj=str2JsonObj(json);
@@ -130,7 +131,8 @@
     //用于存储已得到jsond的jsondId
     var jsonDIdAry = new Array();
     //启动请求数据线程
-    var intervalId = setInterval(function(){
+    var intervalId = -1;
+    intervalId = setInterval(function(){
       //如果两个数组长度一样,关闭线程
       if (jsonDIdAry.length==jsonDInfoArray.length) clearInterval(intervalId);
       //每次循环都将id拼起来，方便查找，
