@@ -12,10 +12,10 @@ import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
-import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
-import com.spiritdata.dataanal.dictionary.pojo.DictModel;
-import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.dictionary.model.DictDetail;
+import com.spiritdata.dataanal.dictionary.model.DictMaster;
+import com.spiritdata.dataanal.dictionary.model.DictModel;
+import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
 import com.spiritdata.dataanal.dictionary.service.DictService;
 import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
@@ -82,10 +82,8 @@ public class MdDictService {
                         //1准备数据-字典组
                         DictMaster dm = new DictMaster();
                         dm.setId(SequenceUUID.getUUIDSubSegment(4));
-                        dm.setOwnerId(_dictCache.getOwnerId());
-                        dm.setOwnerType(_dictCache.getOwnerType());
+                        dm.setOwner(_dictCache.getOwner());
                         dm.setDmName(mm.getColumnByCName(key).getTitleName());//字典组名称mm.getTitleName()+"::"+
-                        dm.setNPy(ChineseCharactersUtils.getFullSpellFirstUp(dm.getDmName())); //汉语拼音
                         dm.setSort(1); //排序，排序需要由人来处理
                         dm.setIsValidate(1);
                         dm.setMType(2); //系统生成的

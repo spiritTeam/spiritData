@@ -9,10 +9,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import com.spiritdata.dataanal.SDConstants;
-import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
-import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
-import com.spiritdata.dataanal.dictionary.pojo.DictModel;
-import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.dictionary.model.DictDetail;
+import com.spiritdata.dataanal.dictionary.model.DictMaster;
+import com.spiritdata.dataanal.dictionary.model.DictModel;
+import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
 import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;

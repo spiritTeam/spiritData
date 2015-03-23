@@ -8,8 +8,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
-import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
-import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
+import com.spiritdata.dataanal.dictionary.model.DictDetail;
+import com.spiritdata.dataanal.dictionary.model.DictMaster;
+import com.spiritdata.dataanal.dictionary.persistence.pojo.DictDetailPo;
+import com.spiritdata.dataanal.dictionary.persistence.pojo.DictMasterPo;
 import com.spiritdata.dataanal.exceptionC.Dtal0301CException;
 
 /**
@@ -21,9 +23,9 @@ import com.spiritdata.dataanal.exceptionC.Dtal0301CException;
  */
 public class DictService {
     @Resource(name="defaultDAO")
-    private MybatisDAO<DictMaster> dictMDao;
+    private MybatisDAO<DictMasterPo> dictMDao;
     @Resource(name="defaultDAO")
-    private MybatisDAO<DictDetail> dictDDao;
+    private MybatisDAO<DictDetailPo> dictDDao;
 
     @PostConstruct
     public void initParam() {
@@ -38,7 +40,7 @@ public class DictService {
      * @return 字典组列表
      * @throws Exception
      */
-    public List<DictMaster> getDictMList(DictMaster paramDm) {
+    public List<DictMasterPo> getDictMList(DictMasterPo paramDm) {
         try {
             return dictMDao.queryForList(paramDm.toHashMapAsBean());
         } catch(Exception e) {

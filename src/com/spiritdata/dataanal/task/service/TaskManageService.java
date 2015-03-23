@@ -33,10 +33,12 @@ public class TaskManageService {
 
     /**
      * 构造缓存中的任务数据。<br/>
-     * 这个任务结构是以所有者Id为key的Map，每一个所有者的任务信息为一个List<TaskGroupPo>列表
-     * @return 
+     * 这个任务结构是以所有者Id为key的Map，每一个所有者的任务信息为一个Map，此Map为：<br/>
+     * 1、tgList:一个List<TaskGroup>列表；<br/>
+     * 2、tList:一个List<TaskInfo>列表；
+     * @return 缓存任务数据
      */
-    public Map<String, List<TaskGroup>> makeCacheTasks() {
+    public Map<String, Map<String, Object>> makeCacheTasks() {
         return null;
     }
 

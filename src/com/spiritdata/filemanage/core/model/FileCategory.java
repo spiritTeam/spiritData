@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.spiritdata.framework.core.model.Model2Po;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
@@ -19,7 +20,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
  * 使用模型类更加规范，但开销大——结构复杂
  * @author wh
  */
-public class FileCategory implements Serializable {
+public class FileCategory implements Serializable, Model2Po {
     private static final long serialVersionUID = 3467199927097139932L;
 
     private String id; //文件分类id

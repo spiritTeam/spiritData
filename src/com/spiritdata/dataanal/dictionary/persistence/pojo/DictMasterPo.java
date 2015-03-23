@@ -1,14 +1,11 @@
-package com.spiritdata.dataanal.dictionary.pojo;
+package com.spiritdata.dataanal.dictionary.persistence.pojo;
 
 import java.sql.Timestamp;
-import com.spiritdata.framework.core.model.BaseObject;
 
-/**
- * 字典组
- * 对应持久化中数据库的表为PLAT_DICTM
- * @author wh
- */
-public class DictMaster extends BaseObject {
+import com.spiritdata.framework.core.model.BaseObject;
+import com.spiritdata.framework.util.ChineseCharactersUtils;
+
+public class DictMasterPo extends BaseObject {
     private static final long serialVersionUID = -5935730569262158194L;
 
     private String id; //字典组id
@@ -47,6 +44,7 @@ public class DictMaster extends BaseObject {
     }
     public void setDmName(String dmName) {
         this.dmName = dmName;
+        if (this.NPy==null||this.NPy.equals("")) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(this.dmName);
     }
     public int getSort() {
         return sort;

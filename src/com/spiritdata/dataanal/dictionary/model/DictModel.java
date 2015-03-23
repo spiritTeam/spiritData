@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.dictionary.pojo;
+package com.spiritdata.dataanal.dictionary.model;
 
 import com.spiritdata.framework.core.model.tree.TreeNode;
 

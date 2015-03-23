@@ -1,11 +1,14 @@
 package com.spiritdata.filemanage.core.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.framework.core.model.Model2Po;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
@@ -21,8 +24,89 @@ import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
  * 使用模型类更加规范，但开销大——结构复杂
  * @author wh
  */
-public class FileInfo extends FileIndexPo {
+public class FileInfo implements Serializable, Model2Po {
     private static final long serialVersionUID = 12366632000244738L;
+
+    protected String id; //文件id
+    private Owner owner; //所有者
+    protected int accessType; //文件访问类型，可通过这个类型转换为file:///；ftp:///等，可能需要再定义访问的一些属性没，如ftp的用户名/密码/端口等
+    protected String path; //文件路径，不包括文件名
+    protected String fileName; //文件名称，包括扩展名
+    protected String extName; //文件扩展名
+    protected Long fileSize; //文件大小
+    protected String desc; //文件说明
+    protected Timestamp fcTime; //文件创建时间
+    protected Timestamp flmTime; //文件最后修改时间
+    protected Timestamp CTime; //记录创建时间
+
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public Owner getOwner() {
+        return owner;
+    }
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+    public int getAccessType() {
+        return accessType;
+    }
+    public void setAccessType(int accessType) {
+        this.accessType = accessType;
+    }
+    public String getPath() {
+        return path;
+    }
+    public void setPath(String path) {
+        this.path = path;
+    }
+    public String getFileName() {
+        return fileName;
+    }
+    /**
+     * 设置文件名，同时根据文件名设置文件扩展名
+     * @param fileName 文件名，包括文件扩展名
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+        this.extName = FileNameUtils.getExt(fileName);
+    }
+    public String getExtName() {
+        return extName;
+    }
+    public Long getFileSize() {
+        return fileSize;
+    }
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+    public String getDesc() {
+        return desc;
+    }
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+    public Timestamp getFcTime() {
+        return fcTime;
+    }
+    public void setFcTime(Timestamp fcTime) {
+        this.fcTime = fcTime;
+    }
+    public Timestamp getFlmTime() {
+        return flmTime;
+    }
+    public void setFlmTime(Timestamp flmTime) {
+        this.flmTime = flmTime;
+    }
+    public Timestamp getCTime() {
+        return CTime;
+    }
+    public void setCTime(Timestamp CTime) {
+        this.CTime = CTime;
+    }
 
     private File file; //文件信息所对应的文件：当accessType==1(操作系统文件)时；若是其他accessType，则这个是null
 
@@ -229,8 +313,8 @@ public class FileInfo extends FileIndexPo {
             ret.setId(this.id);
         }
         //所有者
-        ret.setOwnerId(this.ownerId);
-        ret.setOwnerType(this.ownerType);
+        ret.setOwnerId(this.owner.getOwnerId());
+        ret.setOwnerType(this.owner.getOwnerType());
         //文件访问类型，现在不用枚举，这个属性的使用还是教复杂的
         ret.setAccessType(this.accessType);
         //文件信息

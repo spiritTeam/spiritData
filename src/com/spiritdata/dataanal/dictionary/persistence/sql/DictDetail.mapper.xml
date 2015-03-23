@@ -8,7 +8,7 @@
   <!-- 对象定义:元数据模式 -->
   <resultMap id="BaseResultMap" type="dictDetail">
     <id     column="id"         property="id"         jdbcType="VARCHAR"/>
-    <result column="mId"        property="mid"        jdbcType="VARCHAR"/>
+    <result column="mId"        property="MId"        jdbcType="VARCHAR"/>
     <result column="pId"        property="parentId"   jdbcType="VARCHAR"/>
     <result column="sort"       property="order"      jdbcType="INTEGER"/>
     <result column="isValidate" property="isValidate" jdbcType="INTEGER"/>
@@ -37,7 +37,7 @@
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
         <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
-        <if test="mid!=null"> and mid=#{mid,jdbcType=VARCHAR}</if>
+        <if test="MId!=null"> and mId=#{MId,jdbcType=VARCHAR}</if>
         <if test="parentId!=null"> and pId=#{parentId,jdbcType=VARCHAR}</if>
         <if test="order!=null and order!=0"> and sort=#{order,jdbcType=INTEGER}</if>
         <if test="isValidate!=null and isValidate!=0"> and isValidate=#{isValidate,jdbcType=INTEGER}</if>
@@ -57,7 +57,7 @@
   <sql id="WhereClauseByEntiey_A">
     <trim prefix="(" suffix=")" prefixOverrides="and">
       <if test="id!=null"> and a.id=#{id,jdbcType=VARCHAR}</if>
-      <if test="mid!=null"> and a.mid=#{mid,jdbcType=VARCHAR}</if>
+      <if test="MId!=null"> and a.mId=#{MId,jdbcType=VARCHAR}</if>
       <if test="parentId!=null"> and a.pId=#{parentId,jdbcType=VARCHAR}</if>
       <if test="order!=null and order!=0"> and a.sort=#{order,jdbcType=INTEGER}</if>
       <if test="isValidate!=null and isValidate!=0"> and a.isValidate=#{isValidate,jdbcType=INTEGER}</if>
@@ -87,10 +87,10 @@
   </select>
   <!-- 根据所有者信息获得列表 -->
   <select id="getListByOwnerId" resultMap="BaseResultMap" parameterType="java.util.Map">
-    select <include refid="Base_Column_List_A"/> from plat_dictd a, plat_dictm b where a.mid=b.id
+    select <include refid="Base_Column_List_A"/> from plat_dictd a, plat_dictm b where a.mId=b.id
     <if test="_parameter!=null"><include refid="WhereClauseByEntiey_A"/></if>
     <if test="ownerId!=null"> and b.ownerId=#{ownerId,jdbcType=VARCHAR}</if>
-    order by a.mid, a.pid, a.sort desc
+    order by a.mId, a.pid, a.sort desc
   </select>
 
   <!-- 获得一条数据 -->
@@ -106,7 +106,7 @@
     insert into plat_dictd
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id!=null">id,</if>
-      <if test="mid!=null">mid,</if>
+      <if test="MId!=null">mId,</if>
       <if test="parentId!=null">pId,</if>
       <if test="order!=null and order!=0">sort,</if>
       <if test="isValidate!=null and isValidate!=0">isValidate,</if>
@@ -121,7 +121,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
-      <if test="mid!=null">#{mid,jdbcType=VARCHAR},</if>
+      <if test="MId!=null">#{MId,jdbcType=VARCHAR},</if>
       <if test="parentId!=null">#{parentId,jdbcType=VARCHAR},</if>
       <if test="order!=null and order!=0">#{order,jdbcType=INTEGER},</if>
       <if test="isValidate!=null and isValidate!=0">#{isValidate,jdbcType=INTEGER},</if>
@@ -140,8 +140,8 @@
   <update id="update" parameterType="java.util.Map">
     update plat_dictd
     <set>
-      <if test="mid=null">mId=#{mid,jdbcType=VARCHAR},</if>
-      <if test="parentId=null">pId=#{parentId,jdbcType=VARCHAR},</if>
+      <if test="MId!=null">mId=#{MId,jdbcType=VARCHAR},</if>
+      <if test="parentId!=null">pId=#{parentId,jdbcType=VARCHAR},</if>
       <if test="order!=null and order!=0">sort=#{order,jdbcType=INTEGER},</if>
       <if test="isValidate!=null and isValidate!=0">sValidate=#{isValidate,jdbcType=INTEGER},</if>
       <if test="nodeName=null"> ddName=#{nodeName,jdbcType=VARCHAR},</if>

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal0101CException;
 import com.spiritdata.dataanal.importdata.excel.service.DealExcelFileService;
 import com.spiritdata.filemanage.category.IMP.model.ImportFile;
@@ -58,14 +59,7 @@ public class DealUploadFileService {
 
         //文件信息
         ImportFile ret = new ImportFile();
-        UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-        if(user==null){
-            ret.setOwnerType(2);
-            ret.setOwnerId(session.getId());
-        }else{
-            ret.setOwnerType(1);
-            ret.setOwnerId(user.getUserId());
-        }
+        ret.setOwner(SessionUtils.getOwner(session));
         ret.setServerFileName(allFileName);
         ret.setClientFileName((String)uploadInfoMap.get("orglFilename"));
         return ret;

@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
 import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
@@ -23,25 +24,27 @@ public class Report implements Serializable, Convert2Json {
     private static final long serialVersionUID = 518670183146944686L;
  
     private String id; //报告id，应和报告头中的id相一致
-    private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session);3=系统生成）
-    private String ownerId; //所有者标识（可能是用户id，也可能是SessionID，也可能是'Sys'）
+    private Owner owner; //所有者
     private String reportType; //报告分类
     private String reportName; //报告名称
     private ReportFile reportFile; //报告所对应的文件信息
     private String desc; //文件说明
     private Timestamp CTime; //记录创建时间
 
-    public int getOwnerType() {
-        return ownerType;
+    public String getId() {
+        return this.id;
     }
-    public void setOwnerType(int ownerType) {
-        this.ownerType = ownerType;
+    public void setId(String id) {
+        this.id = id;
+        if (this._HEAD!=null&&(this._HEAD instanceof ReportHead)) {
+            ((ReportHead)this._HEAD).setId(id);
+        }
     }
-    public String getOwnerId() {
-        return ownerId;
+    public Owner getOwner() {
+        return owner;
     }
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
     public String getReportType() {
         return reportType;
@@ -90,15 +93,6 @@ public class Report implements Serializable, Convert2Json {
     private List<OneJsonD> dataList;//jsonD数据访问列表
     private Object _REPORT;//报告主题信息，可以是String reportHead 对象
 
-    public String getId() {
-        return this.id;
-    }
-    public void setId(String id) {
-        this.id = id;
-        if (this._HEAD!=null&&(this._HEAD instanceof ReportHead)) {
-            ((ReportHead)this._HEAD).setId(id);
-        }
-    }
     public Object get_HEAD() {
         return _HEAD;
     }
@@ -189,8 +183,8 @@ public class Report implements Serializable, Convert2Json {
             ret.setId(this.id);
         }
         //所有者
-        ret.setOwnerId(this.ownerId);
-        ret.setOwnerType(this.ownerType);
+        ret.setOwnerId(this.owner.getOwnerId());
+        ret.setOwnerType(this.owner.getOwnerType());
         //TaskId 在这里不设置
         //文件Id
         if (reportFile!=null) ret.setFId(reportFile.getId());

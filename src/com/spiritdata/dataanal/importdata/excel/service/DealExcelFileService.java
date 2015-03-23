@@ -31,7 +31,8 @@ import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
-import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.common.util.SessionUtils;
+import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
 import com.spiritdata.dataanal.dictionary.service.DictSessionService;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
@@ -339,15 +340,7 @@ public class DealExcelFileService {
                 Map<String, Object> param = new HashMap<String, Object>();
                 Map<String, Object> preTreadParam = new HashMap<String, Object>();
                 preTreadParam.put("reportParam", reportParam);
-                String ownerId = session.getId();
-                int ownerType = 2;
-                UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-                if (user!=null) {
-                    ownerId = user.getUserId();
-                    ownerType = 1;
-                }
-                preTreadParam.put("ownerType", ownerType);
-                preTreadParam.put("ownerId", ownerId);
+                preTreadParam.put("owner", SessionUtils.getOwner(session));
                 preTreadParam.put("impFileInfo", fi);
                 preTreadParam.put("ownerDict", _od);
                 param.put("preTreadParam", preTreadParam);

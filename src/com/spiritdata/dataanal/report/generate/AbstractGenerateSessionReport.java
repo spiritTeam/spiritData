@@ -77,8 +77,7 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         //2.1-写报告文件
         ReportFile rfSeed = new ReportFile();
         rfSeed.setId(SequenceUUID.getPureUUID());
-        rfSeed.setOwnerId(report.getOwnerId());
-        rfSeed.setOwnerType(report.getOwnerType());
+        rfSeed.setOwner(report.getOwner());
         rfSeed.setReportId(report.getId());
         rfSeed.setTasksId(tg.getId());
         FileInfo impFi = (FileInfo)preTreadParam.get("impFileInfo");
