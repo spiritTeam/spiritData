@@ -23,6 +23,7 @@
           id:"seg1_2_1",
           name:"单项指标分析",
           content:'<div style="font-height:bold; font-size:18px;">2、单项指标分析</div><br/>
+            <!--人员 性别-->
             <div style="font-height:bold; ">“<d did="2" showType="value" value="mdName"/>”[<d did="2" showType="value" value="quotas[0].titleName"/>]</div>指标分析：<br/>
             “<d did="2" showType="value" value="quotas[0].titleName"/>”中
               大多为{<d did="2" showType="value" value="quotas[0].tableData.tableBody[0].category"/>}占<d did="2" showType="value" value="quotas[0].tableData.tableBody[0].percent"/>%，
@@ -30,7 +31,9 @@
             <d did="2" showType="table" value="quotas[0]" titleDcrt="quotas[0].titles"/>
             <d did="2" showType="pie" value="quotas[0]" label="category", data="num" decorateView="{lableShow:[category, percent]}"/>
             <br/>
+            <!--人员 籍贯-->
             <div style="font-height:bold; ">“<d did="2" showType="value" value="mdName"/>”[<d did="2" showType="value" value="quotas[1].titleName"/>]</div>指标分析：<br/>
+            <d did="2" showType="table" value="quotas[1]" titleDcrt="quotas[1].titles"/>
             新加测试showType=“line”：<br/><d did="2" showType="line" value="quotas[1]" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
             新加测试showType=“bars”：<d did="2" showType="bars" value="quotas[1]" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
             测试showType=“first”降序：<d did="2" showType="!first(3|num)" value="quotas[1]" decorateView="{#category#}占#percent#%"/>
