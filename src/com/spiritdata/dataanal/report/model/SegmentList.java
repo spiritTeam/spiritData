@@ -25,8 +25,10 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
         String tempStr;
         for (int i=0; i<this.size(); i++) {
             TreeNode<ReportSegment> oneSeg = this.get(i);
-            ret +="\"id\":\""+oneSeg.getId()+"\"";
-            ret +=",\"name\":\""+oneSeg.getNodeName()+"\"";
+            if (i>0) ret +=",";
+            ret +="{\"id\":\""+oneSeg.getId()+"\"";
+            tempStr = oneSeg.getTnEntity().getNodeName();
+            if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"name\":\""+tempStr+"\"";
             tempStr = oneSeg.getTnEntity().getTitle();
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"title\":\""+tempStr+"\"";
             tempStr = oneSeg.getTnEntity().getContent();
@@ -35,6 +37,7 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
             if (oneSeg.getChildren()!=null&&oneSeg.getChildren().size()>0) {
                 ret +=",\"subSeg\":"+convertList2Json(oneSeg.getChildren());
             }
+            ret +="}";
         }
         return ret+"]";
     }
@@ -44,9 +47,11 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
         String ret = "[";
         String tempStr;
         for (int i=0; i<children.size(); i++) {
-            TreeNode<ReportSegment> oneSeg = this.get(i);
-            ret +="\"id\":\""+oneSeg.getId()+"\"";
-            ret +=",\"name\":\""+oneSeg.getNodeName()+"\"";
+            TreeNode<ReportSegment> oneSeg = children.get(i);
+            if (i>0) ret +=",";
+            ret +="{\"id\":\""+oneSeg.getId()+"\"";
+            tempStr = oneSeg.getTnEntity().getNodeName();
+            if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"name\":\""+tempStr+"\"";
             tempStr = oneSeg.getTnEntity().getTitle();
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"title\":\""+tempStr+"\"";
             tempStr = oneSeg.getTnEntity().getContent();
@@ -55,6 +60,7 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
             if (oneSeg.getChildren()!=null&&oneSeg.getChildren().size()>0) {
                 ret +=",\"subSeg\":"+convertList2Json(oneSeg.getChildren());
             }
+            ret +="}";
         }
         return ret+"]";
     }

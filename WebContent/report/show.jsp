@@ -29,8 +29,9 @@ body {
 </body>
 <script type="text/javascript">
 $(function(){
-  var reportId = "2323e";
-  var reportUrl = "<%=path%>/report/getReport.do";
+  var reportId="ssss";
+  var reportUrl = "<%=path%>/report/getReport.do?uri=demo\\templetDemo\\templet1.json";
+  alert(reportUrl);
   $.templetJD(reportUrl,reportId);
 });
 </script>

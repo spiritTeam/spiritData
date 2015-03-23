@@ -126,6 +126,7 @@ public class DealExcelFileService {
                 book = new HSSFWorkbook(fis);
                 excelType = ExcelConstants.EXECL2003_FLAG;
             } catch (Exception e) {
+                e.printStackTrace();
             }
             if (book==null) {
                 try {
@@ -133,10 +134,12 @@ public class DealExcelFileService {
                     book = new XSSFWorkbook(fis);
                     excelType = ExcelConstants.EXECL2007_FLAG;
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             if (excelType==0) {
                 logger.info("以excel格式读取文件["+fi.getAllFileName()+"]失败");
+                //TODO 不支持的版本信息要提示到用户界面去
                 return;
             }
 
@@ -346,6 +349,7 @@ public class DealExcelFileService {
                 preTreadParam.put("ownerType", ownerType);
                 preTreadParam.put("ownerId", ownerId);
                 preTreadParam.put("impFileInfo", fi);
+                preTreadParam.put("ownerDict", _od);
                 param.put("preTreadParam", preTreadParam);
                 buildReport.buildANDprocess(param);
             }

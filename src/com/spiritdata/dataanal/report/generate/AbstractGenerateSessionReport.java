@@ -90,9 +90,10 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         rfService.saveFile(rf);//报告的json存储
         //2.3-报告信息数据库存储
         reportService.saveReport(tr);
-        //3-处理任务
-        //4-进行持久化存储——报告+任务
-        //5-以Session为容器，构建任务执行的上下文
+        //3-任务处理
+        //3.1-进行持久化存储
+        
+        //3.2-以App为容器，构建任务执行的上下文
         //6-启动任务
 
         return report.getId();

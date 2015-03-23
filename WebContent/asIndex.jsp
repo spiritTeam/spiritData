@@ -30,6 +30,7 @@
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/js/mainPage.utils.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css">
 <style>
 #fileIn {
   position:absolute;
@@ -154,11 +155,13 @@
 <!-- 头部:悬浮 -->
 <div id="topSegment">
   <div style="float:right;">
-    <div ><a id="login" onclick="login();" href="#">登录</a>
-      <a id="_logout" onclick="logout();" href="#">注销</a>
-      <a id="forgetPassword" onclick="forgetPassword();" href="#" >忘记密码</a>
-      <a id="updateUser" onclick="updateUser();" href="#" >修改基本信息</a>
-      <a id=register onclick="register()" href="#">注册</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <div >
+    <div style="height: 5px;"></div>
+      <div class="loginButton"><a id="login" onclick="login();" href="#">登录</a></div>
+      <div class="loginButton"><a id="_logout" onclick="logout();" href="#">注销</a></div>
+      <div class="loginButton"><a id="forgetPassword" onclick="forgetPassword();" href="#" >忘记密码</a></div>
+      <div class="loginButton"><a id="updateUser" onclick="updateUser();" href="#" >修改基本信息</a></div>
+      <div class="loginButton"><a id=register onclick="register()" href="#">注册</a></div>&nbsp;&nbsp;&nbsp;&nbsp;
       <input id="loginName" type="hidden" value="">
     </div>
   </div>
@@ -210,6 +213,7 @@ var INIT_PARAM = {
 
   top_height: 30, //顶部高度
   top_peg: false,
+  top_shadow_color:"#1AE517",//颜色
 
   foot_height: 75, //脚部高度
   foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
@@ -259,6 +263,16 @@ function uploadF() {
     $.messager.alert("文件上传失败", e, "error");
   }
 }
+function buttonStyle(){
+	$('#updateUser').parent().css('width','80px')
+  $(".loginButton").css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
+  $(".loginButton").bind("mouseover",function(){
+    $(this).css({'background-color':'#D9F4DF'}).children().css({'color':'#32C52F'});
+  });
+  $(".loginButton").bind("mouseleave",function(){
+    $(this).css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
+  });
+}
 //主函数
 $(function() {
   //mht代码=============
@@ -292,6 +306,7 @@ $(function() {
   }).mouseout(function(){
     $(this).css({"color":"white", "background-color":"#36B148"});
   });
+  buttonStyle();
 });
 
 //初始化界面
@@ -570,8 +585,8 @@ function initPageWin(){
     var winOption={
       url:_url,
       title:"修改密码",
-      height:wHeight,
-      width:wWidth,
+      height:360,
+      width:330,
       modal:true
     };
     modifyWinId = openSWinInMain(winOption);
@@ -599,18 +614,18 @@ function initButton(initType) {
 }
 //===根据登录状态，修改页面显示
 function setNoLogin() {
-  $('#_logout').css('display','none');
-  $('#login').css('display','');
-  $('#register').css('display','');
-  $('#forgetPassword').css('display','none');
-  $('#updateUser').css('display','none');
+  $('#_logout').parent().css('display','none');
+  $('#login').parent().css('display','');
+  $('#register').parent().css('display','');
+  $('#forgetPassword').parent().css('display','none');
+  $('#updateUser').parent().css('display','none');
 }
 function setLogined(loginName) {
-  $('#_logout').css("display", "");
-  $('#login').css('display','none');
-  $('#register').css('display','none');
-  $('#forgetPassword').css("display", "none");
-  $('#updateUser').css('display','');
+  $('#_logout').parent().css("display", "");
+  $('#login').parent().css('display','none');
+  $('#register').parent().css('display','none');
+  $('#forgetPassword').parent().css("display", "none");
+  $('#updateUser').parent().css('display','');
   if(loginName!=""&&loginName!=null) $('loginName').val(loginName);
 }
 //以上为初始化按钮方法

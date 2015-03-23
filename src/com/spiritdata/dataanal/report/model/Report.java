@@ -134,10 +134,10 @@ public class Report implements Serializable, Convert2Json {
      */
     public int getDid(String jsonDId) {
         int ret = -1;
-        if (dataList==null||dataList.size()==0) {
+        if (dataList!=null&&dataList.size()>0) {
             for (int i=0; i<dataList.size(); i++) {
                 OneJsonD oj = dataList.get(i);
-                if (oj.equals(jsonDId)) return oj.getRdId();
+                if (oj.getJsonDId().equals(jsonDId)) return oj.getRdId();
             }
         }
         return ret;

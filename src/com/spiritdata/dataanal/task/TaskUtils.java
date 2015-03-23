@@ -5,8 +5,17 @@ import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.dataanal.exceptionC.Dtal0401CException;
 import com.spiritdata.jsonD.model.AccessJsonD;
 
+/**
+ * 任务通用方法
+ * @author wh
+ */
 public abstract class TaskUtils {
 
+    /**
+     * 任务信息转换为jsonD的访问对象
+     * @param task 任务信息
+     * @return jsonD访问对象
+     */
     public static AccessJsonD convert2AccessJsonDOne(TaskInfo task) {
         AccessJsonD aj = new AccessJsonD();
         AnalResultFile arf = task.getResultFile();
@@ -19,5 +28,4 @@ public abstract class TaskUtils {
         aj.setUrl("jsonD/getJsonD.do?jsonDId="+arf.getId());
         return aj;
     }
-
 }

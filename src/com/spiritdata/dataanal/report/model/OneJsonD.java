@@ -10,7 +10,7 @@ import com.spiritdata.jsonD.model.AccessJsonD;
 public class OneJsonD extends AccessJsonD implements Convert2Json {
     private static final long serialVersionUID = 336480238247137657L;
 
-    private int rdId; //此Id是在report中进行标识用的
+    private int rdId; //此Id是在report中进行标识用的，ReportDatalistId
     public int getRdId() {
         return rdId;
     }
