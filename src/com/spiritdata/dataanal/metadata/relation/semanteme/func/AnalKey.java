@@ -24,10 +24,10 @@ import com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable;
 import com.spiritdata.dataanal.metadata.relation.semanteme.AnalTable;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
-import com.spiritdata.dataanal.util.Arithmetic;
 import com.spiritdata.jsonD.model.JsonD;
 import com.spiritdata.jsonD.model.JsonDAtomData;
 import com.spiritdata.jsonD.model.JsonDHead;
+import com.spiritdata.dataanal.common.util.Arithmetic;
 import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 
 /**
