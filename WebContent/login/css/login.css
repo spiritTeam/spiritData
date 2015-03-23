@@ -39,5 +39,6 @@
 /*Ìá½»°´Å¥*/
 .commitDiv {height:28px;width:275px;margin-left:2px;background-image:url(../images/bg.png); border-radius:5px; text-align:center; padding-top:10px; cursor:pointer;}
 .commitDiv span {font-family:Î¢ÈíÑÅºÚ,ºÚÌå; color:#fff; font-weight:bold; font-size:16px;}
+
 /**µÇÂ¼°´Å¥*/
-.loginButton{float: left;width: 35px;height: 20px;line-height: 20px;margin-top: auto;margin-left: auto;text-align: center;}
+.loginButton{float: left;width: 35px;height: 20px;line-height: 20px;margin-top: auto;margin-left: auto;text-align: center;border-radius: 3px;}

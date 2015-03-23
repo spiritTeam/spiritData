@@ -155,12 +155,12 @@
 <!-- 头部:悬浮 -->
 <div id="topSegment">
   <div style="float:right;">
-    <div >
+    <div>
     <div style="height: 5px;"></div>
       <div class="loginButton"><a id="login" onclick="login();" href="#">登录</a></div>
       <div class="loginButton"><a id="_logout" onclick="logout();" href="#">注销</a></div>
       <div class="loginButton"><a id="forgetPassword" onclick="forgetPassword();" href="#" >忘记密码</a></div>
-      <div class="loginButton"><a id="updateUser" onclick="updateUser();" href="#" >修改基本信息</a></div>
+      <div class="loginButton"><a id="updateUser" onclick="updateUser();" href="#" >修改</a></div>
       <div class="loginButton"><a id=register onclick="register()" href="#">注册</a></div>&nbsp;&nbsp;&nbsp;&nbsp;
       <input id="loginName" type="hidden" value="">
     </div>
@@ -263,16 +263,6 @@ function uploadF() {
     $.messager.alert("文件上传失败", e, "error");
   }
 }
-function buttonStyle(){
-	$('#updateUser').parent().css('width','80px')
-  $(".loginButton").css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
-  $(".loginButton").bind("mouseover",function(){
-    $(this).css({'background-color':'#D9F4DF'}).children().css({'color':'#32C52F'});
-  });
-  $(".loginButton").bind("mouseleave",function(){
-    $(this).css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
-  });
-}
 //主函数
 $(function() {
   //mht代码=============
@@ -308,7 +298,20 @@ $(function() {
   });
   buttonStyle();
 });
-
+//头中按钮样式
+function buttonStyle(){
+  $('#updateUser').parent().css('width','80px');
+  $(".loginButton").css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
+  $(".loginButton").bind("mouseover",function(){
+    $(this).css({'background-color':'#D9F4DF'}).children().css({'color':'#32C52F'});
+  });
+  $(".loginButton").bind("mouseleave",function(){
+    $(this).css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
+  });
+  //top和foot的background-color
+  $('#footSegment').css({'border':'1px solid #32C52F','background':'#32C52F','opacity':'1'});
+  $('#topSegment').css({'border':'1px solid #95b8e7','border-bottom':'0','background':'#32C52F','overflow':'hidden','border':'0','border-bottom':'0px'});
+}
 //初始化界面
 function initPosition() {//注意，不要在此设置topSegment/mainSegment/footSegment等框架元素的宽高等，否则，页面不会自动进行调整
   //控制中心区域图片
@@ -697,7 +700,7 @@ function forgetPassword(){
 //修改个人信息
 function updateUser(){
   var _url="<%=path%>/login/update.jsp?";
-  var title = "修改个人信息";
+  var title = "修改";
   var winOption={
     url:_url,
     title:title,
@@ -718,7 +721,11 @@ function login(){
     width:wWidth,
     modal:true
   };
+  $('#login').parent().attr('disabled','disabled');return;
   openSWinInMain(winOption);
+  setTimeout(function(){
+    $('#login').bind("onclick",function(){login();});
+  }, 1000);
 }
 /**
  * 测试
