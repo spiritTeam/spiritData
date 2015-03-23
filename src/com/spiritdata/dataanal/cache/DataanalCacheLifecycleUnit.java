@@ -6,15 +6,15 @@ import org.springframework.stereotype.Component;
 import com.spiritdata.framework.core.cache.AbstractCacheLifecycleUnit;
 
 /**
- * 精灵数据分析缓存生命周期
- * @author mht
+ * 数据分析缓存生命周期
+ * @author mht,wh
  */
 @Component
-public class ExcelCacheLifecycleUnit extends AbstractCacheLifecycleUnit {
+public class DataanalCacheLifecycleUnit extends AbstractCacheLifecycleUnit {
     /**
      * 日志
      */
-    private Logger logger = Logger.getLogger(ExcelCacheLifecycleUnit.class);
+    private Logger logger = Logger.getLogger(DataanalCacheLifecycleUnit.class);
     @Override
     public void init() {
         try {

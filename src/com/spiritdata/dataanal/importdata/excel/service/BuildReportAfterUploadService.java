@@ -13,6 +13,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import com.spiritdata.dataanal.SDConstants;
+import com.spiritdata.dataanal.dictionary.pojo.DictModel;
+import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
 import com.spiritdata.dataanal.exceptionC.Dtal1003CException;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
@@ -21,9 +23,12 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
 import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
+import com.spiritdata.dataanal.report.model.D_Tag;
+import com.spiritdata.dataanal.report.model.DtagShowType;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.dataanal.report.model.ReportSegment;
+import com.spiritdata.dataanal.report.model.SegmentList;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.task.TaskUtils;
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
@@ -32,6 +37,7 @@ import com.spiritdata.dataanal.task.model.TaskInfo;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.jsonD.util.JsonUtils;
@@ -75,10 +81,17 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
      *   每个数据表的信息，又对应一个map，此Map为：
      *     tabMapOrgAry：实体表愿数据对应数据，通过此可以判断是否是新增元数据
      *     sysMd：本数据表元数据
-     *
+     * ownerDict——字典缓存
      * @see com.spiritdata.dataanal.report.generate.GenerateReport#preTreat(java.util.Map)
      */
     public Map<String, Object> preTreat(Map<String, Object> param) {
+        //准备通用变量
+        String tempStr = "", tempContent = "", mids = ""; //元数据id列表字符串，以,隔开
+        Map<String, Object> _value = null;
+        MetadataModel mm = null;
+        MetadataTableMapRel[] tabMapOrgAry = null;
+        boolean hasDictTask = false;
+        
         //判断数据可用性
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
@@ -89,6 +102,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         if (ownerType==0) throw new Dtal1003CException(new IllegalArgumentException("Map参数中没有所有者类型[ownerType]的信息！"));
         FileInfo impFi = (FileInfo)param.get("impFileInfo");
         if (impFi==null) throw new Dtal1003CException(new IllegalArgumentException("Map参数中没有导入文件对象[impFileInfo]的信息！"));
+        _OwnerDictionary _od = (_OwnerDictionary)param.get("ownerDict");
 
         TaskReport tr = new TaskReport();
         Report report = new Report();
@@ -123,74 +137,110 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         //4-构建报告体，并生成相关的任务
         AnalResultFile arf;
         Map<String, Object> taskParam = new HashMap<String, Object>();//任务参数结构，所有的任务都用此函数作为
-        String mids = ""; //元数据id列表字符串，以,隔开
+        SegmentList<ReportSegment> reportBody = new SegmentList<ReportSegment>();
 
         Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
         while (iter.hasNext()) {
             Map<SheetTableInfo, Map<String, Object>> value = iter.next();
             for (SheetTableInfo key : value.keySet()) {
-                Map<String, Object> _value = value.get(key);
-                MetadataModel mm = (MetadataModel)_value.get("sysMd");
-                MetadataTableMapRel[] tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
+                _value = value.get(key);
+                mm = (MetadataModel)_value.get("sysMd");
+                tabMapOrgAry = (MetadataTableMapRel[])_value.get("tabMapOrgAry");
                 mids += ","+mm.getId();
+                tempStr = SequenceUUID.getPureUUID();
 
-                //任务处理
-                //4.a.2-单项字典项分析
-                TaskInfo analSingleDict_Task = new TaskInfo();
-                analSingleDict_Task.setId(SequenceUUID.getPureUUID());
-                analSingleDict_Task.setTaskName(mm.getTitleName()+"单项指标分析");
-                analSingleDict_Task.setLangType(TaskLangType.JAVA);
-                analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
-                analSingleDict_Task.setPrepared();
-                  //设置参数
-                taskParam.clear();
-                taskParam.put("pType", "metadata");
-                taskParam.put("mid", mm.getId());
-                analSingleDict_Task.setParam(JsonUtils.objToJson(taskParam));
-                tg.addTask2Graph(analSingleDict_Task);
-                  //设置文件
-                arf = new AnalResultFile();
-                arf.setId(SequenceUUID.getPureUUID());
-                arf.setJsonDCode(SDConstants.JDC_MD_SDICT);
-                arf.setAnalType(SDConstants.ANAL_MD_SDICT); //分析类型
-                arf.setSubType("SingleDict"); //下级分类
-                arf.setObjType("metadata"); //所分析对象
-                arf.setObjId(mm.getId()); //所分析对象的ID
-                arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdSingleDict_"+arf.getId());
-                arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
-                analSingleDict_Task.setResultFile(arf);
-                report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
-                //任务处理end
-
-                //处理report中的数据访问列表
+                //处理report中的字典项目
                 ReportSegment rs1 = new ReportSegment();
                 rs1.setNodeName(mm.getTitleName());
                 rs1.setTitle(mm.getTitleName()+"分析");
                 rs1.setId(SequenceUUID.getPureUUID());
-
-                ReportSegment rs2 = new ReportSegment();
-                rs2.setTitle("单向指标分析");
-                rs2.setId(SequenceUUID.getPureUUID());
-                //字典处理
+                TreeNode<ReportSegment> rsTn1 = new TreeNode<ReportSegment>(rs1);
+                reportBody.add(rsTn1);
+                //字典内容处理——某一个表
+                ReportSegment rs1_1 = new ReportSegment();
+                rs1_1.setTitle("单向指标分析");
+                rs1_1.setId(tempStr);
+                TreeNode<ReportSegment> rsTn1_1 = new TreeNode<ReportSegment>(rs1_1);
+                //字典处理——表内各字典项，可能没有字典项
+                hasDictTask = false;
                 for (MetadataColumn mc: mm.getColumnList()) {
                     List<MetadataColSemanteme> csl = mc.getColSemList();
                     if (csl!=null&&csl.size()>0) {
-                        for (MetadataColSemanteme mcs: csl) {
-                            if (mcs.getSemantemeType()==2) {//是字典
-                                ReportSegment rs3 = new ReportSegment();
-                                rs3.setNodeName(mc.getTitleName()+"指标");
-                                rs3.setTitle("<div style='font-height:bold;'>"+mc.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
-                                rs3.setId(SequenceUUID.getPureUUID());
-                                //TODO 判断有几个字典项目，若大于三个，采用下面的方式
-                                rs3.setContent("");
+                        for (int i=0; i<csl.size(); i++) {
+                            MetadataColSemanteme mcs = csl.get(i);
+                            if (mcs.getSemantemeType()==1&&_od!=null&&_od.getDictModelById(mcs.getSemantemeCode())!=null) {//是字典
+                                if (!hasDictTask) { //有字典项，生成字典项任务
+                                    //任务处理
+                                    //4.a.1-单项字典项分析
+                                    TaskInfo analSingleDict_Task = new TaskInfo();
+                                    analSingleDict_Task.setId(tempStr);
+                                    analSingleDict_Task.setTaskName(mm.getTitleName()+"单项指标分析");
+                                    analSingleDict_Task.setLangType(TaskLangType.JAVA);
+                                    analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
+                                    analSingleDict_Task.setPrepared();
+                                      //设置参数
+                                    taskParam.clear();
+                                    taskParam.put("pType", "metadata");
+                                    taskParam.put("mid", mm.getId());
+                                    analSingleDict_Task.setParam(JsonUtils.objToJson(taskParam));
+                                    tg.addTask2Graph(analSingleDict_Task);
+                                      //设置文件
+                                    arf = new AnalResultFile();
+                                    arf.setId(tempStr);
+                                    arf.setJsonDCode(SDConstants.JDC_MD_SDICT);
+                                    arf.setAnalType(SDConstants.ANAL_MD_SDICT); //分析类型
+                                    arf.setSubType("SingleDict"); //下级分类
+                                    arf.setObjType("metadata"); //所分析对象
+                                    arf.setObjId(mm.getId()); //所分析对象的ID
+                                    arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdSingleDict_"+arf.getId());
+                                    arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
+                                    analSingleDict_Task.setResultFile(arf);
+                                    report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
+                                    //任务处理end
+                                    hasDictTask=true;
+                                }
+                                if (rsTn1.getChild(tempStr)==null) rsTn1.addChild(rsTn1_1);
+                                ReportSegment rs1_1_loop = new ReportSegment();
+                                rs1_1_loop.setNodeName(mc.getTitleName()+"指标");
+                                rs1_1_loop.setTitle("<div style='font-height:bold;'>"+mm.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
+                                rs1_1_loop.setId(SequenceUUID.getPureUUID());
+                                DictModel dm = _od.getDictModelById(mcs.getSemantemeCode());
+                                D_Tag discriptDt = new D_Tag();
+                                discriptDt.setShowType(DtagShowType.FIRST);
+                                discriptDt.setFuncStr("first(3|num)");
+                                discriptDt.setDid(report.getDid(tempStr)+"");
+                                discriptDt.setValue("quote['"+mc.getId()+"']");
+                                discriptDt.setDecorateView("{#category#}占#percent#%");
+                                if (dm.dictTree.getChildCount()>3) {
+                                    tempContent += "["+mm.getTitleName()+"]中，大多数为";
+                                } else {
+                                    tempContent += "["+mm.getTitleName()+"]中，";
+                                }
+                                D_Tag tableDt = new D_Tag();
+                                tableDt.setShowType(DtagShowType.TABLE);
+                                tableDt.setDid(report.getDid(tempStr)+"");
+                                tableDt.setValue("quote['"+mc.getId()+"']");
+                                tempContent += discriptDt.toHtmlTag()+"，具体数据为：<br/>"+tableDt.toHtmlTag();
+                                rs1_1_loop.setContent(tempContent);
+                                TreeNode<ReportSegment> rsTn1_1_loop = new TreeNode<ReportSegment>(rs1_1_loop);
+                                rsTn1_1.addChild(rsTn1_1_loop);
                             }
                         }
                     }
                 }
+                //元数据分析，结构分析
+                ReportSegment rs1_2 = new ReportSegment();
+                rs1_2.setTitle("结构分析");
+                rs1_2.setId(mm.getId());
+                rs1_2.setContent("["+mm.getTitleName()+"]为已有结构");
+                if (tabMapOrgAry.length==3) rs1_2.setContent("["+mm.getTitleName()+"]为新增结构");
+                TreeNode<ReportSegment> rsTn1_2 = new TreeNode<ReportSegment>(rs1_2);
+                rsTn1.addChild(rsTn1_2);
             }
         }
-        
-        //4.a.1-获得所有本次对应的元数据信息
+
+        //任务处理
+        //4.a.2-获得所有本次对应的所有元数据信息
         mids = mids.substring(1);
         TaskInfo getMDInfos_Task = new TaskInfo();
         getMDInfos_Task.setId(SequenceUUID.getPureUUID());
@@ -205,7 +255,8 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         getMDInfos_Task.setParam(JsonUtils.objToJson(taskParam));
           //设置文件
         arf = new AnalResultFile();
-        arf.setId(SequenceUUID.getPureUUID());
+        tempStr=SequenceUUID.getPureUUID();
+        arf.setId(tempStr);
         arf.setJsonDCode(SDConstants.JDC_MD_INFO);
         arf.setAnalType(SDConstants.ANAL_MD_GETINFO); //分析类型
         arf.setSubType("multiple"); //下级分类
@@ -218,18 +269,26 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tg.addTask2Graph(getMDInfos_Task);
         report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(getMDInfos_Task));
 
-        report.set_REPORT(null);
+        //处理数据结构段落中的did
+        if (reportBody!=null&&reportBody.size()>0) {
+            for (TreeNode<ReportSegment> rsTn: reportBody) {
+                if (rsTn.getChildCount()>0) {
+                    for (TreeNode<ReportSegment> _rsTn: rsTn.getChildren()) {
+                        ReportSegment rs = _rsTn.getTnEntity();
+                        if (rs.getTitle().equals("结构分析")) {
+                            D_Tag tableDt = new D_Tag();
+                            tableDt.setShowType(DtagShowType.TABLE);
+                            tableDt.setDid(report.getDid(tempStr)+"");
+                            tableDt.setValue("quote['"+rs.getId()+"']");
+                            rs.setContent(rs.getContent()+"，对其结构的分析结果如下：<br/>"+tableDt.toHtmlTag());
+                        }
+                    }
+                }
+            }
+        }
+
+        report.set_REPORT(reportBody);
         //4.1-分不同元数据，进行分析，目前包括()
-//        private String id; //任务
-//        private String taskName; //任务名称
-//        private String langType; //执行语言，默认为java
-//        private String excuteFunc; //任务执行方法
-//        private String param; //任务执行所需的参数
-//        private int status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
-//        private String desc; //任务说明
-//        private Timestamp firstTime; //任务第一次准备执行时间
-//        private Timestamp beginTime; //本次开始执行时间
-//        private Timestamp endTime; //本次结束执行时间
         //4.2-导入日志，第一部分，都导入了那些内容
 
         //5-组装
@@ -247,16 +306,16 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
      * @return 若参数有效 返回true，否则返回false
      */
     private boolean isEmptyParam(Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam) {
-        if (reportParam==null||reportParam.size()==0) return false;
+        if (reportParam==null||reportParam.size()==0) return true;
         Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
         while (iter.hasNext()) {
             Map<SheetTableInfo, Map<String, Object>> value = iter.next();
             for (SheetTableInfo key : value.keySet()) {
                 Map<String, Object> _value = value.get(key);
                 MetadataModel mm = (MetadataModel)_value.get("sysMd");
-                if (mm!=null) return true;
+                if (mm!=null) return false;
             }
         }
-        return false;
+        return true;
     }
 }
