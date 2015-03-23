@@ -22,8 +22,10 @@
 <script type="text/javascript" src="<%=path%>/resources/plugins/Chart.min.js"></script>
 
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
+<!-- ECharts单文件引入 -->
+<script src="<%=path%>/resources/plugins/echarts-2.2.1/echarts.js"></script>
 
-<title>分析报告</title>
+<title>DEMO分析报告ECHATS版</title>
 </head>
 <style>
 body {
@@ -111,7 +113,9 @@ body {
           </div>
         </td>
         <td><div style="width:240px;height:148px;border:1px solid #95B8E7;padding:5px;margin-left:5px;"><div id="chartA1_2_a" style="width:220px;height:145px;"></div></div></td>
-        </tr></table></div>
+        <td><div style="width:240px;height:148px;border:1px solid #95B8E7;padding:5px;margin-left:5px;"><div id="chartA1_2_a_echart" style="width:250px;height:155px;"></div></div></td>
+        </tr>
+        </table></div>
       </li>
       <li>
         <div><span style="font-weight:bold;">“人员”[籍贯]</span>指标分析：</div>
@@ -140,7 +144,10 @@ body {
         </tr><tr>
         <td><div style="width:180px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_2_b" style="width:170px;height:170px;"></div></div></td>
         <td><div style="width:392px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div id="chartA1_2_c" style="width:400px;height:170px;"></div></div></td>
-        </tr></table></div>
+        <td><div style="width:400px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div id="chartA1_2_c_echart" style="width:99%;height:99%;"></div></div></td>
+        </tr>
+        <tr><td colspan=3><div id="map_jiguan" style="height:500px;border:1px solid #ccc;padding:10px;"></div></td></tr>
+        </table></div>
       </li>
       <li>
         <div><span style="font-weight:bold;">“案件”[接报派出所]</span>指标分析：</div>
@@ -198,7 +205,19 @@ body {
         </tr><tr>
         <td><div style="width:180px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_2_f" style="width:170px;height:170px;"></div></div></td>
         <td><div style="width:392px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div id="chartA1_2_g" style="width:400px;height:170px;"></div></div></td>
-        </tr></table></div>
+        </tr>
+        </table></div>
+      </li>
+      <li>
+        <div><span style="font-weight:bold;">“案件”[地图案件]</span>指标分析：</div>
+        <div style="padding:3px 0 3px 5px;">“案件”中[地图案件]案件点位分布图如下：</div>
+        <div style="padding:3px 0 3px 5px;">
+          <table>
+	        <tr>
+	        <td><div style="width:800px;height:500px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_2_f_echart" style="width:98%;height:98%;"></div></div></td>
+	        </tr>
+          </table>
+        </div>
       </li>
     </ul>
   </div>
@@ -885,5 +904,237 @@ $(function() {
 function detail1(value,row,index) {
   if (value=='1') return '<div style="border:1px solid red; width:12px; height:12px;margin-left:5px;"></div>';
 }
+
+/**
+ * echarts
+ */
+// 路径配置
+require.config({
+    paths: {
+        echarts: '<%=path%>/resources/plugins/echarts-2.2.1'
+    }
+});
+
+
+// 使用
+require(
+    [
+        'echarts',
+        'echarts/chart/bar', // 使用柱状图就加载bar模块，按需加载
+        'echarts/chart/pie',
+        'echarts/chart/map'
+    ],
+    function (ec) {
+        //画饼图
+        drawEchartsPie(ec);
+    	//画柱图
+        drawEchartsBar(ec);
+    	//画范围专题地图
+    	drawMapJiguan(ec);
+    	//画案件点位分布图
+    	drawPtAnJian(ec);
+    }
+    
+);
+
+//画饼图
+function drawEchartsPie(ec){
+	
+	var A1_2_a_echart = [{value:156,name:'男'},{value:40, name:'女'}, {value:4,name:'未知' }];
+	var myChart = ec.init(document.getElementById('chartA1_2_a_echart')); 
+  var option = { 
+	  tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+	  }, 
+      series : [{
+    	  type:'pie',
+          data:A1_2_a_echart,
+          itemStyle:{
+             normal:{
+                 label:{
+                   show: true,
+                   position:'outer',
+                   formatter: '{b}:{c}'
+                 },
+                 labelLine :{show:true}
+               }
+           } 
+      }],
+  };
+  // 为echarts对象加载数据 
+  myChart.setOption(option); 
+}
+
+//画柱图
+function drawEchartsBar(ec){
+	var ydata = [42,36,28,27,25,12,8,8,6,6,2];
+	var xdata=['北京','河北','河南','天津','上海','辽宁','浙江','四川','江苏','黑龙江','其他',];
+	var myChart = ec.init(document.getElementById('chartA1_2_c_echart')); 
+    var option = {
+        tooltip: {
+            show: true
+        },
+        calculable : true,
+        legend: {
+        	show:true,
+        	orient :'horizontal',
+        	x:'right',
+        	y:'top',
+            data:['籍贯分布']
+        },
+        xAxis : [
+            {
+                type : 'category',
+                axisLabel :{
+                	interval:0,
+                	rotate:-45
+                },
+                data : xdata
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:"籍贯分布",
+                type:"bar",
+                barGap:"30%",
+                data:ydata
+            }
+        ]
+    };
+    // 为echarts对象加载数据 
+    myChart.setOption(option); 
+}
+
+//画人口籍贯分布渲染图，分色面状填充籍贯区域，不同的数值所对应的色块颜色不一样
+function drawMapJiguan(ec){
+	// --- 地图 ---
+	var A1_2_c_echart = [{name:'北京',value:42,selected:false},{name:'河北',value:36},{name:'河南',value:28},{name:'天津',value:27},{name:'上海',value:25},{name:'辽宁',value:12},{name:'浙江',value:8},{name:'四川',value:8},{name:'江苏',value:6},{name:'黑龙江',value:6},{name:'其他',value:2}];
+    //A1_2_c_echart.push({name : 'echarts',symbol: 'image://../asset/img/echarts-logo.png',symbolSize: 21,x: 300,y: 100});
+	var myChart2 = ec.init(document.getElementById('map_jiguan'));
+	myChart2.setOption({
+	    roamController: {
+	        show: true,
+	        x: 'right',
+	        mapTypeControl: {
+	            'china': true
+	        }
+	    },
+	    tooltip : {
+	        trigger: 'item',
+	        formatter: '{b}:{c}'
+	    },
+	    dataRange: {
+	        min: 0,
+	        max: 50,
+	        text:['High','Low'],
+	        realtime: false,
+	        calculable : true,
+	        color: ['red','yellow','lightskyblue']
+	    },
+	    series : [
+	        {
+	            name: '中国',
+	            type: 'map',
+	            mapType: 'china',
+	            selectedMode : 'single',
+	            roam:true,
+	            itemStyle:{
+	                normal:{label:{show:true},color:''},
+	                emphasis:{label:{show:true}}
+	            },
+	            data:A1_2_c_echart
+	        }
+	    ]
+	});
+}
+
+//画案件分部点图，根据案件坐标在地图上画点 
+function drawPtAnJian(ec){	
+    //获取案件分布地图对象
+    var mapPtAnJian = ec.init(document.getElementById('chartA1_2_f_echart'));
+    var optionPtAnJian = {
+        title:{
+            text:'案件坐标点位分布图',
+            x:'center'
+        },
+        tooltip:{
+            trigger:'item',
+            formatter: function(params){
+                return params.seriesName+'<br/>'+params.name+":"+params.ajlx;
+            }
+        }, 
+        series:[
+            {
+                name:'案件',
+                type:'map',
+                mapType:'china',
+                hoverable:false,
+                roam:true,
+                data:[],
+                markPoint:{
+                    symbolSize:5,
+                    itemStyle:{
+                        normal:{
+                            borderColor:'#87cefa',
+                            borderWidth:1,
+                            label:{
+                                show:false
+                            }
+                        },
+                        emphasis:{
+                            borderColor:'#1e90ff',
+                            borderWidth:5,
+                            label:{
+                                show:false	
+                            }
+                        }
+                    },
+                    data:[
+                          {name: "1001", value: "抢劫-海淀区"},
+                          {name: "1002", value: "抢夺-海淀区"},  
+                          {name: "1003", value: "盗窃-海淀区"},  
+                          {name: "1004", value: "抢劫-朝阳区"},  
+                          {name: "抢劫", value: 1005,ajlx:"抢劫"}  
+                      ]
+                },
+                geoCoord:{
+                    "1001":[121.15,31.89],
+                    "1002":[109.781327,39.608266],
+                    "1003":[120.38,37.35],
+                    "1004":[122.207216,29.985295],
+                    "抢劫":[123.97,47.33]                        
+                }
+            }
+        ]
+    
+    };
+    mapPtAnJian.setOption(optionPtAnJian);
+    try{
+        var ecConfig = require('echarts/config');
+        alert(ecConfig.EVENT.MAP_SELECTED);
+        mapPtAnJian.on(ecConfig.EVENT.MAP_SELECTED, function (param){
+        	alert("map selected...");
+            var selected = param.selected;
+            var str = '当前选择： ';
+            for (var p in selected) {
+                if (selected[p]) {
+                    str += p + ' ';
+                }
+            }
+            alert("str");
+            //document.getElementById('wrong-message').innerHTML = str;
+        });
+    }catch(e){
+    	alert(e.message);
+    }
+   
+}
+ 
 </script>
 </html>

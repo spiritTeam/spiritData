@@ -17,7 +17,7 @@
   </resultMap>
   <!-- 所有列 -->
   <sql id="Base_Column_List">
-    id, fId, type1, type2, type3, extInfom, cTime
+    id, fId, type1, type2, type3, extInfo, cTime
   </sql>
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey">

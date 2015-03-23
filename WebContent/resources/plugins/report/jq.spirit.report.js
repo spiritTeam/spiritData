@@ -25,11 +25,13 @@
   $.templetJD = function(reportUrl, reportId) {
     //1,画pageFrame
     initPageFrame();
+    //alert(reportUrl+" "+reportId);
     //2，从后台请求数据
     var pData = {'reportId':reportId};
     alert(reportUrl);
     $.ajax({type:"post",url:reportUrl,data:pData,dataType:"json",
       success:function(json){
+    	  //alert(json);
         var templetJsonObj=str2JsonObj(json);
         if (templetJsonObj.jsonType==1) {
           var templetJD = templetJsonObj.data;
@@ -51,7 +53,10 @@
           //为树结点绑定锚点
           $('#catalogTree').tree({
             onClick: function(node){
-              $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top-70});
+              try{
+            	  var topSegHeight = $("#topSegment").height()+3;	
+                  $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top - topSegHeight});  
+              }catch(e){}
             }
           });
         }else{
@@ -464,17 +469,18 @@
     //得到拍序列以及取数范围
     if (decorateView) {
       var showColAry = decorateView.match(/#.*?#/g);
-      if (exp.charAt(0)=="!") {
+      //if (exp.charAt(0)=="!") {
+      if (removeSpace(showType).charAt(0)=="!") {
         //处理升序!(n|col)
-        if (exp.charAt(1)!="(") {
-          alert("缺失符号“(”");
-          return;
-        } else {
-          exp = removeBrackets(exp);
-          if (exp.lastIndexOf("|")==-1) {
-            alert("缺失符号“|”");
-            return;
-          } else {
+       // if (exp.charAt(1)!="(") {
+       //   alert("缺失符号“(”");
+       //   return;
+       // } else {
+       //   exp = removeBrackets(exp);
+       //   if (exp.lastIndexOf("|")==-1) {
+       //     alert("缺失符号“|”");
+       //     return;
+       //   } else {
             var firstNum = exp.split("|")[0];
             var oderCol = exp.split("|")[1];
             //接下来排序？sort
@@ -491,8 +497,8 @@
               showStr = showStr+tt+"，";
             }
             jQobj.html(showStr);
-          }
-        }
+        //  }
+        //}
       } else {
         //处理降序n|col？
         if (exp.lastIndexOf("|")==-1) {

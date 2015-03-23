@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.util;
+package com.spiritdata.dataanal.common.util;
 
 import java.util.ArrayList;
 import java.util.List;

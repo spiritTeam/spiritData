@@ -7,7 +7,7 @@ public class Flmg0002CException extends FlmgCException {
     private static final long serialVersionUID = -7866589640578169284L;
 
     private static String myBaseMsg = "数据类型不合法";
-    private static int myCode = 1;
+    private static int myCode = 2;
 
     /**
      * 构造没有详细消息内容的——'数据类型不合法'异常

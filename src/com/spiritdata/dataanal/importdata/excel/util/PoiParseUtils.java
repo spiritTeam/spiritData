@@ -13,10 +13,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.spiritdata.framework.util.DateUtils;
+import com.spiritdata.dataanal.common.util.SpiritRandom;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
-import com.spiritdata.dataanal.util.SpiritRandom;
 
 /**
  * 通过Poi包解析excel文件的公共方法集服务

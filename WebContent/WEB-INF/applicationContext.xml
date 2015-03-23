@@ -58,7 +58,8 @@
   <bean id="cachePool" class=" com.spiritdata.framework.core.cache.CachePool">
     <property name="caches">
       <map>
-        <!--<entry key="2" value-ref="dataToolsCacheManager"/>
+        <entry key="1" value-ref="DtalCacheLifecycleUnit"/>
+        <!--<entry key="2" value-ref="DtalCacheLifecycleUnit"/>
         <entry key="0" value-ref="cacheFrameworkManager"/>
         <entry key="1" value-ref="cacheFrameworkUgaManager"/>
         -->
