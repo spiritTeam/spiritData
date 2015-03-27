@@ -48,7 +48,7 @@ public class RegisterController {
         User user = userService.getUserByLoginName(loginName);
         String retInfo = "";
         Exception ee = null;
-        if (user==null||user.equals("")) {
+        if (user==null) {
             retInfo = "没有账号为"+loginName+"的用户";
             ee = new Dtal1104CException(retInfo);
             retMap.put("success", false);
@@ -66,7 +66,7 @@ public class RegisterController {
         user.setValidataSequence(validatsaSequence);
         user.setUserState(3);
         User suser = (User) request.getSession().getAttribute("FConstants.SESSION_USER");
-        if (suser!=null&&!suser.equals("")) {
+        if (suser!=null) {
             suser.setUserState(3);
             suser.setValidataSequence(validatsaSequence);
         }
@@ -106,7 +106,7 @@ public class RegisterController {
         User user = userService.getUserByLoginName(loginName);
         String retInfo = "";
         Exception ee = null;
-        if (user==null||user.equals("")) {
+        if (user==null) {
             retMap.put("success", false);
             retInfo = "修改异常,请重试,未找到账号为"+loginName+"的用户，请重新填写账号！";
             ee = new Dtal1104CException("为找到该账号对应的用户！");
@@ -251,7 +251,7 @@ public class RegisterController {
         User user = (User) session.getAttribute(FConstants.SESSION_USER);
         String password = request.getParameter("password");
         Exception ee = null;
-        if (user!=null&&!user.equals("")) user.setPassword(password);
+        if (user!=null) user.setPassword(password);
         else user = userService.getUserByLoginName(loginName);
         user.setPassword(password);
         user.setUserState(1);

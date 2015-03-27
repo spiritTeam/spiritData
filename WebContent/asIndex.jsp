@@ -157,7 +157,7 @@
   <div style="float:right;">
     <div>
     <div style="height: 5px;"></div>
-      <div class="loginButton"><a id="login" onclick="login();" href="#">登录</a></div>
+      <div class="loginButton" onclick="login();" id="login">登陆测试</div>
       <div class="loginButton"><a id="_logout" onclick="logout();" href="#">注销</a></div>
       <div class="loginButton"><a id="forgetPassword" onclick="forgetPassword();" href="#" >忘记密码</a></div>
       <div class="loginButton"><a id="updateUser" onclick="updateUser();" href="#" >修改</a></div>
@@ -722,6 +722,7 @@ function login(){
     modal:true
   };
   $('#login').parent().attr('disabled','disabled');return;
+  //<a id="login" onclick="login();" href="#">登录</a>
   openSWinInMain(winOption);
   setTimeout(function(){
     $('#login').bind("onclick",function(){login();});
