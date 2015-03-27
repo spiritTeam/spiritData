@@ -28,41 +28,46 @@
     //alert(reportUrl+" "+reportId);
     //2，从后台请求数据
     var pData = {'reportId':reportId};
-    alert(reportUrl);
+    //alert(reportUrl);
     $.ajax({type:"post",url:reportUrl,data:pData,dataType:"json",
       success:function(json){
-    	  //alert(json);
-        var templetJsonObj=str2JsonObj(json);
-        if (templetJsonObj.jsonType==1) {
-          var templetJD = templetJsonObj.data;
-          //3，根据templetD构造出树和框
-          //主体
-          var _REPORT = templetJD._REPORT;
-          //标题
-          var _HEAD = templetJD._HEAD;
-          //jsonDurl 用于请求jsond
-          var _DATA = templetJD._DLIST;
-          dataIdAry = getJsonD(_DATA);
-          $('#rTitle').html(_HEAD.reportName);
-          buildSegmentGroup($('#reportFrame'), _REPORT, level, null);
-          //显示 
-          resolveAndDraw();
-          //显示树的部分
-          $('#catalogTree').tree({animate:true});
-          $('#catalogTree').tree("loadData", segTree);
-          //为树结点绑定锚点
-          $('#catalogTree').tree({
-            onClick: function(node){
-              try{
-            	  var topSegHeight = $("#topSegment").height()+3;	
-                  $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top - topSegHeight});  
-              }catch(e){}
-            }
-          });
-        }else{
-          $.messager.alert("提示",jsonData.message,'info');
+        try{
+      	  //alert(json);
+	        var templetJsonObj=str2JsonObj(json);
+	        if (templetJsonObj.jsonType==1) {
+	          var templetJD = templetJsonObj.data;
+	          //3，根据templetD构造出树和框
+	          //主体
+	          var _REPORT = templetJD._REPORT;
+	          //标题
+	          var _HEAD = templetJD._HEAD;
+	          //jsonDurl 用于请求jsond
+	          var _DATA = templetJD._DLIST;
+	          dataIdAry = getJsonD(_DATA);
+	          $('#rTitle').html(_HEAD.reportName);
+	          buildSegmentGroup($('#reportFrame'), _REPORT, level, null);
+	          //显示 
+	          resolveAndDraw();
+	          //显示树的部分
+	          $('#catalogTree').tree({animate:true});
+	          $('#catalogTree').tree("loadData", segTree);
+	          //为树结点绑定锚点
+	          $('#catalogTree').tree({
+	            onClick: function(node){
+	              try{
+	            	  var topSegHeight = $("#topSegment").height()+3;	
+	                  $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top - topSegHeight});  
+	              }catch(e){}
+	            }
+	          });
+	        }else{
+	          $.messager.alert("提示",jsonData.message,'info');
+	        }        	
+        }catch(e){
+            $.messager.alert("提示",e.message,'info');
         }
       },error:function(errorData ){
+    	  alert("err:"+errorData);
         $.messager.alert("提示","未知错误！",'info');
       }
     });

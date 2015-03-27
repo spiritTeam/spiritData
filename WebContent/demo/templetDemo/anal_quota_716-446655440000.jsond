@@ -26,8 +26,7 @@
           {category:"女",   num:"40",  percent:"20"},
           {category:"其他", num:"4",   percent:"2"}
         ]
-      }},
-      {columnName:"col_4",
+      }},{columnName:"col_4",
       titleName:"籍贯",
       tableData:{
        sort:{sortCol:"num",shotType:"1"}, /*0：未排序1:由大到小、2：由小到大*/
@@ -45,7 +44,34 @@
           {category:"浙江",   num:"8",  percent:"4"},
           {category:"黑龙江", num:"6",  percent:"3"}
         ]
+        }
+      },{/*人员坐标*/
+      tableData:{
+        titles:[{xm:"姓名"},{sfz:"身份证"},{xb:"性别"},{city:"城市"}],/*这个不应该去掉*/
+        tableBody:[
+          {xm:"张三", sfz:"420205198803122653", xb:"男", city:'北京', X:"116.46", Y:"39.92"},
+          {xm:"李四", sfz:"320205198803122653", xb:"男", city:'上海', X:"121.48", Y:"31.22"},
+          {xm:"王二", sfz:"220205198803122653", xb:"女", city:'广州', X:"113.23", Y:"28.27"}
+        ]
       }
-    }]
+     },{/*省市数量坐标*/
+      tableData:{
+        titles:[{category:"籍贯"},{num:"数量"},{percent:"百分比"}],/*这个不应该去掉*/
+        tableBody:[
+          {category:"其他",   num:"2",  percent:"1", X:"", Y:""},
+          {category:"北京",   num:"42", percent:"21", X:"", Y:""},
+          {category:"四川",   num:"8",  percent:"4", X:"", Y:""},
+          {category:"江苏",   num:"6",  percent:"3", X:"", Y:""},
+          {category:"河北",   num:"36", percent:"18", X:"", Y:""},
+          {category:"天津",   num:"27", percent:"13.5", X:"", Y:""},
+          {category:"上海",   num:"25", percent:"12.5", X:"", Y:""},
+          {category:"河南",   num:"28", percent:"14", X:"", Y:""},
+          {category:"辽宁",   num:"12", percent:"6", X:"", Y:""},
+          {category:"浙江",   num:"8",  percent:"4", X:"", Y:""},
+          {category:"黑龙江", num:"6",  percent:"3", X:"", Y:""}
+        ]
+      }
+     }
+     ]
   }
 }

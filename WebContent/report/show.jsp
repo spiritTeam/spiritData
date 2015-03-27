@@ -31,7 +31,7 @@ body {
 $(function(){
   var reportId="ssss";
   var reportUrl = "<%=path%>/report/getReport.do?uri=demo\\templetDemo\\templet1.json";
-  alert(reportUrl);
+  //alert("show report url="+reportUrl);
   $.templetJD(reportUrl,reportId);
 });
 </script>
