@@ -13,7 +13,7 @@
   _position:absolute;
   /* for IE6 */
 }
-/* 头部
+/* 头部 */
 .topSegment{
   border:1px solid #95b8e7;
   border-bottom:0;
@@ -27,20 +27,20 @@
   overflow:hidden;
   border:0;
   border-bottom:1px solid #284318;
-} */
-.topSegment{
+}
+/* .topSegment{
   border:1px solid #95b8e7;
   border-bottom:0;
   background-color:#32C52F;
   overflow:hidden;
   border:0;
-  border-bottom:1px solid #284318;
-}
+  border-bottom:0px solid #284318;
+} */
 /* 主体容器 */
 #_main{
   position:absolute;
 }
-/* 脚部 
+/* 脚部 */
 .footSegment{
   border:1px solid #95b8e7;
   background-color:#E0ECFF;
@@ -51,11 +51,11 @@
   background-repeat:repeat-x;
   filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#EFF5FF,endColorstr=#E0ECFF,GradientType=0);
   filter:alpha(opacity=70); -moz-opacity:0.7; opacity:0.7;
-}*/
-.footSegment{
+}
+/*.footSegment{
   border:1px solid #95b8e7;
   background-color:#32C52F;
-}
+}*/
 /* 头部占位及尾部占位 */
 #_top, #_foot{ border:0; padding:0; margin:0; }
 

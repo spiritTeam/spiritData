@@ -107,9 +107,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
     </tr>
   </table></form>
   <div align="right" style="width:310px;margin-top:50px;margin-right:10px;">
-    <a id="forgetPassword" onclick="forgetPassword();" href="#">忘记密码</a>&nbsp;|&nbsp;
-    <a id="register" onclick="register();" href="#">注册</a><span id="delimiter" >&nbsp;|&nbsp;</span>
-    <a id="activeUser" onclick="activeUser();" href="#">激活</a>
+    <a id="forgetPassword" onclick="forgetPassword();" href="#">忘记密码</a>&nbsp;|&nbsp;<a id="register" onclick="register();" href="#">注册</a><span id="delimiter">&nbsp;|&nbsp;</span><a id="activeUser" onclick="activeUser();" href="#">激活</a>
   </div>
 </div></center>
 </body>
@@ -139,6 +137,8 @@ $(function() {
 });
 //初始化页面全局参数
 function initPageParam(){
+  //打开窗口后获得焦点
+  $('#loginName').focus();
   mainPage = getMainPage();
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
