@@ -721,11 +721,11 @@ function login(){
     width:wWidth,
     modal:true
   };
-  $('#login').parent().attr('disabled','disabled');return;
+  //$('#login').parent().attr('disabled','disabled');return;
   openSWinInMain(winOption);
-  setTimeout(function(){
-    $('#login').bind("onclick",function(){login();});
-  }, 1000);
+  //setTimeout(function(){
+  //  $('#login').bind("onclick",function(){login();});
+  //}, 1000);
 }
 /**
  * 测试
