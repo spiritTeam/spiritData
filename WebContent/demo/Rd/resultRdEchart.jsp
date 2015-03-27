@@ -911,7 +911,8 @@ function detail1(value,row,index) {
 // 路径配置
 require.config({
     paths: {
-        echarts: '<%=path%>/resources/plugins/echarts-2.2.1'
+        echarts: '<%=path%>/resources/plugins/echarts-2.2.1',
+        zrender: '<%=path%>/resources/plugins/echarts-2.2.1/zrender'
     }
 });
 
@@ -964,6 +965,24 @@ function drawEchartsPie(ec){
   };
   // 为echarts对象加载数据 
   myChart.setOption(option); 
+
+  //点击事件
+  try{
+      var ecConfig = require('echarts/config');
+      myChart.on(ecConfig.EVENT.CLICK, function (param){
+          var selected = param.selected;
+          var str = '当前选择： ';
+          for (var p in selected) {
+              if (selected[p]) {
+                  str += p + ' ';
+              }
+          }
+          alert(str);
+          //document.getElementById('wrong-message').innerHTML = str;
+      });
+  }catch(e){
+      alert(e.message);
+  }
 }
 
 //画柱图
@@ -1063,22 +1082,64 @@ function drawPtAnJian(ec){
             text:'案件坐标点位分布图',
             x:'center'
         },
+        legend: {
+            orient: 'vertical',
+            x:'left',
+            data:['抢劫类案件','盗窃类案件'],
+            textStyle : {
+                color: '#000000'
+            }
+        },
         tooltip:{
             trigger:'item',
             formatter: function(params){
-                return params.seriesName+'<br/>'+params.name+":"+params.ajlx;
+            	var retStr="";
+            	//标头
+            	var tmpdata = params.seriesName;
+                if(tmpdata==undefined || tmpdata==""){
+                    return retStr;
+                }else{
+                	retStr += tmpdata+'<br/>';
+                }
+                //案件类型
+                var tmpdata = params.name;
+                if(tmpdata!=undefined && tmpdata!=""){
+                    retStr+='案件类型:'+tmpdata+'<br/>';
+                }
+            	//案件编号
+            	var tmpdata = params.value;
+            	if(tmpdata!=undefined && tmpdata!=""){
+                    retStr+='案件编号:'+tmpdata+'<br/>';
+            	}
+            	//案发时间
+            	tmpdata = params.data['afsj'];
+                if(tmpdata!=undefined && tmpdata!=""){
+                    retStr+='案发时间:'+tmpdata+'<br/>';
+                }
+            	return retStr;
+                //return params.seriesName+'<br/>'+params.name+":"+(params.data['ajlx']==undefined?"":params.data['ajlx']);
             }
         }, 
         series:[
             {
-                name:'案件',
+                name:'抢劫类案件',
                 type:'map',
                 mapType:'china',
                 hoverable:false,
-                roam:true,
+                //selectedMode : 'single',
+                itemStyle:{
+                    normal:{
+                    	label:{show:true}
+                    },
+                    emphasis:{label:{show:true}}
+                },
+                roam:false,
                 data:[],
                 markPoint:{
                     symbolSize:5,
+                    effect : {
+                        //show: true
+                    },
                     itemStyle:{
                         normal:{
                             borderColor:'#87cefa',
@@ -1096,20 +1157,56 @@ function drawPtAnJian(ec){
                         }
                     },
                     data:[
-                          {name: "1001", value: "抢劫-海淀区"},
-                          {name: "1002", value: "抢夺-海淀区"},  
-                          {name: "1003", value: "盗窃-海淀区"},  
-                          {name: "1004", value: "抢劫-朝阳区"},  
-                          {name: "抢劫", value: 1005,ajlx:"抢劫"}  
+                          {name: "持棍抢劫", value: 1001, afsj:'2013年1月2日'},  
+                          {name: "飞车抢劫", value: 1002, afsj:'2012年3月5日'},  
+                          {name: "拦路抢劫", value: 1003, afsj:'2013年6月7日'}  
                       ]
                 },
                 geoCoord:{
-                    "1001":[121.15,31.89],
-                    "1002":[109.781327,39.608266],
-                    "1003":[120.38,37.35],
-                    "1004":[122.207216,29.985295],
-                    "抢劫":[123.97,47.33]                        
+                    "持棍抢劫":[120.38,37.35],
+                    "飞车抢劫":[110.479191, 29.117096],
+                    "拦路抢劫":[113.3, 40.12]                        
                 }
+            },{
+                name:'盗窃类案件',
+                type:'map',
+                mapType:'china',
+                hoverable:false,
+                roam:false,
+                data:[],
+                markPoint:{
+                    symbol : 'diamond',
+                    symbolSize:6,
+                    effect : {
+                        //show: true
+                    },
+                    itemStyle:{
+                        normal:{
+                            borderColor:'#87cefa',
+                            borderWidth:1,
+                            label:{
+                                show:false
+                            }
+                        },
+                        emphasis:{
+                            borderColor:'#1e90ff',
+                            borderWidth:5,
+                            label:{
+                                show:false  
+                            }
+                        }
+                    },
+                    data:[
+                          {name: "入室盗窃", value: 2001, afsj:'2013年1月2日'},  
+                          {name: "网吧盗窃", value: 2002, afsj:'2012年3月5日'},  
+                          {name: "商场盗窃", value: 2003, afsj:'2013年6月7日'}  
+                      ]
+                },
+                geoCoord:{
+                    "入室盗窃":[115.89, 28.68],
+                    "网吧盗窃":[119.57, 39.95],
+                    "商场盗窃":[113.08, 36.18]                        
+                }            	
             }
         ]
     
@@ -1117,19 +1214,19 @@ function drawPtAnJian(ec){
     mapPtAnJian.setOption(optionPtAnJian);
     try{
         var ecConfig = require('echarts/config');
-        alert(ecConfig.EVENT.MAP_SELECTED);
+        /**
         mapPtAnJian.on(ecConfig.EVENT.MAP_SELECTED, function (param){
-        	alert("map selected...");
-            var selected = param.selected;
+      	    var selected = param.selected;
             var str = '当前选择： ';
             for (var p in selected) {
                 if (selected[p]) {
                     str += p + ' ';
                 }
             }
-            alert("str");
+            alert(str);
             //document.getElementById('wrong-message').innerHTML = str;
         });
+        */
     }catch(e){
     	alert(e.message);
     }

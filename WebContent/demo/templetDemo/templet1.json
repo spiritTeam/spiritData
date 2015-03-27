@@ -38,6 +38,12 @@
             新加测试showType=“bars”：<d did="2" showType="bars" value="quotas[1]" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
             测试showType=“first”降序：<d did="2" showType="!first(3|num)" value="quotas[1]" decorateView="{#category#}占#percent#%"/>
             测试showType=“first”升序：<d did="2" showType="first(3|num)" value="quotas[1]" decorateView="{#category#}占#percent#%"/>'
+        },{/*地图上以点状显示人员坐标信息*/
+          id:"seg1_3",
+          name:"地图展示",
+          content:'<div style="font-height:bold; font-size:18px;">3、人员地图分析</div><br/>
+            <!--人员 坐标分布  SYS:使用哪家地图，AGIS|BAIDU|GAODE-->
+            <d did="3" showType="map_pts" value="quotas[2]::first(100)" SYS="BAIDU" coord="X,Y", decorateView="'姓名':#xm#',身份证':#sfz#',性别':#sb#','colCN(city)':#city#"/>
         }
       ]
     }
