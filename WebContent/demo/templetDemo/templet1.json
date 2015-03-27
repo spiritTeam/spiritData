@@ -43,7 +43,7 @@
           name:"地图展示",
           content:'<div style="font-height:bold; font-size:18px;">3、人员地图分析</div><br/>
             <!--人员 坐标分布  SYS:使用哪家地图，AGIS|BAIDU|GAODE-->
-            <d did="3" showType="map_pts" value="quotas[2]::first(100)" SYS="BAIDU" coord="X,Y", decorateView="'姓名':#xm#,'身份证':#sfz#,'性别':#sb#",'colCN(city)':#city#"/>
+            <d did="3" showType="map_pts" value="quotas[2]::first(100)" SYS="BAIDU" coord="X,Y", decorateView="'姓名':#xm#',身份证':#sfz#',性别':#sb#','colCN(city)':#city#"/>
         }
       ]
     }
