@@ -27,8 +27,8 @@
           {colName:"出生日期", colType:"Date",   details:"",           semantic:"唯一列"},
           {colName:"政治面貌", colType:"未知",   details:"",           semantic:"次元数据列为空，数据抛弃"},
           {colName:"其他",     colType:"未知",   details:"",           semantic:"次元数据列数据格式混乱，数据抛弃"},
-          {colName:"X",     colType:"Double", details:"BD", semantic:"X坐标"},
-          {colName:"Y",     colType:"Double", details:"", semantic:"Y坐标"}
+          {colName:"X",     colType:"Double", details:"百度地图坐标系", semantic:"X坐标"},
+          {colName:"Y",     colType:"Double", details:"百度地图坐标系", semantic:"Y坐标"}
         ]
       }
     },{
