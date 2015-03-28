@@ -10,6 +10,11 @@
  *  _5显示
  */
 (function($){
+  //***开始 常量定义***
+  //百度地图	
+  var CONST_MAP_BAIDU = "BAIDU";
+  //***结束 常量定义 ***
+  
   //树
   var segTree=[];
   //level
@@ -444,6 +449,7 @@
   function parseEle(jQobj, _DATA){
     //指向jsond中的数据
     var value = jQobj.attr('value');
+    //解析 value,有可能存在quotas[2]::first(100)
     //得到showType//根据value得到数据
     eval("var _data=_DATA."+value);
     var showType = jQobj.attr('showType');
@@ -452,6 +458,7 @@
     else if (showType=="pie") drawPie(jQobj, _data);
     else if (showType=="line") drawLine(jQobj, _data);
     else if (showType=="bars") drawBar(jQobj, _data);
+    else if (showType=="map_pts") drawMapPts(jQobj,_data); //地图画点
     else if (showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
   }
 
@@ -696,6 +703,7 @@
   function drawBar(jQobj,_data){
     var label = jQobj.attr('label');
     var data = jQobj.attr('data');
+    var coord = jQobj.attr('coord');
     var line_dataBody = _data.tableData.tableBody;
     var ary = [];
     var height = 20*line_dataBody.length;
@@ -728,6 +736,52 @@
       },
       legend:{ show:true, position: "sw" }
     });
+  }  
+
+  /**
+   * 地图画点
+   * st==map_pts
+   * jQobj:jquery对象
+   * dataAry：数据
+   * decorateView:显示修饰
+   */
+  function drawMapPts(jQobj,_data){
+    try{
+      //所使用的地图
+      var sys = jQobj.attr('mapType');
+      if(sys == undefined || sys==CONST_MAP_BAIDU){
+    	drawBaiDuPts(jQobj,_data);
+      }else{
+    	$.messager.alert("unsupported map type:", sys, "error");
+      }
+    }catch(e){
+      $.messager.alert("draw map points err", e.message, "error");
+    }
+  }
+  
+  //画百度地图的坐标点
+  function drawBaiDuPts(jQobj,_data){
+      //设置DOM对象的宽度和高度
+	  var width=800;
+	  var height=500;
+	  jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+      //要显示的名称name
+      var label = jQobj.attr('label');
+      //要显示的数值value
+      var data = jQobj.attr('data');
+      //所使用的地图XY坐标
+      var coord = jQobj.attr('coord');
+      //解析数据体
+      var dataArr = [];
+      var dataBody = _data.tableData.tableBody;
+      for (var i=0;i<dataBody.length;i++) {
+    	var name = dataBody[i][label];
+    	alert(name);
+          //eval("var _x = line_dataBody[i]."+label);
+          //eval("var _y = line_dataBody[i]."+data);
+          //dataArr[i] = [_x,_y];
+        }
+      
   }
   //以上方法为对showType的解析
 

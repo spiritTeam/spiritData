@@ -9,7 +9,7 @@
   String userMail;
   String loginName;
   String oldPwd;
-  if(user==null||user.equals("")){
+  if(user==null){
       userMail = "";
       loginName = "";
       oldPwd = "";
