@@ -122,7 +122,7 @@ public class RegisterController {
                 FileUtils.deleteFile(new File(toDeletURI));
                 HttpSession session = request.getSession();
                 User userInfo = ((User)session.getAttribute(FConstants.SESSION_USER));
-                if (userInfo!=null&&!userInfo.equals("")) {
+                if (userInfo!=null) {
                     userInfo.setPassword(password);
                     userInfo.setMailAdress(mailAdress);
                     userInfo.setUserName(userName);
