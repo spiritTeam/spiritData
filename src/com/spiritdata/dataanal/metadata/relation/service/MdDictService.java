@@ -84,7 +84,7 @@ public class MdDictService {
                         dm.setId(SequenceUUID.getUUIDSubSegment(4));
                         dm.setOwner(_dictCache.getOwner());
                         dm.setDmName(mm.getColumnByCName(key).getTitleName());//字典组名称mm.getTitleName()+"::"+
-                        dm.setSort(1); //排序，排序需要由人来处理
+                        dm.setOrder(1); //排序，排序需要由人来处理
                         dm.setIsValidate(1);
                         dm.setMType(2); //系统生成的
                         //2准备数据-字典语义
@@ -104,7 +104,7 @@ public class MdDictService {
                         //1-1创建根结点
                         DictDetail _t = new DictDetail();
                         _t.setId(dModel.getId());
-                        _t.setMid(dModel.getId());
+                        _t.setMId(dModel.getId());
                         _t.setNodeName(dModel.getDmName());
                         _t.setIsValidate(1);
                         _t.setParentId(null);
@@ -131,7 +131,7 @@ public class MdDictService {
                         //找看看是否有相同的
                         if (_dictCache.ddList!=null&&_dictCache.ddList.size()>0) {
                             for (DictDetail dd: _dictCache.ddList) {
-                                if (dd.getMid().equals(dModel.getId())&&dd.getNodeName().equals(dictDetailName)) {
+                                if (dd.getMId().equals(dModel.getId())&&dd.getNodeName().equals(dictDetailName)) {
                                     find=true;
                                     break;
                                 }
@@ -141,7 +141,7 @@ public class MdDictService {
                             //准备数据
                             DictDetail dd = new DictDetail();
                             dd.setId(SequenceUUID.getUUIDSubSegment(4));
-                            dd.setMid(dModel.getId());
+                            dd.setMId(dModel.getId());
                             dd.setNodeName(dictDetailName);
                             dd.setNPy(ChineseCharactersUtils.getFullSpellFirstUp(dictDetailName));
                             dd.setBCode(dd.getId());

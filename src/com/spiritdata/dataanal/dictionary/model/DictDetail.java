@@ -3,21 +3,24 @@ package com.spiritdata.dataanal.dictionary.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.spiritdata.dataanal.dictionary.persistence.pojo.DictDetailPo;
 import com.spiritdata.framework.core.model.Model2Po;
 import com.spiritdata.framework.core.model.tree.TreeNodeBean;
+import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 
 /**
  * 字典项
  * 对应持久化中数据库的表为PLAT_DICTD
  * @author wh
  */
-public class DictDetail extends TreeNodeBean implements Model2Po {
+public class DictDetail extends TreeNodeBean implements Serializable, Model2Po {
     private static final long serialVersionUID = -4154673243407172158L;
 
     //String id; //字典项ID，在TreeNodeBean中对应id
-    private String mid; //字典组ID
+    private String MId; //字典组ID
     //String pId; //上级字典项ID，若为直接属于某字典组的字典项，则此只为0，在TreeNodeBean中对应parentId
-    //int sort; //排序，在TreeNodeBean中对应sort
+    //int sort; //排序，在TreeNodeBean中对应Order
     private int isValidate; //字典组是否可用 1可用，2不可用
     //String ddName; //字典项名称，在TreeNodeBean中对应nodeName
     private String NPy; //字典名称拼音
@@ -30,11 +33,11 @@ public class DictDetail extends TreeNodeBean implements Model2Po {
     private Timestamp CTime; //记录创建时间
     private Timestamp lmTime; //记录最后修改时间
 
-    public String getMid() {
-        return mid;
+    public String getMId() {
+        return MId;
     }
-    public void setMid(String mid) {
-        this.mid = mid;
+    public void setMId(String MId) {
+        this.MId = MId;
     }
     public int getIsValidate() {
         return isValidate;
@@ -96,9 +99,20 @@ public class DictDetail extends TreeNodeBean implements Model2Po {
     public void setLmTime(Timestamp lmTime) {
         this.lmTime = lmTime;
     }
+
     @Override
     public Object convert2Po() {
-        // TODO Auto-generated method stub
-        return null;
+        DictDetailPo ret = new DictDetailPo();
+        //id处理，没有id，自动生成一个
+        if (StringUtils.isNullOrEmptyOrSpace(this.getId())) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.getId());
+
+        ret.setMId(this.MId);
+        ret.setParentId(this.getParentId());
+        ret.setOrder(this.getOrder());
+        ret.setIsValidate(this.isValidate);
+        ret.setDdName(this.getNodeName());
+        ret.setAliasName(this.aliasName);
+        return ret;
     }
 }

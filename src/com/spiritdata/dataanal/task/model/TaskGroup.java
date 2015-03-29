@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskGroupPo;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 
 /**
  * 任务组模型，包括任务组的信息，任务组中的任务(是一个有向图)
@@ -112,11 +113,9 @@ public class TaskGroup implements Serializable {
      */
     public TaskGroupPo convert2Po() {
         TaskGroupPo ret = new TaskGroupPo();
-        if (this.getId()==null||this.getId().trim().equals("")) {
-            ret.setId(SequenceUUID.getPureUUID());
-        } else {
-            ret.setId(this.getId());
-        }
+        if (StringUtils.isNullOrEmptyOrSpace(this.getId())) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.getId());
+
         ret.setOwnerType(this.owner.getOwnerType());
         ret.setOwnerId(this.owner.getOwnerId());
         ret.setWorkName(this.workName);

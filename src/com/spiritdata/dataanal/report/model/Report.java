@@ -11,6 +11,7 @@ import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.Convert2Json;
 import com.spiritdata.jsonD.model.AccessJsonD;
 import com.spiritdata.jsonD.util.JsonUtils;
@@ -100,7 +101,7 @@ public class Report implements Serializable, Convert2Json {
         this._HEAD = _HEAD;
         if (this._HEAD!=null&&(this._HEAD instanceof ReportHead)) {
             String _id = ((ReportHead)this._HEAD).getId();
-            if (_id!=null&&_id.trim().length()>0) this.setId(((ReportHead)this._HEAD).getId());
+            if (!StringUtils.isNullOrEmptyOrSpace(_id)) this.setId(_id);
         }
     }
     public Object get_REPORT() {
@@ -176,12 +177,10 @@ public class Report implements Serializable, Convert2Json {
 
     public ReportPo convert2Po() {
         ReportPo ret = new ReportPo();
-        //id处理
-        if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
-            ret.setId(SequenceUUID.getPureUUID());
-        } else {
-            ret.setId(this.id);
-        }
+        //id处理，没有id，自动生成一个
+        if (StringUtils.isNullOrEmptyOrSpace(this.id)) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.id);
+
         //所有者
         ret.setOwnerId(this.owner.getOwnerId());
         ret.setOwnerType(this.owner.getOwnerType());

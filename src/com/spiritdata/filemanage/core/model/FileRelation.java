@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 
 import com.spiritdata.framework.core.model.Model2Po;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileRelationPo;
 import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
@@ -113,12 +114,10 @@ public class FileRelation implements Serializable, Model2Po {
         }
 
         FileRelationPo ret = new FileRelationPo();
-        //id处理
-        if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
-            ret.setId(SequenceUUID.getPureUUID());
-        } else {
-            ret.setId(this.id);
-        }
+        //id处理，没有id，自动生成一个
+        if (StringUtils.isNullOrEmptyOrSpace(this.id)) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.id);
+
         //第一元素处理
         if (this.element1 instanceof FileInfo) {
             ret.setAId(((FileInfo)this.element1).getId());

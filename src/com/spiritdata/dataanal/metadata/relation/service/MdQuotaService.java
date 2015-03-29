@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.dataanal.exceptionC.Dtal0201CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
@@ -75,9 +76,9 @@ public class MdQuotaService {
      * @return 表指标信息
      */
     public QuotaTable caculateQuota(MetadataTableMapRel tmo) {
-        if (tmo.getId()==null||tmo.getId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表Id字段为空，必须指定映射表Id"));
-        if (tmo.getMdMId()==null||tmo.getMdMId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表元数据模式mdMId字段为空，必须指定元数据模式Id"));
-        if (tmo.getTableName()==null||tmo.getTableName().equals("")) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表表名称字段tableName字段为空，必须指定表名称"));
+        if (StringUtils.isNullOrEmptyOrSpace(tmo.getId())) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表Id字段为空，必须指定映射表Id"));
+        if (StringUtils.isNullOrEmptyOrSpace(tmo.getMdMId())) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表元数据模式mdMId字段为空，必须指定元数据模式Id"));
+        if (StringUtils.isNullOrEmptyOrSpace(tmo.getTableName())) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表表名称字段tableName字段为空，必须指定表名称"));
 
         MetadataModel mm;
         try {
@@ -86,7 +87,7 @@ public class MdQuotaService {
             throw new Dtal0201CException(e);
         }
         if (mm==null) return null;
-        if (mm.getOwnerId()==null||mm.getOwnerId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表元数据模式mdMId所对应的元数据信息中没有所有者信息，无法处理"));
+        if (StringUtils.isNullOrEmptyOrSpace(mm.getOwnerId())) throw new Dtal0201CException(new IllegalArgumentException("参数中映射表元数据模式mdMId所对应的元数据信息中没有所有者信息，无法处理"));
 
         return caculateQuota(mm, tmo.getTableName(), tmo.getId());
     }
@@ -99,8 +100,9 @@ public class MdQuotaService {
      * @throws Exception
      */
     public QuotaTable caculateQuota(MetadataModel mm, String tableName) {
-        if (mm.getId()==null||mm.getId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("必须指定元数据模式Id"));
-        if (mm.getOwnerId()==null||mm.getOwnerId().equals("")) throw new Dtal0201CException(new IllegalArgumentException("元数据信息中没有所有者信息，无法处理"));
+        if (StringUtils.isNullOrEmptyOrSpace(mm.getId())) throw new Dtal0201CException(new IllegalArgumentException("必须指定元数据模式Id"));
+        if (StringUtils.isNullOrEmptyOrSpace(mm.getOwnerId())) throw new Dtal0201CException(new IllegalArgumentException("元数据信息中没有所有者信息，无法处理"));
+
         MetadataTableMapRel tmo;
         try {
             tmo = tmoService.getTableMapOrg(mm.getId(), tableName);

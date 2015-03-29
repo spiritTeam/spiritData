@@ -10,7 +10,7 @@
     <id     column="id"         property="id"         jdbcType="VARCHAR"/>
     <result column="mId"        property="MId"        jdbcType="VARCHAR"/>
     <result column="pId"        property="parentId"   jdbcType="VARCHAR"/>
-    <result column="sort"       property="order"      jdbcType="INTEGER"/>
+    <result column="order"      property="order"      jdbcType="INTEGER"/>
     <result column="isValidate" property="isValidate" jdbcType="INTEGER"/>
     <result column="ddName"     property="nodeName"   jdbcType="VARCHAR"/>
     <result column="nPy"        property="NPy"        jdbcType="VARCHAR"/>
@@ -26,10 +26,10 @@
 
   <!-- 所有列 -->
   <sql id="Base_Column_List">
-    id, mId, pId, sort, isValidate, ddName, nPy, aliasName, anPy, bCode, dType, dRef, descn, cTime, lmTime 
+    id, mId, pId, order, isValidate, ddName, nPy, aliasName, anPy, bCode, dType, dRef, descn, cTime, lmTime 
   </sql>
   <sql id="Base_Column_List_A">
-    a.id, a.mId, a.pId, a.sort, a.isValidate, a.ddName, a.nPy, a.aliasName, a.anPy, a.bCode, a.dType, a.dRef, a.descn, a.cTime, a.lmTime 
+    a.id, a.mId, a.pId, a.order, a.isValidate, a.ddName, a.nPy, a.aliasName, a.anPy, a.bCode, a.dType, a.dRef, a.descn, a.cTime, a.lmTime 
   </sql>
 
   <!-- 条件子句 -->
@@ -39,7 +39,7 @@
         <if test="id!=null"> and id=#{id,jdbcType=VARCHAR}</if>
         <if test="MId!=null"> and mId=#{MId,jdbcType=VARCHAR}</if>
         <if test="parentId!=null"> and pId=#{parentId,jdbcType=VARCHAR}</if>
-        <if test="order!=null and order!=0"> and sort=#{order,jdbcType=INTEGER}</if>
+        <if test="order!=null and order!=0"> and order=#{order,jdbcType=INTEGER}</if>
         <if test="isValidate!=null and isValidate!=0"> and isValidate=#{isValidate,jdbcType=INTEGER}</if>
         <if test="nodeName!=null"> and ddName=#{nodeName,jdbcType=VARCHAR}</if>
         <if test="NPy!=null"> and nPy=#{NPy,jdbcType=VARCHAR}</if>
@@ -59,7 +59,7 @@
       <if test="id!=null"> and a.id=#{id,jdbcType=VARCHAR}</if>
       <if test="MId!=null"> and a.mId=#{MId,jdbcType=VARCHAR}</if>
       <if test="parentId!=null"> and a.pId=#{parentId,jdbcType=VARCHAR}</if>
-      <if test="order!=null and order!=0"> and a.sort=#{order,jdbcType=INTEGER}</if>
+      <if test="order!=null and order!=0"> and a.order=#{order,jdbcType=INTEGER}</if>
       <if test="isValidate!=null and isValidate!=0"> and a.isValidate=#{isValidate,jdbcType=INTEGER}</if>
       <if test="nodeName!=null"> and a.ddName=#{nodeName,jdbcType=VARCHAR}</if>
       <if test="NPy!=null"> and a.nPy=#{NPy,jdbcType=VARCHAR}</if>
@@ -90,7 +90,7 @@
     select <include refid="Base_Column_List_A"/> from plat_dictd a, plat_dictm b where a.mId=b.id
     <if test="_parameter!=null"><include refid="WhereClauseByEntiey_A"/></if>
     <if test="ownerId!=null"> and b.ownerId=#{ownerId,jdbcType=VARCHAR}</if>
-    order by a.mId, a.pid, a.sort desc
+    order by a.mId, a.pid, a.order desc
   </select>
 
   <!-- 获得一条数据 -->
@@ -108,7 +108,7 @@
       <if test="id!=null">id,</if>
       <if test="MId!=null">mId,</if>
       <if test="parentId!=null">pId,</if>
-      <if test="order!=null and order!=0">sort,</if>
+      <if test="order!=null and order!=0">order,</if>
       <if test="isValidate!=null and isValidate!=0">isValidate,</if>
       <if test="nodeName!=null">ddName,</if>
       <if test="NPy!=null">nPy,</if>
@@ -142,7 +142,7 @@
     <set>
       <if test="MId!=null">mId=#{MId,jdbcType=VARCHAR},</if>
       <if test="parentId!=null">pId=#{parentId,jdbcType=VARCHAR},</if>
-      <if test="order!=null and order!=0">sort=#{order,jdbcType=INTEGER},</if>
+      <if test="order!=null and order!=0">order=#{order,jdbcType=INTEGER},</if>
       <if test="isValidate!=null and isValidate!=0">sValidate=#{isValidate,jdbcType=INTEGER},</if>
       <if test="nodeName=null"> ddName=#{nodeName,jdbcType=VARCHAR},</if>
       <if test="NPy=null"> nPy=#{NPy,jdbcType=VARCHAR},</if>

@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import com.spiritdata.framework.core.model.BaseObject;
 import com.spiritdata.framework.util.ChineseCharactersUtils;
+import com.spiritdata.framework.util.StringUtils;
 
 /**
  * 字典项详细信息<br/>
@@ -13,12 +14,12 @@ import com.spiritdata.framework.util.ChineseCharactersUtils;
 public class DictDetailPo extends BaseObject {
     private static final long serialVersionUID = 3494500574282767402L;
 
-    String id; //字典项ID，在TreeNodeBean中对应id
+    private String id; //字典项ID，在TreeNodeBean中对应id
     private String MId; //字典组ID
-    String parentId; //上级字典项ID，若为直接属于某字典组的字典项，则此只为0，在TreeNodeBean中对应parentId
-    int sort; //排序，在TreeNodeBean中对应sort
+    private String parentId; //上级字典项ID，若为直接属于某字典组的字典项，则此只为0，在TreeNodeBean中对应parentId
+    private int order; //排序，在TreeNodeBean中对应order，越大越靠前
     private int isValidate; //字典组是否可用 1可用，2不可用
-    String ddName; //字典项名称，在TreeNodeBean中对应nodeName
+    private String ddName; //字典项名称，在TreeNodeBean中对应nodeName
     private String NPy; //字典名称拼音
     private String aliasName; //字典项别名
     private String anPy; //字典项别名拼音
@@ -47,11 +48,11 @@ public class DictDetailPo extends BaseObject {
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }
-    public int getSort() {
-        return sort;
+    public int getOrder() {
+        return order;
     }
-    public void setSort(int sort) {
-        this.sort = sort;
+    public void setOrder(int order) {
+        this.order = order;
     }
     public int getIsValidate() {
         return isValidate;
@@ -64,7 +65,7 @@ public class DictDetailPo extends BaseObject {
     }
     public void setDdName(String ddName) {
         this.ddName = ddName;
-        if (this.NPy==null||this.NPy.equals("")) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(this.ddName);
+        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(this.ddName);
     }
     public String getNPy() {
         return NPy;
@@ -77,7 +78,7 @@ public class DictDetailPo extends BaseObject {
     }
     public void setAliasName(String aliasName) {
         this.aliasName = aliasName;
-        if (this.anPy==null||this.anPy.equals("")) this.anPy=ChineseCharactersUtils.getFullSpellFirstUp(this.aliasName);
+        if (StringUtils.isNullOrEmptyOrSpace(this.anPy)) this.anPy=ChineseCharactersUtils.getFullSpellFirstUp(this.aliasName);
     }
     public String getAnPy() {
         return anPy;

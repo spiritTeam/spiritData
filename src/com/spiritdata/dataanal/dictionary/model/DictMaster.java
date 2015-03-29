@@ -7,6 +7,7 @@ import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.dictionary.persistence.pojo.DictMasterPo;
 import com.spiritdata.framework.core.model.Model2Po;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 
 /**
  * 字典组
@@ -19,7 +20,7 @@ public class DictMaster implements Serializable, Model2Po {
     private String id; //字典组id
     private Owner owner;
     private String dmName; //字典组名称
-    private int sort; //排序号，越大越靠前
+    private int order; //排序号，越大越靠前
     private int isValidate; //字典组是否可用 1可用，2不可用
     private int MType; //字典组类型：1系统保留；2系统；3定义；
     private String MRef; //字典组引用，当mType=3
@@ -45,11 +46,11 @@ public class DictMaster implements Serializable, Model2Po {
     public void setDmName(String dmName) {
         this.dmName = dmName;
     }
-    public int getSort() {
-        return sort;
+    public int getOrder() {
+        return order;
     }
-    public void setSort(int sort) {
-        this.sort = sort;
+    public void setOrder(int order) {
+        this.order = order;
     }
     public int getIsValidate() {
         return isValidate;
@@ -88,19 +89,25 @@ public class DictMaster implements Serializable, Model2Po {
         this.lmTime = lmTime;
     }
 
+    /**
+     * 得到字典名称拼音
+     * @return 字典名称拼音
+     */
+    public String getNPy() {
+        return "";
+    }
+
     @Override
     public DictMasterPo convert2Po() {
         DictMasterPo ret = new DictMasterPo();
-        //id处理
-        if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
-            ret.setId(SequenceUUID.getPureUUID());
-        } else {
-            ret.setId(this.id);
-        }
+        //id处理，没有id，自动生成一个
+        if (StringUtils.isNullOrEmptyOrSpace(this.id)) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.id);
+
         ret.setOwnerId(this.owner.getOwnerId());
         ret.setOwnerType(this.owner.getOwnerType());
         ret.setDmName(this.dmName);
-        ret.setSort(this.sort);
+        ret.setOrder(this.order);
         ret.setIsValidate(this.isValidate);
         ret.setMRef(this.MRef);
         ret.setMType(this.MType);

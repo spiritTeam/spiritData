@@ -12,6 +12,7 @@ import com.spiritdata.framework.core.model.Model2Po;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
@@ -306,12 +307,10 @@ public class FileInfo implements Serializable, Model2Po {
      */
     public FileIndexPo convert2Po() {
         FileIndexPo ret = new FileIndexPo();
-        //id处理
-        if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
-            ret.setId(SequenceUUID.getPureUUID());
-        } else {
-            ret.setId(this.id);
-        }
+        //id处理，没有id，自动生成一个
+        if (StringUtils.isNullOrEmptyOrSpace(this.id)) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.id);
+
         //所有者
         ret.setOwnerId(this.owner.getOwnerId());
         ret.setOwnerType(this.owner.getOwnerType());

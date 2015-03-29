@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.spiritdata.framework.core.model.Model2Po;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileCategoryPo;
@@ -231,12 +232,10 @@ public class FileCategory implements Serializable, Model2Po {
      */
     public FileCategoryPo convert2Po() {
         FileCategoryPo ret = new FileCategoryPo();
-        //id处理
-        if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
-            ret.setId(SequenceUUID.getPureUUID());
-        } else {
-            ret.setId(this.id);
-        }
+        //id处理，没有id，自动生成一个
+        if (StringUtils.isNullOrEmptyOrSpace(this.id)) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.id);
+
         //文件id
         ret.setFId(this.categoryFile.getId());
         //文件分类

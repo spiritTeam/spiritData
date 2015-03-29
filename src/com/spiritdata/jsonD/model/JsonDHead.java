@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.Convert2Json;
 import com.spiritdata.jsonD.exceptionC.JsonD0002CException;
 import com.spiritdata.jsonD.exceptionC.JsonD0003CException;
@@ -30,14 +31,14 @@ public class JsonDHead implements Serializable, Convert2Json {
         return id;
     }
     public void setId(String id) {
-        if (id==null||id.length()==0) throw new JsonD0002CException("id必须设置！", new IllegalArgumentException("id不能为null或空串！"));
+        if (StringUtils.isNullOrEmptyOrSpace(id)) throw new JsonD0002CException("id必须设置！", new IllegalArgumentException("id不能为null或空串！"));
         this.id = id;
     }
     public String getCode() {
         return code;
     }
     public void setCode(String code) {
-        if (code==null||code.length()==0) throw new JsonD0002CException("code必须设置！", new IllegalArgumentException("code不能为null或空串！"));
+        if (StringUtils.isNullOrEmptyOrSpace(code)) throw new JsonD0002CException("code必须设置！", new IllegalArgumentException("code不能为null或空串！"));
         if (!JsonDUtils.isLegalCode(code)) throw new JsonD0003CException("code["+code+"]不合规！", new IllegalArgumentException("code不合规，请参看JsonD相关文档！"));
         this.code = code;
     }
@@ -77,16 +78,16 @@ public class JsonDHead implements Serializable, Convert2Json {
      * @return json串
      */
     public String toJson() {
-        if (this.id==null||this.id.length()==0) throw new JsonD0002CException("id必须设置！");
-        if (this.code==null||this.code.length()==0) throw new JsonD0002CException("code必须设置！");
+        if (StringUtils.isNullOrEmptyOrSpace(this.id)) throw new JsonD0002CException("id必须设置！");
+        if (StringUtils.isNullOrEmptyOrSpace(this.code)) throw new JsonD0002CException("code必须设置！");
         if (!JsonDUtils.isLegalCode(this.code)) throw new JsonD0003CException("code["+code+"]不合规，请参看JsonD相关文档！");
 
         if (this.CTime==null) CTime= new Date();
         String ret = "\"_HEAD\":{\"_id\":\""+this.id+"\", \"_code\":\""+this.code+"\", \"_cTime\":\""+this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime()+"\"";
-        if (this.parseFun!=null&&this.parseFun.length()>0) ret +=", \"_parseFun\":\""+this.parseFun+"\"";
-        if (this.node!=null&&this.node.length()>0) ret +=", _node:\""+this.node+"\"";
-        if (this.fileName!=null&&this.fileName.length()>0) ret +=", \"_fileName\":\""+this.fileName+"\"";
-        if (this.desc!=null&&this.desc.length()>0) ret +=", \"_desc\":\""+this.desc+"\"";
+        if (!StringUtils.isNullOrEmptyOrSpace(this.parseFun)) ret +=", \"_parseFun\":\""+this.parseFun+"\"";
+        if (!StringUtils.isNullOrEmptyOrSpace(this.node)) ret +=", _node:\""+this.node+"\"";
+        if (!StringUtils.isNullOrEmptyOrSpace(this.fileName)) ret +=", \"_fileName\":\""+this.fileName+"\"";
+        if (!StringUtils.isNullOrEmptyOrSpace(this.desc)) ret +=", \"_desc\":\""+this.desc+"\"";
         return ret+"}";
     }
 
@@ -95,8 +96,8 @@ public class JsonDHead implements Serializable, Convert2Json {
      * @return Map
      */
     public Map<String, Object> toMap() {
-        if (this.id==null||this.id.length()==0) throw new JsonD0002CException("id必须设置！");
-        if (this.code==null||this.code.length()==0) throw new JsonD0002CException("code必须设置！");
+        if (StringUtils.isNullOrEmptyOrSpace(this.id)) throw new JsonD0002CException("id必须设置！");
+        if (StringUtils.isNullOrEmptyOrSpace(this.code)) throw new JsonD0002CException("code必须设置！");
         if (!JsonDUtils.isLegalCode(this.code)) throw new JsonD0003CException("code["+code+"]不合规，请参看JsonD相关文档！");
 
         if (this.CTime==null) CTime= new Date();
@@ -104,10 +105,10 @@ public class JsonDHead implements Serializable, Convert2Json {
         retMap.put("_id", this.id);
         retMap.put("_code", this.code);
         retMap.put("_cTime", this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime());
-        if (this.parseFun!=null&&this.parseFun.length()>0) retMap.put("_parseFun", this.parseFun);
-        if (this.node!=null&&this.node.length()>0) retMap.put("_node", this.node);
-        if (this.fileName!=null&&this.fileName.length()>0) retMap.put("_fileName", this.fileName);
-        if (this.desc!=null&&this.desc.length()>0) retMap.put("_desc", this.desc);
+        if (!StringUtils.isNullOrEmptyOrSpace(this.parseFun)) retMap.put("_parseFun", this.parseFun);
+        if (!StringUtils.isNullOrEmptyOrSpace(this.node)) retMap.put("_node", this.node);
+        if (!StringUtils.isNullOrEmptyOrSpace(this.fileName)) retMap.put("_fileName", this.fileName);
+        if (!StringUtils.isNullOrEmptyOrSpace(this.desc)) retMap.put("_desc", this.desc);
         Map<String, Object> _retMap = new HashMap<String, Object>();
         _retMap.put("_HEAD", retMap);
         return _retMap;
