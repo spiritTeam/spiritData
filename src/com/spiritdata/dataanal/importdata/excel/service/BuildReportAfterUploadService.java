@@ -13,8 +13,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import com.spiritdata.dataanal.SDConstants;
-import com.spiritdata.dataanal.dictionary.pojo.DictModel;
-import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.dictionary.model.DictModel;
+import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
 import com.spiritdata.dataanal.exceptionC.Dtal1003CException;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
@@ -96,10 +97,8 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
         if (isEmptyParam(reportParam)) return null; //若报告参数中不包含任何元数据信息，无法生成报告，返回空
-        String ownerId = (String)param.get("ownerId");
-        if (ownerId==null||ownerId.trim().length()==0) throw new Dtal1003CException(new IllegalArgumentException("Map参数中没有所有者Id[owenrId]的信息！"));
-        int ownerType = Integer.parseInt(param.get("ownerType")+"");
-        if (ownerType==0) throw new Dtal1003CException(new IllegalArgumentException("Map参数中没有所有者类型[ownerType]的信息！"));
+        Owner owner = (Owner)param.get("owner");
+        if (owner==null) throw new Dtal1003CException(new IllegalArgumentException("Map参数中没有所有者Owner信息！"));
         FileInfo impFi = (FileInfo)param.get("impFileInfo");
         if (impFi==null) throw new Dtal1003CException(new IllegalArgumentException("Map参数中没有导入文件对象[impFileInfo]的信息！"));
         _OwnerDictionary _od = (_OwnerDictionary)param.get("ownerDict");
@@ -115,8 +114,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         ReportHead rHead = new ReportHead();
         report.set_HEAD(rHead);
         report.setId(SequenceUUID.getPureUUID()); //生成新的Id，头的id也设置了
-        report.setOwnerType(ownerType);
-        report.setOwnerId(ownerId);
+        report.setOwner(owner);
         String reportName = "["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后数据分析报告";
         report.setReportName(reportName); //设置报告名称，头的reportName也设置了
         report.setCTime(new Timestamp((new Date()).getTime())); //设置报告生成时间，同时也设置了头的时间
@@ -128,8 +126,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         //3-任务组处理——构建任务组
         //3.1-构建组
         tg.setId(SequenceUUID.getPureUUID());
-        tg.setOwnerId(ownerId);
-        tg.setOwnerType(ownerType);
+        tg.setOwner(owner);
         tg.setWorkName("["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后分析任务");
         tg.setStatus(0);
         tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\"}");
@@ -158,7 +155,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                 reportBody.add(rsTn1);
                 //字典内容处理——某一个表
                 ReportSegment rs1_1 = new ReportSegment();
-                rs1_1.setTitle("单向指标分析");
+                rs1_1.setTitle("单项指标分析");
                 rs1_1.setId(tempStr);
                 TreeNode<ReportSegment> rsTn1_1 = new TreeNode<ReportSegment>(rs1_1);
                 //字典处理——表内各字典项，可能没有字典项

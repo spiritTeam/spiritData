@@ -57,7 +57,7 @@ public class MdKeyService {
             for (MetadataColumn mc : mm.getColumnList()) {
                 if (mc.isPk()) keyStr += ","+mc.getColumnName();
             }
-            if (keyStr.equals("")) keys=null;
+            if (keyStr.trim().length()==0) keys=null;
             else keys = StringUtils.splitString(keyStr, ",");
         } else {
             for (int i=0; i<keys.length; i++) {
@@ -65,10 +65,10 @@ public class MdKeyService {
             }
         }
         keyStr = keys==null?"":keyStr.substring(1);
-        if (keys==null||keys[0].equals("")) return ;
+        if (keys==null||keys[0].trim().length()==0) return ;
         //看目前元数据积累表是否有主键，若有取出(注意这里是从关系型数据库的系统管理信息[metadata]中得到主键)
         String sumTableName = mm.getTableName();
-        if (sumTableName==null||sumTableName.equals("")) return ;
+        if (sumTableName==null||sumTableName.trim().length()==0) return ;
         //读取关系型数据元数据
         Connection conn = null;
         ResultSet rs = null;
@@ -87,16 +87,15 @@ public class MdKeyService {
                 _tabKeyStr +=","+rs.getString("COLUMN_NAME"); //列名
                 if (_tabPkName==null) _tabPkName = rs.getString("PK_NAME");//主键名称
             }
-            if (_tabKeyStr.equals("")) {
-                _tabKeys=null;
-            } else {
+            if (_tabKeyStr.trim().length()==0) _tabKeys=null;
+            else {
                 _tabKeyStr = _tabKeyStr.substring(1);
                 _tabKeys = StringUtils.splitString(_tabKeyStr, ",");
             }
             //检查是否需要创建主键
             boolean needCreateKey = true;
             //若有主键，比较主键是否和mm中主键一致
-            if (_tabKeys!=null&&!_tabKeys[0].equals("")) {
+            if (_tabKeys!=null&&!(_tabKeys[0].trim().length()==0)) {
                 if (!twoStringArraySame(_tabKeys, keys)) {//若不相同，删除原来的主键
                     st.execute("ALTER TABLE "+sumTableName+" DROP PRIMARY KEY");
                 } else needCreateKey = false;

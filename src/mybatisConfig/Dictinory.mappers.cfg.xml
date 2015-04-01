@@ -3,11 +3,11 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="dictMaster" type="com.spiritdata.dataanal.dictionary.pojo.DictMaster"/>
-    <typeAlias alias="dictDetail" type="com.spiritdata.dataanal.dictionary.pojo.DictDetail"/>
+    <typeAlias alias="dictMaster" type="com.spiritdata.dataanal.dictionary.persistence.pojo.DictMaster"/>
+    <typeAlias alias="dictDetail" type="com.spiritdata.dataanal.dictionary.persistence.pojo.DictDetail"/>
   </typeAliases>
   <mappers>
-    <mapper resource="com/spiritdata/dataanal/dictionary/sql/DictMaster.mapper.xml"/>
-    <mapper resource="com/spiritdata/dataanal/dictionary/sql/DictDetail.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/dictionary/persistence/sql/DictMaster.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/dictionary/persistence/sql/DictDetail.mapper.xml"/>
   </mappers>
 </configuration>

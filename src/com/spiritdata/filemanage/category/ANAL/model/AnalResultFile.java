@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
@@ -106,8 +107,10 @@ public class AnalResultFile extends AbstractToBeStoreFile implements Serializabl
         //主信息
         ret.setFile(f);
         ret.setId(this.id);
-        ret.setOwnerId("sys");
-        ret.setOwnerType(3);
+        Owner owner = new Owner();
+        owner.setOwnerId("sys");
+        owner.setOwnerType(3);
+        ret.setOwner(owner);
         ret.setAccessType(1);
         /**
         if (this.CTime==null) this.CTime=new Timestamp(new Date().getTime());

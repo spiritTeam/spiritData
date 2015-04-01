@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import com.spiritdata.framework.core.model.BaseObject;
 
 /**
- * 文件分类
+ * 文件分类<br/>
  * 对应持久化中数据库的表为SA_FILE_CATEGORY
  * @author wh
  */

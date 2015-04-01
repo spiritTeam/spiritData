@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spiritdata.framework.core.model.BaseObject;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal0001CException;
 
 /**
@@ -92,12 +93,8 @@ public class MetadataModel extends BaseObject {
      */
     public void addColumn(MetadataColumn mdc) {
         if (mdc==null) return;
-        if (mdc.getColumnType()==null||mdc.getColumnType().equals("")) {
-            throw new Dtal0001CException(new IllegalArgumentException("列描术必须设置类型columnType"));
-        }
-        if (mdc.getTitleName()==null||mdc.getTitleName().equals("")) {
-            throw new Dtal0001CException(new IllegalArgumentException("列描术必须设置列标题TitleName"));
-        }
+        if (StringUtils.isNullOrEmptyOrSpace(mdc.getColumnType())) throw new Dtal0001CException(new IllegalArgumentException("列描述必须设置类型columnType"));
+        if (StringUtils.isNullOrEmptyOrSpace(mdc.getTitleName())) throw new Dtal0001CException(new IllegalArgumentException("列描述必须设置列标题TitleName"));
 
         if (this.columnList==null) this.columnList = new ArrayList<MetadataColumn>();
         for (MetadataColumn c: this.columnList) {
