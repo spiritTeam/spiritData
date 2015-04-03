@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.spiritdata.dataanal.dictionary.persistence.pojo.DictDetailPo;
-import com.spiritdata.framework.core.model.Model2Po;
+import com.spiritdata.framework.core.model.ModelSwapPo;
 import com.spiritdata.framework.core.model.tree.TreeNodeBean;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
@@ -14,7 +14,7 @@ import com.spiritdata.framework.util.StringUtils;
  * 对应持久化中数据库的表为PLAT_DICTD
  * @author wh
  */
-public class DictDetail extends TreeNodeBean implements Serializable, Model2Po {
+public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapPo {
     private static final long serialVersionUID = -4154673243407172158L;
 
     //String id; //字典项ID，在TreeNodeBean中对应id
@@ -114,5 +114,10 @@ public class DictDetail extends TreeNodeBean implements Serializable, Model2Po {
         ret.setDdName(this.getNodeName());
         ret.setAliasName(this.aliasName);
         return ret;
+    }
+    @Override
+    public Object getFromPo(Object po) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

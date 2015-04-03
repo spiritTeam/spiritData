@@ -57,7 +57,7 @@ public class DictSessionService implements SessionLoader {
     /**
      * 装载并检查数据，先检查是否已经装载，若没有装载则进行装载。并返回装载的内容
      * @param session 
-     * @throws InterruptedException 
+     * @throws Excepiton InterruptedException
      */
     public _OwnerDictionary loadcheckData(HttpSession session) throws Exception {
         _OwnerDictionary _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);

@@ -8,7 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.spiritdata.dataanal.common.model.Owner;
-import com.spiritdata.framework.core.model.Model2Po;
+import com.spiritdata.framework.core.model.ModelSwapPo;
+import com.spiritdata.framework.exceptionC.Plat0006CException;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
@@ -25,7 +26,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
  * 使用模型类更加规范，但开销大——结构复杂
  * @author wh
  */
-public class FileInfo implements Serializable, Model2Po {
+public class FileInfo implements Serializable, ModelSwapPo {
     private static final long serialVersionUID = 12366632000244738L;
 
     protected String id; //文件id
@@ -288,19 +289,48 @@ public class FileInfo implements Serializable, Model2Po {
     public int getEqualRelationSize() {
         return inverseRelationFiles==null?0:inverseRelationFiles.size();
     }
+
+    /**
+     * 获得所有关联文件列表<br/>
+     * 包括正向关系、反向关系和相等关系。
+     * @return 所有关联文件列表
+     */
     public List<FileRelation> getAllRelationFiles() {
         List<FileRelation> ret = new ArrayList<FileRelation>();
-        ret.addAll(positiveRelationFiles);
-        ret.addAll(inverseRelationFiles);
-        ret.addAll(equalRelationFiles);
+        if (positiveRelationFiles!=null) ret.addAll(positiveRelationFiles);
+        if (inverseRelationFiles!=null) ret.addAll(inverseRelationFiles);
+        if (equalRelationFiles!=null) ret.addAll(equalRelationFiles);
         return ret;
     }
+
+    /**
+     * 获得所有关系的个数
+     * @return 关系个数
+     */
     public int getAllRelationSize() {
         return (positiveRelationFiles==null?0:positiveRelationFiles.size())
                +(inverseRelationFiles==null?0:inverseRelationFiles.size())
                +(equalRelationFiles==null?0:equalRelationFiles.size());
     }
-    
+
+    /**
+     * 用全部文件名(目录+文件名+扩展名)
+     * @param allFileName 全部文件名
+     */
+    public void setAllFileName(String allFileName) {
+        this.setPath(FileNameUtils.getFilePath(allFileName));
+        this.setFileName(FileNameUtils.getFileName(allFileName));
+    }
+
+    /**
+     * 返回全部文件名
+     * @return 全部文件名
+     */
+    public String getAllFileName() {
+        return FileNameUtils.concatPath(this.getPath(), this.getFileName());
+    }
+
+
     /**
      * 把当前对象转换为Po对象，为数据库操作做准备
      * @return 文件信息Po对象
@@ -341,20 +371,12 @@ public class FileInfo implements Serializable, Model2Po {
         return ret;
     }
 
-    /**
-     * 用全部文件名(目录+文件名+扩展名)
-     * @param allFileName 全部文件名
-     */
-    public void setAllFileName(String allFileName) {
-        this.setPath(FileNameUtils.getFilePath(allFileName));
-        this.setFileName(FileNameUtils.getFileName(allFileName));
-    }
-
-    /**
-     * 返回全部文件名
-     * @return 全部文件名
-     */
-    public String getAllFileName() {
-        return FileNameUtils.concatPath(this.getPath(), this.getFileName());
+    @Override
+    public FileInfo getFromPo(Object po) {
+        // TODO 此方法目前还用不上，先不实现
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑类！");
+        FileIndexPo _po = (FileIndexPo)po;
+        FileInfo ret = new FileInfo();
+        return ret;
     }
 }

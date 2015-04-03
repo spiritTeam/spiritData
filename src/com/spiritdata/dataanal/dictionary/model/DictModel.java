@@ -6,7 +6,7 @@ import com.spiritdata.framework.core.model.tree.TreeNode;
  * 字典数据（字典模型），此模型包括所有者信息。由字典组和字典树组合而成
  * @author wh
  */
-public class DictModel extends DictMaster{
+public class DictModel extends DictMaster {
     private static final long serialVersionUID = 5186525088340017035L;
 
     public DictModel() {

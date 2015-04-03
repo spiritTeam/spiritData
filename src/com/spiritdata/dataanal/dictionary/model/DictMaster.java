@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.dictionary.persistence.pojo.DictMasterPo;
-import com.spiritdata.framework.core.model.Model2Po;
+import com.spiritdata.framework.core.model.ModelSwapPo;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
 
@@ -14,7 +14,7 @@ import com.spiritdata.framework.util.StringUtils;
  * 对应持久化中数据库的表为PLAT_DICTM
  * @author wh
  */
-public class DictMaster implements Serializable, Model2Po {
+public class DictMaster implements Serializable, ModelSwapPo {
     private static final long serialVersionUID = -5935730569262158194L;
 
     private String id; //字典组id
@@ -115,5 +115,10 @@ public class DictMaster implements Serializable, Model2Po {
         ret.setCTime(this.CTime);
         ret.setLmTime(this.lmTime);
         return ret;
+    }
+    @Override
+    public Object getFromPo(Object po) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

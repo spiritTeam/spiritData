@@ -3,7 +3,9 @@ package com.spiritdata.filemanage.core.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.spiritdata.framework.core.model.Model2Po;
+import com.spiritdata.framework.core.model.ModelSwapPo;
+import com.spiritdata.framework.exceptionC.Plat0005CException;
+import com.spiritdata.framework.exceptionC.Plat0006CException;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
@@ -17,7 +19,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
  * 使用模型类更加规范，但开销大——结构复杂
  * @author wh
  */
-public class FileRelation implements Serializable, Model2Po {
+public class FileRelation implements Serializable, ModelSwapPo {
     private static final long serialVersionUID = 2171855816787994983L;
 
     private String id; //文件id
@@ -102,15 +104,42 @@ public class FileRelation implements Serializable, Model2Po {
     }
 
     /**
+     * 判断相等，所有有意义的字段都相等—obj1,obj2,rtype1,rtype2,desc，不包括id和CTime
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof FileRelation)) return false;
+        boolean ret = super.equals(obj)
+                &&(this.element1.equals(((FileRelation)obj).element1))
+                &&(this.element2.equals(((FileRelation)obj).element2))
+                &&(this.RType1==((FileRelation)obj).RType1);
+
+        String s1, s2;
+        if (ret) {
+            s1=this.RType2.indexOf("ContraryRef::")==0?(this.RType2.substring("ContraryRef::".length()+1)):this.RType2;
+            s2=((FileRelation)obj).getRType2();
+            s2=s2.indexOf("ContraryRef::")==0?(s2.substring("ContraryRef::".length()+1)):s2;
+            ret=s1.equals(s2);
+        }
+        if (ret) {
+            s1=this.desc.indexOf("反关系—")==0?(this.desc.substring("反关系—".length()+1)):this.desc;
+            s2=((FileRelation)obj).getDesc();
+            s2=s2.indexOf("反关系—")==0?(s2.substring("反关系—".length()+1)):s2;
+            ret=s1.equals(s2);
+        }
+        return ret;
+    }
+
+    /**
      * 把当前对象转换为Po对象，为数据库操作做准备
      * @return 文件关系Po对象
      */
     public FileRelationPo convert2Po() {
         if (!(element1 instanceof FileInfo)&&!(element1 instanceof FileCategory)) {
-            throw new Flmg0002CException("第一关联对象只能是FileInfo或FileCategory类型，无法转换！");
+            throw new Plat0005CException(new Flmg0002CException("第一关联对象只能是FileInfo或FileCategory类型，无法转换！"));
         }
         if (!(element2 instanceof FileInfo)&&!(element2 instanceof FileCategory)) {
-            throw new Flmg0002CException("第二关联对象只能是FileInfo或FileCategory类型，无法转换！");
+            throw new Plat0005CException(new Flmg0002CException("第二关联对象只能是FileInfo或FileCategory类型，无法转换！"));
         }
 
         FileRelationPo ret = new FileRelationPo();
@@ -143,30 +172,12 @@ public class FileRelation implements Serializable, Model2Po {
         return ret;
     }
 
-    /**
-     * 判断相等，所有有意义的字段都相等—obj1,obj2,rtype1,rtype2,desc，不包括id和CTime
-     */
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof FileRelation)) return false;
-        boolean ret = super.equals(obj)
-                &&(this.element1.equals(((FileRelation)obj).element1))
-                &&(this.element2.equals(((FileRelation)obj).element2))
-                &&(this.RType1==((FileRelation)obj).RType1);
-
-        String s1, s2;
-        if (ret) {
-            s1=this.RType2.indexOf("ContraryRef::")==0?(this.RType2.substring("ContraryRef::".length()+1)):this.RType2;
-            s2=((FileRelation)obj).getRType2();
-            s2=s2.indexOf("ContraryRef::")==0?(s2.substring("ContraryRef::".length()+1)):s2;
-            ret=s1.equals(s2);
-        }
-        if (ret) {
-            s1=this.desc.indexOf("反关系—")==0?(this.desc.substring("反关系—".length()+1)):this.desc;
-            s2=((FileRelation)obj).getDesc();
-            s2=s2.indexOf("反关系—")==0?(s2.substring("反关系—".length()+1)):s2;
-            ret=s1.equals(s2);
-        }
+    public FileRelation getFromPo(Object po) {
+        // TODO 此方法目前还用不上，先不实现
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑类！");
+        FileRelationPo _po = (FileRelationPo)po;
+        FileRelation ret = new FileRelation();
         return ret;
     }
 }
