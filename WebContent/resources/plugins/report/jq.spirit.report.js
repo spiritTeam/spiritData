@@ -35,6 +35,7 @@
     //2，从后台请求数据
     this.reportId = reportId;
     var pData = {'reportId':reportId};
+    var deployName = reportUrl.substring(0,reportUrl.indexOf('/report/'));
     //alert(reportUrl);
     $.ajax({type:"post",url:reportUrl,data:pData,dataType:"json",
       success:function(json){
@@ -51,7 +52,7 @@
             //jsonDurl 用于请求jsond
             var _DATA = reportJD._DLIST;
             dataIdAry = getJsonD(_DATA);
-            $('#rTitle').html(_HEAD.reportName+'<input id="download" onclick="$.download(\''+reportId+'\');" type="button" value="保存报告"/>');
+            $('#rTitle').html(_HEAD.reportName+'<input id="download" onclick="$.download(\''+reportId+'\',\''+deployName+'\');" type="button" value="保存报告"/>');
             buildSegmentGroup($('#reportFrame'), _REPORT, level, null);
             //显示 
             resolveAndDraw();
@@ -752,9 +753,9 @@
       //所使用的地图
       var sys = jQobj.attr('mapType');
       if(sys == undefined || sys==CONST_MAP_BAIDU){
-      drawBaiDuPts(jQobj,_data);
+        drawBaiDuPts(jQobj,_data);
       }else{
-      $.messager.alert("unsupported map type:", sys, "error");
+        $.messager.alert("unsupported map type:", sys, "error");
       }
     }catch(e){
       $.messager.alert("draw map points err", e.message, "error");
@@ -782,7 +783,7 @@
           //eval("var _x = line_dataBody[i]."+label);
           //eval("var _y = line_dataBody[i]."+data);
           //dataArr[i] = [_x,_y];
-        }
+      }
       
   }
   //以上方法为对showType的解析
