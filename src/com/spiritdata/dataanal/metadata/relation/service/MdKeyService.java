@@ -289,7 +289,7 @@ public class MdKeyService {
             analKey = (Map<String, Object>)JsonUtils.jsonToObj(jsonS, Map.class);
             Map<String, Object> _HEAD = (Map<String, Object>)analKey.get("_HEAD");
             String _code = (String)_HEAD.get("_code");
-            if (_code.equals(AnalKey.jsonDCode)) {
+            if (_code.equals(SDConstants.JDC_ANAL_KEY)) {
                 Map<String, Object> _data = (Map<String, Object>)analKey.get("_DATA");
                 Map<String, Object> _temp = (Map<String, Object>)_data.get("_mdMId");
                 String tempStr = (String)_temp.get("value");
