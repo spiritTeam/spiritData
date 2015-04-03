@@ -83,7 +83,9 @@ public class ReportHead  implements Serializable, Convert2Json {
         if (!JsonDUtils.isLegalCode(this.code)) throw new Dtal1002CException("reportD头信息不规范：code["+code+"]不合规！，请参看report相关文档！");
 
         if (this.CTime==null) CTime= new Date();
-        String ret = "\"_HEAD\":{\"_id\":\""+this.id+"\", \"_reportType\":\""+this.reportType+"\", \"_reportName\":\""+this.reportName+"\", "
+        String ret = "\"_HEAD\":{\"_id\":\""+this.id+"\"";
+        if (!StringUtils.isNullOrEmptyOrSpace(this.reportType)) ret +=", \"_reportType\":\""+this.reportType+"\"";
+        ret +=", \"_reportName\":\""+this.reportName+"\", "
                     +"\"_code\":\""+this.code+"\", \"_cTime\":\""+this.CTime.getTimezoneOffset()+"::"+this.CTime.getTime()+"\"";
         if (!StringUtils.isNullOrEmptyOrSpace(this.desc)) ret +=", \"_desc\":\""+this.desc+"\"";
         return ret+"}";
