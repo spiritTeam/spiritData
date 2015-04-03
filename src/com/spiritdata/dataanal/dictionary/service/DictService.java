@@ -54,8 +54,8 @@ public class DictService {
      * @return 字典组列表
      * @throws Exception
      */
-    public List<DictMaster> getDictMListByOwnerId(String ownerId) {
-        DictMaster paramDm = new DictMaster();
+    public List<DictMasterPo> getDictMListByOwnerId(String ownerId) {
+        DictMasterPo paramDm = new DictMasterPo();
         paramDm.setOwnerId(ownerId);
         return this.getDictMList(paramDm);
     }
@@ -80,7 +80,7 @@ public class DictService {
      * @return 字典项列表
      * @throws Exception
      */
-    public List<DictDetail> getDictDList(DictDetail paramDd) {
+    public List<DictDetailPo> getDictDList(DictDetail paramDd) {
         try {
             return dictDDao.queryForList(paramDd.toHashMapAsBean());
         } catch(Exception e) {
@@ -94,7 +94,7 @@ public class DictService {
      * @return 字典项列表
      * @throws Exception
      */
-    public List<DictDetail> getDictDListByOwnerId(String ownerId) {
+    public List<DictDetailPo> getDictDListByOwnerId(String ownerId) {
         try {
             Map<String, String> param = new HashMap<String, String>();
             param.put("ownerId", ownerId);
