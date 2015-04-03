@@ -8,6 +8,7 @@ import java.io.IOException;
 import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;
 import com.spiritdata.filemanage.exceptionC.Flmg0003CException;
 import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
@@ -23,7 +24,7 @@ public abstract class AbstractWriteString2FileByToBeStoreFile {
      * @param fullFileName 文件全名，包括路径
      */
     private void write2File(String content, String fullFileName) {
-        if (fullFileName==null||fullFileName.trim().length()==0) throw new Flmg0003CException(new IllegalArgumentException("文件名参数[fullFileName]为空或空串，无法写入文件"));
+        if (StringUtils.isNullOrEmptyOrSpace(fullFileName)) throw new Flmg0003CException(new IllegalArgumentException("文件名参数[fullFileName]为空或空串，无法写入文件"));
         //写文件
         FileOutputStream fileOutputStream = null;
         try {
@@ -54,16 +55,13 @@ public abstract class AbstractWriteString2FileByToBeStoreFile {
      * @return 存储文件名称
      */
     public String getStoreFileName(ToBeStoreFile tbsf) {
-        if ((tbsf.getFileNameSeed()==null||tbsf.getFileNameSeed().trim().length()==0)
-          &&(tbsf.getFullFileName()==null||tbsf.getFullFileName().trim().length()==0)) {
+        if (StringUtils.isNullOrEmptyOrSpace(tbsf.getFileNameSeed())
+          &&StringUtils.isNullOrEmptyOrSpace(tbsf.getFullFileName())) {
             throw new Flmg0003CException("'文件名种子'或'文件全名'至少设定一个");
         }
-        
-        if (tbsf.getFullFileName()==null||tbsf.getFullFileName().trim().length()==0) {
-            return buildFileName(tbsf.getFileNameSeed());
-        } else {
-            return tbsf.getFullFileName();
-        }
+
+        if (StringUtils.isNullOrEmptyOrSpace(tbsf.getFullFileName())) return buildFileName(tbsf.getFileNameSeed());
+        else return tbsf.getFullFileName();
     }
 
     /**

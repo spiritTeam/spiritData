@@ -10,6 +10,7 @@ import com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 
 /**
  * 任务信息对象，包括任务的基本信息，前置任务列表，任务执行结果列表
@@ -167,11 +168,9 @@ public class TaskInfo implements Serializable {
      */
     public TaskInfoPo convert2Po() {
         TaskInfoPo ret = new TaskInfoPo();
-        if (this.getId()==null||this.getId().trim().equals("")) {
-            ret.setId(SequenceUUID.getPureUUID());
-        } else {
-            ret.setId(this.getId());
-        }
+        if (StringUtils.isNullOrEmptyOrSpace(this.getId())) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.getId());
+
         ret.setTaskName(this.taskName);
         ret.setLangType(this.langType.getValue());
         ret.setExcuteFunc(this.excuteFunc);
@@ -179,8 +178,8 @@ public class TaskInfo implements Serializable {
         ret.setParam(this.param);
         ret.setStatus(this.status);
         ret.setDesc(this.desc);
-        if (this.resultFile!=null&&(this.resultFile.getId()!=null&&this.resultFile.getId().trim().length()>0)) ret.setRfId(this.resultFile.getId());
-        if (this.taskGroup!=null&&(this.taskGroup.getId()!=null&&this.taskGroup.getId().trim().length()>0)) ret.setTaskGId(this.taskGroup.getId());
+        if (this.resultFile!=null&&!StringUtils.isNullOrEmptyOrSpace(this.resultFile.getId())) ret.setRfId(this.resultFile.getId());
+        if (this.taskGroup!=null&&!StringUtils.isNullOrEmptyOrSpace(this.taskGroup.getId())) ret.setTaskGId(this.taskGroup.getId());
         return ret;
     }
 
@@ -192,7 +191,7 @@ public class TaskInfo implements Serializable {
         if (this.preTasks==null||this.preTasks.size()==0) return null;
 
         List<TaskRelPo> retl = new ArrayList<TaskRelPo>();
-        if (this.getId()==null||this.getId().trim().equals("")) this.setId(SequenceUUID.getPureUUID());
+        if (StringUtils.isNullOrEmptyOrSpace(this.getId())) this.setId(SequenceUUID.getPureUUID());
         for (PreTask pt: this.preTasks) {
             TaskRelPo trp = new TaskRelPo();
             trp.setId(SequenceUUID.getPureUUID());

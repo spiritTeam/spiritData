@@ -13,6 +13,7 @@ import com.spiritdata.framework.core.cache.CacheEle;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal1001CException;
 import com.spiritdata.dataanal.exceptionC.Dtal1004CException;
@@ -65,7 +66,7 @@ public class ReportService {
      * @return 报告json串
      */
     public String getReportJsonById(String reportId) {
-        if (reportId==null||reportId.length()==0) throw new Dtal1001CException("所给reportId参数为空，无法获取数据！");
+        if (StringUtils.isNullOrEmptyOrSpace(reportId)) throw new Dtal1001CException("所给reportId参数为空，无法获取数据！");
         //根据id获取内容，现在先不处理//原文件名templet1.json
         return this.getReportJsonByUri("demo\\templetDemo\\templet1.json");
     }

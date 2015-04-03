@@ -9,10 +9,12 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import com.spiritdata.dataanal.SDConstants;
-import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
-import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
-import com.spiritdata.dataanal.dictionary.pojo.DictModel;
-import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.common.util.SessionUtils;
+import com.spiritdata.dataanal.dictionary.model.DictDetail;
+import com.spiritdata.dataanal.dictionary.model.DictMaster;
+import com.spiritdata.dataanal.dictionary.model.DictModel;
+import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
 import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
@@ -41,8 +43,9 @@ public class DictSessionService implements SessionLoader {
      * @param ownerType 所有者类型
      * @param session session
      */
-    public void loadData2Session(String ownerId, int ownerType, HttpSession session) {
-        _OwnerDictionary _od = new _OwnerDictionary(ownerId, ownerType);
+    @Override
+    public void loader(HttpSession session) throws Exception {
+        _OwnerDictionary _od = new _OwnerDictionary(SessionUtils.getOwner(session));
         session.removeAttribute(SDConstants.SESSION_OWNER_DICT);
         session.setAttribute(SDConstants.SESSION_OWNER_DICT, _od);
         //启动加载线程
@@ -51,34 +54,15 @@ public class DictSessionService implements SessionLoader {
         t.start();
     }
 
-    @Override
-    public void loader(HttpSession session) throws Exception {
-        String ownerId = session.getId();
-        int ownerType = 2;
-        UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-        if (user!=null) {
-            ownerId = user.getUserId();
-            ownerType = 1;
-        }
-        loadData2Session(ownerId, ownerType, session);
-    }
-
     /**
      * 装载并检查数据，先检查是否已经装载，若没有装载则进行装载。并返回装载的内容
      * @param session 
      * @throws InterruptedException 
      */
-    public _OwnerDictionary loadcheckData(HttpSession session) throws InterruptedException {
+    public _OwnerDictionary loadcheckData(HttpSession session) throws Exception {
         _OwnerDictionary _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);
         if (_od==null) {
-            String ownerId = session.getId();
-            int ownerType = 2;
-            UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-            if (user!=null) {
-                ownerId = user.getUserId();
-                ownerType = 1;
-            }
-            loadData2Session(ownerId, ownerType, session);
+            loader(session);
             _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);
             while (!_od.isLoadSuccess()) {
                 Thread.sleep(100);
@@ -101,14 +85,13 @@ class Thread_LoadData implements Runnable {
     @Override
     public void run() {
         _OwnerDictionary _od = (_OwnerDictionary)session.getAttribute(SDConstants.SESSION_OWNER_DICT);
-        String ownerId = _od.getOwnerId();
-        int ownerType = _od.getOwnerType();
+        Owner owner = _od.getOwner();
         _od.dictModelMap = new ConcurrentHashMap<String, DictModel>();
 
         DictService dictService = caller.getDictService();
         try {
             //字典组列表
-            _od.dmList = dictService.getDictMListByOwnerId(ownerId);
+            _od.dmList = dictService.getDictMListByOwnerId(owner.getOwnerId());
             //字典项列表，按照层级结果，按照排序的广度遍历树
             if (_od.dmList!=null&&_od.dmList.size()>0) _od.ddList = dictService.getDictDListByOwnerId(ownerId);
 

@@ -2,6 +2,7 @@ package com.spiritdata.jsonD.model;
 
 import java.io.Serializable;
 
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.exceptionC.JsonD0003CException;
 import com.spiritdata.jsonD.util.JsonDUtils;
 
@@ -39,7 +40,7 @@ public class AccessJsonD implements Serializable {
         return jsonDCode;
     }
     public void setJsonDCode(String jsonDCode) {
-        if (jsonDCode==null||jsonDCode.length()==0) throw new IllegalArgumentException("jsonDCode不能为null或空串！");
+        if (StringUtils.isNullOrEmptyOrSpace(jsonDCode)) throw new IllegalArgumentException("jsonDCode不能为null或空串！");
         if (!JsonDUtils.isLegalCode(jsonDCode)) throw new JsonD0003CException("jsonDCode["+jsonDCode+"]不合规！", new IllegalArgumentException("jsonDCode不合规，请参看JsonD相关文档！"));
         this.jsonDCode = jsonDCode;
     }

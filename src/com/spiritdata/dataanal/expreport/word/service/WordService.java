@@ -73,7 +73,6 @@ public class WordService {
         //report
         String reportJson =  reportSerivce.getReportJsonById(reportId);
         this.report = (Report) JsonUtils.jsonToObj(reportJson, Report.class);
-
         //jsond:如果report中有dataList的get方法，report.getDataList()可以获得，如果没有，则通过id获取
         for(String jsonDId :jsonDIdList){
             String jsonDjson =  jsonDSerive.getJsonDById(jsonDId);
