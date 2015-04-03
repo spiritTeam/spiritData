@@ -5,7 +5,7 @@
  * 3、执行流程:
  *  _1:先初始化PageFrame。
  *  _2:向后太请求数据。
- *  _3完成结构的组建(树和templet主体)。
+ *  _3完成结构的组建(树和report主体)。
  *  _4解析jsonD。
  *  _5显示
  */
@@ -43,7 +43,7 @@
           var reportJsonObj=str2JsonObj(json);
           if (reportJsonObj.jsonType==1) {
             var reportJD = reportJsonObj.data;
-            //3，根据templetD构造出树和框
+            //3，根据report构造出树和框
             //主体
             var _REPORT = reportJD._REPORT;
             //标题
@@ -51,7 +51,7 @@
             //jsonDurl 用于请求jsond
             var _DATA = reportJD._DLIST;
             dataIdAry = getJsonD(_DATA);
-            $('#rTitle').html(_HEAD.reportName+'<input id="saveReport" onclick="$.reportJD.saveReport(\''+reportId+'\');" type="button" value="保存报告"/>');
+            $('#rTitle').html(_HEAD.reportName+'<input id="download" onclick="$.download(\''+reportId+'\');" type="button" value="保存报告"/>');
             buildSegmentGroup($('#reportFrame'), _REPORT, level, null);
             //显示 
             resolveAndDraw();
@@ -253,7 +253,7 @@
             }
             subStart = end;
           }
-          var retObj = templetContentParse(pendingAry,subAry);
+          var retObj = reportContentParse(pendingAry,subAry);
           _dataAry = retObj._dataAry;
           newContent = retObj.newContent;
         }
@@ -313,7 +313,7 @@
    * subAry：不用处理的数组
    * return：返回处理完成后的content
    */
-  function templetContentParse(pendingAry,subAry){
+  function reportContentParse(pendingAry,subAry){
     var newContent="";
     var _dataStr = "";
     for (var i=0;i<pendingAry.length;i++) {

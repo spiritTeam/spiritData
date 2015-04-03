@@ -8,7 +8,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
+<!-- report -->
 <script type="text/javascript" src="<%=path %>/resources/plugins/report/jq.spirit.report.js"></script>
+<script type="text/javascript" src="<%=path %>/resources/plugins/report/jq.spirit.report.util.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/report/css/report.css"/>
 <!-- pageFrame -->
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
