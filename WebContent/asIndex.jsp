@@ -721,7 +721,7 @@ function login(){
     width:wWidth,
     modal:true
   };
-  $('#login').parent().attr('disabled','disabled');return;
+  $('#login').parent().attr('disabled','disabled');
   openSWinInMain(winOption);
   setTimeout(function(){
     $('#login').bind("onclick",function(){login();});

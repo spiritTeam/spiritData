@@ -1,8 +1,8 @@
 /**
- *框架介绍:
- *1、两个参数，一个是url,另一个是templetId
- *2、入口函数是$.templetJD(templetUrl,templetId);
- *3、执行流程:
+ * 框架介绍:
+ * 1、两个参数，一个是reportUrl,另一个是reportId
+ * 2、入口函数是$.reportJD(reportUrl,reportId);
+ * 3、执行流程:
  *  _1:先初始化PageFrame。
  *  _2:向后太请求数据。
  *  _3完成结构的组建(树和templet主体)。
@@ -11,7 +11,7 @@
  */
 (function($){
   //***开始 常量定义***
-  //百度地图	
+  //百度地图  
   var CONST_MAP_BAIDU = "BAIDU";
   //***结束 常量定义 ***
   
@@ -23,61 +23,63 @@
   var jsonDInfoArray=[];
   //用于存放dataId,方便最后一步进行搜索dom
   var dataIdAry=[];
+  //reportId用于保存report
 
   /**
    * 主函数入口
    */
-  $.templetJD = function(reportUrl, reportId) {
+  $.reportJD = function(reportUrl, reportId) {
     //1,画pageFrame
     initPageFrame();
     //alert(reportUrl+" "+reportId);
     //2，从后台请求数据
+    this.reportId = reportId;
     var pData = {'reportId':reportId};
     //alert(reportUrl);
     $.ajax({type:"post",url:reportUrl,data:pData,dataType:"json",
       success:function(json){
         try{
-      	  //alert(json);
-	        var templetJsonObj=str2JsonObj(json);
-	        if (templetJsonObj.jsonType==1) {
-	          var templetJD = templetJsonObj.data;
-	          //3，根据templetD构造出树和框
-	          //主体
-	          var _REPORT = templetJD._REPORT;
-	          //标题
-	          var _HEAD = templetJD._HEAD;
-	          //jsonDurl 用于请求jsond
-	          var _DATA = templetJD._DLIST;
-	          dataIdAry = getJsonD(_DATA);
-	          $('#rTitle').html(_HEAD.reportName);
-	          buildSegmentGroup($('#reportFrame'), _REPORT, level, null);
-	          //显示 
-	          resolveAndDraw();
-	          //显示树的部分
-	          $('#catalogTree').tree({animate:true});
-	          $('#catalogTree').tree("loadData", segTree);
-	          //为树结点绑定锚点
-	          $('#catalogTree').tree({
-	            onClick: function(node){
-	              try{
-	            	  var topSegHeight = $("#topSegment").height()+3;	
-	                  $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top - topSegHeight});  
-	              }catch(e){}
-	            }
-	          });
-	        }else{
-	          $.messager.alert("提示",jsonData.message,'info');
-	        }        	
+          //alert(json);
+          var reportJsonObj=str2JsonObj(json);
+          if (reportJsonObj.jsonType==1) {
+            var reportJD = reportJsonObj.data;
+            //3，根据templetD构造出树和框
+            //主体
+            var _REPORT = reportJD._REPORT;
+            //标题
+            var _HEAD = reportJD._HEAD;
+            //jsonDurl 用于请求jsond
+            var _DATA = reportJD._DLIST;
+            dataIdAry = getJsonD(_DATA);
+            $('#rTitle').html(_HEAD.reportName+'<input id="saveReport" onclick="$.reportJD.saveReport(\''+reportId+'\');" type="button" value="保存报告"/>');
+            buildSegmentGroup($('#reportFrame'), _REPORT, level, null);
+            //显示 
+            resolveAndDraw();
+            //显示树的部分
+            $('#catalogTree').tree({animate:true});
+            $('#catalogTree').tree("loadData", segTree);
+            //为树结点绑定锚点
+            $('#catalogTree').tree({
+              onClick: function(node){
+                try {
+                  var topSegHeight = $("#topSegment").height()+3;  
+                  $("body,html").animate({scrollTop:$("#"+node.eleId).offset().top - topSegHeight});  
+                } catch(e) {}
+              }
+            });
+          }else{
+            $.messager.alert("提示",jsonData.message,'info');
+          }          
         }catch(e){
-            $.messager.alert("提示",e.message,'info');
+          $.messager.alert("提示",e.message,'info');
         }
-      },error:function(errorData ){
-    	  alert("err:"+errorData);
+      },error:function(errorData){
+        alert("err:"+errorData);
         $.messager.alert("提示","未知错误！",'info');
       }
     });
   };
-
+  
   /**
    * 在content完成后，对新的content中元素进行解析
    * 1、根据dataId抓取dom
@@ -750,9 +752,9 @@
       //所使用的地图
       var sys = jQobj.attr('mapType');
       if(sys == undefined || sys==CONST_MAP_BAIDU){
-    	drawBaiDuPts(jQobj,_data);
+      drawBaiDuPts(jQobj,_data);
       }else{
-    	$.messager.alert("unsupported map type:", sys, "error");
+      $.messager.alert("unsupported map type:", sys, "error");
       }
     }catch(e){
       $.messager.alert("draw map points err", e.message, "error");
@@ -762,9 +764,9 @@
   //画百度地图的坐标点
   function drawBaiDuPts(jQobj,_data){
       //设置DOM对象的宽度和高度
-	  var width=800;
-	  var height=500;
-	  jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+    var width=800;
+    var height=500;
+    jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
       //要显示的名称name
       var label = jQobj.attr('label');
       //要显示的数值value
@@ -775,8 +777,8 @@
       var dataArr = [];
       var dataBody = _data.tableData.tableBody;
       for (var i=0;i<dataBody.length;i++) {
-    	var name = dataBody[i][label];
-    	alert(name);
+      var name = dataBody[i][label];
+      alert(name);
           //eval("var _x = line_dataBody[i]."+label);
           //eval("var _y = line_dataBody[i]."+data);
           //dataArr[i] = [_x,_y];

@@ -29,10 +29,10 @@ body {
 </body>
 <script type="text/javascript">
 $(function(){
-  var reportId="ssss";
-  var reportUrl = "<%=path%>/report/getReport.do?uri=demo\\templetDemo\\templet1.json";
+  var reportId="asdaw";
+  var reportUrl = "<%=path%>/report/getReport.do?uri=demo\\reportDemo\\report.json";
   //alert("show report url="+reportUrl);
-  $.templetJD(reportUrl,reportId);
+  $.reportJD(reportUrl,reportId);
 });
 </script>
 </html>
