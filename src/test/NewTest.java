@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -167,13 +167,51 @@ public class NewTest {
 	 * 模板测试2
 	 * @throws OpenXML4JException 
 	 */
+	@Test
 	public void templet2() throws IOException, OpenXML4JException{
+		//定义替换字符
+		Map<String,Object> replaceMap = new HashMap<String,Object>();
+		replaceMap.put("${LName}", "张三");
+		replaceMap.put("${startTime}", "4月1号");
+		replaceMap.put("${endTime}", "4月7号");
+		replaceMap.put("${type}", "事假");
+		replaceMap.put("${reason}", "xxxx");
+		replaceMap.put("${applyName}", "李四");
+		replaceMap.put("${applyDate}", "3月20日");
+		//用于储存段落中的text
 		//POIXMLDocument.openPackage("")读取一个word
-		XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(""));
-		//TODO 待续未完
-		//document.getPac
-		List<PackagePart> ppList= document.getAllEmbedds();
-		ppList.iterator();
+		XWPFDocument docx = new XWPFDocument(POIXMLDocument.openPackage("D:\\word\\template.docx"));
+		//取到所有的段落
+		List<XWPFParagraph> xpList = docx.getParagraphs();
+//		for(XWPFParagraph xp:xpList){
+//			List<XWPFRun> xr  = xp.getRuns();
+//			xp.getRun(r);
+//		}
+		for(XWPFParagraph xp:xpList){
+			//取到所有的Run
+			List<XWPFRun> xrList = xp.getRuns();
+			String xrText = "";
+			for(XWPFRun xr:xrList){
+				//Run text
+				String text = xr.getText(0);
+				System.out.println(text);
+				xrText = xrText+text;
+			}
+			if(xrText!=null){
+				Iterator<String> it = replaceMap.keySet().iterator();
+				while(it.hasNext()){
+					String key = it.next();
+					if(xrText.indexOf(key)!=-1){
+						xrText = xrText.replace(key, ""+replaceMap.get(key));
+					}
+				}
+				XWPFRun newXR = xp.createRun();
+				newXR.setText(xrText);
+			}
+		}
+		FileOutputStream fopts = new FileOutputStream("D:\\word\\template2.docx");
+        docx.write(fopts);
+        fopts.close();
 	}
 	private void close(OutputStream os) {
 		if(os!=null){
