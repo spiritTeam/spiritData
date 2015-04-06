@@ -65,7 +65,6 @@ public class DictDetailPo extends BaseObject {
     }
     public void setDdName(String ddName) {
         this.ddName = ddName;
-        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(this.ddName);
     }
     public String getNPy() {
         return NPy;
@@ -78,7 +77,6 @@ public class DictDetailPo extends BaseObject {
     }
     public void setAliasName(String aliasName) {
         this.aliasName = aliasName;
-        if (StringUtils.isNullOrEmptyOrSpace(this.anPy)) this.anPy=ChineseCharactersUtils.getFullSpellFirstUp(this.aliasName);
     }
     public String getAnPy() {
         return anPy;

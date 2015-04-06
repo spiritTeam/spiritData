@@ -1,10 +1,7 @@
 package com.spiritdata.dataanal.dictionary.persistence.pojo;
 
 import java.sql.Timestamp;
-
 import com.spiritdata.framework.core.model.BaseObject;
-import com.spiritdata.framework.util.ChineseCharactersUtils;
-import com.spiritdata.framework.util.StringUtils;
 
 public class DictMasterPo extends BaseObject {
     private static final long serialVersionUID = -5935730569262158194L;
@@ -45,14 +42,8 @@ public class DictMasterPo extends BaseObject {
     }
     public void setDmName(String dmName) {
         this.dmName = dmName;
-        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(this.dmName);
     }
-    /**
-     * 得到名称拼音，若名称为空
-     * @return 名称拼音
-     */
     public String getNPy() {
-        if (StringUtils.isNullOrEmptyOrSpace(this.dmName)) return null;
         return NPy;
     }
     public void setNPy(String nPy) {

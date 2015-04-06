@@ -26,7 +26,7 @@ public class DictModel extends DictMaster {
      * 根据持久化数据（字典组），构造无字典树的字典模型
      * @param dMaster 字典组信息
      */
-    public void setDictModelByMaster (DictMaster dMaster) {
+    public void setDictModelByMaster(DictMaster dMaster) {
         this.setId(dMaster.getId());
         this.setDmName(dMaster.getDmName());
         this.setOrder(dMaster.getOrder());
