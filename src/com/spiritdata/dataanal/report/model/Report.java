@@ -89,8 +89,8 @@ public class Report implements Serializable, Convert2Json {
     private Object _HEAD;//头信息，可以是String reportHead 对象
     private List<OneJsonD> dataList;//jsonD数据访问列表
     private Object _REPORT;//报告主题信息，可以是String reportHead 对象
-
-    public String getId() {
+    
+	public String getId() {
         return this.id;
     }
     public void setId(String id) {
