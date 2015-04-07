@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.dictionary.persistence.pojo.DictMasterPo;
 import com.spiritdata.framework.core.model.ModelSwapPo;
+import com.spiritdata.framework.exceptionC.Plat0006CException;
+import com.spiritdata.framework.util.ChineseCharactersUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
 
@@ -20,6 +22,7 @@ public class DictMaster implements Serializable, ModelSwapPo {
     private String id; //字典组id
     private Owner owner;
     private String dmName; //字典组名称
+    private String NPy; //字典组名称拼音
     private int order; //排序号，越大越靠前
     private int isValidate; //字典组是否可用 1可用，2不可用
     private int MType; //字典组类型：1系统保留；2系统；3定义；
@@ -45,6 +48,7 @@ public class DictMaster implements Serializable, ModelSwapPo {
     }
     public void setDmName(String dmName) {
         this.dmName = dmName;
+        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(this.dmName);
     }
     public int getOrder() {
         return order;
@@ -94,7 +98,10 @@ public class DictMaster implements Serializable, ModelSwapPo {
      * @return 字典名称拼音
      */
     public String getNPy() {
-        return "";
+        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)&&!StringUtils.isNullOrEmptyOrSpace(this.dmName)) {
+            this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(this.dmName);
+        }
+        return this.NPy;
     }
 
     @Override
@@ -107,6 +114,7 @@ public class DictMaster implements Serializable, ModelSwapPo {
         ret.setOwnerId(this.owner.getOwnerId());
         ret.setOwnerType(this.owner.getOwnerType());
         ret.setDmName(this.dmName);
+        ret.setNPy(this.getNPy());
         ret.setOrder(this.order);
         ret.setIsValidate(this.isValidate);
         ret.setMRef(this.MRef);
@@ -116,9 +124,21 @@ public class DictMaster implements Serializable, ModelSwapPo {
         ret.setLmTime(this.lmTime);
         return ret;
     }
+
     @Override
-    public Object getFromPo(Object po) {
-        // TODO Auto-generated method stub
-        return null;
+    public void buildFromPo(Object po) {
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑对象！");
+        if (!(po instanceof DictMasterPo)) throw new Plat0006CException("Po对象不是DictMasterPo的实例，无法从此对象得字典组对象！");
+        DictMasterPo _po = (DictMasterPo)po;
+        this.id =_po.getId();
+        this.owner = new Owner(_po.getOwnerType(), _po.getOwnerId());
+        this.setDmName(_po.getDmName());
+        this.order = _po.getOrder();
+        this.isValidate = _po.getIsValidate();
+        this.MRef = _po.getMRef();
+        this.MType = _po.getMType();
+        this.desc = _po.getDesc();
+        this.CTime = _po.getCTime();
+        this.lmTime = _po.getLmTime();
     }
 }

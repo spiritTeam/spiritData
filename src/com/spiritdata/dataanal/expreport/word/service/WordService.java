@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.spiritdata.dataanal.UGA.pojo.User;
+import com.spiritdata.dataanal.expreport.word.util.WordUtils;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.service.ReportService;
 import com.spiritdata.jsonD.model.JsonD;
@@ -45,8 +46,9 @@ public class WordService {
      * 入口方法：
      * @param userInfo 用户信息
      * @param reportId 报告id，
+     * @throws Exception 
      */
-    public Map<String,Object> expWord(String reportId, User userInfo,List<String> jsonDIdList){
+    public Map<String,Object> expWord(String reportId, User userInfo,List<String> jsonDIdList) throws Exception{
         
         //1、获得report及jsond
         initReportAndJsonD(reportId,jsonDIdList);
@@ -64,15 +66,18 @@ public class WordService {
         return null;
     }
     
+    @Resource
+    private WordService wordService;
     /**
      * 得到jsond和report
      * @param reportId
      * @param jsonDIdList
+     * @throws Exception 
      */
-    private void initReportAndJsonD(String reportId, List<String> jsonDIdList) {
+    private void initReportAndJsonD(String reportId, List<String> jsonDIdList) throws Exception {
         //report
-        String reportJson =  reportSerivce.getReportJsonById(reportId);
-        this.report = (Report) JsonUtils.jsonToObj(reportJson, Report.class);
+        String reportJson =  "["+reportSerivce.getReportJsonById(reportId)+"]";
+        Report r = (Report) WordUtils.getObjList(reportJson, "report");
         //jsond:如果report中有dataList的get方法，report.getDataList()可以获得，如果没有，则通过id获取
         for(String jsonDId :jsonDIdList){
             String jsonDjson =  jsonDSerive.getJsonDById(jsonDId);

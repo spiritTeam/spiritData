@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import com.spiritdata.dataanal.dictionary.persistence.pojo.DictDetailPo;
 import com.spiritdata.framework.core.model.ModelSwapPo;
 import com.spiritdata.framework.core.model.tree.TreeNodeBean;
+import com.spiritdata.framework.util.ChineseCharactersUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
 
@@ -45,30 +46,34 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
     public void setIsValidate(int isValidate) {
         this.isValidate = isValidate;
     }
+
+    @Override
+    public void setNodeName(String nodeName) {
+        this.setNodeName(nodeName);
+        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(nodeName);
+    }
+
     public String getNPy() {
-        return NPy;
+        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)&&!StringUtils.isNullOrEmptyOrSpace(this.getNodeName())) {
+            this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(this.getNodeName());
+        }
+        return this.NPy;
     }
-    public void setNPy(String nPy) {
-        NPy = nPy;
-    }
-    public Timestamp getCTime() {
-        return CTime;
-    }
-    public void setCTime(Timestamp cTime) {
-        CTime = cTime;
-    }
+
     public String getAliasName() {
         return aliasName;
     }
     public void setAliasName(String aliasName) {
         this.aliasName = aliasName;
+        if (StringUtils.isNullOrEmptyOrSpace(this.anPy)) this.anPy=ChineseCharactersUtils.getFullSpellFirstUp(aliasName);
     }
     public String getAnPy() {
-        return anPy;
+        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)&&!StringUtils.isNullOrEmptyOrSpace(this.getNodeName())) {
+            this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(this.getNodeName());
+        }
+        return this.anPy;
     }
-    public void setAnPy(String anPy) {
-        this.anPy = anPy;
-    }
+
     public String getBCode() {
         return BCode;
     }
@@ -80,6 +85,12 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
     }
     public void setDType(int dType) {
         DType = dType;
+    }
+    public Timestamp getCTime() {
+        return CTime;
+    }
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
     public String getDRef() {
         return DRef;
@@ -119,5 +130,10 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
     public Object getFromPo(Object po) {
         // TODO Auto-generated method stub
         return null;
+    }
+    @Override
+    public void buildFromPo(Object po) {
+        // TODO Auto-generated method stub
+        
     }
 }

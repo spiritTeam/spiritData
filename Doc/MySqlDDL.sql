@@ -67,7 +67,7 @@ CREATE TABLE sa_md_tabmodel (
   ownerId   varchar(32)      NOT NULL                COMMENT '指向用户表(用户id或sessionId)',
   ownerType int(1) unsigned  NOT NULL                COMMENT '用户类型(1-用户，2-session)',
   tableName varchar(40)      NOT NULL                COMMENT '业务 表中的积累表的名称',
-  titleName varchar(100)                             COMMENT '页签名称',
+  titleName varchar(100)                             COMMENT '表描述名称',
   descn     varchar(400)               DEFAULT NULL  COMMENT '备注',
   cTime     timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建的系统时间',
   PRIMARY KEY (id)
@@ -96,7 +96,7 @@ CREATE TABLE sa_md_colsemanteme (
   cId           varchar(32)      NOT NULL  COMMENT '列描述Id(外键)',
   tmId          varchar(32)      NOT NULL  COMMENT '元数据模式Id(模式id，冗余外键)',
   semantemeCode varchar(32)      NOT NULL  COMMENT '语义代码(某列在确定语义类型后，对该类型的数据的具体描述，目前只对字典项有意义)',
-  semantemeType int(1) unsigned  NOT NULL  COMMENT '语义类型(1-字典项，2-身份证，3-姓名等等。。。。)',
+  semantemeType int(4) unsigned  NOT NULL  COMMENT '语义类型(1-字典项，2-身份证，3-姓名等等。。。。)',
   cTime         timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
   lmTime        timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '每次更新时修改',
   PRIMARY KEY (id)
