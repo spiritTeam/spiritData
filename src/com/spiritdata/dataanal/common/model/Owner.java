@@ -12,9 +12,20 @@ public class Owner implements Serializable {
     private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session)）
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID）
 
+    public Owner() {
+        super();
+    }
+
     public int getOwnerType() {
         return ownerType;
     }
+
+    public Owner(int ownerType, String ownerId) {
+        super();
+        this.ownerType = ownerType;
+        this.ownerId = ownerId;
+    }
+
     public void setOwnerType(int ownerType) {
         this.ownerType = ownerType;
     }

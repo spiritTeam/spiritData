@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spiritdata.jsonD.exceptionC.JsonD0101CException;
-import com.spiritdata.jsonD.exceptionC.JsonD0102CException;
+import com.spiritdata.framework.exceptionC.Plat0001CException;
+import com.spiritdata.framework.exceptionC.Plat0002CException;
 
 /**
  * 处理Json的方法类
@@ -29,7 +29,7 @@ public abstract class JsonUtils {
      * 将java对象转换成json字符串
      * @param obj 准备转换的对象
      * @return json字符串
-     * @throws JsonD0101CException
+     * @throws Plat0001CException
      */
     public static String objToJson(Object obj) {
         try {
@@ -37,7 +37,7 @@ public abstract class JsonUtils {
             String json=objectMapper.writeValueAsString(obj);
             return json;
         } catch (Exception e) {
-            throw new JsonD0101CException(e);
+            throw new Plat0001CException(e);
         }
     }
 
@@ -46,15 +46,15 @@ public abstract class JsonUtils {
      * @param obj 准备转换的对象
      * @param createNew ObjectMapper实例方式:true，新实例;false,存在的mapper实例
      * @return json字符串
-     * @throws JsonD0101CException
+     * @throws Plat0001CException
      */
-    public static String objToJson(Object obj, Boolean createNew) {
+    public static String objToJson(Object obj,Boolean createNew) {
         try {
             ObjectMapper objectMapper=getMapperInstance(createNew);
             String json=objectMapper.writeValueAsString(obj);
             return json;
         } catch (Exception e) {
-            throw new JsonD0101CException(e);
+            throw new Plat0001CException(e.getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ public abstract class JsonUtils {
      * @param obj 欲转换的对象，如果是String 则直接返回到data中
      * @param type 类型：1是成功，0是失败，其他整型类型可自己定义
      * @return Json字符串
-     * @throws JsonD0101CException 异常 
+     * @throws Plat0001CException 异常 
      */
     public static String obj2AjaxJson(Object obj, int type) {
         return JsonUtils.objToJson(JsonUtils.obj2AjaxMap(obj, type));
@@ -75,7 +75,7 @@ public abstract class JsonUtils {
      * @param json 准备转换的json字符串
      * @param cls  准备转换的类
      * @return java对象
-     * @throws JsonD0102CException
+     * @throws Plat0002CException
      */
     public static Object jsonToObj(String json, Class<?> cls) {
         try {
@@ -83,7 +83,7 @@ public abstract class JsonUtils {
             Object vo=objectMapper.readValue(json, cls);
             return vo;
         } catch (Exception e) {
-            throw new JsonD0102CException(e);
+            throw new Plat0002CException(e);
         }
     }
 
@@ -93,7 +93,7 @@ public abstract class JsonUtils {
      * @param cls  准备转换的类
      * @param createNew ObjectMapper实例方式:true，新实例;false,存在的mapper实例
      * @return java对象
-     * @throws JsonD0102CException
+     * @throws Plat0002CException
      */
     public static Object jsonToObj(String json, Class<?> cls,Boolean createNew) {
         try {
@@ -101,7 +101,7 @@ public abstract class JsonUtils {
             Object vo=objectMapper.readValue(json, cls);
             return vo;
         } catch (Exception e) {
-            throw new JsonD0102CException(e);
+            throw new Plat0002CException(e);
         }
     }
 
@@ -126,7 +126,7 @@ public abstract class JsonUtils {
      * @return 紧凑型Json串
      */
     public static String getCompactJsonStr(String jsonStr) {
-        if (jsonStr==null || jsonStr.trim().length()==0) return null;
+        if (jsonStr==null||jsonStr.trim().length()==0) return null;
 
         int dQuotes = 0, sQuotes=0; //单双引号标志
         int rnFlag = 0; //回车换行标记
@@ -160,7 +160,7 @@ public abstract class JsonUtils {
      * @return 格式化后的字符串
      */
     public static String formatJsonStr(String jsonStr, String indentStr) {
-        if (jsonStr==null || jsonStr.trim().length()==0) return null;
+        if (jsonStr==null||jsonStr.trim().length()==0) return null;
 
         int dQuotes = 0, sQuotes=0; //单双引号标志
         int rnFlag = 0; //回车换行标记
@@ -190,7 +190,7 @@ public abstract class JsonUtils {
         StringBuffer _sb = new StringBuffer();
         //占位符处理
         String _indentStr = indentStr;
-        if (_indentStr==null||_indentStr.length()==0) _indentStr="  ";
+        if (_indentStr==null||_indentStr.trim().length()==0) _indentStr="  ";
         String _is = "";
         for (int i=0; i<sb.length(); i++) {
             char c = sb.charAt(i);

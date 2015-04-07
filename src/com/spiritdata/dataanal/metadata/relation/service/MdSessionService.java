@@ -17,6 +17,7 @@ import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.core.web.SessionLoader;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
@@ -90,7 +91,7 @@ public class MdSessionService implements SessionLoader {
         if (_existMm==null) {
             //生成积累表名称
             String mdMId = mm.getId();
-            if (mdMId==null||mdMId.equals("")) {
+            if (StringUtils.isNullOrEmptyOrSpace(mdMId)) {
                 mdMId = SequenceUUID.getPureUUID();
                 mm.setId(mdMId);
             }
@@ -157,7 +158,7 @@ public class MdSessionService implements SessionLoader {
         List<MetadataColumn> mcList = mm.getColumnList();
         if (mcList!=null&&mcList.size()>0) {
             for (MetadataColumn mc: mcList) {
-                if (mc.getId()==null||mc.getId().equals("")) mc.setId(SequenceUUID.getPureUUID());
+                if (StringUtils.isNullOrEmptyOrSpace(mc.getId())) mc.setId(SequenceUUID.getPureUUID());
                 mdBasisService.addMetadataColumn(mc);
             }
         }

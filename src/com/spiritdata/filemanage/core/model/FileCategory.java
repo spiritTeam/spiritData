@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.spiritdata.framework.core.model.ModelSwapPo;
+import com.spiritdata.framework.exceptionC.Plat0006CException;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileCategoryPo;
@@ -19,7 +22,7 @@ import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
  * 使用模型类更加规范，但开销大——结构复杂
  * @author wh
  */
-public class FileCategory implements Serializable {
+public class FileCategory implements Serializable, ModelSwapPo {
     private static final long serialVersionUID = 3467199927097139932L;
 
     private String id; //文件分类id
@@ -230,12 +233,10 @@ public class FileCategory implements Serializable {
      */
     public FileCategoryPo convert2Po() {
         FileCategoryPo ret = new FileCategoryPo();
-        //id处理
-        if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
-            ret.setId(SequenceUUID.getPureUUID());
-        } else {
-            ret.setId(this.id);
-        }
+        //id处理，没有id，自动生成一个
+        if (StringUtils.isNullOrEmptyOrSpace(this.id)) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.id);
+
         //文件id
         ret.setFId(this.categoryFile.getId());
         //文件分类
@@ -245,6 +246,15 @@ public class FileCategory implements Serializable {
         //其他
         ret.setExtInfo(this.extInfo);
         ret.setCTime(this.CTime);
+        return ret;
+    }
+
+    @Override
+    public FileCategory getFromPo(Object po) {
+        // TODO 此方法目前还用不上，先不实现
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑类！");
+        FileCategoryPo _po = (FileCategoryPo)po;
+        FileCategory ret = new FileCategory();
         return ret;
     }
 }

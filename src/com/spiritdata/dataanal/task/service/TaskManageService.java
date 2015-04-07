@@ -61,10 +61,10 @@ public class TaskManageService {
      */
     public boolean save(TaskGroup tg) {
         //保存到内存
-        String ownerId = (tg.getOwnerId()).trim();
-        if (ownerId==null||ownerId.length()==0) { //抛出异常
+        //String ownerId = (tg.getOwnerId()).trim();
+        //if (ownerId==null||ownerId.trim().length()==0) { //抛出异常
             
-        }
+        //}
         //保存到数据库
         return false;
     }

@@ -16,6 +16,7 @@ import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.CacheEle;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
 import com.spiritdata.jsonD.exceptionC.JsonD1001CException;
 
@@ -34,11 +35,11 @@ public class JsonDService {
      * @return jsonD串
      */
     public String getJsonDById(String jsonDId) {
-        if (jsonDId==null||jsonDId.length()==0) throw new JsonD1001CException("所给jsonDId参数为空，无法获取数据！");
+        if (StringUtils.isNullOrEmptyOrSpace(jsonDId)) throw new JsonD1001CException("所给jsonDId参数为空，无法获取数据！");
         //先从内存中取
         String ret = "";
         //再从数据库和文件系统中取
-        if (ret==null||ret.trim().length()==0) {
+        if (StringUtils.isNullOrEmptyOrSpace(ret)) {
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("id", jsonDId);
             List<FileIndexPo> afl = arfService.getAnalFiles(m);

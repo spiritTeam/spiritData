@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.dictionary.pojo;
+package com.spiritdata.dataanal.dictionary.model;
 
 import com.spiritdata.framework.core.model.tree.TreeNode;
 
@@ -6,7 +6,7 @@ import com.spiritdata.framework.core.model.tree.TreeNode;
  * 字典数据（字典模型），此模型包括所有者信息。由字典组和字典树组合而成
  * @author wh
  */
-public class DictModel extends DictMaster{
+public class DictModel extends DictMaster {
     private static final long serialVersionUID = 5186525088340017035L;
 
     public DictModel() {
@@ -26,17 +26,15 @@ public class DictModel extends DictMaster{
      * 根据持久化数据（字典组），构造无字典树的字典模型
      * @param dMaster 字典组信息
      */
-    public void setDictModelByMaster (DictMaster dMaster) {
+    public void setDictModelByMaster(DictMaster dMaster) {
         this.setId(dMaster.getId());
         this.setDmName(dMaster.getDmName());
-        this.setNPy(dMaster.getNPy());
-        this.setSort(dMaster.getSort());
+        this.setOrder(dMaster.getOrder());
         this.setIsValidate(dMaster.getIsValidate());
         this.setMType(dMaster.getMType());
         this.setMRef(dMaster.getMRef());
         this.setDesc(dMaster.getDesc());
-        this.setOwnerId(dMaster.getOwnerId());
-        this.setOwnerType(dMaster.getOwnerType());
+        this.setOwner(dMaster.getOwner());
         this.setCTime(dMaster.getCTime());
         this.setLmTime(dMaster.getLmTime());
     }
@@ -48,14 +46,12 @@ public class DictModel extends DictMaster{
         DictMaster dd = new DictMaster();
         dd.setId(this.getId());
         dd.setDmName(this.getDmName());
-        dd.setNPy(this.getNPy());
-        dd.setSort(this.getSort());
+        dd.setOrder(this.getOrder());
         dd.setIsValidate(this.getIsValidate());
         dd.setMType(this.getMType());
         dd.setMRef(this.getMRef());
         dd.setDesc(this.getDesc());
-        dd.setOwnerId(this.getOwnerId());
-        dd.setOwnerType(this.getOwnerType());
+        dd.setOwner(this.getOwner());
         dd.setCTime(this.getCTime());
         dd.setLmTime(this.getLmTime());
         return dd;

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.spiritdata.framework.CodeException;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.Convert2Json;
 import com.spiritdata.jsonD.exceptionC.JsonD0001CException;
 import com.spiritdata.jsonD.util.JsonUtils;
@@ -85,7 +86,7 @@ public class JsonDAtomData implements Serializable, Convert2Json {
         checkAttributes();//检查合法性
 
         Object directedValue = null;
-        boolean dTypeIsNull = this.dataType==null||this.dataType.trim().length()==0;
+        boolean dTypeIsNull = StringUtils.isNullOrEmptyOrSpace(this.dataType);
 
         Map<String, Object> dataMap = new HashMap<String, Object>();
         if (this.dataValue!=null) {
@@ -94,7 +95,7 @@ public class JsonDAtomData implements Serializable, Convert2Json {
         } else {
             if (!dTypeIsNull) dataMap.put("value", null);
         }
-        if (this.dataType!=null&&this.dataType.trim().length()!=0) {
+        if (!StringUtils.isNullOrEmptyOrSpace(this.dataType)) {
             dataMap.put("dtype", this.dataType);
         }
         Map<String, Object> retMap = new HashMap<String, Object>();
@@ -118,6 +119,6 @@ public class JsonDAtomData implements Serializable, Convert2Json {
      * @throws CodeException
      */
     private void checkAttributes() throws CodeException {
-        if (this.dataName==null||this.dataName.trim().length()==0) throw new JsonD0001CException("名称dataName必须设置！");
+        if (StringUtils.isNullOrEmptyOrSpace(this.dataName)) throw new JsonD0001CException("名称dataName必须设置！");
     }
 }

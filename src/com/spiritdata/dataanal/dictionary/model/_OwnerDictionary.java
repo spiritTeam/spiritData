@@ -1,7 +1,9 @@
-package com.spiritdata.dataanal.dictionary.pojo;
+package com.spiritdata.dataanal.dictionary.model;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.spiritdata.dataanal.common.model.Owner;
 
 /**
  * 所有者“字典数据”。把一个所有者的所有字典信息按结构进行存储。
@@ -17,14 +19,9 @@ public class _OwnerDictionary {
 
     protected boolean loadSuccess=false; //加载数据是否完成
 
-    protected String ownerId; //所有者Id，有可能是用户Id也有可能是SessionId
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    protected int ownerType; //所有者类型：1=用户；2=Session
-    public int getOwnerType() {
-        return ownerType;
+    private Owner owner;
+    public Owner getOwner() {
+        return owner;
     }
 
     public void setLoadSuccess() {
@@ -39,9 +36,8 @@ public class _OwnerDictionary {
      * @param ownerId 所有者类型
      * @param ownerType 所有者Id
      */
-    public _OwnerDictionary(String ownerId, int ownerType) {
-        this.ownerId = ownerId;
-        this.ownerType = ownerType;
+    public _OwnerDictionary(Owner owner) {
+        this.owner=owner;
         this.loadSuccess = false;
     }
 

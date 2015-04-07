@@ -36,11 +36,8 @@ public class OneJsonD extends AccessJsonD implements Convert2Json {
     }
     
     public String toJson() {
-        String ret = "{";
-        ret += "\"_id\":"+this.rdId+","
+        return "{\"_id\":"+this.rdId+","
              + "\"_url\":\""+(this.getUrl()==null?"":this.getUrl())+"\","
-             + "\"_jsonDCode\":\""+(this.getJsonDCode()==null?"":this.getJsonDCode())+"\","
-             + "\"_jsonDId\":\""+(this.getJsonDId()==null?"":this.getJsonDId())+"\"";
-        return ret+"}";
+             + "\"_jsonDCode\":\""+(this.getJsonDCode()==null?"":this.getJsonDCode())+"\"}";
     }
 }

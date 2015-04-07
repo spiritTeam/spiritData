@@ -36,7 +36,6 @@ import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
  */
 @Component
 public class AnalKey implements AnalTable {
-    public final static String jsonDCode = "SD.TEAM.ANAL::0001";
     @Resource
     private BasicDataSource dataSource;
     @Resource
@@ -174,7 +173,7 @@ public class AnalKey implements AnalTable {
         //头
         JsonDHead jsonDHead = new JsonDHead();
         jsonDHead.setId(SequenceUUID.getPureUUID());
-        jsonDHead.setCode(jsonDCode);
+        jsonDHead.setCode(SDConstants.JDC_ANAL_KEY);
         jsonDHead.setCTime(new Date());
         jsonDHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键");
         //数据体
@@ -194,7 +193,7 @@ public class AnalKey implements AnalTable {
         arfSeed.setObjType("table");
         arfSeed.setObjId(tableName);
         arfSeed.setFileNameSeed("METADATA"+File.separator+"key"+File.separator+"md_"+mm.getId());
-        arfSeed.setJsonDCode(jsonDCode);
+        arfSeed.setJsonDCode(SDConstants.JDC_ANAL_KEY);
 
         AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analKeyJsonD, arfSeed);
         //回写文件信息到返回值
