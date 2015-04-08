@@ -91,8 +91,8 @@ public class Report implements Serializable, Convert2Json {
     }
 
     private Object _HEAD;//头信息，可以是String reportHead 对象
-    private List<OneJsonD> dataList;//jsonD数据访问列表
-    private Object _REPORT;//报告主题信息，可以是String reportHead 对象
+    private List<OneJsonD> _DLIST;//jsonD数据访问列表
+    private Object _REPORT;//报告主体信息，可以是String reportHead 对象
 
     public Object get_HEAD() {
         return _HEAD;
@@ -104,22 +104,16 @@ public class Report implements Serializable, Convert2Json {
             if (!StringUtils.isNullOrEmptyOrSpace(_id)) this.setId(_id);
         }
     }
-    public Object get_REPORT() {
-        return _REPORT;
-    }
-    public void set_REPORT(Object _REPORT) {
-        this._REPORT = _REPORT;
-    }
 
     /**
      * 向report中加入一个jsonD的访问信息
      * @param one
      */
     public void addOneJsonD(AccessJsonD one) {
-        if (dataList==null) dataList=new ArrayList<OneJsonD>();
+        if (_DLIST==null) _DLIST=new ArrayList<OneJsonD>();
         OneJsonD oj = new OneJsonD(one);
-        oj.setRdId(dataList.size());
-        dataList.add(oj);
+        oj.setRdId(_DLIST.size());
+        _DLIST.add(oj);
     }
 
     /**
@@ -129,13 +123,20 @@ public class Report implements Serializable, Convert2Json {
      */
     public int getDid(String jsonDId) {
         int ret = -1;
-        if (dataList!=null&&dataList.size()>0) {
-            for (int i=0; i<dataList.size(); i++) {
-                OneJsonD oj = dataList.get(i);
+        if (_DLIST!=null&&_DLIST.size()>0) {
+            for (int i=0; i<_DLIST.size(); i++) {
+                OneJsonD oj = _DLIST.get(i);
                 if (oj.getJsonDId().equals(jsonDId)) return oj.getRdId();
             }
         }
         return ret;
+    }
+
+    public Object get_REPORT() {
+        return _REPORT;
+    }
+    public void set_REPORT(Object _REPORT) {
+        this._REPORT = _REPORT;
     }
 
     /**
@@ -152,14 +153,9 @@ public class Report implements Serializable, Convert2Json {
         } else {
             jsonS += "\"_HEAD\":"+JsonUtils.objToJson(_HEAD);
         }
-        //转换dataList;报告可以没有任何dataList
-        if (dataList!=null&&dataList.size()>0) {
-            jsonS += ",\"_DLIST\":[";
-            for (int i=0; i<dataList.size(); i++) {
-                if (i!=0) jsonS += ",";
-                jsonS += dataList.get(i).toJson();
-            }
-            jsonS += "],";
+        //转换dataList;报告可以没有任何_DLIST
+        if (_DLIST!=null&&_DLIST.size()>0) {
+            jsonS += ","+JsonUtils.objToJson(_DLIST);
         } else jsonS += ",";
         //转换体report
         if (_REPORT==null) jsonS += "\"_REPORT\":\"\"";

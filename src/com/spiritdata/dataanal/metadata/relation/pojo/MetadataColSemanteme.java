@@ -17,7 +17,7 @@ public class MetadataColSemanteme extends BaseObject {
     private String mdMId; //元数据模式Id
     private String semantemeCode; //语义代码
     private int semantemeType; //语义类型
-    private float semantemeWeight; //语义权重
+    private float semantemeWeight; //语义权重，此字段不存储在数据库中，但在分析过程中，可以使用此字段
     private Timestamp CTime; //记录创建时间
     private Timestamp lmTime; //最后修改时间
     //以上对应数据库信息
