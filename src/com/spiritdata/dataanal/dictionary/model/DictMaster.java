@@ -128,7 +128,7 @@ public class DictMaster implements Serializable, ModelSwapPo {
     @Override
     public void buildFromPo(Object po) {
         if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑对象！");
-        if (!(po instanceof DictMasterPo)) throw new Plat0006CException("Po对象不是DictMasterPo的实例，无法从此对象得字典组对象！");
+        if (!(po instanceof DictMasterPo)) throw new Plat0006CException("Po对象不是DictMasterPo的实例，无法从此对象构建字典组对象！");
         DictMasterPo _po = (DictMasterPo)po;
         this.id =_po.getId();
         this.owner = new Owner(_po.getOwnerType(), _po.getOwnerId());

@@ -23,7 +23,6 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.semanteme.SemantemeType;
 import com.spiritdata.framework.core.model.tree.TreeNode;
-import com.spiritdata.framework.util.ChineseCharactersUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 
 /**
@@ -143,7 +142,6 @@ public class MdDictService {
                             dd.setId(SequenceUUID.getUUIDSubSegment(4));
                             dd.setMId(dModel.getId());
                             dd.setNodeName(dictDetailName);
-                            dd.setNPy(ChineseCharactersUtils.getFullSpellFirstUp(dictDetailName));
                             dd.setBCode(dd.getId());
                             dd.setDType(2); //系统生成的
                             dd.setParentId("0");

@@ -26,6 +26,12 @@ public class Owner implements Serializable {
         this.ownerId = ownerId;
     }
 
+    public Owner(String ownerId, int ownerType) {
+        super();
+        this.ownerType = ownerType;
+        this.ownerId = ownerId;
+    }
+    
     public void setOwnerType(int ownerType) {
         this.ownerType = ownerType;
     }
@@ -34,5 +40,18 @@ public class Owner implements Serializable {
     }
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+
+        Owner other = (Owner)obj;
+        if (ownerId==null&&other.ownerId!=null) return false;
+        else if (!ownerId.equals(other.ownerId)) return false;
+        if (ownerType!=other.ownerType) return false;
+        return true;
     }
 }

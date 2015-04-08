@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import com.spiritdata.dataanal.dictionary.persistence.pojo.DictDetailPo;
 import com.spiritdata.framework.core.model.ModelSwapPo;
 import com.spiritdata.framework.core.model.tree.TreeNodeBean;
+import com.spiritdata.framework.exceptionC.Plat0006CException;
 import com.spiritdata.framework.util.ChineseCharactersUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
@@ -21,7 +22,7 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
     //String id; //字典项ID，在TreeNodeBean中对应id
     private String MId; //字典组ID
     //String pId; //上级字典项ID，若为直接属于某字典组的字典项，则此只为0，在TreeNodeBean中对应parentId
-    //int sort; //排序，在TreeNodeBean中对应Order
+    //int order; //排序，在TreeNodeBean中对应Order
     private int isValidate; //字典组是否可用 1可用，2不可用
     //String ddName; //字典项名称，在TreeNodeBean中对应nodeName
     private String NPy; //字典名称拼音
@@ -48,6 +49,9 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
     }
 
     @Override
+    /**
+     * 改写基类的该方法，使其能够自动设置汉语拼音
+     */
     public void setNodeName(String nodeName) {
         this.setNodeName(nodeName);
         if (StringUtils.isNullOrEmptyOrSpace(this.NPy)) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(nodeName);
@@ -112,7 +116,7 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
     }
 
     @Override
-    public Object convert2Po() {
+    public DictDetailPo convert2Po() {
         DictDetailPo ret = new DictDetailPo();
         //id处理，没有id，自动生成一个
         if (StringUtils.isNullOrEmptyOrSpace(this.getId())) ret.setId(SequenceUUID.getPureUUID());
@@ -123,17 +127,37 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
         ret.setOrder(this.getOrder());
         ret.setIsValidate(this.isValidate);
         ret.setDdName(this.getNodeName());
+        ret.setNPy(this.getNPy());
         ret.setAliasName(this.aliasName);
+        ret.setAnPy(this.getAnPy());
+        ret.setBCode(this.BCode);
+        ret.setDType(this.DType);
+        ret.setDRef(this.DRef);
+        ret.setDesc(this.desc);
+        ret.setCTime(this.CTime);
+        ret.setLmTime(this.lmTime);
+
         return ret;
     }
-    @Override
-    public Object getFromPo(Object po) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
     @Override
     public void buildFromPo(Object po) {
-        // TODO Auto-generated method stub
-        
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑对象！");
+        if (!(po instanceof DictDetailPo)) throw new Plat0006CException("Po对象不是DictDetailPo的实例，无法从此对象构建字典项对象！");
+        DictDetailPo _po = (DictDetailPo)po;
+        this.setId(_po.getId());
+        this.MId=_po.getMId();
+        this.setParentId(_po.getParentId());
+        this.setOrder(_po.getOrder());
+        this.setOrderType(0);//从大到小
+        this.isValidate=_po.getIsValidate();
+        this.setNodeName(_po.getDdName());
+        this.setAliasName(_po.getAliasName());
+        this.BCode=_po.getBCode();
+        this.DType=_po.getDType();
+        this.DRef=_po.getDRef();
+        this.desc=_po.getDesc();
+        this.CTime=_po.getCTime();
+        this.lmTime=_po.getLmTime();
     }
 }

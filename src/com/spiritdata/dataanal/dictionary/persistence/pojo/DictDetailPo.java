@@ -3,8 +3,6 @@ package com.spiritdata.dataanal.dictionary.persistence.pojo;
 import java.sql.Timestamp;
 
 import com.spiritdata.framework.core.model.BaseObject;
-import com.spiritdata.framework.util.ChineseCharactersUtils;
-import com.spiritdata.framework.util.StringUtils;
 
 /**
  * 字典项详细信息<br/>
