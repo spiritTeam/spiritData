@@ -58,7 +58,7 @@ public class WordService {
      */
     public Map<String,Object> expWord(String reportId, User userInfo,List<String> jsonDIdList) throws Exception{
         
-        //1、获得report及jsond
+        //1、获得report
         initReportAndJsonD(reportId);
         //2、bulidWord
         Map<String,Object> retMap = bulidWord();
@@ -73,24 +73,36 @@ public class WordService {
      * @param jsonDIdList
      * @throws Exception 
      */
+	@SuppressWarnings("unchecked")
 	private void initReportAndJsonD(String reportId) throws Exception {
         //report
-        String reportJson = "["+reportSerivce.getReportJsonById(reportId)+"]";
-        this.report = (Report) JsonUtils.jsonToObj(reportJson, Report.class);
+        String reportJson = reportSerivce.getReportJsonById(reportId);
+        Map<String,Object> reportMap = (Map<String, Object>)JsonUtils.jsonToObj(reportJson, Map.class);
+        map2been(reportMap);
         //jsonD
         if(this.report!=null){
-//        	List<_REPORT_DLIST> jsonDIdList = report.get_DLIST();
-//            Iterator<_REPORT_DLIST> jsonDIt = jsonDIdList.iterator();
-//            while (jsonDIt.hasNext()) {
-//            	_REPORT_DLIST _dList = jsonDIt.next();
-//            	String jsonDjson =  "["+jsonDSerive.getJsonDByUri(_dList.get_url())+"]";
-//                this.jsonDList.add((_JSOND) JsonUtils.jsonToObj(jsonDjson, _JSOND.class));
-//             // TODO 由于jsond的定义还未确定，所以以下部分还未完成
-//            }
         }
     }
 
-    /**
+	/**
+	 * 
+	 * @param reportMap
+	 * @param class1
+	 */
+    private void map2been(Map<String, Object> reportMap) {
+		Iterator<String> it = reportMap.keySet().iterator();
+		while (it.hasNext()) {
+			String key = it.next();
+			Object value = reportMap.get(key);
+			if (value instanceof String) {
+				System.out.println("key="+key+":val="+value);
+			} else {
+				System.out.println("key="+key);
+			}
+		}
+	}
+
+	/**
      * 创建word
      * @return 
      * @throws IOException 
