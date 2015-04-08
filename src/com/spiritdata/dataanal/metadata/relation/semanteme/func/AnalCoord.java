@@ -53,7 +53,7 @@ public class AnalCoord implements AnalMetadata {
     @Resource
     private AanlResultFileService arfService; //分析结果文件存取服务
 
-	// 中国范围的经度判断参数JSON，可以考虑从配置文件中读取!!!
+	// 中国范围的经度判断参数JSON，可以考虑从配置文件中读取,放到param里传到此类进行分析!!! 所有的列判断规则JSON串最好是统一放在一个列规则判断配置文件中
 	public static final String BAIDU_CHINA_COORDX = "{min:73.508097,max:135.083849,weightSimilarRangeVal:0.5,keywords:'x,lon,longitude,jd,jingdu,经度',weightSimilarKeyVal:0.5,weightExcludeKeyVal:0}";
 	// 中国范围的纬度判断参数JSON                                                                           
 	public static final String BAIDU_CHINA_COORDY = "{min:18.164892,max:53.569653,weightSimilarRangeVal:0.5,keywords:'y,lat,latitude,wd,weidu,维度',weightSimilarKeyVal:0.5,weightExcludeKeyVal:0}";

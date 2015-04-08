@@ -44,6 +44,7 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
+import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalCoord;
 import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalDict;
 import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalKey;
 import com.spiritdata.dataanal.metadata.relation.service.MdBasisService;
@@ -94,7 +95,9 @@ public class DealExcelFileService {
     private FileManageService fmService;
     @Resource
     private AanlResultFileService arFileService;
-
+    @Resource
+    private AnalCoord analCoord;//只分析可能坐标列,并计入文件
+    
     /**
      * 处理Excel文件
      * @param fi 导入的文件的fileInfo信息
@@ -330,6 +333,10 @@ public class DealExcelFileService {
                             //7.1.3-字典分析结果调整
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                             mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
+                            
+                            //7.2-分析坐标列
+                            //7.2.1-积累表坐标列分析
+                            Map<String, Object> coordMap = analCoord.scanMetadata(sysMd, null);
                         } catch(Exception e) {
                             // TODO 记录日志 
                             e.printStackTrace();
