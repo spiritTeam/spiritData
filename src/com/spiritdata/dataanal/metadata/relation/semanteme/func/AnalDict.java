@@ -31,7 +31,6 @@ import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
  */
 @Component
 public class AnalDict implements AnalMetadata {
-    public final static String jsonDCode = "SD.TEAM.ANAL::0002";
     private final static float compressThreshold = 0.7f; //压缩率的阀值，当压缩率大于此值，则认为是字典项目
 
     @Resource
@@ -66,7 +65,7 @@ public class AnalDict implements AnalMetadata {
         //头
         JsonDHead jsonDHead = new JsonDHead();
         jsonDHead.setId(SequenceUUID.getPureUUID());
-        jsonDHead.setCode(jsonDCode);
+        jsonDHead.setCode(SDConstants.JDC_ANAL_DICT);
         jsonDHead.setCTime(new Date());
         jsonDHead.setDesc("分析元数据["+mm.getTitleName()+"("+mm.getId()+")]的字典信息");
         //数据体
@@ -84,7 +83,7 @@ public class AnalDict implements AnalMetadata {
         arfSeed.setObjType("metadata"); //所分析对象
         arfSeed.setObjId("["+mm.getTitleName()+"("+mm.getId()+")]"); //所分析对象的ID
         arfSeed.setFileNameSeed("METADATA"+File.separator+"dict"+File.separator+"md_"+mm.getId());
-        arfSeed.setJsonDCode(jsonDCode);
+        arfSeed.setJsonDCode(SDConstants.JDC_ANAL_DICT);
 
         AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analDictJsonD, arfSeed);
         //回写文件信息到返回值

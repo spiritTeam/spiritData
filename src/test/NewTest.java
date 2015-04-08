@@ -1,16 +1,18 @@
 package test;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.POIXMLDocument;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -135,31 +137,81 @@ public class NewTest {
 	 * @throws IOException 
 	 */
 	@Test
-	public void templet() throws IOException{
-		Map<String, Object> param = new HashMap<String, Object>();  
-        param.put("${name}", "huangqiqing");  
-        param.put("${zhuanye}", "信息管理与信息系统");  
-        param.put("${sex}", "男");  
-        param.put("${school_name}", "山东财经大学");  
-        param.put("${date}", new Date().toString());  
+	public void templet1() throws IOException{
+		Map<String, Object> param = new HashMap<String, Object>();
+        param.put("${name}", "huangqiqing");
+        param.put("${zhuanye}", "信息管理与信息系统");
+        param.put("${sex}", "男");
+        param.put("${school_name}", "山东财经大学");
+        param.put("${date}", new Date().toString());
           
-        Map<String,Object> header = new HashMap<String, Object>();  
-        header.put("width", 100);  
-        header.put("height", 150);  
-        header.put("type", "jpg");  
-        header.put("content", WordUtil.inputStream2ByteArray(new FileInputStream("D:\\word\\p1.jpg"), true));  
-        param.put("${header}",header);  
+        Map<String,Object> header = new HashMap<String, Object>();
+        header.put("width", 100);
+        header.put("height", 150);
+        header.put("type", "jpg");
+        header.put("content", WordUtil.inputStream2ByteArray(new FileInputStream("D:\\word\\p1.jpg"), true));
+        param.put("${header}",header);
           
-//        Map<String,Object> twocode = new HashMap<String, Object>();  
-//        twocode.put("width", 100);  
-//        twocode.put("height", 100);  
-//        twocode.put("type", "png");  
-//        twocode.put("content", ZxingEncoderHandler.getTwoCodeByteArray("测试二维码,huangqiqing", 100,100));  
-//        param.put("${twocode}",twocode);  
-        CustomXWPFDocument doc = WordUtil.generateWord(param, "D:\\word\\template.docx");  
-        FileOutputStream fopts = new FileOutputStream("D:\\word\\template2.docx");  
-        doc.write(fopts);  
-        fopts.close();  
+//        Map<String,Object> twocode = new HashMap<String, Object>();
+//        twocode.put("width", 100);
+//        twocode.put("height", 100);
+//        twocode.put("type", "png");
+//        twocode.put("content", ZxingEncoderHandler.getTwoCodeByteArray("测试二维码,huangqiqing", 100,100));
+//        param.put("${twocode}",twocode);
+        CustomXWPFDocument doc = WordUtil.generateWord(param, "D:\\word\\template.docx");
+        FileOutputStream fopts = new FileOutputStream("D:\\word\\template2.docx");
+        doc.write(fopts);
+        fopts.close();
+	}
+	/**
+	 * 模板测试2
+	 * @throws OpenXML4JException 
+	 */
+	@Test
+	public void templet2() throws IOException, OpenXML4JException{
+		//定义替换字符
+		Map<String,Object> replaceMap = new HashMap<String,Object>();
+		replaceMap.put("${LName}", "张三");
+		replaceMap.put("${startTime}", "4月1号");
+		replaceMap.put("${endTime}", "4月7号");
+		replaceMap.put("${type}", "事假");
+		replaceMap.put("${reason}", "xxxx");
+		replaceMap.put("${applyName}", "李四");
+		replaceMap.put("${applyDate}", "3月20日");
+		//用于储存段落中的text
+		//POIXMLDocument.openPackage("")读取一个word
+		XWPFDocument docx = new XWPFDocument(POIXMLDocument.openPackage("D:\\word\\template.docx"));
+		//取到所有的段落
+		List<XWPFParagraph> xpList = docx.getParagraphs();
+//		for(XWPFParagraph xp:xpList){
+//			List<XWPFRun> xr  = xp.getRuns();
+//			xp.getRun(r);
+//		}
+		for(XWPFParagraph xp:xpList){
+			//取到所有的Run
+			List<XWPFRun> xrList = xp.getRuns();
+			String xrText = "";
+			for(XWPFRun xr:xrList){
+				//Run text
+				String text = xr.getText(0);
+				System.out.println(text);
+				xrText = xrText+text;
+			}
+			if(xrText!=null){
+				Iterator<String> it = replaceMap.keySet().iterator();
+				while(it.hasNext()){
+					String key = it.next();
+					if(xrText.indexOf(key)!=-1){
+						xrText = xrText.replace(key, ""+replaceMap.get(key));
+					}
+				}
+				XWPFRun newXR = xp.createRun();
+				newXR.setText(xrText);
+			}
+		}
+		FileOutputStream fopts = new FileOutputStream("D:\\word\\template2.docx");
+        docx.write(fopts);
+        fopts.close();
 	}
 	private void close(OutputStream os) {
 		if(os!=null){

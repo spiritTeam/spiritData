@@ -1,14 +1,19 @@
 package com.spiritdata.filemanage.core.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.framework.core.model.ModelSwapPo;
+import com.spiritdata.framework.exceptionC.Plat0006CException;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
@@ -21,8 +26,89 @@ import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
  * 使用模型类更加规范，但开销大——结构复杂
  * @author wh
  */
-public class FileInfo extends FileIndexPo {
+public class FileInfo implements Serializable, ModelSwapPo {
     private static final long serialVersionUID = 12366632000244738L;
+
+    protected String id; //文件id
+    private Owner owner; //所有者
+    protected int accessType; //文件访问类型，可通过这个类型转换为file:///；ftp:///等，可能需要再定义访问的一些属性没，如ftp的用户名/密码/端口等
+    protected String path; //文件路径，不包括文件名
+    protected String fileName; //文件名称，包括扩展名
+    protected String extName; //文件扩展名
+    protected Long fileSize; //文件大小
+    protected String desc; //文件说明
+    protected Timestamp fcTime; //文件创建时间
+    protected Timestamp flmTime; //文件最后修改时间
+    protected Timestamp CTime; //记录创建时间
+
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public Owner getOwner() {
+        return owner;
+    }
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+    public int getAccessType() {
+        return accessType;
+    }
+    public void setAccessType(int accessType) {
+        this.accessType = accessType;
+    }
+    public String getPath() {
+        return path;
+    }
+    public void setPath(String path) {
+        this.path = path;
+    }
+    public String getFileName() {
+        return fileName;
+    }
+    /**
+     * 设置文件名，同时根据文件名设置文件扩展名
+     * @param fileName 文件名，包括文件扩展名
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+        this.extName = FileNameUtils.getExt(fileName);
+    }
+    public String getExtName() {
+        return extName;
+    }
+    public Long getFileSize() {
+        return fileSize;
+    }
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+    public String getDesc() {
+        return desc;
+    }
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+    public Timestamp getFcTime() {
+        return fcTime;
+    }
+    public void setFcTime(Timestamp fcTime) {
+        this.fcTime = fcTime;
+    }
+    public Timestamp getFlmTime() {
+        return flmTime;
+    }
+    public void setFlmTime(Timestamp flmTime) {
+        this.flmTime = flmTime;
+    }
+    public Timestamp getCTime() {
+        return CTime;
+    }
+    public void setCTime(Timestamp CTime) {
+        this.CTime = CTime;
+    }
 
     private File file; //文件信息所对应的文件：当accessType==1(操作系统文件)时；若是其他accessType，则这个是null
 
@@ -203,34 +289,61 @@ public class FileInfo extends FileIndexPo {
     public int getEqualRelationSize() {
         return inverseRelationFiles==null?0:inverseRelationFiles.size();
     }
+
+    /**
+     * 获得所有关联文件列表<br/>
+     * 包括正向关系、反向关系和相等关系。
+     * @return 所有关联文件列表
+     */
     public List<FileRelation> getAllRelationFiles() {
         List<FileRelation> ret = new ArrayList<FileRelation>();
-        ret.addAll(positiveRelationFiles);
-        ret.addAll(inverseRelationFiles);
-        ret.addAll(equalRelationFiles);
+        if (positiveRelationFiles!=null) ret.addAll(positiveRelationFiles);
+        if (inverseRelationFiles!=null) ret.addAll(inverseRelationFiles);
+        if (equalRelationFiles!=null) ret.addAll(equalRelationFiles);
         return ret;
     }
+
+    /**
+     * 获得所有关系的个数
+     * @return 关系个数
+     */
     public int getAllRelationSize() {
         return (positiveRelationFiles==null?0:positiveRelationFiles.size())
                +(inverseRelationFiles==null?0:inverseRelationFiles.size())
                +(equalRelationFiles==null?0:equalRelationFiles.size());
     }
-    
+
+    /**
+     * 用全部文件名(目录+文件名+扩展名)
+     * @param allFileName 全部文件名
+     */
+    public void setAllFileName(String allFileName) {
+        this.setPath(FileNameUtils.getFilePath(allFileName));
+        this.setFileName(FileNameUtils.getFileName(allFileName));
+    }
+
+    /**
+     * 返回全部文件名
+     * @return 全部文件名
+     */
+    public String getAllFileName() {
+        return FileNameUtils.concatPath(this.getPath(), this.getFileName());
+    }
+
+
     /**
      * 把当前对象转换为Po对象，为数据库操作做准备
      * @return 文件信息Po对象
      */
     public FileIndexPo convert2Po() {
         FileIndexPo ret = new FileIndexPo();
-        //id处理
-        if (this.id==null||this.id.length()==0) {//没有id，自动生成一个
-            ret.setId(SequenceUUID.getPureUUID());
-        } else {
-            ret.setId(this.id);
-        }
+        //id处理，没有id，自动生成一个
+        if (StringUtils.isNullOrEmptyOrSpace(this.id)) ret.setId(SequenceUUID.getPureUUID());
+        else ret.setId(this.id);
+
         //所有者
-        ret.setOwnerId(this.ownerId);
-        ret.setOwnerType(this.ownerType);
+        ret.setOwnerId(this.owner.getOwnerId());
+        ret.setOwnerType(this.owner.getOwnerType());
         //文件访问类型，现在不用枚举，这个属性的使用还是教复杂的
         ret.setAccessType(this.accessType);
         //文件信息
@@ -258,20 +371,12 @@ public class FileInfo extends FileIndexPo {
         return ret;
     }
 
-    /**
-     * 用全部文件名(目录+文件名+扩展名)
-     * @param allFileName 全部文件名
-     */
-    public void setAllFileName(String allFileName) {
-        this.setPath(FileNameUtils.getFilePath(allFileName));
-        this.setFileName(FileNameUtils.getFileName(allFileName));
-    }
-
-    /**
-     * 返回全部文件名
-     * @return 全部文件名
-     */
-    public String getAllFileName() {
-        return FileNameUtils.concatPath(this.getPath(), this.getFileName());
+    @Override
+    public FileInfo getFromPo(Object po) {
+        // TODO 此方法目前还用不上，先不实现
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑类！");
+        FileIndexPo _po = (FileIndexPo)po;
+        FileInfo ret = new FileInfo();
+        return ret;
     }
 }

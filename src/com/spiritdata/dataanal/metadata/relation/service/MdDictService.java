@@ -12,10 +12,10 @@ import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import com.spiritdata.dataanal.dictionary.pojo.DictDetail;
-import com.spiritdata.dataanal.dictionary.pojo.DictMaster;
-import com.spiritdata.dataanal.dictionary.pojo.DictModel;
-import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
+import com.spiritdata.dataanal.dictionary.model.DictDetail;
+import com.spiritdata.dataanal.dictionary.model.DictMaster;
+import com.spiritdata.dataanal.dictionary.model.DictModel;
+import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
 import com.spiritdata.dataanal.dictionary.service.DictService;
 import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
@@ -82,11 +82,9 @@ public class MdDictService {
                         //1准备数据-字典组
                         DictMaster dm = new DictMaster();
                         dm.setId(SequenceUUID.getUUIDSubSegment(4));
-                        dm.setOwnerId(_dictCache.getOwnerId());
-                        dm.setOwnerType(_dictCache.getOwnerType());
+                        dm.setOwner(_dictCache.getOwner());
                         dm.setDmName(mm.getColumnByCName(key).getTitleName());//字典组名称mm.getTitleName()+"::"+
-                        dm.setNPy(ChineseCharactersUtils.getFullSpellFirstUp(dm.getDmName())); //汉语拼音
-                        dm.setSort(1); //排序，排序需要由人来处理
+                        dm.setOrder(1); //排序，排序需要由人来处理
                         dm.setIsValidate(1);
                         dm.setMType(2); //系统生成的
                         //2准备数据-字典语义
@@ -106,7 +104,7 @@ public class MdDictService {
                         //1-1创建根结点
                         DictDetail _t = new DictDetail();
                         _t.setId(dModel.getId());
-                        _t.setMid(dModel.getId());
+                        _t.setMId(dModel.getId());
                         _t.setNodeName(dModel.getDmName());
                         _t.setIsValidate(1);
                         _t.setParentId(null);
@@ -133,7 +131,7 @@ public class MdDictService {
                         //找看看是否有相同的
                         if (_dictCache.ddList!=null&&_dictCache.ddList.size()>0) {
                             for (DictDetail dd: _dictCache.ddList) {
-                                if (dd.getMid().equals(dModel.getId())&&dd.getNodeName().equals(dictDetailName)) {
+                                if (dd.getMId().equals(dModel.getId())&&dd.getNodeName().equals(dictDetailName)) {
                                     find=true;
                                     break;
                                 }
@@ -143,7 +141,7 @@ public class MdDictService {
                             //准备数据
                             DictDetail dd = new DictDetail();
                             dd.setId(SequenceUUID.getUUIDSubSegment(4));
-                            dd.setMid(dModel.getId());
+                            dd.setMId(dModel.getId());
                             dd.setNodeName(dictDetailName);
                             dd.setNPy(ChineseCharactersUtils.getFullSpellFirstUp(dictDetailName));
                             dd.setBCode(dd.getId());

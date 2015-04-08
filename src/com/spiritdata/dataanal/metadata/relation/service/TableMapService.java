@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.dataanal.metadata.relation.pojo.ImpTableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
@@ -35,7 +36,7 @@ public class TableMapService {
 
     //导入文件实体表关联
     public void bindImpTabMap(ImpTableMapRel itmr) {
-        if (itmr.getId()==null||itmr.getId().length()==0) itmr.setId(SequenceUUID.getPureUUID());
+        if (StringUtils.isNullOrEmptyOrSpace(itmr.getId())) itmr.setId(SequenceUUID.getPureUUID());
         itmrDao.insert(itmr);
     }
 
@@ -50,7 +51,7 @@ public class TableMapService {
      * @throws Exception
      */
     public MetadataTableMapRel registTabOrgMap(String tableName, MetadataModel mm, int tableType) {
-        if (tableName==null||tableName.equals("")) throw new IllegalArgumentException("实体表名称不能为空！");
+        if (StringUtils.isNullOrEmptyOrSpace(tableName)) throw new IllegalArgumentException("实体表名称不能为空！");
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new IllegalArgumentException("元数据模式没有任何列描述信息！");
         //创建相应的表
         Map<String, String> btm = new HashMap<String, String>(); //build table map
@@ -61,13 +62,10 @@ public class TableMapService {
         int _index = 0;
         for (MetadataColumn mc : mm.getColumnList()) {
             columnStr += ",";
-            if (mc.getColumnName()==null||mc.getColumnName().equals("")) mc.setColumnName("col_"+(_index++));
-            if (mc.getColumnType().equalsIgnoreCase("String")) {
-                columnStr += mc.getColumnName()+" varchar(768)";//mysqlkey不可超过768，先这样
-            } else {
-                columnStr += mc.getColumnName()+" "+mc.getColumnType();
-            }
-            if (mc.getTitleName()!=null&&!mc.getTitleName().equals("")) columnStr += " COMMENT '"+mc.getTitleName()+"'";
+            if (StringUtils.isNullOrEmptyOrSpace(mc.getColumnName())) mc.setColumnName("col_"+(_index++));
+            if (mc.getColumnType().equalsIgnoreCase("String")) columnStr += mc.getColumnName()+" varchar(768)";//mysqlkey不可超过768，先这样
+            else columnStr += mc.getColumnName()+" "+mc.getColumnType();
+            if (!StringUtils.isNullOrEmptyOrSpace(mc.getTitleName())) columnStr += " COMMENT '"+mc.getTitleName()+"'";
             if (mc.isPk()) pks.add(mc);
         }
         columnStr = columnStr.substring(1);
@@ -84,15 +82,12 @@ public class TableMapService {
             for (MetadataColumn mc : pks) {
                 if (mc.isCertainPk()) _tempS += ","+mc.getColumnName();
             }
-            if (_tempS.length()>0) _tempS.substring(1);
-            if (_tempS.length()>0) {
-                columnStr += ", PRIMARY KEY ("+_tempS+") USING BTREE";
-            }
+            if (_tempS.trim().length()>0) _tempS.substring(1);
+            if (_tempS.trim().length()>0) columnStr += ", PRIMARY KEY ("+_tempS+") USING BTREE";
         }
         btm.put("columnStr", columnStr);
-        if (mm.getDesc()!=null&&mm.getDesc().length()>0) {
-            btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDesc());
-        }
+        if (!StringUtils.isNullOrEmptyOrSpace(mm.getDesc())) btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDesc());
+
         mtmrDao.excute("createTable", btm);
         //修改mm中的积累表名称
         if (tableType==1) mm.setTableName(tableName);
@@ -118,7 +113,7 @@ public class TableMapService {
      * @throws Exception
      */
     public MetadataTableMapRel getAccumulationTableMapOrg(String mdMId) {
-        if (mdMId==null||mdMId.equals("")) throw new IllegalArgumentException("元数据模式Id不能为空！");
+        if (StringUtils.isNullOrEmptyOrSpace(mdMId)) throw new IllegalArgumentException("元数据模式Id不能为空！");
         MetadataTableMapRel paramTmo = new MetadataTableMapRel();
         paramTmo.setMdMId(mdMId);
         paramTmo.setTableType(1);
@@ -133,8 +128,9 @@ public class TableMapService {
      * @throws Exception
      */
     public MetadataTableMapRel getTableMapOrg(String mdMId, String tableName) {
-        if (tableName==null||tableName.equals("")) throw new IllegalArgumentException("表名称不能为空！");
-        if (mdMId==null||mdMId.equals("")) throw new IllegalArgumentException("元数据模式Id不能为空！");
+        if (StringUtils.isNullOrEmptyOrSpace(tableName)) throw new IllegalArgumentException("表名称不能为空！");
+        if (StringUtils.isNullOrEmptyOrSpace(mdMId)) throw new IllegalArgumentException("元数据模式Id不能为空！");
+
         MetadataTableMapRel paramTmo = new MetadataTableMapRel();
         paramTmo.setMdMId(mdMId);
         paramTmo.setTableName(tableName);

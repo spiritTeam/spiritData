@@ -31,7 +31,9 @@ import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.UGA.UgaUser;
-import com.spiritdata.dataanal.dictionary.pojo._OwnerDictionary;
+import com.spiritdata.framework.util.StringUtils;
+import com.spiritdata.dataanal.common.util.SessionUtils;
+import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
 import com.spiritdata.dataanal.dictionary.service.DictSessionService;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
@@ -95,7 +97,7 @@ public class DealExcelFileService {
 
     /**
      * 处理Excel文件
-     * @param fileName 文件名称
+     * @param fi 导入的文件的fileInfo信息
      * @param session 用户Session
      */
     public void process(FileInfo fi, HttpSession session) {
@@ -339,15 +341,7 @@ public class DealExcelFileService {
                 Map<String, Object> param = new HashMap<String, Object>();
                 Map<String, Object> preTreadParam = new HashMap<String, Object>();
                 preTreadParam.put("reportParam", reportParam);
-                String ownerId = session.getId();
-                int ownerType = 2;
-                UgaUser user = (UgaUser)session.getAttribute(FConstants.SESSION_USER);
-                if (user!=null) {
-                    ownerId = user.getUserId();
-                    ownerType = 1;
-                }
-                preTreadParam.put("ownerType", ownerType);
-                preTreadParam.put("ownerId", ownerId);
+                preTreadParam.put("owner", SessionUtils.getOwner(session));
                 preTreadParam.put("impFileInfo", fi);
                 preTreadParam.put("ownerDict", _od);
                 param.put("preTreadParam", preTreadParam);
@@ -384,7 +378,7 @@ public class DealExcelFileService {
      * @param parse excel解析器
      */
     private void saveDataToTempTab(SheetTableInfo sti, MetadataModel sysMm, String tempTableName, PoiParseUtils parse) {
-        if (tempTableName==null||tempTableName.equals("")) throw new IllegalArgumentException("临时表名称必须确定");
+        if (StringUtils.isNullOrEmptyOrSpace(tempTableName)) throw new IllegalArgumentException("临时表名称必须确定");
         if (sysMm==null||sysMm.getColumnList()==null||sysMm.getColumnList().size()==0) throw new IllegalArgumentException("元数据模型必须设置，且列信息不能为空");
         if (sti==null||sti.getTitleInfo()==null||sti.getTitleInfo().size()==0) throw new IllegalArgumentException("Sheet中的表结构区域信息必须设置，且表头信息不能为空");
         if (parse==null||parse.getSheetInfo()==null||parse.getSheetInfo().getStiList()==null) throw new IllegalArgumentException("excel解析单元必须设置");
@@ -405,8 +399,8 @@ public class DealExcelFileService {
             columnSql+=","+mc.getColumnName();
             valueSql+=",?";
         }
-        if (columnSql.length()>0) columnSql=columnSql.substring(1);
-        if (valueSql.length()>0) valueSql=valueSql.substring(1);
+        if (columnSql.trim().length()>0) columnSql=columnSql.substring(1);
+        if (valueSql.trim().length()>0) valueSql=valueSql.substring(1);
         insertSql = insertSql.replaceAll("#columnSql", columnSql).replaceAll("#valueSql", valueSql);
 
         Connection conn = null;
@@ -513,7 +507,7 @@ public class DealExcelFileService {
     private void saveDataToAccumulationTab(SheetTableInfo sti, MetadataModel sysMm, PoiParseUtils parse) {
         if (sysMm==null||sysMm.getColumnList()==null||sysMm.getColumnList().size()==0) throw new IllegalArgumentException("元数据模型必须设置，且列信息不能为空");
         String mainTableName = sysMm.getTableName();
-        if (mainTableName==null||mainTableName.equals("")) throw new IllegalArgumentException("元数据模型中必须有积累表名称");
+        if (StringUtils.isNullOrEmptyOrSpace(mainTableName)) throw new IllegalArgumentException("元数据模型中必须有积累表名称");
         if (sti==null||sti.getTitleInfo()==null||sti.getTitleInfo().size()==0) throw new IllegalArgumentException("Sheet中的表结构区域信息必须设置，且表头信息不能为空");
         if (parse==null||parse.getSheetInfo()==null||parse.getSheetInfo().getStiList()==null) throw new IllegalArgumentException("excel解析单元必须设置");
         else {
@@ -544,13 +538,13 @@ public class DealExcelFileService {
                 updateKey += " and "+mc.getColumnName()+"=?";
             }
         }
-        if (columnSql.length()>0) columnSql=columnSql.substring(1);
-        if (valueSql.length()>0) valueSql=valueSql.substring(1);
+        if (columnSql.trim().length()>0) columnSql=columnSql.substring(1);
+        if (valueSql.trim().length()>0) valueSql=valueSql.substring(1);
         insertSql = insertSql.replaceAll("#columnSql", columnSql).replaceAll("#valueSql", valueSql);
-        if (updateKey.equals("")||updateSet.equals("")) updateSql=null;
+        if (updateKey.trim().length()==0||updateSet.trim().length()==0) updateSql=null;
         else {
-            if (updateSet.length()>0) updateSet=updateSet.substring(1);
-            if (updateKey.length()>0) updateKey=updateKey.substring(5);
+            if (updateSet.trim().length()>0) updateSet=updateSet.substring(1);
+            if (updateKey.trim().length()>0) updateKey=updateKey.substring(5);
             updateSql = updateSql.replaceAll("#updateSet", updateSet).replaceAll("#updateKey", updateKey);
             String[] s = updateSet.split(",");
             int k=0;

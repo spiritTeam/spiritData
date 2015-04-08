@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.FileUtils;
@@ -21,8 +22,7 @@ public class ImportFile implements Serializable, BeManageFile {
     private static final long serialVersionUID = -6413748884964474948L;
 
     private String id; //上传文件的id
-    private int ownerType; //上传文件所对应的所有者类型（1=注册用户;2=非注册用户(session)）
-    private String ownerId; //上传文件所有者标识（可能是用户id，也可能是SessionID）
+    private Owner owner; //所有者
     private String serverFileName; //服务端文件全名(包括目录和文件名)
     private String clientFileName; //客户端文件全名(包括目录和文件名)
 
@@ -32,17 +32,11 @@ public class ImportFile implements Serializable, BeManageFile {
     public void setId(String id) {
         this.id = id;
     }
-    public int getOwnerType() {
-        return ownerType;
+    public Owner getOwner() {
+        return owner;
     }
-    public void setOwnerType(int ownerType) {
-        this.ownerType = ownerType;
-    }
-    public String getOwnerId() {
-        return ownerId;
-    }
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
     public String getServerFileName() {
         return serverFileName;
@@ -75,8 +69,7 @@ public class ImportFile implements Serializable, BeManageFile {
         //主信息
         ret.setFile(f);
         ret.setId(this.id);
-        ret.setOwnerId(this.ownerId);
-        ret.setOwnerType(this.ownerType);
+        ret.setOwner(this.owner);
         ret.setAccessType(1);
         ret.setDesc("导入数据，文件为:"+FileNameUtils.getFileName(this.serverFileName)+"；导入时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f))));
         //分类信息

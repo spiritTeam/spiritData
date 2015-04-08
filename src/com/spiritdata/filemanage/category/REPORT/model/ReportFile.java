@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
@@ -24,8 +25,7 @@ public class ReportFile extends AbstractToBeStoreFile implements Serializable, B
     private static final long serialVersionUID = -1625546654030117440L;
 
     private String id; //报告文件的id
-    private int ownerType; //报告文件所对应的所有者类型（1=注册用户;2=非注册用户(session)）
-    private String ownerId; //报告文件所有者标识（可能是用户id，也可能是SessionID）
+    private Owner owner; //所有者
     private String fileName; //报告文件文件全名(包括目录和文件名)
     private String reportId; //报告所对应的Id，记录在表中
     private String tasksId; //任务组的Id，此Id也是taskd的id???还要设计，存储在sa_file_category.type3中
@@ -36,17 +36,11 @@ public class ReportFile extends AbstractToBeStoreFile implements Serializable, B
     public void setId(String id) {
         this.id = id;
     }
-    public int getOwnerType() {
-        return ownerType;
+    public Owner getOwner() {
+        return owner;
     }
-    public void setOwnerType(int ownerType) {
-        this.ownerType = ownerType;
-    }
-    public String getOwnerId() {
-        return ownerId;
-    }
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
     public String getFileName() {
         return fileName;
@@ -79,12 +73,10 @@ public class ReportFile extends AbstractToBeStoreFile implements Serializable, B
         //主信息
         ret.setFile(f);
         ret.setId(this.id);
-        ret.setOwnerId(this.getOwnerId());
-        ret.setOwnerType(this.getOwnerType());
+        ret.setOwner(this.owner);
         ret.setAccessType(1);
         ret.setDesc("分析报告文件:"+FileNameUtils.getFileName(this.fileName)+"；生成报告时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f)))
                 +"；报告文件Id："+this.reportId+"，对应的任务组ID："+this.tasksId);
-
         //分类信息
         FileCategory fc = new FileCategory();
         fc.setFType1(FileCategoryType1.REPORT);
