@@ -97,7 +97,7 @@ public class DealExcelFileService {
 
     /**
      * 处理Excel文件
-     * @param fileName 文件名称
+     * @param fi 导入的文件的fileInfo信息
      * @param session 用户Session
      */
     public void process(FileInfo fi, HttpSession session) {

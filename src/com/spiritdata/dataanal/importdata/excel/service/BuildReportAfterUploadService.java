@@ -134,7 +134,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         //4-构建报告体，并生成相关的任务
         AnalResultFile arf;
         Map<String, Object> taskParam = new HashMap<String, Object>();//任务参数结构，所有的任务都用此函数作为
-        SegmentList<ReportSegment> reportBody = new SegmentList<ReportSegment>();
+        SegmentList<TreeNode<ReportSegment>> reportBody = new SegmentList<TreeNode<ReportSegment>>();
 
         Iterator<Map<SheetTableInfo, Map<String, Object>>> iter = reportParam.values().iterator();
         while (iter.hasNext()) {
