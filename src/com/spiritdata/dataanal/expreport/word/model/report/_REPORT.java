@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.expreport.word.model;
+package com.spiritdata.dataanal.expreport.word.model.report;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -7,11 +7,10 @@ import java.util.List;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 
 /**
- * 报告类，此报告类只包含报告本身的信息，不包括处理报告相关的信息。<br/>
- * 包括：_HEAD,_DATA,_REPORT
- * @author wh
+ * report model
+ * @author mht
  */
-public class Report implements Serializable {
+public class _REPORT implements Serializable {
     private static final long serialVersionUID = 518670183146944686L;
  
     private String id; //报告id，应和报告头中的id相一致
@@ -22,17 +21,16 @@ public class Report implements Serializable {
     private ReportFile reportFile; //报告所对应的文件信息
     private String desc; //文件说明
     private Timestamp CTime; //记录创建时间
-    private Object _HEAD;//头信息，可以是String reportHead 对象
-    private List<String> _DLIST;//jsonD数据访问列表
-    private _REPORT _REPORT;//报告主题信息，可以是String reportHead 对象
-    
-	public _REPORT get_REPORT() {
-		return _REPORT;
-	}
-	public void set_REPORT(_REPORT _REPORT) {
-		this._REPORT = _REPORT;
-	}
-	public int getOwnerType() {
+    private _REPORT_HEAD _HEAD;//头信息，可以是String reportHead 对象
+    private List<_REPORT_DLIST> _DLIST;//jsonD数据访问列表
+    private _REPORT_REPORT [] _REPORT;//报告主题信息，可以是String reportHead 对象
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public int getOwnerType() {
         return ownerType;
     }
     public void setOwnerType(int ownerType) {
@@ -47,8 +45,14 @@ public class Report implements Serializable {
     public String getReportType() {
         return reportType;
     }
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
+    }
     public String getReportName() {
         return reportName;
+    }
+    public void setReportName(String reportName) {
+        this.reportName = reportName;
     }
     public ReportFile getReportFile() {
         return reportFile;
@@ -59,38 +63,32 @@ public class Report implements Serializable {
     public String getDesc() {
         return desc;
     }
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
     public Timestamp getCTime() {
         return CTime;
     }
-
-	public List<String> get_DLIST() {
-		return _DLIST;
-	}
-	public void set_DLIST(List<String> _DLIST) {
-		this._DLIST = _DLIST;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setReportType(String reportType) {
-		this.reportType = reportType;
-	}
-	public void setReportName(String reportName) {
-		this.reportName = reportName;
-	}
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
-	public void setCTime(Timestamp cTime) {
-		CTime = cTime;
-	}
-	public void set_HEAD(Object _HEAD) {
-		this._HEAD = _HEAD;
-	}
-	public String getId() {
-        return this.id;
+    public void setCTime(Timestamp cTime) {
+        CTime = cTime;
     }
-    public Object get_HEAD() {
+    public _REPORT_HEAD get_HEAD() {
         return _HEAD;
     }
+    public void set_HEAD(_REPORT_HEAD _HEAD) {
+        this._HEAD = _HEAD;
+    }
+    public List<_REPORT_DLIST> get_DLIST() {
+        return _DLIST;
+    }
+    public void set_DLIST(List<_REPORT_DLIST> _DLIST) {
+        this._DLIST = _DLIST;
+    }
+    public _REPORT_REPORT[] get_REPORT() {
+        return _REPORT;
+    }
+    public void set_REPORT(_REPORT_REPORT[] _REPORT) {
+        this._REPORT = _REPORT;
+    }
+    
 }
