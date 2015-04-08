@@ -182,7 +182,8 @@ public class AnalKey implements AnalTable {
         _DATA_Map.putAll(_dataElement.toJsonMap());
         _dataElement.setAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
-        _DATA_Map.put("_keyAnals", convertToList(ret));
+        //_DATA_Map.put("_keyAnals", convertToList(ret));
+        _DATA_Map.put("_analResults", convertToList(ret));
         //设置JsonD
         analKeyJsonD.set_HEAD(jsonDHead);
         analKeyJsonD.set_DATA(_DATA_Map);
@@ -192,7 +193,7 @@ public class AnalKey implements AnalTable {
         arfSeed.setSubType(mm.getId());
         arfSeed.setObjType("table");
         arfSeed.setObjId(tableName);
-        arfSeed.setFileNameSeed("METADATA"+File.separator+"key"+File.separator+"md_"+mm.getId());
+        arfSeed.setFileNameSeed("METADATA"+File.separator+"key"+File.separator+"md_"+mm.getId()+new Date().getTime());
         arfSeed.setJsonDCode(SDConstants.JDC_ANAL_KEY);
 
         AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analKeyJsonD, arfSeed);

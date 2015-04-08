@@ -72,7 +72,7 @@ public class AnalDict implements AnalMetadata {
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
         JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
-        _DATA_Map.put("_dictAnals", convertToList(ret));
+        _DATA_Map.put("_analResults", convertToList(ret));
         //设置JsonD
         analDictJsonD.set_HEAD(jsonDHead);
         analDictJsonD.set_DATA(_DATA_Map);
@@ -82,7 +82,7 @@ public class AnalDict implements AnalMetadata {
         arfSeed.setSubType(mm.getId()); //下级分类
         arfSeed.setObjType("metadata"); //所分析对象
         arfSeed.setObjId("["+mm.getTitleName()+"("+mm.getId()+")]"); //所分析对象的ID
-        arfSeed.setFileNameSeed("METADATA"+File.separator+"dict"+File.separator+"md_"+mm.getId());
+        arfSeed.setFileNameSeed("METADATA"+File.separator+"dict"+File.separator+"md_"+mm.getId()+new Date().getTime());
         arfSeed.setJsonDCode(SDConstants.JDC_ANAL_DICT);
 
         AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analDictJsonD, arfSeed);
