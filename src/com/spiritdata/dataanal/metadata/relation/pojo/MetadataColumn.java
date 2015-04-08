@@ -9,7 +9,7 @@ import com.spiritdata.dataanal.exceptionC.Dtal0002CException;
 
 /**
  * 元数据列描述
- * 对应持久化中数据库的表为SD_MD_TABMODULE
+ * 对应持久化中数据库的表为SD_MD_COLUMN
  * @author wh, mht
  */
 public class MetadataColumn extends BaseObject {
