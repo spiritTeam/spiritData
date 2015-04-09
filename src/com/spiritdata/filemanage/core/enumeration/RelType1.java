@@ -22,4 +22,11 @@ public enum RelType1 {
         if (this==INVERSE) return POSITIVE;
         return EQUAL;
     }
+
+    public static RelType1 getRelType1(int value) {
+        if (value==1) return POSITIVE;
+        if (value==-1) return INVERSE;
+        if (value==0) return EQUAL;
+        return null;
+    }
 }

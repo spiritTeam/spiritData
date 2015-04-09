@@ -15,9 +15,7 @@ import com.spiritdata.dataanal.dictionary.model.DictDetail;
 import com.spiritdata.dataanal.dictionary.model.DictMaster;
 import com.spiritdata.dataanal.dictionary.model.DictModel;
 import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
-import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
-import com.spiritdata.framework.FConstants;
-import com.spiritdata.framework.UGA.UgaUser;
+import com.spiritdata.dataanal.exceptionC.Dtal0301CException;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.core.web.SessionLoader;
 import com.spiritdata.framework.util.TreeUtils;
@@ -93,70 +91,64 @@ class Thread_LoadData implements Runnable {
             //字典组列表
             _od.dmList = dictService.getDictMListByOwnerId(owner.getOwnerId());
             //字典项列表，按照层级结果，按照排序的广度遍历树
-            if (_od.dmList!=null&&_od.dmList.size()>0) _od.ddList = dictService.getDictDListByOwnerId(ownerId);
+            if (_od.dmList!=null&&_od.dmList.size()>0) _od.ddList = dictService.getDictDListByOwnerId(owner.getOwnerId());
 
             //组装dictModelMap
             if (_od.dmList!=null&&_od.dmList.size()>0) {
-                List<DictDetail> templ = new ArrayList<DictDetail>();
-                String tempDmId = "";
+                //Map主对应关系
                 for (DictMaster dm: _od.dmList) {
-                    if (dm.getOwnerType()==ownerType&&ownerId.equals(dm.getOwnerId())) { //过滤掉不可用的数据
+                    if (dm.getOwner().equals(owner)) { //过滤掉不可用的数据
                         _od.dictModelMap.put(dm.getId(), new DictModel(dm));
                     }
                 }
+                //构造单独的字典树
+                List<DictDetail> templ = new ArrayList<DictDetail>();
+                String tempDmId = "";
                 if (_od.ddList!=null&&_od.ddList.size()>0) {
                     for (DictDetail dd: _od.ddList) {
-                        if (tempDmId.equals(dd.getMid())) templ.add(dd);
+                        if (tempDmId.equals(dd.getMId())) templ.add(dd);
                         else {
-                            if (templ.size()>0) {//组成树
-                                DictModel dModel = _od.dictModelMap.get(templ.get(0).getMid());
-                                if (dModel!=null) {
-                                    DictDetail _t = new DictDetail();
-                                    _t.setId(dModel.getId());
-                                    _t.setMid(dModel.getId());
-                                    _t.setNodeName(dModel.getDmName());
-                                    _t.setIsValidate(1);
-                                    _t.setParentId(null);
-                                    _t.setOrder(1);
-                                    _t.setBCode("root");
-                                    TreeNode<DictDetail> root = new TreeNode<DictDetail>(_t);
-
-                                    Map<String, Object> m = TreeUtils.convertFromList(templ);
-                                    root.setChildren((List<TreeNode<DictDetail>>)m.get("forest"));
-                                    dModel.dictTree = root;
-                                    //暂不处理错误记录
-                                }
-                            }
+                            buildDictTree(templ, _od);
                             templ.clear();
                             templ.add(dd);
-                            tempDmId=dd.getMid();
+                            tempDmId=dd.getMId();
                         }
                     }
-                    if (templ.size()>0) {//组成树
-                        DictModel dModel = _od.dictModelMap.get(templ.get(0).getMid());
-                        if (dModel!=null) {
-                            DictDetail _t = new DictDetail();
-                            _t.setId(dModel.getId());
-                            _t.setMid(dModel.getId());
-                            _t.setNodeName(dModel.getDmName());
-                            _t.setIsValidate(1);
-                            _t.setParentId(null);
-                            _t.setOrder(1);
-                            _t.setBCode("root");
-                            TreeNode<DictDetail> root = new TreeNode<DictDetail>(_t);
-
-                            Map<String, Object> m = TreeUtils.convertFromList(templ);
-                            root.setChildren((List<TreeNode<DictDetail>>)m.get("forest"));
-                            dModel.dictTree = root;
-                            //暂不处理错误记录
-                        }
-                    }
+                    //最后一个记录的后处理
+                    buildDictTree(templ, _od);
                 }
             }
         } catch(Exception e) {
-            throw new Dtal0203CException("加载Session中的字典信息", e);
+            throw new Dtal0301CException("加载Session中的字典信息", e);
         } finally {
             _od.setLoadSuccess();
+        }
+    }
+
+    /**
+     * 以ddList为数据源(同一字典组的所有字典项的列表)，构造所有者字典数据中的dictModelMap中的dictModel对象中的dictTree
+     * @param ddList 同一字典组的所有字典项的列表
+     * @param od 所有者字典数据
+     */
+    private void buildDictTree(List<DictDetail> ddList, _OwnerDictionary od) {
+        if (ddList.size()>0) {//组成树
+            DictModel dModel = od.dictModelMap.get(ddList.get(0).getMId());
+            if (dModel!=null) {
+                DictDetail _t = new DictDetail();
+                _t.setId(dModel.getId());
+                _t.setMId(dModel.getId());
+                _t.setNodeName(dModel.getDmName());
+                _t.setIsValidate(1);
+                _t.setParentId(null);
+                _t.setOrder(1);
+                _t.setBCode("root");
+                TreeNode<DictDetail> root = new TreeNode<DictDetail>(_t);
+
+                Map<String, Object> m = TreeUtils.convertFromList(ddList);
+                root.setChildren((List<TreeNode<DictDetail>>)m.get("forest"));
+                dModel.dictTree = root;
+                //暂不处理错误记录
+            }
         }
     }
 }

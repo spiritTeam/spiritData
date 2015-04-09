@@ -20,4 +20,12 @@ public enum FileCategoryType1 {
     private FileCategoryType1(String v) {
         this.value =v;
     }
+
+    public static FileCategoryType1 getFileCategoryType1(String value) {
+        if (value.equals("IMP")) return IMP;
+        if (value.equals("LOG")) return LOG;
+        if (value.equals("ANAL")) return ANAL;
+        if (value.equals("REPORT")) return REPORT;
+        return null;
+    }
 }

@@ -1,5 +1,6 @@
 package com.spiritdata.dataanal.dictionary.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,26 +36,32 @@ public class DictService {
 
     //以下为字典组相关操作
     /**
-     * 获得字典组列表
-     * @param paramDm 字典组对象，此对象中的值将是条件，这些条件是And的关系
-     * @return 字典组列表
-     * @throws Exception
+     * 获得字典组逻辑对象列表
+     * @param paramDm 字典组持久化对象，此对象中的值将是条件，这些条件是And的关系
+     * @return 字典组逻辑对象列表
      */
-    public List<DictMasterPo> getDictMList(DictMasterPo paramDm) {
+    public List<DictMaster> getDictMList(DictMasterPo paramDm) {
         try {
-            return dictMDao.queryForList(paramDm.toHashMapAsBean());
+            List<DictMasterPo> _l = dictMDao.queryForList(paramDm.toHashMapAsBean());
+            if (_l==null||_l.size()==0) return null;
+            List<DictMaster> ret = new ArrayList<DictMaster>();
+            for (DictMasterPo dmp: _l) {
+                DictMaster dm = new DictMaster();
+                dm.buildFromPo(dmp);
+                ret.add(dm);
+            }
+            return ret.size()==0?null:ret;
         } catch(Exception e) {
             throw new Dtal0301CException(e);
         }
     }
 
     /**
-     * 根据所有者Id获得字典组列表
+     * 根据所有者Id获得字典组逻辑对象列表
      * @param ownerId 所有者Id
-     * @return 字典组列表
-     * @throws Exception
+     * @return 字典组逻辑对象列表
      */
-    public List<DictMasterPo> getDictMListByOwnerId(String ownerId) {
+    public List<DictMaster> getDictMListByOwnerId(String ownerId) {
         DictMasterPo paramDm = new DictMasterPo();
         paramDm.setOwnerId(ownerId);
         return this.getDictMList(paramDm);
@@ -62,12 +69,18 @@ public class DictService {
 
     /**
      * 新增字典组信息
-     * @param dm 字典组信息
-     * @throws Exception
+     * @param dm 字典组逻辑对象信息
      */
     public void addDictMaster(DictMaster dm) {
         try {
-            dictMDao.insert(dm);
+            DictMasterPo newDmp = dm.convert2Po();
+            //以下两个设置其实是没有必要的，在myBatis的定义中insert时就不涉及这两个字段，这两个字段是在mysql的表定义中定义，会自动填入
+            //之所以加入，是为了提醒读代码的人员注意时间的设置，同时，若更换了orm的框架，或数据表的定义，这个设置可能就有用了
+            /*
+            newDmp.setCTime(new Timestamp(new Date().getTime()));
+            newDmp.setLmTime(new Timestamp(new Date().getTime()));
+            */
+            dictMDao.insert(newDmp);
         } catch(Exception e) {
             throw new Dtal0301CException(e);
         }
@@ -75,30 +88,44 @@ public class DictService {
 
     //以下为字典项相关操作
     /**
-     * 获得字典项列表
-     * @param paramDd 字典项对象，此对象中的值将是条件，这些条件是And的关系
-     * @return 字典项列表
-     * @throws Exception
+     * 获得字典项逻辑对象列表
+     * @param paramDd 字典项持久化对象，此对象中的值将是条件，这些条件是And的关系
+     * @return 字典项逻辑对象列表
      */
-    public List<DictDetailPo> getDictDList(DictDetail paramDd) {
+    public List<DictDetail> getDictDList(DictDetailPo paramDd) {
         try {
-            return dictDDao.queryForList(paramDd.toHashMapAsBean());
+            List<DictDetailPo> _l = dictDDao.queryForList(paramDd.toHashMapAsBean());
+            if (_l==null||_l.size()==0) return null;
+            List<DictDetail> ret = new ArrayList<DictDetail>();
+            for (DictDetailPo ddp: _l) {
+                DictDetail dd = new DictDetail();
+                dd.buildFromPo(ddp);
+                ret.add(dd);
+            }
+            return ret.size()==0?null:ret;
         } catch(Exception e) {
             throw new Dtal0301CException(e);
         }
     }
 
     /**
-     * 根据所有者Id获得字典项列表
+     * 根据所有者Id获得字典项逻辑对象列表
      * @param ownerId 所有者Id
-     * @return 字典项列表
-     * @throws Exception
+     * @return 字典项逻辑对象列表
      */
-    public List<DictDetailPo> getDictDListByOwnerId(String ownerId) {
+    public List<DictDetail> getDictDListByOwnerId(String ownerId) {
         try {
             Map<String, String> param = new HashMap<String, String>();
             param.put("ownerId", ownerId);
-            return dictDDao.queryForList("getListByOwnerId", param);
+            List<DictDetailPo> _l = dictDDao.queryForList("getListByOwnerId", param);
+            if (_l==null||_l.size()==0) return null;
+            List<DictDetail> ret = new ArrayList<DictDetail>();
+            for (DictDetailPo ddp: _l) {
+                DictDetail dd = new DictDetail();
+                dd.buildFromPo(ddp);
+                ret.add(dd);
+            }
+            return ret.size()==0?null:ret;
         } catch(Exception e) {
             throw new Dtal0301CException(e);
         }
@@ -107,11 +134,17 @@ public class DictService {
     /**
      * 新增字典项
      * @param dd 字典项信息
-     * @throws Exception
      */
     public void addDictDetail(DictDetail dd) {
         try {
-            dictDDao.insert(dd);
+            DictDetailPo newDdp = dd.convert2Po();
+            //以下两个设置其实是没有必要的，在myBatis的定义中insert时就不涉及这两个字段，这两个字段是在mysql的表定义中定义，会自动填入
+            //之所以加入，是为了提醒读代码的人员注意时间的设置，同时，若更换了orm的框架，或数据表的定义，这个设置可能就有用了
+            /*
+            newDdp.setCTime(new Timestamp(new Date().getTime()));
+            newDdp.setLmTime(new Timestamp(new Date().getTime()));
+            */
+            dictDDao.insert(newDdp);
         } catch(Exception e) {
             throw new Dtal0301CException(e);
         }
