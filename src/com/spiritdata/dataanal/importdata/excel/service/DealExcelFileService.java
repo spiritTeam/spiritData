@@ -126,12 +126,13 @@ public class DealExcelFileService {
         FileInputStream fis = null;
         try {
             //获得处理excel的workbook
+        	logger.info("start process excel file ...");
             try {
                 fis = new FileInputStream(excelFile);
                 book = new HSSFWorkbook(fis);
                 excelType = ExcelConstants.EXECL2003_FLAG;
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
             if (book==null) {
                 try {
@@ -154,6 +155,7 @@ public class DealExcelFileService {
             SheetInfo si;
 
             //1-分析文件，得到元数据信息，并把分析结果存入si
+            logger.info("start analysis meta data info ...");
             List<PoiParseUtils> excelParseList = new ArrayList<PoiParseUtils>();
 
 //          Map<SheetInfo, Object> sheetLogMap = new HashMap<SheetInfo, Object>();
@@ -210,6 +212,7 @@ public class DealExcelFileService {
             }
 */
             //2-获得元数据后，数据存储及语义分析功能
+            logger.info("start data save and semantic analysis ...");
             if (excelParseList.size()>0) {
                 //准备缓存或Session
                 _OwnerMetadata _om = mdSessionService.loadcheckData(session);
@@ -223,7 +226,9 @@ public class DealExcelFileService {
                     parseExcel = excelParseList.get(i);
                     si = parseExcel.getSheetInfo();
                     if (si.getStiList()==null||si.getStiList().size()==0) continue;
-                    for (SheetTableInfo sti: si.getStiList()) {
+//                    for (SheetTableInfo sti: si.getStiList()) {
+                    for(int j=0;j<si.getStiList().size();j++){
+                    	SheetTableInfo sti = si.getStiList().get(j);
                         //准备报告数据:1:begin
                         Map<SheetTableInfo, Map<String, Object>> m = reportParam.get(si);
                         if (m==null) {
@@ -286,11 +291,15 @@ public class DealExcelFileService {
                                 mdBasisServcie.updateMdM(uMM);
                             }
                             //2-储存临时表
+                            String logPreStr = " (sheet:"+i+" table:"+j+")";
+                            logger.info(logPreStr + " start save data to tmpTable ...");
                             saveDataToTempTab(sti, sysMd, tabMapOrgAry[1].getTableName(), parseExcel);
                             //3-临时表指标分析
+                            logger.info(logPreStr + " start analysis quota table ...");
                             mdQutotaService.caculateQuota(tabMapOrgAry[1]); //分析临时表指标
                             //4-主键分析
                             //4.1-临时表主键分析
+                            logger.info(logPreStr + " start analysis primary key ...");
                             Map<String, Object> keyMap = analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
@@ -305,16 +314,23 @@ public class DealExcelFileService {
                                 fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的主键");
                                 fmService.saveFileRelation(fr);//文件关联存储
                                 //4.3-主键分析结果应用
-                                mdKeyService.adjustMdKey(sysMd); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
+                                try{
+                                	mdKeyService.adjustMdKey(sysMd); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
+                                }catch(Exception ex){
+                                	ex.printStackTrace();
+                                }
                             }
                             //5-存储积累表
+                            logger.info(logPreStr + " start save accumulate table ...");
                             saveDataToAccumulationTab(sti, sysMd, parseExcel);
                             //6-积累表指标分析
+                            logger.info(logPreStr + " start analysis accumulate table quota ...");
                             mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析积累表指标
                             //7-元数据语义分析
                             // TODO 分析元数据语义，目前想到——字典项/身份证/经纬度/URL分析/mail地址分析/姓名分析；另外（列之间关系，如数值的比例等）
                             //7.1-分析字典
                             //7.1.1-积累表字典分析
+                            logger.info(logPreStr + " start analysis dict key ...");
                             keyMap = analDict.scanMetadata(sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
@@ -332,10 +348,12 @@ public class DealExcelFileService {
                             }
                             //7.1.3-字典分析结果调整
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
+                            logger.info(logPreStr + " start adjust dict key ...");
                             mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
                             
                             //7.2-分析坐标列
                             //7.2.1-积累表坐标列分析
+                            logger.info(logPreStr + " start analysis coord key ...");
                             Map<String, Object> coordMap = analCoord.scanMetadata(sysMd, null);
                         } catch(Exception e) {
                             // TODO 记录日志 
@@ -345,6 +363,7 @@ public class DealExcelFileService {
                 }
                 //8-生成report，这个也可以不在这里处理，而通过任务启动
                 //这个报告是对整个excel文件的，而不是对文件中的某一个表或Seet的
+                logger.info("start genrate report ...");
                 Map<String, Object> param = new HashMap<String, Object>();
                 Map<String, Object> preTreadParam = new HashMap<String, Object>();
                 preTreadParam.put("reportParam", reportParam);

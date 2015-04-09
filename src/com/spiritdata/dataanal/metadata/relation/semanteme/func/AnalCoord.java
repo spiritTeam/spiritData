@@ -46,7 +46,7 @@ public class AnalCoord implements AnalMetadata {
 	 * 相似度值分析结果通过线值
 	 * 当相似度值高于通过线值时，才会写入元数据列分析结果文件中
 	 */
-	public static final float ANAL_COORD_SIMILAR_PASS_VAL = 0.8f;
+	public static final float ANAL_COORD_SIMILAR_PASS_VAL = 0.4f;
 	
 	@Resource
 	private MdQuotaService mdQuotaService; //元数据指标列读取服务
@@ -54,9 +54,9 @@ public class AnalCoord implements AnalMetadata {
     private AanlResultFileService arfService; //分析结果文件存取服务
 
 	// 中国范围的经度判断参数JSON，可以考虑从配置文件中读取,放到param里传到此类进行分析!!! 所有的列判断规则JSON串最好是统一放在一个列规则判断配置文件中
-	public static final String BAIDU_CHINA_COORDX = "{min:73.508097,max:135.083849,weightSimilarRangeVal:0.5,keywords:'x,lon,longitude,jd,jingdu,经度',weightSimilarKeyVal:0.5,weightExcludeKeyVal:0}";
+	public static final String BAIDU_CHINA_COORDX = "{\"min\":73.508097,\"max\":135.083849,\"weightSimilarRangeVal\":0.5,\"keywords\":\"x,lon,lng,long,longitude,jd,jingdu,经度\",\"weightSimilarKeyVal\":0.5,\"weightExcludeKeyVal\":0}";
 	// 中国范围的纬度判断参数JSON                                                                           
-	public static final String BAIDU_CHINA_COORDY = "{min:18.164892,max:53.569653,weightSimilarRangeVal:0.5,keywords:'y,lat,latitude,wd,weidu,维度',weightSimilarKeyVal:0.5,weightExcludeKeyVal:0}";
+	public static final String BAIDU_CHINA_COORDY = "{\"min\":18.164892,\"max\":53.569653,\"weightSimilarRangeVal\":0.5,\"keywords\":\"y,lat,latitude,wd,weidu,维度\",\"weightSimilarKeyVal\":0.5,\"weightExcludeKeyVal\":0}";
 
 	// X坐标关键字
 //	public static final String COORD_TYPE_X = "X";
@@ -67,10 +67,10 @@ public class AnalCoord implements AnalMetadata {
 	// Y坐标列参数判断BEAN
 	private CoordRegularBean coordYBean;
 
-	// 暂存的X列名值，可能分析出来的有多个X值列，需要再做进一步的过滤筛选
-	private List<SimilarResultBean> colXList = new ArrayList<SimilarResultBean>();
-	// 暂存的Y列名值，可能分析出来的有多个Y值列，需要再做进一步的过滤筛选
-	private List<SimilarResultBean> colYList = new ArrayList<SimilarResultBean>();
+//	// 暂存的X列名值，可能分析出来的有多个X值列，需要再做进一步的过滤筛选
+//	private List<SimilarResultBean> colXList;
+//	// 暂存的Y列名值，可能分析出来的有多个Y值列，需要再做进一步的过滤筛选
+//	private List<SimilarResultBean> colYList;
 
 	@Override
 	public Map<String, Object> scanMetadata(MetadataModel mm,
@@ -92,20 +92,24 @@ public class AnalCoord implements AnalMetadata {
 			return null;
 		}
 
+		List<SimilarResultBean> colXList = new ArrayList<SimilarResultBean>();
+		List<SimilarResultBean> colYList = new ArrayList<SimilarResultBean>();		
 		//对每一列进行判断是否为坐标列
 		for (QuotaColumn qc : qt.getColQuotaList()) {
 			if (qc.getColumn().getColumnType().equals("Double")) {
 				// 新生成对X相似度判断结果BEAN
 				SimilarResultBean srbx = new SimilarResultBean();
 				srbx.setColQuota(qc);
-				this.SimilarProcess(qc, coordXBean, srbx);
+				srbx.setCoordReg(this.coordXBean);
+				this.SimilarProcess(qc, srbx);
 				//对坐标列分析结果按照相似度值进行排序后插入到列表中 
 				this.addASimilarResultBean(colXList, srbx);
 				
 				//新生成对Y相似度判断结果BEAN
 				SimilarResultBean srby = new SimilarResultBean();
 				srby.setColQuota(qc);
-				this.SimilarProcess(qc, coordYBean, srby);
+				srby.setCoordReg(this.coordYBean);
+				this.SimilarProcess(qc, srby);
 				this.addASimilarResultBean(colYList, srby);
 			}
 		}
@@ -125,7 +129,18 @@ public class AnalCoord implements AnalMetadata {
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
         JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
-        _DATA_Map.put("_analResults", colsListToJsonMap());
+
+        //读取X列分析列结果 
+        Map<String,List<Map<String,Object>>> colJsonMap = new LinkedHashMap<String,List<Map<String,Object>>>();
+        List<SimilarResultBean> colXPassList = filterPassValcolList(colXList,ANAL_COORD_SIMILAR_PASS_VAL);
+        List<Map<String,Object>> colXJsonList = colList2JsonStr(colXPassList);
+        colJsonMap.put("xCols", colXJsonList);
+        //读取Y列分析结果
+        List<SimilarResultBean> colYPassList = filterPassValcolList(colYList,ANAL_COORD_SIMILAR_PASS_VAL);
+        List<Map<String,Object>> colYJsonList = colList2JsonStr(colYPassList);
+        colJsonMap.put("yCols", colYJsonList);
+
+        _DATA_Map.put("_analResults", colJsonMap);
         //设置JsonD
         analCoordJsonD.set_HEAD(jsonDHead);
         analCoordJsonD.set_DATA(_DATA_Map);
@@ -135,7 +150,7 @@ public class AnalCoord implements AnalMetadata {
         arfSeed.setSubType(mm.getId()); //下级分类
         arfSeed.setObjType("metadata"); //所分析对象
         arfSeed.setObjId("["+mm.getTitleName()+"("+mm.getId()+")]"); //所分析对象的ID
-        arfSeed.setFileNameSeed("METADATA"+File.separator+"coord"+File.separator+"md_"+mm.getId()+new Date().getTime());
+        arfSeed.setFileNameSeed("METADATA"+File.separator+"coord"+File.separator+"md_"+mm.getId()+"_"+new Date().getTime());
         arfSeed.setJsonDCode(SDConstants.JDC_ANAL_COORD);
 
         AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analCoordJsonD, arfSeed);
@@ -156,12 +171,12 @@ public class AnalCoord implements AnalMetadata {
 	 * @param srb
 	 *            相似度判断结果BEAN
 	 */
-	private void SimilarProcess(QuotaColumn qc, CoordRegularBean coordReg,
-			SimilarResultBean similarResult) {
+	private void SimilarProcess(QuotaColumn qc,	SimilarResultBean similarResult) {
 		// 判断最大、最小值
 		double min = this.parseDouble(qc.getMin());
 		double max = this.parseDouble(qc.getMax());
 		float similarRangeVal = 0.0f;
+		CoordRegularBean coordReg = similarResult.getCoordReg();
 		if (min != Double.MIN_NORMAL && max != Double.MIN_NORMAL) { //如果最大、最小值范围不为空
 			similarRangeVal = coordReg.similarRange(min, max);
 		}
@@ -201,6 +216,7 @@ public class AnalCoord implements AnalMetadata {
 	 * 初始化坐标列判断BEAN，将参数JSON字符串转换为COORDBEAN
 	 */
 	private void initCoordBean() {
+//		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 		if (this.coordXBean == null) {
 			this.coordXBean = (CoordRegularBean) JsonUtils.jsonToObj(
 					BAIDU_CHINA_COORDX, CoordRegularBean.class);
@@ -210,6 +226,11 @@ public class AnalCoord implements AnalMetadata {
 					BAIDU_CHINA_COORDY, CoordRegularBean.class);
 		}
 	}
+	
+//	public static void main(String[] args){
+//		AnalCoord ac = new AnalCoord();
+//		ac.initCoordBean();
+//	}
 
 	/**
 	 * 解析数值型字符串
@@ -234,20 +255,20 @@ public class AnalCoord implements AnalMetadata {
 	 * @param coordAnalResultMap
 	 * @return
 	 */
-    private Map<String,List<Map<String,Object>>> colsListToJsonMap() {        
-        Map<String,List<Map<String,Object>>> ret = new LinkedHashMap<String,List<Map<String,Object>>>();
-        
-        //读取X列分析列结果 
-        List<SimilarResultBean> colXPassList = filterPassValcolList(this.colXList,ANAL_COORD_SIMILAR_PASS_VAL);
-        List<Map<String,Object>> colXJsonList = colList2JsonStr(colXPassList);
-        ret.put("xCols", colXJsonList);
-        //读取Y列分析结果
-        List<SimilarResultBean> colYPassList = filterPassValcolList(this.colYList,ANAL_COORD_SIMILAR_PASS_VAL);
-        List<Map<String,Object>> colYJsonList = colList2JsonStr(colYPassList);
-        ret.put("yCols", colYJsonList);
-
-        return ret;
-    }
+//    private Map<String,List<Map<String,Object>>> colsListToJsonMap() {        
+//        Map<String,List<Map<String,Object>>> ret = new LinkedHashMap<String,List<Map<String,Object>>>();
+//        
+//        //读取X列分析列结果 
+//        List<SimilarResultBean> colXPassList = filterPassValcolList(colXList,ANAL_COORD_SIMILAR_PASS_VAL);
+//        List<Map<String,Object>> colXJsonList = colList2JsonStr(colXPassList);
+//        ret.put("xCols", colXJsonList);
+//        //读取Y列分析结果
+//        List<SimilarResultBean> colYPassList = filterPassValcolList(colYList,ANAL_COORD_SIMILAR_PASS_VAL);
+//        List<Map<String,Object>> colYJsonList = colList2JsonStr(colYPassList);
+//        ret.put("yCols", colYJsonList);
+//
+//        return ret;
+//    }
     
     /**
      * 根据通过值,过滤出相似度值>通过值的列信息
@@ -276,12 +297,14 @@ public class AnalCoord implements AnalMetadata {
     private List<Map<String,Object>> colList2JsonStr(List<SimilarResultBean> colList){
     	List<Map<String,Object>> retList = new ArrayList<Map<String,Object>>();
     	for(SimilarResultBean asrb : colList){
-    		Map<String, Object> oneMap = new HashMap<String, Object>();
+    		Map<String, Object> oneMap = new LinkedHashMap<String, Object>();
     		oneMap.put("colName", asrb.getColQuota().getColumn().getTitleName());
-    		oneMap.put("similarSortVal", asrb.getSimilarSortVal());
-    		oneMap.put("similarRangeVal", asrb.getSimilarRangeVal());
-    		oneMap.put("similarKeyVal", asrb.getSimilarKeyVal());
-    		oneMap.put("excludeKeyVal", asrb.getExcludeKeyVal());
+    		Map<String, Object> oneSilimarValMap = new LinkedHashMap<String, Object>();
+    		oneSilimarValMap.put("similarSortVal", asrb.getSimilarSortVal());
+    		oneSilimarValMap.put("similarRangeVal", asrb.getSimilarRangeVal());
+    		oneSilimarValMap.put("similarKeyVal", asrb.getSimilarKeyVal());
+    		oneSilimarValMap.put("excludeKeyVal", asrb.getExcludeKeyVal());
+    		oneMap.put("similarVals", oneSilimarValMap);
     		retList.add(oneMap);
     	}
     	
