@@ -476,9 +476,9 @@ public class DealExcelFileService {
                                     _infoDType = (Integer)kv.get("dType");
                                     if (_infoDType==_mmDType) v = kv.get("value");
                                     else if (_mmDType==ExcelConstants.DATA_TYPE_DOUBLE) {
-                                        if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
+                                        if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_LONG||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
                                             v = kv.get("value");
-                                        }
+                                        } 
                                     }
                                 }
                                 if (_mmDType==ExcelConstants.DATA_TYPE_STRING&&v==null) {
@@ -635,7 +635,7 @@ public class DealExcelFileService {
                                     _infoDType = (Integer)kv.get("dType");
                                     if (_infoDType==_mmDType) v = kv.get("value");
                                     else if (_mmDType==ExcelConstants.DATA_TYPE_DOUBLE) {
-                                        if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
+                                        if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_LONG||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
                                             v = kv.get("value");
                                         }
                                     }
