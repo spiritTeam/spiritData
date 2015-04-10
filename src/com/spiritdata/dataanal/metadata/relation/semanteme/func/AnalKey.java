@@ -71,7 +71,7 @@ public class AnalKey implements AnalTable {
             if (one==(1-qc.getCompressRate())&&qc.getNullCount()<2) {
                 if (cType.equalsIgnoreCase("String")) {
                     ret.put(cName, one);
-                } else if (cType.equalsIgnoreCase("Integer")) {
+                } else if (cType.equalsIgnoreCase("Integer") || cType.equalsIgnoreCase("Long")) {
                     ret.put(cName, one);
                 } else if (cType.equalsIgnoreCase("Double")) {
                     ret.put(cName, new Float(one*0.5));
