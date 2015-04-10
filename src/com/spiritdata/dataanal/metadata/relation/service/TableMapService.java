@@ -63,7 +63,9 @@ public class TableMapService {
         for (MetadataColumn mc : mm.getColumnList()) {
             columnStr += ",";
             if (StringUtils.isNullOrEmptyOrSpace(mc.getColumnName())) mc.setColumnName("col_"+(_index++));
-            if (mc.getColumnType().equalsIgnoreCase("String")) columnStr += mc.getColumnName()+" varchar(768)";//mysqlkey不可超过768，先这样
+            //MySQL的varchar主键只支持不超过768个字节，或者 768/2=384个双字节，或者 768/3=256个三字节的字段。 而 GBK是双字节的，UTF-8是三字节的
+            if (mc.getColumnType().equalsIgnoreCase("String")) columnStr += mc.getColumnName()+" varchar(255)";
+            else if(mc.getColumnType().equalsIgnoreCase("Long"))columnStr += mc.getColumnName()+" BIGINT"; //将LONG转换成MYSQL的BIGINT型
             else columnStr += mc.getColumnName()+" "+mc.getColumnType();
             if (!StringUtils.isNullOrEmptyOrSpace(mc.getTitleName())) columnStr += " COMMENT '"+mc.getTitleName()+"'";
             if (mc.isPk()) pks.add(mc);
