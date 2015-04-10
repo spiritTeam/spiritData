@@ -111,7 +111,7 @@ public class MdKeyService {
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
             try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
-    }
+    } 
 
     private boolean needAnalKey(MetadataModel mm) {
         boolean needAnalKey = false;//是否需要分析主键
