@@ -231,6 +231,7 @@ public class FileCategory implements Serializable, ModelSwapPo {
      * 把当前对象转换为Po对象，为数据库操作做准备
      * @return 文件分类的Po对象
      */
+    @Override
     public FileCategoryPo convert2Po() {
         FileCategoryPo ret = new FileCategoryPo();
         //id处理，没有id，自动生成一个
@@ -249,12 +250,33 @@ public class FileCategory implements Serializable, ModelSwapPo {
         return ret;
     }
 
+    /**
+     * <p>从po得到模型对象，对于文件分类对象来说：
+     * <p>categoryFile属性（被分类文件），没有做处理，通过po中的FId是可以得到这个信息的，之所以没有处理，是要把这个功能留到Service中再处理。
+     * 这样做考虑如下：得到文件要读取数据库，慢！而在Service中，可能上下文已经得到了文件的信息，这样可能更快，而且不用从数据库获得两次(本方法中一次，Service中一次)。
+     * <p>同样理由，本模型对象中的三类文件关系列表也不在这里处理。(通过读取数据库相关信息，这三个列表也是能够得到的)
+     * <p>因此要注意：通过本方法构建的对象信息是不完整的。
+     */
     @Override
-    public FileCategory getFromPo(Object po) {
-        // TODO 此方法目前还用不上，先不实现
-        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑类！");
+    public void buildFromPo(Object po) {
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑对象！");
+        if (!(po instanceof FileCategoryPo)) throw new Plat0006CException("Po对象不是FileCategoryPo的实例，无法从此对象构建文件分类对象！");
         FileCategoryPo _po = (FileCategoryPo)po;
-        FileCategory ret = new FileCategory();
-        return ret;
+        this.id = _po.getId();
+        this.FType1 = FileCategoryType1.getFileCategoryType1(_po.getFType1());
+        this.FType2 = _po.getFType2();
+        this.FType3 = _po.getFType3();
+        this.extInfo = _po.getExtInfo();
+        this.CTime = _po.getCTime();
+    }
+
+    /**
+     * 通过文件分类po对象获得文件分类模型对象的所有信息，请参看:
+     * {@linkplain com.spiritdata.filemanage.core.model.FileCategory FileCategory}类中的buildFromPo方法
+     * @param po 文件分类持久化对象
+     */
+    public void buildFromPo_AllField(FileCategoryPo po) {
+        this.buildFromPo(po);
+        //TODO 读取数据库，获得相关的信息
     }
 }

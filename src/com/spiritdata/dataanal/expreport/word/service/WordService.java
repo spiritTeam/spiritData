@@ -97,7 +97,6 @@ public class WordService {
      */
     @SuppressWarnings("unchecked")
 	private void map2been(Map<String, Object> reportMap) throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InstantiationException {
-        
     	//1、 得到数据
         //_DLIST
         List<Map<String,Object>> reportDList = (List<Map<String, Object>>) reportMap.get(WordConstants.REPORT_DLIST);

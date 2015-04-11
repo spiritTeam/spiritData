@@ -111,7 +111,7 @@ public class MdKeyService {
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
             try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
-    }
+    } 
 
     private boolean needAnalKey(MetadataModel mm) {
         boolean needAnalKey = false;//是否需要分析主键
@@ -294,7 +294,7 @@ public class MdKeyService {
                 Map<String, Object> _temp = (Map<String, Object>)_data.get("_mdMId");
                 String tempStr = (String)_temp.get("value");
                 if (!tempStr.equals(mm.getId())) return null;
-                List<Map<String, Object>> l = (List<Map<String, Object>>)_data.get("_keyAnals");
+                List<Map<String, Object>> l = (List<Map<String, Object>>)_data.get("_analResults");
                 if (l!=null&&l.size()>0) {
                     ret = new HashMap<String, Double>();
                     for (Map<String, Object> elem: l) {

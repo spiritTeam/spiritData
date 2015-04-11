@@ -16,6 +16,7 @@ import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
+import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
 import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
 
 /**
@@ -127,7 +128,7 @@ public class FileInfo implements Serializable, ModelSwapPo {
      * @param file 文件
      */
     public void setFile(File file) {
-        if (file==null||!file.isFile()) throw new IllegalArgumentException("文件为空或是一个目录！");
+        if (file==null||!file.isFile()) throw new Flmg0001CException(new IllegalArgumentException("文件为空或是一个目录！"));
 
         this.file = file;
         this.setPath(FileNameUtils.getFilePath(file.getAbsolutePath()));
@@ -371,12 +372,39 @@ public class FileInfo implements Serializable, ModelSwapPo {
         return ret;
     }
 
+    /**
+     * <p>从po得到模型对象，对于文件信息对象来说：
+     * <p>fileCategoryList属性（文件分类列表），没有做处理，通过数据库检索可以得到这个属性，之所以没有处理，是要把这个功能留到Service中再处理。
+     * 这样做考虑如下：读取数据库，慢！而在Service中，可能上下文已经得到了文件的信息，这样可能更快，而且不用从数据库获得两次(本方法中一次，Service中一次)。
+     * <p>同样理由，本模型对象中的三类文件关系列表也不在这里处理。(通过读取数据库相关信息，这三个列表也是能够得到的)
+     * <p>因此要注意：通过本方法构建的对象信息是不完整的。
+     */
     @Override
-    public FileInfo getFromPo(Object po) {
-        // TODO 此方法目前还用不上，先不实现
-        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑类！");
+    public void buildFromPo(Object po) {
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑对象！");
+        if (!(po instanceof FileIndexPo)) throw new Plat0006CException("Po对象不是FileCategoryPo的实例，无法从此对象构建文件分类对象！");
         FileIndexPo _po = (FileIndexPo)po;
-        FileInfo ret = new FileInfo();
-        return ret;
+        this.id = _po.getId();
+        this.owner = new Owner(_po.getOwnerType(), _po.getOwnerId());
+        this.accessType = _po.getAccessType();
+        this.path = _po.getPath();
+        this.setFileName(_po.getFileName());
+        this.fileSize = _po.getFileSize();
+        this.CTime = _po.getCTime();
+        this.fcTime = _po.getFcTime();
+        this.flmTime = _po.getFlmTime();
+        //这里不判断文件是否存在
+        File f = new File(FileNameUtils.concatPath(this.path, this.fileName));
+        this.file = f;
+    }
+
+    /**
+     * 通过文件关系po对象获得文件信息的模型/概念对象的所有信息，请参看:
+     * {@linkplain com.spiritdata.filemanage.core.model.FileInfo FileInfo}类中的buildFromPo方法
+     * @param po 文件关系持久化对象
+     */
+    public void buildFromPo_AllField(FileIndexPo po) {
+        this.buildFromPo(po);
+        //TODO 读取数据库，获得相关的信息
     }
 }
