@@ -10,4 +10,6 @@ public class WordConstants {
     public final static String REPORT_DLIST = "_DLIST";
     //report _REPORT
     public final static String REPORT_REPORT = "_REPORT";
+    //report subSeg
+    public final static String REPORT_SUBSEG = "subSeg";
 }
