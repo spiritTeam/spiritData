@@ -63,7 +63,7 @@ public class TableMapService {
         for (MetadataColumn mc : mm.getColumnList()) {
             columnStr += ",";
             if (StringUtils.isNullOrEmptyOrSpace(mc.getColumnName())) mc.setColumnName("col_"+(_index++));
-            if (mc.getColumnType().equalsIgnoreCase("String")) columnStr += mc.getColumnName()+" varchar(768)";//mysqlkey不可超过768，先这样
+            if (mc.getColumnType().equalsIgnoreCase("String")) columnStr += mc.getColumnName()+" varchar(191)";//mysqlkey不可超过767，先这样
             else columnStr += mc.getColumnName()+" "+mc.getColumnType();
             if (!StringUtils.isNullOrEmptyOrSpace(mc.getTitleName())) columnStr += " COMMENT '"+mc.getTitleName()+"'";
             if (mc.isPk()) pks.add(mc);
