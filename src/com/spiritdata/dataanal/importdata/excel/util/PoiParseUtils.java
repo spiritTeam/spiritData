@@ -493,35 +493,41 @@ public class PoiParseUtils {
                     value = Integer.parseInt(sVal);
                     __dtype = ExcelConstants.DATA_TYPE_INTEGER;
                 } catch (Exception e) {
-                    //尝试转换为浮点
-                    try {
-                        value = Double.parseDouble(sVal);
-                        __dtype = ExcelConstants.DATA_TYPE_DOUBLE;
-                    } catch(Exception e1) {
-                        //尝试转换为日期
+                	//尝试转换为长整形
+                	try{
+                        value = Long.parseLong(sVal);
+                        __dtype = ExcelConstants.DATA_TYPE_LONG;                		
+                	}catch(Exception ex){
+                        //尝试转换为浮点
                         try {
-                            value = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss S", sVal);
-                        } catch(Exception e2) {}
-                        if (value==null) {
-                            try {
-                                value = DateUtils.getDateTime("yyyy年MM月dd日 HH:mm:ss S", sVal);
-                            } catch(Exception e2) {}
-                        }
-                        if (value==null) {
-                            try {
-                                value = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss", sVal);
-                            } catch(Exception e2) {}
-                        }
-                        if (value==null) {
+                            value = Double.parseDouble(sVal);
+                            __dtype = ExcelConstants.DATA_TYPE_DOUBLE;
+                        } catch(Exception e1) {
+                            //尝试转换为日期
                             try {
                                 value = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss S", sVal);
                             } catch(Exception e2) {}
-                        }
-                        //可能还有其他的模式
-                        if (value!=null) {
-                            __dtype = ExcelConstants.DATA_TYPE_DATE;
-                        }
-                    }
+                            if (value==null) {
+                                try {
+                                    value = DateUtils.getDateTime("yyyy年MM月dd日 HH:mm:ss S", sVal);
+                                } catch(Exception e2) {}
+                            }
+                            if (value==null) {
+                                try {
+                                    value = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss", sVal);
+                                } catch(Exception e2) {}
+                            }
+                            if (value==null) {
+                                try {
+                                    value = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss S", sVal);
+                                } catch(Exception e2) {}
+                            }
+                            //可能还有其他的模式
+                            if (value!=null) {
+                                __dtype = ExcelConstants.DATA_TYPE_DATE;
+                            }
+                        }                		
+                	}
                 }
             } else if (_dtype==0) { //数值
                 //尝试转换为日期
@@ -533,11 +539,21 @@ public class PoiParseUtils {
                     String _ts = _d.toString();
                     try {
                         if (_ts.indexOf('.')==-1) {
-                            value = Integer.parseInt(_ts);
-                            __dtype = ExcelConstants.DATA_TYPE_INTEGER;
+                        	try{
+	                            value = Integer.parseInt(_ts);
+	                            __dtype = ExcelConstants.DATA_TYPE_INTEGER;
+                        	}catch(Exception ex){
+                                value = Long.parseLong(_ts);
+                                __dtype = ExcelConstants.DATA_TYPE_LONG;
+                        	}
                         } else if ((Integer.parseInt(_ts.substring(_ts.indexOf('.')+1)))==0) {
-                            value = Integer.parseInt(_ts.substring(0, _ts.indexOf('.')));
-                            __dtype = ExcelConstants.DATA_TYPE_INTEGER;
+                        	try{
+	                            value = Integer.parseInt(_ts.substring(0, _ts.indexOf('.')));
+	                            __dtype = ExcelConstants.DATA_TYPE_INTEGER;
+                        	}catch(Exception ex){
+                                value = Long.parseLong(_ts.substring(0, _ts.indexOf('.')));
+                                __dtype = ExcelConstants.DATA_TYPE_LONG;                        		
+                        	}
                         }
                     } catch(Exception e ) {
                         //尝试转换为浮点

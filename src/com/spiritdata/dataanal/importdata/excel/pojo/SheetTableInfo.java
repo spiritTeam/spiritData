@@ -125,15 +125,15 @@ public class SheetTableInfo implements Serializable {
             boolean exceptType = false;
             for (Integer dType: _colDataTypeAnalData.keySet()) {
                 if (dType==ExcelConstants.DATA_TYPE_ERROR||dType==ExcelConstants.DATA_TYPE_NULL||dType==ExcelConstants.DATA_TYPE_FORMULA) continue;
-                if (dType!=ExcelConstants.DATA_TYPE_STRING&&dType!=ExcelConstants.DATA_TYPE_INTEGER) exceptType=true;
+                if (dType!=ExcelConstants.DATA_TYPE_STRING&&dType!=ExcelConstants.DATA_TYPE_INTEGER&&dType!=ExcelConstants.DATA_TYPE_LONG) exceptType=true;
                 int thisCount = (Integer)((Map<String, Object>)_colDataTypeAnalData.get(dType)).get("dCount");
                 a = Double.valueOf(thisCount+"");
 
                 if (a/b>=ExcelConstants.WEIGHT_OF_DATATYPE) _thisColType = dType;
 
-                if (dType==ExcelConstants.DATA_TYPE_NUMERIC||dType==ExcelConstants.DATA_TYPE_DOUBLE||dType==ExcelConstants.DATA_TYPE_INTEGER) numberCount+=thisCount;
+                if (dType==ExcelConstants.DATA_TYPE_NUMERIC||dType==ExcelConstants.DATA_TYPE_DOUBLE||dType==ExcelConstants.DATA_TYPE_INTEGER||dType==ExcelConstants.DATA_TYPE_LONG) numberCount+=thisCount;
             }
-            if ((_thisColType==-1||_thisColType==ExcelConstants.DATA_TYPE_NUMERIC||_thisColType==ExcelConstants.DATA_TYPE_DOUBLE||_thisColType==ExcelConstants.DATA_TYPE_INTEGER)
+            if ((_thisColType==-1||_thisColType==ExcelConstants.DATA_TYPE_NUMERIC||_thisColType==ExcelConstants.DATA_TYPE_DOUBLE||_thisColType==ExcelConstants.DATA_TYPE_INTEGER||_thisColType==ExcelConstants.DATA_TYPE_LONG)
               &&(numberCount/b>=ExcelConstants.WEIGHT_OF_DATATYPE&&numberCount>a)) {
                 _thisColType = ExcelConstants.DATA_TYPE_DOUBLE;
             }

@@ -184,10 +184,12 @@ public class MetadataModel extends BaseObject {
                         mc.getColumnType().equals(_mc.getColumnType())
                         ||(mc.getColumnType().equals("Integer")&&_mc.getColumnType().equals("Double"))
                         ||(_mc.getColumnType().equals("Integer")&&mc.getColumnType().equals("Double"))
+                        ||(mc.getColumnType().equals("Long")&&_mc.getColumnType().equals("Double"))
+                        ||(_mc.getColumnType().equals("Long")&&mc.getColumnType().equals("Double"))
                     )) {
                         sameCount++;
                         tagStr+=","+j;
-                        if (mc.getColumnType().equals("Integer")&&_mc.getColumnType().equals("Double")) {
+                        if ((mc.getColumnType().equals("Integer")||(mc.getColumnType().equals("Long")))&&_mc.getColumnType().equals("Double")) {
                             alterTable.put(mc.getColumnName(), "Double");
                         }
                         break;
