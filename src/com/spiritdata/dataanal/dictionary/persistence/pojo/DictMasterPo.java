@@ -11,7 +11,7 @@ public class DictMasterPo extends BaseObject {
     private int ownerType; //模式所对应的所有者类型（1=注册用户;2=非注册用户(session)）
     private String dmName; //字典组名称
     private String NPy; //字典组名称拼音
-    private int order; //排序号，越大越靠前
+    private int sort; //排序号，越大越靠前
     private int isValidate; //字典组是否可用 1可用，2不可用
     private int MType; //字典组类型：1系统保留；2系统；3定义；
     private String MRef; //字典组引用，当mType=3
@@ -49,11 +49,11 @@ public class DictMasterPo extends BaseObject {
     public void setNPy(String nPy) {
         NPy = nPy;
     }
-    public int getOrder() {
-        return order;
+    public int getSort() {
+        return sort;
     }
-    public void setOrder(int order) {
-        this.order = order;
+    public void setSort(int sort) {
+        this.sort = sort;
     }
     public int getIsValidate() {
         return isValidate;

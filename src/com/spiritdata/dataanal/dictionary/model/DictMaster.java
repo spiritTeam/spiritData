@@ -115,7 +115,7 @@ public class DictMaster implements Serializable, ModelSwapPo {
         ret.setOwnerType(this.owner.getOwnerType());
         ret.setDmName(this.dmName);
         ret.setNPy(this.getNPy());
-        ret.setOrder(this.order);
+        ret.setSort(this.order);
         ret.setIsValidate(this.isValidate);
         ret.setMRef(this.MRef);
         ret.setMType(this.MType);
@@ -133,7 +133,7 @@ public class DictMaster implements Serializable, ModelSwapPo {
         this.id =_po.getId();
         this.owner = new Owner(_po.getOwnerType(), _po.getOwnerId());
         this.setDmName(_po.getDmName());
-        this.order = _po.getOrder();
+        this.order = _po.getSort();
         this.isValidate = _po.getIsValidate();
         this.MRef = _po.getMRef();
         this.MType = _po.getMType();

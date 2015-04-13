@@ -48,13 +48,12 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
         this.isValidate = isValidate;
     }
 
-    @Override
     /**
      * 改写基类的该方法，使其能够自动设置汉语拼音
      */
-    public void setNodeName(String nodeName) {
-        this.setNodeName(nodeName);
-        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(nodeName);
+    public void setDdName(String ddName) {
+        this.setNodeName(ddName);
+        if (StringUtils.isNullOrEmptyOrSpace(this.NPy)) this.NPy=ChineseCharactersUtils.getFullSpellFirstUp(ddName);
     }
 
     public String getNPy() {
@@ -124,7 +123,7 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
 
         ret.setMId(this.MId);
         ret.setParentId(this.getParentId());
-        ret.setOrder(this.getOrder());
+        ret.setSort(this.getOrder());
         ret.setIsValidate(this.isValidate);
         ret.setDdName(this.getNodeName());
         ret.setNPy(this.getNPy());
@@ -148,10 +147,10 @@ public class DictDetail extends TreeNodeBean implements Serializable, ModelSwapP
         this.setId(_po.getId());
         this.MId=_po.getMId();
         this.setParentId(_po.getParentId());
-        this.setOrder(_po.getOrder());
+        this.setOrder(_po.getSort());
         this.setOrderType(0);//从大到小
         this.isValidate=_po.getIsValidate();
-        this.setNodeName(_po.getDdName());
+        this.setDdName(_po.getDdName());
         this.setAliasName(_po.getAliasName());
         this.BCode=_po.getBCode();
         this.DType=_po.getDType();
