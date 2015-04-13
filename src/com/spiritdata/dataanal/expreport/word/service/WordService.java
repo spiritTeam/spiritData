@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.expreport.word.WordConstants;
 import com.spiritdata.dataanal.expreport.word.util.WordUtils;
+import com.spiritdata.dataanal.report.model.OneJsonD;
+import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.dataanal.report.model.ReportSegment;
 import com.spiritdata.dataanal.report.model.SegmentList;
@@ -61,11 +63,7 @@ public class WordService {
     private WordService wordService;
 
     //_report
-    private SegmentList<ReportSegment> _REPORT = new SegmentList<ReportSegment>();
-    //_DLIST
-    private ArrayList<AccessJsonD> _DLIST = new ArrayList<AccessJsonD>();
-    //_HEAD
-    private ReportHead _HEAD;
+    private Report report = new Report();
 
     /**
      * 得到jsond和report
@@ -80,7 +78,7 @@ public class WordService {
         Map<String,Object> reportMap = (Map<String, Object>)JsonUtils.jsonToObj(reportJson, Map.class);
         reportMap2been(reportMap);
         //jsonD
-        for (AccessJsonD jsonDInfo : this._DLIST) {
+        for (OneJsonD jsonDInfo : this.report.get_DLIST()) {
             String jsonDUri = jsonDInfo.getUrl();
             String jsonDJson = reportSerivce.getReportJsonByUri(jsonDUri);
             Map<String,Object> jsonDMap = (Map<String, Object>)JsonUtils.jsonToObj(jsonDJson, Map.class);
@@ -116,16 +114,19 @@ public class WordService {
         
         //2、得到转换类 
         //head
-        this._HEAD = (ReportHead) fieldBeen(ReportHead.class.getName(),reportHeadMap);
+        ReportHead rh = (ReportHead) fieldBeen(ReportHead.class.getName(),reportHeadMap);
+        this.report.set_HEAD(rh);
         //dList
         for (Map<String,Object> dListMap :reportDList) {
             AccessJsonD accessJonnD = (AccessJsonD) fieldBeen(AccessJsonD.class.getName(),dListMap);
-            this._DLIST.add(accessJonnD);
+            this.report.addOneJsonD(accessJonnD);
         }
         //segMent
+        SegmentList<ReportSegment> _REPORT = new SegmentList<ReportSegment>();
         for (Map<String,Object> segmentMap:reportReportList) {
-            this._REPORT.add((TreeNode<ReportSegment>)fieldBeen(ReportSegment.class.getName(),segmentMap));
+        	_REPORT.add((TreeNode<ReportSegment>)fieldBeen(ReportSegment.class.getName(),segmentMap));
         }
+        this.report.set_REPORT(_REPORT);
     }
 
     /**
@@ -200,7 +201,6 @@ public class WordService {
                 if (propertyName.equals(WordConstants.REPORT_SUBSEG)) {
                     for (Map<String,Object> v : (List<Map<String,Object>>)val) {
                         childNodeList.add(bulidSegTree(v));
-                        break;
                     }
                 }
                 if(propertyName.indexOf("_")!=-1){
@@ -219,9 +219,18 @@ public class WordService {
                 for(Field field :parentFields){
                     String fieldName = field.getName();
                     field.setAccessible(true);
-                    if(fieldName.equals(propertyName)){
-                        field.set(segment, val);
-                        break;
+                    if (fieldName.equals("nodeName")) {
+                    	String nodeName = (String) childSegMap.get("title");
+                    	if (nodeName.equals("")||nodeName==null){
+                    		nodeName = (String) childSegMap.get("name");
+                    	}
+                    	field.set(segment, nodeName);
+                    	break;
+                    } else {
+                        if(fieldName.equals(propertyName)){
+                            field.set(segment, val);
+                            break;
+                        }
                     }
                 }
             }
@@ -239,7 +248,8 @@ public class WordService {
      * @return 
      * @throws IOException 
      */
-    private Map<String, Object> bulidWord() throws IOException {
+    @SuppressWarnings("unchecked")
+	private Map<String, Object> bulidWord() throws IOException {
         //新建一个文档 
         XWPFDocument docx = new XWPFDocument();
         
@@ -247,13 +257,14 @@ public class WordService {
         XWPFParagraph titlePara = docx.createParagraph();
         //一个XWPFRun代表具有相同属性的一个区域。
         XWPFRun titleRun = titlePara.createRun();
-        String title = this._HEAD.getReportName();
+        Object _HEAD = this.report.get_HEAD();
         titleRun.setBold(true); //加粗
-        titleRun.setText(title);
+        titleRun.setText(((ReportHead)_HEAD).getReportName());
         titleRun.setFontSize(22);
         
         //2、正文部分====
-        for (TreeNode<ReportSegment> treeNode :this._REPORT) {
+        Object _REPORT = this.report.get_REPORT();
+        for (TreeNode<ReportSegment> treeNode :(SegmentList<ReportSegment>)_REPORT) {
             buildSegmentGroup(treeNode,docx);
         }
         
@@ -272,6 +283,7 @@ public class WordService {
      * @param docx 文档对象
      */
     private void buildSegmentGroup(TreeNode<ReportSegment> treeNode,XWPFDocument docx) {
+    	//TODO 待完成
     }
 
     /**

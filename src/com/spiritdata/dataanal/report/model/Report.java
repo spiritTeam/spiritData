@@ -94,6 +94,13 @@ public class Report implements Serializable, Convert2Json {
     private List<OneJsonD> _DLIST;//jsonD数据访问列表
     private Object _REPORT;//报告主体信息，可以是String reportHead 对象
 
+    public List<OneJsonD> get_DLIST() {
+		return _DLIST;
+	}
+	public void set_DLIST(List<OneJsonD> _DLIST) {
+		this._DLIST = _DLIST;
+	}
+
     public Object get_HEAD() {
         return _HEAD;
     }
