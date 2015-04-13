@@ -3,7 +3,6 @@ package com.spiritdata.dataanal.expreport.word.web;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -39,18 +38,16 @@ public class WordController implements ServletContextAware{
      */
     @RequestMapping("/expReport/expWord.do")
     private void expWord(HttpServletRequest request,HttpServletResponse response) throws Exception {
-    	//TODO 以下为要完成代码
-    	//reportId
-    	String reportId = request.getParameter("reportId");
-    	//jsonDIdList
-    	List<String> jsonDIdList = null;
-    	//user
-    	HttpSession session = request.getSession();
-    	User user = ((User)session.getAttribute(FConstants.SESSION_USER));
-    	Map<String,Object> retMap = wordService.expWord(reportId,user,jsonDIdList);
-    	if((boolean)retMap.get("success")==true){
-    		String fileName = (String) retMap.get("fileName");
-    		//以下为下载部分代码
+        //TODO 以下为要完成代码
+        //reportId
+        String reportId = request.getParameter("reportId");
+        //user
+        HttpSession session = request.getSession();
+        User user = ((User)session.getAttribute(FConstants.SESSION_USER));
+        Map<String,Object> retMap = wordService.expWord(reportId,user);
+        if((boolean)retMap.get("success")==true){
+            String fileName = (String) retMap.get("fileName");
+            //以下为下载部分代码
             //获取网站部署路径(通过ServletContext对象)，用于确定下载文件位置，从而实现下载 
             String path = servletContext.getRealPath("/");
       
@@ -78,7 +75,7 @@ public class WordController implements ServletContextAware{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-    	}
+        }
     }
     @Override
     public void setServletContext(ServletContext servletContext) {

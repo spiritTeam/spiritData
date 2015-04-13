@@ -4,7 +4,7 @@ import com.spiritdata.jsonD.Convert2Json;
 import com.spiritdata.jsonD.model.AccessJsonD;
 
 /**
- * 某一jsonD数据的访问对象
+ * 某一jsonD数据的访问对象，只用在report的_DLIST中
  * @author wh
  */
 public class OneJsonD extends AccessJsonD implements Convert2Json {

@@ -31,8 +31,6 @@ import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
-import com.spiritdata.framework.FConstants;
-import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
@@ -455,7 +453,7 @@ public class DealExcelFileService {
         try {
             conn = dataSource.getConnection();
             autoCommit = conn.getAutoCommit();
-            conn.setAutoCommit(true);
+            conn.setAutoCommit(false);
             ps = conn.prepareStatement(insertSql);
             
             List<Map<String, Object>> rowData = null;
@@ -493,12 +491,10 @@ public class DealExcelFileService {
                                     else if (_mmDType==ExcelConstants.DATA_TYPE_DOUBLE) {
                                         if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_LONG||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
                                             v = kv.get("value");
-                                        } 
+                                        }
                                     }
                                 }
-                                if (_mmDType==ExcelConstants.DATA_TYPE_STRING&&v==null) {
-                                    v=((Map<String, Object>)cell.get("transData")).get("value")+"";
-                                }
+                                if (_mmDType==ExcelConstants.DATA_TYPE_STRING&&v==null) v=((Map<String, Object>)cell.get("transData")).get("value")+"";
                                 paramArray[k]=v;
                                 
                                 //对数据进行判断，可能会产生列长度不够的问题，所以需要扩容
@@ -538,6 +534,11 @@ public class DealExcelFileService {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            try {
+                if (conn!=null) conn.commit();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
             try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
             try { if (conn!=null) {conn.setAutoCommit(autoCommit);conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
@@ -619,7 +620,7 @@ public class DealExcelFileService {
         try {
             conn = dataSource.getConnection();
             autoCommit = conn.getAutoCommit();
-            conn.setAutoCommit(true);
+            conn.setAutoCommit(false);
             psInsert = conn.prepareStatement(insertSql);
             if (updateSql!=null) psUpdate = conn.prepareStatement(updateSql);
 
@@ -736,6 +737,11 @@ public class DealExcelFileService {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            try {
+                if (conn!=null) conn.commit();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
             try { if (psUpdate!=null) {psUpdate.close();psUpdate = null;} } catch (Exception e) {e.printStackTrace();} finally {psUpdate = null;};
             try { if (psInsert!=null) {psInsert.close();psInsert = null;} } catch (Exception e) {e.printStackTrace();} finally {psInsert = null;};
             try { if (conn!=null) {conn.setAutoCommit(autoCommit);conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};

@@ -591,7 +591,6 @@ public class PoiParseUtils {
                         _cellMap.put("transData", mainMergedCellMap.get("transData"));
                         _cellMap.put("nativeData", mainMergedCellMap.get("nativeData"));
                     }
-                    
                 }
                 ret.add(_cellMap);
             }
