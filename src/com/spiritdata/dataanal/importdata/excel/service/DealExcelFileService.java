@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -76,6 +78,8 @@ public class DealExcelFileService {
     private TableMapService tmServier;
     @Resource
     private MdBasisService mdBasisServcie;
+    @Resource    
+    private TableMetaDataService tbMetaDataService;
     //key分析
     @Resource
     private AnalKey analKey;//只分析,并计入文件
@@ -126,7 +130,7 @@ public class DealExcelFileService {
         FileInputStream fis = null;
         try {
             //获得处理excel的workbook
-        	logger.info("start process excel file ...");
+        	logger.debug("start process excel file ...");
             try {
                 fis = new FileInputStream(excelFile);
                 book = new HSSFWorkbook(fis);
@@ -155,7 +159,7 @@ public class DealExcelFileService {
             SheetInfo si;
 
             //1-分析文件，得到元数据信息，并把分析结果存入si
-            logger.info("start analysis meta data info ...");
+            logger.debug("start analysis meta data info ...");
             List<PoiParseUtils> excelParseList = new ArrayList<PoiParseUtils>();
 
 //          Map<SheetInfo, Object> sheetLogMap = new HashMap<SheetInfo, Object>();
@@ -212,7 +216,7 @@ public class DealExcelFileService {
             }
 */
             //2-获得元数据后，数据存储及语义分析功能
-            logger.info("start data save and semantic analysis ...");
+            logger.debug("start data save and semantic analysis ...");
             if (excelParseList.size()>0) {
                 //准备缓存或Session
                 _OwnerMetadata _om = mdSessionService.loadcheckData(session);
@@ -292,14 +296,14 @@ public class DealExcelFileService {
                             }
                             //2-储存临时表
                             String logPreStr = " (sheet:"+i+" table:"+j+")";
-                            logger.info(logPreStr + " start save data to tmpTable ...");
+                            logger.debug(logPreStr + " start save data to tmpTable name="+tabMapOrgAry[1].getTableName()+" ...");
                             saveDataToTempTab(sti, sysMd, tabMapOrgAry[1].getTableName(), parseExcel);
                             //3-临时表指标分析
-                            logger.info(logPreStr + " start analysis quota table ...");
+                            logger.debug(logPreStr + " start analysis quota table ...");
                             mdQutotaService.caculateQuota(tabMapOrgAry[1]); //分析临时表指标
                             //4-主键分析
                             //4.1-临时表主键分析
-                            logger.info(logPreStr + " start analysis primary key ...");
+                            logger.debug(logPreStr + " start analysis primary key ...");
                             Map<String, Object> keyMap = analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
@@ -321,16 +325,16 @@ public class DealExcelFileService {
                                 }
                             }
                             //5-存储积累表
-                            logger.info(logPreStr + " start save accumulate table ...");
+                            logger.debug(logPreStr + " start save accumulate table ...");
                             saveDataToAccumulationTab(sti, sysMd, parseExcel);
                             //6-积累表指标分析
-                            logger.info(logPreStr + " start analysis accumulate table quota ...");
+                            logger.debug(logPreStr + " start analysis accumulate table quota ...");
                             mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析积累表指标
                             //7-元数据语义分析
                             // TODO 分析元数据语义，目前想到——字典项/身份证/经纬度/URL分析/mail地址分析/姓名分析；另外（列之间关系，如数值的比例等）
                             //7.1-分析字典
                             //7.1.1-积累表字典分析
-                            logger.info(logPreStr + " start analysis dict key ...");
+                            logger.debug(logPreStr + " start analysis dict key ...");
                             keyMap = analDict.scanMetadata(sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
@@ -348,12 +352,12 @@ public class DealExcelFileService {
                             }
                             //7.1.3-字典分析结果调整
                             //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
-                            logger.info(logPreStr + " start adjust dict key ...");
+                            logger.debug(logPreStr + " start adjust dict key ...");
                             mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
                             
                             //7.2-分析坐标列
                             //7.2.1-积累表坐标列分析
-                            logger.info(logPreStr + " start analysis coord key ...");
+                            logger.debug(logPreStr + " start analysis coord key ...");
                             Map<String, Object> coordMap = analCoord.scanMetadata(sysMd, null);
                         } catch(Exception e) {
                             // TODO 记录日志 
@@ -363,7 +367,7 @@ public class DealExcelFileService {
                 }
                 //8-生成report，这个也可以不在这里处理，而通过任务启动
                 //这个报告是对整个excel文件的，而不是对文件中的某一个表或Seet的
-                logger.info("start genrate report ...");
+                logger.debug("start genrate report ...");
                 Map<String, Object> param = new HashMap<String, Object>();
                 Map<String, Object> preTreadParam = new HashMap<String, Object>();
                 preTreadParam.put("reportParam", reportParam);
@@ -398,6 +402,7 @@ public class DealExcelFileService {
 
     /*
      * 保存临时表信息
+     * 将EXCEL表数据插入到临时表里
      * @param sti Sheet中的表结构区域信息
      * @param sysMm 元数据信息（已在系统注册过的）
      * @param tempTableName 临时表名称
@@ -419,6 +424,14 @@ public class DealExcelFileService {
             if (!isMate) throw new IllegalArgumentException("参数：paras(excel解析单元)必须与参数：sti(表结构区域信息)相匹配");
         }
 
+        /**
+         * 获取临时表的元数据描述
+         * 主要是获取列名、类型、长度
+         * 当插入数据前需要判断是否超长，是否需要扩容列长度
+         */
+        tbMetaDataService.initTableMetaDataService(tempTableName);        
+        
+        //构建插入语句
         Object[] paramArray = new Object[sysMm.getColumnList().size()];
         String insertSql = "insert into "+tempTableName+"(#columnSql) values(#valueSql)", columnSql="", valueSql="";
         for (MetadataColumn mc: sysMm.getColumnList()) {
@@ -450,6 +463,7 @@ public class DealExcelFileService {
             for (int i=sti.getBeginY(); i<=sti.getEndY(); i++) {
                 rowData = parse.readOneRow(i);
                 rowData = parse.convert2DataRow(rowData);
+                //去除空行
                 if (parse.isEmptyRow(rowData)) {
   //                  _log_ignoreCount++;
                     _log_ignoreMap.put(i, "第"+i+"行为空行。");
@@ -466,7 +480,8 @@ public class DealExcelFileService {
                             MetadataColumn mc = sysMm.getColumnList().get(k);
                             _mmDType = ExcelConstants.convert2DataType(mc.getColumnType());
                             _infoDType = -1;
-                            if (mc.getTitleName().equals((String)titleCol.get("title"))) {
+                            // 循环处理每列值信息
+                            if (mc.getTitleName().equals((String)titleCol.get("title"))) {                                
                                 Map<String, Object> kv = (Map<String, Object>)cell.get("transData");
                                 _infoDType = (Integer)kv.get("dType");
                                 v = null;
@@ -485,6 +500,9 @@ public class DealExcelFileService {
                                     v=((Map<String, Object>)cell.get("transData")).get("value")+"";
                                 }
                                 paramArray[k]=v;
+                                
+                                //对数据进行判断，可能会产生列长度不够的问题，所以需要扩容
+                                this.tbMetaDataService.processColLen(mc.getColumnName(),v);
                             }
                         }
                     }
@@ -524,7 +542,7 @@ public class DealExcelFileService {
             try { if (conn!=null) {conn.setAutoCommit(autoCommit);conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
     }
-
+   
     /*
      * 保存积累表信息
      * @param em 从Excel中分析出来的元数据信息，注意，这里包括sheet信息
@@ -547,6 +565,14 @@ public class DealExcelFileService {
             if (!isMate) throw new IllegalArgumentException("参数：paras(excel解析单元)必须与参数：sti(表结构区域信息)相匹配");
         }
 
+        /**
+         * 获取积累表的元数据描述
+         * 主要是获取列名、类型、长度
+         * 当插入数据前需要判断是否超长，是否需要扩容列长度
+         */
+        tbMetaDataService.initTableMetaDataService(mainTableName);       
+        
+        //插入、更新数据
         String insertSql = "insert into "+mainTableName+"(#columnSql) values(#valueSql)", columnSql="", valueSql="";
         String updateSql = "update "+mainTableName+" set #updateSet where #updateKey", updateSet="", updateKey="";
         Object[] paramArray4Insert = new Object[sysMm.getColumnList().size()];
@@ -643,9 +669,13 @@ public class DealExcelFileService {
                                         v=((Map<String, Object>)cell.get("transData")).get("value")+"";
                                     }
                                 }
-                                paramArray4Insert[insertColIndexMap.get(mc.getColumnName())] = v;
+                                paramArray4Insert[insertColIndexMap.get(mc.getColumnName())] = v;   
                                 if (updateSql!=null) paramArray4Update[updateColIndexMap.get(mc.getColumnName())] = v;
                                 tagStr+=","+k;
+
+                                //对数据进行判断，可能会产生列长度不够的问题，所以需要扩容
+                                tbMetaDataService.processColLen(mc.getColumnName(), v);
+                                
                                 break;
                             }
                         }
