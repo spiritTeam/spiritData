@@ -43,7 +43,7 @@ public class AnalDict implements AnalMetadata {
      *
      * @param md 元数据
      * @param param 扩展参数，若分析需要其他参数，可通过这个参数传入
-     * @return Map<String, Object> 一个Map对象，这样能返回更丰富的信息
+     * @return Map<String, Object> 一个Map对象，这样能返回更丰富的信息，目前包括分析的结果
      */
     public Map<String, Object> scanMetadata(MetadataModel mm, Map<String, Object> param) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new Dtal0203CException("元数据模型信息不包含任何列信息，无法分析！");
@@ -93,9 +93,9 @@ public class AnalDict implements AnalMetadata {
     }
 
     private List<Map<String, Object>> convertToList(Map<String, Object> dictAnalResultMap) {
-        if (dictAnalResultMap==null||dictAnalResultMap.size()==0) return null;
-
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+        if (dictAnalResultMap==null||dictAnalResultMap.size()==0) return ret;
+
         for (String cols: dictAnalResultMap.keySet()) {
             Map<String, Object> oneEle = new HashMap<String, Object>();
             JsonDAtomData _dataElement = new JsonDAtomData("keyCols", "string", cols);
