@@ -31,6 +31,7 @@ import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
+import com.spiritdata.framework.core.dao.dialect.Dialect;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
@@ -38,6 +39,7 @@ import com.spiritdata.dataanal.dictionary.service.DictSessionService;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
+import com.spiritdata.dataanal.importdata.excel.service.TableDataProcessService.MetaDataColInfo;
 import com.spiritdata.dataanal.importdata.excel.util.PoiParseUtils;
 import com.spiritdata.dataanal.metadata.relation.pojo.ImpTableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
@@ -77,7 +79,9 @@ public class DealExcelFileService {
     @Resource
     private MdBasisService mdBasisServcie;
     @Resource    
-    private TableDataProcessService tbDataProcService;
+    private TmpTableDataProcessService tmpTbDataProcService;
+    @Resource    
+    private AccumulateTableDataProcessService accuTbDataProcService;
     //key分析
     @Resource
     private AnalKey analKey;//只分析,并计入文件
@@ -296,6 +300,8 @@ public class DealExcelFileService {
                             String logPreStr = " (sheet:"+i+" table:"+j+")";
                             logger.debug(logPreStr + " start save data to tmpTable name="+tabMapOrgAry[1].getTableName()+" ...");
                             saveDataToTempTab(sti, sysMd, tabMapOrgAry[1].getTableName(), parseExcel);
+                            //获取需要修改长度的列元数据信息
+                            Map<String,MetaDataColInfo> colModiMap = this.tmpTbDataProcService.getColModiMap();
                             //3-临时表指标分析
                             logger.debug(logPreStr + " start analysis quota table ...");
                             mdQutotaService.caculateQuota(tabMapOrgAry[1]); //分析临时表指标
@@ -319,14 +325,14 @@ public class DealExcelFileService {
                                 //4.3-主键分析结果应用
                                 try{
                                 	//主键调整的时候需要考虑到主键字段的长度，对于MYSQL，如果超过255则不能成为主键！！！
-                                	mdKeyService.adjustMdKey(sysMd); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
+                                	mdKeyService.adjustMdKey(sysMd,colModiMap,this.tmpTbDataProcService.dialect); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
                                 }catch(Exception ex){
                                 	ex.printStackTrace();
                                 }
                             }
                             //5-存储积累表
                             logger.debug(logPreStr + " start save accumulate table ...");
-                            saveDataToAccumulationTab(sti, sysMd, parseExcel);
+                            saveDataToAccumulationTab(sti, sysMd, parseExcel,colModiMap);
                             //6-积累表指标分析
                             logger.debug(logPreStr + " start analysis accumulate table quota ...");
                             mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析积累表指标
@@ -433,7 +439,7 @@ public class DealExcelFileService {
              */
 //            tbDataProcService.initTableMetaDataService(tempTableName); 
             //插入数据
-            tbDataProcService.insertDatas2TempTab(tempTableName,sysMm.getColumnList(),sti, parse);
+        	tmpTbDataProcService.insertDatas2TempTab(tempTableName,sysMm.getColumnList(),sti, parse);
         }catch(Exception ex){
         	logger.error("failed to save data to tmp table="+tempTableName,ex);
         }
@@ -444,7 +450,7 @@ public class DealExcelFileService {
      * @param em 从Excel中分析出来的元数据信息，注意，这里包括sheet信息
      * @param sysMm 元数据信息（已在系统注册过的），这其中包括积累表信息
      */
-    private void saveDataToAccumulationTab(SheetTableInfo sti, MetadataModel sysMm, PoiParseUtils parse) {
+    private void saveDataToAccumulationTab(SheetTableInfo sti, MetadataModel sysMm, PoiParseUtils parse,Map<String,MetaDataColInfo> colModiMap) {
         if (sysMm==null||sysMm.getColumnList()==null||sysMm.getColumnList().size()==0) throw new IllegalArgumentException("元数据模型必须设置，且列信息不能为空");
         String mainTableName = sysMm.getTableName();
         if (StringUtils.isNullOrEmptyOrSpace(mainTableName)) throw new IllegalArgumentException("元数据模型中必须有积累表名称");
@@ -470,7 +476,7 @@ public class DealExcelFileService {
              */
 //            this.tbDataProcService.initTableMetaDataService(mainTableName);       
             //保存数据
-            this.tbDataProcService.saveData2AccumulateTab(mainTableName,sysMm.getColumnList(),sti, parse);
+            this.accuTbDataProcService.saveData2AccumulateTab(mainTableName,sysMm.getColumnList(),sti, parse,colModiMap);
         }catch(Exception ex){
         	logger.error("failed to save data 2 accumulation table="+mainTableName,ex);
         }        

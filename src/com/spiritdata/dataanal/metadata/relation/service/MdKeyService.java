@@ -20,10 +20,12 @@ import org.apache.commons.dbcp.BasicDataSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
+import com.spiritdata.framework.core.dao.dialect.Dialect;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
+import com.spiritdata.dataanal.importdata.excel.service.TableDataProcessService.MetaDataColInfo;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 
@@ -44,7 +46,7 @@ public class MdKeyService {
      * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
      * @param mm 元数据信息，注意，这里的元数据信息必须是全的，包括column和语义
      */
-    public void adjustMdKey(MetadataModel mm) {
+    public void adjustMdKey(MetadataModel mm,Map<String,MetaDataColInfo> colModiMap,Dialect dialect) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return ;
         
         //读取元数据信息，看主键是否是确定的
@@ -91,6 +93,24 @@ public class MdKeyService {
                 _tabKeyStr = _tabKeyStr.substring(1);
                 _tabKeys = StringUtils.splitString(_tabKeyStr, ",");
             }
+            
+            //需要根据插入临时表时修改的列字段长度来判断是否主键，对与VARCHAR类型，主键长度不能超过255，最好放在dialect中来根据类型判断，否则重复代码太多！！！
+            if(colModiMap!=null && colModiMap.containsKey(_tabKeys)){
+            	MetaDataColInfo mdCol = (MetaDataColInfo)colModiMap.get(_tabKeys);
+            	int colLen = mdCol.getColLen();
+            	String colType = mdCol.getColTypeName();
+            	if(dialect.getClass().getName().indexOf("MySqlDialect")>-1){
+            		if(colType.equalsIgnoreCase("VARCHAR") ||colType.equalsIgnoreCase("CHAR")){
+            			if(colLen>255){ //MYSQL中字符类型的主键长度不能超过255
+            				_tabKeys = null;
+            			}
+            		}else{
+            			//还需要对其它类型判断？？？
+            		}
+            	}
+            }
+            
+            
             //检查是否需要创建主键
             boolean needCreateKey = true;
             //若有主键，比较主键是否和mm中主键一致
