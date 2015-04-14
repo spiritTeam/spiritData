@@ -1,6 +1,6 @@
-{/*数据2-getJsonD.do?datafile=/??/anal_quota_1_716-446655440000.jsond*/
+{
   _id: "550E8400-E29B-11D4",
-  _code: "SP.TEAM-00009",/*excl元数据列表，基于元数据的jsonD*/
+  _code: "SP.TEAM-00009",
   _parsefun:{
     _lan: "java",
     _class: "com.spirit.team.Key00009"
@@ -15,12 +15,12 @@
     mdName:"人员",
     tempTableId:"",
     sourceData:"c:/xyz.excel[0]",
-    quotas:[{/*单项指标分析*/
+    quotas:[{
       columnName:"col_1",
       titleName:"性别",
       desc:"人员表性别分类数值分布",
       tableData:{
-      	titles:[{category:"分类"},{num:"数量"},{percent:"百分比"}],/*这是SP.TEAM-00009中默认的，应该去掉又是列什么的不对应。。。暂时改为columnList这个变量还影响到pie，暂时不解决！！*/
+      	titles:[{category:"分类"},{num:"数量"},{percent:"百分比"}],
         tableBody:[
           {category:"男",   num:"156", percent:"78"},
           {category:"女",   num:"40",  percent:"20"},
@@ -29,8 +29,8 @@
       }},{columnName:"col_4",
       titleName:"籍贯",
       tableData:{
-       sort:{sortCol:"num",shotType:"1"}, /*0：未排序1:由大到小、2：由小到大*/
-        titles:[{category:"籍贯"},{num:"数量"},{percent:"百分比"}],/*这个不应该去掉*/
+       sort:{sortCol:"num",shotType:"1"},
+        titles:[{category:"籍贯"},{num:"数量"},{percent:"百分比"}],
         tableBody:[
           {category:"其他",   num:"2",  percent:"1"},
           {category:"北京",   num:"42", percent:"21"},
@@ -45,18 +45,18 @@
           {category:"黑龙江", num:"6",  percent:"3"}
         ]
         }
-      },{/*人员坐标*/
+      },{
       tableData:{
-        titles:[{xm:"姓名"},{sfz:"身份证"},{xb:"性别"},{city:"城市"},{X:"X坐标"},{Y:"Y坐标"}],/*这个不应该去掉*/
+        titles:[{xm:"姓名"},{sfz:"身份证"},{xb:"性别"},{city:"城市"},{X:"X坐标"},{Y:"Y坐标"}],
         tableBody:[
           {xm:"张三", sfz:"420205198803122653", xb:"男", city:'北京', X:"116.46", Y:"39.92"},
           {xm:"李四", sfz:"320205198803122653", xb:"男", city:'上海', X:"121.48", Y:"31.22"},
           {xm:"王二", sfz:"220205198803122653", xb:"女", city:'广州', X:"113.23", Y:"28.27"}
         ]
       }
-     },{/*省市数量坐标*/
+     },{
       tableData:{
-        titles:[{category:"籍贯"},{num:"数量"},{percent:"百分比"},{X:"X坐标"},{Y:"Y坐标"}],/*这个不应该去掉*/
+        titles:[{category:"籍贯"},{num:"数量"},{percent:"百分比"},{X:"X坐标"},{Y:"Y坐标"}],
         tableBody:[
           {category:"其他",   num:"2",  percent:"1", X:"", Y:""},
           {category:"北京",   num:"42", percent:"21", X:"", Y:""},
