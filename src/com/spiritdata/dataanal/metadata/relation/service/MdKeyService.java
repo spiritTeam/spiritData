@@ -26,7 +26,6 @@ import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
-import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalKey;
 
 /**
  * 元数据主键处理服务
@@ -102,7 +101,7 @@ public class MdKeyService {
             }
             //按照metadata中的内容创建主键
             if (needCreateKey) {
-                st.execute("Alter table "+sumTableName+" add primary key("+keyStr+")");
+                st.execute("ALTER TABLE "+sumTableName+" ADD PRIMARY KEY("+keyStr+")");
             }
         } catch(Exception e) {
             throw new Dtal0202CException(e);
