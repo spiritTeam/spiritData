@@ -231,7 +231,7 @@ VIEW vsa_imp_log AS
 DROP TABLE IF EXISTS sa_report_info;
 CREATE TABLE sa_report_info (
   id          varchar(32)      NOT NULL  COMMENT '报告信息表ID(UUID)',
-  taskGId     varchar(32)      NOT NULL  COMMENT '任务组Id(UUID)',
+  taskGId     varchar(32)                COMMENT '任务组Id(UUID)',
   fId         varchar(32)      NOT NULL  COMMENT '对应报告文件Id(UUID)',
   ownerType   int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
   ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',

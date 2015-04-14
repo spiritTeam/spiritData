@@ -9,7 +9,9 @@ import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
 import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
+import com.spiritdata.framework.core.model.ModelSwapPo;
 import com.spiritdata.framework.core.model.tree.TreeNode;
+import com.spiritdata.framework.exceptionC.Plat0006CException;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.Convert2Json;
@@ -21,7 +23,7 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * 包括：_HEAD,_DATA,_REPORT
  * @author wh
  */
-public class Report implements Serializable, Convert2Json {
+public class Report implements Serializable, Convert2Json, ModelSwapPo {
     private static final long serialVersionUID = 518670183146944686L;
  
     private String id; //报告id，应和报告头中的id相一致
@@ -31,6 +33,10 @@ public class Report implements Serializable, Convert2Json {
     private ReportFile reportFile; //报告所对应的文件信息
     private String desc; //文件说明
     private Timestamp CTime; //记录创建时间
+
+    private Object _HEAD;//头信息，可以是String reportHead 对象
+    private List<OneJsonD> _DLIST;//jsonD数据访问列表
+    private Object _REPORT;//报告主体信息，可以是String reportHead 对象
 
     public String getId() {
         return this.id;
@@ -90,17 +96,7 @@ public class Report implements Serializable, Convert2Json {
         }
     }
 
-    private Object _HEAD;//头信息，可以是String reportHead 对象
-    private List<OneJsonD> _DLIST;//jsonD数据访问列表
-    private Object _REPORT;//报告主体信息，可以是String reportHead 对象
-
-    public List<OneJsonD> get_DLIST() {
-		return _DLIST;
-	}
-	public void set_DLIST(List<OneJsonD> _DLIST) {
-		this._DLIST = _DLIST;
-	}
-
+    //头处理
     public Object get_HEAD() {
         return _HEAD;
     }
@@ -112,6 +108,10 @@ public class Report implements Serializable, Convert2Json {
         }
     }
 
+    //数据列表处理
+    public List<OneJsonD> get_DLIST() {
+        return _DLIST;
+    }
     /**
      * 向report中加入一个jsonD的访问信息
      * @param one
@@ -122,11 +122,10 @@ public class Report implements Serializable, Convert2Json {
         oj.setRdId(_DLIST.size());
         _DLIST.add(oj);
     }
-
     /**
      * 根据jsonDId获取访问信息在本报告中的id
      * @param jsonDId jsonD的id，就是jsonD文件的id，对应数据库中file_index中的id
-     * @return 所对应的report中的jsonD的标识
+     * @return 所对应的report中的jsonD的标识(顺序自然数)
      */
     public int getDid(String jsonDId) {
         int ret = -1;
@@ -139,6 +138,7 @@ public class Report implements Serializable, Convert2Json {
         return ret;
     }
 
+    //报告体处理
     public Object get_REPORT() {
         return _REPORT;
     }
@@ -162,7 +162,7 @@ public class Report implements Serializable, Convert2Json {
         }
         //转换dataList;报告可以没有任何_DLIST
         if (_DLIST!=null&&_DLIST.size()>0) {
-            jsonS += ",_DLIST:"+JsonUtils.objToJson(_DLIST);
+            jsonS += ",\"_DLIST\":"+JsonUtils.objToJson(_DLIST);
         } else jsonS += ",";
         //转换体report
         if (_REPORT==null) jsonS += "\"_REPORT\":\"\"";
@@ -178,6 +178,10 @@ public class Report implements Serializable, Convert2Json {
         return jsonS+"}";
     }
 
+    /**
+     * 
+     */
+    @Override
     public ReportPo convert2Po() {
         ReportPo ret = new ReportPo();
         //id处理，没有id，自动生成一个
@@ -187,7 +191,6 @@ public class Report implements Serializable, Convert2Json {
         //所有者
         ret.setOwnerId(this.owner.getOwnerId());
         ret.setOwnerType(this.owner.getOwnerType());
-        //TaskId 在这里不设置
         //文件Id
         if (reportFile!=null) ret.setFId(reportFile.getId());
         //其他
@@ -196,5 +199,25 @@ public class Report implements Serializable, Convert2Json {
         ret.setDesc(this.getDesc());
         ret.setCTime(this.CTime);
         return ret;
+    }
+
+    /**
+     * <p>从po得到模型对象，对于报告信息对象来说：
+     * <p>reportFile属性（对应的报告文件），没有做处理，通过数据库检索可以得到这个属性，之所以没有处理，是要把这个功能留到Service中再处理。
+     * 这样做考虑如下：读取数据库，慢！而在Service中，可能上下文已经得到了文件的信息，这样可能更快，而且不用从数据库获得两次(本方法中一次，Service中一次)。
+     * <p>_HEAD、_DLIST、_REPORT三个属性属于report的结构化信息，无法在这里处理。
+     * <p>因此要注意：通过本方法构建的对象信息是不完整的。
+     */
+    @Override
+    public void buildFromPo(Object po) {
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑对象！");
+        if (!(po instanceof ReportPo)) throw new Plat0006CException("Po对象不是ReportPo的实例，无法从此对象构建报告对象！");
+        ReportPo _po = (ReportPo)po;
+        this.id = _po.getId();
+        this.owner = new Owner(_po.getOwnerType(), _po.getOwnerId());
+        this.reportType = _po.getReportType();
+        this.reportName = _po.getReportName();
+        this.desc = _po.getDesc();
+        this.CTime = _po.getCTime();
     }
 }

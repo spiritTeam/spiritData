@@ -3,6 +3,7 @@ package com.spiritdata.dataanal.report.model;
 import java.io.Serializable;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
+import com.spiritdata.dataanal.report.enumeration.DtagShowType;
 import com.spiritdata.framework.util.StringUtils;
 
 /**
@@ -75,7 +76,7 @@ public class D_Tag implements Serializable{
 
         String ret = "<d ";
         ret += "did='"+this.did+"'";
-        if (this.showType==DtagShowType.FIRST) {
+        if (this.showType==DtagShowType.TEXT) {
             if (StringUtils.isNullOrEmptyOrSpace(this.funcStr)) throw new Dtal1002CException("D标签不规范：若设置showType=first，funcStr属性必须设置且不能为空！");
             ret += " showType='"+this.funcStr+"'";
         } else {

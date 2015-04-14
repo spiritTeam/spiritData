@@ -1,5 +1,7 @@
 package com.spiritdata.filemanage.core.enumeration;
 
+import com.spiritdata.filemanage.exceptionC.Flmg0201CException;
+
 /**
  * 文件分类中的大分类，目前只支持IMP,LOG,ANAL,REPORT。<br/>
  * IMP:导入文件；<br/>
@@ -13,6 +15,7 @@ public enum FileCategoryType1 {
     IMP("IMP"), LOG("LOG"), ANAL("ANAL"), REPORT("REPORT");
 
     private String value;
+
     public String getValue() {
         return this.value;
     }
@@ -22,10 +25,10 @@ public enum FileCategoryType1 {
     }
 
     public static FileCategoryType1 getFileCategoryType1(String value) {
-        if (value.equals("IMP")) return IMP;
-        if (value.equals("LOG")) return LOG;
-        if (value.equals("ANAL")) return ANAL;
-        if (value.equals("REPORT")) return REPORT;
-        return null;
+        if (value.toUpperCase().equals("IMP")) return FileCategoryType1.IMP;
+        if (value.toUpperCase().equals("LOG")) return FileCategoryType1.LOG;
+        if (value.toUpperCase().equals("ANAL")) return FileCategoryType1.ANAL;
+        if (value.toUpperCase().equals("REPORT")) return FileCategoryType1.REPORT;
+        throw new Flmg0201CException("不能识别的文件大分类:"+value+"！");
     }
 }

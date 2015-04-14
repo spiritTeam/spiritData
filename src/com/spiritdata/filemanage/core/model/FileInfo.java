@@ -399,7 +399,7 @@ public class FileInfo implements Serializable, ModelSwapPo {
     }
 
     /**
-     * 通过文件关系po对象获得文件信息的模型/概念对象的所有信息，请参看:
+     * <p>通过文件关系po对象获得文件信息的模型/概念对象的所有信息，请参看:
      * {@linkplain com.spiritdata.filemanage.core.model.FileInfo FileInfo}类中的buildFromPo方法
      * @param po 文件关系持久化对象
      */
