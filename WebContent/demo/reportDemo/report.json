@@ -1,49 +1,41 @@
 {
-  _HEAD:{
-    reportName:"“XXXSSS”分析报告"
+  "_HEAD":{
+    "_id":"abcd-efg-higklmn",
+    "_reportType":"test",
+    "_reportName":"test",
+    "_code":"T.TEST::0002",
+    "_cTime":"-480::1421744444796",
+    "_desc":"测试报告"
   },
-  _DLIST:[/*data问题，一定要注重规范*/
-    {_id:1, _url:'http://localhost:8080/sa/jsonD/getJsonD.do?uri=/demo/reportDemo/metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond', _jsonD_code:'SP.TEAM-00007'},
-    {_id:2, _url:'http://localhost:8080/sa/jsonD/getJsonD.do?uri=/demo/reportDemo/anal_quota_716-446655440000.jsond'}
+  "_DLIST":[
+    {"_id":"0","_url":"getJsonD.do?datafile=/??/.jsond","_jsonDCode":"SP.TEAM-00007","_jsonDId":""},
+    {"_id":"1","_url":"getJsonD.do?datafile=/??/anal_quota_716-446655440000.jsond","_jsonDCode":"SP.TEAM-00009","_jsonDId":""}
   ],
   _REPORT:[
     {
       id:"seg1",
       name:"上传数据CCC",
-      title:'<div style="font-height:bold;font-size:24px;">上传数据￥￥￥￥</div>',
+      title:"<div style='font-height:bold;font-size:24px;'>上传数据￥￥￥￥</div>",
       subSeg:[
         {
           id:"seg1_1",
           name:"结构分析",
-          content:'<div style="font-height:bold; font-size:18px;">1、结构分析</div><br/>
-            <div style="font-height:bold; ">“<d did="1" showType="value" value="excelMdmArray[0].sheetInfo.name"/>”页签(sheet<d did="1" showType="value" value="excelMdmArray[0].sheetInfo.index"/>)</div>为新增结构，元数据结构分析结果如下：<br/>
-            <d did="1" showType="table" value="excelMdmArray[0]"/><br/>
-            <div style="font-height:bold; ">“<d did="1" showType="value" value="excelMdmArray[1].sheetInfo.name"/>”页签(sheet<d did="1" showType="value" value="excelMdmArray[1].sheetInfo.index"/>)</div>为原有结构，元数据用原有结构。<br/>'
+          content:"<div style='font-height:bold; font-size:18px;'>1、结构分析</div><br/>
+                  <d did='1' showType='table' value='excelMdmArray[0]'/><br/>"
         },{
           id:"seg1_2_1",
           name:"单项指标分析",
-          content:'<div style="font-height:bold; font-size:18px;">2、单项指标分析</div><br/>
-            <!--人员 性别-->
-            <div style="font-height:bold; ">“<d did="2" showType="value" value="mdName"/>”[<d did="2" showType="value" value="quotas[0].titleName"/>]</div>指标分析：<br/>
-            “<d did="2" showType="value" value="quotas[0].titleName"/>”中
-              大多为{<d did="2" showType="value" value="quotas[0].tableData.tableBody[0].category"/>}占<d did="2" showType="value" value="quotas[0].tableData.tableBody[0].percent"/>%，
-              {<d did="2" showType="value" value="quotas[0].tableData.tableBody[1].category"/>}占<d did="2" showType="value" value="quotas[0].tableData.tableBody[1].percent"/>%，具体分析数据如下：<br/>
-            <d did="2" showType="table" value="quotas[0]" titleDcrt="quotas[0].titles"/>
-            <d did="2" showType="pie" value="quotas[0]" label="category", data="num" decorateView="{lableShow:[category, percent]}"/>
-            <br/>
-            <!--人员 籍贯-->
-            <div style="font-height:bold; ">“<d did="2" showType="value" value="mdName"/>”[<d did="2" showType="value" value="quotas[1].titleName"/>]</div>指标分析：<br/>
-            <d did="2" showType="table" value="quotas[1]" titleDcrt="quotas[1].titles"/>
-            新加测试showType=“line”：<br/><d did="2" showType="line" value="quotas[1]" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
-            新加测试showType=“bars”：<d did="2" showType="bars" value="quotas[1]" label="category", data="num" decorateView="{lableShow:[category, percent]}" />
-           <!-- 测试showType=“first”降序：<d did="2" showType="text" value="quotas[1]::!first(3|num)" decorateView="{#category#}占#percent#%"/>
-            测试showType=“first”升序：<d did="2" showType="text" value="quotas[1]::first(3|num)" decorateView="{#category#}占#percent#%"/>-->'
-        },{/*地图上以点状显示人员坐标信息*/
-          id:"seg1_3",
-          name:"人员地图分析",
-          content:'<div style="font-height:bold; font-size:18px;">3、人员地图分析</div><br/>
-            <!--人员 坐标分布  mapType:使用哪家地图，AGIS|BAIDU|GAODE
-            <d did="2" showType="map_pts" value="quotas[2]::random(100)" label="xm" data="sfz" mapType="BAIDU" coord="X,Y", decorateView="姓名:#xm#,身份证:#sfz#,性别:#sb#,colCN(city):#city#"/>-->'
+          content:
+            "<d did='1' showType='value' value='excelMdmArray[0].sheetInfo.name' />
+             <d did='2' showType='text' value='quotas[1]::!first(3|num)' decorateView='{#category#}占#percent(num)#%::{suffix:’、’}' />
+             <d did='2' showType='text' value='quotas[1]::first(3|num)' decorateView='{#category#}占#percent(num)#%' />
+             <d did='1' showType='table' value='excelMdmArray[0]' />
+             <d did='2' showType='pie' param='{‘xAxis’:’category’, ‘yAxis’:’num’}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
+             <d did='2' showType='bar' param='{‘xAxis’:’category’, ‘yAxis’:’num’}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
+             <d did='2' showType='line' param='{‘xAxis’:’category’, ‘yAxis’:’num’}' value='quotas[0]' decorateView='#num#'/>
+             <d did='2' showType='radar' param='{‘xAxis’:’category’ , ‘yAxis’:’num’ , ‘max’:’100’}' value='quotas[0]' decorateView='#num#'/>
+             <d did='2' showType='map_pts' param='{‘X’:’coordX’, ‘Y’:’coordY’ ,‘Z’:’coordZ’,’mapType’:’BAIDU’}' value='quotas[0]'/>
+            "
         }
       ]
     }
