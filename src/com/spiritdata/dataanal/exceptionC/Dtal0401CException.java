@@ -8,7 +8,7 @@ public class Dtal0401CException extends DtalCException {
     private static final long serialVersionUID = -5107800087154965799L;
 
     private static String myBaseMsg = "Task转换为JsonD的access";
-    private static int myCode = 301;
+    private static int myCode = 401;
 
     /**
      * 构造没有详细消息内容的——'Task转换为JsonD的access'异常

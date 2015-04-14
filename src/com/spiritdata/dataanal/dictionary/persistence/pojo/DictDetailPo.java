@@ -15,7 +15,7 @@ public class DictDetailPo extends BaseObject {
     private String id; //字典项ID，在TreeNodeBean中对应id
     private String MId; //字典组ID
     private String parentId; //上级字典项ID，若为直接属于某字典组的字典项，则此只为0，在TreeNodeBean中对应parentId
-    private int order; //排序，在TreeNodeBean中对应order，越大越靠前
+    private int sort; //排序，在TreeNodeBean中对应order，越大越靠前
     private int isValidate; //字典组是否可用 1可用，2不可用
     private String ddName; //字典项名称，在TreeNodeBean中对应nodeName
     private String NPy; //字典名称拼音
@@ -46,11 +46,11 @@ public class DictDetailPo extends BaseObject {
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }
-    public int getOrder() {
-        return order;
+    public int getSort() {
+        return sort;
     }
-    public void setOrder(int order) {
-        this.order = order;
+    public void setSort(int sort) {
+        this.sort = sort;
     }
     public int getIsValidate() {
         return isValidate;

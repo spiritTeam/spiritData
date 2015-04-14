@@ -27,7 +27,7 @@ CREATE TABLE plat_dictm (
   ownerType  int(1) unsigned  NOT NULL  DEFAULT 1  COMMENT '所有者类型(1-用户,2-session)',
   dmName     varchar(200)     NOT NULL             COMMENT '字典组名称',
   nPy        varchar(800)                          COMMENT '名称拼音',
-  order      int(5) unsigned  NOT NULL  DEFAULT 0  COMMENT '字典组排序,从大到小排序，越大越靠前',
+  sort       int(5) unsigned  NOT NULL  DEFAULT 0  COMMENT '字典组排序,从大到小排序，越大越靠前',
   isValidate int(1) unsigned  NOT NULL  DEFAULT 1  COMMENT '是否生效(1-生效,2-无效)',
   mType      int(1) unsigned  NOT NULL  DEFAULT 3  COMMENT '字典类型(1-系统保留,2-系统,3-自定义)',
   mRef       varchar(4000)                         COMMENT '创建时间',
@@ -44,7 +44,7 @@ CREATE TABLE plat_dictd (
   id         varchar(32)      NOT NULL             COMMENT '字典项表ID(UUID)',
   mId        varchar(32)      NOT NULL             COMMENT '字典组外键(UUID)',
   pId        varchar(32)      NOT NULL             COMMENT '父结点ID(UUID)',
-  order      int(5) unsigned  NOT NULL  DEFAULT 0  COMMENT '字典项排序,只在本级排序有意义,从大到小排序，越大越靠前',
+  sort       int(5) unsigned  NOT NULL  DEFAULT 0  COMMENT '字典项排序,只在本级排序有意义,从大到小排序，越大越靠前',
   isValidate int(1) unsigned  NOT NULL  DEFAULT 1  COMMENT '是否生效(1-生效,2-无效)',
   ddName     varchar(200)     NOT NULL             COMMENT '字典项名称',
   nPy        varchar(800)                          COMMENT '名称拼音',
@@ -231,7 +231,7 @@ VIEW vsa_imp_log AS
 DROP TABLE IF EXISTS sa_report_info;
 CREATE TABLE sa_report_info (
   id          varchar(32)      NOT NULL  COMMENT '报告信息表ID(UUID)',
-  taskGId     varchar(32)      NOT NULL  COMMENT '任务组Id(UUID)',
+  taskGId     varchar(32)                COMMENT '任务组Id(UUID)',
   fId         varchar(32)      NOT NULL  COMMENT '对应报告文件Id(UUID)',
   ownerType   int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
   ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',

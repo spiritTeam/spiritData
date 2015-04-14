@@ -17,6 +17,10 @@ public enum RelType1 {
         this.value=v;
     }
 
+    /**
+     * 获得相反关系
+     * @return 本关系的相反关系
+     */
     public RelType1 getContrary() {
         if (this==POSITIVE) return INVERSE;
         if (this==INVERSE) return POSITIVE;
@@ -24,9 +28,10 @@ public enum RelType1 {
     }
 
     public static RelType1 getRelType1(int value) {
-        if (value==1) return POSITIVE;
-        if (value==-1) return INVERSE;
-        if (value==0) return EQUAL;
-        return null;
+        if (value>0) return POSITIVE;
+        else
+        if (value<0) return INVERSE;
+        else
+        return EQUAL;
     }
 }
