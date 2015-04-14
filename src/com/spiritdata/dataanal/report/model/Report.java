@@ -163,9 +163,10 @@ public class Report implements Serializable, Convert2Json, ModelSwapPo {
         //转换dataList;报告可以没有任何_DLIST
         if (_DLIST!=null&&_DLIST.size()>0) {
             jsonS += ",\"_DLIST\":"+JsonUtils.objToJson(_DLIST);
-        } else jsonS += ",";
+        }
         //转换体report
-        if (_REPORT==null) jsonS += "\"_REPORT\":\"\"";
+        jsonS += ",";
+        if (_REPORT==null) jsonS += "\"_REPORT\":{}";
         else {
             if (_REPORT instanceof String) {
                 jsonS += "\"_REPORT\":"+_REPORT;

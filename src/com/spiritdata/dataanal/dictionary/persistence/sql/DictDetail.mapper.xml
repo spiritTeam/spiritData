@@ -12,7 +12,7 @@
     <result column="pId"        property="parentId"   jdbcType="VARCHAR"/>
     <result column="sort"       property="sort"       jdbcType="INTEGER"/>
     <result column="isValidate" property="isValidate" jdbcType="INTEGER"/>
-    <result column="ddName"     property="nodeName"   jdbcType="VARCHAR"/>
+    <result column="ddName"     property="ddName"     jdbcType="VARCHAR"/>
     <result column="nPy"        property="NPy"        jdbcType="VARCHAR"/>
     <result column="aliasName"  property="aliasName"  jdbcType="VARCHAR"/>
     <result column="anPy"       property="anPy"       jdbcType="VARCHAR"/>
@@ -41,7 +41,7 @@
         <if test="parentId!=null"> and pId=#{parentId,jdbcType=VARCHAR}</if>
         <if test="sort!=null and sort!=0"> and sort=#{sort,jdbcType=INTEGER}</if>
         <if test="isValidate!=null and isValidate!=0"> and isValidate=#{isValidate,jdbcType=INTEGER}</if>
-        <if test="nodeName!=null"> and ddName=#{nodeName,jdbcType=VARCHAR}</if>
+        <if test="ddName!=null"> and ddName=#{ddName,jdbcType=VARCHAR}</if>
         <if test="NPy!=null"> and nPy=#{NPy,jdbcType=VARCHAR}</if>
         <if test="aliasName!=null"> and aliasName=#{aliasName,jdbcType=VARCHAR}</if>
         <if test="anPy!=null"> and anPy=#{anPy,jdbcType=VARCHAR}</if>
@@ -61,7 +61,7 @@
       <if test="parentId!=null"> and a.pId=#{parentId,jdbcType=VARCHAR}</if>
       <if test="sort!=null and sort!=0"> and a.sort=#{sort,jdbcType=INTEGER}</if>
       <if test="isValidate!=null and isValidate!=0"> and a.isValidate=#{isValidate,jdbcType=INTEGER}</if>
-      <if test="nodeName!=null"> and a.ddName=#{nodeName,jdbcType=VARCHAR}</if>
+      <if test="ddName!=null"> and a.ddName=#{ddName,jdbcType=VARCHAR}</if>
       <if test="NPy!=null"> and a.nPy=#{NPy,jdbcType=VARCHAR}</if>
       <if test="aliasName!=null"> and a.aliasName=#{aliasName,jdbcType=VARCHAR}</if>
       <if test="anPy!=null"> and a.anPy=#{anPy,jdbcType=VARCHAR}</if>
@@ -110,7 +110,7 @@
       <if test="parentId!=null">pId,</if>
       <if test="sort!=null and sort!=0">sort,</if>
       <if test="isValidate!=null and isValidate!=0">isValidate,</if>
-      <if test="nodeName!=null">ddName,</if>
+      <if test="ddName!=null">ddName,</if>
       <if test="NPy!=null">nPy,</if>
       <if test="aliasName!=null">aliasName,</if>
       <if test="anPy!=null">anPy,</if>
@@ -125,7 +125,7 @@
       <if test="parentId!=null">#{parentId,jdbcType=VARCHAR},</if>
       <if test="sort!=null and sort!=0">#{sort,jdbcType=INTEGER},</if>
       <if test="isValidate!=null and isValidate!=0">#{isValidate,jdbcType=INTEGER},</if>
-      <if test="nodeName!=null">#{nodeName,jdbcType=VARCHAR},</if>
+      <if test="ddName!=null">#{ddName,jdbcType=VARCHAR},</if>
       <if test="NPy!=null">#{NPy,jdbcType=VARCHAR},</if>
       <if test="aliasName!=null">#{aliasName,jdbcType=VARCHAR},</if>
       <if test="anPy!=null">#{anPy,jdbcType=VARCHAR},</if>
@@ -144,7 +144,7 @@
       <if test="parentId!=null">pId=#{parentId,jdbcType=VARCHAR},</if>
       <if test="sort!=null and sort!=0">sort=#{sort,jdbcType=INTEGER},</if>
       <if test="isValidate!=null and isValidate!=0">sValidate=#{isValidate,jdbcType=INTEGER},</if>
-      <if test="nodeName=null"> ddName=#{nodeName,jdbcType=VARCHAR},</if>
+      <if test="ddName=null"> ddName=#{ddName,jdbcType=VARCHAR},</if>
       <if test="NPy=null"> nPy=#{NPy,jdbcType=VARCHAR},</if>
       <if test="aliasName=null">aliasName=#{aliasName,jdbcType=VARCHAR},</if>
       <if test="anPy=null">anPy=#{anPy,jdbcType=VARCHAR},</if>

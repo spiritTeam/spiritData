@@ -1,26 +1,32 @@
 package com.spiritdata.dataanal.report.model;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
 import com.spiritdata.dataanal.report.enumeration.DtagShowType;
 import com.spiritdata.framework.util.StringUtils;
+import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
- * 出现在Content中的D标签，主要为转换为d标签的html字符串<br/>
- * 此类由于标签设计的问题，可能今后还需要修改
+ * 出现在Content中的D标签，主要为转换为d标签的html字符串。
+ * <pre>
+ * 注意：
+ * 1、D标签中的内容，若遇到括号不够用的情况，用^代替双引号，用~代替单引号；
+ * 2、目前没有对param、value的过滤函数、decorateView的扩展进行合法性检查
+ * <pre>
  * @author wh
  */
 public class D_Tag implements Serializable{
     private static final long serialVersionUID = -7400921505424634876L;
 
-    private String did; //对应的data编码
+    private String did; //对应的data编码，report中_DLIST里的jsonD标签的顺序号
     private DtagShowType showType; //显示类型
-    private String funcStr; //类型函数，目前只对first相关
-    private String value; //数据，获取_DATA中的那个对象、
-    private String lable; //X轴或分类
-    private String data; //Y轴或数值
-    private String decorateView; //修饰语法
+    private Map<String, String> param; //showType附属说明，在标签串中以json格式存在
+    private String value; //数据，获取_DATA中的那个对象
+    private String valueFilterFun; //数据过滤函数
+    private String decorateView; //显示修饰语法
+    private Map<String, String> dvExt; //显示修饰的扩展部分，在标签中串中以json格式存在
 
     public String getDid() {
         return did;
@@ -34,11 +40,11 @@ public class D_Tag implements Serializable{
     public void setShowType(DtagShowType showType) {
         this.showType = showType;
     }
-    public String getFuncStr() {
-        return funcStr;
+    public Map<String, String> getParam() {
+        return param;
     }
-    public void setFuncStr(String funcStr) {
-        this.funcStr = funcStr;
+    public void setParam(Map<String, String> param) {
+        this.param = param;
     }
     public String getValue() {
         return value;
@@ -46,23 +52,23 @@ public class D_Tag implements Serializable{
     public void setValue(String value) {
         this.value = value;
     }
-    public String getLable() {
-        return lable;
+    public String getValueFilterFun() {
+        return valueFilterFun;
     }
-    public void setLable(String lable) {
-        this.lable = lable;
-    }
-    public String getData() {
-        return data;
-    }
-    public void setData(String data) {
-        this.data = data;
+    public void setValueFilterFun(String valueFilterFun) {
+        this.valueFilterFun = valueFilterFun;
     }
     public String getDecorateView() {
         return decorateView;
     }
     public void setDecorateView(String decorateView) {
         this.decorateView = decorateView;
+    }
+    public Map<String, String> getDvExt() {
+        return dvExt;
+    }
+    public void setDvExt(Map<String, String> dvExt) {
+        this.dvExt = dvExt;
     }
 
     /**
@@ -74,23 +80,36 @@ public class D_Tag implements Serializable{
         if (this.showType==null) throw new Dtal1002CException("D标签不规范：showType属性必须设置！");
         if (StringUtils.isNullOrEmptyOrSpace(this.value)) throw new Dtal1002CException("D标签不规范：value属性必须设置且不能为空！");
 
-        String ret = "<d ";
-        ret += "did='"+this.did+"'";
-        if (this.showType==DtagShowType.TEXT) {
-            if (StringUtils.isNullOrEmptyOrSpace(this.funcStr)) throw new Dtal1002CException("D标签不规范：若设置showType=first，funcStr属性必须设置且不能为空！");
-            ret += " showType='"+this.funcStr+"'";
-        } else {
-            ret += " showType='"+this.showType.getValue()+"'";
+        String temp = "";
+        String ret = "<d"; //标签开始
+        //1-did
+        ret += " did='"+this.did+"'";
+        //2-showType
+        ret += " showType='"+this.showType.getValue()+"'";
+        //3-param
+        if (this.param!=null&&this.param.size()>0) {
+            temp = JsonUtils.objToJson(this.param);
+            ret += " param='"+replaceQuotation(temp)+"'";
         }
-        ret += " value='"+this.value+"'";
-        
-        if (this.showType==DtagShowType.PIE||this.showType==DtagShowType.LINE||this.showType==DtagShowType.BAR||this.showType==DtagShowType.RADAR) {
-            if (StringUtils.isNullOrEmptyOrSpace(this.lable)) throw new Dtal1002CException("D标签不规范：若设置showType="+this.showType.toString()+"，label属性必须设置且不能为空！");
-            if (StringUtils.isNullOrEmptyOrSpace(this.data)) throw new Dtal1002CException("D标签不规范：若设置showType="+this.showType.toString()+"，data属性必须设置且不能为空！");
+        //4-value
+        ret += " value='"+this.value;
+        if (!StringUtils.isNullOrEmptyOrSpace(this.valueFilterFun)) ret += "::"+this.valueFilterFun;
+        ret += "'";
+        //5-decorateView
+        if (!StringUtils.isNullOrEmptyOrSpace(this.decorateView)) {
+            ret += " decorateView='"+replaceQuotation(this.decorateView);
+            if (this.dvExt!=null&&this.dvExt.size()>0) {
+                temp = JsonUtils.objToJson(this.dvExt);
+                ret += "::"+replaceQuotation(temp);
+            }
+            ret += "'";
         }
+        return ret+"/>"; //标签结束
+    }
 
-        if (!StringUtils.isNullOrEmptyOrSpace(this.decorateView)) ret += " decorateView='"+this.decorateView+"'";
-        
-        return ret+"/>";
+    private String replaceQuotation(String sourceStr) {
+        sourceStr = sourceStr.replaceAll("'", "~");
+        sourceStr = sourceStr.replaceAll("\"", "^");
+        return sourceStr;
     }
 }

@@ -204,10 +204,10 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 DictModel dm = _od.getDictModelById(mcs.getSemantemeCode());
                                 D_Tag discriptDt = new D_Tag();
                                 discriptDt.setShowType(DtagShowType.TEXT);
-                                discriptDt.setFuncStr("first(3|num)");
                                 discriptDt.setDid(report.getDid(tempStr)+"");
                                 discriptDt.setValue("quote['"+mc.getId()+"']");
-                                discriptDt.setDecorateView("{#category#}占#percent#%");
+                                discriptDt.setValueFilterFun("first(3|num)");
+                                discriptDt.setDecorateView("{#category#}占#percent(num)#%");
                                 if (dm.dictTree.getChildCount()>3) {
                                     tempContent += "["+mm.getTitleName()+"]中，大多数为";
                                 } else {
