@@ -134,6 +134,12 @@ $(function() {
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100);//初始化maskTitle
   refresh('<%=path%>');
+  document.onkeydown = function(e) { 
+    var ev = document.all ? window.event : e;
+    if(ev.keyCode==13) {
+      commit();
+    }
+  };
 });
 //初始化页面全局参数
 function initPageParam(){
