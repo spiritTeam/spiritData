@@ -77,7 +77,7 @@ public class DealExcelFileService {
     @Resource
     private MdBasisService mdBasisServcie;
     @Resource    
-    private TableMetaDataService tbMetaDataService;
+    private TableDataProcessService tbDataProcService;
     //key分析
     @Resource
     private AnalKey analKey;//只分析,并计入文件
@@ -302,6 +302,7 @@ public class DealExcelFileService {
                             //4-主键分析
                             //4.1-临时表主键分析
                             logger.debug(logPreStr + " start analysis primary key ...");
+                            //主键分析的时候需要考虑到主键字段的长度，对于MYSQL，如果超过255则不能成为主键！！！
                             Map<String, Object> keyMap = analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
@@ -317,6 +318,7 @@ public class DealExcelFileService {
                                 fmService.saveFileRelation(fr);//文件关联存储
                                 //4.3-主键分析结果应用
                                 try{
+                                	//主键调整的时候需要考虑到主键字段的长度，对于MYSQL，如果超过255则不能成为主键！！！
                                 	mdKeyService.adjustMdKey(sysMd); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
                                 }catch(Exception ex){
                                 	ex.printStackTrace();
@@ -399,7 +401,7 @@ public class DealExcelFileService {
     }
 
     /*
-     * 保存临时表信息
+     * 保存临时表数据信息
      * 将EXCEL表数据插入到临时表里
      * @param sti Sheet中的表结构区域信息
      * @param sysMm 元数据信息（已在系统注册过的）
@@ -422,125 +424,18 @@ public class DealExcelFileService {
             if (!isMate) throw new IllegalArgumentException("参数：paras(excel解析单元)必须与参数：sti(表结构区域信息)相匹配");
         }
 
-        /**
-         * 获取临时表的元数据描述
-         * 主要是获取列名、类型、长度
-         * 当插入数据前需要判断是否超长，是否需要扩容列长度
-         */
-        tbMetaDataService.initTableMetaDataService(tempTableName);        
-        
-        //构建插入语句
-        Object[] paramArray = new Object[sysMm.getColumnList().size()];
-        String insertSql = "insert into "+tempTableName+"(#columnSql) values(#valueSql)", columnSql="", valueSql="";
-        for (MetadataColumn mc: sysMm.getColumnList()) {
-            columnSql+=","+mc.getColumnName();
-            valueSql+=",?";
-        }
-        if (columnSql.trim().length()>0) columnSql=columnSql.substring(1);
-        if (valueSql.trim().length()>0) valueSql=valueSql.substring(1);
-        insertSql = insertSql.replaceAll("#columnSql", columnSql).replaceAll("#valueSql", valueSql);
-
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        Map<String, Object> titleCol = null;
-        //日志信息准备
-//        int _log_readAllCount/*读取总行数*/, _log_insertOkCount=0/*新增成功行数*/, _log_insertFailCount=0/*新增失败行数*/, _log_ignoreCount=0/*忽略行数*/;
-        Map<Integer, String> _log_failMap = new HashMap<Integer, String>();//新增失败的行及其原因
-        Map<Integer, String> _log_ignoreMap = new HashMap<Integer, String>();//忽略行及其原因
-
-        boolean autoCommit = false;
-        try {
-            conn = dataSource.getConnection();
-            autoCommit = conn.getAutoCommit();
-            conn.setAutoCommit(false);
-            ps = conn.prepareStatement(insertSql);
-            
-            List<Map<String, Object>> rowData = null;
-//            _log_readAllCount = sti.getEndY()-sti.getBeginY()+1;
-            for (int i=sti.getBeginY(); i<=sti.getEndY(); i++) {
-                rowData = parse.readOneRow(i);
-                rowData = parse.convert2DataRow(rowData);
-                //去除空行
-                if (parse.isEmptyRow(rowData)) {
-  //                  _log_ignoreCount++;
-                    _log_ignoreMap.put(i, "第"+i+"行为空行。");
-                    continue;
-                }
-                for (int j=0; j<paramArray.length; j++) paramArray[j]=null;
-
-                int _mmDType, _infoDType;
-                Object v;
-                for (Map<String, Object> cell: rowData) {
-                    titleCol = parse.findMatchTitle(cell, sti);
-                    if (titleCol!=null) {
-                        for (int k=0; k<sysMm.getColumnList().size(); k++) {
-                            MetadataColumn mc = sysMm.getColumnList().get(k);
-                            _mmDType = ExcelConstants.convert2DataType(mc.getColumnType());
-                            _infoDType = -1;
-                            // 循环处理每列值信息
-                            if (mc.getTitleName().equals((String)titleCol.get("title"))) {                                
-                                Map<String, Object> kv = (Map<String, Object>)cell.get("transData");
-                                _infoDType = (Integer)kv.get("dType");
-                                v = null;
-                                if (_infoDType==_mmDType) v = kv.get("value");
-                                else {
-                                    kv = (Map<String, Object>)cell.get("nativeData");
-                                    _infoDType = (Integer)kv.get("dType");
-                                    if (_infoDType==_mmDType) v = kv.get("value");
-                                    else if (_mmDType==ExcelConstants.DATA_TYPE_DOUBLE) {
-                                        if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_LONG||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
-                                            v = kv.get("value");
-                                        }
-                                    }
-                                }
-                                if (_mmDType==ExcelConstants.DATA_TYPE_STRING&&v==null) v=((Map<String, Object>)cell.get("transData")).get("value")+"";
-                                paramArray[k]=v;
-                                
-                                //对数据进行判断，可能会产生列长度不够的问题，所以需要扩容
-                                this.tbMetaDataService.processColLen(mc.getColumnName(),v);
-                            }
-                        }
-                    }
-                }
-                boolean canInsert = false;
-                for (int j=0; j<paramArray.length; j++) {
-                    if (paramArray[j]!=null) {
-                        canInsert = true;
-                        break;
-                    }
-                }
-                if (!canInsert) {
-//                    _log_ignoreCount++;
-                    _log_ignoreMap.put(i, "第"+i+"行数据与元数据不匹配，行数据为<<>>，元数据为<<>>。");
-                    continue;
-                }
-                try{
-                    for (int j=0; j<paramArray.length; j++) {
-                        ps.setObject(j+1, paramArray[j]);
-                    }
-                    int insertOk = ps.executeUpdate();
-                    if (insertOk>0) {
-  //                      _log_insertOkCount += insertOk;
-                    } else {
-    //                    _log_insertFailCount++;
-                        _log_failMap.put(i,  "第"+i+"行数据新增失败，原因未知！");
-                    }
-                } catch(SQLException sqlE) {
-      //              _log_insertFailCount++;
-                    _log_failMap.put(i,  "第"+i+"行数据新增失败，原因为："+sqlE.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (conn!=null) conn.commit();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-            try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
-            try { if (conn!=null) {conn.setAutoCommit(autoCommit);conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
+        //将EXCELE数据按行读出并插入到临时表中
+        try{
+            /**
+             * 获取临时表的元数据描述
+             * 主要是获取列名、类型、长度
+             * 当插入数据前需要判断是否超长，是否需要扩容列长度
+             */
+//            tbDataProcService.initTableMetaDataService(tempTableName); 
+            //插入数据
+            tbDataProcService.insertDatas2TempTab(tempTableName,sysMm.getColumnList(),sti, parse);
+        }catch(Exception ex){
+        	logger.error("failed to save data to tmp table="+tempTableName,ex);
         }
     }
    
@@ -566,185 +461,18 @@ public class DealExcelFileService {
             if (!isMate) throw new IllegalArgumentException("参数：paras(excel解析单元)必须与参数：sti(表结构区域信息)相匹配");
         }
 
-        /**
-         * 获取积累表的元数据描述
-         * 主要是获取列名、类型、长度
-         * 当插入数据前需要判断是否超长，是否需要扩容列长度
-         */
-        tbMetaDataService.initTableMetaDataService(mainTableName);       
-        
-        //插入、更新数据
-        String insertSql = "insert into "+mainTableName+"(#columnSql) values(#valueSql)", columnSql="", valueSql="";
-        String updateSql = "update "+mainTableName+" set #updateSet where #updateKey", updateSet="", updateKey="";
-        Object[] paramArray4Insert = new Object[sysMm.getColumnList().size()];
-        Object[] paramArray4Update = new Object[sysMm.getColumnList().size()];
-        Map<String, Integer> insertColIndexMap = new HashMap<String, Integer>();
-        Map<String, Integer> updateColIndexMap = new HashMap<String, Integer>();
-        for (int k=0; k<sysMm.getColumnList().size(); k++) {
-            MetadataColumn mc = sysMm.getColumnList().get(k);
-            columnSql+=","+mc.getColumnName();
-            valueSql+=",?";
-            insertColIndexMap.put(mc.getColumnName(), k);
-            if (!mc.isPk()) {
-                updateSet += ","+mc.getColumnName()+"=?";
-            } else {
-                updateKey += " and "+mc.getColumnName()+"=?";
-            }
-        }
-        if (columnSql.trim().length()>0) columnSql=columnSql.substring(1);
-        if (valueSql.trim().length()>0) valueSql=valueSql.substring(1);
-        insertSql = insertSql.replaceAll("#columnSql", columnSql).replaceAll("#valueSql", valueSql);
-        if (updateKey.trim().length()==0||updateSet.trim().length()==0) updateSql=null;
-        else {
-            if (updateSet.trim().length()>0) updateSet=updateSet.substring(1);
-            if (updateKey.trim().length()>0) updateKey=updateKey.substring(5);
-            updateSql = updateSql.replaceAll("#updateSet", updateSet).replaceAll("#updateKey", updateKey);
-            String[] s = updateSet.split(",");
-            int k=0;
-            for (; k<s.length; k++) updateColIndexMap.put(s[k].substring(0, s[k].length()-2), k);
-            s = updateKey.split(" and ");
-            for (int l=0; l<s.length; l++) updateColIndexMap.put(s[l].substring(0, s[l].length()-2), k+l);
-        }
-
-        Connection conn = null;
-        PreparedStatement psInsert = null;
-        PreparedStatement psUpdate = null;
-
-        Map<String, Object> titleCol = null;
-        //日志信息准备
-        int _log_readAllCount/*读取总行数*/, _log_insertOkCount=0/*新增成功行数*/,_log_updateOkCount=0/*新增成功行数*/, _log_saveFailCount=0/*新增失败行数*/, _log_ignoreCount=0/*忽略行数*/;
-        Map<Integer, String> _log_failMap = new HashMap<Integer, String>();//存储失败的行及其原因
-        Map<Integer, String> _log_ignoreMap = new HashMap<Integer, String>();//忽略行及其原因
-
-        boolean autoCommit = false;
-        try {
-            conn = dataSource.getConnection();
-            autoCommit = conn.getAutoCommit();
-            conn.setAutoCommit(false);
-            psInsert = conn.prepareStatement(insertSql);
-            if (updateSql!=null) psUpdate = conn.prepareStatement(updateSql);
-
-            int keyCount=0;
-            int _mmDType, _infoDType;
-            Object v;
-            String tagStr;
-
-            List<Map<String, Object>> rowData = null;
-            _log_readAllCount = sti.getEndY()-sti.getBeginY()+1;
-            for (int i=sti.getBeginY(); i<=sti.getEndY(); i++) {
-                rowData = parse.readOneRow(i);
-                rowData = parse.convert2DataRow(rowData);
-                if (parse.isEmptyRow(rowData)) {
-                    _log_ignoreCount++;
-                    _log_ignoreMap.put(i, "第"+i+"行为空行。");
-                    continue;
-                }
-                for (int j=0; j<paramArray4Insert.length; j++) paramArray4Insert[j]=null;
-                if (updateSql!=null) for (int j=0; j<paramArray4Update.length; j++) paramArray4Update[j]=null;
-
-                keyCount=0;
-                tagStr = "";
-                for (Map<String, Object> cell: rowData) {
-                    titleCol = parse.findMatchTitle(cell, sti);
-                    if (titleCol!=null) {
-                        for (int k=0; k<sysMm.getColumnList().size(); k++) {
-                            MetadataColumn mc = sysMm.getColumnList().get(k);
-                            _mmDType = ExcelConstants.convert2DataType(mc.getColumnType());
-                            _infoDType = -1;
-                            if (tagStr.indexOf(","+k)!=-1) continue;
-                            if (mc.getTitleName().equals((String)titleCol.get("title"))) {
-                                Map<String, Object> kv = (Map<String, Object>)cell.get("transData");
-                                _infoDType = (Integer)kv.get("dType");
-                                v = null;
-                                if (_infoDType==_mmDType) v = kv.get("value");
-                                else {
-                                    kv = (Map<String, Object>)cell.get("nativeData");
-                                    _infoDType = (Integer)kv.get("dType");
-                                    if (_infoDType==_mmDType) v = kv.get("value");
-                                    else if (_mmDType==ExcelConstants.DATA_TYPE_DOUBLE) {
-                                        if (_infoDType==ExcelConstants.DATA_TYPE_INTEGER||_infoDType==ExcelConstants.DATA_TYPE_LONG||_infoDType==ExcelConstants.DATA_TYPE_NUMERIC) {
-                                            v = kv.get("value");
-                                        }
-                                    }
-                                    if (_mmDType==ExcelConstants.DATA_TYPE_STRING&&v==null) {
-                                        v=((Map<String, Object>)cell.get("transData")).get("value")+"";
-                                    }
-                                }
-                                paramArray4Insert[insertColIndexMap.get(mc.getColumnName())] = v;   
-                                if (updateSql!=null) paramArray4Update[updateColIndexMap.get(mc.getColumnName())] = v;
-                                tagStr+=","+k;
-
-                                //对数据进行判断，可能会产生列长度不够的问题，所以需要扩容
-                                tbMetaDataService.processColLen(mc.getColumnName(), v);
-                                
-                                break;
-                            }
-                        }
-                    }
-                }
-                boolean canSave = false;
-                for (int j=0; j<paramArray4Insert.length; j++) {
-                    if (paramArray4Insert[j]!=null) {
-                        canSave = true;
-                        break;
-                    }
-                }
-                if (!canSave) {
-                    _log_ignoreCount++;
-                    _log_ignoreMap.put(i, "第"+i+"行数据与元数据不匹配，行数据为<<>>，元数据为<<>>。");
-                    continue;
-                }
-                //先修改，再新增
-                boolean canInsert = true;
-                int j=0;
-                if (updateSql!=null) {
-                    psUpdate.clearParameters();
-                    try{
-                        for (j=0; j<paramArray4Update.length; j++) {
-                            psUpdate.setObject(j+1, paramArray4Update[j]);
-                        }
-                        int updateOk = psUpdate.executeUpdate();
-                        if (updateOk>0) {
-                            canInsert=false;
-                            _log_updateOkCount += updateOk;
-                        } else {
-                            canInsert=true;
-                        }
-                        canInsert = !(psUpdate.executeUpdate()==1);
-                    } catch(SQLException sqlE) {
-                        canInsert=true;
-                    }
-                }
-                if (canInsert) {
-                    psInsert.clearParameters();
-                    try {
-                        for (j=0; j<paramArray4Insert.length; j++) {
-                            psInsert.setObject(j+1, paramArray4Insert[j]);
-                        }
-                        int insertOk = psInsert.executeUpdate();
-                        if (insertOk>0) {
-                            _log_insertOkCount += insertOk;
-                        } else {
-                            _log_saveFailCount++;
-                            _log_failMap.put(i,  "第"+i+"行数据新增失败，原因未知！");
-                        }
-                    } catch(SQLException sqlE) {
-                        _log_saveFailCount++;
-                        _log_failMap.put(i,  "第"+i+"行数据新增失败，原因为："+sqlE.getMessage());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (conn!=null) conn.commit();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-            try { if (psUpdate!=null) {psUpdate.close();psUpdate = null;} } catch (Exception e) {e.printStackTrace();} finally {psUpdate = null;};
-            try { if (psInsert!=null) {psInsert.close();psInsert = null;} } catch (Exception e) {e.printStackTrace();} finally {psInsert = null;};
-            try { if (conn!=null) {conn.setAutoCommit(autoCommit);conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
-        }
+        //将EXCEL数据插入到积累表中，并更新原有数据
+        try{
+            /**
+             * 获取积累表的元数据描述
+             * 主要是获取列名、类型、长度
+             * 当插入数据前需要判断是否超长，是否需要扩容列长度
+             */
+//            this.tbDataProcService.initTableMetaDataService(mainTableName);       
+            //保存数据
+            this.tbDataProcService.saveData2AccumulateTab(mainTableName,sysMm.getColumnList(),sti, parse);
+        }catch(Exception ex){
+        	logger.error("failed to save data 2 accumulation table="+mainTableName,ex);
+        }        
     }
 }
