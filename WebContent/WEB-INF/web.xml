@@ -6,13 +6,25 @@
   <display-name>BasicPlat</display-name>
 
   <!-- begin上下文参数 -->
-  <!-- Spring配置文件位置 -->
+  <!-- Spring配置文件位置 后三项是为了让Spring环境不报错误，具体意义不详 -->
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>
       classpath*:springConfig/*Spring.xml,
       /WEB-INF/applicationContext.xml
     </param-value>
+  </context-param>
+  <context-param>
+    <param-name>spring.profiles.active</param-name>
+    <param-value>dev</param-value>
+  </context-param>
+  <context-param>
+    <param-name>spring.profiles.default</param-name>
+    <param-value>dev</param-value>
+  </context-param>
+  <context-param>
+    <param-name>spring.liveBeansView.mbeanDomain</param-name>
+    <param-value>dev</param-value>
   </context-param>
   <!-- log4j配置 -->
   <context-param>

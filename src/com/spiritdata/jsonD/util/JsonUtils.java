@@ -171,6 +171,8 @@ public abstract class JsonUtils {
 
         int dQuotes = 0, sQuotes=0; //单双引号标志
         int rnFlag = 0; //回车换行标记
+
+        //更换
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<jsonStr.length(); i++) {
             char c = jsonStr.charAt(i);
@@ -208,6 +210,12 @@ public abstract class JsonUtils {
 
             if (sQuotes%2==1||dQuotes%2==1) _sb.append(c);
             else {
+                if ((c=='['&&_c==']')||(c=='{'&&_c=='}')) {
+                    _sb.append(c);
+                    _sb.append(_c);
+                    i++;
+                    continue;
+                }
                 if (c=='{'||c=='['||(c==','&&_c!='['&&_c!='{')) {
                     _sb.append(c);
                     _sb.append("\n");

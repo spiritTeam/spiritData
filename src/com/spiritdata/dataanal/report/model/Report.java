@@ -162,7 +162,7 @@ public class Report implements Serializable, Convert2Json {
         }
         //转换dataList;报告可以没有任何_DLIST
         if (_DLIST!=null&&_DLIST.size()>0) {
-            jsonS += ","+JsonUtils.objToJson(_DLIST);
+            jsonS += ",_DLIST:"+JsonUtils.objToJson(_DLIST);
         } else jsonS += ",";
         //转换体report
         if (_REPORT==null) jsonS += "\"_REPORT\":\"\"";
