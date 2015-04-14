@@ -3,6 +3,7 @@ package com.spiritdata.jsonD.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spiritdata.framework.exceptionC.Plat0001CException;
 import com.spiritdata.framework.exceptionC.Plat0002CException;
@@ -19,9 +20,15 @@ public abstract class JsonUtils {
      * @param createNew 方式：true，新实例；false,存在的mapper实例
      * @return ObjectMapper实例
      */
-    private static synchronized ObjectMapper getMapperInstance(boolean createNew) {     
+    private static synchronized ObjectMapper getMapperInstance(boolean createNew) {
         if (createNew)  return new ObjectMapper();
         else if (mapper==null) mapper=new ObjectMapper();
+        //单引号
+        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        //无引号
+        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        //特殊字符
+        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
         return mapper;
     }
 

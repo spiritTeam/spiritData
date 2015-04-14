@@ -1,5 +1,5 @@
 { _id: "550E8400-E29B-11D4-A716-446655440000",
-  _code: "SP.TEAM-00007",/*excl元数据列表，基于元数据的jsonD*/
+  _code: "SP.TEAM-00007",
   _parsefun:{
     _lan: "java",
     _class: "com.spirit.team.Key00007"
@@ -17,7 +17,7 @@
         index:"0"
       },
       tableData:{
-        titles:[{colName:"元数据名"},{colType:"元数据类型"},{details:"详细"},{semantic:"语义定义"}],/*这是样例，应该去掉*/
+        titles:[{colName:"元数据名"},{colType:"元数据类型"},{details:"详细"},{semantic:"语义定义"}],
         tableBody:[
           {colName:"id",       colType:"String", details:"",           semantic:"唯一列，可做主键"},
           {colName:"名称",     colType:"String", details:"",           semantic:"可能是中文名称，可能性98%"},
