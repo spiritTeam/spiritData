@@ -50,7 +50,7 @@ public class MdKeyService {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return ;
         
         //读取元数据信息，看主键是否是确定的
-        String[] keys = (needAnalKey(mm))?analMdKey(mm):null;
+        String[] keys = (needAnalKey(mm))?analMdKey(mm,colModiMap,dialect):null;
         //不管主键是否确定，下面都对主键进行调整
         //以下调整是对实体表(积累表)进行调整的
         String keyStr = "";
@@ -82,6 +82,7 @@ public class MdKeyService {
             conn = dataSource.getConnection();
             st = conn.createStatement();
 
+            //取得数据表中目前的主键
             DatabaseMetaData dbMetaData = conn.getMetaData();
             rs = dbMetaData.getPrimaryKeys(null, null, sumTableName);
             while (rs.next()){
@@ -94,31 +95,17 @@ public class MdKeyService {
                 _tabKeys = StringUtils.splitString(_tabKeyStr, ",");
             }
             
-            //需要根据插入临时表时修改的列字段长度来判断是否主键，对与VARCHAR类型，主键长度不能超过255，最好放在dialect中来根据类型判断，否则重复代码太多！！！
-            if(colModiMap!=null && colModiMap.containsKey(_tabKeys)){
-            	MetaDataColInfo mdCol = (MetaDataColInfo)colModiMap.get(_tabKeys);
-            	int colLen = mdCol.getColLen();
-            	String colType = mdCol.getColTypeName();
-            	if(dialect.getClass().getName().indexOf("MySqlDialect")>-1){
-            		if(colType.equalsIgnoreCase("VARCHAR") ||colType.equalsIgnoreCase("CHAR")){
-            			if(colLen>255){ //MYSQL中字符类型的主键长度不能超过255
-            				_tabKeys = null;
-            			}
-            		}else{
-            			//还需要对其它类型判断？？？
-            		}
-            	}
-            }
-            
-            
             //检查是否需要创建主键
-            boolean needCreateKey = true;
-            //若有主键，比较主键是否和mm中主键一致
+            boolean needCreateKey = true;                
+            //若分析出了主键，则需要比较分析出的主键是否和原表中的主键一致
             if (_tabKeys!=null&&!(_tabKeys[0].trim().length()==0)) {
-                if (!twoStringArraySame(_tabKeys, keys)) {//若不相同，删除原来的主键
+                if (!twoStringArraySame(_tabKeys, keys)) {//若分析出的主键和原表的主键不相同，删除原来的主键
                     st.execute("ALTER TABLE "+sumTableName+" DROP PRIMARY KEY");
-                } else needCreateKey = false;
+                } else{ //若分析出的主键和原表的主键相同，则无需再修改主键
+                	needCreateKey = false;
+                }
             }
+            
             //按照metadata中的内容创建主键
             if (needCreateKey) {
                 st.execute("ALTER TABLE "+sumTableName+" ADD PRIMARY KEY("+keyStr+")");
@@ -158,7 +145,7 @@ public class MdKeyService {
      * @return 最有可能作为key的列组合，用列名称(String类型)的数组来表示
      * @throws Exception
      */
-    private String[] analMdKey(MetadataModel mm) {
+    private String[] analMdKey(MetadataModel mm,Map<String,MetaDataColInfo> colModiMap,Dialect dialect) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return null;
         //读取元数据信息，看是否需要对主键进行分析
         String keyStr = null; //主键串，若分析后无主键，此变量为null
@@ -223,12 +210,15 @@ public class MdKeyService {
         if (keyStr!=null) {
             ret = StringUtils.splitString(keyStr, ",");
             for (String keyCn: ret) {
-                for (MetadataColumn mc: mm.getColumnList()) {
-                    if (mc.getColumnName().equals(keyCn)) {
-                        mc.setPkSign(pkSign);
-                        updateList.add(mc);
-                    }
-                }
+            	//对可能的主键列做长度判断，需要根据插入临时表时修正的列长度来进一步判断分析出主键列是否为真正的主键列
+            	if(this.isPkByColLen(keyCn, colModiMap, dialect)){
+	                for (MetadataColumn mc: mm.getColumnList()) {
+	                    if (mc.getColumnName().equals(keyCn)) {
+	                        mc.setPkSign(pkSign);
+	                        updateList.add(mc);
+	                    }
+	                }
+            	}
             }
         }
         //修改数据库
@@ -269,6 +259,35 @@ public class MdKeyService {
         return ret;
     }
 
+    /**
+     * 通过扩容列的长度判断给出的主键是否符合要求
+     * 对于MYSQL的VARCHAR类型主键长度必须小于256
+     * @param pkStr
+     * @param colModiMap
+     * @param dialect
+     * @return
+     */
+    private boolean isPkByColLen(String pkStr,Map<String,MetaDataColInfo> colModiMap,Dialect dialect){
+        boolean isPkStr = true;
+    	//需要根据插入临时表时修改的列字段长度来判断是否主键，对与VARCHAR类型，主键长度不能超过255，最好放在dialect中来根据类型判断，否则重复代码太多！！！
+        if(colModiMap!=null && colModiMap.containsKey(pkStr)){
+        	MetaDataColInfo mdCol = (MetaDataColInfo)colModiMap.get(pkStr);
+        	int colLen = mdCol.getColLen();
+        	String colType = mdCol.getColTypeName();
+        	if(dialect.getClass().getName().indexOf("MySqlDialect")>-1){
+        		if(colType.equalsIgnoreCase("VARCHAR") ||colType.equalsIgnoreCase("CHAR")){
+        			if(colLen>255){ //MYSQL中字符类型的主键长度不能超过255
+        				isPkStr = false;
+        			}
+        		}else{
+        			//还需要对其它类型判断？？？
+        		}
+        	}
+        }
+        
+        return isPkStr;
+    }
+    
     /*
      * 比较两个字符串数组是否一样
      */
