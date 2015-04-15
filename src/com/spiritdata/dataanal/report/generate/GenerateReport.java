@@ -20,6 +20,8 @@ public interface GenerateReport {
 
     /**
      * 构建报告对象，生成task任务，并启动分析任务。
+     * <STRONG>是否返回String还要考虑，要和log一起进行考虑！！！现在先这样
+     * </STRONG>
      * @param param 完成本过程需要的数据，必须包括预处理需要的数据，应放入preTreadParam参数中
      * @return 报告所对应的报告id
      */

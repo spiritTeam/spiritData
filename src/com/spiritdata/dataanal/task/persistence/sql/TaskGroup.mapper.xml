@@ -106,4 +106,9 @@
   <delete id="deleteByEntity" parameterType="java.util.Map">
     delete from sa_task_group <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
   </delete>
+
+  <!-- 调整所属者Id -->
+  <delete id="changeOwner" parameterType="java.util.Map">
+    update sa_task_group set ownerId=#{newOwnerId,jdbcType=VARCHAR}, ownerType=1 where ownerId=#{oldOwnerId,jdbcType=VARCHAR} and ownerType=2
+  </delete>
 </mapper>

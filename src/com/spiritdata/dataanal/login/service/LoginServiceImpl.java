@@ -96,7 +96,7 @@ public class LoginServiceImpl implements LoginService {
             st.execute("update sa_md_tabmap_rel set ownerId='"+newOwnerId+"', ownerType=1 where ownerId='"+sessionId+"' and ownerType=2");
             conn.commit();
             conn.setAutoCommit(autoCommitFlag);
-            //修改任务所有者
+            //修改任务所有者，这里之所以不按照上面的方式去处理是因为：以上的内容都缓存在Session中，而task缓存在App中
             //TODO 若修改失败，怎样处理，这里还未考虑
             tmService.changeOwnerId(session.getId(), newOwnerId);
         } catch (Exception e) {

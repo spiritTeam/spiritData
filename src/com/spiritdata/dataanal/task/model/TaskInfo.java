@@ -4,26 +4,30 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo;
 import com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
+import com.spiritdata.framework.core.model.ModelSwapPo;
+import com.spiritdata.framework.exceptionC.Plat0006CException;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
+import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
  * 任务信息对象，包括任务的基本信息，前置任务列表，任务执行结果列表
  * @author wh
  */
-public class TaskInfo implements Serializable {
+public class TaskInfo implements Serializable, ModelSwapPo {
     private static final long serialVersionUID = 5771297762371717292L;
 
     private String id; //任务
     private String taskName; //任务名称
     private TaskLangType langType; //执行语言，默认为java
     private String excuteFunc; //任务执行方法
-    private String param; //任务执行所需的参数
+    private Map<String, Object> param; //任务执行所需的参数
     private int status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
     private String desc; //任务说明
     private Timestamp firstTime; //任务第一次准备执行时间
@@ -59,11 +63,12 @@ public class TaskInfo implements Serializable {
     public void setExcuteFunc(String excuteFunc) {
         this.excuteFunc = excuteFunc;
     }
-    public String getParam() {
+    public Map<String, Object> getParam() {
         return param;
     }
+    @SuppressWarnings("unchecked")
     public void setParam(String param) {
-        this.param = param;
+        this.param = (Map<String, Object>)JsonUtils.jsonToObj(param, Map.class);
     }
     public int getStatus() {
         return status;
@@ -166,6 +171,7 @@ public class TaskInfo implements Serializable {
      * 当前对象转换为Po对象，为数据库操作做准备
      * @return 任务信息
      */
+    @Override
     public TaskInfoPo convert2Po() {
         TaskInfoPo ret = new TaskInfoPo();
         if (StringUtils.isNullOrEmptyOrSpace(this.getId())) ret.setId(SequenceUUID.getPureUUID());
@@ -174,9 +180,8 @@ public class TaskInfo implements Serializable {
         ret.setTaskName(this.taskName);
         ret.setLangType(this.langType.getValue());
         ret.setExcuteFunc(this.excuteFunc);
-        ret.setParam(this.param);
-        ret.setParam(this.param);
-        ret.setStatus(this.status);
+        ret.setParam(JsonUtils.objToJson(this.param));
+        ret.setStatus(this.status==0?1:this.status);
         ret.setDesc(this.desc);
         if (this.resultFile!=null&&!StringUtils.isNullOrEmptyOrSpace(this.resultFile.getId())) ret.setRfId(this.resultFile.getId());
         if (this.taskGroup!=null&&!StringUtils.isNullOrEmptyOrSpace(this.taskGroup.getId())) ret.setTaskGId(this.taskGroup.getId());
@@ -199,7 +204,33 @@ public class TaskInfo implements Serializable {
             trp.setPreTaskId(pt.getPreTask().getId());
             if (pt.isUseResult()) trp.setUsedPreData(1);
             else  trp.setUsedPreData(2);
+            retl.add(trp);
         }
         return retl;
+    }
+
+    /**
+     * <p>从po得到模型对象，对于任务信息对象来说：
+     * <p>taskGroup属性（所属任务组），没有做处理，通过数据库检索可以得到这组属性，之所以没有处理，是要把这个功能留到Service中再处理。
+     * 这样做考虑如下：读取数据库，慢！而在Service中，可能上下文已经得到了文件的信息，这样可能更快，而且不用从数据库获得两次(本方法中一次，Service中一次)。
+     * <p>同样理由，resultFile(对应的jsonD文件)、preTasks（前序任务列表）的构造也不在这里处理。(通过读取数据库相关信息，这三个列表也是能够得到的)
+     * <p>因此要注意：通过本方法构建的模型对象信息是不完整的。
+     */
+    @Override
+    public void buildFromPo(Object po) {
+        if (po==null) throw new Plat0006CException("Po对象为空，无法从空对象得到概念/逻辑对象！");
+        if (!(po instanceof TaskInfoPo)) throw new Plat0006CException("Po对象不是TaskInfoPo的实例，无法从此对象构建任务信息对象！");
+
+        TaskInfoPo _po = (TaskInfoPo)po;
+        this.id = _po.getId();
+        this.taskName = _po.getTaskName();
+        this.langType = TaskLangType.getTaskLangType(_po.getLangType());
+        this.excuteFunc = _po.getExcuteFunc();
+        this.setParam(_po.getParam());
+        this.status = _po.getStatus();
+        this.desc = _po.getDesc();
+        this.firstTime = _po.getFirstTime();
+        this.beginTime = _po.getBeginTime();
+        this.endTime = _po.getEndTime();
     }
 }

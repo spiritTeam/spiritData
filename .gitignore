@@ -1,14 +1,15 @@
 ﻿/Doc
 /WebContent/log
-/WebContent/WEB-INF/lib
-/WebContent/WEB-INF/classes
 /WebContent/analData
+/WebContent/reportStore
 /WebContent/reportJson
 /WebContent/tempUpload
 /WebContent/uploadFiles
 /WebContent/test
 /WebContent/log
 /WebContent/checkCodeImges
+/WebContent/WEB-INF/lib
+/WebContent/WEB-INF/classes
 /pom.xml
 
 /.classpath
@@ -16,3 +17,5 @@
 /target
 
 /test
+
+/WebContent/reportDownLoad

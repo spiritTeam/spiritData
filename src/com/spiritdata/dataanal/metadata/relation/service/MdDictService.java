@@ -46,6 +46,7 @@ public class MdDictService {
      * @param _dictCache 字典缓存
      * @param tTableName 临时表，用于调整数据
      */
+    @SuppressWarnings("resource")
     public void adjustMdDict(MetadataModel mm, Map<String, Object> dictMap, String tTableName, _OwnerDictionary _dictCache) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new Dtal0203CException("元数据模型信息不包含任何列信息，无法分析！");
 
@@ -75,6 +76,7 @@ public class MdDictService {
                     DictModel dModel = null;
                     if (v instanceof MetadataColSemanteme) { //已引用的字典组
                         dModel=_dictCache.getDictModelById(((MetadataColSemanteme) v).getSemantemeCode());
+                        if (dModel==null) throw new Dtal0203CException("无法从Session缓存中得到相应的字典项");
                         _tableName = tTableName;
                     } else { //未引用的字典组，加入新的字典组，包括Session和数据库
                         //准备数据
@@ -159,7 +161,8 @@ public class MdDictService {
                 }
             }
         } catch(Exception e) {
-            throw new Dtal0203CException(e);
+            if (e instanceof Dtal0203CException) throw (Dtal0203CException)e;
+            else throw new Dtal0203CException(e);
         } finally {
             try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};

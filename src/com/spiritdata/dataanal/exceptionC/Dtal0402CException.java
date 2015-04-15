@@ -1,7 +1,7 @@
 package com.spiritdata.dataanal.exceptionC;
 
 /**
- * 任务描述信息不规范，内部码为0401，基本信息为'任务描述信息不规范'异常
+ * 任务描述信息不规范，内部码为0402，基本信息为'任务描述信息不规范'异常
  * @author wh
  */
 public class Dtal0402CException extends DtalCException {

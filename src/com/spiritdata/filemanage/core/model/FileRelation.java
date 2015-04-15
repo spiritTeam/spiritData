@@ -176,7 +176,7 @@ public class FileRelation implements Serializable, ModelSwapPo {
      * <p>从po得到模型对象，对于文件关系对象来说：
      * <p>element1、element2属性（第一关系对象、第二关系对象），没有做处理，通过po中的AType/Aid和BType/BId是可以得到这两个信息的，之所以没有处理，是要把这个功能留到Service中再处理。
      * 这样做考虑如下：得到两个关系对象要读取数据库，慢！而在Service中，可能上下文已经得到了文件的信息，这样可能更快，而且不用从数据库获得两次(本方法中一次，Service中一次)。
-     * <p>因此要注意：通过本方法构建的对象信息是不完整的。
+     * <p>因此要注意：通过本方法构建的模型对象信息是不完整的。
      */
     @Override
     public void buildFromPo(Object po) {

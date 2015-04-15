@@ -299,10 +299,10 @@ public class DealExcelFileService {
                             //4.1-临时表主键分析
                             logger.info(logPreStr + " start analysis primary key ...");
                             Map<String, Object> keyMap = analKey.scanOneTable(tabMapOrgAry[1].getTableName(), sysMd, null);
+                            //4.2-文件关系存储
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
                                 FileInfo arFi = arFileService.saveFile(arf);//分析jsonD存储
-                                //4.2-文件关系存储
                                 FileRelation fr = new FileRelation();
                                 fr.setElement1(fi.getFileCategoryList().get(0));
                                 fr.setElement2(arFi.getFileCategoryList().get(0));
@@ -311,12 +311,12 @@ public class DealExcelFileService {
                                 fr.setRType2("语义分析-主键");
                                 fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的主键");
                                 fmService.saveFileRelation(fr);//文件关联存储
-                                //4.3-主键分析结果应用
-                                try{
-                                	mdKeyService.adjustMdKey(sysMd); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
-                                }catch(Exception ex){
-                                	ex.printStackTrace();
-                                }
+                            }
+                            //4.3-主键分析结果应用
+                            try{
+                                mdKeyService.adjustMdKey(sysMd); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
+                            }catch(Exception ex){
+                                ex.printStackTrace();
                             }
                             //5-存储积累表
                             logger.info(logPreStr + " start save accumulate table ...");
@@ -324,12 +324,14 @@ public class DealExcelFileService {
                             //6-积累表指标分析
                             logger.info(logPreStr + " start analysis accumulate table quota ...");
                             mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析积累表指标
-                            //7-元数据语义分析
+
                             // TODO 分析元数据语义，目前想到——字典项/身份证/经纬度/URL分析/mail地址分析/姓名分析；另外（列之间关系，如数值的比例等）
+                            //7-元数据语义分析
                             //7.1-分析字典
                             //7.1.1-积累表字典分析
                             logger.info(logPreStr + " start analysis dict key ...");
                             keyMap = analDict.scanMetadata(sysMd, null);
+                            //7.1.2-文件关系存储
                             if (keyMap!=null) {
                                 AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
                                 FileInfo arFi = arFileService.saveFile(arf);//分析jsonD存储
@@ -343,18 +345,36 @@ public class DealExcelFileService {
                                 fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的字典项");
                                 fmService.saveFileRelation(fr);//文件关联存储
                                 keyMap.remove("resultFile");
+                                //7.1.3-字典分析结果调整
+                                //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
+                                //logger.info(logPreStr + " start adjust dict key ...");
+                                try{
+                                    mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od);
+                                }catch(Exception ex){
+                                    ex.printStackTrace();
+                                }
                             }
-                            //7.1.3-字典分析结果调整
-                            //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
-                            logger.info(logPreStr + " start adjust dict key ...");
-                            mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
-                            
                             //7.2-分析坐标列
                             //7.2.1-积累表坐标列分析
                             logger.info(logPreStr + " start analysis coord key ...");
-                            Map<String, Object> coordMap = analCoord.scanMetadata(sysMd, null);
+                            keyMap = analCoord.scanMetadata(sysMd, null);
+                            //7.2.2-文件关系存储
+                            if (keyMap!=null) {
+                                AnalResultFile arf = (AnalResultFile)keyMap.get("resultFile");
+                                FileInfo arFi = arFileService.saveFile(arf);//分析jsonD存储
+                                //7.1.2-文件关系存储
+                                FileRelation fr = new FileRelation();
+                                fr.setElement1(fi.getFileCategoryList().get(0));
+                                fr.setElement2(arFi.getFileCategoryList().get(0));
+                                fr.setCTime(new Timestamp((new Date()).getTime()));
+                                fr.setRType1(RelType1.POSITIVE);
+                                fr.setRType2("语义分析-地图坐标分析");
+                                fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的地图坐标");
+                                fmService.saveFileRelation(fr);//文件关联存储
+                                keyMap.remove("resultFile");
+                            }
                         } catch(Exception e) {
-                            // TODO 记录日志 
+                            // TODO 记录日志
                             e.printStackTrace();
                         }
                     }
