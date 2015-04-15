@@ -23,9 +23,9 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
+import com.spiritdata.dataanal.report.enumeration.DtagShowType;
 import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
 import com.spiritdata.dataanal.report.model.D_Tag;
-import com.spiritdata.dataanal.report.model.DtagShowType;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.dataanal.report.model.ReportSegment;
@@ -203,11 +203,11 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 rs1_1_loop.setId(SequenceUUID.getPureUUID());
                                 DictModel dm = _od.getDictModelById(mcs.getSemantemeCode());
                                 D_Tag discriptDt = new D_Tag();
-                                discriptDt.setShowType(DtagShowType.FIRST);
-                                discriptDt.setFuncStr("first(3|num)");
+                                discriptDt.setShowType(DtagShowType.TEXT);
                                 discriptDt.setDid(report.getDid(tempStr)+"");
                                 discriptDt.setValue("quote['"+mc.getId()+"']");
-                                discriptDt.setDecorateView("{#category#}占#percent#%");
+                                discriptDt.setValueFilterFun("first(3|num)");
+                                discriptDt.setDecorateView("{#category#}占#percent(num)#%");
                                 if (dm.dictTree.getChildCount()>3) {
                                     tempContent += "["+mm.getTitleName()+"]中，大多数为";
                                 } else {
