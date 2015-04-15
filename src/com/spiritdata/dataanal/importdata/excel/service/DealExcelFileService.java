@@ -45,6 +45,7 @@ import com.spiritdata.dataanal.metadata.relation.pojo.ImpTableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
+import com.spiritdata.dataanal.metadata.relation.pojo.QuotaTable;
 import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
 import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalCoord;
 import com.spiritdata.dataanal.metadata.relation.semanteme.func.AnalDict;
