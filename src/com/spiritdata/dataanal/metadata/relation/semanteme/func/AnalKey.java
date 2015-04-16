@@ -90,6 +90,11 @@ public class AnalKey implements AnalTable {
                     else if (title.indexOf("编码")!=-1)  ret.put(cName, new Float(f*1.8));
                     else if (title.indexOf("号")!=-1)    ret.put(cName, new Float(f*1.3));
                     else if (title.indexOf("序号")!=-1)  ret.remove(cName);//若是序号，则一定不能作为主键
+                    
+                    //如果该列有NULL值，则不能作为主键
+                    if(qc.getNullCount()>0){
+                    	ret.remove(cName);
+                    }
                 }
             }
         }
