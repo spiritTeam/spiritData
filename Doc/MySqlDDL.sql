@@ -289,7 +289,7 @@ DROP TABLE IF EXISTS sa_task_rel;
 CREATE TABLE sa_task_rel (
   id           varchar(32)      NOT NULL               COMMENT '任务关系表ID(UUID)',
   taskId       varchar(32)      NOT NULL               COMMENT '任务Id，外键',
-  preTaskId    varchar(100)                            COMMENT '前置任务Id',
+  preTaskId    varchar(100)     NOT NULL               COMMENT '前置任务Id',
   usedPreData  int(1) unsigned  NOT NULL  DEFAULT '2'  COMMENT '是否利用前序任务的数据1-利用;2-不利用',
   PRIMARY KEY (id)
 )
