@@ -318,8 +318,9 @@
     var newContent="";
     var _dataStr = "";
     for (var i=0;i<pendingAry.length;i++) {
+      //content转为dom，方便操作
       var ele = $(pendingAry[i]);
-      //为找到的ele设id
+      //设置元素的Id，为showType+i
       var id = ele.attr('showType')+i;
       ele.attr('id',id);
       var _data = ele.attr('did')+",";
