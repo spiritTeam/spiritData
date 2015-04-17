@@ -146,6 +146,7 @@ public class MetadataModel extends BaseObject {
         }
         return ret;
     }
+
     /**
      * 比较两个模式是否相同
      * @param mm 被比较模式
@@ -170,7 +171,7 @@ public class MetadataModel extends BaseObject {
             ret.put("message", "所有者不一致");
             return ret;
         }
-        MetadataColumn mc, _mc;
+        MetadataColumn mc/*本对象列信息*/, _mc/*被比较对象列信息*/;
         Map<String, String> alterTable = new HashMap<String, String>(); //需要对table进行调整的
         String tagStr = "";
         int sameCount = 0;

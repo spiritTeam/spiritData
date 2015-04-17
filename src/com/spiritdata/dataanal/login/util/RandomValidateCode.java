@@ -13,7 +13,6 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.spiritdata.framework.FConstants;
@@ -35,41 +34,12 @@ public class RandomValidateCode {
     }
     //获得颜色
     private Color getRandColor(int fc,int bc){
-        if(fc > 255)
-            fc = 255;
-        if(bc > 255)
-            bc = 255;
+        if (fc>255) fc = 255;
+        if (bc>255) bc = 255;
         int r = fc + random.nextInt(bc-fc-16);
         int g = fc + random.nextInt(bc-fc-14);
         int b = fc + random.nextInt(bc-fc-18);
         return new Color(r,g,b);
-    }
-    // 生成随机图片
-    public void getRandcode(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        //BufferedImage类是具有缓冲区的Image类,Image类是用于描述图像信息的类
-        BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_BGR);
-        Graphics g = image.getGraphics();//产生Image对象的Graphics对象,改对象可以在图像上进行各种绘制操作
-        g.fillRect(0, 0, width, height);
-        g.setFont(new Font("Times New Roman",Font.ROMAN_BASELINE,18));
-        g.setColor(getRandColor(110, 133));
-        //绘制干扰线
-        for(int i=0;i<=lineSize;i++){
-            drowLine(g);
-        }
-        //绘制随机字符
-        String randomString = "";
-        for(int i=1;i<=stringNum;i++){
-            randomString=drowString(g,randomString,i);
-        }
-        session.removeAttribute(RANDOMCODEKEY);
-        session.setAttribute(RANDOMCODEKEY, randomString.toUpperCase());
-        g.dispose();
-        try {
-            ImageIO.write(image, "JPEG", response.getOutputStream());//将内存中的图片通过流动形式输出到客户端
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -79,20 +49,17 @@ public class RandomValidateCode {
      */
     public Map<String, String> saveImg2File(HttpServletRequest request) {
         HttpSession session = request.getSession();        
+        String randomString = "";
+
         BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_BGR);
         Graphics g = image.getGraphics();//产生Image对象的Graphics对象,改对象可以在图像上进行各种绘制操作
         g.fillRect(0, 0, width, height);
         g.setFont(new Font("Times New Roman",Font.ROMAN_BASELINE,18));
         g.setColor(getRandColor(110, 133));
         //绘制干扰线
-        for(int i=0;i<=lineSize;i++){
-            drowLine(g);
-        }
+        for(int i=0;i<=lineSize;i++) drowLine(g);
         //绘制随机字符
-        String randomString = "";
-        for(int i=1;i<=stringNum;i++){
-            randomString=drowString(g,randomString,i);
-        }
+        for (int i=1; i<=stringNum; i++) randomString=drowString(g,randomString,i);
         g.dispose();
 
         Map<String, String> retM = new HashMap<String, String>();

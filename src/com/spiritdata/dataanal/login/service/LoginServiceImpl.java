@@ -18,6 +18,7 @@ import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.component.login.service.LoginService;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileUtils;
+import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.exceptionC.Dtal1105CException;
 import com.spiritdata.dataanal.task.service.TaskManageService;
@@ -30,21 +31,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
-        Map<String,Object> retMap = new HashMap<String,Object>();
-        String requestCC = request.getParameter("checkCode");
-        HttpSession session = request.getSession();
-        String checkCode = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
-        if(checkCode!=null&&checkCode!=""){
-            requestCC = requestCC.toUpperCase();
-            if(requestCC.equals(checkCode)){
-                retMap.put("success", "success");
-            }else{
-                retMap.put("retInfo", "验证码填写错误，请重新填写");
-            } 
-        }else{
-            retMap.put("success", "success");
-        }
-        return retMap;
+        return null;
     }
 
     @Override
@@ -106,7 +93,6 @@ public class LoginServiceImpl implements LoginService {
                     conn.rollback();
                     conn.setAutoCommit(autoCommitFlag);
                 } catch (SQLException sqlE) {
-                	//TODO 需测试这个异常是否能正常抛出？
                     throw new Dtal1105CException(sqlE.getMessage());
                 }
             }
@@ -114,5 +100,20 @@ public class LoginServiceImpl implements LoginService {
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
             try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
+    }
+
+    @Override
+    public Map<String, Object> onLogout(HttpServletRequest req) {
+        Map<String,Object> retMap = new HashMap<String,Object>();
+        try {
+            req.getSession().removeAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
+            req.getSession().removeAttribute(SDConstants.SESSION_OWNER_DICT);
+            retMap.put("retInfo", "登录成功!");
+            retMap.put("success", "success");
+        } catch(Exception e) {
+            retMap.put("success", "false");
+            retMap.put("retInfo", e.getMessage());
+        }
+        return retMap;
     }
 }
