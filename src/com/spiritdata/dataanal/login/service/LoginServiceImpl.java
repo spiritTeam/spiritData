@@ -107,7 +107,7 @@ public class LoginServiceImpl implements LoginService {
         try {
             req.getSession().removeAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
             req.getSession().removeAttribute(SDConstants.SESSION_OWNER_DICT);
-            retMap.put("retInfo", "登录成功!");
+            retMap.put("retInfo", "注销成功!");
             retMap.put("success", "success");
         } catch(Exception e) {
             retMap.put("success", "false");

@@ -285,7 +285,6 @@ public class DealExcelFileService {
                                 keyMap.remove("resultFile");
                                 //7.1.3-字典分析结果调整
                                 //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
-                                //logger.info(logPreStr + " start adjust dict key ...");
                                 try{
                                     mdDictService.adjustMdDict(sysMd, keyMap, tabMapOrgAry[1].getTableName(), _od);
                                 }catch(Exception ex){
