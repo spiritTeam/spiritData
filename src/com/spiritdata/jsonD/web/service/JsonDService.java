@@ -57,11 +57,16 @@ public class JsonDService {
      * @param uri sond的Uri
      * @return jsonD串
      */
-    public String getJsonDByUri(String uri) {
+    @SuppressWarnings("unchecked")
+	public String getJsonDByUri(String uri) {
         String ret = null;
         if (uri.indexOf("\\\\:")!=-1||uri.indexOf("//:")!=-1) {//走协议方式
             
         } else {//走服务器目录方式
+        	//mht 对uri的修改
+        	if (uri.indexOf("datafile=/")!=-1) {
+        		uri = uri.substring(uri.indexOf("datafile=/")+10, uri.length());
+        	}
             if (uri.indexOf(":")==-1) uri = FileNameUtils.concatPath(((CacheEle<String>)SystemCache.getCache(FConstants.APPOSPATH)).getContent(), uri);
             File f = FileUtils.getFile(uri);
             if (f.isFile()) {//读取文件

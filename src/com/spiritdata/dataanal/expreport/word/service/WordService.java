@@ -306,6 +306,7 @@ public class WordService {
         this.close(os);
         Map<String,Object> retMap = new HashMap<String,Object>();
         retMap.put("success", true);
+        retMap.put("reportName", reportName);
         return retMap;
     }
 
