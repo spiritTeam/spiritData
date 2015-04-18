@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -111,7 +110,6 @@ public class DealExcelFileService {
         FileInputStream fis = null;
         try {
             //获得处理excel的workbook
-        	logger.debug("start process excel file ...");
             try {
                 fis = new FileInputStream(excelFile);
                 book = new HSSFWorkbook(fis);
@@ -139,7 +137,6 @@ public class DealExcelFileService {
             SheetInfo si;
 
             //1-分析文件，得到元数据信息，并把分析结果存入si
-            logger.debug("start analysis meta data info ...");
             List<PoiParseUtils> excelParseList = new ArrayList<PoiParseUtils>();
 
             for (; i<book.getNumberOfSheets(); i++) {
@@ -148,14 +145,14 @@ public class DealExcelFileService {
                     si = initSheetInfo(sheet, excelType, i);
                     si.setFileName(fi.getAllFileName());
                     parseExcel = new PoiParseUtils(si);
-                    List<String> logl = parseExcel.analSheetMetadata();
+                    //List<String> logl = parseExcel.analSheetMetadata();
+                    parseExcel.analSheetMetadata();
                     excelParseList.add(parseExcel);
                 } catch(Exception e) {
                     
                 }
             }
             //2-获得元数据后，数据存储及语义分析功能
-            logger.debug("start data save and semantic analysis ...");
             if (excelParseList.size()>0) {
                 //准备缓存或Session
                 _OwnerMetadata _om = mdSessionService.loadcheckData(session);
@@ -318,6 +315,7 @@ public class DealExcelFileService {
                                 keyMap.remove("resultFile");
                             }
                             Map<String, Object> coordMap = analCoord.scanMetadata(sysMd, null);
+                            //根据coordMap修改语义表，这里还有问题！！！！！
                         } catch(Exception e) {
                             // TODO 记录日志
                             e.printStackTrace();

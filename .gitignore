@@ -1,8 +1,6 @@
 ﻿/Doc
 /WebContent/log
-/WebContent/analData
-/WebContent/reportStore
-/WebContent/reportJson
+/WebContent/DataCenter
 /WebContent/tempUpload
 /WebContent/uploadFiles
 /WebContent/test
@@ -17,5 +15,3 @@
 /target
 
 /test
-
-/WebContent/reportDownLoad

@@ -48,6 +48,7 @@ public class MdDictService {
      */
     @SuppressWarnings("resource")
     public void adjustMdDict(MetadataModel mm, Map<String, Object> dictMap, String tTableName, _OwnerDictionary _dictCache) {
+        if (dictMap==null||dictMap.size()==0) return;
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new Dtal0203CException("元数据模型信息不包含任何列信息，无法分析！");
 
         Map<String, Object> m = new HashMap<String, Object>();//记录那列是字典项
@@ -59,17 +60,15 @@ public class MdDictService {
                 }
             }
         }
-        if (dictMap.size()>0) {
-            for (String key :dictMap.keySet()) {
-                if (m.get(key)==null) m.put(key, dictMap.get(key));
-            }
+        for (String key :dictMap.keySet()) {
+            if (m.get(key)==null) m.put(key, dictMap.get(key));
         }
-        
-        Connection conn = null;
-        ResultSet rs = null;
-        Statement st = null;
-        try {
-            if (m.size()>0) {
+
+        if (m.size()>0) {
+            Connection conn = null;
+            ResultSet rs = null;
+            Statement st = null;
+            try {
                 String _tableName = "";
                 for (String key :m.keySet()) {
                     Object v = m.get(key); //每个字典组分别处理
@@ -159,14 +158,14 @@ public class MdDictService {
                         }
                     }
                 }
+            } catch(Exception e) {
+                if (e instanceof Dtal0203CException) throw (Dtal0203CException)e;
+                else throw new Dtal0203CException(e);
+            } finally {
+                try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
+                try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
+                try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
             }
-        } catch(Exception e) {
-            if (e instanceof Dtal0203CException) throw (Dtal0203CException)e;
-            else throw new Dtal0203CException(e);
-        } finally {
-            try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
-            try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
-            try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
     }
 }

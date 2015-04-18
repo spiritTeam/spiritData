@@ -6,8 +6,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import com.spiritdata.framework.FConstants;
-import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal0101CException;

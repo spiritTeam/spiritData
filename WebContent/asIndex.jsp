@@ -639,6 +639,7 @@ function setLogined(loginName) {
 function logout() {
   $("#loginName").val("");
   var url=_PATH+"/logout.do";
+  alert(url);
   $.ajax({type:"post", async:true, url:url, data:null, dataType:"json",
     success: function(json) {
       if (json.type==1) {
