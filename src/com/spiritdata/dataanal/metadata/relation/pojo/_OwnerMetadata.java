@@ -2,6 +2,8 @@ package com.spiritdata.dataanal.metadata.relation.pojo;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.spiritdata.dataanal.common.model.Owner;
+
 /**
  * 所有者“关系型元数据”。把一个所有者的所有基础元数据信息按结构进行存储。
  * 主要服务于缓存(或Session)、数据导入、数据质量分析。
@@ -13,14 +15,9 @@ public class _OwnerMetadata {
 
     protected boolean loadSuccess=false; //加载数据是否完成
 
-    protected String ownerId; //所有者Id，有可能是用户Id也有可能是SessionId
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    protected int ownerType; //所有者类型：1=用户；2=Session
-    public int getOwnerType() {
-        return ownerType;
+    private Owner owner;
+    public Owner getOwner() {
+        return owner;
     }
 
     public void setLoadSuccess() {
@@ -35,9 +32,8 @@ public class _OwnerMetadata {
      * @param ownerId 所有者类型
      * @param ownerType 所有者Id
      */
-    public _OwnerMetadata(String ownerId, int ownerType) {
-        this.ownerId = ownerId;
-        this.ownerType = ownerType;
+    public _OwnerMetadata(Owner owner) {
+        this.owner=owner;
         this.loadSuccess = false;
     }
 
