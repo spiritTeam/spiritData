@@ -46,7 +46,7 @@ public class MdKeyService {
      * 若元数据主键是不确定的，本方法还会自动调用主键的分析方法。
      * @param mm 元数据信息，注意，这里的元数据信息必须是全的，包括column和语义
      */
-    public void adjustMdKey(MetadataModel mm,Map<String,MetaDataColInfo> colModiMap,Dialect dialect) {
+    public void adjustMdKey(MetadataModel mm, Map<String, List<String>> noKeyInfo) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) return ;
         
         //读取元数据信息，看主键是否是确定的
@@ -310,9 +310,9 @@ public class MdKeyService {
 
     /*
      * 读取文件内容，今后可能会用到JsonD的功能 
-     * @param f
-     * @param mm
-     * @return
+     * @param f 文件信息
+     * @param mm 元数据模型，用来判断数据是否合规
+     * @return key=字段名、value=可行性的Map
      */
     private Map<String, Double> parseJsonFile(File f, MetadataModel mm) {
         Map<String, Double> ret = null;

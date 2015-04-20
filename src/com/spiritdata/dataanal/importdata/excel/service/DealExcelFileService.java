@@ -237,9 +237,7 @@ public class DealExcelFileService {
                         mdBasisServcie.updateMdM(uMM);
                     }
                     //2-储存临时表
-                    SaveDataUtils.save2TempTable(sti, sysMd, tabMapOrgAry[1].getTableName(), parseExcel, dataSource);
-                    //获取需要修改长度的列元数据信息
-                    Map<String,MetaDataColInfo> colModiMap = this.tmpTbDataProcService.getColModiMap();
+                    Map<String, Object> tempResult = SaveDataUtils.save2TempTable(sti, sysMd, tabMapOrgAry[1].getTableName(), parseExcel, dataSource);
                     //3-临时表指标分析
                     mdQutotaService.caculateQuota(tabMapOrgAry[1]); //分析临时表指标
                     //4-主键分析
@@ -262,12 +260,14 @@ public class DealExcelFileService {
                     //4.3-主键分析结果应用
                     try{
                         //主键调整的时候需要考虑到主键字段的长度，对于MYSQL，如果超过255则不能成为主键！！！
-                        mdKeyService.adjustMdKey(sysMd,colModiMap,this.tmpTbDataProcService.dialect); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
+                        Map<String, List<String>> noKeyInfo = (Map<String, List<String>>)(tempResult==null?null:tempResult.get("noKeyInfo"));
+                        mdKeyService.adjustMdKey(sysMd, noKeyInfo); //分析主键，此方法执行后，若分析出主键，则已经修改了模式对应的积累表的主键信息
                     }catch(Exception ex){
                         ex.printStackTrace();
                     }
                     //5-存储积累表
-                    SaveDataUtils.save2AccumulationTable(sti, sysMd, parseExcel, dataSource);
+                    Map<String, Integer> changeLenColMap = (Map<String, Integer>)(tempResult==null?null:tempResult.get("changeLenColMap"));
+                    SaveDataUtils.save2AccumulationTable(sti, sysMd, parseExcel, changeLenColMap, dataSource);
                     //6-积累表指标分析
                     mdQutotaService.caculateQuota(tabMapOrgAry[0]); //分析积累表指标
 

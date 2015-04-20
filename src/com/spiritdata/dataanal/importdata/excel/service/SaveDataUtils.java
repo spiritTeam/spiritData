@@ -8,6 +8,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,17 @@ public abstract class SaveDataUtils {
      * @param tempTableName 临时表名称
      * @param parse excel解析器
      * @param dataSoource 数据源
-     * @return 返回不能作为主键的列，注意，若是组合列，各列间用空格隔开，返回值是Map结构，key={不能是主键原因(目前只有主键超长)}, value={List<String>},目前只对单列主键进行处理。
+     * @return 返回值是一个Map，包括：
+     * <pre>
+     *   //为修改积累表长度所准备的数据
+     *   1、key="changeLenColMap"  //需要修改长度的列的Map
+     *      value=Map<String, Integer> ::{key(String)=列名称；value(Integer)=需要改成的长度}
+     *   //为调整主键所准备的数据
+     *   2、key="noKeyInfo" //不能做为Key的列的信息
+     *      value=Map<String, List<String>> ::{key(String)=不能作为主键的原因(目前只有长度过长，只对MySql)；value(List<String>)=不能为主键的列名称的字符串，组合列用逗号隔开}
+     * </pre>
      */
-    protected static Map<String, List<String>> save2TempTable(SheetTableInfo sti, MetadataModel sysMm, String tempTableName, PoiParseUtils parse, DataSource dataSource) {
+    protected static Map<String, Object> save2TempTable(SheetTableInfo sti, MetadataModel sysMm, String tempTableName, PoiParseUtils parse, DataSource dataSource) {
         if (dataSource==null) throw new IllegalArgumentException("数据源不能为空");
         if (sysMm==null||sysMm.getColumnList()==null||sysMm.getColumnList().size()==0) throw new IllegalArgumentException("元数据模型必须设置，且列信息不能为空");
         if (sti==null||sti.getTitleInfo()==null||sti.getTitleInfo().size()==0) throw new IllegalArgumentException("Sheet中的表结构区域信息必须设置，且表头信息不能为空");
@@ -52,6 +61,7 @@ public abstract class SaveDataUtils {
             if (!isMate) throw new IllegalArgumentException("参数：paras(excel解析单元)必须与参数：sti(表结构区域信息)相匹配");
         }
 
+        Map<String, Object> ret = new HashMap<String, Object>();
         //准备SQL语句
         String insertSql = "insert into "+tempTableName+"(#columnSql) values(#valueSql)", columnSql="", valueSql="";
         for (MetadataColumn mc: sysMm.getColumnList()) {
@@ -61,12 +71,10 @@ public abstract class SaveDataUtils {
         if (columnSql.length()>0) columnSql=columnSql.substring(1);
         if (valueSql.length()>0) valueSql=valueSql.substring(1);
         insertSql = insertSql.replaceAll("#columnSql", columnSql).replaceAll("#valueSql", valueSql);
-
-        Map<String, List<String>> ret = new HashMap<String, List<String>>();
         //数据插入
         Map<String, Object> titleCol = null;
         //日志信息准备
-        int _log_readAllCount/*读取总行数*/, _log_insertOkCount=0/*新增成功行数*/, _log_insertFailCount=0/*新增失败行数*/, _log_ignoreCount=0/*忽略行数*/;
+//        int _log_readAllCount/*读取总行数*/, _log_insertOkCount=0/*新增成功行数*/, _log_insertFailCount=0/*新增失败行数*/, _log_ignoreCount=0/*忽略行数*/;
         
         Dialect dialect = null;
         Connection conn = null;
@@ -81,7 +89,7 @@ public abstract class SaveDataUtils {
             ps = conn.prepareStatement(insertSql);
 
             List<Map<String, Object>> rowData = null;
-            _log_readAllCount = sti.getEndY()-sti.getBeginY()+1;
+//            _log_readAllCount = sti.getEndY()-sti.getBeginY()+1;
             Object[] paramArray = new Object[sysMm.getColumnList().size()];
             Map<Integer, Object[]> iiInsertData = new HashMap<Integer, Object[]>();//第二次插入时需要的数据
             Map<String, Integer> changeLenColMap = new HashMap<String, Integer>();//需扩容的列列表
@@ -101,12 +109,12 @@ public abstract class SaveDataUtils {
             //第一次Insert
             Integer dbLen;
             int strLen;
-            String colName, _tabKeys="", _tabPkName="";
+            String colName;
             for (int i=sti.getBeginY(); i<=sti.getEndY(); i++) {
                 rowData = parse.readOneRow(i);
                 rowData = parse.convert2DataRow(rowData);
                 if (parse.isEmptyRow(rowData)) {
-                    _log_ignoreCount++;
+//                    _log_ignoreCount++;
 //                    _log_ignoreMap.put(i, "第"+i+"行为空行。");
                     continue;
                 }
@@ -150,11 +158,12 @@ public abstract class SaveDataUtils {
                     }
                 }
                 if (!canInsert) {
-                    _log_ignoreCount++;
+//                    _log_ignoreCount++;
 //                    _log_ignoreMap.put(i, "第"+i+"行数据与元数据不匹配，行数据为<<>>，元数据为<<>>。");
                     continue;
                 }
-                //构造不能插入的列
+                //TODO 注意这里可能要判断列组合，现在先不做处理
+                //根据长度判断是否能够插入，构造不能插入的列，这个主要为MySql数据库来处理
                 for (int k=0; k<sysMm.getColumnList().size(); k++) {
                     colName = sysMm.getColumnList().get(k).getColumnName();
                     dbLen = strColLenMap.get(colName);
@@ -167,14 +176,12 @@ public abstract class SaveDataUtils {
                         }
                     }
                 }
-                
-                //根据长度判断是否能够插入，这个主要为MySql数据库来处理
-                //TODO 注意这里可能要判断列组合，现在先不做处理
                 if (!canInsert) {
-                    _log_ignoreCount++;
+//                    _log_ignoreCount++;
 //                    _log_ignoreMap.put(i, "第"+i+"行数据与元数据不匹配，行数据为<<>>，元数据为<<>>。");
                     continue;
                 }
+
                 try{
                     for (int j=0; j<paramArray.length; j++) {
                         ps.setObject(j+1, paramArray[j]);
@@ -194,13 +201,6 @@ public abstract class SaveDataUtils {
             conn.commit();
 
             //第二次插入前调整主键及各列的长度
-            rs.close();
-            rs = dbMetaData.getPrimaryKeys(null, null, sysMm.getTableName());
-            while (rs.next()){
-                _tabKeys +=","+rs.getString("COLUMN_NAME"); //列名
-                if (_tabPkName==null) _tabKeys = rs.getString("PK_NAME");//主键名称
-            }
-            _tabKeys = _tabKeys.substring(1);
             if (changeLenColMap.size()>0) {
                 for (String _colName: changeLenColMap.keySet()) {
                     ps.execute("alter table "+tempTableName+" modify column "+_colName+" varchar("+changeLenColMap.get(_colName)+")"); //临时表
@@ -225,6 +225,22 @@ public abstract class SaveDataUtils {
     //                _log_failMap.put(i,  "第"+i+"行数据新增失败，原因为："+sqlE.getMessage());
                 }
             }
+            //构造返回值
+            //1-列调整信息
+            if (changeLenColMap!=null&&changeLenColMap.size()>0) ret.put("changeLenColMap", changeLenColMap);
+            //2-不能作为主键的信息
+            Map<String, List<String>> noKeyInfo = new HashMap<String, List<String>>();
+            List<String> noKeyL = new ArrayList<String>();
+            strColLenMap.putAll(changeLenColMap);
+            if (dialect instanceof com.spiritdata.framework.core.dao.dialect.MySqlDialect) {
+                for (String _colName: strColLenMap.keySet()) {
+                    if (strColLenMap.get(_colName)>255) {
+                        noKeyL.add(_colName);
+                    }
+                }
+                if (noKeyL.size()>0) noKeyInfo.put("exceedMaxLen", noKeyL);
+            }
+            if (noKeyInfo!=null&&noKeyInfo.size()>0) ret.put("noKeyInfo", noKeyInfo);
         } catch (Exception e) {
             throw new Dtal0103CException("数据存入临时表", e);
         } finally {
@@ -238,10 +254,14 @@ public abstract class SaveDataUtils {
 
     /**
      * 保存积累表信息
-     * @param em 从Excel中分析出来的元数据信息，注意，这里包括sheet信息
-     * @param sysMm 元数据信息（已在系统注册过的），这其中包括积累表信息
+     * @param sti Sheet中的表结构区域信息
+     * @param sysMm 元数据信息（已在系统注册过的）
+     * @param parse excel解析器
+     * @param changeLenColMap 需要修改长度的列信息
+     * @param dataSoource 数据源
      */
-    protected static void save2AccumulationTable(SheetTableInfo sti, MetadataModel sysMm, PoiParseUtils parse, DataSource dataSource) {
+    protected static void save2AccumulationTable(SheetTableInfo sti, MetadataModel sysMm, PoiParseUtils parse, Map<String, Integer> changeLenColMap, DataSource dataSource) {
+        if (dataSource==null) throw new IllegalArgumentException("数据源不能为空");
         if (sysMm==null||sysMm.getColumnList()==null||sysMm.getColumnList().size()==0) throw new IllegalArgumentException("元数据模型必须设置，且列信息不能为空");
         String mainTableName = sysMm.getTableName();
         if (mainTableName==null||mainTableName.equals("")) throw new IllegalArgumentException("元数据模型中必须有积累表名称");
@@ -258,6 +278,7 @@ public abstract class SaveDataUtils {
             if (!isMate) throw new IllegalArgumentException("参数：paras(excel解析单元)必须与参数：sti(表结构区域信息)相匹配");
         }
 
+        //准备SQL语句
         String insertSql = "insert into "+mainTableName+"(#columnSql) values(#valueSql)", columnSql="", valueSql="";
         String updateSql = "update "+mainTableName+" set #updateSet where #updateKey", updateSet="", updateKey="";
         Object[] paramArray4Insert = new Object[sysMm.getColumnList().size()];
@@ -293,10 +314,11 @@ public abstract class SaveDataUtils {
         Connection conn = null;
         PreparedStatement psInsert = null;
         PreparedStatement psUpdate = null;
+        PreparedStatement ps = null;
 
         Map<String, Object> titleCol = null;
         //日志信息准备
-        int _log_readAllCount/*读取总行数*/, _log_insertOkCount=0/*新增成功行数*/,_log_updateOkCount=0/*新增成功行数*/, _log_saveFailCount=0/*新增失败行数*/, _log_ignoreCount=0/*忽略行数*/;
+//        int _log_readAllCount/*读取总行数*/, _log_insertOkCount=0/*新增成功行数*/,_log_updateOkCount=0/*新增成功行数*/, _log_saveFailCount=0/*新增失败行数*/, _log_ignoreCount=0/*忽略行数*/;
         Map<Integer, String> _log_failMap = new HashMap<Integer, String>();//存储失败的行及其原因
         Map<Integer, String> _log_ignoreMap = new HashMap<Integer, String>();//忽略行及其原因
 
@@ -308,18 +330,25 @@ public abstract class SaveDataUtils {
             psInsert = conn.prepareStatement(insertSql);
             if (updateSql!=null) psUpdate = conn.prepareStatement(updateSql);
 
+            //根据长度调整Map，调整积累表数据格式
+            if (changeLenColMap!=null&&changeLenColMap.size()>0) {
+                for (String _colName: changeLenColMap.keySet()) {
+                    ps.execute("alter table "+sysMm.getTableName()+" modify column "+_colName+" varchar("+changeLenColMap.get(_colName)+")"); //临时表
+                }
+            }
+
             int keyCount=0;
             int _mmDType, _infoDType;
             Object v;
             String tagStr;
 
             List<Map<String, Object>> rowData = null;
-            _log_readAllCount = sti.getEndY()-sti.getBeginY()+1;
+//            _log_readAllCount = sti.getEndY()-sti.getBeginY()+1;
             for (int i=sti.getBeginY(); i<=sti.getEndY(); i++) {
                 rowData = parse.readOneRow(i);
                 rowData = parse.convert2DataRow(rowData);
                 if (parse.isEmptyRow(rowData)) {
-                    _log_ignoreCount++;
+//                    _log_ignoreCount++;
                     _log_ignoreMap.put(i, "第"+i+"行为空行。");
                     continue;
                 }
@@ -370,7 +399,7 @@ public abstract class SaveDataUtils {
                     }
                 }
                 if (!canSave) {
-                    _log_ignoreCount++;
+//                    _log_ignoreCount++;
                     _log_ignoreMap.put(i, "第"+i+"行数据与元数据不匹配，行数据为<<>>，元数据为<<>>。");
                     continue;
                 }
@@ -386,7 +415,7 @@ public abstract class SaveDataUtils {
                         int updateOk = psUpdate.executeUpdate();
                         if (updateOk>0) {
                             canInsert=false;
-                            _log_updateOkCount += updateOk;
+//                            _log_updateOkCount += updateOk;
                         } else {
                             canInsert=true;
                         }
@@ -403,13 +432,13 @@ public abstract class SaveDataUtils {
                         }
                         int insertOk = psInsert.executeUpdate();
                         if (insertOk>0) {
-                            _log_insertOkCount += insertOk;
+//                            _log_insertOkCount += insertOk;
                         } else {
-                            _log_saveFailCount++;
+//                            _log_saveFailCount++;
                             _log_failMap.put(i,  "第"+i+"行数据新增失败，原因未知！");
                         }
                     } catch(SQLException sqlE) {
-                        _log_saveFailCount++;
+//                        _log_saveFailCount++;
                         _log_failMap.put(i,  "第"+i+"行数据新增失败，原因为："+sqlE.getMessage());
                     }
                 }
@@ -417,6 +446,7 @@ public abstract class SaveDataUtils {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
             try { if (psUpdate!=null) {psUpdate.close();psUpdate = null;} } catch (Exception e) {e.printStackTrace();} finally {psUpdate = null;};
             try { if (psInsert!=null) {psInsert.close();psInsert = null;} } catch (Exception e) {e.printStackTrace();} finally {psInsert = null;};
             try { if (conn!=null) {conn.setAutoCommit(autoCommit);conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
