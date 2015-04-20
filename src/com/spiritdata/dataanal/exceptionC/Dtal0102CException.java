@@ -1,7 +1,7 @@
 package com.spiritdata.dataanal.exceptionC;
 
 /**
- * 数据导入时，Excel解析分析异常，内部码为0102，基本信息为'Excel解析分析异常'异常
+ * Excel解析分析异常，内部码为0102，基本信息为'Excel解析分析异常'异常
  * @author wh
  */
 public class Dtal0102CException extends DtalCException {

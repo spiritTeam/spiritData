@@ -5,7 +5,6 @@ package com.spiritdata.dataanal.exceptionC;
  * @author wh
  */
 public class Dtal0103CException extends DtalCException {
-    private static final long serialVersionUID = 6945808838469552562L;
 
     private static String myBaseMsg = "数据存储异常";
     private static int myCode = 103;

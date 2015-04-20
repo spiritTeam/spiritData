@@ -201,10 +201,8 @@ public abstract class SaveDataUtils {
                 if (_tabPkName==null) _tabKeys = rs.getString("PK_NAME");//主键名称
             }
             _tabKeys = _tabKeys.substring(1);
-            boolean hadDropKey = false, needDropKey=false;
             if (changeLenColMap.size()>0) {
                 for (String _colName: changeLenColMap.keySet()) {
-                    Integer colLen = changeLenColMap.get(_colName);
                     ps.execute("alter table "+tempTableName+" modify column "+_colName+" varchar("+changeLenColMap.get(_colName)+")"); //临时表
                 }
             }
