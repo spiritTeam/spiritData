@@ -49,10 +49,10 @@
         </td>    
         <td style="text-align:right;">
           <a href="#" class="">
-            <img src="<%=path%>/analApp/images/file_list.png" style="height:45px;width:45px;" onclick="showSearchResult('LIST');" title="列表预览" alt="列表预览"/>
+            <img src="<%=path%>/analApp/images/file_list.png" style="height:45px;width:45px;" onclick="showSearchResult(SHOW_TYPE_LIST);" title="列表预览" alt="列表预览"/>
           </a>
           <a href="#" class="">
-            <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="showSearchResult('THUMB');" title="缩略图预览" alt="缩略图预览"/>
+            <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="showSearchResult(SHOW_TYPE_THUMB);" title="缩略图预览" alt="缩略图预览"/>
           </a>
         </td>
     </table>    
@@ -78,8 +78,7 @@ function initSearchFileInput(){
   var _objSearch = $("#idSearchFile");
   _objSearch.keydown(function(e){
     if(e.keyCode == 13){
-      alert("您输入了："+getInputSearchFileStr());
-      showSearchResult("LIST");
+    	startSearch();
     }
   });
 }
@@ -90,32 +89,68 @@ function initSubmitBt(){
     //$(this).css("color","#CC0000");
   }).mouseout(function(){
     //$(this).css("color","#000000");
-  }).click(function(){      
-    alert("您输入了："+getInputSearchFileStr());
-    showSearchResult("LIST");
+  }).click(function(){   
+	  startSearch();
   });
 }
 
 
+//定义查询方式和保存查询结果
+var SHOW_TYPE_LIST = "LIST"; //列表显示常量
+var SHOW_TYPE_THUMB = "THUMB"; //缩略图显示常量
+var showType = SHOW_TYPE_LIST; //默认是列表显示查询结果
+var searchResultJsonData = null; //保存查询后的结果
+var objDatatable = null; //列表显示对象
+
+//取出输入条件，提交查询
+function startSearch(){
+	var searchStr = getInputSearchFileStr();
+  alert("您输入了："+ searchStr);
+
+  //异步查询文件列表  
+  var searchParam={"searchStr":searchStr};
+  var url="<%=path%>/analApp/demoData/filelist.json";
+  $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
+    success:function(jsonStr){
+      try{
+    	  searchResultJsonData = str2JsonObj(jsonStr); 
+    	  showSearchResult(showType);
+      }catch(e){
+        $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+      }
+    },
+    error:function(errorData){
+      $.messager.alert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+    }
+  }); 
+}
+
 //显示查询结果
-function showSearchResult(showType){
-    $('#dgList').css("display","none");
-    $('#dgThumb').css("display","none");
+function showSearchResult(_showType){
+	//alert("showSearchResult() showType="+_showType);
+	showType = _showType;
+  $('#dgList').css("display","none");
+  $('#dgThumb').css("display","none");
     
-	if(showType == "LIST"){
-        showSearchResultList();
-	}else if(showType == "THUMB"){
-        showSearchResultThumb();
+	if(showType == SHOW_TYPE_LIST){
+    showSearchResultList();
+	}else if(showType == SHOW_TYPE_THUMB){
+    showSearchResultThumb();
 	}else{
-        showSearchResultList();
+		showType = SHOW_TYPE_LIST;
+    showSearchResultList();
 	}
 }
 
+//列表显示查询结果
 function showSearchResultList(){
-  $('#dgList').css("display","block");
+	var _objList = $('#dgList');
+	_objList.empty();
+	_objList.css("display","block");
+  //构建dbopts
   var dbopts={
     customizable: true, 
-    checkable: true,
+    checkable: false,
     // sortable: true,
     sort: function(event){},
     mergeRows: true,
@@ -127,59 +162,37 @@ function showSearchResultList(){
     rowHover:true,
     data:{  
       cols:[
-        {width:'250',text:'文件名',type:'string',flex: false,colClass:'text-left dg_border_left_1',cssClass:'text-left dg_th_font_bold'},
-        {width: 100,text:'大小',type:'number',flex: true,colClass:'text-right dg_border_left_1 ',cssClass:'text-right dg_th_font_bold'},
-        {width:150,text:'创建日期',type:'date',flex: true,colClass:'text-left dg_border_left_1 ',cssClass:'text-left dg_th_font_bold',mergeRows: false}
+        {width:'250',text:'文件名',type:'string',flex: false,colClass:'text-left',cssClass:'text-center dg_th_font_bold'},
+        {width: 100,text:'大小',type:'number',flex: true,colClass:'text-right',cssClass:'text-center dg_th_font_bold'},
+        {width:150,text:'创建日期',type:'date',flex: true,colClass:'text-left',cssClass:'text-center dg_th_font_bold',mergeRows: false}
       ]
     }
   };
-	
-  //异步查询文件列表	
-  var searchParam={};
-  var resultJsonData={};
-  var url="<%=path%>/analApp/demoData/filelist.json";
-  $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
-    success:function(jsonStr){
-      try{
-        var jsonData = str2JsonObj(jsonStr);
-        var dtrows =[];
-        var jsonRows = jsonData.rows;
-        var len = jsonRows.length;
-        for(var i=0;i<len;i++){
-          var fileName = jsonRows[i]["name"];
-          var suffix = jsonRows[i]["suffix"];
-          var size = jsonRows[i]["size"];
-          var createData = jsonRows[i]["createData"];
-          var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
-          var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
-          dtrows.push(arow);
-        }
-
-        dbopts.data.rows = dtrows;
-        //显示结果
-        $('#dgList').datatable(dbopts).on('sort.zui.datatable', function(event){}); 
-      }catch(e){
-        alert("failed to parse jsonStr="+jsonStr+" ."+e.message);
-        return;
-      }
-    },
-    error:function(errorData){
-      alert("get data err");
-      if (errorData ){
-        var errData = errorData.responseText;
-        //errData = eval(errData);
-        alert(errData);
-        try{ 
-          var objData = eval("("+errData+")");  
-          dbopts.data.rows = objData.rows;
-          //显示结果
-          $('#dgList').datatable(dbopts).on('sort.zui.datatable', function(event){});  
-        }catch(e){
-          alert(e.message); 
-        }
-      }
-    }
-  });	
+  //组装显示结果行
+  var dtrows =[];
+  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
+	  var jsonRows = searchResultJsonData.rows;
+	  var len = jsonRows.length;
+	  for(var i=0;i<len;i++){
+	    var fileName = jsonRows[i]["name"];
+	    var suffix = jsonRows[i]["suffix"];
+	    var fileFull = fileName+"."+suffix;
+	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
+	    var size = jsonRows[i]["size"];
+	    var createData = jsonRows[i]["createData"];
+	    //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
+	    //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
+	    var arow={checked:false,data:[ahrf_file,size,createData]};
+	    dtrows.push(arow);
+	  }
+  }
+  dbopts.data.rows = dtrows;
+  //构建datatable
+  var objDatatable = $('<div id="div_datatable"></div>');
+  objDatatable.datatable(dbopts);  
+  objDatatable.find("table").addClass("table-bordered table-striped");
+	//添加到dglist中
+  _objList.append(objDatatable);
 }
 
 //缩略图显示查询结果
@@ -187,26 +200,42 @@ function showSearchResultThumb(){
 	var _objThumb = $('#dgThumb');
 	_objThumb.css("display","block");
 	var thumbHtmlStr = '';
-    thumbHtmlStr += '<section class="cards">';
-	for(var i=1;i<21;i++){
-	    thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-3">';
-	    thumbHtmlStr += '    <a href="###" class="card">';
-	    thumbHtmlStr += '      <img src="<%=path%>/analApp/images/img2.jpg" alt="">';
-	    thumbHtmlStr += '      <span class="caption">关于图片的说明'+i+'</span>';
-	    thumbHtmlStr += '      <strong class="card-heading">图片标题飞'+i+'</strong>';
-	    thumbHtmlStr += '    </a>';
-	    thumbHtmlStr += '  </div>';		
+	if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
+	  thumbHtmlStr += '<section class="cards">';
+	  var jsonRows = searchResultJsonData.rows;
+	  var len = jsonRows.length;
+	  for(var i=0;i<len;i++){
+	    var fileName = jsonRows[i]["name"];
+	    var suffix = jsonRows[i]["suffix"];
+	    var fileFull = fileName+"."+suffix;
+	    var desc = jsonRows[i]["desc"];
+	    thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-2">';
+	    thumbHtmlStr += '    <div class="card">';
+		  thumbHtmlStr += '      <div class="media-wrapper">';
+		  thumbHtmlStr += '        <img src="<%=path%>/analApp/images/excel.png" alt="">';
+	    thumbHtmlStr += '      </div>';   
+		  thumbHtmlStr += '        <span class="caption">'+desc+'</span>';
+	    thumbHtmlStr += '      <div class="media-wrapper">';
+		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
+	    thumbHtmlStr += '      </div>';   
+		  thumbHtmlStr += '    </div>';
+		  thumbHtmlStr += '  </div>';   
+		}
+	  thumbHtmlStr += '</section>';
 	}
-    thumbHtmlStr += '</section>';      
     
-    _objThumb.html(thumbHtmlStr);
-	
+  _objThumb.html(thumbHtmlStr);
 }
 
 //获得输入的查询内容
 function getInputSearchFileStr(){
   var searchedStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
   return searchedStr;
+}
+
+//查询结果中，当点击了某个文件，触发此操作
+function showFile(fileName){
+	alert("您点击了："+fileName);
 }
 </script>
 </html>
