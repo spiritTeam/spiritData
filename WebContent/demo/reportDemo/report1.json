@@ -1,0 +1,60 @@
+{
+  "_HEAD": {
+    "_id": "63f78f9a12b748e5ae442e8e647baa0f",
+    "_reportType": "导入后即时报告",
+    "_reportName": "[test002.xls]——文件导入后数据分析报告",
+    "_code": "SD.TEAM.REPORT::0001",
+    "_cTime": "-480::1425718344824",
+    "_desc": "[test002.xls]——文件导入后数据分析报告"
+  },
+  "_DLIST": [
+    {
+      "_id": 0,
+      "_url": "/demo/reportDemo/metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond",
+      "_jsonDCode": "SD.TEAM.ANAL::0004",
+      "_jsonDId": "e9c2e02cacd948c5a3782e069e3a4344"
+    },{
+      "_id": 1,
+      "_url": "/demo/reportDemo/anal_quota_716-446655440000.jsond",
+      "_jsonDCode": "SD.TEAM.ANAL::0003",
+      "_jsonDId": "0928b1288bf841dda543a9af22d7d70d"
+    }
+  ],
+  "_REPORT": [
+    {
+      "id": "1e5c027523bf46df9cd1babd61ca7cdc",
+      "name": "一、学生成绩",
+      "title": "一、学生成绩",
+      "subSeg": [
+        {
+          "id": "e21f7fef9bd5475bb06abb0e4aeb6a2d222",
+          "name": "1、单向指标分析11",
+          "title": "1、单向指标分析11"
+        },{
+          "id": "e21f7fef9bd5475bb06abb0e4aeb6a2d11",
+          "name": "2、单向指标分析12",
+          "title": "2、单向指标分析12"
+        }
+      ]
+    },
+     {
+      "id": "1e5c027523bf46df9cd1babd61ca7cdc2",
+      "name": "二、学生成绩2",
+      "title": "二、学生成绩分析2",
+      "content": "contentcontentcontentcont学生成绩分析2tentcontentcontentcontent",
+      "subSeg": [
+        {
+          "id": "e21f7fef9bd5475bb06abb0e4aeb6a2d23",
+          "name": "1、单向指标分析21",
+          "title": "1、单向指标分析21",
+          "content": "contentco单向指标分析2contentcontentcontentcontentcontent"
+        },
+        {
+          "id": "e21f7fef9bd5475bb06abb0e4aeb6a2d21",
+          "name": "2、XXX222",
+          "title": "2、XXX222","content": "contentcoXXX222contentcontentcontentcontentcontent"
+        }
+      ]
+    }
+  ]
+}

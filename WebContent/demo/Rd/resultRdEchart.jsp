@@ -13,7 +13,7 @@
 <meta http-equiv="expires" content="0"/>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 
-<link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mySpiritUi/pageFrame.css"/>
+<link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/spiritui/themes/default/pageFrame.css"/>
 
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/excanvas.min.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.js"></script>

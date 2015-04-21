@@ -159,7 +159,6 @@
     <div style="height: 5px;"></div>
       <div class="loginButton"><a id="login" onclick="login();" href="#">登录</a></div>
       <div class="loginButton"><a id="_logout" onclick="logout();" href="#">注销</a></div>
-      <div class="loginButton"><a id="forgetPassword" onclick="forgetPassword();" href="#" >忘记密码</a></div>
       <div class="loginButton"><a id="updateUser" onclick="updateUser();" href="#" >修改</a></div>
       <div class="loginButton"><a id=register onclick="register()" href="#">注册</a></div>&nbsp;&nbsp;&nbsp;&nbsp;
       <input id="loginName" type="hidden" value="">
@@ -300,7 +299,6 @@ $(function() {
 });
 //头中按钮样式
 function buttonStyle(){
-  $('#updateUser').parent().css('width','80px');
   $(".loginButton").css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
   $(".loginButton").bind("mouseover",function(){
     $(this).css({'background-color':'#D9F4DF'}).children().css({'color':'#32C52F'});
@@ -620,14 +618,12 @@ function setNoLogin() {
   $('#_logout').parent().css('display','none');
   $('#login').parent().css('display','');
   $('#register').parent().css('display','');
-  $('#forgetPassword').parent().css('display','none');
   $('#updateUser').parent().css('display','none');
 }
 function setLogined(loginName) {
   $('#_logout').parent().css("display", "");
   $('#login').parent().css('display','none');
   $('#register').parent().css('display','none');
-  $('#forgetPassword').parent().css("display", "none");
   $('#updateUser').parent().css('display','');
   if(loginName!=""&&loginName!=null) $('loginName').val(loginName);
 }

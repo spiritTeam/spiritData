@@ -46,7 +46,7 @@ public class WordController implements ServletContextAware{
         User user = ((User)session.getAttribute(FConstants.SESSION_USER));
         Map<String,Object> retMap = wordService.expWord(reportId,user);
         if((boolean)retMap.get("success")==true){
-            String fileName = (String) retMap.get("fileName");
+            String reportName = (String) retMap.get("reportName");
             //以下为下载部分代码
             //获取网站部署路径(通过ServletContext对象)，用于确定下载文件位置，从而实现下载 
             String path = servletContext.getRealPath("/");
@@ -54,10 +54,10 @@ public class WordController implements ServletContextAware{
             //1.设置文件ContentType类型，这样设置，会自动判断下载文件类型 
             response.setContentType("multipart/form-data");
             //2.设置文件头：最后一个参数是设置下载文件名 
-            response.setHeader("Content-Disposition", "attachment;fileName="+fileName);
+            response.setHeader("Content-Disposition", "attachment;fileName="+reportName);
             ServletOutputStream out;
             //通过文件路径获得File对象(假如此路径中有一个download.pdf文件)
-            File file = new File(path + "report/reportDownLoad/" + "textDown.docx");
+            File file = new File(path + "reportDownLoad/" + reportName);
             try {
                 FileInputStream inputStream = new FileInputStream(file);
                 //3.通过response获取ServletOutputStream对象(out)
