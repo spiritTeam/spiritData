@@ -15,7 +15,7 @@ public class ReportPo extends BaseObject {
     private String id; //报告id
     private int ownerType; //报告所对应的所有者类型（1=注册用户;2=非注册用户(session);3=系统生成）
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID，也可能是'Sys'）
-    private String taskGId; //报告对应的任务组Id
+    private String taskGId; //报告对应的任务组Id，可以为空，即没有任务的报告
     private String FId; //对应文件id，文件信息，报告对应的文件report.json
     private String reportType; //报告分类
     private String reportName; //报告id

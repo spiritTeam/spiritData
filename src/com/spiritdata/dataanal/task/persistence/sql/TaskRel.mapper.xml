@@ -54,10 +54,10 @@
   <insert id="insert" parameterType="java.util.Map">
     insert into sa_task_rel
     <trim prefix="(" suffix=")" suffixOverrides=",">
-     <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
-      <if test="taskId!=null">taskId=#{taskId,jdbcType=VARCHAR},</if>
-      <if test="preTaskId!=null">preTaskId=#{preTaskId,jdbcType=VARCHAR},</if>
-      <if test="usedPreData!=null and usedPreData!=0">usedPreData=#{usedPreData,jdbcType=INTEGER},</if>
+      <if test="id!=null">id,</if>
+      <if test="taskId!=null">taskId,</if>
+      <if test="preTaskId!=null">preTaskId,</if>
+      <if test="usedPreData!=null and usedPreData!=0">usedPreData,</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id!=null">#{id,jdbcType=VARCHAR},</if>
@@ -84,5 +84,8 @@
   </delete>
   <delete id="deleteByEntity" parameterType="java.util.Map">
     delete from sa_task_rel <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+  </delete>
+  <delete id="deleteByGroupId" parameterType="java.lang.String">
+    delete from sa_task_rel where taskId in (select id from sa_task_info where taskGId=#{id,jdbcType=VARCHAR})
   </delete>
 </mapper>

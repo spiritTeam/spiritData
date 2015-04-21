@@ -254,13 +254,13 @@ VIEW vsa_report_file AS
 DROP TABLE IF EXISTS sa_task_group;
 CREATE TABLE sa_task_group (
   id          varchar(32)      NOT NULL  COMMENT '任务组表ID(UUID)',
+  reportId    varchar(32)                COMMENT '对应报告信息Id(UUID)，可为空，分析可以没有报告',
   ownerType   int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
   ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
   workName    varchar(100)               COMMENT '任务组名称',
-  reportId    varchar(32)                COMMENT '对应报告信息Id(UUID)',
   status      int(1) unsigned  NOT NULL  COMMENT '任务组状态1=准备执行；2=正在执行；3=任务失效；4=执行成功；5=执行失败',
   descn       varchar(500)               COMMENT '任务组说明',
-  beginTime   timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '任务组开启说明',
+  beginTime   timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '任务组开始执行时间',
   PRIMARY KEY (id)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务组信息';
@@ -275,7 +275,7 @@ CREATE TABLE sa_task_info (
   status        int(1) unsigned  NOT NULL                  COMMENT '任务状态1=准备执行；2=等待执行；3=正在执行；4=任务失效；5=执行成功；6=执行失败；',
   langType      varchar(50)      NOT NULL  DEFAULT 'java'  COMMENT '任务执行语言：目前只有Java',
   excuteFunc    varchar(200)     NOT NULL                  COMMENT '任务执行方法，要实现一个接口',
-  param         varchar(500)                               COMMENT '任务执行所需的参数，用json处理',
+  param         varchar(500)                               COMMENT '任务执行所需的参数，用json处理', 
   descn         varchar(500)                               COMMENT '任务说明',
   firstTime     timestamp                                  COMMENT '第一次放入执行队列的时间',
   beginTime     timestamp                                  COMMENT '开始执行时间',
@@ -289,7 +289,7 @@ DROP TABLE IF EXISTS sa_task_rel;
 CREATE TABLE sa_task_rel (
   id           varchar(32)      NOT NULL               COMMENT '任务关系表ID(UUID)',
   taskId       varchar(32)      NOT NULL               COMMENT '任务Id，外键',
-  preTaskId    varchar(100)                            COMMENT '前置任务Id',
+  preTaskId    varchar(100)     NOT NULL               COMMENT '前置任务Id',
   usedPreData  int(1) unsigned  NOT NULL  DEFAULT '2'  COMMENT '是否利用前序任务的数据1-利用;2-不利用',
   PRIMARY KEY (id)
 )

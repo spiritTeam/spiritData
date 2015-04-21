@@ -83,14 +83,14 @@
   <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
     select <include refid="Base_Column_List"/> from plat_dictd
     <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
-    <if test="sortByClause!=null">sort by ${sortByClause}</if>
+    <if test="sortByClause!=null">order by ${sortByClause}</if>
   </select>
   <!-- 根据所有者信息获得列表 -->
   <select id="getListByOwnerId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select <include refid="Base_Column_List_A"/> from plat_dictd a, plat_dictm b where a.mId=b.id
     <if test="_parameter!=null"><include refid="WhereClauseByEntiey_A"/></if>
     <if test="ownerId!=null"> and b.ownerId=#{ownerId,jdbcType=VARCHAR}</if>
-    sort by a.mId, a.pid, a.sort desc
+    order by a.mId, a.pid, a.sort desc
   </select>
 
   <!-- 获得一条数据 -->

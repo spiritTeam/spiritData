@@ -377,7 +377,7 @@ public class FileInfo implements Serializable, ModelSwapPo {
      * <p>fileCategoryList属性（文件分类列表），没有做处理，通过数据库检索可以得到这个属性，之所以没有处理，是要把这个功能留到Service中再处理。
      * 这样做考虑如下：读取数据库，慢！而在Service中，可能上下文已经得到了文件的信息，这样可能更快，而且不用从数据库获得两次(本方法中一次，Service中一次)。
      * <p>同样理由，本模型对象中的三类文件关系列表也不在这里处理。(通过读取数据库相关信息，这三个列表也是能够得到的)
-     * <p>因此要注意：通过本方法构建的对象信息是不完整的。
+     * <p>因此要注意：通过本方法构建的模型对象信息是不完整的。
      */
     @Override
     public void buildFromPo(Object po) {

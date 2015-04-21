@@ -17,14 +17,18 @@ public class TaskInfoPo extends BaseObject {
     private String rfId; //结果jsonD文件Id
     private String langType; //执行语言，默认为java
     private String excuteFunc; //任务执行方法
-    private String param; //任务执行所需的参数
+    private String param; //任务执行所需的参数，是Json串
     private int status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
     private String taskName; //任务名称
     private String desc; //任务说明
-    
+
     private Timestamp firstTime; //任务第一次准备执行时间
     private Timestamp beginTime; //本次开始执行时间
     private Timestamp endTime; //本次结束执行时间
+
+    public TaskInfoPo() {
+        this.status = 1;
+    }
 
     public String getId() {
         return id;

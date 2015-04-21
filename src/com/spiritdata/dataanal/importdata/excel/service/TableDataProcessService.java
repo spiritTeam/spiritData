@@ -314,7 +314,4 @@ public class TableDataProcessService {
     		return this.colTypeName;
     	}
     }
-    
-
-    
 }

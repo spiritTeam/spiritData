@@ -33,6 +33,8 @@ import com.spiritdata.dataanal.report.model.SegmentList;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.task.TaskUtils;
 import com.spiritdata.dataanal.task.enumeration.TaskLangType;
+import com.spiritdata.dataanal.task.model.PreTask;
+import com.spiritdata.dataanal.task.model.TaskGraph;
 import com.spiritdata.dataanal.task.model.TaskGroup;
 import com.spiritdata.dataanal.task.model.TaskInfo;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
@@ -290,6 +292,17 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
 
         //5-组装
         tr.setReport(report);
+
+        //为测试====BEGIN
+        TaskGraph tGraph = tg.getTaskGraph();
+        Map<String, TaskInfo> taskMap = tGraph.getTaskMap();
+        for (String taskId: taskMap.keySet()) {
+            TaskInfo ti = taskMap.get(taskId);
+            if (!ti.getId().equals(getMDInfos_Task.getId())) {
+                ti.addPreTask(getMDInfos_Task, false);
+            }
+        }
+        //为测试====END
         tr.setTaskGroup(tg);
 
         Map<String, Object> ret = new HashMap<String, Object>();
