@@ -40,7 +40,7 @@ function generateReport(reportUrl, reportId) {
   var pData = {'reportId':reportId};
   //得到path<%=path%>
   deployName = reportUrl.substring(0,reportUrl.indexOf('/report/'));
-  $.ajax({type:"post",url:reportUrl,data:pData,async:true,dataType:"json",
+  $.ajax({type:"post",url:reportUrl,data:pData,async:true,dataType:"text",
     success:function(json){
       try{
         //str2JsonObj方法来自common.utils.js 用于吧json字符串变成json对象
@@ -91,50 +91,56 @@ function generateReport(reportUrl, reportId) {
 }
 
 /**
- * 
+ * ？？？？
  */
 function resolveAndDraw(){
   //根据jsonDIdAry中的id抓取dom
-  // TODO 方法未完成
   var domAry = new Array();
   for (var i=0;i<jsonDIdAry.length;i++) {
     var attr = "_did="+jsonDIdAry[i];
     var _domAry = $('['+attr+']').toArray();
     domAry[i] = _domAry;
   }
-    //JsonDSize>0说明是有数据需要请求的
-    if (monitor.monitorJsonDSize&&monitor.monitorJsonDSize>0) {
-      if (jsonDInfoArray.length==0) {//一条数据都没取到
-        return;
-      } else {
-        var _jsonDIdAry = [];
-        //起setInterval
-        monitor.monitorDrawId = setInterval(function() {
-          for (var i=0;i<jsonDInfoArray.length;i++) {
-            var jsonDInfo = jsonDInfoArray[i];
-            if (_jsonDIdAry.toString().indexOf(jsonDInfo.id)==-1) {
-              //起setInterval,检查d元素是否到位
-              if (jsonDInfo.jsond!=null&&jsonDInfo.jsond!="") {
-                for (var k=0;k<domAry.length;k++) {
-                  var _domAry = domAry[k];
-                  var _DATA = jsonDInfo.jsond._DATA;
-                  if (jsonDInfo.id == $(_domAry[0]).attr('_did')) {
-                    //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
-                    for (var j=0;j<_domAry.length;j++) {
-                      parseEle($(_domAry[j]),_DATA);
-                    }
-                  }
-                }
-                _jsonDIdAry.push(jsonDInfo.id);
+  //JsonDSize>0说明是有数据需要请求的
+  if (monitor.monitorJsonDSize&&monitor.monitorJsonDSize>0) {
+    //用于储存已经显示过的id
+    monitor._alreadyShownId = [];
+    monitor.monitorDrawId = setInterval(retrievalJsonDJson(domAry),500);
+  } else {
+    return;
+  }
+}
+/**
+ * 检索是否有已经得到的jsonDjson
+ * 从而进一步解析。
+ * @param domAry根据jsonDid分组后的dom数组
+ */
+function retrievalJsonDJson (domAry) {
+  if (jsonDInfoArray.length==0) {//一条数据都没取到
+    return;
+  } else {
+    // 当已经全部显示完时关闭定时任务
+    if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) clearInterval(monitor.monitorDrawId);
+    for (var i=0;i<jsonDInfoArray.length;i++) {
+      var jsonDInfo = jsonDInfoArray[i];
+      if (monitor._alreadyShownId.toString().indexOf(jsonDInfo.id)==-1) {
+        //起setInterval,检查d元素是否到位
+        if (jsonDInfo.json!=null&&jsonDInfo.json!="") {
+          for (var k=0;k<domAry.length;k++) {
+            var _domAry = domAry[k];
+            if (jsonDInfo.id == $(_domAry[0]).attr('_did')) {
+              //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
+              for (var j=0;j<_domAry.length;j++) {
+                var _DATA = jsonDInfo.json._DATA;
+                parseEle($(_domAry[j]),_DATA);
               }
             }
           }
-        },500);
+          monitor._alreadyShownId.push(jsonDInfo.id);
+        }
       }
-    } else {
-      return;
     }
-    
+  }
 }
 
 /**
@@ -143,13 +149,9 @@ function resolveAndDraw(){
  * _DATA：对应的数据
  */
 function parseEle(jQobj, _DATA){
-  //指向jsond中的数据
-  var value = jQobj.attr('value');
-  //解析 value,有可能存在quotas[2]::first(100)
-  //得到showType//根据value得到数据
-  eval("var _data=_DATA."+value);
   var showType = jQobj.attr('showType');
-  if (showType=="value") drawValue(jQobj, _data);
+  if (showType=="text") drawText(jQobj, _DATA);
+  else if (showType=="value") drawValue(jQobj, _data);
   else if (showType=="table") drawTable(jQobj, _data);
   else if (showType=="pie") drawPie(jQobj, _data);
   else if (showType=="line") drawLine(jQobj, _data);
@@ -157,6 +159,151 @@ function parseEle(jQobj, _DATA){
   else if (showType=="map_pts") drawMapPts(jQobj,_data); //地图画点
   else if (showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
 }
+
+//以下为解析showType代码
+/**
+ * showType=table
+ */
+function drawTable (jQobj,_data) {
+  var table_body = _data.tableData.tableBody;
+  var table_titles = _data.tableData.titles;
+  var colAry = new Array();
+  for (var i=0;i<table_titles.length;i++) {
+    //getAllPrpos得到对应的属性
+    var titlePrpos = getAllPrpos(table_titles[i]);
+    var col = new Object();
+    col.field = titlePrpos.prposName;
+    col.title = titlePrpos.prposValue;
+    col.width = 100;
+    colAry.push(col);
+  }
+  var width = (100*(table_titles.length))+50;
+  jQobj.attr('style','width:'+width+'px;');
+  jQobj.datagrid({
+    singleSelect:true,
+    collapsible:true,
+    columns:[colAry],
+    data:table_body
+  });
+}
+
+/**
+ * showType=value
+ */
+function drawValue (jQobj,dataAry) {
+  jQobj.html(dataAry);
+}
+
+/**
+ * showType=text
+ * text解析主要解析value和decorateView
+ * value的复杂程度：value='quotas[1]::!first(3|num)'
+ * decorateView的复杂程度：decorateView='{#category#}占#percent(num)#%::{suffix:’、’}'
+ * @param jQobj：对象
+ * @param _DATA:数据 
+ */
+function drawText (jQobj,_DATA) {
+  //value
+  var value = jQobj.attr('value');
+  value = removeSpace(value);
+  //要显示的最终数据
+  var showData = "";
+  if (value.indexOf("::")==-1) {
+    valIndex = value;
+    eval("var _data=_DATA."+valIndex);
+    showData = _data;
+  } else {
+    //取值规则
+    var valDemand = value.substring(value.indexOf("::"),value.length);
+    //取值位置
+    var valIndex  = value.substring(0,value.indexOf("::"));
+    //取值范围
+    var limit = valDemand.substring(valDemand.indexOf("first("),valDemand.indexOf("|"));
+    // oder ->2：升序;1降序
+    var sortType = 1;
+    if (valDemand.indexOf("!")==-1) sortType = 2;
+    // 排序列
+    var sortCol = valDemand.substring(valDemand.indexOf("|"),valDemand.indexOf(")"));
+    eval("var _data=_DATA."+valIndex);
+    // oder ->up：升序;down降序
+    if (valDemand.indexOf("!")==-1) oder = "up";
+    showData = getDataByDemand(_data,sortType,limit,sortCol);
+  }
+  //decorateView
+  var decorateView = jQobj.attr('decorateView');
+  decorateView = removeSpace(decorateView);
+  
+  jQobj.html(dataAry);
+}
+//以上为解析showType代码
+
+//以下为公共部分代码==============
+/**
+ * @param _data数据
+ * @param sortType升降序
+ * @param limit范围
+ * @param sortCol排序列
+ */
+function getDataByDemand (_data,sortType,limit,sortCol) {
+  //_data中的数据部分
+  eval("var tableData=_data.tableData");
+  //原数据中的排序：srot
+  eval("var sort=_data.sort");
+  //原数据中的表头：titles
+  eval("var titlrs=_data.titles");
+  //原数据中的表身：tableBody
+  eval("var tableBody=_data.tableBody");
+  var retBody = [];
+  if (sort!=""&&sort!=null) {//当jsonD中已排序的时候
+    if (sortCol==sort.sortCol) {//排序列相同
+      if (sortType==sort.sortType) {//排序方式相同
+        if (limit>tableBody.length) {//范围和长度的比较
+          ret = tableBody;
+        } else {
+          for ( var i=0;i<limit;i++) {
+            retBody[i] = tableBody[i];
+          }
+        }
+      } else {//排序方式不同相同
+    	  
+      }
+    } else {//排序列不同
+    	
+    }
+  } else {
+	  //当jsonD中未排序的时候
+  }
+}
+/**
+ * 去除str中的空格
+ * exp:带空格的字符串
+ */
+function removeSpace(str){
+  return str.replace(/\s/g,'');
+}
+
+/**
+ * 用来获取title中对象的属性名和属性值
+ * obj:仅限一个对象，
+ * return 返回一个由prposName(属性名)和prposValue(属性值)的新对象
+ */
+function getAllPrpos (obj) {
+  // 用来保存所有的属性名称和值 
+  var retProps = new Object();
+  // 开始遍历
+  for ( var p in obj ) {
+    // 方法
+    if ( typeof (obj[p]) == " function " ) {
+      obj[p]();
+    } else {
+      // p 为属性名称，obj[p]为对应属性的值 
+      retProps.prposName = p;
+      retProps.prposValue = obj[p];
+    }
+  }
+  return retProps;
+}
+//以上为公共部分代码=================
 
 /**
  * 替换content
@@ -377,6 +524,66 @@ function buildSegmentGroup(jObj, segArray, treeLevel, parent) {
 }
 
 /**
+ * 1、解析_DLIST为jsonDInfo
+ * 2、得到jsonD数据
+ */
+function resolveDLIST(_DLIST){
+  // 判断_DLIST是否符合标准
+  if (_DLIST==null||_DLIST==""||_DLIST.length<=0) return null;
+  //所有的jsonId
+  monitor.monitorJsonDSize = _DLIST.length;
+  monitor._getJsonDIdAry = [];
+  for (var i=0;i<_DLIST.length;i++) {
+    //jsonDInfo 囊括了jsonD的信息
+    var jsonDInfo = new Object();
+    jsonDInfo.id = _DLIST[i]._id;
+    jsonDIdAry[i] = jsonDInfo.id;
+    jsonDInfo.url =  _DLIST[i]._url;
+    //jsonD_code有时有，有时没有，负值的时候判断下
+    if (_DLIST[i]._jsonD_code!=""&&_DLIST[i]._jsonD_code!=null) jsonDInfo.jsonD_code = _DLIST[i]._jsonD_code;
+    else jsonDInfo.jsonD_code = "";
+    jsonDInfoArray.push(jsonDInfo);
+    //jsonDjson 用于存贮jsonD的数据 会在后面赋值
+    monitor.monitorJsonDId = setInterval(getJsonDJson(jsonDInfo),500);
+  }
+}
+
+/**
+ * 获取jsonDInfo.json
+ * @param jsonDInfo
+ */
+function getJsonDJson(jsonDInfo) {
+  if (monitor._getJsonDIdAry.length==monitor.monitorJsonDSize) clearInterval(monitor.monitorJsonDId);
+  var dId = jsonDInfo.id;
+  for (var k=0;k<jsonDInfoArray.length;k++) {
+    //当已存数组中不包含该id，并且找到对应的jsoDinfo时，进行获取数据
+    if(monitor._getJsonDIdAry.toString().indexOf(dId)==-1&&dId==jsonDInfoArray[k].id){
+      //处理rul
+      var _url;
+      jsonDInfo = jsonDInfoArray[k];
+      if ((jsonDInfo.url).indexOf("/")!=-1) _url = deployName+"/"+jsonDInfo.url;
+      else _url = deployName+jsonDInfo.url;
+      //uri
+      var pData = {'uri':jsonDInfo.url};
+      $.ajax({type:"post",url:_url,data:pData,async:true,dataType:"text",
+        success:function(json){
+          var jsonDObj = str2JsonObj(json);
+          if(jsonDObj.jsonType==1){
+            jsonDInfo.json = jsonDObj.data;
+            monitor._getJsonDIdAry.push(dId);
+          }else{
+            alert("获取数据错误");
+          }
+        },
+        error:function(errorData){
+          alert("err:"+errorData);
+        }
+      });
+    }
+  }
+}
+
+/**
  * 初始化pageFrame
  */
 function initPageFrame(){
@@ -420,67 +627,3 @@ function initPageFrame(){
     return ;
   };
 }
-
-/**
- * 1、解析_DLIST为jsonDInfo
- * 2、得到jsonD数据
- */
-function resolveDLIST(_DLIST){
-  // 判断_DLIST是否符合标准
-  if (_DLIST==null||_DLIST==""||_DLIST.length<=0) return null;
-  //所有的jsonId
-  monitor.monitorJsonDSize = _DLIST.length;
-  for (var i=0;i<_DLIST.length;i++) {
-    //jsonDInfo 囊括了jsonD的信息
-    var jsonDInfo = new Object();
-    jsonDInfo.id = _DLIST[i]._id;
-    jsonDIdAry[i] = jsonDInfo.id;
-    jsonDInfo.url =  _DLIST[i]._url;
-    //jsonD_code有时有，有时没有，负值的时候判断下
-    if (_DLIST[i]._jsonD_code!=""&&_DLIST[i]._jsonD_code!=null) jsonDInfo.jsonD_code = _DLIST[i]._jsonD_code;
-    else jsonDInfo.jsonD_code = "";
-    //jsonDjson 用于存贮jsonD的数据 会在后面赋值
-    monitor.monitorJsonDId = setInterval(getJsonD(jsonDInfo),500);
-  }
-}
-
-/**
- * 获取jsonD
- * @param id jsonD~id
- * @param url jsonD~uri
- */
-function getJsonD(jsonDInfo){
-  //如果jsonDInfoArray的长度=monitorJsonDSize并且json不为0，说明已经全部取完关闭线程
-	// TODO 关闭线程的设定不太好
-  if (monitor.monitorJsonDSize==jsonDInfoArray.length) {
-    for (var i=0;i<jsonDInfoArray.length;i++) {
-      if(jsonDInfoArray[i].json&&jsonDInfoArray[i].json!=null&&jsonDInfoArray[i].json!="") {
-        clearInterval(monitor.monitorJsonDId);
-        return;
-      }
-    }
-  } else {
-    //处理url
-    var _url;
-    if ((jsonDInfo.url).indexOf("/")!=-1) _url = deployName+"/"+jsonDInfo.url;
-    else _url = deployName+jsonDInfo.url;
-    
-    //请求数据
-    var pData = {'uri':jsonDInfo.url};
-    $.ajax({type:"post",url:_url,data:pData,async:true,dataType:"json",
-      success:function(json){
-        var jsonDObj=str2JsonObj(json);
-        if(jsonDObj.jsonType==1){
-          jsonDInfo.json = jsonDObj.data;
-          jsonDInfoArray.push(jsonDInfo);
-        }else{
-          alert("获取数据错误");
-        }
-      },
-      error:function(errorData){
-        alert("err:"+errorData);
-      }
-    });
-  }
-};
-
