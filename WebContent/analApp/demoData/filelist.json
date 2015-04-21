@@ -1,0 +1,10 @@
+{
+  "total":5,
+  "rows":[
+    {"name":"文件1","suffix":"xlsx","size":"1M","createData":"2014-08-01"},
+    {"name":"文件2","suffix":"docx","size":"12M","createData":"2014-01-22"},
+    {"name":"文件3","suffix":"pdf","size":"35M","createData":"2012-11-05"},
+    {"name":"文件4","suffix":"avi","size":"55M","createData":"2012-09-09"},
+    {"name":"文件5","suffix":"mp3","size":"16M","createData":"2013-12-01"}
+  ]
+}

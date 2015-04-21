@@ -8,8 +8,8 @@
     "_desc":"测试报告"
   },
   "_DLIST":[
-    {"_id":"0","_url":"jsonD/getJsonD.do?datafile=/demo/reportDemo/metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond","_jsonDCode":"SP.TEAM-00007","_jsonDId":""},
-    {"_id":"1","_url":"jsonD/getJsonD.do?datafile=/demo/reportDemo/anal_quota_716-446655440000.jsond","_jsonDCode":"SP.TEAM-00009","_jsonDId":""}
+    {"_id":"0","_url":"jsonD/getJsonD.do?datafile=/demo/reportDemo/anal_quota_716-446655440000.jsond","_jsonDCode":"SP.TEAM-00009","_jsonDId":""},
+    {"_id":"1","_url":"jsonD/getJsonD.do?datafile=/demo/reportDemo/metedataInfo550E8400-E29B-11D4-A716-446655440000.jsond","_jsonDCode":"SP.TEAM-00007","_jsonDId":""}
   ],
   _REPORT:[
     {
@@ -26,15 +26,8 @@
           id:"seg1_2_1",
           name:"2、单项指标分析",
           content:
-            "<d did='1' showType='value' value='excelMdmArray[0].sheetInfo.name' />
-             <d did='2' showType='text' value='quotas[1]::!first(3|num)' decorateView='{#category#}占#percent(num)#%::{suffix:’、’}' />
-             <d did='2' showType='text' value='quotas[1]::first(3|num)' decorateView='{#category#}占#percent(num)#%' />
-             <d did='1' showType='table' value='excelMdmArray[0]' />
-             <d did='2' showType='pie' param='{‘xAxis’:’category’, ‘yAxis’:’num’}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
-             <d did='2' showType='bar' param='{‘xAxis’:’category’, ‘yAxis’:’num’}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
-             <d did='2' showType='line' param='{‘xAxis’:’category’, ‘yAxis’:’num’}' value='quotas[0]' decorateView='#num#'/>
-             <d did='2' showType='radar' param='{‘xAxis’:’category’ , ‘yAxis’:’num’ , ‘max’:’100’}' value='quotas[0]' decorateView='#num#'/>
-             <d did='2' showType='map_pts' param='{‘X’:’coordX’, ‘Y’:’coordY’ ,‘Z’:’coordZ’,’mapType’:’BAIDU’}' value='quotas[0]'/>
+            "showType:value <d did='1' showType='value' value='excelMdmArray[0].sheetInfo.name' />
+             showType:text <d did='0' showType='text' value='quotas[1]::!first(3|num)' decorateView='{#category#}占#percent(num)#%::{suffix:’、’}' />
             "
         }
       ]

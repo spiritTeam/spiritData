@@ -29,7 +29,7 @@
       }},{columnName:"col_4",
       titleName:"籍贯",
       tableData:{
-       sort:{sortCol:"num",shotType:"1"},
+       sort:{sortCol:"num",sortType:"1"},
         titles:[{category:"籍贯"},{num:"数量"},{percent:"百分比"}],
         tableBody:[
           {category:"其他",   num:"2",  percent:"1"},
