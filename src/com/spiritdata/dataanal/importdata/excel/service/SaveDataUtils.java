@@ -234,9 +234,7 @@ public abstract class SaveDataUtils {
             strColLenMap.putAll(changeLenColMap);
             if (dialect instanceof com.spiritdata.framework.core.dao.dialect.MySqlDialect) {
                 for (String _colName: strColLenMap.keySet()) {
-                    if (strColLenMap.get(_colName)>255) {
-                        noKeyL.add(_colName);
-                    }
+                    if (strColLenMap.get(_colName)>255) noKeyL.add(_colName);
                 }
                 if (noKeyL.size()>0) noKeyInfo.put("exceedMaxLen", noKeyL);
             }

@@ -9,6 +9,7 @@ public abstract class SDConstants {
 
     //以下为分析方法相关的常量
     public final static String ANAL_MD_KEY="METADATA-key";//主键分析标识
+    public final static String ANAL_MD_NOKEY="METADATA-nokey";//不能为主键的分析标识
     public final static String ANAL_MD_DICT="METADATA-dict";//字典分析标识
     public final static String ANAL_MD_GETINFO="METADATA-get";//获得元数据信息
     public final static String ANAL_MD_SDICT="METADATA-sigleDice";//单项指标分析
@@ -16,6 +17,7 @@ public abstract class SDConstants {
 
     //以下jsonD常量类型信息，JDC=JsonDCode，主要和分析有关
     public final static String JDC_ANAL_KEY = "SD.TEAM.ANAL::0001"; //主键分析
+    public final static String JDC_ANAL_NOKEY = "SD.TEAM.ANAL::0006"; //不能为主键的列的信息
     public final static String JDC_ANAL_DICT = "SD.TEAM.ANAL::0002"; //字典项分析
     public final static String JDC_MD_INFO="SD.TEAM.ANAL::0003"; //元数据信息（一个或多个）
     public final static String JDC_MD_SDICT="SD.TEAM.ANAL::0004"; //元数据单项指标分析结果信息

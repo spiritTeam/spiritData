@@ -278,18 +278,8 @@ public class DealExcelFileService {
                     analResultMap = analDict.scanMetadata(sysMd, null);
                     //7.1.2-文件关系存储
                     if (analResultMap!=null) {
-                        AnalResultFile arf = (AnalResultFile)analResultMap.get("resultFile");
-                        FileInfo arFi = arFileService.saveFile(arf);//分析jsonD存储
-                        //7.1.2-文件关系存储
-                        FileRelation fr = new FileRelation();
-                        fr.setElement1(fi.getFileCategoryList().get(0));
-                        fr.setElement2(arFi.getFileCategoryList().get(0));
-                        fr.setCTime(new Timestamp((new Date()).getTime()));
-                        fr.setRType1(RelType1.POSITIVE);
-                        fr.setRType2("语义分析-字典项");
-                        fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的字典项");
-                        fmService.saveFileRelation(fr);//文件关联存储
-                        analResultMap.remove("resultFile");
+                        AnalResultFile arf = (AnalResultFile)analResultMap.remove("resultFile");
+                        arFileService.saveFile(arf);//分析jsonD存储
                         //7.1.3-字典分析结果调整
                         //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                         try{
@@ -301,24 +291,14 @@ public class DealExcelFileService {
                     //7.1.3-字典分析结果调整
                     //--获得系统保存的与当前Excel元数据信息匹配的元数据信息
                     mdDictService.adjustMdDict(sysMd, analResultMap, tabMapOrgAry[1].getTableName(), _od); //分析主键，此时，若分析出主键，则已经修改了模式对应的积累表的主键信息
-                    
+
                     //7.2-分析坐标列
                     //7.2.1-积累表坐标列分析
                     analResultMap = analCoord.scanMetadata(sysMd, null);
                     //7.2.2-文件关系存储
                     if (analResultMap!=null) {
-                        AnalResultFile arf = (AnalResultFile)analResultMap.get("resultFile");
-                        FileInfo arFi = arFileService.saveFile(arf);//分析jsonD存储
-                        //7.1.2-文件关系存储
-                        FileRelation fr = new FileRelation();
-                        fr.setElement1(fi.getFileCategoryList().get(0));
-                        fr.setElement2(arFi.getFileCategoryList().get(0));
-                        fr.setCTime(new Timestamp((new Date()).getTime()));
-                        fr.setRType1(RelType1.POSITIVE);
-                        fr.setRType2("语义分析-地图坐标分析");
-                        fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的地图坐标");
-                        fmService.saveFileRelation(fr);//文件关联存储
-                        analResultMap.remove("resultFile");
+                        AnalResultFile arf = (AnalResultFile)analResultMap.remove("resultFile");
+                        arFileService.saveFile(arf);//分析jsonD存储
                     }
                     //根据coordMap修改语义表，这里还有问题！！！！！
                 } catch(Exception e) {
