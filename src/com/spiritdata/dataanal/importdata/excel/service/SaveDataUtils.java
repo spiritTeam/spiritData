@@ -27,7 +27,6 @@ import com.spiritdata.framework.core.dao.dialect.DialectFactory;
  * @author wh
  */
 public abstract class SaveDataUtils {
-
     /**
      * 保存临时表信息，并对字段长度进行判断，以便顺利插入数据
      * @param sti Sheet中的表结构区域信息
@@ -95,17 +94,7 @@ public abstract class SaveDataUtils {
             Map<String, Integer> changeLenColMap = new HashMap<String, Integer>();//需扩容的列列表
 
             //构造当前表字符串列长度的结构
-            Map<String, Integer> strColLenMap = new HashMap<String, Integer>();
-            DatabaseMetaData dbMetaData = conn.getMetaData();
-            rs = dbMetaData.getColumns(null, null, tempTableName, null);
-            if (rs!=null) {//注意这里不考虑非varchar2以外的数据类型，应为所有表都是系统自动建立的
-                while (rs.next()) {
-                    if (rs.getString("TYPE_NAME").toUpperCase().equals("VARCHAR")) {
-                        strColLenMap.put(rs.getString("COLUMN_NAME"), rs.getInt("COLUMN_SIZE"));
-                    }
-                }
-            }
-
+            Map<String, Integer> strColLenMap = SaveDataUtils.getDBColumnSize(conn, rs, tempTableName);
             //第一次Insert
             Integer dbLen;
             int strLen;
@@ -168,10 +157,10 @@ public abstract class SaveDataUtils {
                     colName = sysMm.getColumnList().get(k).getColumnName();
                     dbLen = strColLenMap.get(colName);
                     if (dbLen!=null&&sysMm.getColumnList().get(k).getColumnType().equals("String")) {
-                        strLen = SaveDataUtils.getStringLen((String)paramArray[i], dialect);
+                        strLen = SaveDataUtils.getStringLen((String)paramArray[k], dialect);
                         if (strLen>dbLen) {
                             if (canInsert) canInsert = false; //阻止本次插入
-                            if (iiInsertData.get(i)==null) iiInsertData.put(new Integer(i), paramArray);//缓存此数据
+                            if (iiInsertData.get(i)==null) iiInsertData.put(new Integer(i), paramArray.clone());//缓存此数据
                             if (changeLenColMap.get(colName)==null||strLen>changeLenColMap.get(colName)) changeLenColMap.put(colName, strLen);//为调整字段长度做准备
                         }
                     }
@@ -313,6 +302,7 @@ public abstract class SaveDataUtils {
         PreparedStatement psInsert = null;
         PreparedStatement psUpdate = null;
         PreparedStatement ps = null;
+        ResultSet rs = null; //DB元数据获取结果
 
         Map<String, Object> titleCol = null;
         //日志信息准备
@@ -329,13 +319,19 @@ public abstract class SaveDataUtils {
             if (updateSql!=null) psUpdate = conn.prepareStatement(updateSql);
 
             //根据长度调整Map，调整积累表数据格式
+            Map<String, Integer> strColLenMap = SaveDataUtils.getDBColumnSize(conn, rs, sysMm.getTableName());
+            for (String colName: strColLenMap.keySet()) {
+                Integer inChangeMap = changeLenColMap.get(colName);
+                if (inChangeMap!=null&&inChangeMap<=strColLenMap.get(colName)) changeLenColMap.remove(colName);
+            }
             if (changeLenColMap!=null&&changeLenColMap.size()>0) {
                 for (String _colName: changeLenColMap.keySet()) {
-                    ps.execute("alter table "+sysMm.getTableName()+" modify column "+_colName+" varchar("+changeLenColMap.get(_colName)+")"); //临时表
+                    ps=conn.prepareStatement("alter table "+sysMm.getTableName()+" modify column "+_colName+" varchar("+changeLenColMap.get(_colName)+")");
+                    ps.execute();
                 }
             }
 
-            int keyCount=0;
+//            int keyCount=0;
             int _mmDType, _infoDType;
             Object v;
             String tagStr;
@@ -353,7 +349,7 @@ public abstract class SaveDataUtils {
                 for (int j=0; j<paramArray4Insert.length; j++) paramArray4Insert[j]=null;
                 if (updateSql!=null) for (int j=0; j<paramArray4Update.length; j++) paramArray4Update[j]=null;
 
-                keyCount=0;
+//                keyCount=0;
                 tagStr = "";
                 for (Map<String, Object> cell: rowData) {
                     titleCol = parse.findMatchTitle(cell, sti);
@@ -444,6 +440,7 @@ public abstract class SaveDataUtils {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
             try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
             try { if (psUpdate!=null) {psUpdate.close();psUpdate = null;} } catch (Exception e) {e.printStackTrace();} finally {psUpdate = null;};
             try { if (psInsert!=null) {psInsert.close();psInsert = null;} } catch (Exception e) {e.printStackTrace();} finally {psInsert = null;};
@@ -460,5 +457,24 @@ public abstract class SaveDataUtils {
     private static int getStringLen(String str, Dialect d) {
         if (d==null) return str.length();
         return d.getStrLen(str, "utf8");
+    }
+
+    private static Map<String, Integer> getDBColumnSize(Connection conn, ResultSet rs, String tableName) {
+        Map<String, Integer> strColLenMap = new HashMap<String, Integer>();
+        try {
+            DatabaseMetaData dbMetaData = conn.getMetaData();
+            rs = dbMetaData.getColumns(null, null, tableName, null);
+            if (rs!=null) {//注意这里不考虑非varchar2以外的数据类型，应为所有表都是系统自动建立的
+                while (rs.next()) {
+                    if (rs.getString("TYPE_NAME").toUpperCase().equals("VARCHAR")) {
+                        strColLenMap.put(rs.getString("COLUMN_NAME"), rs.getInt("COLUMN_SIZE"));
+                    }
+                }
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return strColLenMap.size()==0?null:strColLenMap;
     }
 }

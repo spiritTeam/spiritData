@@ -95,7 +95,7 @@ public class MdKeyService {
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
             try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
-    } 
+    }
 
     private boolean needAnalKey(MetadataModel mm) {
         boolean needAnalKey = false;//是否需要分析主键
@@ -324,12 +324,17 @@ public class MdKeyService {
      * @param mm 元数据模型
      * @return 主键字符串组成的数组，第一个元数是主键名称
      */
-    private String[] getDbKeys(Connection conn, String tableName, ResultSet rs) throws SQLException {
+    private String[] getDbKeys(Connection conn, String tableName, ResultSet rs) {
         String keyStr = "";
-        DatabaseMetaData dbMetaData = conn.getMetaData();
-        rs = dbMetaData.getPrimaryKeys(null, null, tableName);
-        while (rs.next()) {
-            keyStr +=","+rs.getString("COLUMN_NAME"); //列名
+        try {
+            DatabaseMetaData dbMetaData = conn.getMetaData();
+            rs = dbMetaData.getPrimaryKeys(null, null, tableName);
+            while (rs.next()) {
+                keyStr +=","+rs.getString("COLUMN_NAME"); //列名
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         if (keyStr.trim().length()==0) return null;
         else return StringUtils.splitString(keyStr.substring(1), ",");
@@ -354,7 +359,7 @@ public class MdKeyService {
     }
 
     /*
-     * 合并不允许作为主键的列，包括度JsonD和写入JsonD
+     * 合并不允许作为主键的列，包括读JsonD和写入JsonD
      * @param noKeyInfo 未合并前的“不允许作为主键的列的信息”
      * @param mm 元数据信息
      * @return 合并后的不允许作为主键的列的信息
@@ -404,6 +409,8 @@ public class MdKeyService {
                 ret = noKeyInfo;
             }
         }
+        if (ret==null) return ret;
+
         //更新文件处理
         //1-得到需要写入的串
         String jsonS = _m==null?null:(String)_m.get("jsonStr");
@@ -412,7 +419,7 @@ public class MdKeyService {
         Map<String, Object> _DATA_Map = new HashMap<String, Object>();
         JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
         _DATA_Map.putAll(_dataElement.toJsonMap());
-        _DATA_Map.put("_analResults", JsonUtils.objToJson(ret));
+        _DATA_Map.put("_analResults", ret);
         if (jsonS==null) {
             //组织JsonD，并写入文件
             analNoKeyJsonD = new JsonD();
@@ -427,7 +434,7 @@ public class MdKeyService {
             analNoKeyJsonD.set_DATA(_DATA_Map);
             jsonS = analNoKeyJsonD.toJson();
         } else {
-            jsonS = jsonS.substring(0, jsonS.indexOf("_DATA"))+"_DATA:"+JsonUtils.objToJson(_DATA_Map)+"}";
+            jsonS = jsonS.substring(0, jsonS.indexOf("_DATA"))+"_DATA\":"+JsonUtils.objToJson(_DATA_Map)+"}";
         }
         //2-写入
         if (fip==null) { //需要重新写入
@@ -438,9 +445,10 @@ public class MdKeyService {
                 arfSeed.setSubType(mm.getId());
                 arfSeed.setObjType("metadata"); //所分析对象
                 arfSeed.setObjId("["+mm.getTitleName()+"("+mm.getId()+")]"); //所分析对象的ID
-                arfSeed.setFileNameSeed("METADATA"+File.separator+"nokey"+File.separator+"md_"+mm.getId()+"_"+new Date().getTime());
+                arfSeed.setFileNameSeed("METADATA"+File.separator+"nokey"+File.separator+"md_"+mm.getId());
                 arfSeed.setJsonDCode(SDConstants.JDC_ANAL_NOKEY);
-                arfService.write2FileAsJson(analNoKeyJsonD, arfSeed);
+                arfSeed = (AnalResultFile)arfService.write2FileAsJson(analNoKeyJsonD, arfSeed);
+                arfService.saveFile(arfSeed);
             }
         } else { //在已有的情况下写入
             FileOperUtils.write2File(JsonUtils.formatJsonStr(jsonS, null), fip.getPath()+File.separator+fip.getFileName());
@@ -460,16 +468,15 @@ public class MdKeyService {
         FileInputStream fis = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> analKey = null;
             fis = new FileInputStream(f);
             byte[] b=new byte[fis.available()];
             fis.read(b);
             String jsonS = new String(b);
-            analKey = (Map<String, Object>)JsonUtils.jsonToObj(jsonS, Map.class);
-            Map<String, Object> _HEAD = (Map<String, Object>)analKey.get("_HEAD");
+            Map<String, Object> analNoKey = (Map<String, Object>)JsonUtils.jsonToObj(jsonS, Map.class);
+            Map<String, Object> _HEAD = (Map<String, Object>)analNoKey.get("_HEAD");
             String _code = (String)_HEAD.get("_code");
             if (_code.equals(SDConstants.JDC_ANAL_NOKEY)) {
-                Map<String, Object> _data = (Map<String, Object>)analKey.get("_DATA");
+                Map<String, Object> _data = (Map<String, Object>)analNoKey.get("_DATA");
                 Map<String, Object> _temp = (Map<String, Object>)_data.get("_mdMId");
                 String tempStr = (String)_temp.get("value");
                 if (!tempStr.equals(mm.getId())) return null;

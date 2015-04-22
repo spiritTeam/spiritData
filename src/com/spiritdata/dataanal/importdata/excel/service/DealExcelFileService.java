@@ -32,7 +32,6 @@ import com.spiritdata.dataanal.dictionary.service.DictSessionService;
 import com.spiritdata.dataanal.importdata.excel.ExcelConstants;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
-import com.spiritdata.dataanal.importdata.excel.service.TableDataProcessService.MetaDataColInfo;
 import com.spiritdata.dataanal.importdata.excel.util.PoiParseUtils;
 import com.spiritdata.dataanal.metadata.relation.pojo.ImpTableMapRel;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
@@ -47,10 +46,6 @@ import com.spiritdata.dataanal.metadata.relation.service.MdKeyService;
 import com.spiritdata.dataanal.metadata.relation.service.MdQuotaService;
 import com.spiritdata.dataanal.metadata.relation.service.MdSessionService;
 import com.spiritdata.dataanal.metadata.relation.service.TableMapService;
-
-//import java.util.Enumeration;
-//import org.apache.log4j.FileAppender;
-
 
 /**
  * 处理excel文件。
