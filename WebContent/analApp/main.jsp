@@ -97,7 +97,7 @@ var INIT_PARAM = {
   page_width: -1,
   page_height: -1,
   top_shadow_color:"#E6E6E6",
-  top_height: 60,
+  top_height: 45,
   top_peg: false,
   myInit: initPos,
   myResize: initPos,
