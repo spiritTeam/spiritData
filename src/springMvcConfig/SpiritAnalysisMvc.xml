@@ -15,7 +15,7 @@
     http://www.springframework.org/schema/aop
     http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-  <context:component-scan base-package="com.spiritdata.dataanal" use-default-filters="false">
+  <context:component-scan base-package="com.spiritdata.dataanal,com.spiritdata.analApp" use-default-filters="false">
     <context:include-filter type="regex" expression=".*.web.*Controller"/>
   </context:component-scan>
 
