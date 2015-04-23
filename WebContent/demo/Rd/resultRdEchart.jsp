@@ -113,7 +113,7 @@ body {
           </div>
         </td>
         <td><div style="width:240px;height:148px;border:1px solid #95B8E7;padding:5px;margin-left:5px;"><div id="chartA1_2_a" style="width:220px;height:145px;"></div></div></td>
-        <td><div style="width:240px;height:148px;border:1px solid #95B8E7;padding:5px;margin-left:5px;"><div id="chartA1_2_a_echart" style="width:250px;height:155px;"></div></div></td>
+        <!-- <td><div style="width:240px;height:148px;border:1px solid #95B8E7;padding:5px;margin-left:5px;"><div id="chartA1_2_a_echart" style="width:250px;height:155px;"></div></div></td> -->
         </tr>
         </table></div>
       </li>
@@ -144,9 +144,11 @@ body {
         </tr><tr>
         <td><div style="width:180px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_2_b" style="width:170px;height:170px;"></div></div></td>
         <td><div style="width:392px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div id="chartA1_2_c" style="width:400px;height:170px;"></div></div></td>
-        <td><div style="width:400px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div id="chartA1_2_c_echart" style="width:99%;height:99%;"></div></div></td>
-        </tr>
-        <tr><td colspan=3><div id="map_jiguan" style="height:500px;border:1px solid #ccc;padding:10px;"></div></td></tr>
+        <!-- <td><div style="width:400px;height:180px;border:1px solid #95B8E7;padding:5px;margin-top:5px;margin-left:5px;"><div id="chartA1_2_c_echart" style="width:99%;height:99%;"></div></div></td> -->
+        </tr>        
+        </table></div>
+        <div style="padding:3px 0 3px 5px;"><table>
+          <tr><td><div id="map_jiguan" style="width:900px;height:500px;border:1px solid #ccc;padding:10px;"></div></td></tr>
         </table></div>
       </li>
       <li>
@@ -214,7 +216,7 @@ body {
         <div style="padding:3px 0 3px 5px;">
           <table>
 	        <tr>
-	        <td><div style="width:800px;height:500px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_2_f_echart" style="width:98%;height:98%;"></div></div></td>
+	        <td><div style="width:900px;height:500px;border:1px solid #95B8E7;padding:5px;margin-top:5px;"><div id="chartA1_2_f_echart" style="width:98%;height:98%;"></div></div></td>
 	        </tr>
           </table>
         </div>
@@ -927,9 +929,9 @@ require(
     ],
     function (ec) {
         //画饼图
-        drawEchartsPie(ec);
+        //drawEchartsPie(ec);
     	//画柱图
-        drawEchartsBar(ec);
+        //drawEchartsBar(ec);
     	//画范围专题地图
     	drawMapJiguan(ec);
     	//画案件点位分布图
@@ -939,8 +941,7 @@ require(
 );
 
 //画饼图
-function drawEchartsPie(ec){
-	
+function drawEchartsPie(ec){	
 	var A1_2_a_echart = [{value:156,name:'男'},{value:40, name:'女'}, {value:4,name:'未知' }];
 	var myChart = ec.init(document.getElementById('chartA1_2_a_echart')); 
   var option = { 

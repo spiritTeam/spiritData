@@ -91,7 +91,8 @@ function generateReport(reportUrl, reportId) {
 }
 
 /**
- * ？？？？
+ * 对元素按照didId分类
+ * 通过线程控制对元素的解析
  */
 function resolveAndDraw(){
   //根据jsonDIdAry中的id抓取dom
@@ -152,25 +153,25 @@ function parseEle(jQobj, _DATA){
   var showType = jQobj.attr('showType');
   if (showType=="text") drawText(jQobj, _DATA);
   else if (showType=="value") drawValue(jQobj, _data);
-  else if (showType=="table") drawTable(jQobj, _data);
-  else if (showType=="pie") drawPie(jQobj, _data);
-  else if (showType=="line") drawLine(jQobj, _data);
-  else if (showType=="bars") drawBar(jQobj, _data);
-  else if (showType=="map_pts") drawMapPts(jQobj,_data); //地图画点
-  else if (showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
+  //else if (showType=="table") drawTable(jQobj, _data);
+//  else if (showType=="pie") drawPie(jQobj, _data);
+//  else if (showType=="line") drawLine(jQobj, _data);
+//  else if (showType=="bars") drawBar(jQobj, _data);
+//  else if (showType=="map_pts") drawMapPts(jQobj,_data); //地图画点
+//  else if (showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
 }
 
 //以下为解析showType代码
 /**
  * showType=table
  */
-function drawTable (jQobj,_data) {
-  var table_body = _data.tableData.tableBody;
+function drawTable (jQobj,_data) {//由于修改了getPrposMapAry方法，所有drawTable也要修改
+  return;var table_body = _data.tableData.tableBody;
   var table_titles = _data.tableData.titles;
   var colAry = new Array();
   for (var i=0;i<table_titles.length;i++) {
-    //getAllPrpos得到对应的属性
-    var titlePrpos = getAllPrpos(table_titles[i]);
+    //getPrposMapAry得到对应的属性
+    var titlePrpos = getPrposMapAry(table_titles[i]);
     var col = new Object();
     col.field = titlePrpos.prposName;
     col.title = titlePrpos.prposValue;
@@ -190,7 +191,7 @@ function drawTable (jQobj,_data) {
 /**
  * showType=value
  */
-function drawValue (jQobj,dataAry) {
+function drawValue (jQobj,dataAry) {return;
   jQobj.html(dataAry);
 }
 
@@ -218,62 +219,266 @@ function drawText (jQobj,_DATA) {
     //取值位置
     var valIndex  = value.substring(0,value.indexOf("::"));
     //取值范围
-    var limit = valDemand.substring(valDemand.indexOf("first("),valDemand.indexOf("|"));
+    var limit = valDemand.substring(valDemand.indexOf("first(")+6,valDemand.indexOf("|"));
     // oder ->2：升序;1降序
     var sortType = 1;
     if (valDemand.indexOf("!")==-1) sortType = 2;
     // 排序列
-    var sortCol = valDemand.substring(valDemand.indexOf("|"),valDemand.indexOf(")"));
+    var sortCol = valDemand.substring(valDemand.indexOf("|")+1,valDemand.indexOf(")"));
     eval("var _data=_DATA."+valIndex);
     // oder ->up：升序;down降序
     if (valDemand.indexOf("!")==-1) oder = "up";
-    showData = getDataByDemand(_data,sortType,limit,sortCol);
+    showData = getDataBySortDemand(_data,sortType,limit,sortCol);
   }
+
   //decorateView
   var decorateView = jQobj.attr('decorateView');
   decorateView = removeSpace(decorateView);
-  
-  jQobj.html(dataAry);
+  //把decorateView分为两个部分，dBegin，dEnd，
+  //decorateView主体部分
+  var dViewBegin = "";
+  //decorateView特殊显示部分
+  var dViewEnd = "";
+  if (decorateView.indexOf("::")!=-1) {
+    dViewBegin = decorateView.substring(0,decorateView.indexOf("::"));
+    dViewEnd = decorateView.substring(decorateView.indexOf("::")+2,decorateView.length);
+  } else {
+    dViewBegin = decorateView;
+  }
+  showData = getDataByShowDemand(dViewBegin,dViewEnd,showData);
+  jQobj.html(showData);
 }
 //以上为解析showType代码
 
 //以下为公共部分代码==============
+
 /**
+ * 求某列的总和
+ * @param data数据数组
+ * @param colName列名
+ */
+function getSum(data,colName){
+  var sum = 0;
+  for(var i=0;i<data.length;i++) {
+    var val = data[i][colName];
+    sum = sum+parseFloat(val);
+  }
+  return sum;
+}
+
+/**
+ * 求一个数的百分数默认保留2位
+ * @param num 数值
+ * @param sum 总和
+ * @param length 保留小数点后几位
+ */
+function getPercent(num,sum,length){
+  var percent = "";
+  if (num!=""&&num!=null&&sum!=""&&sum!=null&&num<sum) {
+    percent = (num*100)/sum+"";
+    //小数点的位置
+    var len = percent.indexOf(".");
+    len = len+length+1;
+    if (len!=-1) {
+      if (len<percent.length) {//多余2位的时候
+        percent = percent.substring(0,len);
+      } else {
+        var _len = len-percent.length;
+        for (var i=0;i<_len;i++) {
+          percent = percent+"0";
+        }
+      }
+    } else {
+      percent = percent+".";
+      for (var i=0;i<length;i++) {
+        percent = percent+"0";
+      }
+    }
+  }
+  return percent;
+}
+/**
+ * 根据显示需求筛选数据
+ * @param dViewBegin 显示主体部分
+ * @param dViewEnd 特殊显示部分
+ * @param showData 数据，包含titles以及经过排序筛选后的data
+ */
+function getDataByShowDemand(dViewBegin,dViewEnd,showData) {
+
+  //1、找出需要计算列，并算出总和
+  //colAry 需要替换参数的数组
+  var colAry = dViewBegin.match(/#.*?#/g);
+  //数据部分
+  var _data = showData.dataBody;
+  //元数据部分
+  var sourceData = showData.sourceData;
+  //求和参数对象数组
+  var sumParamAry = [];
+  //取一行数据，看能不能得到对应的数据，如不能得到，则需要计算，
+  var _dataRow = _data[0]; 
+  for (var i=0;i<colAry.length;i++) {
+    var colName = colAry[i].split("#")[1];
+    var val = _dataRow[colName];
+    //求和参数对象colName为需要求和的列，sum为该列的和
+    var sumParam = new Object();
+    if (!val&&colName.indexOf("percent(")!=-1) {
+      //colName是带"#"的
+      sumParam.colName = colName;
+      var _colName = colName.substring(colName.indexOf("(")+1,colName.lastIndexOf(")"));
+      sumParam.sum = getSum(sourceData,_colName);
+      //_colName是不带"#"的
+      sumParam._colName = _colName;
+      sumParamAry.push(sumParam);
+    }
+  }
+
+  //2、对模板中的参数进行替换
+  var showAry = [];
+  for (var j=0;j<_data.length;j++) {
+    //一行数据
+    var data = _data[j];
+    //模板字符串
+    var templet = dViewBegin;
+    for (var k=0;k<colAry.length;k++) {
+      //cloName
+      var cName = (colAry[k]).split("#")[1];
+      //替换字符串的值
+      var cVal = data[cName];
+      if (!cVal){//当取不到的时候
+        for (var kk=0;kk<sumParamAry.length;kk++) {
+          if (cName==sumParamAry[kk].colName&&cName.indexOf("percent(")!=-1) {//当
+            var _cName = sumParamAry[kk]._colName;
+            cVal = data[_cName];
+            var sum = sumParamAry[kk].sum;
+            cVal = getPercent(parseFloat(cVal),sum,2);
+            templet = templet.replace(colAry[k],cVal);
+            continue;
+          } 
+        }
+      }
+      templet = templet.replace(colAry[k],cVal);
+    }
+    showAry.push(templet);
+  }
+  
+  //3、解析dViewEnd
+  var showStr = "";
+  if (dViewEnd!=null&&dViewEnd!="") {
+    dViewEnd = dViewEnd.replace(/\^/g,"\"");
+    var jsonObj = str2JsonObj(dViewEnd);
+    var prefix = "";
+    var suffix = "；";
+    if (jsonObj.prefix) prefix=jsonObj.prefix;
+    if (jsonObj.suffix) suffix=jsonObj.suffix;
+    for (var jj=0;jj<showAry.length;jj++) {
+      showStr = showStr+prefix+showAry[jj]+suffix;
+    }
+  }
+  return showStr;
+}
+
+/**
+ * 根据排序需求筛选数据
  * @param _data数据
  * @param sortType升降序
  * @param limit范围
- * @param sortCol排序列
+ * @param sortCol排序列：时间或数值类型。
  */
-function getDataByDemand (_data,sortType,limit,sortCol) {
+function getDataBySortDemand(_data,sortType,limit,sortCol) {
   //_data中的数据部分
   eval("var tableData=_data.tableData");
-  //原数据中的排序：srot
-  eval("var sort=_data.sort");
+  //原数据中的排序对象：tSort
+  eval("var tSort=tableData.sort");
   //原数据中的表头：titles
-  eval("var titlrs=_data.titles");
+  eval("var titles=tableData.titles");
   //原数据中的表身：tableBody
-  eval("var tableBody=_data.tableBody");
-  var retBody = [];
-  if (sort!=""&&sort!=null) {//当jsonD中已排序的时候
-    if (sortCol==sort.sortCol) {//排序列相同
-      if (sortType==sort.sortType) {//排序方式相同
+  eval("var tableBody=tableData.tableBody");
+  //筛选后得到的数据
+  var dataBody = [];
+  var retObj = new Object();
+  if (tSort!=""&&tSort!=null) {//当jsonD中已排序的时候
+    if (sortCol==tSort.sortCol) {//排序列相同
+      if (sortType==tSort.sortType) {//排序方式相同--正取
         if (limit>tableBody.length) {//范围和长度的比较
-          ret = tableBody;
+          dataBody = tableBody;
         } else {
-          for ( var i=0;i<limit;i++) {
-            retBody[i] = tableBody[i];
+          for (var i=0;i<limit;i++) {
+            dataBody[i] = tableBody[i];
           }
         }
-      } else {//排序方式不同相同
-    	  
+      } else {//排序方式不同相同--倒着取
+        if (limit>tableBody.length) {//范围和长度的比较
+          for (var j=0;j<tableBody.length;j++) {
+            dataBody[j] = tableBody[tableBody.length-j-1];
+          } 
+        } else {
+          for (var k=0;k<limit;k++) {
+            dataBody[k] = tableBody[tableBody.length-k-1];
+          } 
+        }
       }
     } else {//排序列不同
-    	
+      dataBody = sort(sortType, tableBody, sortCol, limit);
     }
   } else {
-	  //当jsonD中未排序的时候
+    dataBody = sort(sortType, tableBody, sortCol, limit);
   }
+  retObj.dataBody = dataBody;
+  retObj.dataTitles = titles;
+  retObj.sourceData = tableBody;
+  return retObj;
 }
+
+/**
+ * 排序方法这方法是getDataByDemand()的一个扩展
+ * @param sortType 升降序
+ * @param data 数据
+ * @param sortCol 排序列
+ * @param limit 范围
+ * @returns
+ */
+function sort(sortType, data, sortCol, limit) {
+  if (limit>data.length) limit = data.length;
+  var ret = new Array(limit);
+  var usedIndexs="";
+  if (data==null||data.length==0) return null;
+  var _thisIndex=-1;
+  for (var i=0; i<limit; i++) {
+    var flagData = null;
+    for (var k=0;k<data.length;k++) {
+      if (usedIndexs.indexOf(k)==-1) {
+        flagData=eval("data["+k+"]."+sortCol);
+        _thisIndex = k;
+        try {
+          flagData = parseFloat(flagData);
+        } catch (e) {continue;}
+        break;
+      }
+    }
+    for (var j=0; j<data.length; j++) {
+      if (usedIndexs.indexOf(j)!=-1)continue;
+      var _thisData = eval("data["+j+"]."+sortCol);
+      try {
+        _thisData = parseFloat(_thisData);
+      } catch (e) { continue; }
+      if (sortType==1){
+        if (_thisData>flagData) {
+          flagData = _thisData;
+          _thisIndex=j;
+        }
+      } else {
+        if (_thisData<flagData) {
+          flagData = _thisData;
+          _thisIndex=j;
+        }
+      }
+    }
+    usedIndexs+=","+_thisIndex;
+    ret[i]=eval("data["+_thisIndex+"]");
+  }
+  return ret;
+}
+
 /**
  * 去除str中的空格
  * exp:带空格的字符串
@@ -284,24 +489,28 @@ function removeSpace(str){
 
 /**
  * 用来获取title中对象的属性名和属性值
- * obj:仅限一个对象，
  * return 返回一个由prposName(属性名)和prposValue(属性值)的新对象
  */
-function getAllPrpos (obj) {
-  // 用来保存所有的属性名称和值 
-  var retProps = new Object();
-  // 开始遍历
-  for ( var p in obj ) {
-    // 方法
-    if ( typeof (obj[p]) == " function " ) {
-      obj[p]();
-    } else {
-      // p 为属性名称，obj[p]为对应属性的值 
-      retProps.prposName = p;
-      retProps.prposValue = obj[p];
+function getPrposMapAry (obj) {
+  var retPropsAry = [];
+  for (var i=0;i<obj.length;i++) {
+    // 用来保存所有的属性名称和值 
+    var retProps = new Object();
+    var _obj = obj[i];
+    // 开始遍历
+    for ( var p in _obj ) {
+      // 方法
+      if ( typeof (_obj[p]) == " function " ) {
+        _obj[p]();
+      } else {
+        // p 为属性名称，_obj[p]为对应属性的值 
+        retProps.prposName = p;
+        retProps.prposValue = _obj[p];
+      }
     }
+    retPropsAry.push(retProps);
   }
-  return retProps;
+  return retPropsAry;
 }
 //以上为公共部分代码=================
 
@@ -503,10 +712,10 @@ function buildSegmentGroup(jObj, segArray, treeLevel, parent) {
         } else {
           pDataAry = "";
           if(_didAry){
-            for (var v=0;v<_didAry.length;v++) {
+            for (var p=0;p<_didAry.length;p++) {
               if (pDataAry!="") {
-                if (pDataAry.indexOf(_didAry[v])==-1) pDataAry = pDataAry+_didAry[v]+",";
-              } else pDataAry = pDataAry+_didAry[v]+",";
+                if (pDataAry.indexOf(_didAry[p])==-1) pDataAry = pDataAry+_didAry[p]+",";
+              } else pDataAry = pDataAry+_didAry[p]+",";
               if (pDataAry==",") pDataAry="";
             }
             if (pDataAry.indexOf(",")==pDataAry.length-1) pDataAry = pDataAry.substring(0, pDataAry.indexOf(","));
@@ -575,8 +784,10 @@ function getJsonDJson(jsonDInfo) {
             alert("获取数据错误");
           }
         },
-        error:function(errorData){
-          alert("err:"+errorData);
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.status);
+            alert(XMLHttpRequest.readyState);
+            alert(textStatus);
         }
       });
     }
