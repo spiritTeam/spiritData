@@ -137,6 +137,10 @@ $(function() {
   document.onkeydown = function(e) { 
     var ev = document.all ? window.event : e;
     if(ev.keyCode==13) {
+      //在回车登陆的时候验证一下
+      validatePassword();
+      validateLoginName();
+      validateCheckCode();
       commit();
     }
   };
@@ -167,7 +171,7 @@ function validateLoginName(){
   else vdInfoAry[0] = "账号为必填项";
 }
 //验证码验证
-function validateCheckCode(eleId){
+function validateCheckCode(){
   var val = ($('#checkCode').val()).toUpperCase();
   if (val) {
     win.setMessage({'msg':''});
