@@ -85,7 +85,6 @@ public class LoginServiceImpl implements LoginService {
             conn.commit();
             conn.setAutoCommit(autoCommitFlag);
             //修改任务所有者，这里之所以不按照上面的方式去处理是因为：以上的内容都缓存在Session中，而task缓存在App中
-            //TODO 若修改失败，怎样处理，这里还未考虑
             tmService.changeOwnerId(session.getId(), newOwnerId);
         } catch (Exception e) {
             if (conn!=null) {
@@ -108,7 +107,7 @@ public class LoginServiceImpl implements LoginService {
         try {
             req.getSession().removeAttribute(SDConstants.SESSION_OWNER_RMDUNIT);
             req.getSession().removeAttribute(SDConstants.SESSION_OWNER_DICT);
-            retMap.put("retInfo", "登录成功!");
+            retMap.put("retInfo", "注销成功!");
             retMap.put("success", "success");
         } catch(Exception e) {
             retMap.put("success", "false");

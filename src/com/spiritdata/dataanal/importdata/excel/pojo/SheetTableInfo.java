@@ -9,7 +9,8 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 
 /**
- * Excel中的结构表信息
+ * <p>Excel中的结构表信息,为基础分析提供数据结构支持。
+ * <p>包括线程处理、数据块、分析结果等
  * @author wh
  */
 public class SheetTableInfo implements Serializable {

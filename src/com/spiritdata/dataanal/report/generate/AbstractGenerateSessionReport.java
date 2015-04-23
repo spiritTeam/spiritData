@@ -1,5 +1,6 @@
 package com.spiritdata.dataanal.report.generate;
 
+import java.io.File;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -81,7 +82,7 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         rfSeed.setReportId(report.getId());
         rfSeed.setTaskGId(tg.getId());
         FileInfo impFi = (FileInfo)preTreadParam.get("impFileInfo");
-        rfSeed.setFileNameSeed("afterImport(IMPFID-"+impFi.getId()+"_RID-"+report.getId()+")");
+        rfSeed.setFileNameSeed(report.getId()+File.separator+"afterImport(IMPFID-"+impFi.getId()+")");
 
         ReportFile rf = (ReportFile)rfService.write2FileAsJson(report, rfSeed); //保存文件，并把文件信息回写到report对象中
         report.setReportFile(rf);

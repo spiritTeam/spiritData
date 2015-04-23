@@ -20,10 +20,9 @@ import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.FileNameUtils;
 
 public class RandomValidateCode {
-    public static final String RANDOMCODEKEY = "RANDOMVALIDATECODEKEY";//放到session中的key
     private Random random = new Random();
     private String randString = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";//随机产生的字符串
-    
+
     private int width = 93;//图片宽
     private int height = 33;//图片高
     private int lineSize = 38;//干扰线数量

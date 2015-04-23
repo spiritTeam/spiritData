@@ -23,7 +23,7 @@ public class ReportFileService extends AbstractWriteString2FileByToBeStoreFile i
     @Override
     public String buildFileName(String fileNameSeed) {
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-        String storeFile = FileNameUtils.concatPath(root, "reportJson"+File.separator+fileNameSeed+".json");
+        String storeFile = FileNameUtils.concatPath(root, "DataCenter/report"+File.separator+fileNameSeed+".json");
         return storeFile.replace("\\", "/");
     }
 

@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;
 import com.spiritdata.filemanage.exceptionC.Flmg0003CException;
+import com.spiritdata.filemanage.util.FileOperUtils;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
@@ -18,37 +19,6 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * @author wh
  */
 public abstract class AbstractWriteString2FileByToBeStoreFile {
-    /*
-     * 写字符串内容content到文件
-     * @param content 字符串内容
-     * @param fullFileName 文件全名，包括路径
-     */
-    private void write2File(String content, String fullFileName) {
-        if (StringUtils.isNullOrEmptyOrSpace(fullFileName)) throw new Flmg0003CException(new IllegalArgumentException("文件名参数[fullFileName]为空或空串，无法写入文件"));
-        //写文件
-        FileOutputStream fileOutputStream = null;
-        try {
-            File file = new File(fullFileName);
-            if (!file.exists()) {
-                File dirs = new File(FileNameUtils.getFilePath(fullFileName));
-                if (!dirs.exists()) {
-                    if (dirs.mkdirs()) file.createNewFile();
-                    else throw new Flmg0003CException("创建目录["+FileNameUtils.getFilePath(fullFileName)+"]失败，无法写入文件");
-                }
-            }
-            fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(content.getBytes());
-        } catch (FileNotFoundException e) {
-            throw new Flmg0003CException(e);
-        } catch (IOException e) {
-            throw new Flmg0003CException(e);
-        } finally {
-            if (fileOutputStream!=null) {
-                try {fileOutputStream.close();}catch(IOException e) {e.printStackTrace();}
-            }
-        }
-    }
-
     /**
      * 得到存储文件名称，全路径名
      * @param tbsf 将要存储的文件对象
@@ -71,7 +41,7 @@ public abstract class AbstractWriteString2FileByToBeStoreFile {
      */
     public String write2File(String content, ToBeStoreFile tbsf) {
         String storeFileName = getStoreFileName(tbsf);
-        this.write2File(content, storeFileName);
+        FileOperUtils.write2File(content, storeFileName);
         return storeFileName;
     }
 
