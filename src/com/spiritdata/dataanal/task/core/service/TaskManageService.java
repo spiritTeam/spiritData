@@ -99,4 +99,24 @@ public class TaskManageService {
             throw e;
         }
     }
+
+    /**
+     * 获得能够执行的任务组信息。先查看可执行的具体任务，再以此任务的组ID为依据，得到这个列表
+     * @return 任务组信息列表
+     */
+    public List<TaskGroupPo> getCanExcuteTaskGroups() {
+        return taskGroupDao.queryForList("getCanExcuteTaskGroups");
+    }
+
+    /**
+     * 获得能够执行的任务信息。
+     * @return 任务信息列表
+     */
+    public List<TaskInfoPo> getCanExcuteTaskInfos() {
+        return taskInfoDao.queryForList("getCanExcuteTaskInfos");
+    }
+
+    public List<TaskRelPo> getCanExcuteTaskRels() {
+        return taskRelDao.queryForList("getCanExcuteTaskRels");
+    }
 }

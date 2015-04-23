@@ -10,7 +10,7 @@
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations">
       <list merge="default">
-        <value>/WEB-INF/database.properties</value> 
+        <value>/WEB-INF/database.properties</value>
       </list>
     </property>
   </bean>
@@ -58,10 +58,10 @@
   <bean id="cachePool" class=" com.spiritdata.framework.core.cache.CachePool">
     <property name="caches">
       <map>
-        <entry key="1" value-ref="DtalCacheLifecycleUnit"/>
         <!--<entry key="2" value-ref="DtalCacheLifecycleUnit"/>
         <entry key="0" value-ref="cacheFrameworkManager"/>
         <entry key="1" value-ref="cacheFrameworkUgaManager"/>
+        <entry key="1" value-ref="DtalCacheLifecycleUnit"/>
         -->
       </map>
     </property>
