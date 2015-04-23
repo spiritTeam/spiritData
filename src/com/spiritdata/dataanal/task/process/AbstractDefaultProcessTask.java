@@ -2,7 +2,7 @@ package com.spiritdata.dataanal.task.process;
 
 import java.util.Map;
 
-import com.spiritdata.dataanal.task.model.TaskInfo;
+import com.spiritdata.dataanal.task.core.model.TaskInfo;
 
 /**
  * 默认任务执行的虚拟类，本分析项目中的具体任务执行都应继承自此类

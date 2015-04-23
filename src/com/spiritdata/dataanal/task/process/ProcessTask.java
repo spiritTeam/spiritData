@@ -1,6 +1,6 @@
 package com.spiritdata.dataanal.task.process;
 
-import com.spiritdata.dataanal.task.model.TaskInfo;
+import com.spiritdata.dataanal.task.core.model.TaskInfo;
 
 /**
  * 执行

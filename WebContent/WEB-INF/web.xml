@@ -58,6 +58,10 @@
   <listener>
     <listener-class>com.spiritdata.framework.core.web.InitSysConfigListener</listener-class>
   </listener>
+  <!-- 任务运行 -->
+  <listener>
+    <listener-class>com.spiritdata.dataanal.task.run.WebRunningListener</listener-class>
+  </listener>
   <!-- end监听设置 -->
 
   <!-- begin过滤器 -->
@@ -113,6 +117,7 @@
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
   <!-- end Servlet设置 -->
+
   <welcome-file-list>
     <welcome-file>asIndex.jsp</welcome-file>
   </welcome-file-list>

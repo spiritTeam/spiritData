@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.task.enumeration;
+package com.spiritdata.dataanal.task.core.enumeration;
 
 import com.spiritdata.dataanal.exceptionC.Dtal0402CException;
 

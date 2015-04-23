@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.task.service;
+package com.spiritdata.dataanal.task.core.service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +9,11 @@ import javax.annotation.Resource;
 
 import com.spiritdata.dataanal.exceptionC.Dtal0402CException;
 import com.spiritdata.dataanal.exceptionC.Dtal0403CException;
-import com.spiritdata.dataanal.task.model.TaskGroup;
-import com.spiritdata.dataanal.task.model.TaskInfo;
-import com.spiritdata.dataanal.task.persistence.pojo.TaskGroupPo;
-import com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo;
-import com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo;
+import com.spiritdata.dataanal.task.core.model.TaskGroup;
+import com.spiritdata.dataanal.task.core.model.TaskInfo;
+import com.spiritdata.dataanal.task.core.persistence.pojo.TaskGroupPo;
+import com.spiritdata.dataanal.task.core.persistence.pojo.TaskInfoPo;
+import com.spiritdata.dataanal.task.core.persistence.pojo.TaskRelPo;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 
 /**
@@ -33,17 +33,6 @@ public class TaskManageService {
         taskGroupDao.setNamespace("taskGroup");
         taskInfoDao.setNamespace("taskInfo");
         taskRelDao.setNamespace("taskRel");
-    }
-
-    /**
-     * 构造缓存中的任务数据。<br/>
-     * 这个任务结构是以所有者Id为key的Map，每一个所有者的任务信息为一个Map，此Map为：<br/>
-     * 1、tgList:一个List<TaskGroup>列表；<br/>
-     * 2、tList:一个List<TaskInfo>列表；
-     * @return 缓存任务数据
-     */
-    public Map<String, Map<String, Object>> makeCacheTasks() {
-        return null;
     }
 
     /**
