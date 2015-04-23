@@ -9,8 +9,8 @@ public class TaskContextConfig {
     private int MAX_QUEUE_LENGTH = (1<<10)-1; //2^10=1024
 
     //加载数据的间隔时间
-//    private int LOAD_INTERVAL = 1*1000*60*5; //默认是5分钟
-    private int LOAD_INTERVAL = 1*1000*1; //测试为1秒
+    private int LOAD_INTERVAL = 1*1000*60*5; //默认是5分钟
+    //    private int LOAD_INTERVAL = 1*1000*1; //测试为1秒
 
     public int getMAX_QUEUE_LENGTH() {
         return MAX_QUEUE_LENGTH;

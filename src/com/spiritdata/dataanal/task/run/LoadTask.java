@@ -23,7 +23,11 @@ public class LoadTask extends TimerTask {
 
     @Override
     public void run() {
-        loadData();
+        try {
+            loadData();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadData() {
@@ -35,7 +39,7 @@ public class LoadTask extends TimerTask {
         String temp = "";
 
         List<TaskGroupPo> tgL = tmService.getCanExcuteTaskGroups();
-        List<TaskInfoPo> tiL = tmService.getCanExcuteTaskInfos();
+        //List<TaskInfoPo> tiL = tmService.getCanExcuteTaskInfos();
         List<TaskRelPo> trL = tmService.getCanExcuteTaskRels();
         //构造前置任务关系结构：本任务Id->前置任务Id列表
         Map<String, List<String>> preTaskIdRelMap = new HashMap<String, List<String>>();
