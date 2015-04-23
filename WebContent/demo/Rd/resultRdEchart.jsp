@@ -941,8 +941,7 @@ require(
 );
 
 //画饼图
-function drawEchartsPie(ec){
-	
+function drawEchartsPie(ec){	
 	var A1_2_a_echart = [{value:156,name:'男'},{value:40, name:'女'}, {value:4,name:'未知' }];
 	var myChart = ec.init(document.getElementById('chartA1_2_a_echart')); 
   var option = { 
