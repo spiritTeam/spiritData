@@ -24,12 +24,14 @@ public class TaskReport implements Serializable {
     }
     public void setReport(Report report) {
         this.report = report;
+        if (this.taskGroup!=null) this.taskGroup.setReportId(report.getId());
     }
     public TaskGroup getTaskGroup() {
         return taskGroup;
     }
     public void setTaskGroup(TaskGroup taskGroup) {
         this.taskGroup = taskGroup;
+        if (this.report!=null) this.taskGroup.setReportId(this.report.getId());
     }
 
     /**
@@ -52,7 +54,6 @@ public class TaskReport implements Serializable {
         if (report==null||taskGroup==null) throw new Dtal1003CException("报告或任务组对象为空，不能进行转换");
         TaskGroupPo ret = new TaskGroupPo();
         ret = this.taskGroup.convert2Po();
-        ret.setReportId(this.report.getId());
         return ret;
     }
 }

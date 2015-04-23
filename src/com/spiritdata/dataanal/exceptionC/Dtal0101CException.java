@@ -1,7 +1,7 @@
 package com.spiritdata.dataanal.exceptionC;
 
 /**
- * DataAnal数据分析中数据文件导入，内部码为0101，基本信息为'数据文件导入'异常
+ * 数据分析中数据文件导入，内部码为0101，基本信息为'数据文件导入'异常
  * @author wh
  */
 public class Dtal0101CException extends DtalCException {

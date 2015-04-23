@@ -639,7 +639,6 @@ function logout() {
     success: function(json) {
       if (json.type==1) {
         $.messager.alert("注销信息","注销成功!",'info',function(){
-          //window.location.href="<%=path%>/login/login.jsp?noAuth";
           window.location.href="<%=path%>/asIndex.jsp";
           setNoLogin();
         });

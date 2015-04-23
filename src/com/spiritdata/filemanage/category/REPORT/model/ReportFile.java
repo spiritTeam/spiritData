@@ -28,7 +28,7 @@ public class ReportFile extends AbstractToBeStoreFile implements Serializable, B
     private Owner owner; //所有者
     private String fileName; //报告文件文件全名(包括目录和文件名)
     private String reportId; //报告所对应的Id，记录在表中
-    private String tasksId; //任务组的Id，此Id也是taskd的id???还要设计，存储在sa_file_category.type3中
+    private String taskGId; //任务组的Id，此Id也是taskG的id还要设计，存储在sa_file_category.type3中
 
     public String getId() {
         return id;
@@ -54,11 +54,11 @@ public class ReportFile extends AbstractToBeStoreFile implements Serializable, B
     public void setReportId(String reportId) {
         this.reportId = reportId;
     }
-    public String getTasksId() {
-        return tasksId;
+    public String getTaskGId() {
+        return taskGId;
     }
-    public void setTasksId(String tasksId) {
-        this.tasksId = tasksId;
+    public void setTaskGId(String taskGId) {
+        this.taskGId = taskGId;
     }
 
     /**
@@ -76,12 +76,12 @@ public class ReportFile extends AbstractToBeStoreFile implements Serializable, B
         ret.setOwner(this.owner);
         ret.setAccessType(1);
         ret.setDesc("分析报告文件:"+FileNameUtils.getFileName(this.fileName)+"；生成报告时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f)))
-                +"；报告文件Id："+this.reportId+"，对应的任务组ID："+this.tasksId);
+                +"；报告文件Id："+this.reportId+"，对应的任务组ID："+this.taskGId);
         //分类信息
         FileCategory fc = new FileCategory();
         fc.setFType1(FileCategoryType1.REPORT);
         fc.setFType2(this.reportId);
-        fc.setFType3(this.tasksId);
+        fc.setFType3(this.taskGId);
         ret.addFileCategoryList(fc);
 
         return ret;

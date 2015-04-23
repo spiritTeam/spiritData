@@ -1,11 +1,3 @@
-//处理winId,把id后面的"#"去掉
-function formatWid(winId){
-  if(winId.indexOf('#')!=-1){
-    winId = winId.substring(0,winId.indexOf('#'));
-  }
-  return winId;
-}
-
 /**
  * 得到提示输入控件的主容器
  * @param _jQobj 提示控件中的某个控件
@@ -187,8 +179,9 @@ function initMask(){
     "height": $(window).height()
   });
 }
+
 //刷新验证码
-function refresh(deployName) {
+function refreshCCImg(deployName) {
   $("#waittingText").html("请稍候，获取验证码图片...");
   $("#mask").show();
   $.ajax({type:"post", async:true, url:deployName+"/login/refreshValidateCode.do?"+Math.random(), dataType:"json",

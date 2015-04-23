@@ -1,5 +1,6 @@
 package com.spiritdata.dataanal.report.generate;
 
+import java.io.File;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -14,7 +15,7 @@ import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.util.SequenceUUID;
-
+import com.spiritdata.dataanal.task.service.TaskManageService;
 
 /**
  * 以Session为基础的
@@ -25,6 +26,8 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
     private ReportFileService rfService;
     @Resource
     private ReportService reportService;
+    @Resource
+    private TaskManageService tmService;
 
     private HttpSession session;//session用来缓存与该会话相关的信息
 
@@ -49,11 +52,9 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
      */
     /*
      * 1-通过预处理过程获得需要的数据
-     * 2-生成报告 OK
+     * 2-报告处理 OK
      * 3-处理任务
-     * 4-进行持久化存储——报告+任务
-     * 5-以Session为容器，构建任务执行的上下文
-     * 6-启动任务
+     * 4-启动任务
      */
     public String buildANDprocess(Map<String, Object> param) {
         if (param==null||param.size()==0) throw new Dtal1003CException(new IllegalArgumentException("构建报告及任务时，必须设置参数！"));
@@ -79,9 +80,9 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         rfSeed.setId(SequenceUUID.getPureUUID());
         rfSeed.setOwner(report.getOwner());
         rfSeed.setReportId(report.getId());
-        rfSeed.setTasksId(tg.getId());
+        rfSeed.setTaskGId(tg.getId());
         FileInfo impFi = (FileInfo)preTreadParam.get("impFileInfo");
-        rfSeed.setFileNameSeed("afterImport(IMPFID-"+impFi.getId()+"_RID-"+report.getId()+")");
+        rfSeed.setFileNameSeed(report.getId()+File.separator+"afterImport(IMPFID-"+impFi.getId()+")");
 
         ReportFile rf = (ReportFile)rfService.write2FileAsJson(report, rfSeed); //保存文件，并把文件信息回写到report对象中
         report.setReportFile(rf);
@@ -89,11 +90,11 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         rfService.saveFile(rf);//报告的json存储
         //2.3-报告信息数据库存储
         reportService.saveReport(tr);
-        //3-任务处理
-        //3.1-进行持久化存储
-        
+        //3-任务处理，这是一个事务，若3.1失败，3.2也失败，整个构建报告和任务的过程就失败了
+        //3.1-存储，包括持久化和内存
+        tmService.save(tg);
         //3.2-以App为容器，构建任务执行的上下文
-        //6-启动任务
+        //4-启动任务
 
         return report.getId();
     }

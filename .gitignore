@@ -1,14 +1,13 @@
 ﻿/Doc
 /WebContent/log
-/WebContent/WEB-INF/lib
-/WebContent/WEB-INF/classes
-/WebContent/analData
-/WebContent/reportJson
+/WebContent/DataCenter
 /WebContent/tempUpload
 /WebContent/uploadFiles
 /WebContent/test
 /WebContent/log
 /WebContent/checkCodeImges
+/WebContent/WEB-INF/lib
+/WebContent/WEB-INF/classes
 /pom.xml
 
 /.classpath

@@ -92,7 +92,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <td class="inputTd">
         <div class="alertInput-vCode">
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="3" type="text" onBlur="validateCheckCode();"/></div>
-          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh('<%=path %>');" src=""></div>
+          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refreshCCImg('<%=path %>');" src=""></div>
           <div class="alertImg"></div>
           <div class="maskTitle">按右图输入验证码</div>
         </div>
@@ -133,7 +133,7 @@ $(function() {
 
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100);//初始化maskTitle
-  refresh('<%=path%>');
+  refreshCCImg('<%=path%>');
   document.onkeydown = function(e) { 
     var ev = document.all ? window.event : e;
     if(ev.keyCode==13) {
@@ -192,7 +192,6 @@ function validateCheckCode(){
 //跳转到注册页面
 function register(){
   var winId = getUrlParam(window.location.href, "_winID");
-  if(winId.indexOf('#')!=-1) winId = formatWid(winId);
   var win = getSWinInMain(winId);
   win.modify({title:"注册"});
   window.location.href="<%=path%>/login/register.jsp?_winID="+winId;
@@ -285,7 +284,7 @@ function login(pData){
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
     success:function(json){
       $("#mask").hide();
-      refresh('<%=path%>');
+      refreshCCImg('<%=path%>');
       $('#checkCode').val('');
       var loginInfo = json.data;
       var retInfo = loginInfo.retInfo;
@@ -336,7 +335,7 @@ function login(pData){
     }
   });
   mainPage.$("#mask").hide();
-  refresh('<%=path%>');
+  refreshCCImg('<%=path%>');
   $('#checkCode').val('');
 }
 </script>

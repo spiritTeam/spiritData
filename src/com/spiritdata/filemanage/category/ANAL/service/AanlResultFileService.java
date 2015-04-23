@@ -67,7 +67,7 @@ public class AanlResultFileService extends AbstractWriteString2FileByToBeStoreFi
     @Override
     public String buildFileName(String fileNameSeed) {
         String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-        String storeFile = FileNameUtils.concatPath(root, "analData"+File.separator+fileNameSeed+".json");
+        String storeFile = FileNameUtils.concatPath(root, "DataCenter/analysis"+File.separator+fileNameSeed+".json");
         return storeFile.replace("\\", "/");
     }
 

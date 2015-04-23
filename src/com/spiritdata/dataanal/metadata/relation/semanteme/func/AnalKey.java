@@ -90,11 +90,6 @@ public class AnalKey implements AnalTable {
                     else if (title.indexOf("编码")!=-1)  ret.put(cName, new Float(f*1.8));
                     else if (title.indexOf("号")!=-1)    ret.put(cName, new Float(f*1.3));
                     else if (title.indexOf("序号")!=-1)  ret.remove(cName);//若是序号，则一定不能作为主键
-                    
-                    //如果该列有NULL值，则不能作为主键
-                    if(qc.getNullCount()>0){
-                    	ret.remove(cName);
-                    }
                 }
             }
         }
@@ -173,39 +168,40 @@ public class AnalKey implements AnalTable {
             }
         }
 
-        //组织JsonD，并写入文件
-        JsonD analKeyJsonD = new JsonD();
-        //头
-        JsonDHead jsonDHead = new JsonDHead();
-        jsonDHead.setId(SequenceUUID.getPureUUID());
-        jsonDHead.setCode(SDConstants.JDC_ANAL_KEY);
-        jsonDHead.setCTime(new Date());
-        jsonDHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键");
-        //数据体
-        Map<String, Object> _DATA_Map = new HashMap<String, Object>();
-        JsonDAtomData _dataElement = new JsonDAtomData("_tableName", "string", tableName);
-        _DATA_Map.putAll(_dataElement.toJsonMap());
-        _dataElement.setAtomData("_mdMId", "string", mm.getId());
-        _DATA_Map.putAll(_dataElement.toJsonMap());
-        //_DATA_Map.put("_keyAnals", convertToList(ret));
-        _DATA_Map.put("_analResults", convertToList(ret));
-        //设置JsonD
-        analKeyJsonD.set_HEAD(jsonDHead);
-        analKeyJsonD.set_DATA(_DATA_Map);
-        //分析结果文件种子设置
-        AnalResultFile arfSeed = new AnalResultFile();
-        arfSeed.setAnalType(SDConstants.ANAL_MD_KEY);
-        arfSeed.setSubType(mm.getId());
-        arfSeed.setObjType("table");
-        arfSeed.setObjId(tableName);
-        arfSeed.setFileNameSeed("METADATA"+File.separator+"key"+File.separator+"md_"+mm.getId()+"_"+new Date().getTime());
-        arfSeed.setJsonDCode(SDConstants.JDC_ANAL_KEY);
+        if (ret.size()>0) { //如果没有分析结果，就不写jsonD文件了
+            //组织JsonD，并写入文件
+            JsonD analKeyJsonD = new JsonD();
+            //头
+            JsonDHead jsonDHead = new JsonDHead();
+            jsonDHead.setId(SequenceUUID.getPureUUID());
+            jsonDHead.setCode(SDConstants.JDC_ANAL_KEY);
+            jsonDHead.setCTime(new Date());
+            jsonDHead.setDesc("分析表["+tableName+"]那列或那些列可作为主键");
+            //数据体
+            Map<String, Object> _DATA_Map = new HashMap<String, Object>();
+            JsonDAtomData _dataElement = new JsonDAtomData("_tableName", "string", tableName);
+            _DATA_Map.putAll(_dataElement.toJsonMap());
+            _dataElement.setAtomData("_mdMId", "string", mm.getId());
+            _DATA_Map.putAll(_dataElement.toJsonMap());
+            //_DATA_Map.put("_keyAnals", convertToList(ret));
+            _DATA_Map.put("_analResults", convertToList(ret));
+            //设置JsonD
+            analKeyJsonD.set_HEAD(jsonDHead);
+            analKeyJsonD.set_DATA(_DATA_Map);
+            //分析结果文件种子设置
+            AnalResultFile arfSeed = new AnalResultFile();
+            arfSeed.setAnalType(SDConstants.ANAL_MD_KEY);
+            arfSeed.setSubType(mm.getId());
+            arfSeed.setObjType("table");
+            arfSeed.setObjId(tableName);
+            arfSeed.setFileNameSeed("METADATA"+File.separator+"key"+File.separator+"md_"+mm.getId()+"_"+new Date().getTime());
+            arfSeed.setJsonDCode(SDConstants.JDC_ANAL_KEY);
 
-        AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analKeyJsonD, arfSeed);
-        //回写文件信息到返回值
-        ret.put("resultFile", arf);
-
-        return ret;
+            AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analKeyJsonD, arfSeed);
+            //回写文件信息到返回值
+            ret.put("resultFile", arf);
+        }
+        return ret.size()>0?ret:null;
     }
 
     private List<Map<String, Object>> convertToList(Map<String, Object> keyAnalResultMap) {
