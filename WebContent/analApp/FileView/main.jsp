@@ -31,6 +31,40 @@
 .dg_td_bgcolor_lightblue{background-color:#e5ffee;}
 /*** end 列表数据显示样式 ***/
 
+.bt_13_no{border:0px solid transparent;font-size:13px;padding:0px;}
+.td_height_49{height:49px;}
+.font_15{font-size:15px;}
+.div_float_left{float:left;}
+
+.roundBase {
+border-radius: 5px; /* 所有角都使用半径为5px的圆角，此属性为CSS3标准属性 */
+-moz-border-radius: 5px; /* Mozilla浏览器的私有属性 */
+-webkit-border-radius: 5px; /* Webkit浏览器的私有属性 */
+border-radius: 5px 4px 3px 2px; /* 四个半径值分别是左上角、右上角、右下角和左下角 */
+} 
+.circleFillRed {
+width: 10px;
+height: 10px;
+background-color: #ff0000;
+-webkit-border-radius: 10px;
+border-radius:10px;
+} 
+.circleEmpty {
+width: 15px;
+height: 15px;
+background-color: #efefef; /* Can be set to transparent */
+border: 1px #a72525 solid;
+-webkit-border-radius: 15px 15px 15px 15px;
+border-radius:10px;
+} 
+.circleEmpty2 {
+width: 10px;
+height: 10px;
+background-color: #efefef; /* Can be set to transparent */
+border: 1px #a72525 solid;
+-webkit-border-radius: 10px;
+border-radius:10px;
+} 
 
 </style>
 <body style="background-color:#FFFFFF">
@@ -70,6 +104,8 @@
 $(function() {
   initSubmitBt();
   initSearchFileInput();
+  
+  startSearch();
 });
 
 //初始化查询输入框
@@ -105,7 +141,7 @@ var objDatatable = null; //列表显示对象
 //取出输入条件，提交查询
 function startSearch(){
 	var searchStr = getInputSearchFileStr();
-  alert("您输入了："+ searchStr);
+  //alert("您输入了："+ searchStr);
 
   //异步查询文件列表  
   var searchParam={"searchStr":searchStr};
@@ -162,9 +198,10 @@ function showSearchResultList(){
     rowHover:true,
     data:{  
       cols:[
-        {width:'250',text:'文件名',type:'string',flex: false,colClass:'text-left',cssClass:'text-center dg_th_font_bold'},
-        {width: 100,text:'大小',type:'number',flex: true,colClass:'text-right',cssClass:'text-center dg_th_font_bold'},
-        {width:150,text:'创建日期',type:'date',flex: true,colClass:'text-left',cssClass:'text-center dg_th_font_bold',mergeRows: false}
+        {width:300,text:'文件名',type:'string',flex: false,colClass:'text-left font_15',cssClass:'text-center dg_th_font_bold'},
+        {width:60,text:'大小',type:'number',flex: true,colClass:'text-right font_15',cssClass:'text-center dg_th_font_bold'},
+        {width:60,text:'创建日期',type:'date',flex: true,colClass:'text-left font_15',cssClass:'text-center dg_th_font_bold'},
+        {width:30,text:'操作 ',type:'string',flex: true,colClass:'text-center font_15',cssClass:'text-center dg_th_font_bold'}
       ]
     }
   };
@@ -178,11 +215,18 @@ function showSearchResultList(){
 	    var suffix = jsonRows[i]["suffix"];
 	    var fileFull = fileName+"."+suffix;
 	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
+	    
 	    var size = jsonRows[i]["size"];
 	    var createData = jsonRows[i]["createData"];
 	    //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
 	    //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
-	    var arow={checked:false,data:[ahrf_file,size,createData]};
+	    //构建操作按钮
+	    var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileFull+'\');">浏览</button>';
+	    //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
+      var optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileFull+'\');">报告</button>';
+      
+      var optHtml = ""+optView+"&nbsp;&nbsp;"+optReport+"";
+      var arow={checked:false,data:[ahrf_file,size,createData,optHtml]};
 	    dtrows.push(arow);
 	  }
   }
@@ -191,6 +235,8 @@ function showSearchResultList(){
   var objDatatable = $('<div id="div_datatable"></div>');
   objDatatable.datatable(dbopts);  
   objDatatable.find("table").addClass("table-bordered table-striped");
+  //$("tr",objDatatable).css("height","49px");
+
 	//添加到dglist中
   _objList.append(objDatatable);
 }
@@ -236,6 +282,17 @@ function getInputSearchFileStr(){
 //查询结果中，当点击了某个文件，触发此操作
 function showFile(fileName){
 	alert("您点击了："+fileName);
+}
+
+function showReport(reportId) {
+    var winOption={
+    	      url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
+    	      title:"报告详情",
+    	      height:600,
+    	      width:1000,
+    	      modal:true
+    	    };
+	openSWinInMain(winOption);
 }
 </script>
 </html>
