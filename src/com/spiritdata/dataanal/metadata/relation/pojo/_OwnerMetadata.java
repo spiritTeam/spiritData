@@ -13,7 +13,7 @@ import com.spiritdata.dataanal.common.model.Owner;
 public class _OwnerMetadata {
     public ConcurrentHashMap<String, MetadataModel> mdModelMap; //所有者元数据集合
 
-    protected boolean loadSuccess=false; //加载数据是否完成
+    protected volatile boolean loadSuccess=false; //加载数据是否完成
 
     private Owner owner;
     public Owner getOwner() {

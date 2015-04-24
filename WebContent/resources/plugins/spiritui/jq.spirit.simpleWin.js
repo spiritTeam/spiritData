@@ -105,7 +105,8 @@
     contentDiv.css("top", headDiv.spiritUtils("getViewHeight"));
     if (_options.url) {
       var _iframe = window.document.createElement("iframe");
-      $(_iframe).attr("width", "100%").attr("height", "100%").attr("scrolling", "no").attr("frameborder", "no").attr("src", _options.url.indexOf("?")==-1?_options.url+"?_winID="+swinId:_options.url+"&_winID="+swinId);
+      var scrollType= (_options.iframeScroll?_options.iframeScroll:"no");
+      $(_iframe).attr("width", "100%").attr("height", "100%").attr("scrolling", scrollType).attr("frameborder", "no").attr("src", _options.url.indexOf("?")==-1?_options.url+"?_winID="+swinId:_options.url+"&_winID="+swinId);
       if (_options.expandAttr) {
         if (_options.expandAttr.frameID) $(_iframe).attr("id", _options.expandAttr.frameID);
       }
@@ -256,6 +257,7 @@
     iconCss: "", //窗口图标的css
     iconUrl: "", //窗口图标的url
     msgFontColor: "", //窗口提示区字体默认颜色
+    iframeScroll: "", //若需要内容窗口有滚动条，则要设置(yes or no)，默认为没有滚动条
 
     onBeforeClose: null, //窗口关闭之前
     zIndex:1000,

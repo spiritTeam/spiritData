@@ -730,6 +730,17 @@ function testW() {
   openSWinInMain({height:"400px", width:"300px", title:"测试窗口", url:"<%=path%>/jsp2mht/view/cc1.html"});
   return;
 }
+
+
+var winOption={
+  url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
+  title:"报告详情123",
+  height:600,
+  width:1000,
+  modal:true
+};
+openSWinInMain(winOption);
+
 //以上为mht js代码，勿删撒=========================================================
 </script>
 </body>

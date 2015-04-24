@@ -21,7 +21,7 @@ import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.exceptionC.Dtal1105CException;
-import com.spiritdata.dataanal.task.service.TaskManageService;
+import com.spiritdata.dataanal.task.core.service.TaskManageService;
 
 public class LoginServiceImpl implements LoginService {
     @Resource

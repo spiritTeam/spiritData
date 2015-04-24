@@ -3,13 +3,13 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
-    <typeAlias alias="TaskGroup" type="com.spiritdata.dataanal.task.persistence.pojo.TaskGroupPo"/>
-    <typeAlias alias="TaskInfo" type="com.spiritdata.dataanal.task.persistence.pojo.TaskInfoPo"/>
-    <typeAlias alias="TaskRel" type="com.spiritdata.dataanal.task.persistence.pojo.TaskRelPo"/>
+    <typeAlias alias="TaskGroup" type="com.spiritdata.dataanal.task.core.persistence.pojo.TaskGroupPo"/>
+    <typeAlias alias="TaskInfo" type="com.spiritdata.dataanal.task.core.persistence.pojo.TaskInfoPo"/>
+    <typeAlias alias="TaskRel" type="com.spiritdata.dataanal.task.core.persistence.pojo.TaskRelPo"/>
   </typeAliases>
   <mappers>
-    <mapper resource="com/spiritdata/dataanal/task/persistence/sql/TaskGroup.mapper.xml"/>
-    <mapper resource="com/spiritdata/dataanal/task/persistence/sql/TaskInfo.mapper.xml"/>
-    <mapper resource="com/spiritdata/dataanal/task/persistence/sql/TaskRel.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/task/core/persistence/sql/TaskGroup.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/task/core/persistence/sql/TaskInfo.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/task/core/persistence/sql/TaskRel.mapper.xml"/>
   </mappers>
 </configuration>

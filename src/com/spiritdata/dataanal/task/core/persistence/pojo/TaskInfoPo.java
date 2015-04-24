@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.task.persistence.pojo;
+package com.spiritdata.dataanal.task.core.persistence.pojo;
 
 import java.sql.Timestamp;
 

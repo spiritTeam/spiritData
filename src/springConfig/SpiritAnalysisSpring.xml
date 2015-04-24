@@ -21,7 +21,4 @@
   </context:component-scan>
   <context:component-scan base-package="com.spiritdata.dataanal.metadata.relation.semanteme.func" use-default-filters="true">
   </context:component-scan>
-
-  <!--分析缓存-->
-  <bean id="DtalCacheLifecycleUnit" class="com.spiritdata.dataanal.common.cache.DataanalCacheLifecycleUnit"/>
 </beans>

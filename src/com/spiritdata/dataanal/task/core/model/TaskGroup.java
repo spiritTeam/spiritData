@@ -1,10 +1,10 @@
-package com.spiritdata.dataanal.task.model;
+package com.spiritdata.dataanal.task.core.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.spiritdata.dataanal.common.model.Owner;
-import com.spiritdata.dataanal.task.persistence.pojo.TaskGroupPo;
+import com.spiritdata.dataanal.task.core.persistence.pojo.TaskGroupPo;
 import com.spiritdata.framework.core.model.ModelSwapPo;
 import com.spiritdata.framework.exceptionC.Plat0006CException;
 import com.spiritdata.framework.util.SequenceUUID;

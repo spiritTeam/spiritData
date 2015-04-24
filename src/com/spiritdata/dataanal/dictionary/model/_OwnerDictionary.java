@@ -17,7 +17,7 @@ public class _OwnerDictionary {
     public List<DictMaster> dmList = null; //所有者字典组列表
     public List<DictDetail> ddList = null; //所有者字典项列表
 
-    protected boolean loadSuccess=false; //加载数据是否完成
+    protected volatile boolean loadSuccess=false; //加载数据是否完成
 
     private Owner owner;
     public Owner getOwner() {
