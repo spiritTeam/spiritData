@@ -300,10 +300,10 @@ openSWinInMain(winOption);
 function showReport(reportId) {
     var winOption={
             url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
-            title:"报告详情",
-            height:600,
-            width:1000,
-            modal:true
+            title:"报告详情111",
+            height:700,
+            width:500,
+            iframeScroll:"yes"
           };
   openSWinInMain(winOption);
 }

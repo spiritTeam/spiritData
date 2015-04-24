@@ -290,7 +290,7 @@ function showReport(reportId) {
     	      title:"报告详情",
     	      height:600,
     	      width:1000,
-    	      modal:true
+            iframeScroll:"yes"
     	    };
 	openSWinInMain(winOption);
 }
