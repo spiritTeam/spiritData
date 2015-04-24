@@ -74,8 +74,8 @@ border-radius:10px;
         <td style="width:20%;">          
         </td>    
         <td style="width:50%;">
-          <div class="input-group">
-            <input id="idSearchFile" class="form-control"  type="text" style="height:37px;" placeholder="请输入查询内容...">
+          <div class="input-group" style="display:block;">
+            <input id="idSearchFile" class="form-control"  type="text" style="height:25px;" placeholder="请输入查询内容...">
             <span class="input-group-btn">
               <button id="idSubmitSearchFile" class="btn btn-default" type="button" style="font:18px Microsoft YaHei,Microsoft JhengHei,黑体;">搜索</button>
             </span>
