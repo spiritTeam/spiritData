@@ -73,50 +73,15 @@ body {
           </a>
         </td>    
         <td>
-          <a id="a_report" href="#" class="def-nav" style="width:15%;" onclick="showMainSeg('ReportView/main.jsp');">报告<span id="id_report_new" class="label label-badge label-danger"  data-custom="#showModelNewReport" data-toggle="modal" style="z-index:99;">12</span></a>
+          <a id="a_report" href="#" class="def-nav" style="width:15%;" onclick="showMainSeg('ReportView/main.jsp');">报告<span id="id_report_new" class="label label-badge label-danger" style="z-index:99;">12</span></a>
           <a href="#" class="def-nav" style="width:10%;"  onclick="showMainSeg('FileView/main.jsp');">文件</a>
           <a href="#" class="def-nav" style="width:70%;" onclick="showMainSeg('');">文件上传并分析</a>
         </td>    
         <td style="width:6%;">
           <a href="#" class="def-nav" onclick="showMainSeg();">用户处理</a>
         </td>
+      </tr>
     </table>
-  </div>
-</div>
-
-<!-- 模态窗口：显示新报告列表信息 -->
-<div class="modal fade" id="sssssss">
-<div class="modal-dialog">
-  <div class="modal-content">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
-      <h4 class="modal-title">标题</h4>
-    </div>
-    <div class="modal-body">
-      <p>主题内容...</p>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-      <button type="button" class="btn btn-primary">保存</button>
-    </div>
-  </div>
-</div>
-</div>
-
-<div class="modal fade" id="showModelNewReport">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
-        <h4 class="modal-title">新报告列表</h4>        
-      </div>
-      <div class="modal-body" id="modle_showNewReportList">
-        ...模态窗口！！！
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -163,20 +128,17 @@ $(function() {
   $('#topSegment').css({'border':'1px solid #95b8e7','border-bottom':'0','background':'#32C52F','overflow':'hidden','border':'0','border-bottom':'0px'});
   //$('#footSegment').css({'border':'1px solid #32C52F','background':'#32C52F','opacity':'1'});
   
-  $("#id_report_new").css("visibility","hidden")
-    .click(function(){
-    	//var objShowReportList = $("#modle_showNewReportList");
-    	//for(var i=0;i<newReportArr.length;i++){    	  
-    	//  var ahrf_file = '<div><a href="###" onclick="showReport(\''+newReportArr[i]+'\');"><strong>'+newReportArr[i]+'</strong></a></div>';
-    	  //objShowReportList.append(ahrf_file);
-    	//}
-    	//$(this).modalTrigger({custom: function()
-    	//	{
-    		    //return objShowReportList.html();
-    	//	    return "";
-    	//	}});
-    });
+  //默认进入报告查询页面
+  showMainSeg('ReportView/main.jsp');
   
+  //新报告点击事件
+  $("#id_report_new").css("visibility","hidden");
+  $("#id_report_new").click(function(){
+    showModelNewReportList();
+  });
+  
+  //定时查询是否有新报告
+  searchNewReport();
   setInterval(searchNewReport,10*1000);
 });
 
@@ -258,6 +220,41 @@ function showMainSeg(filepath){
   }
   var fileurl = fileroot+filepath;
   $("#mainSegmentIframe").attr("src",fileurl);
+}
+
+/**
+ * 模态显示新报告列表
+ * 当点击新报告数量图标时，触发此方法
+ */
+function showModelNewReportList(){
+	if(newReportArr.length<=0){
+		return;
+	}
+	var contentHtml ="<div style='height:98%;overflow-y:auto;'>";
+	var tableStyle = "style='width:96%;overflow-y:scroll;border:1px solid #DDD;background-color:transparent;margin:0px auto;'";
+	contentHtml += "<table "+ tableStyle +">";
+	var thStyle0 = "style='width:240px;height:18px;background-color:#F1F1F1;border:1px solid #DDD;font-size:12px;font-weight:bold;text-align:center;'";
+	var thStyle1 = "style='width:60px;background-color:#F1F1F1;border:1px solid #DDD;font-size:12px;font-weight:bold;text-align:center;'";
+	var thStyle2 = "style='width:100px;background-color:#F1F1F1;border:1px solid #DDD;font-size:12px;font-weight:bold;text-align:center;'";
+	contentHtml +="<tr><th "+thStyle0+">报告名</th><th "+thStyle1+">大小</th><th "+thStyle2+">生成日期</th></tr>";
+	var tdStyle0 = "style='background-color:#F9F9F9;border:1px solid #DDD;font-size:12px;text-align:left;'";
+	  var tdStyle1 = "style='background-color:#ffffff;border:1px solid #DDD;font-size:12px;text-align:left;'";
+	for(var i=0;i<newReportArr.length;i++){
+		var tdStyle = i%2==0?tdStyle0:tdStyle1;
+		contentHtml += "<tr'><td "+tdStyle+">"+newReportArr[i]+"</td><td "+tdStyle+">1M</td><td "+tdStyle+">2014-01-02</td></tr>";
+	}
+	contentHtml+="</table>";
+	contentHtml+="</div>";
+	
+	var winOption={
+	  //url:"<%=path%>/analApp/demoData/force1.jsp",
+	  content:contentHtml,
+	  title:"未读报告列表",
+	  height:600,
+	  width:500,
+	  iframeScroll:"yes"
+	};
+	openSWinInMain(winOption);
 }
 
 //点击logo图片
