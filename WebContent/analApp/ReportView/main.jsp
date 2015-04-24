@@ -285,6 +285,15 @@ function getInputSearchFileStr(){
 //查询结果中，当点击了某个文件，触发此操作
 function showRelation(reportId){
   alert("您点击了："+reportId);
+  
+  var winOption={
+          url:"<%=path%>/analApp/demoData/force1.jsp",
+          title:"报告关系",
+          height:600,
+          width:1000,
+          modal:true
+        };
+openSWinInMain(winOption);
 }
 
 //模态显示报告信息
