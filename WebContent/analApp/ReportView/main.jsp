@@ -284,14 +284,14 @@ function getInputSearchFileStr(){
 
 //查询结果中，当点击了某个文件，触发此操作
 function showRelation(reportId){
-  alert("您点击了："+reportId);
+  //alert("您点击了："+reportId);
   
   var winOption={
           url:"<%=path%>/analApp/demoData/force1.jsp",
           title:"报告关系",
           height:600,
-          width:1000,
-          modal:true
+          width:500,
+          iframeScroll:"yes"
         };
 openSWinInMain(winOption);
 }
@@ -300,9 +300,9 @@ openSWinInMain(winOption);
 function showReport(reportId) {
     var winOption={
             url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
-            title:"报告详情111",
-            height:700,
-            width:500,
+            title:"报告详情",
+            height:600,
+            width:1000,
             iframeScroll:"yes"
           };
   openSWinInMain(winOption);

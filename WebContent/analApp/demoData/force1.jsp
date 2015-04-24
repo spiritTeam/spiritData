@@ -35,7 +35,7 @@ body {
   width:270px; padding-left:20px; position:fixed;
 }
 #rTitle {
-  height:40px; padding:10px; padding-left: 30px; font-size:36px; font-weight:bold;
+  height:40px; padding:10px; padding-left: 30px; font-size:28px; font-weight:bold;
 }
 .rptSegment {
   border:1px solid #E6E6E6;
@@ -55,7 +55,7 @@ body {
 
 <body style="background-color:#FFFFFF">
 <!-- 头部:悬浮 -->
-<div id="topSegment">
+<div id="topSegment" style="display:none;">
   <div id="rTitle">报告关系导图</div>
 </div>
 
@@ -66,39 +66,48 @@ body {
 <div id="sideFrame">
   <div id="catalogTree" style="border:1px solid #E6E6E6; width:0px; "></div>
 </div>
-
  
 <div id="reportFrame">
-<div class="rptSegment">
-    <ul>
-      <li>
-        <div id="seg1Title" class="segTitle"><span>报告关系导图：</span></div>
-        <div style="padding:3px 0 3px 5px;"><table>
-          <tr><td><div id="echart_relation" style="width:900px;height:500px;border:1px solid #ccc;padding:10px;"></div></td></tr>
-        </table></div>
-      </li>
-      <li>
-        <div id="seg1Title" class="segTitle"><span>报告关系表：</span></div>
-        <div style="padding:3px 0 3px 5px;">
-          <table class="easyui-datagrid" style="width:920px;"
+        <div id="seg1Title" class="subTitle" style="width:420px;"><span>1、报告关系导图：</span></div>
+        <table style="width:450px;">
+          <tr><td><div id="echart_relation" style="width:420px;height:350px;border:1px solid #ccc;padding:10px;"></div></td></tr>
+        </table>
+        
+        <div id="seg1Title" class="subTitle"  style="width:450px;"><span>2、报告-报告关系表：</span></div>
+        <table class="easyui-datagrid" style="width:440px;"
            data-options="singleSelect:true,collapsible:true,url:'segdemoA1_2_b.json',method:'get'">
           <thead>
             <tr>
-              <th data-options="field:'fl',width:350,halign:'center',align:'left'">报告名</th>
-              <th data-options="field:'num',width:350,halign:'center',align:'left'">关联报告名</th>
-              <th data-options="field:'ver',width:200,halign:'center',align:'left'">关联关系</th>
+              <th data-options="field:'fl',width:120,halign:'center',align:'left'">报告名</th>
+              <th data-options="field:'num',width:120,halign:'center',align:'left'">关联报告名</th>
+              <th data-options="field:'ver',width:180,halign:'center',align:'left'">关联关系</th>
             </tr>
           </thead>
-            <tr>
-              <td>报告1</td>
-              <td>报告2</td>
-              <td>关系1</td>
-            </tr>
+            <tr><td>报告1</td><td>报告2</td><td>父报告</td></tr>
+            <tr><td>报告1</td><td>报告3</td><td>父报告</td></tr>
+            <tr><td>报告1</td><td>报告4</td><td>子报告</td></tr>
+            <tr><td>报告2</td><td>报告3</td><td> -- </td></tr>
+            <tr><td>报告2</td><td>报告4</td><td> -- </td></tr>
+            <tr><td>报告3</td><td>报告4</td><td>子报告</td></tr>
         </table>
-        </div>
-      </div>
-      </li>
-    </ul>
+        
+        <div id="seg1Title" class="subTitle"  style="width:450px;"><span>2、报告-文件关系表：</span></div>
+        <table class="easyui-datagrid" style="width:440px;"
+           data-options="singleSelect:true,collapsible:true,url:'segdemoA1_2_b.json',method:'get'">
+          <thead>
+            <tr>
+              <th data-options="field:'fl',width:120,halign:'center',align:'left'">报告名</th>
+              <th data-options="field:'num',width:120,halign:'center',align:'left'">关联文件名</th>
+              <th data-options="field:'ver',width:180,halign:'center',align:'left'">关联关系</th>
+            </tr>
+          </thead>
+            <tr><td>报告1</td><td>文件2</td><td>全部引用该文件</td></tr>
+            <tr><td>报告1</td><td>文件3</td><td>全部引用该文件</td></tr>
+            <tr><td>报告1</td><td>文件4</td><td>部分引用该文件</td></tr>
+            <tr><td>报告2</td><td>文件5</td><td>全部引用该文件</td></tr>
+            <tr><td>报告2</td><td>文件3</td><td>部分引用该文件</td></tr>
+            <tr><td>报告3</td><td>文件5</td><td>全部引用该文件</td></tr>
+        </table>
 </div>
 </body>
 
@@ -106,13 +115,13 @@ body {
 //主窗口参数
 var INIT_PARAM = {
   pageObjs: {
-    topId: "topSegment",
+    topId: "topSegment1",
     mainId: "mainSegment"
   },
   page_width: -1,
   page_height: -1,
   top_shadow_color:"#E6E6E6",
-  top_height: 60,
+  top_height: 0,
   top_peg: false,
   myInit: initPos,
   myResize: initPos
@@ -205,7 +214,7 @@ function drawRelation(ec){
 		            ribbonType: false,
 		            categories : [
 		                {
-		                    name: '人物'
+		                    name: '关系'
 		                },
 		                {
 		                    name: '报告'
@@ -257,16 +266,16 @@ function drawRelation(ec){
 		                {category:2, name: '文件2',value : 8},
 		                {category:2, name: '文件3',value : 9},
 		                {category:2, name: '文件4',value : 4},
-		                {category:2, name: '文件5',value : 4}
+		                {category:2, name: '文件5',value : 6}
 		            ],
 		            links : [
-		                {source : '报告2', target : '报告1', weight : 1, name: '女儿'},
-		                {source : '报告3', target : '报告1', weight : 2, name: '父亲'},
+		                {source : '报告2', target : '报告1', weight : 1, name: '子报告'},
+		                {source : '报告3', target : '报告1', weight : 2, name: '父报告'},
 		                {source : '报告4', target : '报告1', weight : 2},
-		                {source : '文件1', target : '报告1', weight : 3, name: '合伙人'},
+		                {source : '文件1', target : '报告1', weight : 3, name: '报告引用该文件'},
 		                {source : '文件2', target : '报告1', weight : 1},
-		                {source : '文件3', target : '报告1', weight : 6, name: '竞争对手'},
-		                {source : '文件4', target : '报告1', weight : 1, name: '爱将'},
+		                {source : '文件3', target : '报告1', weight : 6, name: '报告引用该文件'},
+		                {source : '文件4', target : '报告1', weight : 1, name: '报告引用该文件'},
 		                {source : '文件5', target : '报告1', weight : 1},
 		                {source : '文件2', target : '报告3', weight : 1},
 		                {source : '文件2', target : '报告4', weight : 1},
