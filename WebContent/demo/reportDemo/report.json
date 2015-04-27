@@ -26,7 +26,9 @@
           "id":"seg1_2_1",
           "name":"2、单项指标分析",
           "content":
-            "showType:value <d did='1' showType='value' value='excelMdmArray[0].sheetInfo.name' />
+            "showType:line <d did='0' showType='line' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#num#'/>
+             showType:pie <d did='0' showType='pie' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
+             showType:value <d did='1' showType='value' value='excelMdmArray[0].sheetInfo.name' />
              showType:text <d did='0' showType='text' value='quotas[1]::!first(3|num)' decorateView='{#category#}占#percent(num)#%::{^suffix^:^、^,^suffix^:^、^}' />
             "
         }
