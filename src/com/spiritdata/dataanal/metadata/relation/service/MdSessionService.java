@@ -13,8 +13,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import com.spiritdata.framework.FConstants;
-import com.spiritdata.framework.UGA.UgaUser;
 import com.spiritdata.framework.core.web.SessionLoader;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;

@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.task.model;
+package com.spiritdata.dataanal.task.core.model;
 
 import java.io.Serializable;
 
@@ -7,9 +7,10 @@ import java.io.Serializable;
  * @author wh
  */
 public class PreTask implements Serializable {
+    private static final long serialVersionUID = 3145870992211118527L;
+
     private TaskInfo preTask;
     private boolean isUseResult; //是否利用前置任务的结果
-    private static final long serialVersionUID = 3145870992211118527L;
 
     public TaskInfo getPreTask() {
         return preTask;

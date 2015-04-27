@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.task.model;
+package com.spiritdata.dataanal.task.core.model;
 
 import java.io.Serializable;
 import java.util.HashMap;

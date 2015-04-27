@@ -21,6 +21,9 @@
   <sql id="Base_Column_List">
     id, reportId, ownerType, ownerId, workName, status, descn, beginTime
   </sql>
+  <sql id="Base_Column_List_A">
+    a.id, a.reportId, a.ownerType, a.ownerId, a.workName, a.status, a.descn, a.beginTime
+  </sql>
 
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey">
@@ -111,4 +114,10 @@
   <delete id="changeOwner" parameterType="java.util.Map">
     update sa_task_group set ownerId=#{newOwnerId,jdbcType=VARCHAR}, ownerType=1 where ownerId=#{oldOwnerId,jdbcType=VARCHAR} and ownerType=2
   </delete>
+
+  <!-- 获得可够执行的任务组信息 -->
+  <select id="getCanExcuteTaskGroups" resultMap="BaseResultMap">
+    select distinct <include refid="Base_Column_List_A"/>
+    from sa_task_group a, sa_task_info b where b.status=1 and a.id=b.taskGId order by a.beginTime
+  </select>
 </mapper>

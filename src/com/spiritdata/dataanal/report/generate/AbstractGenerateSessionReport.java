@@ -10,12 +10,12 @@ import com.spiritdata.dataanal.exceptionC.Dtal1003CException;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.service.ReportService;
-import com.spiritdata.dataanal.task.model.TaskGroup;
+import com.spiritdata.dataanal.task.core.model.TaskGroup;
+import com.spiritdata.dataanal.task.core.service.TaskManageService;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.util.SequenceUUID;
-import com.spiritdata.dataanal.task.service.TaskManageService;
 
 /**
  * 以Session为基础的

@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1003CException;
 import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
-import com.spiritdata.dataanal.task.model.TaskGroup;
-import com.spiritdata.dataanal.task.persistence.pojo.TaskGroupPo;
+import com.spiritdata.dataanal.task.core.model.TaskGroup;
+import com.spiritdata.dataanal.task.core.persistence.pojo.TaskGroupPo;
 
 /**
  * 报告任务，所有后台生成的报告都应准备这个对象。

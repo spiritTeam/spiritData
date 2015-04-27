@@ -17,6 +17,9 @@
   <sql id="Base_Column_List">
     id, taskId, preTaskId, usedPreData
   </sql>
+  <sql id="Base_Column_List_A">
+    a.id, a.taskId, a.preTaskId, a.usedPreData
+  </sql>
 
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey">
@@ -88,4 +91,11 @@
   <delete id="deleteByGroupId" parameterType="java.lang.String">
     delete from sa_task_rel where taskId in (select id from sa_task_info where taskGId=#{id,jdbcType=VARCHAR})
   </delete>
+
+  <!-- 获得可够执行的任务组信息 -->
+  <select id="getCanExcuteTaskRels" resultMap="BaseResultMap">
+    select distinct <include refid="Base_Column_List_A"/>
+    from sa_task_rel a, sa_task_info b where b.status=1 and b.id=a.taskId
+    order by a.taskId
+  </select>
 </mapper>

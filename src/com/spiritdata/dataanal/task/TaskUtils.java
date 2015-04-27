@@ -1,6 +1,6 @@
 package com.spiritdata.dataanal.task;
 
-import com.spiritdata.dataanal.task.model.TaskInfo;
+import com.spiritdata.dataanal.task.core.model.TaskInfo;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal0401CException;
