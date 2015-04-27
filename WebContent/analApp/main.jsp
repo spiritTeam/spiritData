@@ -65,19 +65,33 @@ body {
 <!-- 头部:悬浮 -->
 <div id="topSegment">
   <div style="padding:5px;border:0px solid #ddd;">
-    <table style="width:95%;">
+    <table style="width:100%;">
       <tr>
-        <td style="width:10%;">
-          <a href="#" class="def-nav" style="width:120px;">
+        <td style="width:120px;text-align:center;">
+          <a href="#" class="def-nav">
             <img src="<%=path%>/resources/images/logo/logo_op.jpg" style="height:98%;width:120px;" onclick="clickLogo()" alt="公司LOGO"/>
           </a>
         </td>    
-        <td>
-          <a id="a_report" href="#" class="def-nav" style="width:15%;" onclick="showMainSeg('ReportView/main.jsp');">报告<span id="id_report_new" class="label label-badge label-danger" style="z-index:99;">12</span></a>
-          <a href="#" class="def-nav" style="width:10%;"  onclick="showMainSeg('FileView/main.jsp');">文件</a>
-          <a href="#" class="def-nav" style="width:70%;" onclick="showMainSeg('');">文件上传并分析</a>
+        <td style="width:100px;text-align:center;">
+          <a id="a_report" href="#" class="def-nav" onclick="showMainSeg('ReportView/main.jsp');">报告<span id="id_report_new" class="label label-badge label-danger" style="z-index:99;">12</span></a>
+        </td>      
+        <td style="width:100px;text-align:center;">
+          <a href="#" class="def-nav" onclick="showMainSeg('FileView/main.jsp');">文件</a>
+        </td>        
+        <td style="width:380px;text-align:center;">
+          <div class="input-group" style="display:block;">
+            <input id="idSearchFile" class="form-control"  type="text" style="height:25px;" placeholder="请输入查询内容...">
+            <span class="input-group-btn">
+              <button id="idSubmitSearchFile" class="btn btn-default" type="button" style="font:18px Microsoft YaHei,Microsoft JhengHei,黑体;">搜索</button>
+            </span>
+          </div>  
+        </td>      
+        <td style="width:100px;text-align:center;">
+        </td>
+        <td style="width:100px;text-align:center;">
+          <a href="#" class="def-nav" style="" onclick="showMainSeg('');">数据上传</a>
         </td>    
-        <td style="width:6%;">
+        <td style="width:100px;text-align:center;">
           <a href="#" class="def-nav" onclick="showMainSeg();">用户处理</a>
         </td>
       </tr>
