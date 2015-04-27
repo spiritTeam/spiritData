@@ -17,7 +17,9 @@
 <!-- 加载ZUI - 开源HTML5跨屏框架 -->
 <link href="<%=path%>/resources/plugins/zui/css/zui.min.css" rel="stylesheet">
 <link href="<%=path%>/resources/plugins/zui/css/example.css" rel="stylesheet">
+<link href="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.css" rel="stylesheet">
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
+<script src="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.js"></script>
 
 <title>报告主界面</title>
 </head>
@@ -30,6 +32,9 @@
 .dg_th_font_bold{color:#444;font-weight:bold;}
 .dg_td_bgcolor_lightblue{background-color:#e5ffee;}
 /*** end 列表数据显示样式 ***/
+
+.border_no{border:0px solid red; }
+.padding_top5{padding-top:5px;}
 
 .bt_13_no{border:0px solid transparent;font-size:13px;padding:0px;}
 .td_height_49{height:49px;}
@@ -67,19 +72,32 @@ border-radius:10px;
 } 
 
 </style>
-<body style="background-color:#FFFFFF">
-  <div class="div">
+<body class="padding_top5" style="background-color:#FFFFFF">
+  <div class="div border_no">
     <table style="width:100%;">
       <tr>
-        <td style="width:20%;">          
-        </td>    
-        <td style="width:50%;">
-          <div class="input-group" style="display:block;">
-            <input id="idSearchFile" class="form-control"  type="text" style="height:25px;" placeholder="请输入查询内容...">
-            <span class="input-group-btn">
-              <button id="idSubmitSearchFile" class="btn btn-default" type="button" style="font:18px Microsoft YaHei,Microsoft JhengHei,黑体;">搜索</button>
-            </span>
-          </div>  
+        <td style="width:100px;">          
+        </td>  
+        <td style="width:200px;">
+          <div style="float:left;width:100%;">
+            <div style="float:left;padding-top:2px;"><font style="font-size:15px;">文件名：</font></div>
+            <div style="float:left;"><input id="inp_filename" type="text" class="form-control" style="width:120px;"></input></div>
+          </div>
+        </td>        
+        <td style="width:80px;text-align:right;">   
+                              时间段：
+        </td>        
+        <td style="width:100px;">   
+          <div class="col-md-4"><input id="startDate" type="text" class='form-control form-date' placeholder='开始日期' readonly></div>       
+        </td>        
+        <td style="width:10px;">   
+          --      
+        </td>           
+        <td style="width:100px;">   
+          <div class="col-md-4"><input id="endDate" type="text" class='form-control form-date' placeholder='结束日期' readonly></div>       
+        </td>          
+        <td style="width:100px;text-align:right;">   
+          <button class="btn btn-default" onclick="startSearch();">查  询</button>
         </td>    
         <td style="text-align:right;">
           <a href="#" class="">
@@ -92,7 +110,7 @@ border-radius:10px;
     </table>    
   </div>
              
-  <div class="div">
+  <div class="div border_no">
     <!-- 查询结果列表显示-->
     <div id="dgList" style="display:none;"></div>
     <!-- 查询结果缩略图显示 -->
@@ -104,6 +122,7 @@ border-radius:10px;
 $(function() {
   initSubmitBt();
   initSearchFileInput();
+  initDatePicker();
   
   startSearch();
 });
@@ -130,6 +149,22 @@ function initSubmitBt(){
   });
 }
 
+//初始化日期选择控件 
+function initDatePicker(){
+    $('.form-date').datetimepicker(
+    {
+        language:  'zh-CN',
+        weekStart: 1,
+        todayBtn:  1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0,
+        format: 'yyyy-mm-dd'
+    });
+}
+
 
 //定义查询方式和保存查询结果
 var SHOW_TYPE_LIST = "LIST"; //列表显示常量
@@ -140,11 +175,14 @@ var objDatatable = null; //列表显示对象
 
 //取出输入条件，提交查询
 function startSearch(){
-  var searchStr = getInputSearchFileStr();
-  //alert("您输入了："+ searchStr);
-
+  //var searchStr = getInputSearchFileStr();
+  var searchStr = $("#inp_filename").val();
+  var startDateStr = $("#startDate").val();
+  var endDateStr = $("#endDate").val();
+  
   //异步查询文件列表  
-  var searchParam={"searchStr":searchStr};
+  var searchParam={"searchStr":searchStr,"startDateStr":startDateStr,"endDateStr":endDateStr};
+  //alert("查询参数："+allFields(searchParam));
   var url="<%=path%>/analApp/demoData/reportlist.json";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
@@ -308,7 +346,7 @@ function getOptHtml(aJsonRow,floatStyle){
 
 //获得输入的查询内容
 function getInputSearchFileStr(){
-  var searchedStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
+  var searchedStr = ($("#inp_filename").val()==searchTxt)?"":$("#idSearchFile").val();
   return searchedStr;
 }
 
