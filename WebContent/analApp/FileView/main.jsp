@@ -31,6 +31,9 @@
 .dg_td_bgcolor_lightblue{background-color:#e5ffee;}
 /*** end 列表数据显示样式 ***/
 
+.border_no{border:0px solid red; }
+.padding_top5{padding-top:5px;}
+
 .bt_13_no{border:0px solid transparent;font-size:13px;padding:0px;}
 .td_height_49{height:49px;}
 .font_15{font-size:15px;}
@@ -67,8 +70,8 @@ border-radius:10px;
 } 
 
 </style>
-<body style="background-color:#FFFFFF">
-  <div class="div">
+<body class="padding_top5" style="background-color:#FFFFFF">
+  <div class="div border_no">
     <table style="width:100%;">
       <tr>
         <td style="width:20%;">          
@@ -92,7 +95,7 @@ border-radius:10px;
     </table>    
   </div>
              
-  <div class="div">
+  <div class="div border_no" style="border:0px solid red; ">
     <!-- 查询结果列表显示-->
     <div id="dgList" style="display:none;"></div>
     <!-- 查询结果缩略图显示 -->
