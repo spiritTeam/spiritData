@@ -68,9 +68,11 @@ body {
     <table style="width:100%;">
       <tr>
         <td style="width:120px;text-align:center;">
-          <a href="#" class="def-nav">
-            <img src="<%=path%>/resources/images/logo/logo_op.jpg" style="height:98%;width:120px;" onclick="clickLogo()" alt="公司LOGO"/>
+          <div>
+          <a href="#" class="def-nav" style="">
+            <img src="<%=path%>/resources/images/logo/logo_op.jpg" style="height:88%;width:120px;" onclick="clickLogo()" alt="公司LOGO"/>
           </a>
+          </div>
         </td>    
         <td style="width:100px;text-align:center;">
           <a id="a_report" href="#" class="def-nav" onclick="showMainSeg('ReportView/main.jsp');">报告<span id="id_report_new" class="label label-badge label-danger" style="z-index:99;">12</span></a>
@@ -79,10 +81,10 @@ body {
           <a href="#" class="def-nav" onclick="showMainSeg('FileView/main.jsp');">文件</a>
         </td>        
         <td style="width:380px;text-align:center;">
-          <div class="input-group" style="display:block;">
+          <div class="input-group" style="display:block;margin-bottom:5px;">
             <input id="idSearchFile" class="form-control"  type="text" style="height:25px;" placeholder="请输入查询内容...">
             <span class="input-group-btn">
-              <button id="idSubmitSearchFile" class="btn btn-default" type="button" style="font:18px Microsoft YaHei,Microsoft JhengHei,黑体;">搜索</button>
+              <button id="idSubmitSearchFile" onclick="startSearch();" class="btn btn-default" type="button" style="font:18px Microsoft YaHei,Microsoft JhengHei,黑体;">搜索</button>
             </span>
           </div>  
         </td>      
@@ -138,6 +140,8 @@ $(function() {
     $.messager.alert("页面初始化失败", initStr, "error");
     return ;
   };
+  
+  initSearchFileInput();
 
   $('#topSegment').css({'border':'1px solid #95b8e7','border-bottom':'0','background':'#32C52F','overflow':'hidden','border':'0','border-bottom':'0px'});
   //$('#footSegment').css({'border':'1px solid #32C52F','background':'#32C52F','opacity':'1'});
@@ -166,6 +170,25 @@ function myResize() {
   $("#mainSegmentIframe").width($("#mainSegment").width());
   $("#mainSegmentIframe").height($("#mainSegment").height());
 };
+
+//初始化查询输入框
+var searchTxt = "请输入查询内容...";
+function initSearchFileInput(){
+  var _objSearch = $("#idSearchFile");
+  _objSearch.keydown(function(e){
+    if(e.keyCode == 13){
+      startSearch();
+    }
+  });
+}
+
+//取出输入条件，提交查询
+function startSearch(){
+  var searchStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
+  //alert("您输入了："+ searchStr);
+  var fileName = "listView/main.jsp?searchStr="+searchStr;
+  showMainSeg(fileName);
+}
 
 /**
  * 异步请求后台，查找是否有新的报告生成
