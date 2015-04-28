@@ -25,9 +25,11 @@ var level = 0;
  */
 var segTree=[];
 
-//以上为全局变量部分=========
-
+/**
+ * monitor用于监控setInterval
+ */
 var monitor = new Object();
+//以上为全局变量部分=========
 
 /**
  * 生成报告方法
@@ -184,6 +186,7 @@ function drawMapPts(jQobj,_DATA){
     $.messager.alert("draw map points err", e.message, "error");
   }
 }
+
 /**
  * mapType==baidu
  * @param jQobj jq对象
@@ -199,21 +202,78 @@ function drawBaiDuPts(jQobj,_data,param){
   var xCol = param.X;
   var yCol = param.Y;
   var zCol = param.X;
+  //titleName
+  var titleName = _data.titleName;
   //decorateView 这个decorateView可能不太需要，因为向显示的数据直接标注出来就好，插件可以直接显示
   /**
-   * decorateView = "<tr><td>姓名</td><td>#xm#</td><td>身份证</td><td>#sfz#</td><td>性别</td><td>#sb#</td><td>城市</td><td>#city#</td></tr>::{^envelopeType^:^table^}"
+   * decorateView = "
+   * <tr><td>姓名</td><td>#xm#</td></tr>
+   * <tr><td>身份证</td><td>#sfz#</td></tr>
+   * <tr><td>性别</td><td>#sb#</td></tr>
+   * <tr><td>城市</td><td>#city#</td></tr>
+   * ::{^envelopeType^:^table^}"
    */
   var decorateView = jQobj.attr('decorateView');
   decorateView = removeSpace(decorateView);
+  //根据decorateView得到displayRule
+  //displayRule显示规则
+  var displayRule = null;
   if (decorateView) {
-	  if (decorateView.indexOf(":")!=-1) {
-		  // TODO 这个begin，end起的比较纠结
-		  var begin = decorateView.substring(0,);
-		  var end = decorateView.substring(0,);
-	  } else {
-		  
-	  }
+    if (decorateView.indexOf("::")!=-1) {//有envelopeType的情况
+      //model 这个是decorateView的前部分，用于对找出colName和和显示名的关系，
+      var model = decorateView.substring(0,decorateView.indexOf("::"));
+      // displayClaim 显示要求
+      var displayReq = decorateView.substring(decorateView.indexOf("::")+2,decorateView.length);
+      if (displayReq) {
+        var displayReqObj = str2Json(displayReq);
+        var envelopeType = displayReqObj.envelopeType;
+        displayRule = resolveMapPtsDecorateView(model,envelopeType);
+      }
+    } else {//无envelopeType的情况
+      
+    }
+  } else {
+    alert("解析MapPts_decorateView格式出错:decorateView格式出错！");
   }
+  if (displayRule!=""&&displayRule!=null) {
+	  
+  }
+}
+
+/**
+ * 根据已知模型，和封装类型，返回一个colName和display的对象数组
+ * @param model 显示模型
+ * @param envelopeType 封装类型：table/div
+ */
+function resolveMapPtsDecorateView(model,envelopeType){
+  //返回数组
+  var retAry = [];
+  if (envelopeType=="table") {
+    //拆分成单个的tr
+    var trAry = model.match(/<tr>.*?<\/tr>/g);
+    if (trAry!=null&&trAry.length>0) {
+      //第一个是displayName,第二个是colName
+      for (var i=0;i<trAry.length;i++) {
+        var tdAry = trAry[i].match(/<td>.*?<\/td>/g);
+        if (tdAry.length==2) {
+          //为什么长度等于2，因为displayName和colName是一一对应的，如果不等于2的话说明少了其中某一项都无法找到正确的对应关系
+          if (tdAry[0]=="<td></td>"||tdAry[1]=="<td></td>") {//当其中一个td中没有内容的时候，格式也是不正常的，同样无法找到对应关系
+            alert("解析MapPts_decorateView格式出错：在第"+i+1+"行的<td></td>中的值为空");
+          } else {
+            var obj = new Object();
+            obj.colName = tdAry[0];
+            obj.displayName = tdAry[0];
+            retAry.push(obj);
+          }
+        } else {
+          alert("解析MapPts_decorateView格式出错：在第"+i+1+"行的<td></td>格式不正确");
+        }
+      }
+    } else {
+      alert("解析MapPts_decorateView格式出错：原因可能是未匹配到完整的<tr></tr>标签");
+    }
+  }
+  return retAry;
 }
 /**
  * 样例：showType:bar <d did='0' showType='bar' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
