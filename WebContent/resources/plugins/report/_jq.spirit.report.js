@@ -25,9 +25,11 @@ var level = 0;
  */
 var segTree=[];
 
-//以上为全局变量部分=========
-
+/**
+ * monitor用于监控setInterval
+ */
 var monitor = new Object();
+//以上为全局变量部分=========
 
 /**
  * 生成报告方法
@@ -152,29 +154,344 @@ function retrievalJsonDJson (domAry) {
 function parseEle(jQobj, _DATA){
   var showType = jQobj.attr('showType');
   if (showType=="text") drawText(jQobj, _DATA);
-  else if (showType=="value") drawValue(jQobj, _data);
-  //else if (showType=="table") drawTable(jQobj, _data);
-//  else if (showType=="pie") drawPie(jQobj, _data);
-//  else if (showType=="line") drawLine(jQobj, _data);
-//  else if (showType=="bars") drawBar(jQobj, _data);
-//  else if (showType=="map_pts") drawMapPts(jQobj,_data); //地图画点
-//  else if (showType.lastIndexOf("first(")!=-1) drawFirst(showType,jQobj, _data);
+  else if (showType=="value") drawValue(jQobj, _DATA);
+  else if (showType=="table") drawTable(jQobj, _DATA);
+  else if (showType=="pie") drawPie(jQobj, _DATA);
+  else if (showType=="line") drawLine(jQobj, _DATA);
+  else if (showType=="bar") drawBar(jQobj, _DATA);
+  else if (showType=="map_pts") drawMapPts(jQobj,_DATA); //地图画点
 }
 
-//以下为解析showType代码
+//以下为解析showType代码==============
+/**
+ * 样例:showType:map_pts <d did='0' showType='map_pts' param='{^X^:^coordX^, ^Y^:^coordY^ ,^Z^:^coordZ^,^mapType^:^BAIDU^}' value='quotas[0]'/>
+ * 地图画点
+ * showType==map_pts
+ */
+function drawMapPts(jQobj,_DATA){
+  var value = jQobj.attr('value');
+  eval("var _data=_DATA."+value);
+  //获取param属性
+  var param =  jQobj.attr('param');
+  var paramJson = str2Json(param);
+  try{
+    //所使用的地图
+    var sys = paramJson.mapType;
+    if(sys == undefined || sys==CONST_MAP_BAIDU){
+      drawBaiDuPts(jQobj,_data,param);
+    }else{
+      $.messager.alert("unsupported map type:", sys, "error");
+    }
+  }catch(e){
+    $.messager.alert("draw map points err", e.message, "error");
+  }
+}
+
+/**
+ * mapType==baidu
+ * @param jQobj jq对象
+ * @param _data 数据
+ * @param param 参数param='{^X^:^coordX^, ^Y^:^coordY^ ,^Z^:^coordZ^,^mapType^:^BAIDU^}'
+ */
+function drawBaiDuPts(jQobj,_data,param){
+  //设置DOM对象的宽度和高度
+  var width=800;
+  var height=500;
+  jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+  //获取坐标列 x、y、z、
+  var xCol = param.X;
+  var yCol = param.Y;
+  var zCol = param.X;
+  //titleName
+  var titleName = _data.titleName;
+  //decorateView 这个decorateView可能不太需要，因为向显示的数据直接标注出来就好，插件可以直接显示
+  /**
+   * decorateView = "
+   * <tr><td>姓名</td><td>#xm#</td></tr>
+   * <tr><td>身份证</td><td>#sfz#</td></tr>
+   * <tr><td>性别</td><td>#sb#</td></tr>
+   * <tr><td>城市</td><td>#city#</td></tr>
+   * ::{^envelopeType^:^table^}"
+   */
+  var decorateView = jQobj.attr('decorateView');
+  decorateView = removeSpace(decorateView);
+  //根据decorateView得到displayRule
+  //displayRule显示规则
+  var displayRule = null;
+  if (decorateView) {
+    if (decorateView.indexOf("::")!=-1) {//有envelopeType的情况
+      //model 这个是decorateView的前部分，用于对找出colName和和显示名的关系，
+      var model = decorateView.substring(0,decorateView.indexOf("::"));
+      // displayClaim 显示要求
+      var displayReq = decorateView.substring(decorateView.indexOf("::")+2,decorateView.length);
+      if (displayReq) {
+        var displayReqObj = str2Json(displayReq);
+        var envelopeType = displayReqObj.envelopeType;
+        displayRule = resolveMapPtsDecorateView(model,envelopeType);
+      }
+    } else {//无envelopeType的情况
+      
+    }
+  } else {
+    alert("解析MapPts_decorateView格式出错:decorateView格式出错！");
+  }
+  if (displayRule!=""&&displayRule!=null) {
+	  
+  }
+}
+
+/**
+ * 根据已知模型，和封装类型，返回一个colName和display的对象数组
+ * @param model 显示模型
+ * @param envelopeType 封装类型：table/div
+ */
+function resolveMapPtsDecorateView(model,envelopeType){
+  //返回数组
+  var retAry = [];
+  if (envelopeType=="table") {
+    //拆分成单个的tr
+    var trAry = model.match(/<tr>.*?<\/tr>/g);
+    if (trAry!=null&&trAry.length>0) {
+      //第一个是displayName,第二个是colName
+      for (var i=0;i<trAry.length;i++) {
+        var tdAry = trAry[i].match(/<td>.*?<\/td>/g);
+        if (tdAry.length==2) {
+          //为什么长度等于2，因为displayName和colName是一一对应的，如果不等于2的话说明少了其中某一项都无法找到正确的对应关系
+          if (tdAry[0]=="<td></td>"||tdAry[1]=="<td></td>") {//当其中一个td中没有内容的时候，格式也是不正常的，同样无法找到对应关系
+            alert("解析MapPts_decorateView格式出错：在第"+i+1+"行的<td></td>中的值为空");
+          } else {
+            var obj = new Object();
+            obj.colName = tdAry[0];
+            obj.displayName = tdAry[0];
+            retAry.push(obj);
+          }
+        } else {
+          alert("解析MapPts_decorateView格式出错：在第"+i+1+"行的<td></td>格式不正确");
+        }
+      }
+    } else {
+      alert("解析MapPts_decorateView格式出错：原因可能是未匹配到完整的<tr></tr>标签");
+    }
+  }
+  return retAry;
+}
+/**
+ * 样例：showType:bar <d did='0' showType='bar' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
+ * showType==Bar
+ */
+function drawBar(jQobj,_DATA){
+  var value = jQobj.attr('value');
+  eval("var _data=_DATA."+value);
+  //TODO 这里不再有label何data，换为param 未完成
+  //获取param属性
+  var param =  jQobj.attr('param');
+  var paramObj = str2Json(param);
+  //x和y
+  var xAxis = paramObj.xAxis;
+  var yAxis = paramObj.yAxis;
+  var line_dataBody = _data.tableData.tableBody;
+  var ary = [];
+  var height = 50*line_dataBody.length;
+  var width = 70*line_dataBody.length;
+  jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+  for (var i=0;i<line_dataBody.length;i++) {
+    eval("var _x = line_dataBody[i]."+xAxis);
+    eval("var _y = line_dataBody[i]."+yAxis);
+    ary[i] = [_x,_y];
+  }
+  $.plot(jQobj, [ary], {
+    series: {
+      bars: {
+        show: true,
+        barWidth: 0.3,
+        align: "center",
+        fill:0.3
+      }
+    },
+    xaxis: {
+      mode: "categories",
+      autoscaleMargin: 0.05,
+      tickLength: 0
+    },
+    yaxis:{
+      show:true,
+      position:'left',
+      tickLength:40,
+      tickDecimals:0
+    },
+    legend:{ show:true, position: "sw" },
+    grid: {
+      hoverable: true,
+      clickable: true
+    }
+  });
+
+  //添加滑动所需的框体并且绑定事件
+  var hoverId = jQobj.attr('id')+'_hover';
+  jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
+  //TODO decorateView解析预留位置
+  jQobj.bind("plothover", function(event, pos, obj){
+    if (!obj) {
+      return;
+    }
+    var dataIndex = obj.dataIndex;
+    var pointData =  line_dataBody[dataIndex];
+    $("#"+hoverId).html("<span style='font-weight:bold; color:black;'>" + pointData[xAxis]+":" +pointData[yAxis]+ "</span>");
+  });
+}
+/**
+ * showType=line
+ * 样例：showType:line <d did='0' showType='line' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#num#'/>
+ */
+function drawLine(jQobj,_DATA){
+  var value = jQobj.attr('value');
+  eval("var _data=_DATA."+value);
+  // TODO 这里不再有label何data，换为param 未完成
+  //获取param属性
+  var param =  jQobj.attr('param');
+  var paramObj = str2Json(param);
+  //x和y
+  var xAxis = paramObj.xAxis;
+  var yAxis = paramObj.yAxis;
+  var line_dataBody = _data.tableData.tableBody;
+  var ary = [];
+  var height = 20*line_dataBody.length;
+  var width = 40*line_dataBody.length;
+  jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+  var decorateView = jQobj.attr('decorateView');
+  decorateView = removeSpace(decorateView);
+  if (decorateView) {
+    // TODO decorateView解析预留位置
+  }
+  for (var i=0;i<line_dataBody.length;i++) {
+    eval("var _x = line_dataBody[i]."+xAxis);
+    eval("var _y = line_dataBody[i]."+yAxis);
+    ary[i] = [_x,_y];
+  }
+  jQobj.css({"width":"440px", "height":"220px"});
+  $.plot(jQobj, [{label:"最小值", data:ary}], {
+    series: {
+      lines: { show: true },
+      points: { show: true }
+    },
+    grid: {
+      hoverable: true,
+      clickable: true
+    },
+    xaxis: {
+      mode: "categories",
+      autoscaleMargin: 0.05,
+      tickLength: 0
+    },
+    yaxis:{
+      show:true,
+      position:'left',
+      tickLength:40,
+      tickDecimals:0
+    },
+    legend:{show:false}
+  });
+  
+  //添加滑动所需的div框体并且绑定事件
+  var hoverId = jQobj.attr('id')+'_hover';
+  jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
+  jQobj.bind("plothover", function(event, pos, obj){
+    if (!obj) {
+      return;
+    }
+    var dataIndex = obj.dataIndex;
+    var pointData =  line_dataBody[dataIndex];
+    $("#"+hoverId).html("<span style='font-weight:bold; color:black;'>" + pointData[xAxis]+":" +pointData[yAxis]+ "</span>");
+  });
+}
+/**
+ * <d did='0' showType='pie' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
+ * showType = pie
+ * jQobj:jquery对象
+ * _DATA：数据
+ */
+function drawPie(jQobj,_DATA){
+  // TODO 未完成本次实现的功能，仅实现显示，还未实现x轴和y轴，及鼠标滑过显示。或许是图例？
+  //  var _data=_DATA[value];
+  //这里不能用var _data=_DATA[value];的写法，可能是因为value中就已经包含[]了
+  //实际的value = quotas[0]
+  var value = jQobj.attr('value');
+  eval("var _data=_DATA."+value);
+  //获取param属性
+  var param =  jQobj.attr('param');
+  var paramObj = str2Json(param);
+  //x和y
+  var xAxis = paramObj.xAxis;
+  var yAxis = paramObj.yAxis;
+  var ary = [];
+  var pie_dataBody = _data.tableData.tableBody;
+  //在pie中解析decorateView='#category#, #percent(num)#'简单格式
+  var decorateView = jQobj.attr('decorateView');
+  decorateView = removeSpace(decorateView);
+  if (decorateView) {
+    // TODO decorateView处理预留位置
+  }
+  for (var i=0;i<pie_dataBody.length;i++) { 
+    eval("var _pie_label=pie_dataBody[i]."+xAxis);
+    eval("var _pie_data=pie_dataBody[i]."+yAxis);
+    ary[i] = {label:_pie_label,data:_pie_data};
+  }
+  //pie div样式
+  jQobj.attr('style','height:150px;width:330px;');
+  //测试代码
+  var data = [],
+  series = Math.floor(Math.random() * 6) + 3;
+
+  for (var i = 0; i < series; i++) {
+    data[i] = {
+      label: "Series" + (i + 1),
+      data: Math.floor(Math.random() * 100) + 1
+    };
+  }
+
+  //初始化pie
+  $.plot(jQobj, ary, {
+    series: {
+      pie: {
+        show: true
+      }
+    },
+    grid: {
+      hoverable: true,
+      clickable: true
+    }
+  });
+
+  //添加滑动所需的div框体并且绑定事件
+  var hoverId = jQobj.attr('id')+'_hover';
+  jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
+  jQobj.bind("plothover", function(event, pos, obj){
+    if (!obj) {
+      return;
+    }
+    var percent = parseFloat(obj.series.percent).toFixed(2);
+    $("#"+hoverId).html("<span style='font-weight:bold; color:" + obj.series.color + "'>" + obj.series.label + "，" + percent + "%</span>");
+  });
+}
+
 /**
  * showType=table
  */
-function drawTable (jQobj,_data) {//由于修改了getPrposMapAry方法，所有drawTable也要修改
-  return;var table_body = _data.tableData.tableBody;
+function drawTable (jQobj,_DATA) {//由于修改了getPrposMapAry方法，所有drawTable也要修改
+  var value = jQobj.attr('value');
+  eval("var _data=_DATA."+value);
+  //数据主体
+  var table_body = _data.tableData.tableBody;
+  //title
   var table_titles = _data.tableData.titles;
+  //存储数据的数组
   var colAry = new Array();
   for (var i=0;i<table_titles.length;i++) {
     //getPrposMapAry得到对应的属性
-    var titlePrpos = getPrposMapAry(table_titles[i]);
+    var titlePrpos = getPrposMapAry([table_titles[i]]);
     var col = new Object();
-    col.field = titlePrpos.prposName;
-    col.title = titlePrpos.prposValue;
+    col.field = titlePrpos[0].prposName;
+    col.title = titlePrpos[0].prposValue;
     col.width = 100;
     colAry.push(col);
   }
@@ -191,8 +508,10 @@ function drawTable (jQobj,_data) {//由于修改了getPrposMapAry方法，所有
 /**
  * showType=value
  */
-function drawValue (jQobj,dataAry) {return;
-  jQobj.html(dataAry);
+function drawValue (jQobj,_DATA) {
+  var value = jQobj.attr('value');
+  eval("var _data=_DATA."+value);
+  jQobj.html(_data);
 }
 
 /**
@@ -204,13 +523,14 @@ function drawValue (jQobj,dataAry) {return;
  * @param _DATA:数据 
  */
 function drawText (jQobj,_DATA) {
+  // TODO 还差其他情况
   //value
   var value = jQobj.attr('value');
   value = removeSpace(value);
   //要显示的最终数据
   var showData = "";
   if (value.indexOf("::")==-1) {
-    valIndex = value;
+    var valIndex = value;
     eval("var _data=_DATA."+valIndex);
     showData = _data;
   } else {
@@ -248,7 +568,7 @@ function drawText (jQobj,_DATA) {
   showData = getDataByShowDemand(dViewBegin,dViewEnd,showData);
   jQobj.html(showData);
 }
-//以上为解析showType代码
+//以上为解析showType代码============================
 
 //以下为公共部分代码==============
 
@@ -304,7 +624,6 @@ function getPercent(num,sum,length){
  * @param showData 数据，包含titles以及经过排序筛选后的data
  */
 function getDataByShowDemand(dViewBegin,dViewEnd,showData) {
-
   //1、找出需要计算列，并算出总和
   //colAry 需要替换参数的数组
   var colAry = dViewBegin.match(/#.*?#/g);
@@ -364,8 +683,7 @@ function getDataByShowDemand(dViewBegin,dViewEnd,showData) {
   //3、解析dViewEnd
   var showStr = "";
   if (dViewEnd!=null&&dViewEnd!="") {
-    dViewEnd = dViewEnd.replace(/\^/g,"\"");
-    var jsonObj = str2JsonObj(dViewEnd);
+    var jsonObj = str2Json(dViewEnd);
     var prefix = "";
     var suffix = "；";
     if (jsonObj.prefix) prefix=jsonObj.prefix;
@@ -375,6 +693,19 @@ function getDataByShowDemand(dViewBegin,dViewEnd,showData) {
     }
   }
   return showStr;
+}
+
+/**
+ * 把decorateView中的"^"和"~"转换成相应的单引号和双引号
+ * 然后返回一个json对象
+ * @param jsonStr 需要处理的字符串
+ * @returns jsonObj
+ */
+function str2Json(jsonStr){
+  jsonStr = jsonStr.replace(/\^/g,"\"");
+  jsonStr = jsonStr.replace(/\~/g,"\'");
+  var jsonObj = str2JsonObj(jsonStr);
+  return jsonObj;
 }
 
 /**

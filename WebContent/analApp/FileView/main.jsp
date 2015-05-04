@@ -31,6 +31,9 @@
 .dg_td_bgcolor_lightblue{background-color:#e5ffee;}
 /*** end 列表数据显示样式 ***/
 
+.border_no{border:0px solid red; }
+.padding_top5{padding-top:5px;}
+
 .bt_13_no{border:0px solid transparent;font-size:13px;padding:0px;}
 .td_height_49{height:49px;}
 .font_15{font-size:15px;}
@@ -67,15 +70,15 @@ border-radius:10px;
 } 
 
 </style>
-<body style="background-color:#FFFFFF">
-  <div class="div">
+<body class="padding_top5" style="background-color:#FFFFFF">
+  <div class="div border_no">
     <table style="width:100%;">
       <tr>
         <td style="width:20%;">          
         </td>    
         <td style="width:50%;">
-          <div class="input-group">
-            <input id="idSearchFile" class="form-control"  type="text" style="height:37px;" placeholder="请输入查询内容...">
+          <div class="input-group" style="display:block;">
+            <input id="idSearchFile" class="form-control"  type="text" style="height:25px;" placeholder="请输入查询内容...">
             <span class="input-group-btn">
               <button id="idSubmitSearchFile" class="btn btn-default" type="button" style="font:18px Microsoft YaHei,Microsoft JhengHei,黑体;">搜索</button>
             </span>
@@ -92,7 +95,7 @@ border-radius:10px;
     </table>    
   </div>
              
-  <div class="div">
+  <div class="div border_no" style="border:0px solid red; ">
     <!-- 查询结果列表显示-->
     <div id="dgList" style="display:none;"></div>
     <!-- 查询结果缩略图显示 -->
@@ -221,11 +224,7 @@ function showSearchResultList(){
 	    //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
 	    //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
 	    //构建操作按钮
-	    var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileFull+'\');">浏览</button>';
-	    //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
-      var optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileFull+'\');">报告</button>';
-      
-      var optHtml = ""+optView+"&nbsp;&nbsp;"+optReport+"";
+      var optHtml = getOptHtml(jsonRows[i],"floatCenter");
       var arow={checked:false,data:[ahrf_file,size,createData,optHtml]};
 	    dtrows.push(arow);
 	  }
@@ -254,16 +253,28 @@ function showSearchResultThumb(){
 	    var fileName = jsonRows[i]["name"];
 	    var suffix = jsonRows[i]["suffix"];
 	    var fileFull = fileName+"."+suffix;
+	    var size = jsonRows[i]["size"];
+	    var createData = jsonRows[i]["createData"];
 	    var desc = jsonRows[i]["desc"];
 	    thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-2">';
 	    thumbHtmlStr += '    <div class="card">';
 		  thumbHtmlStr += '      <div class="media-wrapper">';
+	    //显示的缩略图片
 		  thumbHtmlStr += '        <img src="<%=path%>/analApp/images/excel.png" alt="">';
 	    thumbHtmlStr += '      </div>';   
+	    //鼠标移到图片上时，下拉浮动框显示的内容
 		  thumbHtmlStr += '        <span class="caption">'+desc+'</span>';
+	    //缩略图下方显示的内容
 	    thumbHtmlStr += '      <div class="media-wrapper">';
 		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
-	    thumbHtmlStr += '      </div>';   
+	    thumbHtmlStr += '      </div>';  
+	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
+	    thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createData+'';
+	    thumbHtmlStr += '      </div>'; 
+	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
+	    var optHtml = getOptHtml(jsonRows[i],"floatRight");
+	    thumbHtmlStr += '        '+optHtml+'';
+	    thumbHtmlStr += '      </div>';  
 		  thumbHtmlStr += '    </div>';
 		  thumbHtmlStr += '  </div>';   
 		}
@@ -277,6 +288,26 @@ function showSearchResultThumb(){
 function getInputSearchFileStr(){
   var searchedStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
   return searchedStr;
+}
+
+//组装一行操作按钮
+function getOptHtml(aJsonRow,floatStyle){
+  if(!aJsonRow){
+    return "";
+  }
+  var fileName = aJsonRow["name"];
+  var suffix = aJsonRow["suffix"];
+  var fileFull = fileName+"."+suffix;
+  //构建操作按钮
+  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileFull+'\');">浏览</button>';
+  //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
+  var optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileFull+'\');">报告</button>';
+  var optContent = ""+optView+"&nbsp;&nbsp;"+optReport+"";
+  var optHtml = optContent;
+  if(typeof(floatStyle) != "undefined" && floatStyle=="floatRight"){
+    optHtml = "<div style='float:right;margin-right:10px;'>"+optContent+"</div>";  
+  }
+  return optHtml;  
 }
 
 //查询结果中，当点击了某个文件，触发此操作
