@@ -278,8 +278,8 @@ CREATE TABLE sa_task_info (
   param         varchar(500)                               COMMENT '任务执行所需的参数，用json处理', 
   descn         varchar(500)                               COMMENT '任务说明',
   firstTime     timestamp                                  COMMENT '第一次放入执行队列的时间',
-  beginTime     timestamp                                  COMMENT '开始执行时间',
-  endTime       timestamp                                  COMMENT '结束执行时间',
+  beginTime     timestamp                  DEFAULT NULL    COMMENT '开始执行时间',
+  endTime       timestamp                  DEFAULT NULL    COMMENT '结束执行时间',
   PRIMARY KEY (id)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务信息';

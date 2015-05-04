@@ -27,6 +27,17 @@ public class TaskGroup implements Serializable, ModelSwapPo {
 
     private TaskGraph taskGraph; //子任务图
 
+    public TaskGroup() {
+    }
+    /**
+     * 从po对象构建本对象，通过此方法构造的对象是不完整的
+     * 
+     * @param po po对象
+     */
+    public TaskGroup(TaskGroupPo po) {
+        this.buildFromPo(po);
+    }
+
     public String getId() {
         return id;
     }
@@ -153,5 +164,16 @@ public class TaskGroup implements Serializable, ModelSwapPo {
         this.status = _po.getStatus();
         this.desc = _po.getDesc();
         this.beginTime = _po.getBeginTime();
+    }
+
+    /**
+     * 获得任务组所包含的任务信息的数量。若本对象的任务图属性为空，或图对象的任务Map为空，返回-1。<br/>
+     * 因此在调用此方法时，不能简单相加，应该如此：sum += (getTaskInfoSize()>0?getTaskInfoSize:0);
+     * @return 任务信息的数量
+     */
+    public int getTaskInfoSize() {
+        if (this.getTaskGraph()==null) return -1;
+        if (this.getTaskGraph().getTaskMap()==null) return -1;
+        return this.getTaskGraph().getTaskMap().size();
     }
 }

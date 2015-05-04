@@ -36,8 +36,18 @@ public class TaskInfo implements Serializable, ModelSwapPo {
 
     private TaskGroup taskGroup; //所属任务组，可为空
     private AnalResultFile resultFile; //分析结果文件，可为空
-
     private List<PreTask> preTasks; //前序任务列表
+
+    public TaskInfo() {
+    }
+    /**
+     * 从po对象构建本对象，通过此方法构造的对象是不完整的
+     * 
+     * @param po po对象
+     */
+    public TaskInfo(TaskInfoPo po) {
+        this.buildFromPo(po);
+    }
 
     public String getId() {
         return id;

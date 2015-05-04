@@ -254,7 +254,7 @@ var fileroot = "<%=path%>/analApp/";
 function showMainSeg(filepath){
 	//alert("showMainSeg():"+filepath);
   if(typeof(filepath) == "undefined" || !filepath || filepath==""){
-    filepath="/constructing.jsp";
+    filepath="constructing.jsp";
   }
   var fileurl = fileroot+filepath;
   $("#mainSegmentIframe").attr("src",fileurl);
