@@ -170,6 +170,7 @@ function initDatePicker(){
 var SHOW_TYPE_LIST = "LIST"; //列表显示常量
 var SHOW_TYPE_THUMB = "THUMB"; //缩略图显示常量
 var showType = SHOW_TYPE_LIST; //默认是列表显示查询结果
+var thumbPath = "<%=path%>/analApp/images/"; //报告缩略图所存储的路径
 var searchResultJsonData = null; //保存查询后的结果
 var objDatatable = null; //列表显示对象
 
@@ -249,19 +250,19 @@ function showSearchResultList(){
     var jsonRows = searchResultJsonData.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
-    	var fileId = jsonRows[i]["id"];
+    	var id = jsonRows[i]["id"];
       var fileName = jsonRows[i]["name"];
       var fileFull = fileName;
-      var ahrf_file = '<a href="###" onclick="showReport(\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
+      var ahrf_file = '<a href="###" onclick="showReport(\''+id+'\');"><strong>'+fileFull+'</strong></a>';
       
       var size = jsonRows[i]["size"];
       var createData = jsonRows[i]["createData"];
       //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
       //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
       //构建操作按钮
-      var optRelation = '<button type="button" class="btn bt_13_no" onclick="showRelation(\''+fileFull+'\');">关系</button>';
+      //var optRelation = '<button type="button" class="btn bt_13_no" onclick="showRelation(\''+id+'\');">关系</button>';
       //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">浏览</button>';
-      var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileFull+'\');">浏览</button>';
+      //var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+id+'\');">浏览</button>';
       var optHtml = getOptHtml(jsonRows[i],"floatLeft");
       var arow={checked:false,data:[ahrf_file,size,createData,optHtml]};
       dtrows.push(arow);
@@ -288,16 +289,20 @@ function showSearchResultThumb(){
     var jsonRows = searchResultJsonData.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
+      var id = jsonRows[i]["id"];
       var fileName = jsonRows[i]["name"];
       var fileFull = fileName;
       var desc = jsonRows[i]["desc"];
       var size = jsonRows[i]["size"];
       var createData = jsonRows[i]["createData"];
+      var thumbUrl = jsonRows[i]["thumbUrl"];
+      thumbUrl = thumbPath + getStr(thumbUrl,"excel.png");
+      
       thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-2">';
       thumbHtmlStr += '    <div class="card">';
       thumbHtmlStr += '      <div class="media-wrapper">';
       //显示的缩略图片
-      thumbHtmlStr += '        <img src="<%=path%>/analApp/images/excel.png" alt="">';
+      thumbHtmlStr += '        <img src='+thumbUrl+' alt="缩略图">';
       thumbHtmlStr += '      </div>';
       //鼠标移到图片上时，下拉浮动框显示的内容
       thumbHtmlStr += '        <span class="caption">'+desc+'</span>';
@@ -326,6 +331,7 @@ function getOptHtml(aJsonRow,floatStyle){
 	if(!aJsonRow){
 		return "";
 	}
+	var fileId = aJsonRow["id"];
   var fileName = aJsonRow["name"];
   var fileFull = fileName;
 	var optRound = '';
@@ -334,8 +340,8 @@ function getOptHtml(aJsonRow,floatStyle){
     optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;"/>';
   }
   //构建操作按钮
-  var optRelation = '<button type="button" class="btn bt_13_no" onclick="showRelation(\''+fileFull+'\');">关系</button>';
-  var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileFull+'\');">浏览</button>';
+  var optRelation = '<button type="button" class="btn bt_13_no" onclick="showRelation(\''+fileId+'\');">关系</button>';
+  var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileId+'\');">浏览</button>';
   var optContent = "<div class='div_float_left'>"+optReportView+"&nbsp;&nbsp;"+optRelation+"</div>&nbsp;&nbsp;"+optRound;
   var optHtml = optContent;
   if(typeof(floatStyle) != "undefined" && floatStyle=="floatRight"){
@@ -375,5 +381,19 @@ function showReport(reportId) {
           };
   openSWinInMain(winOption);
 }
+
+/**
+ * 返回字符串，如果aStr不存在或为空，则使用默认的字符串
+ * @param aStr 指定的字符串
+ * @param defaultStr 默认的返回字符串
+ */
+function getStr(aStr,defaultStr){
+  var retStr = defaultStr;
+  if(typeof(aStr)!="undefined" &&!aStr && aStr.length>0){
+    retStr = aStr;
+  }
+  return retStr;
+}
+
 </script>
 </html>
