@@ -224,12 +224,12 @@ function showSearchResultList(){
 	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileId+'\');"><strong>'+fileFull+'</strong></a>';
 	    
 	    var size = jsonRows[i]["size"];
-	    var createData = jsonRows[i]["createData"];
+	    var createDate = jsonRows[i]["createDate"];
 	    //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
 	    //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
 	    //构建操作按钮
       var optHtml = getOptHtml(jsonRows[i],"floatCenter");
-      var arow={checked:false,data:[ahrf_file,size,createData,optHtml]};
+      var arow={checked:false,data:[ahrf_file,size,createDate,optHtml]};
 	    dtrows.push(arow);
 	  }
   }
@@ -260,7 +260,7 @@ function showSearchResultThumb(){
 	    var thumbImgUrl = thumbPath + getSuffixImgName(suffix);
 	    var fileFull = fileName+"."+suffix;
 	    var size = jsonRows[i]["size"];
-	    var createData = jsonRows[i]["createData"];
+	    var createDate = jsonRows[i]["createDate"];
 	    var desc = jsonRows[i]["desc"];
 	    thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-2">';
 	    thumbHtmlStr += '    <div class="card">';
@@ -275,7 +275,7 @@ function showSearchResultThumb(){
 		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileId+'\');"><strong>'+fileFull+'</strong></a>';
 	    thumbHtmlStr += '      </div>';  
 	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
-	    thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createData+'';
+	    thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createDate+'';
 	    thumbHtmlStr += '      </div>'; 
 	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
 	    var optHtml = getOptHtml(jsonRows[i],"floatRight");

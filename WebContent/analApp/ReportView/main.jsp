@@ -256,15 +256,15 @@ function showSearchResultList(){
       var ahrf_file = '<a href="###" onclick="showReport(\''+id+'\');"><strong>'+fileFull+'</strong></a>';
       
       var size = jsonRows[i]["size"];
-      var createData = jsonRows[i]["createData"];
+      var createDate = jsonRows[i]["createDate"];
       //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
-      //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
+      //var arow={checked:false,data:[fileName+"."+suffix,size,createDate],cssClass:cssClassStr};
       //构建操作按钮
       //var optRelation = '<button type="button" class="btn bt_13_no" onclick="showRelation(\''+id+'\');">关系</button>';
       //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">浏览</button>';
       //var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+id+'\');">浏览</button>';
       var optHtml = getOptHtml(jsonRows[i],"floatLeft");
-      var arow={checked:false,data:[ahrf_file,size,createData,optHtml]};
+      var arow={checked:false,data:[ahrf_file,size,createDate,optHtml]};
       dtrows.push(arow);
     }
   }
@@ -294,7 +294,7 @@ function showSearchResultThumb(){
       var fileFull = fileName;
       var desc = jsonRows[i]["desc"];
       var size = jsonRows[i]["size"];
-      var createData = jsonRows[i]["createData"];
+      var createDate = jsonRows[i]["createDate"];
       var thumbUrl = jsonRows[i]["thumbUrl"];
       thumbUrl = thumbPath + getStr(thumbUrl,"excel.png");
       
@@ -311,7 +311,7 @@ function showSearchResultThumb(){
       thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showReport(\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
       thumbHtmlStr += '      </div>'; 
       thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
-      thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createData+'';
+      thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createDate+'';
       thumbHtmlStr += '      </div>'; 
       thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
       var optHtml = getOptHtml(jsonRows[i],"floatRight");
