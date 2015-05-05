@@ -28,13 +28,18 @@ public class TaskMemory {
     //参数处理部分
     //任务内存对象中最大任务组个数
     protected int MEMORY_MAXSIZE_TASKGROUP = (1<<10)-1; //2^10=1023
-    public void setMEMORY_MAXSIZE_TASKGROUP(int mEMORY_MAXSIZE_TASKGROUP) {
-        MEMORY_MAXSIZE_TASKGROUP = mEMORY_MAXSIZE_TASKGROUP;
+    public void setMEMORY_MAXSIZE_TASKGROUP(int MEMORY_MAXSIZE_TASKGROUP) {
+        this.MEMORY_MAXSIZE_TASKGROUP = MEMORY_MAXSIZE_TASKGROUP;
     }
     //任务内存对象中最大任务个数
     protected int MEMORY_MAXSIZE_TASKINFO = (1<<13)-1; //2^13=8095
-    public void setMEMORY_MAXSIZE_TASKINFO(int mEMORY_MAXSIZE_TASKINFO) {
-        MEMORY_MAXSIZE_TASKINFO = mEMORY_MAXSIZE_TASKINFO;
+    public void setMEMORY_MAXSIZE_TASKINFO(int MEMORY_MAXSIZE_TASKINFO) {
+        this.MEMORY_MAXSIZE_TASKINFO = MEMORY_MAXSIZE_TASKINFO;
+    }
+    //每次清除任务组或任务信息的个数
+    protected int MEMORY_CLEANSIZE_TASK = (1<<4)-1; //2^4-1=15
+    public void setMEMORY_CLEANSIZE_TASK(int MEMORY_CLEANSIZE_TASK) {
+        this.MEMORY_CLEANSIZE_TASK = MEMORY_CLEANSIZE_TASK;
     }
 
     //所有可执行任务组
@@ -51,6 +56,7 @@ public class TaskMemory {
         if (tcc!=null) {
             this.setMEMORY_MAXSIZE_TASKGROUP(tcc.getMEMORY_MAXSIZE_TASKGROUP());
             this.setMEMORY_MAXSIZE_TASKINFO(tcc.getMEMORY_MAXSIZE_TASKINFO());
+            this.setMEMORY_CLEANSIZE_TASK(tcc.getMEMORY_CLEANSIZE_TASK());
             taskGroupMap = new ConcurrentHashMap<String, TaskGroup>();
             taskInfoMap = new ConcurrentHashMap<String, TaskInfo>();
             taskInfoSortList = new CopyOnWriteArrayList<String>();

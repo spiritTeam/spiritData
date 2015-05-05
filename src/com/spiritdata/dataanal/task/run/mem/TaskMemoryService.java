@@ -154,9 +154,46 @@ public class TaskMemoryService {
     }
 
     /**
-     * 
+     * 清除已经完成的任务或任务组
      */
-    public void cleanTaskGroup() {
+    public void cleanTaskMemory() {
+        Map<String, TaskGroup> taskGroupMap = tm.taskGroupMap;
+        Map<String, TaskInfo> taskInfoMap = tm.taskInfoMap;
+        int cleanSize = tm.MEMORY_CLEANSIZE_TASK;
+
+        TaskGroup tg = null;
+        TaskInfo ti = null;
+        //清除任务组
+        boolean canClean = false;
+        if (taskGroupMap!=null&&taskGroupMap.size()>0) {
+            for (String tgId: taskGroupMap.keySet()) {
+                canClean = true;
+                tg = taskGroupMap.get(tgId);
+                for (String tiId: tg.getTaskGraph().getTaskMap().keySet()) {
+                    ti = taskInfoMap.get(tiId);
+                    if (ti.getStatus()!=4&&ti.getStatus()!=5) {
+                        canClean = false;
+                        break;
+                    }
+                }
+                if (canClean) {
+                    _removeCompeteTaskGroup(tgId);
+                    cleanSize--;
+                }
+                if (cleanSize==0) break;
+            }
+        }
+        //清除任务
+        if (cleanSize>0) {
+            for (String tiId: tm.taskInfoSortList) {
+                ti = taskInfoMap.get(tiId);
+                if (ti.getTaskGroup()==null&&(ti.getStatus()==4||ti.getStatus()==5)) {//可删除
+                    taskInfoMap.remove(tiId);
+                    cleanSize--;
+                    if (cleanSize==0) break;
+                }
+            }
+        }
     }
 
     /**
