@@ -40,6 +40,7 @@
         }
       },{
       "tableData":{
+        "titleName":"某公司人员分布",
         "titles":[{"xm":"姓名"},{"sfz":"身份证"},{"xb":"性别"},{"city":"城市"},{"coordX":"X坐标"},{"coordX":"Y坐标"}],
         "tableBody":[
           {"xm":"张三", "sfz":"420205198803122653", "xb":"男", "city":'北京', "coordX":"116.46", "coordY":"39.92"},
