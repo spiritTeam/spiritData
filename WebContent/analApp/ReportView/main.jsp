@@ -171,6 +171,7 @@ var SHOW_TYPE_LIST = "LIST"; //列表显示常量
 var SHOW_TYPE_THUMB = "THUMB"; //缩略图显示常量
 var showType = SHOW_TYPE_LIST; //默认是列表显示查询结果
 var thumbPath = "<%=path%>/analApp/images/"; //报告缩略图所存储的路径
+var defaultThumbImg = "excel.png"; //默认显示的缩略图名称
 var searchResultJsonData = null; //保存查询后的结果
 var objDatatable = null; //列表显示对象
 
@@ -296,7 +297,7 @@ function showSearchResultThumb(){
       var size = jsonRows[i]["size"];
       var createDate = jsonRows[i]["createDate"];
       var thumbUrl = jsonRows[i]["thumbUrl"];
-      thumbUrl = thumbPath + getStr(thumbUrl,"excel.png");
+      thumbUrl = thumbPath + getStr(thumbUrl,defaultThumbImg);
       
       thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-2">';
       thumbHtmlStr += '    <div class="card">';
