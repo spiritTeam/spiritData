@@ -11,6 +11,7 @@ import javax.servlet.ServletContext;
 
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.task.core.model.PreTask;
 import com.spiritdata.dataanal.task.core.model.TaskGroup;
 import com.spiritdata.dataanal.task.core.model.TaskInfo;
@@ -52,12 +53,12 @@ public class TaskMemoryService {
     }
 
     /**
-     * 把任务组插入Map，同时构造相关的任务Map
+     * 把任务组加入任务内存，同时构造内存中对应的任务信息
      */
     public void addTaskGroup(TaskGroup tg) {
         if (tm.taskGroupMap.size()>tm.MEMORY_MAXSIZE_TASKGROUP) return; //已经不能插入任务组了
         if (tg.getTaskInfoSize()>0) {
-            if ((tm.taskInfoSortList.size()+tg.getTaskInfoSize())>tm.MEMORY_MAXSIZE_TASKINFO) return; //任务信息数量已经达到了上限，不能再加入了
+            if ((tm.taskInfoMap.size()+(tg.getTaskInfoSize()>0?tg.getTaskInfoSize():0))>tm.MEMORY_MAXSIZE_TASKINFO) return; //任务信息数量已经达到了上限，不能再加入了
             if (tm.taskGroupMap.get(tg.getId())==null) tm.taskGroupMap.put(tg.getId(), tg);
             Map<String, TaskInfo> _m = tg.getTaskGraph().getTaskMap();
             for (String tiId: _m.keySet()) {
@@ -68,6 +69,15 @@ public class TaskMemoryService {
         }
     }
 
+    /**
+     * 把任务信息加入内存
+     */
+    public void addTaskInfo(TaskInfo ti) {
+        if ((tm.taskInfoMap.size())==tm.MEMORY_MAXSIZE_TASKINFO) return; //任务信息数量已经达到了上限，不能再加入了
+        tm.taskInfoSortList.add(getInsertIndex(ti), ti.getId());
+        tm.taskInfoMap.put(ti.getId(), ti);
+    }
+    
     /**
      * 装载数据库信息到任务内存
      */
@@ -115,8 +125,9 @@ public class TaskMemoryService {
     }
 
     /**
-     * 获得下一个可执行的具体任务
-     * @return
+     * 获得下一个可执行的具体任务。<br/>
+     * 注意，这里是完全按照时间顺序来处理的，没有按照优先级及其他处理。
+     * @return 下一个可执行的具体任务
      */
     public TaskInfo getNextCanProcessTaskInfo() {
         TaskInfo ret = null;
@@ -142,11 +153,39 @@ public class TaskMemoryService {
         return ret;
     }
 
-    
     /**
+     * 
+     */
+    public void cleanTaskGroup() {
+    }
+
+    /**
+     * 调整所有者Id。登录成功后，切换所有者时所调用的方法
+     * @param oldOwnerId 旧所有者Id，目前是SessionId
+     * @param newOwnerId 新所有者Id，目前是用户的Id
+     * @return 调整成功，返回true，否则，返回false
+     */
+    public boolean changeOwnerId(String oldOwnerId, String newOwnerId) {
+        Map<String, TaskGroup> taskGroupMap = tm.taskGroupMap;
+        Owner owner = new Owner();
+        TaskGroup tg = null;
+        if (taskGroupMap!=null&&taskGroupMap.size()>0) {
+            for (String tgId: taskGroupMap.keySet()) {
+                tg = taskGroupMap.get(tgId);
+                if (tg.getOwner().getOwnerId().equals(oldOwnerId)) {
+                    owner.setOwnerId(newOwnerId);
+                    owner.setOwnerType(1);
+                    tg.setOwner(owner);
+                }
+            }
+        }
+        return true;
+    }
+
+    /*
      * 删除指定的任务组，注意这里不判断任务组是否已执行完毕
      */
-    private void removeOneTaskGroup(String tgId) {
+    private void _removeCompeteTaskGroup(String tgId) {
         TaskGroup tg = tm.taskGroupMap.get(tgId);
         if (tg!=null) {
             for (String tiId: tg.getTaskGraph().getTaskMap().keySet()) {

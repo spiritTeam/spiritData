@@ -14,6 +14,7 @@ import com.spiritdata.dataanal.task.core.model.TaskInfo;
 import com.spiritdata.dataanal.task.core.persistence.pojo.TaskGroupPo;
 import com.spiritdata.dataanal.task.core.persistence.pojo.TaskInfoPo;
 import com.spiritdata.dataanal.task.core.persistence.pojo.TaskRelPo;
+import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 
 /**
@@ -36,7 +37,7 @@ public class TaskManageService {
     }
 
     /**
-     * 调整所有者Id，为登录成功后，切换所有者所准备的方法
+     * 调整所有者Id。登录成功后，切换所有者时所调用的方法
      * @param oldOwnerId 旧所有者Id，目前是SessionId
      * @param newOwnerId 新所有者Id，目前是用户的Id
      * @return 调整成功，返回true，否则，返回false
@@ -48,6 +49,8 @@ public class TaskManageService {
         param.put("oldOwnerId", oldOwnerId);
         param.put("newOwnerId", newOwnerId);
         taskGroupDao.excute("changeOwner", param);
+        TaskMemoryService tms = TaskMemoryService.getInstance();
+        tms.changeOwnerId(oldOwnerId, newOwnerId);
         return true;
     }
 

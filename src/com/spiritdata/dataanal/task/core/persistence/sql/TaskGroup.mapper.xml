@@ -111,9 +111,9 @@
   </delete>
 
   <!-- 调整所属者Id -->
-  <delete id="changeOwner" parameterType="java.util.Map">
+  <update id="changeOwner" parameterType="java.util.Map">
     update sa_task_group set ownerId=#{newOwnerId,jdbcType=VARCHAR}, ownerType=1 where ownerId=#{oldOwnerId,jdbcType=VARCHAR} and ownerType=2
-  </delete>
+  </update>
 
   <!-- 获得可够执行的任务组信息 -->
   <select id="getCanExcuteTaskGroups" resultMap="BaseResultMap">
