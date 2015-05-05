@@ -140,7 +140,7 @@ var SHOW_TYPE_THUMB = "THUMB"; //缩略图显示常量
 var showType = SHOW_TYPE_LIST; //默认是列表显示查询结果
 var thumbPath = "<%=path%>/analApp/images/"; //文件缩略图所存储的路径
 //根据文件后缀名查找相应的图标
-var fileSuffixImg = {"default":"excel.png","xlsx":"excel.png","xls":"excel.png"};
+var fileSuffixImg = {"default":"file.png","xlsx":"excel.png","xls":"excel.png"};
 var searchResultJsonData = null; //保存查询后的结果
 var objDatatable = null; //列表显示对象
 
