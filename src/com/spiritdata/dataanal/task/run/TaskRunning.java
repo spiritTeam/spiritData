@@ -42,6 +42,7 @@ public class TaskRunning extends Thread {
         dt.setDaemon(true);
         dt.start();
     }
+
     /*
      * 若在另一个JVM中执行任务，这部分功能可以放在main中
      */
@@ -66,7 +67,7 @@ public class TaskRunning extends Thread {
             System.out.println("1-任务服务参数加载");
             System.out.println("2-初始化任务内存");
             TaskMemory tm = TaskMemory.getInstance();
-            tm.initParam(tcc);
+            tm.init(tcc);
             System.out.println("3-加载任务信息到内存");
             startLoad();
             System.out.println("4-启动任务分发线程");
