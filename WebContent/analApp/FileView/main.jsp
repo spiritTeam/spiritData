@@ -302,14 +302,20 @@ function getOptHtml(aJsonRow,floatStyle){
     return "";
   }
   var fileId = aJsonRow["id"];
+  var reportId = aJsonRow["reportId"];
   var fileName = aJsonRow["name"];
   var suffix = aJsonRow["suffix"];
   var fileFull = fileName+"."+suffix;
   //构建操作按钮
   var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileId+'\');">浏览</button>';
   //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
-  var optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileId+'\');">报告</button>';
-  var optContent = ""+optView+"&nbsp;&nbsp;"+optReport+"";
+  var optReport = '';
+  if(!isUndefinedNullEmpty(reportId)){
+	  optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');">报告</button>';
+  }else{
+	  optReport = '<button type="button" style="visibility:hidden;" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');">报告</button>';
+  }
+  var optContent = ""+optView+"&nbsp;&nbsp;"+optReport+"&nbsp;";
   var optHtml = optContent;
   if(typeof(floatStyle) != "undefined" && floatStyle=="floatRight"){
     optHtml = "<div style='float:right;margin-right:10px;'>"+optContent+"</div>";  
@@ -335,13 +341,13 @@ function showFile(fileId){
 }
 
 function showReport(reportId) {
-    var winOption={
-    	      url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
-    	      title:"报告详情",
-    	      height:600,
-    	      width:1000,
-            iframeScroll:"yes"
-    	    };
+  var winOption={
+    url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
+    title:"报告详情",
+    height:600,
+    width:1000,
+    iframeScroll:"yes"
+  };
 	openSWinInMain(winOption);
 }
 </script>
