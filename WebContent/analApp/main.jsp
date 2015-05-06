@@ -75,7 +75,7 @@ body {
           </div>
         </td>    
         <td style="width:100px;text-align:center;">
-          <a id="a_report" href="#" class="def-nav" onclick="showMainSeg('ReportView/main.jsp');">报告<span id="id_report_new" class="label label-badge label-danger" style="z-index:99;">12</span></a>
+          <a id="a_report" href="#" class="def-nav" onclick="showMainSeg('ReportView/main.jsp');">报告<span id="id_report_new" class="label label-badge label-danger" style="padding:5px;z-index:99;">12</span></a>
         </td>      
         <td style="width:100px;text-align:center;">
           <a href="#" class="def-nav" onclick="showMainSeg('FileView/main.jsp');">文件</a>
