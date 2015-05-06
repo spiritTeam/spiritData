@@ -70,6 +70,11 @@ border: 1px #a72525 solid;
 -webkit-border-radius: 10px;
 border-radius:10px;
 } 
+.li_inline{   
+    display:-moz-inline-box;
+    *display:inline;
+    display:inline-block;
+}
 
 </style>
 <body class="padding_top5" style="background-color:#FFFFFF">
@@ -251,11 +256,19 @@ function showSearchResultList(){
     var jsonRows = searchResultJsonData.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
-    	var id = jsonRows[i]["id"];
+      var id = jsonRows[i]["id"];
       var fileName = jsonRows[i]["name"];
       var fileFull = fileName;
-      var ahrf_file = '<a href="###" onclick="showReport(\''+id+'\');"><strong>'+fileFull+'</strong></a>';
-      
+      var unRead = jsonRows[i]["unRead"]; //是否未读过
+      var ahrf_file = '<a href="###" onclick="showReport(\''+id+'\',\''+unRead+'\');"><strong>'+fileFull+'</strong></a>';
+      //是否未读，如果未读则前面加个小红点用于标识
+      var optRound = '';
+      if(unRead){
+        optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;"/>';
+      }else{
+    	  optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;visibility:hidden;"/>';
+      }
+      ahrf_file = optRound + ahrf_file;
       var size = jsonRows[i]["size"];
       var createDate = jsonRows[i]["createDate"];
       //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
@@ -296,6 +309,7 @@ function showSearchResultThumb(){
       var desc = jsonRows[i]["desc"];
       var size = jsonRows[i]["size"];
       var createDate = jsonRows[i]["createDate"];
+      var unRead = jsonRows[i]["unRead"];
       var thumbUrl = jsonRows[i]["thumbUrl"];
       thumbUrl = thumbPath + getStr(thumbUrl,defaultThumbImg);
       
@@ -309,7 +323,17 @@ function showSearchResultThumb(){
       thumbHtmlStr += '        <span class="caption">'+desc+'</span>';
       //缩略图下方显示的内容
       thumbHtmlStr += '      <div class="media-wrapper">';
-      thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showReport(\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
+      //是否未读，如果未读则前面加个小红点用于标识
+      var optRound = '';
+      if(unRead){
+        optRound = '<span class="circleFillRed" style="display:block;text-align:center;float:right;"></span>';
+      }else{
+        optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;visibility:hidden;"/>';
+      }
+      //显示报告名
+      var ahrf_file = '<a href="###" class="card-heading" style="padding:0px;" onclick="showReport(\''+id+'\',\''+unRead+'\');">'+'<strong>'+fileFull+'</strong></a>';
+      var tbHead = '<ul style="list-style:none;width:100%;height:100%;padding-left:0px;margin-top:10px;margin-bottom:0px;"><li class="li_inline" style="padding-bottom:10px;">'+optRound+'</li><li class="li_inline">'+ahrf_file+'</li></ul>';      
+      thumbHtmlStr += '        '+tbHead;
       thumbHtmlStr += '      </div>'; 
       thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
       thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createDate+'';
@@ -334,19 +358,19 @@ function getOptHtml(aJsonRow,floatStyle){
 	}
 	var fileId = aJsonRow["id"];
   var fileName = aJsonRow["name"];
+  var unRead = aJsonRow["unRead"];
   var fileFull = fileName;
-	var optRound = '';
-  var unRead = aJsonRow["unRead"]; //是否未读过
-  if(unRead){
-    optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;"/>';
-  }
   //构建操作按钮
-  var optRelation = '<button type="button" class="btn bt_13_no" onclick="showRelation(\''+fileId+'\');">关系</button>';
-  var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileId+'\');">浏览</button>';
-  var optContent = "<div class='div_float_left'>"+optReportView+"&nbsp;&nbsp;"+optRelation+"</div>&nbsp;&nbsp;"+optRound;
+  var optRelation = '<button type="button" class="btn bt_13_no" onclick="showRelation(\''+fileId+'\');"><i class="icon-list"></i>关系</button>';
+  var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileId+'\',\''+unRead+'\');"><i class="icon-building"></i>浏览</button>';
+  var optContent = optReportView+"&nbsp;&nbsp;"+optRelation+"";
   var optHtml = optContent;
   if(typeof(floatStyle) != "undefined" && floatStyle=="floatRight"){
-	  optHtml = "<div style='float:right;margin-right:10px;'>"+optContent+"</div>";  
+	  if(floatStyle=="floatRight"){
+		  optHtml = "<div style='float:right;margin-right:10px;'>"+optContent+"</div>";
+	  }else if(floatStyle=="floatLeft"){
+	      optHtml = "<div style='float:left;margin-left:10px;'>"+optContent+"</div>";
+	  }
   }
   return optHtml;  
 }
@@ -359,28 +383,33 @@ function getInputSearchFileStr(){
 
 //查询结果中，当点击了某个文件，触发此操作
 function showRelation(reportId){
-  //alert("您点击了："+reportId);
-  
+  //alert("您点击了："+reportId);  
   var winOption={
-          url:"<%=path%>/analApp/demoData/force1.jsp",
-          title:"报告关系",
-          height:600,
-          width:500,
-          iframeScroll:"yes"
-        };
-openSWinInMain(winOption);
+    url:"<%=path%>/analApp/demoData/force1.jsp",
+    title:"报告关系",
+    height:600,
+    width:500,
+    iframeScroll:"yes"
+  };
+  openSWinInMain(winOption);
 }
 
 //模态显示报告信息
-function showReport(reportId) {
-    var winOption={
-            url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
-            title:"报告详情",
-            height:600,
-            width:1000,
-            iframeScroll:"yes"
-          };
+function showReport(reportId,unRead) {
+	//alert("showReport() reportId="+reportId+" , unRead="+unRead);
+  //弹出窗口显示报告详情
+	var winOption={
+    url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
+    title:"报告详情",
+    height:600,
+    width:1000,
+    iframeScroll:"yes"
+  };
   openSWinInMain(winOption);
+  //如果是未读报告，则通知后台已经看了该报告，后台修改查看状态标记为已读@@@
+  if(unRead){
+	  
+  }
 }
 
 /**
