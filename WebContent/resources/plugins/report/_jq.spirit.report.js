@@ -24,13 +24,15 @@ var level = 0;
  * 用于储存segment组成的树
  */
 var segTree=[];
-
+/**
+ * 百度地图全局变量
+ */
+var CONST_MAP_BAIDU = "BAIDU";
 /**
  * monitor用于监控setInterval
  */
 var monitor = new Object();
 //以上为全局变量部分=========
-
 /**
  * 生成报告方法
  */
@@ -204,6 +206,8 @@ function drawBaiDuPts(jQobj,_data,param){
   var zCol = param.X;
   //titleName
   var titleName = _data.titleName;
+  //data
+  var data = _data.tableBody;
   //decorateView 这个decorateView可能不太需要，因为向显示的数据直接标注出来就好，插件可以直接显示
   /**
    * decorateView = "
@@ -227,7 +231,150 @@ function drawBaiDuPts(jQobj,_data,param){
       if (displayReq) {
         var displayReqObj = str2Json(displayReq);
         var envelopeType = displayReqObj.envelopeType;
-        displayRule = resolveMapPtsDecorateView(model,envelopeType);
+        displayRule = resolveMapPtsDecorateView(model,envelopeType,data);
+        //根据需求，加载插件
+        require(
+          [
+            'echarts',
+            'echarts/chart/map'
+          ],
+          function (ec) {
+            //获取案件分布地图对象
+            var mapPtAnJian = ec.init(jQobj.attr('id'));
+            var optionPtAnJian = {
+              title:{
+                text:titleName,
+                x:'center'
+              },
+              legend: {
+                orient: 'vertical',
+                x:'left',
+                data:['抢劫类案件','盗窃类案件'],//图例为规划
+                textStyle : {
+                  color: '#000000'
+                }
+              },
+              tooltip:{
+                trigger:'item',
+                formatter: function(params){
+                  var retStr="";
+                  //标头
+                  var tmpdata = params.seriesName;
+                  if(tmpdata==undefined || tmpdata==""){
+                    return retStr;
+                  }else{
+                    retStr += tmpdata+'<br/>';
+                  }
+                  //案件类型
+                  var tmpdata = params.name;
+                  if(tmpdata!=undefined && tmpdata!=""){
+                    retStr+='案件类型:'+tmpdata+'<br/>';
+                  }
+                  //案件编号
+                  var tmpdata = params.value;
+                  if(tmpdata!=undefined && tmpdata!=""){
+                    retStr+='案件编号:'+tmpdata+'<br/>';
+                  }
+                  //案发时间
+                  tmpdata = params.data['afsj'];
+                  if(tmpdata!=undefined && tmpdata!=""){
+                     retStr+='案发时间:'+tmpdata+'<br/>';
+                  }
+                  return retStr;
+                  //return params.seriesName+'<br/>'+params.name+":"+(params.data['ajlx']==undefined?"":params.data['ajlx']);
+               }
+            },
+            series:[{
+              name:'抢劫类案件',
+              type:'map',
+              mapType:'china',
+              hoverable:false,
+              //selectedMode : 'single',
+              itemStyle:{
+              normal:{
+                label:{show:true}
+              },
+              emphasis:{label:{show:true}}
+            },
+            roam:false,
+            data:[],
+            markPoint:{
+            symbolSize:5,
+            effect : {
+              //show: true
+            },
+            itemStyle:{
+              normal:{
+                borderColor:'#87cefa',
+                borderWidth:1,
+                label:{
+                  show:false
+                }
+              },
+              emphasis:{
+                borderColor:'#1e90ff',
+                borderWidth:5,
+                label:{
+                  show:false  
+                }
+              }
+            },
+            data:[
+              {name: "持棍抢劫", value: 1001, afsj:'2013年1月2日'},  
+              {name: "飞车抢劫", value: 1002, afsj:'2012年3月5日'},  
+              {name: "拦路抢劫", value: 1003, afsj:'2013年6月7日'}  
+            ]
+          },
+          geoCoord:{
+            "持棍抢劫":[120.38,37.35],
+            "飞车抢劫":[110.479191, 29.117096],
+            "拦路抢劫":[113.3, 40.12]                        
+          }
+        },{
+          name:'盗窃类案件',
+          type:'map',
+          mapType:'china',
+          hoverable:false,
+          roam:false,
+          data:[],
+          markPoint:{
+            symbol : 'diamond',
+            symbolSize:6,
+            effect : {
+              //show: true
+            },
+            itemStyle:{
+              normal:{
+                borderColor:'#87cefa',
+                borderWidth:1,
+                label:{
+                  show:false
+                }
+              },
+              emphasis:{
+                borderColor:'#1e90ff',
+                borderWidth:5,
+                label:{
+                  show:false  
+                }
+              }
+            },
+            data:[
+              {name: "入室盗窃", value: 2001, afsj:'2013年1月2日'},  
+              {name: "网吧盗窃", value: 2002, afsj:'2012年3月5日'},  
+              {name: "商场盗窃", value: 2003, afsj:'2013年6月7日'}  
+            ]
+          },
+          geoCoord:{
+            "入室盗窃":[115.89, 28.68],
+            "网吧盗窃":[119.57, 39.95],
+            "商场盗窃":[113.08, 36.18]                        
+          }              
+        }
+      ]
+              };
+          }
+        );
       }
     } else {//无envelopeType的情况
       
@@ -236,7 +383,7 @@ function drawBaiDuPts(jQobj,_data,param){
     alert("解析MapPts_decorateView格式出错:decorateView格式出错！");
   }
   if (displayRule!=""&&displayRule!=null) {
-	  
+    
   }
 }
 
@@ -245,7 +392,7 @@ function drawBaiDuPts(jQobj,_data,param){
  * @param model 显示模型
  * @param envelopeType 封装类型：table/div
  */
-function resolveMapPtsDecorateView(model,envelopeType){
+function resolveMapPtsDecorateView(model,envelopeType,data){
   //返回数组
   var retAry = [];
   if (envelopeType=="table") {
@@ -262,7 +409,7 @@ function resolveMapPtsDecorateView(model,envelopeType){
           } else {
             var obj = new Object();
             obj.colName = tdAry[0];
-            obj.displayName = tdAry[0];
+            obj.displayName = tdAry[1];
             retAry.push(obj);
           }
         } else {
@@ -272,6 +419,11 @@ function resolveMapPtsDecorateView(model,envelopeType){
     } else {
       alert("解析MapPts_decorateView格式出错：原因可能是未匹配到完整的<tr></tr>标签");
     }
+  }
+  if (retAry!=null&&retAry.lenght>0) {
+	for (var k=0;k<retAry.length;k++) {
+		// TODO 未处理数据顺序
+	}
   }
   return retAry;
 }
