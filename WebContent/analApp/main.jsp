@@ -199,25 +199,25 @@ function startSearch(){
  */
 function searchNewReport(){
 	//异步查询是否有新增报表   
-	var searchParam={"searchType":"fectchNewReport","searchStr":""};
-	  var url="<%=path%>/reportview/searchNewReport.do";
-	  $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
-	    success:function(jsonData){
-	      try{
-	    	  newReportJson = jsonData;          
-          if(newReportJson.rows.length>0){
-        	  refreshNewReportDIV();
-          }
-	      }catch(e){
-	    	  alert("解析新报告异常    "+e.message);
-	        $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
-	      }
-	    },
-	    error:function(errorData){
-	    	alert("err");
-	      $.messager.alert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
-	    }
-	  }); 	
+  var searchParam={"searchType":"fectchNewReport","searchStr":""};
+  var url="<%=path%>/reportview/searchNewReport.do";
+  $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
+    success:function(jsonData){
+      try{
+        newReportJson = jsonData;          
+        if(newReportJson.rows.length>0){
+       	  refreshNewReportDIV();
+        }
+      }catch(e){
+    	  alert("解析新报告异常    "+e.message);
+        $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+      }
+    },
+    error:function(errorData){
+    	alert("err");
+      $.messager.alert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+    }
+  }); 	
 }
 
 /**
