@@ -1,10 +1,15 @@
+/**
+ *按照时间降序排列
+ *unRead-是否未读过
+ *thumbUrl-报告缩略图url,可以只存文件名，路径固定
+ */
 {
   "total":5,
   "rows":[
-    {"id":"1001","unRead":true,"name":"报告1","size":"1M","createData":"2014-08-01",desc:"报告1描述"},
-    {"id":"1002","unRead":true,"name":"报告2","size":"12M","createData":"2014-07-22",desc:"报告2描述"},
-    {"id":"1003","unRead":false,"name":"报告3","size":"35M","createData":"2013-11-05",desc:"报告3描述"},
-    {"id":"1004","unRead":false,"name":"报告4","size":"55M","createData":"2012-09-09",desc:"报告4描述"},
-    {"id":"1005","unRead":false,"name":"报告5","size":"16M","createData":"2013-1201",desc:"报告5描述"}
+    {"id":"1001","unRead":true,"name":"报告1","size":"1M","createDate":"2014-08-01",desc:"报告1描述",thumbUrl:""},
+    {"id":"1002","unRead":true,"name":"报告2","size":"12M","createDate":"2014-07-22",desc:"报告2描述",thumbUrl:""},
+    {"id":"1003","unRead":false,"name":"报告3","size":"35M","createDate":"2013-11-05",desc:"报告3描述",thumbUrl:""},
+    {"id":"1004","unRead":false,"name":"报告4","size":"55M","createDate":"2012-09-09",desc:"报告4描述",thumbUrl:""},
+    {"id":"1005","unRead":false,"name":"报告5","size":"16M","createDate":"2013-1201",desc:"报告5描述",thumbUrl:""}
   ]
 }

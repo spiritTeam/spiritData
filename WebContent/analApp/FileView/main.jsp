@@ -138,6 +138,9 @@ function initSubmitBt(){
 var SHOW_TYPE_LIST = "LIST"; //列表显示常量
 var SHOW_TYPE_THUMB = "THUMB"; //缩略图显示常量
 var showType = SHOW_TYPE_LIST; //默认是列表显示查询结果
+var thumbPath = "<%=path%>/analApp/images/"; //文件缩略图所存储的路径
+//根据文件后缀名查找相应的图标
+var fileSuffixImg = {"default":"file.png","xlsx":"excel.png","xls":"excel.png"};
 var searchResultJsonData = null; //保存查询后的结果
 var objDatatable = null; //列表显示对象
 
@@ -214,18 +217,19 @@ function showSearchResultList(){
 	  var jsonRows = searchResultJsonData.rows;
 	  var len = jsonRows.length;
 	  for(var i=0;i<len;i++){
+	    var fileId = jsonRows[i]["id"];
 	    var fileName = jsonRows[i]["name"];
 	    var suffix = jsonRows[i]["suffix"];
 	    var fileFull = fileName+"."+suffix;
-	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
+	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileId+'\');"><strong>'+fileFull+'</strong></a>';
 	    
 	    var size = jsonRows[i]["size"];
-	    var createData = jsonRows[i]["createData"];
+	    var createDate = jsonRows[i]["createDate"];
 	    //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
 	    //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
 	    //构建操作按钮
       var optHtml = getOptHtml(jsonRows[i],"floatCenter");
-      var arow={checked:false,data:[ahrf_file,size,createData,optHtml]};
+      var arow={checked:false,data:[ahrf_file,size,createDate,optHtml]};
 	    dtrows.push(arow);
 	  }
   }
@@ -250,26 +254,28 @@ function showSearchResultThumb(){
 	  var jsonRows = searchResultJsonData.rows;
 	  var len = jsonRows.length;
 	  for(var i=0;i<len;i++){
+		  var fileId = jsonRows[i]["id"];
 	    var fileName = jsonRows[i]["name"];
 	    var suffix = jsonRows[i]["suffix"];
+	    var thumbImgUrl = thumbPath + getSuffixImgName(suffix);
 	    var fileFull = fileName+"."+suffix;
 	    var size = jsonRows[i]["size"];
-	    var createData = jsonRows[i]["createData"];
+	    var createDate = jsonRows[i]["createDate"];
 	    var desc = jsonRows[i]["desc"];
 	    thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-2">';
 	    thumbHtmlStr += '    <div class="card">';
 		  thumbHtmlStr += '      <div class="media-wrapper">';
 	    //显示的缩略图片
-		  thumbHtmlStr += '        <img src="<%=path%>/analApp/images/excel.png" alt="">';
+		  thumbHtmlStr += '        <img src='+thumbImgUrl+' alt="">';
 	    thumbHtmlStr += '      </div>';   
 	    //鼠标移到图片上时，下拉浮动框显示的内容
 		  thumbHtmlStr += '        <span class="caption">'+desc+'</span>';
 	    //缩略图下方显示的内容
 	    thumbHtmlStr += '      <div class="media-wrapper">';
-		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
+		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileId+'\');"><strong>'+fileFull+'</strong></a>';
 	    thumbHtmlStr += '      </div>';  
 	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
-	    thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createData+'';
+	    thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createDate+'';
 	    thumbHtmlStr += '      </div>'; 
 	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
 	    var optHtml = getOptHtml(jsonRows[i],"floatRight");
@@ -295,13 +301,14 @@ function getOptHtml(aJsonRow,floatStyle){
   if(!aJsonRow){
     return "";
   }
+  var fileId = aJsonRow["id"];
   var fileName = aJsonRow["name"];
   var suffix = aJsonRow["suffix"];
   var fileFull = fileName+"."+suffix;
   //构建操作按钮
-  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileFull+'\');">浏览</button>';
+  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileId+'\');">浏览</button>';
   //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
-  var optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileFull+'\');">报告</button>';
+  var optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileId+'\');">报告</button>';
   var optContent = ""+optView+"&nbsp;&nbsp;"+optReport+"";
   var optHtml = optContent;
   if(typeof(floatStyle) != "undefined" && floatStyle=="floatRight"){
@@ -310,9 +317,21 @@ function getOptHtml(aJsonRow,floatStyle){
   return optHtml;  
 }
 
+//根据文件后缀名查找相应的图标，如果没有找到则返回default默认的图标
+function getSuffixImgName(suffixName){
+  var retName = fileSuffixImg["default"];
+  try{
+    retName = fileSuffixImg[suffixName];
+    if(typeof(retName) == "undefined" || retName==null || retName.length==0){
+    	retName = fileSuffixImg["default"];
+    }
+  }catch(e){alert("failed to fecth img suffix name. suffix="+suffixName+" err:"+e.message);}
+  return retName;
+}
+
 //查询结果中，当点击了某个文件，触发此操作
-function showFile(fileName){
-	alert("您点击了："+fileName);
+function showFile(fileId){
+	alert("您点击了："+fileId);
 }
 
 function showReport(reportId) {
