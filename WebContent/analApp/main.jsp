@@ -130,40 +130,11 @@ var INIT_PARAM = {
   myResize: myResize
 };
 
-
-function loadJs(url, callback){
-    var done = false;
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.language = 'javascript';
-    script.src = url;
-    script.onload = script.onreadystatechange = function(){
-      if (!done && (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete')){
-        done = true;
-        script.onload = script.onreadystatechange = null;
-        if (callback){
-          callback.call(script);
-        }
-      }
-    }
-    document.getElementsByTagName("head")[0].appendChild(script);
-  }
-
 /**变量定义区**/
 //记录新增报表信息
 var newReportArr=[];
 //主函数
 $(function() {
-	//重定向messager
-	
-//为Zui做兼容
-alert(IS_MAINPAGE);
-$.messager.alert("DDDD");
-var mainMessager = $.expend({}, $.messager);
-
-alert(IS_MAINPAGE+"DDD");
-  //load ZUI js
-	loadJs();
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
     $.messager.alert("页面初始化失败", initStr, "error");
