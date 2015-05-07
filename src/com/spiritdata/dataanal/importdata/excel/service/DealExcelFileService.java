@@ -66,10 +66,6 @@ public class DealExcelFileService {
     private TableMapService tmServier;
     @Resource
     private MdBasisService mdBasisServcie;
-    @Resource    
-    private TmpTableDataProcessService tmpTbDataProcService;
-    @Resource    
-    private AccumulateTableDataProcessService accuTbDataProcService;
 
     //key分析
     @Resource

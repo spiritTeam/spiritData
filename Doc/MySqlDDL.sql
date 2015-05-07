@@ -270,16 +270,17 @@ DROP TABLE IF EXISTS sa_task_info;
 CREATE TABLE sa_task_info (
   id            varchar(32)      NOT NULL                  COMMENT '任务表ID(UUID)',
   taskGId       varchar(32)                                COMMENT '外键任务组表ID(UUID)，可为空，任务可独立',
-  taskName      varchar(100)     NOT NULL                  COMMENT '任务名称',
   resultFileId  varchar(32)                                COMMENT '结果文件Id，若没有执行结果，此字段可以为空',
-  status        int(1) unsigned  NOT NULL                  COMMENT '任务状态1=准备执行；2=等待执行；3=正在执行；4=任务失效；5=执行成功；6=执行失败；',
+  taskName      varchar(100)     NOT NULL                  COMMENT '任务名称',
   langType      varchar(50)      NOT NULL  DEFAULT 'java'  COMMENT '任务执行语言：目前只有Java',
   excuteFunc    varchar(200)     NOT NULL                  COMMENT '任务执行方法，要实现一个接口',
   param         varchar(500)                               COMMENT '任务执行所需的参数，用json处理', 
+  status        int(1) unsigned  NOT NULL  DEFAULT 1       COMMENT '任务状态1=准备执行；2=等待执行；3=正在执行；4=任务失效；5=执行成功；6=执行失败；',
+  excuteCount   int(2) unsigned  NOT NULL  DEFAULT 0       COMMENT '任务执行次数', 
   descn         varchar(500)                               COMMENT '任务说明',
   firstTime     timestamp                                  COMMENT '第一次放入执行队列的时间',
-  beginTime     timestamp                                  COMMENT '开始执行时间',
-  endTime       timestamp                                  COMMENT '结束执行时间',
+  beginTime     timestamp                  DEFAULT NULL    COMMENT '开始执行时间',
+  endTime       timestamp                  DEFAULT NULL    COMMENT '结束执行时间',
   PRIMARY KEY (id)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务信息';

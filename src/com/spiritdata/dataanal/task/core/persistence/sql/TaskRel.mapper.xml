@@ -95,7 +95,8 @@
   <!-- 获得可够执行的任务组信息 -->
   <select id="getCanExcuteTaskRels" resultMap="BaseResultMap">
     select distinct <include refid="Base_Column_List_A"/>
-    from sa_task_rel a, sa_task_info b where b.status=1 and b.id=a.taskId
+    from sa_task_rel a, sa_task_info b
+    where b.status=1 and b.id=a.taskId
     order by a.taskId
   </select>
 </mapper>

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.spiritdata.dataanal.task.core.enumeration.StatusType;
 import com.spiritdata.dataanal.task.core.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.core.persistence.pojo.TaskInfoPo;
 import com.spiritdata.dataanal.task.core.persistence.pojo.TaskRelPo;
@@ -28,16 +29,28 @@ public class TaskInfo implements Serializable, ModelSwapPo {
     private TaskLangType langType; //执行语言，默认为java
     private String excuteFunc; //任务执行方法
     private Map<String, Object> param; //任务执行所需的参数
-    private int status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
+    private StatusType status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
+    private int excuteCount; //任务执行次数
     private String desc; //任务说明
+
     private Timestamp firstTime; //任务第一次准备执行时间
     private Timestamp beginTime; //本次开始执行时间
     private Timestamp endTime; //本次结束执行时间
 
     private TaskGroup taskGroup; //所属任务组，可为空
     private AnalResultFile resultFile; //分析结果文件，可为空
-
     private List<PreTask> preTasks; //前序任务列表
+
+    public TaskInfo() {
+    }
+    /**
+     * 从po对象构建本对象，通过此方法构造的对象是不完整的
+     * 
+     * @param po po对象
+     */
+    public TaskInfo(TaskInfoPo po) {
+        this.buildFromPo(po);
+    }
 
     public String getId() {
         return id;
@@ -70,11 +83,17 @@ public class TaskInfo implements Serializable, ModelSwapPo {
     public void setParam(String param) {
         this.param = (Map<String, Object>)JsonUtils.jsonToObj(param, Map.class);
     }
-    public int getStatus() {
+    public StatusType getStatus() {
         return status;
     }
-    public void setStatus(int status) {
+    public void setStatus(StatusType status) {
         this.status = status;
+    }
+    public int getExcuteCount() {
+        return excuteCount;
+    }
+    public void setExcuteCount(int excuteCount) {
+        this.excuteCount = excuteCount;
     }
     public String getDesc() {
         return desc;
@@ -118,37 +137,37 @@ public class TaskInfo implements Serializable, ModelSwapPo {
      * 设置为准备状态
      */
     public void setPrepared() {
-        this.status=1;
+        this.status=StatusType.PREPARE;
     }
     /**
      * 设置为等待状态
      */
     public void setWaiting() {
-        this.status=6;
+        this.status=StatusType.WAITING;
     }
     /**
      * 设置为正在执行
      */
     public void setProcessing() {
-        this.status=2;
+        this.status=StatusType.PROCESSING;
     }
     /**
      * 设置为失效
      */
     public void setAbatement() {
-        this.status=3;
+        this.status=StatusType.ABATE;
     }
     /**
      * 设置为执行成功
      */
     public void setSuccessed() {
-        this.status=4;
+        this.status=StatusType.SUCCESS;
     }
     /**
      * 设置为执行失败
      */
     public void setFailed() {
-        this.status=5;
+        this.status=StatusType.FAILD;
     }
 
     /**
@@ -181,7 +200,8 @@ public class TaskInfo implements Serializable, ModelSwapPo {
         ret.setLangType(this.langType.getValue());
         ret.setExcuteFunc(this.excuteFunc);
         ret.setParam(JsonUtils.objToJson(this.param));
-        ret.setStatus(this.status==0?1:this.status);
+        ret.setStatus(this.status.getValue());
+        ret.setExcuteCount(this.excuteCount);
         ret.setDesc(this.desc);
         if (this.resultFile!=null&&!StringUtils.isNullOrEmptyOrSpace(this.resultFile.getId())) ret.setRfId(this.resultFile.getId());
         if (this.taskGroup!=null&&!StringUtils.isNullOrEmptyOrSpace(this.taskGroup.getId())) ret.setTaskGId(this.taskGroup.getId());
@@ -227,7 +247,8 @@ public class TaskInfo implements Serializable, ModelSwapPo {
         this.langType = TaskLangType.getTaskLangType(_po.getLangType());
         this.excuteFunc = _po.getExcuteFunc();
         this.setParam(_po.getParam());
-        this.status = _po.getStatus();
+        this.status = StatusType.getStatusType(_po.getStatus());
+        this.excuteCount = _po.getExcuteCount();
         this.desc = _po.getDesc();
         this.firstTime = _po.getFirstTime();
         this.beginTime = _po.getBeginTime();
