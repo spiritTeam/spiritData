@@ -81,6 +81,7 @@ public class TaskRunning extends Thread {
             System.out.println("  [环境参数]每次清除任务或任务组信息的个数:"+this.tcc.getMEMORY_CLEANSIZE_TASK());
             System.out.println("  [环境参数]任务处理线程的初始化个数:"+this.tcc.getPROCESS_INITSIZE());
             System.out.println("  [环境参数]任务处理线程的最大个数:"+this.tcc.getPROCESS_MAXSIZE());
+            System.out.println("  [环境参数]任务最大不成功执行次数:"+this.tcc.getEXCUTECOUNT_LIMIT());
 
             System.out.println("2-初始化任务内存");
             TaskMemory tm = TaskMemory.getInstance();

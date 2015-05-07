@@ -118,6 +118,8 @@
   <!-- 获得可够执行的任务组信息 -->
   <select id="getCanExcuteTaskGroups" resultMap="BaseResultMap">
     select distinct <include refid="Base_Column_List_A"/>
-    from sa_task_group a, sa_task_info b where b.status=1 and a.id=b.taskGId order by a.beginTime
+    from sa_task_group a, sa_task_info b
+    where b.status=1 and a.id=b.taskGId and b.status=1
+    order by a.beginTime
   </select>
 </mapper>

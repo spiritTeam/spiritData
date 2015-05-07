@@ -23,10 +23,11 @@ public class TaskContextConfig {
     //每次清除任务组或任务信息的个数
     private int MEMORY_CLEANSIZE_TASK = (1<<4)-1; //2^4-1=15
     //任务处理线程的初始化大小
-    private int PROCESS_INITSIZE = 10; //默认为1秒
+    private int PROCESS_INITSIZE = 10; //默认为10个线程
     //任务处理线程的最大数
-    private int PROCESS_MAXSIZE = 30; //默认为1秒
-
+    private int PROCESS_MAXSIZE = 30; //默认为30个线程
+    //一个任务最多执行次数，超过这个次数若执行仍然失败，则认为任务失效
+    private int EXCUTECOUNT_LIMIT = 3; //默认为3次
 
     public int getMEMORY_MAXSIZE_TASKGROUP() {
         return MEMORY_MAXSIZE_TASKGROUP;
@@ -73,14 +74,21 @@ public class TaskContextConfig {
     public int getPROCESS_INITSIZE() {
         return PROCESS_INITSIZE;
     }
-    public void setPROCESS_INITSIZE(int pROCESS_INITSIZE) {
-        PROCESS_INITSIZE = pROCESS_INITSIZE;
+    public void setPROCESS_INITSIZE(int PROCESS_INITSIZE) {
+        this.PROCESS_INITSIZE = PROCESS_INITSIZE;
     }
 
     public int getPROCESS_MAXSIZE() {
         return PROCESS_MAXSIZE;
     }
-    public void setPROCESS_MAXSIZE(int pROCESS_MAXSIZE) {
-        PROCESS_MAXSIZE = pROCESS_MAXSIZE;
+    public void setPROCESS_MAXSIZE(int PROCESS_MAXSIZE) {
+        this.PROCESS_MAXSIZE = PROCESS_MAXSIZE;
+    }
+
+    public int getEXCUTECOUNT_LIMIT() {
+        return EXCUTECOUNT_LIMIT;
+    }
+    public void setEXCUTECOUNT_LIMIT(int EXCUTECOUNT_LIMIT) {
+        this.EXCUTECOUNT_LIMIT = EXCUTECOUNT_LIMIT;
     }
 }
