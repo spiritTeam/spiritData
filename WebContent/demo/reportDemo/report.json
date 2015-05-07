@@ -27,7 +27,7 @@
           "name":"2、单项指标分析",
           "content":
             "
-             showType:map_pts <d did='0' showType='map_pts' param='{^X^:^coordX^, ^Y^:^coordY^ ,^Z^:^coordZ^,^mapType^:^BAIDU^}' value='quotas[0]' 
+             showType:map_pts <d did='0' showType='map_pts' param='{^X^:^coordX^, ^Y^:^coordY^ ,^Z^:^coordZ^,^mapType^:^BAIDU^}' value='quotas[2]' 
                decorateView='<tr><td>姓名</td><td>#xm#</td></tr>
                <tr><td>身份证</td><td>#sfz#</td></tr>
                <tr><td>性别</td><td>#sb#</td></tr>
