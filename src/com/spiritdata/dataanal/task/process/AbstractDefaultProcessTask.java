@@ -15,7 +15,7 @@ public abstract class AbstractDefaultProcessTask implements ProcessTask {
      * @param param 此参数是根据taskInfo已经组织好的数据，也包括taskInfo
      * @return 返回一个Map，
      */
-    public abstract Map<String, Object> processMain(Map<String, Object> param);
+    public abstract Map<String, Object> action(Map<String, Object> param);
 
     /**
      * 按任务描述信息执行任务，本方法会自动解析taskInfo，把其中的参数组织为Map，并调用processMain方法。
