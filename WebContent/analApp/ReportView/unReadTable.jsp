@@ -17,19 +17,21 @@
 <title>未读报告列表页面</title>
 </head>
 <style>
-.div{padding:2px;border:1px solid #ddd;width:95%;height:95%;margin:0 auto;overflow-y:auto;}
+.div{padding:2px;border:0px solid #ddd;width:98%;height:98%;margin:0 auto;overflow-y:auto;overflow-x:hidden;}
 .border_no{border:0px solid red; }
 .padding_top5{padding-top:5px;}
+//easyui
+.datagrid-header-row td{background-color:blue;color:#fff}
 </style>
 <body class="padding_top5" style="background-color:#FFFFFF">
-  <div class="div border_no">
-    <table id="tb_unReadReport" class="easyui-datagrid" style="overflow-y:scroll;"
+  <div id="divtb" class="div border_no">
+    <table id="tb_unReadReport" class="easyui-datagrid" style="overflow-x:hidden;overflow-y:scroll;width:480px;height:520px;"
            data-options="singleSelect:true,collapsible:true">
       <thead>
         <tr>
-          <th data-options="field:'reportName',width:240,halign:'center',align:'left'">报告名</th>
-          <th data-options="field:'size',width:60,halign:'center',align:'center'">大小</th>
-          <th data-options="field:'createDate',width:100,halign:'center',align:'center'">生成日期</th>
+          <th data-options="field:'reportName',width:290,halign:'center',align:'left'"><label style='font-weight: bolder;color:blue;'>报告名</label></th>
+          <th data-options="field:'size',width:60,halign:'center',align:'right'"><label style='font-weight: bolder;color:blue;'>大小</label></th>
+          <th data-options="field:'createDate',width:100,halign:'center',align:'left'"><label style='font-weight: bolder;color:blue;'>生成日期</label></th>
         </tr>
       </thead>
     </table>    
@@ -37,53 +39,67 @@
 </body>
 
 <script>
-//定义常量变量
-var INTERVAL_TIME = 10*1000; //定时去后台取数据的间隔时间
 //主函数
 $(function() {
-	  //定时查询是否有新报告
-	  searchNewReport();
-	  setInterval(searchNewReport,INTERVAL_TIME);
+  $('#tb_unReadReport').datagrid({
+    rowStyler: function(index,row){
+      if (index % 2 > 0) {
+        return 'background-color:#F6F6F6;';//和一般的样式写法一样
+      }
+    },
+    onClickCell: function (rowIndex, field, value) {
+      //alert(rowIndex+" "+field+"  "+value);  
+      //当点击了某个新报告后，此报告名的字体变色，表示已经不是未读的报告
+      if(field=="reportName"){
+    	  showReport(value,rowIndex);
+    	  var _objRepName = $('#divtb').find("table[class='datagrid-btable']").find("td[field='reportName']")[rowIndex];
+    	  $(_objRepName).find("font").css("color","green");
+      }
+    }
+  });
+
+  var jsonData = getMainPage().newReportJson;
+  refreshNewReportTable(jsonData);  
+
+  //对每个报告名称加上点击事件  
+  $('#divtb').find("table[class='datagrid-btable']")
+  .find("td[field='reportName']").each(function(i,domEle){
+	  var _this = $(this);
+	  var _div = _this.find("div");
+	  var repId = jsonData.rows[i]["reportId"];
+	  //var ahrf_file = '<a href="###" onclick="showReport(\''+repId+'\',\''+i+'\');"><font style="font-weight: bolder;color:red;">'+_div.text()+'</font></a>';
+	  var ahrf_file = '<font style="font-weight: bolder;color:red;">'+_div.text()+'</font>';
+	  _div.empty();
+	  _div.append(ahrf_file);
+	  _this.mouseover(function(){_this.css("cursor","pointer");})
+	       .mouseout(function(){_this.css("cursor","default");});
+	});
+  
 });
 
-/**
- * 异步请求后台，查找是否有新的报告生成
- */
-function searchNewReport(){
-  //异步查询是否有新增报表   
-  var searchParam={"searchType":"fectchNewReport","searchStr":""};
-    var url="<%=path%>/reportview/searchNewReport.do";
-    alert("search new report");
-    $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
-      success:function(jsonData){
-        try{
-        	alert("succ");
-        	alert("searchNewReport():"+jsonData.rows.length);
-          if(jsonData.rows.length>0){
-            refreshNewReportTable(jsonData);
-          }
-        }catch(e){
-          $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
-        }
-      },
-      error:function(errorData){
-    	  alert("failed");
-        $.messager.alert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
-      }
-    });   
-}
 
 /**
  * 当有新数据来时，更新报告列表
  */
 function refreshNewReportTable(jsonData){
-	var obj = {"total":100,"rows":[{"reportName":"report1","size":"1M","createDate":"2015-01-02"}]};
+  //jsonData = {"total":100,"rows":[{"reportName":"report1","size":"1M","createDate":"2015-01-02","reportId":"12345"}]};
 	$('#tb_unReadReport').datagrid('loadData',jsonData);
 }
 
+//模态显示报告信息
+function showReport(reportId,rowidx) {
+  //弹出窗口显示报告详情
+  var winOption={
+    url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
+    title:"报告详情",
+    height:600,
+    width:1000,
+    iframeScroll:"yes"
+  };
+  openSWinInMain(winOption);
+  //如果是未读报告，则通知后台已经看了该报告，后台修改查看状态标记为已读@@@
 
-function detail1(value,row,index) {
-  if (value=='1') return '<div style="border:1px solid red; width:12px; height:12px;margin-left:5px;"></div>';
 }
+
 </script>
 </html>
