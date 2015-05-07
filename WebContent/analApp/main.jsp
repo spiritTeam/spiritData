@@ -130,40 +130,11 @@ var INIT_PARAM = {
   myResize: myResize
 };
 
-
-function loadJs(url, callback){
-    var done = false;
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.language = 'javascript';
-    script.src = url;
-    script.onload = script.onreadystatechange = function(){
-      if (!done && (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete')){
-        done = true;
-        script.onload = script.onreadystatechange = null;
-        if (callback){
-          callback.call(script);
-        }
-      }
-    }
-    document.getElementsByTagName("head")[0].appendChild(script);
-  }
-
 /**变量定义区**/
 //记录新增报表信息
-var newReportArr=[];
+var newReportJson={};
 //主函数
 $(function() {
-	//重定向messager
-	
-//为Zui做兼容
-alert(IS_MAINPAGE);
-$.messager.alert("DDDD");
-var mainMessager = $.expend({}, $.messager);
-
-alert(IS_MAINPAGE+"DDD");
-  //load ZUI js
-	loadJs();
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
     $.messager.alert("页面初始化失败", initStr, "error");
@@ -182,6 +153,10 @@ alert(IS_MAINPAGE+"DDD");
   $("#id_report_new").css("visibility","hidden");
   $("#id_report_new").click(function(){
     showModelNewReportList();
+    //当显示新增条数时，禁用报告按钮
+    var objAReport=$("#a_report");
+    objAReport.removeAttr("onclick");//去掉a标签中的onclick事件
+    setTimeout(function(){objAReport.attr("onclick","showMainSeg('ReportView/main.jsp');");},500);
   });
   
   //定时查询是否有新报告
@@ -228,18 +203,13 @@ function searchNewReport(){
 	  var url="<%=path%>/reportview/searchNewReport.do";
 	  $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
 	    success:function(jsonData){
-	    	mainMessager.alert("succddd");
 	      try{
-          var total = jsonData.total;
-          var data = jsonData.data;
-          for(var i=0;i<total;i++){
-        	  newReportArr.push(data[i]);  
-          }   
-          if(newReportArr.length>0){
+	    	  newReportJson = jsonData;          
+          if(newReportJson.rows.length>0){
         	  refreshNewReportDIV();
           }
 	      }catch(e){
-	    	  alert("exp");
+	    	  alert("解析新报告异常    "+e.message);
 	        $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
 	      }
 	    },
@@ -256,8 +226,9 @@ function searchNewReport(){
 function refreshNewReportDIV(){
 	var objAReport=$("#a_report");
 	var objShowCount = $("#id_report_new");
-	if(newReportArr.length>0){
-		objShowCount.html(newReportArr.length>99?"...":newReportArr.length);
+	var len = newReportJson.rows.length;
+	if(len>0){
+		objShowCount.html(len>99?"...":len);
 		objShowCount.css("visibility","visible");
 		//当显示新增条数时，禁用报告按钮
     //objAReport.removeAttr("href");//去掉a标签中的href属性
@@ -296,7 +267,7 @@ function showMainSeg(filepath){
  * 当点击新报告数量图标时，触发此方法
  */
 function showModelNewReportList(){
-  if(newReportArr.length<=0){
+  if(newReportJson.rows.length<=0){
     return;
   }
   var winOption={
