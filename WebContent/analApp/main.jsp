@@ -130,11 +130,40 @@ var INIT_PARAM = {
   myResize: myResize
 };
 
+
+function loadJs(url, callback){
+    var done = false;
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.language = 'javascript';
+    script.src = url;
+    script.onload = script.onreadystatechange = function(){
+      if (!done && (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete')){
+        done = true;
+        script.onload = script.onreadystatechange = null;
+        if (callback){
+          callback.call(script);
+        }
+      }
+    }
+    document.getElementsByTagName("head")[0].appendChild(script);
+  }
+
 /**变量定义区**/
 //记录新增报表信息
 var newReportArr=[];
 //主函数
 $(function() {
+	//重定向messager
+	
+//为Zui做兼容
+alert(IS_MAINPAGE);
+$.messager.alert("DDDD");
+var mainMessager = $.expend({}, $.messager);
+
+alert(IS_MAINPAGE+"DDD");
+  //load ZUI js
+	loadJs();
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
     $.messager.alert("页面初始化失败", initStr, "error");
@@ -199,6 +228,7 @@ function searchNewReport(){
 	  var url="<%=path%>/reportview/searchNewReport.do";
 	  $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
 	    success:function(jsonData){
+	    	mainMessager.alert("succddd");
 	      try{
           var total = jsonData.total;
           var data = jsonData.data;
@@ -209,10 +239,12 @@ function searchNewReport(){
         	  refreshNewReportDIV();
           }
 	      }catch(e){
+	    	  alert("exp");
 	        $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
 	      }
 	    },
 	    error:function(errorData){
+	    	alert("err");
 	      $.messager.alert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
 	    }
 	  }); 	
@@ -264,6 +296,25 @@ function showMainSeg(filepath){
  * 当点击新报告数量图标时，触发此方法
  */
 function showModelNewReportList(){
+  if(newReportArr.length<=0){
+    return;
+  }
+  var winOption={
+    url:"<%=path%>/analApp/ReportView/unReadTable.jsp",
+    //content:contentHtml,
+    title:"未读报告列表",
+    height:600,
+    width:500,
+    iframeScroll:"yes"
+  };
+  openSWinInMain(winOption);
+}
+
+/**
+ * 模态显示新报告列表
+ * 当点击新报告数量图标时，触发此方法
+ */
+function showModelNewReportListOld(){
 	if(newReportArr.length<=0){
 		return;
 	}
