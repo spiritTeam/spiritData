@@ -1,5 +1,6 @@
 package com.spiritdata.analApp.report.web;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,30 +34,102 @@ public class ReportViewController {
 	public @ResponseBody Map<String,Object> searchNewReport(HttpServletRequest req){
 		Map<String,Object> retMap = new HashMap<String,Object>();
 		try{
-			List<String> dataList = new ArrayList<String>(); 
+			List<NewRepotBean> dataList = new ArrayList<NewRepotBean>(); 
 		    Random random = new Random();
-		    int count = random.nextInt(5);
+		    int count = random.nextInt(50);
 		    int currCount = 0;
 			while(true) {
 			    if(currCount>= count){
 			    	break;
 			    }
 			    
-			    int idx = random.nextInt(10);
-			    String reportFile = "report"+idx;
-			    if(dataList.contains(reportFile)){
+			    int idx = random.nextInt(100);
+			    String reportId = "rptId"+idx;
+			    String reportName = "report"+idx;
+			    String size = idx+"M";
+			    String createDate = "2015-01-02";
+			    
+			    //检查是否已经有了重名的报告，如果有则抛弃
+			    boolean hasReport = false;
+			    for(NewRepotBean nrb:dataList){
+			    	if(nrb.isSameReportId(reportId)){
+			    		hasReport = true;
+			    		break;
+			    	}
+			    }
+			    if(hasReport){
 			    	continue;
 			    }else{
-			    	dataList.add(reportFile);
+			    	NewRepotBean anrb = new NewRepotBean(reportId,reportName,size,createDate);
+			    	dataList.add(anrb);
 			    	currCount++;	
 			    }
 			}
 			retMap.put("total", new Integer(count));
-			retMap.put("data", dataList);
+			retMap.put("rows", dataList);
+			//retMap.put("rows", dataList.toArray());
+			//retMap.put("rows",new ArrayList().add("1"));
 		}catch(Exception ex){
 			logger.error("failed to search new report. ",ex);
 		}
 		return retMap;
 	}
     
+    /**
+     * 新生成报告BEAN
+     * @author yfo
+     *
+     */
+    class NewRepotBean implements Serializable{
+    	/**
+		 * 
+		 */
+		private static final long serialVersionUID = 558467119425972711L;
+		public String reportId;
+		public String reportName;
+		public String size;
+		public String createDate;
+    	public NewRepotBean(){
+    		
+    	}
+    	public NewRepotBean(String reportId,String reportName,String size,String createDate){
+    		this.reportId = reportId;
+    		this.reportName = reportName;
+    		this.size = size;
+    		this.createDate = createDate;
+    	}
+    	
+    	/**
+    	 * 是否和指定的报告重名
+    	 * @param rptName
+    	 * @return
+    	 */
+    	boolean isSameReportId(String rptId){
+    		return this.reportId.equalsIgnoreCase(rptId);
+    	}
+		public String getReportId() {
+			return reportId;
+		}
+		public void setReportId(String reportId) {
+			this.reportId = reportId;
+		}
+		public String getReportName() {
+			return reportName;
+		}
+		public void setReportName(String reportName) {
+			this.reportName = reportName;
+		}
+		public String getSize() {
+			return size;
+		}
+		public void setSize(String size) {
+			this.size = size;
+		}
+		public String getCreateDate() {
+			return createDate;
+		}
+		public void setCreateDate(String createDate) {
+			this.createDate = createDate;
+		}
+    }
 }
