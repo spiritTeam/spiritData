@@ -307,13 +307,13 @@ function getOptHtml(aJsonRow,floatStyle){
   var suffix = aJsonRow["suffix"];
   var fileFull = fileName+"."+suffix;
   //构建操作按钮
-  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileId+'\');">浏览</button>';
+  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileId+'\');"><i class="icon-list"></i>浏览</button>';
   //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
   var optReport = '';
   if(!isUndefinedNullEmpty(reportId)){
-	  optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');">报告</button>';
+	  optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
   }else{
-	  optReport = '<button type="button" style="visibility:hidden;" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');">报告</button>';
+	  optReport = '<button type="button" style="visibility:hidden;" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
   }
   var optContent = ""+optView+"&nbsp;&nbsp;"+optReport+"&nbsp;";
   var optHtml = optContent;
