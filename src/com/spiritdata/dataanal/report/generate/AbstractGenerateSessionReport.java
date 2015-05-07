@@ -12,6 +12,7 @@ import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.service.ReportService;
 import com.spiritdata.dataanal.task.core.model.TaskGroup;
 import com.spiritdata.dataanal.task.core.service.TaskManageService;
+import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
@@ -90,11 +91,11 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         rfService.saveFile(rf);//报告的json存储
         //2.3-报告信息数据库存储
         reportService.saveReport(tr);
-        //3-任务处理，这是一个事务，若3.1失败，3.2也失败，整个构建报告和任务的过程就失败了
-        //3.1-存储，包括持久化和内存
+
+        //3-任务处理，存储，包括持久化和内存，存入内存的数据，任务框架会自动执行
         tmService.save(tg);
-        //3.2-以App为容器，构建任务执行的上下文
-        //4-启动任务
+        TaskMemoryService tms = TaskMemoryService.getInstance();
+        tms.addTaskGroup(tg);
 
         return report.getId();
     }

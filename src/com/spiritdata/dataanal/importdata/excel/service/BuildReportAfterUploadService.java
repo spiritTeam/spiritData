@@ -32,6 +32,7 @@ import com.spiritdata.dataanal.report.model.ReportSegment;
 import com.spiritdata.dataanal.report.model.SegmentList;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.task.TaskUtils;
+import com.spiritdata.dataanal.task.core.enumeration.StatusType;
 import com.spiritdata.dataanal.task.core.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.core.model.PreTask;
 import com.spiritdata.dataanal.task.core.model.TaskGraph;
@@ -130,7 +131,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tg.setId(SequenceUUID.getPureUUID());
         tg.setOwner(owner);
         tg.setWorkName("["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后分析任务");
-        tg.setStatus(0);
+        tg.setStatus(StatusType.PREPARE);
         tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\"}");
         
         //4-构建报告体，并生成相关的任务

@@ -28,10 +28,10 @@ public enum RelType1 {
     }
 
     public static RelType1 getRelType1(int value) {
-        if (value>0) return POSITIVE;
+        if (value>0) return RelType1.POSITIVE;
         else
-        if (value<0) return INVERSE;
+        if (value<0) return RelType1.INVERSE;
         else
-        return EQUAL;
+        return RelType1.EQUAL;
     }
 }

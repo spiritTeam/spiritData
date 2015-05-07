@@ -5,9 +5,11 @@ package com.spiritdata.dataanal.task.run.monitor;
  * @author wh
  */
 public class DispatchTask extends Thread {
+    private int interval = 100; //0.1秒
 
-    public DispatchTask() {
+    public DispatchTask(int interval) {
         super();
+        this.interval = interval;
         this.setName("dispatchTask");
     }
 
@@ -18,7 +20,7 @@ public class DispatchTask extends Thread {
     public void run() {
         while (true) {
             try {
-                sleep(1000);
+                sleep(this.interval);
                 System.out.println("abc");
                 //读取可执行的任务
             } catch (InterruptedException e) {
