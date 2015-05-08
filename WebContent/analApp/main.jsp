@@ -75,10 +75,10 @@ body {
           </div>
         </td>    
         <td style="width:100px;text-align:center;">
-          <a id="a_report" href="#" class="def-nav" onclick="showMainSeg('ReportView/main.jsp');">报告<span id="id_report_new" class="label label-badge label-danger" style="padding:5px;z-index:99;">12</span></a>
+          <a id="a_report" href="#" class="def-nav" onclick="showIframe('mainSegmentIframe_report');">报告<span id="id_report_new" class="label label-badge label-danger" style="padding:5px;z-index:99;">12</span></a>
         </td>      
         <td style="width:100px;text-align:center;">
-          <a href="#" class="def-nav" onclick="showMainSeg('FileView/main.jsp');">文件</a>
+          <a href="#" class="def-nav" onclick="showIframe('mainSegmentIframe_file');">文件</a>
         </td>        
         <td style="width:380px;text-align:center;">
           <div class="input-group" style="display:block;margin-bottom:5px;">
@@ -107,8 +107,10 @@ body {
 
 <!-- 中间主框架 -->
 <div id="mainSegment">
-<iframe id="mainSegmentIframe">
-</iframe>
+  <iframe id="mainSegmentIframe"></iframe>
+  <iframe id="mainSegmentIframe_report"></iframe>
+  <iframe id="mainSegmentIframe_file"></iframe>
+  <iframe id="mainSegmentIframe_search"></iframe>
 </div>
 
 </body>
@@ -143,11 +145,17 @@ $(function() {
   
   initSearchFileInput();
 
+  //初始化iframe
+  $("#mainSegmentIframe_report").attr("src",fileroot+"ReportView/main.jsp");
+  $("#mainSegmentIframe_file").attr("src",fileroot+"FileView/main.jsp");
+  //$("#mainSegmentIframe_search").attr("src",fileroot+"listView/main.jsp");
+  showIframe("mainSegmentIframe_report");
+  
   $('#topSegment').css({'border':'1px solid #95b8e7','border-bottom':'0','background':'#32C52F','overflow':'hidden','border':'0','border-bottom':'0px'});
   //$('#footSegment').css({'border':'1px solid #32C52F','background':'#32C52F','opacity':'1'});
   
   //默认进入报告查询页面
-  showMainSeg('ReportView/main.jsp');
+  //showMainSeg('ReportView/main.jsp');
   
   //新报告点击事件
   $("#id_report_new").css("visibility","hidden");
@@ -156,7 +164,7 @@ $(function() {
     //当显示新增条数时，禁用报告按钮
     var objAReport=$("#a_report");
     objAReport.removeAttr("onclick");//去掉a标签中的onclick事件
-    setTimeout(function(){objAReport.attr("onclick","showMainSeg('ReportView/main.jsp');");},500);
+    setTimeout(function(){objAReport.attr("onclick","showIframe('mainSegmentIframe_report');");},500);
   });
   
   //定时查询是否有新报告
@@ -168,11 +176,23 @@ $(function() {
 function initPosition() {
 	$("#mainSegmentIframe").width($("#mainSegment").width());
 	$("#mainSegmentIframe").height($("#mainSegment").height());
+	$("#mainSegmentIframe_report").width($("#mainSegment").width());
+	$("#mainSegmentIframe_report").height($("#mainSegment").height());
+	$("#mainSegmentIframe_file").width($("#mainSegment").width());
+	$("#mainSegmentIframe_file").height($("#mainSegment").height());
+	$("#mainSegmentIframe_search").width($("#mainSegment").width());
+	$("#mainSegmentIframe_search").height($("#mainSegment").height());
 };
 //当界面尺寸改变
 function myResize() {
   $("#mainSegmentIframe").width($("#mainSegment").width());
   $("#mainSegmentIframe").height($("#mainSegment").height());
+  $("#mainSegmentIframe_report").width($("#mainSegment").width());
+  $("#mainSegmentIframe_report").height($("#mainSegment").height());
+  $("#mainSegmentIframe_file").width($("#mainSegment").width());
+  $("#mainSegmentIframe_file").height($("#mainSegment").height());
+  $("#mainSegmentIframe_search").width($("#mainSegment").width());
+  $("#mainSegmentIframe_search").height($("#mainSegment").height());
 };
 
 //初始化查询输入框
@@ -186,12 +206,22 @@ function initSearchFileInput(){
   });
 }
 
+var lastSearchStr = "";
 //取出输入条件，提交查询
 function startSearch(){
   var searchStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
   //alert("您输入了："+ searchStr);
   var fileName = "listView/main.jsp?searchStr="+searchStr;
-  showMainSeg(fileName);
+  //showMainSeg(fileName);
+  //还需把查询条件传入###
+  if(lastSearchStr!=searchStr){	  
+	  $("#mainSegmentIframe_search").attr("src",fileroot+fileName);
+	  lastSearchStr = searchStr;
+  }else if(searchStr=="" && typeof($("#mainSegmentIframe_search").attr("src"))=="undefined"){
+	  //alert("first new");
+	  $("#mainSegmentIframe_search").attr("src",fileroot+fileName);
+  }
+  showIframe('mainSegmentIframe_search');
 }
 
 /**
@@ -233,11 +263,11 @@ function refreshNewReportDIV(){
 		//当显示新增条数时，禁用报告按钮
     //objAReport.removeAttr("href");//去掉a标签中的href属性
     objAReport.removeAttr("onclick");//去掉a标签中的onclick事件
-    setTimeout(function(){objAReport.attr("onclick","showMainSeg('ReportView/main.jsp');");},500);
+    setTimeout(function(){objAReport.attr("onclick","showIframe('mainSegmentIframe_report');");},500);
 	}else{
 		objShowCount.css("visibility","hidden");
 	  //objAReport.addAttr("href","###");//加上a标签中的href属性
-	  objAReport.attr("onclick","showMainSeg('ReportView/main.jsp');");//加上a标签中的onclick事件
+	  objAReport.attr("onclick","showIframe('mainSegmentIframe_report');");//加上a标签中的onclick事件
 	}
 }
 
@@ -253,6 +283,7 @@ function showMainSeg(filepath){
   }
   var fileurl = fileroot+filepath;
   $("#mainSegmentIframe").attr("src",fileurl);
+  showIframe("mainSegmentIframe");
 }
 
 /**
@@ -312,6 +343,22 @@ function showModelNewReportListOld(){
 //点击logo图片
 function clickLogo(){
   alert("click logo");
+}
+
+//隐藏所有iframe
+function showIframe(iframeId){
+	try{
+	  //先隐藏所有iframe
+	  $("#mainSegmentIframe").css("display","none");
+	  $("#mainSegmentIframe_report").css("display","none");
+	  $("#mainSegmentIframe_file").css("display","none");
+	  $("#mainSegmentIframe_search").css("display","none");
+	
+    //显示指定的iframe
+	  $("#"+iframeId+"").css("display","block");
+	}catch(e){
+		$.messager.alert("显示iframe异常", "显示失败：</br> iframeId="+iframeId+"  errMsg:"+(e?e.message:"")+"！<br/>", "error", function(){});
+	}
 }
 </script>
 </html>
