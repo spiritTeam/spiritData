@@ -209,12 +209,12 @@ function searchNewReport(){
        	  refreshNewReportDIV();
         }
       }catch(e){
-    	  alert("解析新报告异常    "+e.message);
+    	  //alert("解析新报告异常    "+e.message);
         $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
     error:function(errorData){
-    	alert("err");
+    	//alert("err");
       $.messager.alert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 	
@@ -239,13 +239,6 @@ function refreshNewReportDIV(){
 	  //objAReport.addAttr("href","###");//加上a标签中的href属性
 	  objAReport.attr("onclick","showMainSeg('ReportView/main.jsp');");//加上a标签中的onclick事件
 	}
-}
-
-/**
- * 显示指定的报表内容，点击事件触发此方法
- */
-function showReport(reportName){
-	alert("show reoprt:"+reportName);
 }
 
 /**
