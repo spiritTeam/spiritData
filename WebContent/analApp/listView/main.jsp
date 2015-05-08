@@ -5,7 +5,11 @@
   String path = request.getContextPath();
   String searchStr = request.getParameter("searchStr");
   //输入中文后需要做转码，否则会出现乱码
-  searchStr = new String(searchStr.getBytes("ISO-8859-1"),"UTF-8");
+  if(searchStr!=null){
+    searchStr = new String(searchStr.getBytes("ISO-8859-1"),"UTF-8");
+  }else{
+	  searchStr = "";
+  }
   //System.out.println("searchStr="+searchStr);
 %>
 <!DOCTYPE html>
@@ -85,6 +89,7 @@ $(function() {
 //开始查询
 function startSearch(){
 	var _searchStr = "<%=searchStr%>";
+	//alert("startSearch() searchStr="+_searchStr);
 	searchResultJsonData = {};
   //异步查询文件列表  
   var searchParam={"searchStr":_searchStr};
