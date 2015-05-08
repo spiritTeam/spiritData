@@ -385,7 +385,7 @@ function getInputSearchFileStr(){
 function showRelation(reportId){
   //alert("您点击了："+reportId);  
   var winOption={
-    url:"<%=path%>/analApp/demoData/force1.jsp",
+    url:"<%=path%>/analApp/ReportView/reportRelation.jsp?reportId="+reportId,
     title:"报告关系",
     height:600,
     width:500,
