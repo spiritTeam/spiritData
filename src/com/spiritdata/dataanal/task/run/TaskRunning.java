@@ -81,21 +81,25 @@ public class TaskRunning extends Thread {
             System.out.println("  [环境参数]每次清除任务或任务组信息的个数:"+this.tcc.getMEMORY_CLEANSIZE_TASK());
             System.out.println("  [环境参数]任务处理线程的初始化个数:"+this.tcc.getPROCESS_INITSIZE());
             System.out.println("  [环境参数]任务处理线程的最大个数:"+this.tcc.getPROCESS_MAXSIZE());
-            System.out.println("  [环境参数]任务最大不成功执行次数:"+this.tcc.getEXCUTECOUNT_LIMIT());
+            System.out.println("  [环境参数]任务最大不成功执行次数:"+this.tcc.getEXECUTECOUNT_LIMIT());
 
             System.out.println("2-初始化任务内存");
             TaskMemory tm = TaskMemory.getInstance();
             tm.init(tcc);
 
-            System.out.println("3-启动加载任务信息到内存的线程");
+            System.out.println("3-启动线程池");
+            TaskThreadPool.init(this.tcc.getPROCESS_INITSIZE(), this.tcc.getPROCESS_MAXSIZE());
+
+            System.out.println("4-启动——加载任务信息到内存——线程");
             startLoad();
 
-            System.out.println("4-启动任务分发线程");
+            System.out.println("5-启动——任务分发——线程");
             startDispatch();
 
-            System.out.println("5-启动清除已完成任务的");
+            /*
+            System.out.println("6-启动——清除已完成任务——线程");
             startCleanTaskMemory();
-
+*/
             System.out.println("-------------------------------");
         } catch (InterruptedException e) {
             e.printStackTrace();

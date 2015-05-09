@@ -7,27 +7,27 @@
 <mapper namespace="taskInfo">
   <!-- 对象定义:任务信息 -->
   <resultMap id="BaseResultMap" type="TaskInfo">
-    <id     column="id"           property="id"          jdbcType="VARCHAR"/>
-    <result column="taskGId"      property="taskGId"     jdbcType="VARCHAR"/>
-    <result column="resultFileId" property="rfId"        jdbcType="VARCHAR"/>
-    <result column="taskName"     property="taskName"    jdbcType="VARCHAR"/>
-    <result column="langType"     property="langType"    jdbcType="VARCHAR"/>
-    <result column="excuteFunc"   property="excuteFunc"  jdbcType="VARCHAR"/>
-    <result column="param"        property="param"       jdbcType="VARCHAR"/>
-    <result column="status"       property="status"      jdbcType="INTEGER"/>
-    <result column="excuteCount"  property="excuteCount" jdbcType="INTEGER"/>
-    <result column="descn"        property="desc"        jdbcType="VARCHAR"/>
-    <result column="firstTime"    property="firstTime"   jdbcType="TIMESTAMP"/>
-    <result column="beginTime"    property="beginTime"   jdbcType="TIMESTAMP"/>
-    <result column="endTime"      property="endTime"     jdbcType="TIMESTAMP"/>
+    <id     column="id"            property="id"            jdbcType="VARCHAR"/>
+    <result column="taskGId"       property="taskGId"       jdbcType="VARCHAR"/>
+    <result column="resultFileId"  property="rfId"          jdbcType="VARCHAR"/>
+    <result column="taskName"      property="taskName"      jdbcType="VARCHAR"/>
+    <result column="langType"      property="langType"      jdbcType="VARCHAR"/>
+    <result column="executeFunc"    property="executeFunc"    jdbcType="VARCHAR"/>
+    <result column="param"         property="param"         jdbcType="VARCHAR"/>
+    <result column="status"        property="status"        jdbcType="INTEGER"/>
+    <result column="executeCount"  property="executeCount"  jdbcType="INTEGER"/>
+    <result column="descn"         property="desc"          jdbcType="VARCHAR"/>
+    <result column="firstTime"     property="firstTime"     jdbcType="TIMESTAMP"/>
+    <result column="beginTime"     property="beginTime"     jdbcType="TIMESTAMP"/>
+    <result column="endTime"       property="endTime"       jdbcType="TIMESTAMP"/>
   </resultMap>
 
   <!-- 所有列 -->
   <sql id="Base_Column_List">
-    id, taskGId, resultFileId, taskName, langType, excuteFunc, param, status, excuteCount, descn, firstTime, beginTime, endTime
+    id, taskGId, resultFileId, taskName, langType, executeFunc, param, status, executeCount, descn, firstTime, beginTime, endTime
   </sql>
   <sql id="Base_Column_List_A">
-    a.id, a.taskGId, a.resultFileId, a.taskName, a.langType, a.excuteFunc, a.param, a.status, a.descn, a.excuteCount, a.firstTime, a.beginTime, a.endTime
+    a.id, a.taskGId, a.resultFileId, a.taskName, a.langType, a.executeFunc, a.param, a.status, a.descn, a.executeCount, a.firstTime, a.beginTime, a.endTime
   </sql>
 
   <!-- 条件子句 -->
@@ -39,10 +39,10 @@
         <if test="rfId!=null"> and resultFileId=#{rfId,jdbcType=VARCHAR}</if>
         <if test="taskName!=null"> and taskName=#{taskName,jdbcType=VARCHAR}</if>
         <if test="langType!=null"> and langType=#{langType,jdbcType=VARCHAR}</if>
-        <if test="excuteFunc!=null"> and excuteFunc=#{excuteFunc,jdbcType=VARCHAR}</if>
+        <if test="executeFunc!=null"> and executeFunc=#{executeFunc,jdbcType=VARCHAR}</if>
         <if test="param!=null"> and param=#{param,jdbcType=VARCHAR}</if>
         <if test="status!=null and status!=0"> and status=#{status,jdbcType=INTEGER}</if>
-        <if test="excuteCount!=null"> and excuteCount=#{excuteCount,jdbcType=INTEGER}</if>
+        <if test="executeCount!=null"> and executeCount=#{executeCount,jdbcType=INTEGER}</if>
         <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR}</if>
         <if test="firstTime!=null"> and firstTime=#{firstTime,jdbcType=TIMESTAMP}</if>
         <if test="beginTime!=null"> and beginTime=#{beginTime,jdbcType=TIMESTAMP}</if>
@@ -80,10 +80,10 @@
       <if test="rfId!=null">resultFileId,</if>
       <if test="taskName!=null">taskName,</if>
       <if test="langType!=null">langType,</if>
-      <if test="excuteFunc!=null">excuteFunc,</if>
+      <if test="executeFunc!=null">executeFunc,</if>
       <if test="param!=null">param,</if>
       <if test="status!=null and status!=0">status,</if>
-      <if test="excuteCount!=null">excuteCount,</if>
+      <if test="executeCount!=null">executeCount,</if>
       <if test="desc!=null">descn,</if>
       <if test="firstTime!=null">firstTime,</if>
       <if test="beginTime!=null">beginTime,</if>
@@ -95,10 +95,10 @@
       <if test="rfId!=null">#{rfId,jdbcType=VARCHAR},</if>
       <if test="taskName!=null">#{taskName,jdbcType=VARCHAR},</if>
       <if test="langType!=null">#{langType,jdbcType=VARCHAR},</if>
-      <if test="excuteFunc!=null">#{excuteFunc,jdbcType=VARCHAR},</if>
+      <if test="executeFunc!=null">#{executeFunc,jdbcType=VARCHAR},</if>
       <if test="param!=null">#{param,jdbcType=VARCHAR},</if>
       <if test="status!=null and status!=0">#{status,jdbcType=INTEGER},</if>
-      <if test="excuteCount!=null">#{excuteCount,jdbcType=INTEGER},</if>
+      <if test="executeCount!=null">#{executeCount,jdbcType=INTEGER},</if>
       <if test="desc!=null">#{desc,jdbcType=VARCHAR},</if>
       <if test="firstTime!=null">#{firstTime,jdbcType=TIMESTAMP},</if>
       <if test="beginTime!=null">#{beginTime,jdbcType=TIMESTAMP},</if>
@@ -114,10 +114,10 @@
       <if test="rfId!=null">resultFileId=#{rfId,jdbcType=VARCHAR},</if>
       <if test="taskName!=null">taskName=#{taskName,jdbcType=VARCHAR},</if>
       <if test="langType!=null">langType=#{langType,jdbcType=VARCHAR},</if>
-      <if test="excuteFunc!=null">excuteFunc=#{excuteFunc,jdbcType=VARCHAR},</if>
+      <if test="executeFunc!=null">executeFunc=#{executeFunc,jdbcType=VARCHAR},</if>
       <if test="param!=null">param=#{param,jdbcType=VARCHAR},</if>
       <if test="status!=null and status!=0">status=#{status,jdbcType=INTEGER},</if>
-      <if test="excuteCount!=null">excuteCount=#{excuteCount,jdbcType=INTEGER},</if>
+      <if test="executeCount!=null">executeCount=#{executeCount,jdbcType=INTEGER},</if>
       <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR},</if>
       <if test="firstTime!=null">firstTime=#{firstTime,jdbcType=TIMESTAMP},</if>
       <if test="beginTime!=null">beginTime=#{beginTime,jdbcType=TIMESTAMP},</if>
@@ -138,7 +138,7 @@
   </delete>
 
   <!-- 获得可够执行的任务组信息 -->
-  <select id="getCanExcuteTaskInfos" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/> from sa_task_info where status=1 order taskGId, firstTime
+  <select id="getCanExecuteTaskInfos" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from sa_task_info where (status=1 or status=4) order by taskGId, firstTime
   </select>
 </mapper>

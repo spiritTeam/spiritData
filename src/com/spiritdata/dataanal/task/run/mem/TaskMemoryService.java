@@ -56,11 +56,13 @@ public class TaskMemoryService {
 
     /**
      * 把任务组加入任务内存，同时构造内存中对应的任务信息
+     * @param tg 预加入的任务组
+     * @return 加入成功返回true，否则返回false
      */
     public boolean addTaskGroup(TaskGroup tg) {
         if (tm.taskGroupMap.size()>tm.MEMORY_MAXSIZE_TASKGROUP) return false; //已经不能插入任务组了
         if (tg.getStatus()!=StatusType.PREPARE) throw new Dtal0403CException("只有为准备执行状态的任务组才能加入任务内存");
-
+        
         if (tg.getTaskInfoSize()>0) {
             boolean inserted = false;
             Map<String, TaskInfo> _m = tg.getTaskGraph().getTaskMap();
@@ -70,8 +72,10 @@ public class TaskMemoryService {
                 if (!inserted) break;
             }
             if (inserted) {
-                tg.setStatus(StatusType.PROCESSING);//设置为正在执行
-                if (tm.taskGroupMap.get(tg.getId())==null) tm.taskGroupMap.put(tg.getId(), tg);
+                if (tm.taskGroupMap.get(tg.getId())==null) {
+                    tg.setProcessing();//设置为正在执行
+                    tm.taskGroupMap.put(tg.getId(), tg);
+                }
                 return true;
             }
         }
@@ -80,17 +84,36 @@ public class TaskMemoryService {
 
     /**
      * 把任务信息加入内存
+     * @param ti 预加入的任务
+     * @return 加入成功返回true，否则返回false
      */
     public boolean addTaskInfo(TaskInfo ti) {
         if ((tm.taskInfoMap.size())>=tm.MEMORY_MAXSIZE_TASKINFO) return false; //任务信息数量已经达到了上限，不能再加入了
         if (ti.getStatus()!=StatusType.PREPARE) throw new Dtal0403CException("只有为准备执行状态的任务才能加入任务内存");
-
-        tm.taskInfoSortList.add(getInsertIndex(ti), ti.getId());
-        tm.taskInfoMap.put(ti.getId(), ti);
-        ti.setStatus(StatusType.WAITING);
+        if (tm.taskInfoMap.get(ti.getId())==null) {
+            tm.taskInfoSortList.add(getInsertIndex(ti), ti.getId());
+            ti.setWaiting();
+            tm.taskInfoMap.put(ti.getId(), ti);
+        }
         return true;
     }
 
+    /**
+     * 把执行失败的任务加入内存，以便再次执行
+     * @param ti 预加入的任务
+     * @return 加入成功返回true，否则返回false
+     */
+    public boolean addFaildTaskInfo(TaskInfo ti) {
+        if (ti.getStatus()==StatusType.FAILD) {
+            ti.setWaiting();
+            if (tm.taskInfoMap.get(ti.getId())==null) tm.taskInfoMap.put(ti.getId(), ti);
+            if (!_find(ti)) tm.taskInfoSortList.add(getInsertIndex(ti), ti.getId());
+            return true;
+        }
+        return false;
+    }
+
+    //以下函数是需要在线程中调用的
     /**
      * 装载数据库信息到任务内存
      */
@@ -103,14 +126,14 @@ public class TaskMemoryService {
         TaskInfo selfTi, preTi;
 
         //1-构造任务组结构，主表
-        List<TaskGroupPo> tgL = tmService.getCanExcuteTaskGroups();
+        List<TaskGroupPo> tgL = tmService.getCanExecuteTaskGroups();
         Map<String, TaskGroup> tempTGm = new HashMap<String, TaskGroup>();
         for (TaskGroupPo tgp: tgL) {
             tempTGm.put(tgp.getId(), new TaskGroup(tgp));
         }
 
         //2-处理任务信息结构
-        List<TaskInfoPo> tiL = tmService.getCanExcuteTaskInfos();
+        List<TaskInfoPo> tiL = tmService.getCanExecuteTaskInfos();
         Map<String, TaskInfo> tempTIm = new HashMap<String, TaskInfo>();
         for (TaskInfoPo tip: tiL) {
             selfTi = new TaskInfo(tip);
@@ -120,7 +143,7 @@ public class TaskMemoryService {
         }
 
         //3-补充任务中的前置任务
-        List<TaskRelPo> trL = tmService.getCanExcuteTaskRels();
+        List<TaskRelPo> trL = tmService.getCanExecuteTaskRels();
         if (trL!=null&&trL.size()>0) {
             for (TaskRelPo trp: trL) {
                 selfTi = tempTIm.get(trp.getTaskId());
@@ -149,24 +172,21 @@ public class TaskMemoryService {
     public TaskInfo getNextCanProcessTaskInfo() {
         TaskInfo ret = null;
         String taskInfoId = null;
-        boolean preTaskComplete = false;
         int i=0;
         for (; i<tm.taskInfoSortList.size(); i++) {
             taskInfoId = tm.taskInfoSortList.get(i);
             ret = tm.taskInfoMap.get(taskInfoId);
-            if (ret.getPreTasks()==null||ret.getPreTasks().size()==0) preTaskComplete = true;
-            else {
-                preTaskComplete = true;
+            if (ret.getPreTasks()!=null&&ret.getPreTasks().size()>0) {
                 for (PreTask pt: ret.getPreTasks()) {
                     if (pt.getPreTask().getStatus()==StatusType.PREPARE
                         ||pt.getPreTask().getStatus()==StatusType.WAITING
                         ||pt.getPreTask().getStatus()==StatusType.PROCESSING) {
-                        preTaskComplete=false;
-                        break;
+                        ret = null;
+                        continue;
                     }
                 }
             }
-            if (!preTaskComplete) ret = null;
+            if (ret!=null) break;
         }
         if (ret!=null) tm.taskInfoSortList.remove(i);
         return ret;
@@ -178,7 +198,7 @@ public class TaskMemoryService {
     public void cleanTaskMemory() {
         Map<String, TaskGroup> taskGroupMap = tm.taskGroupMap;
         Map<String, TaskInfo> taskInfoMap = tm.taskInfoMap;
-        int cleanLimitSize = tm.MEMORY_CLEANSIZE_TASK; //么每次
+        int cleanLimitSize = tm.MEMORY_CLEANSIZE_TASK; //
         int cleanTG_Count = 0;
         int cleanTI_Count = 0;
 
@@ -221,6 +241,13 @@ public class TaskMemoryService {
         System.out.println("本次清除已完成的任务组["+cleanTG_Count+"]个、任务["+cleanTI_Count+"]个。");
     }
 
+    /**
+     * 得到可执行任务队列的长度，用于判断是否需要分发任务
+     * @return 可执行任务队列的长度
+     */
+    public int getExecuterListSize() {
+        return tm.taskInfoSortList.size();
+    }
     /**
      * 调整所有者Id。登录成功后，切换所有者时所调用的方法
      * @param oldOwnerId 旧所有者Id，目前是SessionId
@@ -283,5 +310,12 @@ public class TaskMemoryService {
             }
         }
         return 0;
+    }
+
+    private boolean _find(TaskInfo ti) {
+        for (String id: tm.taskInfoSortList) {
+            if (id.endsWith(ti.getId())) return true;
+        }
+        return false;
     }
 }

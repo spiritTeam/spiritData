@@ -7,14 +7,16 @@ package com.spiritdata.dataanal.task.run;
 public class TaskContextConfig {
     //==主存储限制
     //任务内存对象中最大任务组个数
-    private int MEMORY_MAXSIZE_TASKGROUP = (1<<10)-1; //2^10=1023
+    private int MEMORY_MAXSIZE_TASKGROUP = (1<<8)-1; //2^10=255
     //任务内存对象中最大任务个数
-    private int MEMORY_MAXSIZE_TASKINFO = (1<<13)-1; //2^13=8095
+    private int MEMORY_MAXSIZE_TASKINFO = (1<<10)-1; //2^13=1023
 
     //==时间间隔设置
     //加载数据的间隔时间
     //private int LOAD_INTERVAL = 1*1000*60*5; //默认是5分钟
-    private int LOAD_INTERVAL = 1*1000*1; //测试为1秒
+    //private int LOAD_INTERVAL = 1*1000*1; //测试为1秒
+    private int LOAD_INTERVAL = 1*1000*60*10; //默认是20分钟，便于调试
+
     //任务分发到线程池过程的间隔时间
     private int DISPATCH_INTERVAL = 1*1000*1; //默认为1秒
     //清除已完成任务的时间间隔
@@ -27,7 +29,7 @@ public class TaskContextConfig {
     //任务处理线程的最大数
     private int PROCESS_MAXSIZE = 30; //默认为30个线程
     //一个任务最多执行次数，超过这个次数若执行仍然失败，则认为任务失效
-    private int EXCUTECOUNT_LIMIT = 3; //默认为3次
+    private int EXECUTECOUNT_LIMIT = 3; //默认为3次
 
     public int getMEMORY_MAXSIZE_TASKGROUP() {
         return MEMORY_MAXSIZE_TASKGROUP;
@@ -85,10 +87,10 @@ public class TaskContextConfig {
         this.PROCESS_MAXSIZE = PROCESS_MAXSIZE;
     }
 
-    public int getEXCUTECOUNT_LIMIT() {
-        return EXCUTECOUNT_LIMIT;
+    public int getEXECUTECOUNT_LIMIT() {
+        return EXECUTECOUNT_LIMIT;
     }
-    public void setEXCUTECOUNT_LIMIT(int EXCUTECOUNT_LIMIT) {
-        this.EXCUTECOUNT_LIMIT = EXCUTECOUNT_LIMIT;
+    public void setEXECUTECOUNT_LIMIT(int EXECUTECOUNT_LIMIT) {
+        this.EXECUTECOUNT_LIMIT = EXECUTECOUNT_LIMIT;
     }
 }
