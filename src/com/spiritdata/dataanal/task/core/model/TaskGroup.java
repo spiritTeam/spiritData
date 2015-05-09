@@ -23,7 +23,7 @@ public class TaskGroup implements Serializable, ModelSwapPo {
     private Owner owner; //所有者
     private String workName; //任务组工作名称
     private StatusType status; //任务组状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；
-    private int defaultExcuteCountLimit; //其子任务默认的执行次数的上限，目前不支持各自任务有自己的执行次数上线，此属性是程序属性，不记录在数据库中
+    private int defaultExecuteCountLimit; //其子任务默认的执行次数的上限，目前不支持各自任务有自己的执行次数上线，此属性是程序属性，不记录在数据库中
     private String desc; //任务组说明
     private Timestamp beginTime; //任务开始启动时间
 
@@ -67,14 +67,11 @@ public class TaskGroup implements Serializable, ModelSwapPo {
     public StatusType getStatus() {
         return status;
     }
-    public void setStatus(StatusType status) {
-        this.status = status;
+    public int getDefaultExecuteCountLimit() {
+        return defaultExecuteCountLimit;
     }
-    public int getDefaultExcuteCountLimit() {
-        return defaultExcuteCountLimit;
-    }
-    public void setDefaultExcuteCountLimit(int defaultExcuteCountLimit) {
-        this.defaultExcuteCountLimit = defaultExcuteCountLimit;
+    public void setDefaultExecuteCountLimit(int defaultExecuteCountLimit) {
+        this.defaultExecuteCountLimit = defaultExecuteCountLimit;
     }
     public String getDesc() {
         return desc;

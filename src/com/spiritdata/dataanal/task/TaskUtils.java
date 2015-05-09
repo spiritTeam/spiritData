@@ -1,6 +1,7 @@
 package com.spiritdata.dataanal.task;
 
 import com.spiritdata.dataanal.task.core.model.TaskInfo;
+import com.spiritdata.dataanal.task.process.TaskProcess;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal0401CException;
@@ -29,4 +30,10 @@ public abstract class TaskUtils {
         aj.setUrl("jsonD/getJsonD.do?jsonDId="+arf.getId());
         return aj;
     }
-}
+
+    public static TaskProcess loadClass(TaskInfo ti) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        //注意，这里没有重写classLoader，任务中的
+        TaskProcess tp = (TaskProcess)(Class.forName(ti.getExecuteFunc()).newInstance());
+        return tp;
+    }
+ }

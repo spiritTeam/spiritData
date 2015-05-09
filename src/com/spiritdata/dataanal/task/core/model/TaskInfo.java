@@ -27,10 +27,10 @@ public class TaskInfo implements Serializable, ModelSwapPo {
     private String id; //任务
     private String taskName; //任务名称
     private TaskLangType langType; //执行语言，默认为java
-    private String excuteFunc; //任务执行方法
+    private String executeFunc; //任务执行方法
     private Map<String, Object> param; //任务执行所需的参数
     private StatusType status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
-    private int excuteCount; //任务执行次数
+    private int executeCount; //任务执行次数
     private String desc; //任务说明
 
     private Timestamp firstTime; //任务第一次准备执行时间
@@ -70,11 +70,11 @@ public class TaskInfo implements Serializable, ModelSwapPo {
     public void setLangType(TaskLangType langType) {
         this.langType = langType;
     }
-    public String getExcuteFunc() {
-        return excuteFunc;
+    public String getExecuteFunc() {
+        return executeFunc;
     }
-    public void setExcuteFunc(String excuteFunc) {
-        this.excuteFunc = excuteFunc;
+    public void setExecuteFunc(String executeFunc) {
+        this.executeFunc = executeFunc;
     }
     public Map<String, Object> getParam() {
         return param;
@@ -86,14 +86,11 @@ public class TaskInfo implements Serializable, ModelSwapPo {
     public StatusType getStatus() {
         return status;
     }
-    public void setStatus(StatusType status) {
-        this.status = status;
+    public int getExecuteCount() {
+        return executeCount;
     }
-    public int getExcuteCount() {
-        return excuteCount;
-    }
-    public void setExcuteCount(int excuteCount) {
-        this.excuteCount = excuteCount;
+    public void setExecuteCount(int executeCount) {
+        this.executeCount = executeCount;
     }
     public String getDesc() {
         return desc;
@@ -198,10 +195,10 @@ public class TaskInfo implements Serializable, ModelSwapPo {
 
         ret.setTaskName(this.taskName);
         ret.setLangType(this.langType.getValue());
-        ret.setExcuteFunc(this.excuteFunc);
+        ret.setExecuteFunc(this.executeFunc);
         ret.setParam(JsonUtils.objToJson(this.param));
         ret.setStatus(this.status.getValue());
-        ret.setExcuteCount(this.excuteCount);
+        ret.setExecuteCount(this.executeCount);
         ret.setDesc(this.desc);
         if (this.resultFile!=null&&!StringUtils.isNullOrEmptyOrSpace(this.resultFile.getId())) ret.setRfId(this.resultFile.getId());
         if (this.taskGroup!=null&&!StringUtils.isNullOrEmptyOrSpace(this.taskGroup.getId())) ret.setTaskGId(this.taskGroup.getId());
@@ -245,10 +242,10 @@ public class TaskInfo implements Serializable, ModelSwapPo {
         this.id = _po.getId();
         this.taskName = _po.getTaskName();
         this.langType = TaskLangType.getTaskLangType(_po.getLangType());
-        this.excuteFunc = _po.getExcuteFunc();
+        this.executeFunc = _po.getExecuteFunc();
         this.setParam(_po.getParam());
         this.status = StatusType.getStatusType(_po.getStatus());
-        this.excuteCount = _po.getExcuteCount();
+        this.executeCount = _po.getExecuteCount();
         this.desc = _po.getDesc();
         this.firstTime = _po.getFirstTime();
         this.beginTime = _po.getBeginTime();
