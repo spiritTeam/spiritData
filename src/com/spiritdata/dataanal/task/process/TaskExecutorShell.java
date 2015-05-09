@@ -7,6 +7,7 @@ import javax.servlet.ServletContext;
 
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.spiritdata.dataanal.exceptionC.Dtal0405CException;
 import com.spiritdata.dataanal.task.TaskUtils;
 import com.spiritdata.dataanal.task.core.enumeration.StatusType;
 import com.spiritdata.dataanal.task.core.model.TaskInfo;
@@ -46,13 +47,12 @@ public class TaskExecutorShell implements Runnable {
                 TaskProcess tp = TaskUtils.loadClass(this.ti);
                 resultMap = tp.process(ti.getParam());
                 //根据结果，设置处理参数
-                if (resultMap.get("sysResultData")!=null) {
+                if (resultMap!=null&&resultMap.get("sysResultData")!=null) {
                     Map<String, String> sysResultData = (Map<String, String>)resultMap.get("sysResultData");
                     if (sysResultData.get("resultType").trim().equals("1")) success=true;
                     if (sysResultData.get("notSaveResult2File").trim().equals("1")) notSaveResult2File=true;
                 }
             } catch(Exception e) {
-                //执行失败不做任何处理
                 e.printStackTrace();
             }
             //3-执行结束处理

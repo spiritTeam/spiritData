@@ -93,9 +93,9 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         reportService.saveReport(tr);
 
         //3-任务处理，存储，包括持久化和内存，存入内存的数据，任务框架会自动执行
-        tmService.save(tg);
+        tmService.save(tg);//持久化存储
         TaskMemoryService tms = TaskMemoryService.getInstance();
-        tms.addTaskGroup(tg);
+        tms.addTaskGroup(tg);//缓存存储
 
         return report.getId();
     }
