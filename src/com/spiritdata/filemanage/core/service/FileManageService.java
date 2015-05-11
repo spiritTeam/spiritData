@@ -105,4 +105,16 @@ public class FileManageService {
             throw new Flmg0101CException(e);
         }
     }
+
+    /**
+     * 根据文件Id，得到文件信息
+     * @param id 文件Id
+     * @return 文件信息
+     */
+    public FileInfo getFileInfoById(String id) {
+        FileIndexPo fiPo = fileIndexDao.getInfoObject(id);
+        if (fiPo==null) return null;
+        FileInfo ret = new FileInfo();
+        return ret;
+    }
 }

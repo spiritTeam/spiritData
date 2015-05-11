@@ -11,6 +11,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.spiritdata.dataanal.exceptionC.Dtal0402CException;
 import com.spiritdata.dataanal.exceptionC.Dtal0404CException;
+import com.spiritdata.dataanal.report.service.ReportService;
 import com.spiritdata.dataanal.task.TaskUtils;
 import com.spiritdata.dataanal.task.core.enumeration.StatusType;
 import com.spiritdata.dataanal.task.core.model.TaskInfo;
@@ -106,17 +107,22 @@ public class TaskExecutorShell implements Runnable {
                             AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analDictJsonD, arfSeed);
                             //写数据库
                             FileInfo arFi = arfService.saveFile(arf);
-                            //写文件关联关系
+                            //写文件关联关系，注意这里的关系是文件分类到文件的直接关系
                             if (!StringUtils.isNullOrEmptyOrSpace(ti.getTaskGroup().getReportId())) {
-                                FileRelation fr = new FileRelation();
-                                //fr.setElement1(fi.getFileCategoryList().get(0));
-                                fr.setElement2(arFi.getFileCategoryList().get(0));
-                                fr.setCTime(new Timestamp((new Date()).getTime()));
-                                fr.setRType1(RelType1.POSITIVE);
-                                fr.setRType2("报告中的数据");
-                                fr.setDesc(ti.getTaskType()+"::"+ti.getTaskName());
-                                FileManageService fmService = (FileManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("fileManageService");
-                                fmService.saveFileRelation(fr);//文件关联存储
+                                //通过reportId得到reportFile对象
+                                ReportService rService = (ReportService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("reportService");
+                                FileInfo reportFi = rService.getReportFiById(ti.getTaskGroup().getReportId());
+                                if (reportFi!=null) {
+                                    FileRelation fr = new FileRelation();
+                                    fr.setElement1(reportFi.getFileCategoryList().get(0));
+                                    fr.setElement2(arFi);
+                                    fr.setCTime(new Timestamp((new Date()).getTime()));
+                                    fr.setRType1(RelType1.POSITIVE);
+                                    fr.setRType2("报告中的数据");
+                                    fr.setDesc(ti.getTaskType()+"::"+ti.getTaskName());
+                                    FileManageService fmService = (FileManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("fileManageService");
+                                    fmService.saveFileRelation(fr);//文件关联存储
+                                }
                             }
                         } catch(Exception e) {
                             (new Dtal0404CException(e)).printStackTrace();

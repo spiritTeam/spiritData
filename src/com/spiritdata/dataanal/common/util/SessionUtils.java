@@ -28,7 +28,6 @@ public abstract class SessionUtils {
             ret.setOwnerId(user.getUserId());
             ret.setOwnerType(1);
         }
-        
         return ret;
     }
 }
