@@ -26,6 +26,7 @@ public class TaskInfo implements Serializable, ModelSwapPo {
 
     private String id; //任务
     private String taskName; //任务名称
+    private String taskType; //任务名称
     private TaskLangType langType; //执行语言，默认为java
     private String executeFunc; //任务执行方法
     private Map<String, Object> param; //任务执行所需的参数
@@ -53,77 +54,83 @@ public class TaskInfo implements Serializable, ModelSwapPo {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
     public void setId(String id) {
         this.id = id;
     }
     public String getTaskName() {
-        return taskName;
+        return this.taskName;
     }
     public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
+    public String getTaskType() {
+        return this.taskType;
+    }
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
+    }
     public TaskLangType getLangType() {
-        return langType;
+        return this.langType;
     }
     public void setLangType(TaskLangType langType) {
         this.langType = langType;
     }
     public String getExecuteFunc() {
-        return executeFunc;
+        return this.executeFunc;
     }
     public void setExecuteFunc(String executeFunc) {
         this.executeFunc = executeFunc;
     }
     public Map<String, Object> getParam() {
-        return param;
+        return this.param;
     }
     @SuppressWarnings("unchecked")
     public void setParam(String param) {
         this.param = (Map<String, Object>)JsonUtils.jsonToObj(param, Map.class);
     }
     public StatusType getStatus() {
-        return status;
+        return this.status;
     }
     public int getExecuteCount() {
-        return executeCount;
+        return this.executeCount;
     }
     public void setExecuteCount(int executeCount) {
         this.executeCount = executeCount;
     }
     public String getDesc() {
-        return desc;
+        return this.desc;
     }
     public void setDesc(String desc) {
         this.desc = desc;
     }
     public Timestamp getFirstTime() {
-        return firstTime;
+        return this.firstTime;
     }
     public void setFirstTime(Timestamp firstTime) {
         this.firstTime = firstTime;
     }
     public Timestamp getBeginTime() {
-        return beginTime;
+        return this.beginTime;
     }
     public void setBeginTime(Timestamp beginTime) {
         this.beginTime = beginTime;
     }
     public Timestamp getEndTime() {
-        return endTime;
+        return this.endTime;
     }
     public void setEndTime(Timestamp endTime) {
         this.endTime = endTime;
     }
     public TaskGroup getTaskGroup() {
-        return taskGroup;
+        return this.taskGroup;
     }
     public void setTaskGroup(TaskGroup taskGroup) {
         this.taskGroup = taskGroup;
     }
     public AnalResultFile getResultFile() {
-        return resultFile;
+        return this.resultFile;
     }
     public void setResultFile(AnalResultFile resultFile) {
         this.resultFile = resultFile;
@@ -194,6 +201,7 @@ public class TaskInfo implements Serializable, ModelSwapPo {
         else ret.setId(this.getId());
 
         ret.setTaskName(this.taskName);
+        ret.setTaskType(this.taskType);
         ret.setLangType(this.langType.getValue());
         ret.setExecuteFunc(this.executeFunc);
         ret.setParam(JsonUtils.objToJson(this.param));
@@ -241,6 +249,7 @@ public class TaskInfo implements Serializable, ModelSwapPo {
         TaskInfoPo _po = (TaskInfoPo)po;
         this.id = _po.getId();
         this.taskName = _po.getTaskName();
+        this.taskType = _po.getTaskType();
         this.langType = TaskLangType.getTaskLangType(_po.getLangType());
         this.executeFunc = _po.getExecuteFunc();
         this.setParam(_po.getParam());

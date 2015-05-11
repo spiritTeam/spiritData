@@ -16,7 +16,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
+import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
@@ -41,7 +41,7 @@ public class AnalKey implements AnalTable {
     @Resource
     private MdQuotaService mdQuotaService;
     @Resource
-    private AanlResultFileService arfService;
+    private AnalResultFileService arfService;
 
     /**
      * 分析某一个表主键。

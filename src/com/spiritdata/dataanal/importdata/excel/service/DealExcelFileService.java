@@ -21,7 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
+import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
@@ -87,7 +87,7 @@ public class DealExcelFileService {
     @Resource
     private FileManageService fmService;
     @Resource
-    private AanlResultFileService arFileService;
+    private AnalResultFileService arFileService;
 
     @Resource
     private BuildReportAfterUploadService buildReport;
