@@ -3,14 +3,12 @@ package com.spiritdata.dataanal.task.process;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal0402CException;
 import com.spiritdata.dataanal.exceptionC.Dtal0404CException;
 import com.spiritdata.dataanal.task.TaskUtils;
@@ -20,12 +18,15 @@ import com.spiritdata.dataanal.task.core.service.TaskManageService;
 import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
+import com.spiritdata.filemanage.core.enumeration.RelType1;
+import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.model.FileRelation;
+import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.model.JsonD;
-import com.spiritdata.jsonD.model.JsonDAtomData;
 import com.spiritdata.jsonD.model.JsonDHead;
 
 public class TaskExecutorShell implements Runnable {
@@ -80,6 +81,7 @@ public class TaskExecutorShell implements Runnable {
                     Map<String, Object> userResultData = (Map<String, Object>)resultMap.get("userResultData");
                     if (userResultData!=null) { //写文件
                         try {
+                            //写文件
                             if (JDC==null) {
                                 throw new Dtal0402CException("把分析结果以jsonD格式进行存储时，需要明确指定JsonDCode！");
                             }
@@ -102,7 +104,20 @@ public class TaskExecutorShell implements Runnable {
                             arfSeed.setJsonDCode(JDC);
                             AnalResultFileService arfService = (AnalResultFileService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("analResultFileService");
                             AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analDictJsonD, arfSeed);
-                            
+                            //写数据库
+                            FileInfo arFi = arfService.saveFile(arf);
+                            //写文件关联关系
+                            if (!StringUtils.isNullOrEmptyOrSpace(ti.getTaskGroup().getReportId())) {
+                                FileRelation fr = new FileRelation();
+                                //fr.setElement1(fi.getFileCategoryList().get(0));
+                                fr.setElement2(arFi.getFileCategoryList().get(0));
+                                fr.setCTime(new Timestamp((new Date()).getTime()));
+                                fr.setRType1(RelType1.POSITIVE);
+                                fr.setRType2("报告中的数据");
+                                fr.setDesc(ti.getTaskType()+"::"+ti.getTaskName());
+                                FileManageService fmService = (FileManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("fileManageService");
+                                fmService.saveFileRelation(fr);//文件关联存储
+                            }
                         } catch(Exception e) {
                             (new Dtal0404CException(e)).printStackTrace();
                         }

@@ -153,7 +153,7 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据列指标表';
 DROP TABLE IF EXISTS sa_imp_tabmap_rel;
 CREATE TABLE sa_imp_tabmap_rel (
   id              varchar(32)      NOT NULL  COMMENT '文件/实体对应关系ID(UUID)',
-  fId             varchar(32)      NOT NULL  COMMENT '文件日志ID(文件表外键)',
+  fId             varchar(32)      NOT NULL  COMMENT '文件信息ID(文件表外键)',
   tmoId           varchar(32)      NOT NULL  COMMENT '对照表Id(元数据实体表对照Id，外键)',
   tmId            varchar(32)      NOT NULL  COMMENT '元数据模式Id(表模式Id外键)',
   sheetName       varchar(100)     NOT NULL  COMMENT '页签名称',
