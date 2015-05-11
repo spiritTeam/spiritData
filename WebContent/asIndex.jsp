@@ -207,7 +207,7 @@ var INIT_PARAM = {
     mainId: "mainSegment", //主体Id
     footId: "footSegment" //尾部Id
   },
-  page_width: 800,
+  page_width: 0,
   page_height: 0,
 
   top_height: 30, //顶部高度
