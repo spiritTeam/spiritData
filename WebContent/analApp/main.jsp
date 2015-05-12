@@ -245,7 +245,7 @@ function searchNewReport(){
     },
     error:function(errorData){
     	//alert("err");
-      $.messager.alert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+      //$.messager.alert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 	
 }
