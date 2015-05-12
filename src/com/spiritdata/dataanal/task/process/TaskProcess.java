@@ -8,9 +8,9 @@ import java.util.Map;
  */
 public interface TaskProcess {
     /**
-     * 
-     * @param param
-     * @return
+     * 执行任务的具体逻辑
+     * @param param 执行参数，是一个Map
+     * @return 返回值是一个Map，必须有如下结构：
      */
     public abstract Map<String, Object> process(Map<String, Object> param);
 }

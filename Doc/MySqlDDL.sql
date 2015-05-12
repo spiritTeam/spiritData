@@ -103,22 +103,7 @@ CREATE TABLE sa_md_colsemanteme (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据语义表';
 
-/**007 元数据表对照[SA_MD_TABMAP_REL]*/
-DROP TABLE IF EXISTS sa_md_tabmap_rel;
-CREATE TABLE sa_md_tabmap_rel (
-  id         varchar(32)      NOT NULL                COMMENT 'uuid(对照表id)',
-  tmId       varchar(32)      NOT NULL                COMMENT '元数据模式Id(表模式ID)',
-  ownerId    varchar(32)      NOT NULL                COMMENT '用户Id或者sessionId',
-  ownerType  int(1) unsigned  NOT NULL                COMMENT '用户类型(1-用户，2-session)',
-  tableName  varchar(40)      NOT NULL                COMMENT '表名称（此名称与业务数据表名称对应）',
-  tableType  int(1) unsigned  NOT NULL  DEFAULT '1'   COMMENT '表类型(1-积累表。2-临时表)',
-  tableDescn varchar(400)               DEFAULT NULL  COMMENT '备注',
-  cTime      timestamp  NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '创建时的系统时间',
-  PRIMARY KEY (id)
-)
-ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据对照关系表';
-
-/**008 元数据表指标[SA_MD_TABLEQUOTA]*/
+/**007 元数据表指标[SA_MD_TABLEQUOTA]*/
 DROP TABLE IF EXISTS sa_md_tabquota;
 CREATE TABLE sa_md_tabquota (
   id        varchar(32)       NOT NULL               COMMENT '标指标Id(UUID)',
@@ -133,7 +118,7 @@ CREATE TABLE sa_md_tabquota (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据表指标';
 
-/**009 元数据列指标[SA_MD_COLUMNQUOTA]*/
+/**008 元数据列指标[SA_MD_COLUMNQUOTA]*/
 DROP TABLE IF EXISTS sa_md_colquota;
 CREATE TABLE sa_md_colquota (
   id            varchar(32)       NOT NULL               COMMENT '列指标Id(UUID)',
@@ -148,6 +133,21 @@ CREATE TABLE sa_md_colquota (
   PRIMARY KEY (id)
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据列指标表';
+
+/**009 元数据表对照[SA_MD_TABMAP_REL]*/
+DROP TABLE IF EXISTS sa_md_tabmap_rel;
+CREATE TABLE sa_md_tabmap_rel (
+  id         varchar(32)      NOT NULL                COMMENT 'uuid(对照表id)',
+  tmId       varchar(32)      NOT NULL                COMMENT '元数据模式Id(表模式ID)',
+  ownerId    varchar(32)      NOT NULL                COMMENT '用户Id或者sessionId',
+  ownerType  int(1) unsigned  NOT NULL                COMMENT '用户类型(1-用户，2-session)',
+  tableName  varchar(40)      NOT NULL                COMMENT '表名称（此名称与业务数据表名称对应）',
+  tableType  int(1) unsigned  NOT NULL  DEFAULT '1'   COMMENT '表类型(1-积累表。2-临时表)',
+  tableDescn varchar(400)               DEFAULT NULL  COMMENT '备注',
+  cTime      timestamp  NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '创建时的系统时间',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据对照关系表';
 
 /**010 数据文件/实体表对应[SA_IMP_TABMAP_REL]*/
 DROP TABLE IF EXISTS sa_imp_tabmap_rel;
@@ -223,7 +223,7 @@ VIEW vsa_file_inverserel AS
 /**015 导入文件视图[vSA_IMP_LOG]*/
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vsa_imp_log AS
-  select a.id, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.extInfo AS cFileName, descn, a.cTime
+  select a.id, b.id cateId, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.extInfo AS cFileName, descn, a.cTime
   from sa_file_index a, sa_file_category b
   where a.id=b.fid and b.type1='IMP';
 

@@ -275,8 +275,8 @@ public class MdQuotaService {
     /**
      * 根据表名，得到该表的指标信息
      * @param tableName 表名
-     * @param mdMId 元数据模式Id 
-     * @return 指标信息
+     * @param mm 元数据模式对象
+     * @return 表指标信息
      */
     public QuotaTable getQuotaInfo(String tableName, MetadataModel mm) {
         Map<String, Object> param = new HashMap<String, Object>();
@@ -305,5 +305,28 @@ public class MdQuotaService {
             else ret = null;
         }
         return ret;
+    }
+
+    /**
+     * 根据表名，得到该表的指标信息
+     * @param tableName 表名
+     * @param mdMId 元数据模式Id 
+     * @return 指标信息
+     */
+    public QuotaTable getMdQuotaInfo(String mdMid) {
+        return _getAllQuotaTableInfo(qtDao.getInfoObject("getInfoByMdMid", mdMid));
+    }
+
+    /**
+     * 根据（不带有列指标信息的）表指标信息，得到全体指标信息，包括列指标信息
+     * @param _qt 不完全的表指标信息
+     * @return 全部的表指标信息
+     */
+    private QuotaTable _getAllQuotaTableInfo(QuotaTable _qt) {
+        if (_qt==null) return null;
+        String mdMid = _qt.getMdMId();//元数据模式Id
+        //找到元数据
+        QuotaTable all_qt = _qt;
+        return all_qt;
     }
 }

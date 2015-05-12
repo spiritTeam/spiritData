@@ -60,10 +60,25 @@ public class MdBasisService {
 
         param.clear();
         param.put("mdMId", id);
+        //查询列
         List<MetadataColumn> clist = mcDao.queryForList(param);
         if (clist==null||clist.size()==0) return null;
         for (MetadataColumn mc: clist) {
             ret.addColumn(mc);
+        }
+        //查询语义
+        param.put("orderByClause", "cId");//按列排序
+        List<MetadataColSemanteme> cslist = mcsDao.queryForList(param);
+        if (cslist!=null&&cslist.size()>0) {
+            String cId = "";
+            MetadataColumn mc = null;
+            for (MetadataColSemanteme mcs: cslist) {
+                if (!mcs.getColId().equals(cId)) {
+                    mc = ret.getColumnByColId(mcs.getColId());
+                    cId = mcs.getColId();
+                }
+                if (mc!=null) mc.addColSem(mcs);
+            }
         }
         return ret;
     }
