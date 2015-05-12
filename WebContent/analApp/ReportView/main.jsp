@@ -85,7 +85,7 @@ border-radius:10px;
         </td>  
         <td style="width:200px;">
           <div style="float:left;width:100%;">
-            <div style="float:left;padding-top:2px;"><font style="font-size:15px;">文件名：</font></div>
+            <div style="float:left;padding-top:2px;"><font style="font-size:15px;">报告名：</font></div>
             <div style="float:left;"><input id="inp_filename" type="text" class="form-control" style="width:120px;"></input></div>
           </div>
         </td>        
@@ -112,6 +112,7 @@ border-radius:10px;
             <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="showSearchResult(SHOW_TYPE_THUMB);" title="缩略图预览" alt="缩略图预览"/>
           </a>
         </td>
+      </tr>
     </table>    
   </div>
              
@@ -135,7 +136,7 @@ $(function() {
 //初始化查询输入框
 var searchTxt = "请输入查询内容...";
 function initSearchFileInput(){
-  var _objSearch = $("#idSearchFile");
+  var _objSearch = $("#inp_filename");
   _objSearch.keydown(function(e){
     if(e.keyCode == 13){
       startSearch();
@@ -169,7 +170,6 @@ function initDatePicker(){
         format: 'yyyy-mm-dd'
     });
 }
-
 
 //定义查询方式和保存查询结果
 var SHOW_TYPE_LIST = "LIST"; //列表显示常量
@@ -377,7 +377,7 @@ function getOptHtml(aJsonRow,floatStyle){
 
 //获得输入的查询内容
 function getInputSearchFileStr(){
-  var searchedStr = ($("#inp_filename").val()==searchTxt)?"":$("#idSearchFile").val();
+  var searchedStr = ($("#inp_filename").val()==searchTxt)?"":$("#inp_filename").val();
   return searchedStr;
 }
 
