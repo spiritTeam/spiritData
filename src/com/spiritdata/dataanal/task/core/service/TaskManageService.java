@@ -51,7 +51,7 @@ public class TaskManageService {
         Map<String, String> param = new HashMap<String, String>();
         param.put("oldOwnerId", oldOwnerId);
         param.put("newOwnerId", newOwnerId);
-        taskGroupDao.excute("changeOwner", param);
+        taskGroupDao.execute("changeOwner", param);
         TaskMemoryService tms = TaskMemoryService.getInstance();
         tms.changeOwnerId(oldOwnerId, newOwnerId);
         return true;
@@ -110,24 +110,24 @@ public class TaskManageService {
      * 获得能够执行的任务组信息。先查看可执行的具体任务，再以此任务的组ID为依据，得到这个列表
      * @return 任务组信息列表
      */
-    public List<TaskGroupPo> getCanExcuteTaskGroups() {
-        return taskGroupDao.queryForList("getCanExcuteTaskGroups");
+    public List<TaskGroupPo> getCanExecuteTaskGroups() {
+        return taskGroupDao.queryForList("getCanExecuteTaskGroups");
     }
 
     /**
      * 获得能够执行的任务信息。
      * @return 任务信息列表
      */
-    public List<TaskInfoPo> getCanExcuteTaskInfos() {
-        return taskInfoDao.queryForList("getCanExcuteTaskInfos");
+    public List<TaskInfoPo> getCanExecuteTaskInfos() {
+        return taskInfoDao.queryForList("getCanExecuteTaskInfos");
     }
 
     /**
      * 获得能够执行的任务的任务关系信息。
      * @return 任务关系信息列表
      */
-    public List<TaskRelPo> getCanExcuteTaskRels() {
-        return taskRelDao.queryForList("getCanExcuteTaskRels");
+    public List<TaskRelPo> getCanExecuteTaskRels() {
+        return taskRelDao.queryForList("getCanExecuteTaskRels");
     }
 
     /**
@@ -135,24 +135,27 @@ public class TaskManageService {
      * @param ti 任务信息
      * @param status 任务完成时的状态值
      */
-    public void completeTaskInfo(TaskInfo ti, int status) {
+    public void completeTaskInfo(TaskInfo ti, StatusType status) {
         TaskMemory tm = TaskMemory.getInstance();
-        if (status!=3||status!=4) new Dtal0403CException(new IllegalArgumentException("status(任务完成状态)只能是4或5，而当前status="+status));
+        if (status!=StatusType.SUCCESS||status!=StatusType.FAILD) new Dtal0403CException(new IllegalArgumentException("status(任务完成状态)只能是4或5，而当前status="+status));
         if (StringUtils.isNullOrEmptyOrSpace(ti.getId())) new Dtal0403CException(new IllegalArgumentException("任务信息中的任务id字段不能是空"));
 
         Map<String, Object> param = new HashMap<String, Object>();
 
         //任务失效的判断及处理
-        ti.setExcuteCount(ti.getExcuteCount()+1);
-        if (status==4) {//失败
-            int excuteLimit = ti.getTaskGroup().getDefaultExcuteCountLimit()==0?tm.getEXCUTECOUNT_LIMIT():ti.getTaskGroup().getDefaultExcuteCountLimit();
-            if (excuteLimit<=ti.getExcuteCount()) status = 5;//执行失败的次数过多，这样的任务是无效的
+        ti.setExecuteCount(ti.getExecuteCount()+1);
+        if (status==StatusType.FAILD) {//失败
+            int executeLimit = ti.getTaskGroup().getDefaultExecuteCountLimit()==0?tm.getEXECUTECOUNT_LIMIT():ti.getTaskGroup().getDefaultExecuteCountLimit();
+          //执行失败的次数过多，这样的任务是无效的
+            if (executeLimit<=ti.getExecuteCount()) ti.setAbatement();
         }
 
         //修改任务表
         param.put("id", ti.getId());
-        param.put("excuteCount", ti.getExcuteCount());
-        param.put("status", status);
+        param.put("executeCount", ti.getExecuteCount());
+        param.put("status", ti.getStatus().getValue());
+        param.put("beginTime", ti.getBeginTime());
+        param.put("endTime", ti.getEndTime());
         taskInfoDao.update(param);
 
         //检查任务组是否也需要更新
@@ -160,7 +163,6 @@ public class TaskManageService {
         Map<String, TaskInfo> tiMap = tg.getTaskGraph().getTaskMap();
         if (tiMap!=null&&tiMap.size()>0) {
             StatusType tg_status = StatusType.SUCCESS; //先设置为执行成功
-            
             for (String tiId: tiMap.keySet()) {
                 StatusType _status = tiMap.get(tiId).getStatus();
                 if (_status==StatusType.PREPARE||_status==StatusType.WAITING||_status==StatusType.PROCESSING) {

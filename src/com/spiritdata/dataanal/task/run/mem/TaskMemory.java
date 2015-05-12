@@ -42,19 +42,19 @@ public class TaskMemory {
         this.MEMORY_CLEANSIZE_TASK = MEMORY_CLEANSIZE_TASK;
     }
     //一个任务最多执行次数，超过这个次数若执行仍然失败，则认为任务失效
-    protected int EXCUTECOUNT_LIMIT = 3; //默认为3次
-    public void setEXCUTECOUNT_LIMIT(int EXCUTECOUNT_LIMIT) {
-        this.EXCUTECOUNT_LIMIT = EXCUTECOUNT_LIMIT;
+    protected int EXECUTECOUNT_LIMIT = 3; //默认为3次
+    public void setEXECUTECOUNT_LIMIT(int EXECUTECOUNT_LIMIT) {
+        this.EXECUTECOUNT_LIMIT = EXECUTECOUNT_LIMIT;
     }
-    public int getEXCUTECOUNT_LIMIT() {
-        return this.EXCUTECOUNT_LIMIT;
+    public int getEXECUTECOUNT_LIMIT() {
+        return this.EXECUTECOUNT_LIMIT;
     }
 
     //所有可执行任务组
     protected Map<String, TaskGroup> taskGroupMap = null;
     //所有可执行任务信息
     protected Map<String, TaskInfo> taskInfoMap = null;
-    //所有可执行任务Id的队列，按照创建时间进行排序
+    //所有可执行任务Id的队列，按照创建时间进行排序 protected 
     protected List<String> taskInfoSortList = null;
 
     /**
@@ -65,7 +65,7 @@ public class TaskMemory {
             this.setMEMORY_MAXSIZE_TASKGROUP(tcc.getMEMORY_MAXSIZE_TASKGROUP());
             this.setMEMORY_MAXSIZE_TASKINFO(tcc.getMEMORY_MAXSIZE_TASKINFO());
             this.setMEMORY_CLEANSIZE_TASK(tcc.getMEMORY_CLEANSIZE_TASK());
-            this.setEXCUTECOUNT_LIMIT(tcc.getEXCUTECOUNT_LIMIT());
+            this.setEXECUTECOUNT_LIMIT(tcc.getEXECUTECOUNT_LIMIT());
             taskGroupMap = new ConcurrentHashMap<String, TaskGroup>();
             taskInfoMap = new ConcurrentHashMap<String, TaskInfo>();
             taskInfoSortList = new CopyOnWriteArrayList<String>();

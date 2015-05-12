@@ -17,10 +17,10 @@ public class TaskInfoPo extends BaseObject {
     private String rfId; //结果jsonD文件Id
     private String taskName; //任务名称
     private String langType; //执行语言，默认为java
-    private String excuteFunc; //任务执行方法
+    private String executeFunc; //任务执行方法
     private String param; //任务执行所需的参数，是Json串
     private int status; //任务状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；6=等待执行
-    private int excuteCount; //任务执行次数
+    private int executeCount; //任务执行次数
     private String desc; //任务说明
 
     private Timestamp firstTime; //任务第一次准备执行时间
@@ -61,11 +61,11 @@ public class TaskInfoPo extends BaseObject {
     public void setLangType(String langType) {
         this.langType = langType;
     }
-    public String getExcuteFunc() {
-        return excuteFunc;
+    public String getExecuteFunc() {
+        return executeFunc;
     }
-    public void setExcuteFunc(String excuteFunc) {
-        this.excuteFunc = excuteFunc;
+    public void setExecuteFunc(String executeFunc) {
+        this.executeFunc = executeFunc;
     }
     public String getParam() {
         return param;
@@ -79,11 +79,11 @@ public class TaskInfoPo extends BaseObject {
     public void setStatus(int status) {
         this.status = status;
     }
-    public int getExcuteCount() {
-        return excuteCount;
+    public int getExecuteCount() {
+        return executeCount;
     }
-    public void setExcuteCount(int excuteCount) {
-        this.excuteCount = excuteCount;
+    public void setExecuteCount(int executeCount) {
+        this.executeCount = executeCount;
     }
     public String getDesc() {
         return desc;

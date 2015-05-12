@@ -1,6 +1,7 @@
 package com.spiritdata.dataanal.task.run.monitor;
 
-import com.spiritdata.dataanal.task.core.model.TaskInfo;
+import com.spiritdata.dataanal.task.process.TaskExecutorShell;
+import com.spiritdata.dataanal.task.run.TaskThreadPool;
 import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 
 /**
@@ -20,16 +21,18 @@ public class DispatchTask extends Thread {
 
     @Override
     /**
-     * 从任务内存读取信息，并
+     * 从任务内存读取信息，并放入线程池
      */
     public void run() {
         while (true) {
             try {
                 sleep(this.interval);
-                System.out.println("abc");
-                //读取可执行的任务
-                TaskInfo ti = tms.getNextCanProcessTaskInfo();
-                
+                System.out.println("=========可执行队列长度:"+tms.getExecuterListSize());
+                if (tms.getExecuterListSize()>0) {
+                    //读取可执行的任务
+                    TaskExecutorShell executor = new TaskExecutorShell(tms.getNextCanProcessTaskInfo());
+                    TaskThreadPool.executeTask(executor);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
