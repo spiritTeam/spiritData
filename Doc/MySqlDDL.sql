@@ -325,7 +325,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vpsa_tasks1 AS (
   select
     a.id MT_Id, concat(d.filePath, '/', d.fileName) MT_RFile,a.langType MT_langType, a.executeFunc MT_executeFunc, a.param MT_param,
-    a.status MT_status, a.taskName MT_tName, a.descn MT_descn, a.firstTime MT_firstTime, a.beginTime MT_beginTime, a.endTime MT_endTime, 
+    a.status MT_status, a.taskName MT_tName, a.taskType MT_tType, a.descn MT_descn, a.firstTime MT_firstTime, a.beginTime MT_beginTime, a.endTime MT_endTime, 
     c.id TG_Id, c.reportId, c.ownerId, c.ownerType, c.status TG_status, c.workName, c.descn TG_descn, c.beginTime TG_beginTime,
     b.preTaskId, b.usedPreData
   from sa_task_info a
@@ -336,10 +336,10 @@ VIEW vpsa_tasks1 AS (
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vpsa_tasks2 AS (
   select
-    m.MT_Id, m.MT_RFile, m.MT_langType, m.MT_executeFunc, m.MT_param, m.MT_status, m.MT_tName, m.MT_descn, m.MT_firstTime, m.MT_beginTime, m.MT_endTime,
+    m.MT_Id, m.MT_RFile, m.MT_langType, m.MT_executeFunc, m.MT_param, m.MT_status, m.MT_tName, m.MT_tNType, m.MT_descn, m.MT_firstTime, m.MT_beginTime, m.MT_endTime,
     m.TG_Id, m.reportId, m.ownerId, m.ownerType, m.TG_status, m.workName, m.TG_descn, m.TG_beginTime,
-    p.id PT_id, p.resultFileid, p.langType PT_langType, p.executeFunc PT_executeFunc, p.param PT_param, p.status PT_status, p.taskName PT_tName, p.descn PT_descn,
-    p.firstTime PT_firstTime, p.beginTime PT_beginTime, p.endTime PT_endTime
+    p.id PT_id, p.resultFileid, p.langType PT_langType, p.executeFunc PT_executeFunc, p.param PT_param, p.status PT_status, p.taskName PT_tName, p.taskType PT_tType,
+    p.descn PT_descn, p.firstTime PT_firstTime, p.beginTime PT_beginTime, p.endTime PT_endTime
   from vpsa_tasks1 m
   left join sa_task_info p on p.id=m.preTaskId
 );
