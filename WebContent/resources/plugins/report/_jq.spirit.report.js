@@ -162,9 +162,83 @@ function parseEle(jQobj, _DATA){
   else if (showType=="line") drawLine(jQobj, _DATA);
   else if (showType=="bar") drawBar(jQobj, _DATA);
   else if (showType=="map_pts") drawMapPts(jQobj,_DATA); //地图画点
+  else if (showType=="radar") drawRadar(jQobj,_DATA);//雷达图
 }
 
 //以下为解析showType代码==============
+function drawRadar(jQobj,_DATA){
+  var value = jQobj.attr('value');
+  eval("var _data=_DATA."+value);
+  //获取param属性
+  //var param =  jQobj.attr('param');
+  //var paramJson = str2Json(param);
+  //初始化长宽高
+  var width=500;
+  var height=500;
+  jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+  try{
+    require(
+      [
+       'echarts',
+       'echarts/chart/radar'
+      ],
+      function (ec) {
+        //获取案件分布地图对象
+        var radar = ec.init(jQobj[0]);
+        option = {
+	      title : {
+	        text: '预算 vs 开销（Budget vs spending）',
+	        subtext: '纯属虚构'
+	      },
+	      tooltip : {
+	        trigger: 'axis'
+	      },
+	      legend: {
+	        orient : 'vertical',
+	        x : 'right',
+	        y : 'bottom',
+	        data:['预算分配（Allocated Budget）','实际开销（Actual Spending）']
+	      },
+	      toolbox: {
+	        show : true,
+	        feature : {
+	          mark : {show: true},
+	          dataView : {show: true, readOnly: false},
+	          restore : {show: true},
+	          saveAsImage : {show: true}
+	        }
+	      },
+	      polar : [{
+	        indicator : [
+	          { text: '销售（sales）', max: 6000},
+	          { text: '管理（Administration）', max: 16000},
+	          { text: '信息技术（Information Techology）', max: 30000},
+	          { text: '客服（Customer Support）', max: 38000},
+	          { text: '研发（Development）', max: 52000},
+	          { text: '市场（Marketing）', max: 25000}
+	        ]
+	      }],
+	      calculable : true,
+	      series : [{
+	        name: '预算 vs 开销（Budget vs spending）',
+	        type: 'radar',
+	        data : [{
+	          value : [4300, 10000, 28000, 35000, 50000, 19000],
+	          name : '预算分配（Allocated Budget）'
+	        },
+	        {
+	          value : [5000, 14000, 28000, 31000, 42000, 21000],
+	          name : '实际开销（Actual Spending）'
+	        }]
+	      }]
+	    };
+        radar.setOption(option);
+      }
+    );
+  }catch(e){
+    $.messager.alert("draw map points err", e.message, "error");
+  }
+}
 /**
  * 样例:showType:map_pts <d did='0' showType='map_pts' param='{^X^:^coordX^, ^Y^:^coordY^ ,^Z^:^coordZ^,^mapType^:^BAIDU^}' value='quotas[0]'/>
  * 地图画点
@@ -180,7 +254,7 @@ function drawMapPts(jQobj,_DATA){
     //所使用的地图
     var sys = paramJson.mapType;
     if(sys == undefined || sys==CONST_MAP_BAIDU){
-      drawBaiDuPts(jQobj,_data,param);
+      drawBaiDuPts(jQobj,_data,paramJson);
     }else{
       $.messager.alert("unsupported map type:", sys, "error");
     }
@@ -197,7 +271,7 @@ function drawMapPts(jQobj,_DATA){
  */
 function drawBaiDuPts(jQobj,_data,param){
   //设置DOM对象的宽度和高度
-  var width=800;
+  var width=500;
   var height=500;
   jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
   //获取坐标列 x、y、z、
@@ -205,9 +279,9 @@ function drawBaiDuPts(jQobj,_data,param){
   var yCol = param.Y;
   var zCol = param.X;
   //titleName
-  var titleName = _data.titleName;
+  var titleName = _data.tableData.titleName;
   //data
-  var data = _data.tableBody;
+  var data = _data.tableData.tableBody;
   //decorateView 这个decorateView可能不太需要，因为向显示的数据直接标注出来就好，插件可以直接显示
   /**
    * decorateView = "
@@ -221,7 +295,6 @@ function drawBaiDuPts(jQobj,_data,param){
   decorateView = removeSpace(decorateView);
   //根据decorateView得到displayRule
   //displayRule显示规则
-  var displayRule = null;
   if (decorateView) {
     if (decorateView.indexOf("::")!=-1) {//有envelopeType的情况
       //model 这个是decorateView的前部分，用于对找出colName和和显示名的关系，
@@ -229,150 +302,93 @@ function drawBaiDuPts(jQobj,_data,param){
       // displayClaim 显示要求
       var displayReq = decorateView.substring(decorateView.indexOf("::")+2,decorateView.length);
       if (displayReq) {
+        //把要求转换成json串，方便得到模型
         var displayReqObj = str2Json(displayReq);
+        //按行还是按table解析
         var envelopeType = displayReqObj.envelopeType;
-        displayRule = resolveMapPtsDecorateView(model,envelopeType,data);
+        var subModelAry = resolveMapPtsDecorateView(model,envelopeType);
+        //初始化坐标
+        var colName = subModelAry[0]._colName;
+        var geoCoordAry = new Object();
+        for (var k=0;k<data.length;k++) {
+          var _d = data[k];
+          var x_axis = _d[xCol];
+          var y_axis = _d[yCol];
+          var z_axis = _d[zCol];
+          //和data中的name对应？
+          var _name = _d[colName];
+          var axixAry = [];
+          if (x_axis!=null&&x_axis!=""&&y_axis!=null&&y_axis!="") {
+            axixAry.push(parseFloat(x_axis));
+            axixAry.push(parseFloat(y_axis));
+            if (z_axis!=null&&z_axis!="") axixAry.push(parseFloat(z_axis));
+          } else {
+            alert("坐标获取失败");
+            return;
+          }
+          geoCoordAry[_name] = axixAry;
+        }
+        
         //根据需求，加载插件
-        require(
-          [
-            'echarts',
-            'echarts/chart/map'
+        require([
+          'echarts',
+          'echarts/chart/map'
           ],
           function (ec) {
             //获取案件分布地图对象
-            var mapPtAnJian = ec.init(jQobj.attr('id'));
-            var optionPtAnJian = {
-              title:{
-                text:titleName,
+            var mapPtAnJian = ec.init(jQobj[0]);
+            option = {
+              title : {
+                text: titleName,
+                subtext: '纯属虚构',
                 x:'center'
+              },
+              tooltip : {
+                trigger: 'item',
+                formatter: function(params){
+                  var retStr="";
+                  //标头
+                  if (params!=""&&params!=null) {
+//                    if (params.seriesName==undefined || params.seriesName=="") {
+//                      return retStr;
+//                    } else {
+                      retStr += params.seriesName+"<br/>";
+                      for (var i=0;i<subModelAry.length;i++) {
+                        var subModel = subModelAry[i];
+                        var _colName = subModel._colName;
+                        retStr +=subModel._displayName+":"+params[_colName]+'<br/>';
+                      }
+                    }
+//                  }
+                  return retStr;
+                }
               },
               legend: {
                 orient: 'vertical',
                 x:'left',
-                data:['抢劫类案件','盗窃类案件'],//图例为规划
-                textStyle : {
-                  color: '#000000'
-                }
+                data:[titleName]
               },
-              tooltip:{
-                trigger:'item',
-                formatter: function(params){
-                  var retStr="";
-                  //标头
-                  var tmpdata = params.seriesName;
-                  if(tmpdata==undefined || tmpdata==""){
-                    return retStr;
-                  }else{
-                    retStr += tmpdata+'<br/>';
-                  }
-                  //案件类型
-                  var tmpdata = params.name;
-                  if(tmpdata!=undefined && tmpdata!=""){
-                    retStr+='案件类型:'+tmpdata+'<br/>';
-                  }
-                  //案件编号
-                  var tmpdata = params.value;
-                  if(tmpdata!=undefined && tmpdata!=""){
-                    retStr+='案件编号:'+tmpdata+'<br/>';
-                  }
-                  //案发时间
-                  tmpdata = params.data['afsj'];
-                  if(tmpdata!=undefined && tmpdata!=""){
-                     retStr+='案发时间:'+tmpdata+'<br/>';
-                  }
-                  return retStr;
-                  //return params.seriesName+'<br/>'+params.name+":"+(params.data['ajlx']==undefined?"":params.data['ajlx']);
-               }
-            },
-            series:[{
-              name:'抢劫类案件',
-              type:'map',
-              mapType:'china',
-              hoverable:false,
-              //selectedMode : 'single',
-              itemStyle:{
-              normal:{
-                label:{show:true}
+              toolbox: {
+                show: true,
+                orient : 'vertical',
+                x: 'right',
+                y: 'center'
               },
-              emphasis:{label:{show:true}}
-            },
-            roam:false,
-            data:[],
-            markPoint:{
-            symbolSize:5,
-            effect : {
-              //show: true
-            },
-            itemStyle:{
-              normal:{
-                borderColor:'#87cefa',
-                borderWidth:1,
-                label:{
-                  show:false
+              series : [
+                {
+                  name: titleName,
+                  type: 'map',
+                  mapType: 'china',
+                  itemStyle:{
+                    normal:{label:{show:true}},
+                    emphasis:{label:{show:true}}
+                  },
+                  data:data
                 }
-              },
-              emphasis:{
-                borderColor:'#1e90ff',
-                borderWidth:5,
-                label:{
-                  show:false  
-                }
-              }
-            },
-            data:[
-              {name: "持棍抢劫", value: 1001, afsj:'2013年1月2日'},  
-              {name: "飞车抢劫", value: 1002, afsj:'2012年3月5日'},  
-              {name: "拦路抢劫", value: 1003, afsj:'2013年6月7日'}  
-            ]
-          },
-          geoCoord:{
-            "持棍抢劫":[120.38,37.35],
-            "飞车抢劫":[110.479191, 29.117096],
-            "拦路抢劫":[113.3, 40.12]                        
-          }
-        },{
-          name:'盗窃类案件',
-          type:'map',
-          mapType:'china',
-          hoverable:false,
-          roam:false,
-          data:[],
-          markPoint:{
-            symbol : 'diamond',
-            symbolSize:6,
-            effect : {
-              //show: true
-            },
-            itemStyle:{
-              normal:{
-                borderColor:'#87cefa',
-                borderWidth:1,
-                label:{
-                  show:false
-                }
-              },
-              emphasis:{
-                borderColor:'#1e90ff',
-                borderWidth:5,
-                label:{
-                  show:false  
-                }
-              }
-            },
-            data:[
-              {name: "入室盗窃", value: 2001, afsj:'2013年1月2日'},  
-              {name: "网吧盗窃", value: 2002, afsj:'2012年3月5日'},  
-              {name: "商场盗窃", value: 2003, afsj:'2013年6月7日'}  
-            ]
-          },
-          geoCoord:{
-            "入室盗窃":[115.89, 28.68],
-            "网吧盗窃":[119.57, 39.95],
-            "商场盗窃":[113.08, 36.18]                        
-          }              
-        }
-      ]
-              };
+              ],
+              geoCoord:geoCoordAry
+            };
+            mapPtAnJian.setOption(option);
           }
         );
       }
@@ -382,9 +398,6 @@ function drawBaiDuPts(jQobj,_data,param){
   } else {
     alert("解析MapPts_decorateView格式出错:decorateView格式出错！");
   }
-  if (displayRule!=""&&displayRule!=null) {
-    
-  }
 }
 
 /**
@@ -392,9 +405,9 @@ function drawBaiDuPts(jQobj,_data,param){
  * @param model 显示模型
  * @param envelopeType 封装类型：table/div
  */
-function resolveMapPtsDecorateView(model,envelopeType,data){
-  //返回数组
-  var retAry = [];
+function resolveMapPtsDecorateView(model,envelopeType){
+  //把model安装一行一行的拆成数组
+  var subModelAry = [];
   if (envelopeType=="table") {
     //拆分成单个的tr
     var trAry = model.match(/<tr>.*?<\/tr>/g);
@@ -408,9 +421,15 @@ function resolveMapPtsDecorateView(model,envelopeType,data){
             alert("解析MapPts_decorateView格式出错：在第"+i+1+"行的<td></td>中的值为空");
           } else {
             var obj = new Object();
-            obj.colName = tdAry[0];
-            obj.displayName = tdAry[1];
-            retAry.push(obj);
+            //displayName
+            obj.displayName = tdAry[0];
+            //不带<td>标签的
+            var _displayName = tdAry[0].substring(tdAry[0].indexOf('<td>')+4,tdAry[0].indexOf('</td>'));
+            obj._displayName = _displayName;
+            //colName
+            obj.colName = tdAry[1];
+            obj._colName = tdAry[1].substring(tdAry[1].indexOf('#')+1,tdAry[1].lastIndexOf('#'));
+            subModelAry.push(obj);
           }
         } else {
           alert("解析MapPts_decorateView格式出错：在第"+i+1+"行的<td></td>格式不正确");
@@ -420,12 +439,7 @@ function resolveMapPtsDecorateView(model,envelopeType,data){
       alert("解析MapPts_decorateView格式出错：原因可能是未匹配到完整的<tr></tr>标签");
     }
   }
-  if (retAry!=null&&retAry.lenght>0) {
-	for (var k=0;k<retAry.length;k++) {
-		// TODO 未处理数据顺序
-	}
-  }
-  return retAry;
+  return subModelAry;
 }
 /**
  * 样例：showType:bar <d did='0' showType='bar' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
