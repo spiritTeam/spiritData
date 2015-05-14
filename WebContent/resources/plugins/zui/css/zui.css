@@ -7039,7 +7039,7 @@ ol.linenums li {
        -o-transition: all .5s cubic-bezier(.175, .885, .32, 1);
           transition: all .5s cubic-bezier(.175, .885, .32, 1);
 }
-.messager {
+.zuImessager {
   position: fixed;
   z-index: 99999;
   max-width: 80%;
@@ -7049,74 +7049,74 @@ ol.linenums li {
   background-color: rgba(0, 0, 0, .8);
   border-radius: 20px;
 }
-.messager.top {
+.zuImessager.top {
   top: 20px;
 }
-.messager.top-left {
+.zuImessager.top-left {
   top: 20px;
   left: 20px;
 }
-.messager.top-right {
+.zuImessager.top-right {
   top: 20px;
   right: 20px;
 }
-.messager.bottom {
+.zuImessager.bottom {
   bottom: 20px;
 }
-.messager.bottom-left {
+.zuImessager.bottom-left {
   bottom: 20px;
   left: 20px;
 }
-.messager.bottom-right {
+.zuImessager.bottom-right {
   right: 20px;
   bottom: 20px;
 }
-.messager-content {
+.zuImessager-content {
   padding: 10px 20px;
 }
-.messager-content > [class^='icon-'] {
+.zuImessager-content > [class^='icon-'] {
   display: inline-block;
   margin-right: 8px;
 }
-.messager-actions {
+.zuImessager-actions {
   position: absolute;
   top: 10px;
   right: 15px;
 }
-.messager-actions > .action {
+.zuImessager-actions > .action {
   color: #fafafa;
   color: rgba(255, 255, 255, .6);
   text-shadow: none;
   background: none;
   border: none;
 }
-.messager-actions > .action.close {
+.zuImessager-actions > .action.close {
   font-size: 20px;
   font-weight: normal;
   opacity: 1;
 }
-.messager-actions > .action:hover {
+.zuImessager-actions > .action:hover {
   color: #fff;
 }
-.messager-primary {
+.zuImessager-primary {
   background-color: #108bf1;
 }
-.messager-success {
+.zuImessager-success {
   background-color: #2ac25f;
 }
-.messager-info {
+.zuImessager-info {
   background-color: #00c3b6;
 }
-.messager-warning {
+.zuImessager-warning {
   background-color: #f39c11;
 }
-.messager-danger {
+.zuImessager-danger {
   background-color: #ee4e2f;
 }
-.messager-important {
+.zuImessager-important {
   background-color: #a76531;
 }
-.messager-special {
+.zuImessager-special {
   background-color: #6f5499;
 }
 .menu > .btn {

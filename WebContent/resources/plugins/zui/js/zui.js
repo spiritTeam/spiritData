@@ -4411,7 +4411,7 @@
 }(jQuery, window, Math));
 
 /* ========================================================================
- * ZUI: messager.js
+ * ZUI: zui_messager.js
  * http://zui.sexy
  * ========================================================================
  * Copyright (c) 2014 cnezsoft.com; Licensed MIT
@@ -4423,7 +4423,7 @@
     'use strict';
 
     var id = 0;
-    var template = '<div class="messager messager-{type} {placement}" id="messager{id}" style="display:none"><div class="messager-content"></div><div class="messager-actions"><button type="button" class="close action">&times;</button></div></div>';
+    var template = '<div class="zuImessager zuImessager-{type} {placement}" id="zuImessager{id}" style="display:none"><div class="zuImessager-content"></div><div class="zuImessager-actions"><button type="button" class="close action">&times;</button></div></div>';
     var defaultOptions =
     {
         type: 'default',
@@ -4436,16 +4436,16 @@
         fade: true,
         scale: true
     };
-    var lastMessager;
+    var lastzuIMessager;
 
-    var Messager = function(message, options)
+    var zuIMessager = function(zuImessage, options)
     {
         var that = this;
         that.id = id++;
         options = that.options = $.extend({}, defaultOptions, options);
-        that.message = (options.icon ? '<i class="icon-' + options.icon + ' icon"></i> ' : '') + message;
+        that.zuImessage = (options.icon ? '<i class="icon-' + options.icon + ' icon"></i> ' : '') + zuImessage;
 
-        that.$ = $(template.format(options)).toggleClass('fade', options.fade).toggleClass('scale', options.scale).attr('id', 'messager-' + that.id);
+        that.$ = $(template.format(options)).toggleClass('fade', options.fade).toggleClass('scale', options.scale).attr('id', 'zuImessager-' + that.id);
         if(!options.close)
         {
             that.$.find('.close').remove();
@@ -4458,25 +4458,25 @@
             });
         }
 
-        that.$.find('.messager-content').html(that.message);
+        that.$.find('.zuImessager-content').html(that.zuImessage);
 
 
-        that.$.data('zui.messager', that);
+        that.$.data('zui.zuImessager', that);
     };
 
-    Messager.prototype.show = function(message)
+    zuIMessager.prototype.show = function(zuImessage)
     {
         var that = this, options = this.options;
 
-        if(lastMessager)
+        if(lastzuIMessager)
         {
-            if(lastMessager.id == that.id)
+            if(lastzuIMessager.id == that.id)
             {
                 that.$.removeClass('in');
             }
-            else if(lastMessager.isShow)
+            else if(lastzuIMessager.isShow)
             {
-                lastMessager.hide();
+                lastzuIMessager.hide();
             }
         }
 
@@ -4486,10 +4486,10 @@
             that.hiding = null;
         }
 
-        if(message)
+        if(zuImessage)
         {
-            that.message = (options.icon ? '<i class="icon-' + options.icon + ' icon"></i> ' : '') + message;
-            that.$.find('.messager-content').html(that.message);
+            that.zuImessage = (options.icon ? '<i class="icon-' + options.icon + ' icon"></i> ' : '') + zuImessage;
+            that.$.find('.zuImessager-content').html(that.zuImessage);
         }
 
         that.$.appendTo(options.parent).show();
@@ -4512,10 +4512,10 @@
         }
 
         that.isShow = true;
-        lastMessager = that;
+        lastzuIMessager = that;
     };
 
-    Messager.prototype.hide = function()
+    zuIMessager.prototype.hide = function()
     {
         var that = this;
         if(that.$.hasClass('in'))
@@ -4527,21 +4527,21 @@
         that.isShow = false;
     };
 
-    $.Messager = Messager;
-    var noConflictMessager = window.Messager;
-    window.Messager = $.Messager;
-    window.Messager.noConflict = function()
+    $.zuIMessager = zuIMessager;
+    var noConflictzuIMessager = window.zuIMessager;
+    window.zuIMessager = $.zuIMessager;
+    window.zuIMessager.noConflict = function()
     {
-        window.Messager = noConflictMessager;
+        window.zuIMessager = noConflictzuIMessager;
     };
 
-    $.showMessage = function(message, options)
+    $.showzuIMessage = function(zuImessage, options)
     {
         if(typeof options === 'string')
         {
             options = {type: options};
         }
-        var msg = new Messager(message, options);
+        var msg = new zuIMessager(zuImessage, options);
         msg.show();
         return msg;
     };
@@ -4551,44 +4551,44 @@
         return (typeof options === 'string') ? {placement: options} : options;
     };
 
-    $.messager =
+    $.zuImessager =
     {
-        show: $.showMessage,
-        primary: function(message, options)
+        show: $.showzuIMessage,
+        primary: function(zuImessage, options)
         {
-            return $.showMessage(message, $.extend({type: 'primary'}, getOptions(options)));
+            return $.showzuIMessage(zuImessage, $.extend({type: 'primary'}, getOptions(options)));
         },
-        success: function(message, options)
+        success: function(zuImessage, options)
         {
-            return $.showMessage(message, $.extend({type: 'success', icon: 'ok-sign'}, getOptions(options)));
+            return $.showzuIMessage(zuImessage, $.extend({type: 'success', icon: 'ok-sign'}, getOptions(options)));
         },
-        info: function(message, options)
+        info: function(zuImessage, options)
         {
-            return $.showMessage(message, $.extend({type: 'info', icon: 'info-sign'}, getOptions(options)));
+            return $.showzuIMessage(zuImessage, $.extend({type: 'info', icon: 'info-sign'}, getOptions(options)));
         },
-        warning: function(message, options)
+        warning: function(zuImessage, options)
         {
-            return $.showMessage(message, $.extend({type: 'warning', icon: 'warning-sign'}, getOptions(options)));
+            return $.showzuIMessage(zuImessage, $.extend({type: 'warning', icon: 'warning-sign'}, getOptions(options)));
         },
-        danger: function(message, options)
+        danger: function(zuImessage, options)
         {
-            return $.showMessage(message, $.extend({type: 'danger', icon: 'exclamation-sign'}, getOptions(options)));
+            return $.showzuIMessage(zuImessage, $.extend({type: 'danger', icon: 'exclamation-sign'}, getOptions(options)));
         },
-        important: function(message, options)
+        important: function(zuImessage, options)
         {
-            return $.showMessage(message, $.extend({type: 'important'}, getOptions(options)));
+            return $.showzuIMessage(zuImessage, $.extend({type: 'important'}, getOptions(options)));
         },
-        special: function(message, options)
+        special: function(zuImessage, options)
         {
-            return $.showMessage(message, $.extend({type: 'special'}, getOptions(options)));
+            return $.showzuIMessage(message, $.extend({type: 'special'}, getOptions(options)));
         }
     };
 
-    var noConflict = window.messager;
-    window.messager = $.messager;
-    window.messager.noConflict = function()
+    var noConflict = window.zuImessager;
+    window.zuImessager = $.zuImessager;
+    window.zuImessager.noConflict = function()
     {
-        window.messager = noConflict;
+        window.zuImessager = noConflict;
     };
 }(jQuery, window));
 

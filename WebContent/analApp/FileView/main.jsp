@@ -18,6 +18,7 @@
 <link href="<%=path%>/resources/plugins/zui/css/zui.min.css" rel="stylesheet">
 <link href="<%=path%>/resources/plugins/zui/css/example.css" rel="stylesheet">
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
+<script src="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.js"></script>
 
 <title>文件主界面</title>
 </head>
@@ -74,15 +75,30 @@ border-radius:10px;
   <div class="div border_no">
     <table style="width:100%;">
       <tr>
-        <td style="width:20%;">          
-        </td>    
-        <td style="width:50%;">
-          <div class="input-group" style="display:block;">
-            <input id="idSearchFile" class="form-control"  type="text" style="height:25px;" placeholder="请输入查询内容...">
-            <span class="input-group-btn">
-              <button id="idSubmitSearchFile" class="btn btn-default" type="button" style="font:18px Microsoft YaHei,Microsoft JhengHei,黑体;">搜索</button>
-            </span>
-          </div>  
+        <td style="width:100px;">          
+        </td>  
+        <td style="width:350px;align:right;">
+          <div style="float:left;width:100%;">
+            <div style="float:left;padding-top:2px;"><font style="font-size:15px;">文件名：</font></div>
+            <div style="float:left;"><input id="inp_filename" type="text" class="form-control" style="width:220px;"></input></div>
+          </div>
+        </td>        
+        <td style="width:80px;text-align:right;">   
+                              时间段：
+        </td>        
+        <td style="width:100px;">   
+          <div class="col-md-4">
+            <input id="startDate" type="text" class='form-control form-date' placeholder='开始日期' readonly>
+          </div>       
+        </td>        
+        <td style="width:10px;">   
+          --      
+        </td>           
+        <td style="width:100px;">   
+          <div class="col-md-4"><input id="endDate" type="text" class='form-control form-date' placeholder='结束日期' readonly></div>       
+        </td>          
+        <td style="width:100px;text-align:right;">   
+          <button class="btn btn-default" onclick="startSearch();">查  询</button>
         </td>    
         <td style="text-align:right;">
           <a href="#" class="">
@@ -92,6 +108,7 @@ border-radius:10px;
             <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="showSearchResult(SHOW_TYPE_THUMB);" title="缩略图预览" alt="缩略图预览"/>
           </a>
         </td>
+      </tr>
     </table>    
   </div>
              
@@ -107,6 +124,7 @@ border-radius:10px;
 $(function() {
   initSubmitBt();
   initSearchFileInput();
+  initDatePicker();
   
   startSearch();
 });
@@ -114,7 +132,7 @@ $(function() {
 //初始化查询输入框
 var searchTxt = "请输入查询内容...";
 function initSearchFileInput(){
-  var _objSearch = $("#idSearchFile");
+  var _objSearch = $("#inp_filename");
   _objSearch.keydown(function(e){
     if(e.keyCode == 13){
     	startSearch();
@@ -133,6 +151,21 @@ function initSubmitBt(){
   });
 }
 
+//初始化日期选择控件 
+function initDatePicker(){
+  $('.form-date').datetimepicker(
+  {
+      language:  'zh-CN',
+      weekStart: 1,
+      todayBtn:  1,
+      autoclose: 1,
+      todayHighlight: 1,
+      startView: 2,
+      minView: 2,
+      forceParse: 0,
+      format: 'yyyy-mm-dd'
+  });
+}
 
 //定义查询方式和保存查询结果
 var SHOW_TYPE_LIST = "LIST"; //列表显示常量
@@ -146,12 +179,15 @@ var objDatatable = null; //列表显示对象
 
 //取出输入条件，提交查询
 function startSearch(){
-	var searchStr = getInputSearchFileStr();
-  //alert("您输入了："+ searchStr);
-
+	//var searchStr = getInputSearchFileStr();
+	var searchStr = $("#inp_filename").val();
+	var startDateStr = $("#startDate").val();
+	var endDateStr = $("#endDate").val();
+	
   //异步查询文件列表  
-  var searchParam={"searchStr":searchStr};
+  var searchParam={"searchStr":searchStr,"startDateStr":startDateStr,"endDateStr":endDateStr};
   var url="<%=path%>/analApp/demoData/filelist.json";
+  url = "<%=path%>/fileview/searchFileList.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
       try{
@@ -217,19 +253,20 @@ function showSearchResultList(){
 	  var jsonRows = searchResultJsonData.rows;
 	  var len = jsonRows.length;
 	  for(var i=0;i<len;i++){
-	    var fileId = jsonRows[i]["id"];
-	    var fileName = jsonRows[i]["name"];
+	    var fileCategoryId = jsonRows[i]["fileCategoryId"];
+	    var fileName = jsonRows[i]["clientFileName"];
 	    var suffix = jsonRows[i]["suffix"];
-	    var fileFull = fileName+"."+suffix;
-	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileId+'\');"><strong>'+fileFull+'</strong></a>';
+	    var fileFull = fileName;
+	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileCategoryId+'\');"><strong>'+fileFull+'</strong></a>';
 	    
-	    var size = jsonRows[i]["size"];
-	    var createDate = jsonRows[i]["createDate"];
+	    var size = jsonRows[i]["fileSize"];
+	    var createDate = jsonRows[i]["createTimeStr"];
+	    
 	    //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
 	    //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
 	    //构建操作按钮
       var optHtml = getOptHtml(jsonRows[i],"floatCenter");
-      var arow={checked:false,data:[ahrf_file,size,createDate,optHtml]};
+	    var arow={checked:false,data:[ahrf_file,size,createDate,optHtml]};
 	    dtrows.push(arow);
 	  }
   }
@@ -292,7 +329,7 @@ function showSearchResultThumb(){
 
 //获得输入的查询内容
 function getInputSearchFileStr(){
-  var searchedStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
+  var searchedStr = ($("#inp_filename").val()==searchTxt)?"":$("#inp_filename").val();
   return searchedStr;
 }
 
@@ -301,15 +338,21 @@ function getOptHtml(aJsonRow,floatStyle){
   if(!aJsonRow){
     return "";
   }
-  var fileId = aJsonRow["id"];
-  var fileName = aJsonRow["name"];
+  var fileCategoryId = aJsonRow["fileCategoryId"];
+  var reportId = aJsonRow["reportId"];
+  var fileName = aJsonRow["clientFileName"];
   var suffix = aJsonRow["suffix"];
-  var fileFull = fileName+"."+suffix;
+  var fileFull = fileName;
   //构建操作按钮
-  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileId+'\');">浏览</button>';
+  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileCategoryId+'\');"><i class="icon-list"></i>浏览</button>';
   //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
-  var optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileId+'\');">报告</button>';
-  var optContent = ""+optView+"&nbsp;&nbsp;"+optReport+"";
+  var optReport = '';
+  if(!isUndefinedNullEmpty(reportId)){
+	  optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
+  }else{
+	  optReport = '<button type="button" style="visibility:hidden;" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
+  }
+  var optContent = ""+optView+"&nbsp;&nbsp;"+optReport+"&nbsp;";
   var optHtml = optContent;
   if(typeof(floatStyle) != "undefined" && floatStyle=="floatRight"){
     optHtml = "<div style='float:right;margin-right:10px;'>"+optContent+"</div>";  
@@ -335,13 +378,13 @@ function showFile(fileId){
 }
 
 function showReport(reportId) {
-    var winOption={
-    	      url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
-    	      title:"报告详情",
-    	      height:600,
-    	      width:1000,
-            iframeScroll:"yes"
-    	    };
+  var winOption={
+    url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
+    title:"报告详情",
+    height:600,
+    width:1000,
+    iframeScroll:"yes"
+  };
 	openSWinInMain(winOption);
 }
 </script>

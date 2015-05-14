@@ -5,7 +5,11 @@
   String path = request.getContextPath();
   String searchStr = request.getParameter("searchStr");
   //输入中文后需要做转码，否则会出现乱码
-  searchStr = new String(searchStr.getBytes("ISO-8859-1"),"UTF-8");
+  if(searchStr!=null){
+    searchStr = new String(searchStr.getBytes("ISO-8859-1"),"UTF-8");
+  }else{
+	  searchStr = "";
+  }
   //System.out.println("searchStr="+searchStr);
 %>
 <!DOCTYPE html>
@@ -85,6 +89,7 @@ $(function() {
 //开始查询
 function startSearch(){
 	var _searchStr = "<%=searchStr%>";
+	//alert("startSearch() searchStr="+_searchStr);
 	searchResultJsonData = {};
   //异步查询文件列表  
   var searchParam={"searchStr":_searchStr};
@@ -126,7 +131,7 @@ function showSearchResult(){
       divItemFooter.appendTo(divItem);
     	
 	    //读取一条记录的内容
-    	var id = jsonRows[i]["id"];
+    	var fileId = jsonRows[i]["id"];
 	    var fileName = jsonRows[i]["name"];
       var fileFull = fileName;
 	    var size = jsonRows[i]["size"];
@@ -142,7 +147,7 @@ function showSearchResult(){
 	      }
 	      //item-head内容
 	      divItemHead.append('<div class="pull-right"><a href="###"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#"><i class="icon-building"></i>报告</a></div>');
-	      divItemHead.append('<h4><span class="label label-primary font_size15">'+flag+'</span>&nbsp; <a href="###" class="href_file">'+fileFull+'</a></h4>');
+	      divItemHead.append('<h4><span class="label label-primary font_size15">'+flag+'</span>&nbsp; <a href="###" class="href_file" onclick="showFile(\''+fileId+'\');">'+fileFull+'</a></h4>');
 	      //item-content内容
 	      divItemContent.append('<div class="text font_size13">'+'大小：'+size+'，上传时间：'+createDate+'，简介：'+desc+'</div>');
 	    }else if(fileType=="report"){
@@ -177,5 +182,21 @@ function getStr(aStr,defaultStr){
   return retStr;
 }
 
+//查询结果中，当点击了某个文件，触发此操作
+function showFile(fileId){
+alert("您点击了："+fileId);
+}
+
+//弹框显示报告详情
+function showReport(reportId) {
+var winOption={
+  url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
+  title:"报告详情",
+  height:600,
+  width:1000,
+  iframeScroll:"yes"
+};
+openSWinInMain(winOption);
+}
 </script>
 </html>

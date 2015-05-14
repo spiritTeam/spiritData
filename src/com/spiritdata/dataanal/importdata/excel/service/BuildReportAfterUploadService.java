@@ -32,6 +32,7 @@ import com.spiritdata.dataanal.report.model.ReportSegment;
 import com.spiritdata.dataanal.report.model.SegmentList;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.task.TaskUtils;
+import com.spiritdata.dataanal.task.core.enumeration.StatusType;
 import com.spiritdata.dataanal.task.core.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.core.model.PreTask;
 import com.spiritdata.dataanal.task.core.model.TaskGraph;
@@ -130,7 +131,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tg.setId(SequenceUUID.getPureUUID());
         tg.setOwner(owner);
         tg.setWorkName("["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后分析任务");
-        tg.setStatus(0);
+        tg.setPrepared();
         tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\"}");
         
         //4-构建报告体，并生成相关的任务
@@ -175,7 +176,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     analSingleDict_Task.setId(tempStr);
                                     analSingleDict_Task.setTaskName(mm.getTitleName()+"单项指标分析");
                                     analSingleDict_Task.setLangType(TaskLangType.JAVA);
-                                    analSingleDict_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
+                                    analSingleDict_Task.setExecuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
                                     analSingleDict_Task.setPrepared();
                                       //设置参数
                                     taskParam.clear();
@@ -245,7 +246,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         getMDInfos_Task.setId(SequenceUUID.getPureUUID());
         getMDInfos_Task.setTaskName("获得元数据信息");
         getMDInfos_Task.setLangType(TaskLangType.JAVA);
-        getMDInfos_Task.setExcuteFunc("com.spiritdata.dataanal.metadata.relation.process.GetMDInfos");
+        getMDInfos_Task.setExecuteFunc("com.spiritdata.dataanal.metadata.relation.process.GetMDInfos");
         getMDInfos_Task.setPrepared();
           //设置参数
         taskParam.clear();

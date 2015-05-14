@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.task.core.enumeration.StatusType;
 import com.spiritdata.dataanal.task.core.persistence.pojo.TaskGroupPo;
 import com.spiritdata.framework.core.model.ModelSwapPo;
 import com.spiritdata.framework.exceptionC.Plat0006CException;
@@ -21,11 +22,23 @@ public class TaskGroup implements Serializable, ModelSwapPo {
     private String reportId; //所对应的报告Id，可为空
     private Owner owner; //所有者
     private String workName; //任务组工作名称
-    private int status; //任务组状态：1=准备执行；2=正在执行；3=任务失效；4=执行成功；5=执行失败；
+    private StatusType status; //任务组状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；
+    private int defaultExecuteCountLimit; //其子任务默认的执行次数的上限，目前不支持各自任务有自己的执行次数上线，此属性是程序属性，不记录在数据库中
     private String desc; //任务组说明
     private Timestamp beginTime; //任务开始启动时间
 
     private TaskGraph taskGraph; //子任务图
+
+    public TaskGroup() {
+    }
+    /**
+     * 从po对象构建本对象，通过此方法构造的对象是不完整的
+     * 
+     * @param po po对象
+     */
+    public TaskGroup(TaskGroupPo po) {
+        this.buildFromPo(po);
+    }
 
     public String getId() {
         return id;
@@ -51,11 +64,14 @@ public class TaskGroup implements Serializable, ModelSwapPo {
     public void setWorkName(String workName) {
         this.workName = workName;
     }
-    public int getStatus() {
+    public StatusType getStatus() {
         return status;
     }
-    public void setStatus(int status) {
-        this.status = status;
+    public int getDefaultExecuteCountLimit() {
+        return defaultExecuteCountLimit;
+    }
+    public void setDefaultExecuteCountLimit(int defaultExecuteCountLimit) {
+        this.defaultExecuteCountLimit = defaultExecuteCountLimit;
     }
     public String getDesc() {
         return desc;
@@ -79,31 +95,31 @@ public class TaskGroup implements Serializable, ModelSwapPo {
      * 设置为准备状态
      */
     public void setPrepared() {
-        this.status=1;
+        this.status=StatusType.PREPARE;
     }
     /**
      * 设置为正在执行
      */
     public void setProcessing() {
-        this.status=2;
+        this.status=StatusType.PROCESSING;
     }
     /**
      * 设置为失效
      */
     public void setAbatement() {
-        this.status=3;
+        this.status=StatusType.ABATE;
     }
     /**
      * 设置为执行成功
      */
     public void setSuccessed() {
-        this.status=4;
+        this.status=StatusType.SUCCESS;
     }
     /**
      * 设置为执行失败：其子任务图没有完全执行成功
      */
     public void setFailed() {
-        this.status=5;
+        this.status=StatusType.FAILD;
     }
 
     /**
@@ -129,7 +145,7 @@ public class TaskGroup implements Serializable, ModelSwapPo {
         ret.setOwnerType(this.owner.getOwnerType());
         ret.setOwnerId(this.owner.getOwnerId());
         ret.setWorkName(this.workName);
-        ret.setStatus(this.status==0?1:this.status);
+        ret.setStatus(this.status.getValue());
         ret.setDesc(this.desc);
         return ret;
     }
@@ -150,8 +166,19 @@ public class TaskGroup implements Serializable, ModelSwapPo {
         this.reportId = _po.getReportId();
         this.owner = new Owner(_po.getOwnerType(), _po.getOwnerId());
         this.workName = _po.getWorkName();
-        this.status = _po.getStatus();
+        this.status = StatusType.getStatusType(_po.getStatus());
         this.desc = _po.getDesc();
         this.beginTime = _po.getBeginTime();
+    }
+
+    /**
+     * 获得任务组所包含的任务信息的数量。若本对象的任务图属性为空，或图对象的任务Map为空，返回-1。<br/>
+     * 因此在调用此方法时，不能简单相加，应该如此：sum += (getTaskInfoSize()>0?getTaskInfoSize:0);
+     * @return 任务信息的数量
+     */
+    public int getTaskInfoSize() {
+        if (this.getTaskGraph()==null) return -1;
+        if (this.getTaskGraph().getTaskMap()==null) return -1;
+        return this.getTaskGraph().getTaskMap().size();
     }
 }

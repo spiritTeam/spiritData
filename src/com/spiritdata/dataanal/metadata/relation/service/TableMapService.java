@@ -90,7 +90,7 @@ public class TableMapService {
         btm.put("columnStr", columnStr);
         if (!StringUtils.isNullOrEmptyOrSpace(mm.getDesc())) btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDesc());
 
-        mtmrDao.excute("createTable", btm);
+        mtmrDao.execute("createTable", btm);
         //修改mm中的积累表名称
         if (tableType==1) mm.setTableName(tableName);
         //写入注册信息

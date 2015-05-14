@@ -7,12 +7,12 @@
 {
   "total":5,
   "rows":[
-    {"id":"1001","type":"file","name":"文件1","size":"1M","createDate":"2014-08-01",desc:"文件1描述","suffix":"xlsx"},
-    {"id":"1002","type":"file","name":"文件2","size":"12M","createDate":"2014-07-22",desc:"文件2描述","suffix":"xlsx"},
-    {"id":"1003","type":"report","name":"报告1","size":"35M","createDate":"2013-11-05",desc:"报告1描述",thumbUrl:""},
-    {"id":"1004","type":"report","name":"报告2","size":"55M","createDate":"2012-09-09",desc:"报告2描述",thumbUrl:""},
-    {"id":"1005","type":"report","name":"报告3","size":"16M","createDate":"2013-12-01",desc:"报告3描述",thumbUrl:""},
-    {"id":"1006","type":"file","name":"文件3","size":"3M","createDate":"2014-10-01",desc:"文件3描述","suffix":"xlsx"},
-    {"id":"1007","type":"report","name":"报告4","size":"26M","createDate":"2013-11-01",desc:"报告4描述",thumbUrl:""}
+    {"id":"1001","type":"file","name":"文件1","size":"1M","createDate":"2014-08-01","desc":"文件1描述","suffix":"xlsx","reportId":"rep1001"},
+    {"id":"1002","type":"file","name":"文件2","size":"12M","createDate":"2014-07-22","desc":"文件2描述","suffix":"xlsx","reportId":""},
+    {"id":"1003","type":"report","name":"报告1","size":"35M","createDate":"2013-11-05","desc":"报告1描述","thumbUrl":""},
+    {"id":"1004","type":"report","name":"报告2","size":"55M","createDate":"2012-09-09","desc":"报告2描述","thumbUrl":""},
+    {"id":"1005","type":"report","name":"报告3","size":"16M","createDate":"2013-12-01","desc":"报告3描述","thumbUrl":""},
+    {"id":"1006","type":"file","name":"文件3","size":"3M","createDate":"2014-10-01",desc:"文件3描述","suffix":"xlsx","reportId":"rep1003"},
+    {"id":"1007","type":"report","name":"报告4","size":"26M","createDate":"2013-11-01","desc":"报告4描述","thumbUrl":""}
   ]
 }
