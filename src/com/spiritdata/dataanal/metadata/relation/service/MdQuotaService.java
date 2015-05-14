@@ -308,13 +308,12 @@ public class MdQuotaService {
     }
 
     /**
-     * 根据表名，得到该表的指标信息
-     * @param tableName 表名
+     * 根据元数据Id，得到该元数据的指标信息（针对积累表）
      * @param mdMId 元数据模式Id 
      * @return 指标信息
      */
-    public QuotaTable getMdQuotaInfo(String mdMid) {
-        return _getAllQuotaTableInfo(qtDao.getInfoObject("getInfoByMdMid", mdMid));
+    public QuotaTable getMdQuotaInfo(String mdMId) {
+        return _getAllQuotaTableInfo(qtDao.getInfoObject("getInfoByMdMId", mdMId));
     }
 
     /**
@@ -322,11 +321,23 @@ public class MdQuotaService {
      * @param _qt 不完全的表指标信息
      * @return 全部的表指标信息
      */
-    private QuotaTable _getAllQuotaTableInfo(QuotaTable _qt) {
+    private QuotaTable _getAllQuotaTableInfo(final QuotaTable _qt) {
         if (_qt==null) return null;
-        String mdMid = _qt.getMdMId();//元数据模式Id
-        //找到元数据
+
         QuotaTable all_qt = _qt;
+        //得到列的指标信息
+        Map<String, Object> m = new HashMap<String, Object>();
+        m.put("tqId", _qt.getId());
+        List<QuotaColumn> qcL = qcDao.queryForList(m);
+        if (qcL!=null&&qcL.size()>0) {
+            for (QuotaColumn qc: qcL) {
+                try {
+                    all_qt.addColumn(qc);
+                } catch(Exception e) {
+                }
+            }
+        }
+        if (all_qt.getColQuotaList()==null||all_qt.getColQuotaList().size()==0) return null;
         return all_qt;
     }
 }

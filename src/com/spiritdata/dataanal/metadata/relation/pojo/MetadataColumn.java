@@ -87,6 +87,10 @@ public class MetadataColumn extends BaseObject {
     public boolean isPk() {
         return pkSign>0;
     }
+    /**
+     * 是否是确定的主键
+     * @return 
+     */
     public boolean isCertainPk() {
         return pkSign==1;
     }
