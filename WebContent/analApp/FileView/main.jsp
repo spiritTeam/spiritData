@@ -253,11 +253,11 @@ function showSearchResultList(){
 	  var jsonRows = searchResultJsonData.rows;
 	  var len = jsonRows.length;
 	  for(var i=0;i<len;i++){
-	    var fileCategoryId = jsonRows[i]["fileCategoryId"];
+	    var fileIndexId = jsonRows[i]["fileIndexId"];
 	    var fileName = jsonRows[i]["clientFileName"];
 	    var suffix = jsonRows[i]["suffix"];
 	    var fileFull = fileName;
-	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileCategoryId+'\');"><strong>'+fileFull+'</strong></a>';
+	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileIndexId+'\');"><strong>'+fileFull+'</strong></a>';
 	    
 	    var size = jsonRows[i]["fileSize"];
 	    var createDate = jsonRows[i]["createTimeStr"];
@@ -291,14 +291,14 @@ function showSearchResultThumb(){
 	  var jsonRows = searchResultJsonData.rows;
 	  var len = jsonRows.length;
 	  for(var i=0;i<len;i++){
-		  var fileId = jsonRows[i]["id"];
-	    var fileName = jsonRows[i]["name"];
+		  var fileIndexId = jsonRows[i]["fileIndexId"];
+		  var fileName = jsonRows[i]["clientFileName"];
 	    var suffix = jsonRows[i]["suffix"];
 	    var thumbImgUrl = thumbPath + getSuffixImgName(suffix);
-	    var fileFull = fileName+"."+suffix;
-	    var size = jsonRows[i]["size"];
-	    var createDate = jsonRows[i]["createDate"];
-	    var desc = jsonRows[i]["desc"];
+	    var fileFull = fileName;
+	    var size = jsonRows[i]["fileSize"];
+	    var createDate = jsonRows[i]["createTimeStr"];
+	    var desc = jsonRows[i]["descn"];
 	    thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-2">';
 	    thumbHtmlStr += '    <div class="card">';
 		  thumbHtmlStr += '      <div class="media-wrapper">';
@@ -306,13 +306,13 @@ function showSearchResultThumb(){
 		  thumbHtmlStr += '        <img src='+thumbImgUrl+' alt="">';
 	    thumbHtmlStr += '      </div>';   
 	    //鼠标移到图片上时，下拉浮动框显示的内容
-		  thumbHtmlStr += '        <span class="caption">'+desc+'</span>';
+		  thumbHtmlStr += '        <span class="caption" style="padding:2px;">'+desc+'</span>';
 	    //缩略图下方显示的内容
 	    thumbHtmlStr += '      <div class="media-wrapper">';
-		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileId+'\');"><strong>'+fileFull+'</strong></a>';
+		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileIndexId+'\');"><strong>'+fileFull+'</strong></a>';
 	    thumbHtmlStr += '      </div>';  
-	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
-	    thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createDate+'';
+	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted" style="padding:2px;text-align:center;">';
+	    thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;&nbsp;创建日期:'+createDate+'';
 	    thumbHtmlStr += '      </div>'; 
 	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
 	    var optHtml = getOptHtml(jsonRows[i],"floatRight");
@@ -338,13 +338,13 @@ function getOptHtml(aJsonRow,floatStyle){
   if(!aJsonRow){
     return "";
   }
-  var fileCategoryId = aJsonRow["fileCategoryId"];
+  var fileIndexId = aJsonRow["fileIndexId"];
   var reportId = aJsonRow["reportId"];
   var fileName = aJsonRow["clientFileName"];
   var suffix = aJsonRow["suffix"];
   var fileFull = fileName;
   //构建操作按钮
-  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileCategoryId+'\');"><i class="icon-list"></i>浏览</button>';
+  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileIndexId+'\');"><i class="icon-list"></i>浏览</button>';
   //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
   var optReport = '';
   if(!isUndefinedNullEmpty(reportId)){
@@ -364,6 +364,11 @@ function getOptHtml(aJsonRow,floatStyle){
 function getSuffixImgName(suffixName){
   var retName = fileSuffixImg["default"];
   try{
+	  if(typeof(suffixName) != "undefined" && suffixName!=null && suffixName.length>0){
+		  if(suffixName.charAt(0)=="."){
+			  suffixName = suffixName.substring(1);
+		  }
+	  }
     retName = fileSuffixImg[suffixName];
     if(typeof(retName) == "undefined" || retName==null || retName.length==0){
     	retName = fileSuffixImg["default"];
