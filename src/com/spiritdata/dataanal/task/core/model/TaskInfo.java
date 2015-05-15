@@ -26,7 +26,7 @@ public class TaskInfo implements Serializable, ModelSwapPo {
 
     private String id; //任务
     private String taskName; //任务名称
-    private String taskType; //任务名称
+    private String taskType; //任务类型
     private TaskLangType langType; //执行语言，默认为java
     private String executeFunc; //任务执行方法
     private Map<String, Object> param; //任务执行所需的参数

@@ -1,14 +1,8 @@
 package com.spiritdata.filemanage.core.pattern.service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;
 import com.spiritdata.filemanage.exceptionC.Flmg0003CException;
 import com.spiritdata.filemanage.util.FileOperUtils;
-import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
 

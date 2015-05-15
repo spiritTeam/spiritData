@@ -32,9 +32,7 @@ import com.spiritdata.dataanal.report.model.ReportSegment;
 import com.spiritdata.dataanal.report.model.SegmentList;
 import com.spiritdata.dataanal.report.model.TaskReport;
 import com.spiritdata.dataanal.task.TaskUtils;
-import com.spiritdata.dataanal.task.core.enumeration.StatusType;
 import com.spiritdata.dataanal.task.core.enumeration.TaskLangType;
-import com.spiritdata.dataanal.task.core.model.PreTask;
 import com.spiritdata.dataanal.task.core.model.TaskGraph;
 import com.spiritdata.dataanal.task.core.model.TaskGroup;
 import com.spiritdata.dataanal.task.core.model.TaskInfo;
@@ -175,6 +173,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     TaskInfo analSingleDict_Task = new TaskInfo();
                                     analSingleDict_Task.setId(tempStr);
                                     analSingleDict_Task.setTaskName(mm.getTitleName()+"单项指标分析");
+                                    analSingleDict_Task.setTaskType(SDConstants.ANAL_MD_SDICT);
                                     analSingleDict_Task.setLangType(TaskLangType.JAVA);
                                     analSingleDict_Task.setExecuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
                                     analSingleDict_Task.setPrepared();
@@ -245,6 +244,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         TaskInfo getMDInfos_Task = new TaskInfo();
         getMDInfos_Task.setId(SequenceUUID.getPureUUID());
         getMDInfos_Task.setTaskName("获得元数据信息");
+        getMDInfos_Task.setTaskType(SDConstants.ANAL_MD_GETINFO);
         getMDInfos_Task.setLangType(TaskLangType.JAVA);
         getMDInfos_Task.setExecuteFunc("com.spiritdata.dataanal.metadata.relation.process.GetMDInfos");
         getMDInfos_Task.setPrepared();

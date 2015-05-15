@@ -267,7 +267,7 @@ public class MdQuotaService {
             try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
             try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
             try { if (ps2!=null) {ps2.close();ps2 = null;} } catch (Exception e) {e.printStackTrace();} finally {ps2 = null;};
-            try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
+            try { if (conn!=null) {conn.commit(); conn.close(); conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
         return qt;
     }
@@ -275,8 +275,8 @@ public class MdQuotaService {
     /**
      * 根据表名，得到该表的指标信息
      * @param tableName 表名
-     * @param mdMId 元数据模式Id 
-     * @return 指标信息
+     * @param mm 元数据模式对象
+     * @return 表指标信息
      */
     public QuotaTable getQuotaInfo(String tableName, MetadataModel mm) {
         Map<String, Object> param = new HashMap<String, Object>();
@@ -305,5 +305,39 @@ public class MdQuotaService {
             else ret = null;
         }
         return ret;
+    }
+
+    /**
+     * 根据元数据Id，得到该元数据的指标信息（针对积累表）
+     * @param mdMId 元数据模式Id 
+     * @return 指标信息
+     */
+    public QuotaTable getMdQuotaInfo(String mdMId) {
+        return _getAllQuotaTableInfo(qtDao.getInfoObject("getInfoByMdMId", mdMId));
+    }
+
+    /**
+     * 根据（不带有列指标信息的）表指标信息，得到全体指标信息，包括列指标信息
+     * @param _qt 不完全的表指标信息
+     * @return 全部的表指标信息
+     */
+    private QuotaTable _getAllQuotaTableInfo(final QuotaTable _qt) {
+        if (_qt==null) return null;
+
+        QuotaTable all_qt = _qt;
+        //得到列的指标信息
+        Map<String, Object> m = new HashMap<String, Object>();
+        m.put("tqId", _qt.getId());
+        List<QuotaColumn> qcL = qcDao.queryForList(m);
+        if (qcL!=null&&qcL.size()>0) {
+            for (QuotaColumn qc: qcL) {
+                try {
+                    all_qt.addColumn(qc);
+                } catch(Exception e) {
+                }
+            }
+        }
+        if (all_qt.getColQuotaList()==null||all_qt.getColQuotaList().size()==0) return null;
+        return all_qt;
     }
 }

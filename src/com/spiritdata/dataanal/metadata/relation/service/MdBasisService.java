@@ -45,12 +45,9 @@ public class MdBasisService {
     }
 
     /**
-     * 根据元数据Id，得到元数据信息
-     * 注意：这个方法不能取到语义信息
-     * @param id
+     * 根据元数据Id，得到元数据信息，不包括语义信息
+     * @param id 元数据信息
      * @return 该元数据信息
-     * @throws Exception 
-     * 这个目前不全，没有包括语义信息，不能调用
      */
     public MetadataModel getMetadataMode(String id) {
         Map<String, String> param = new HashMap<String, String>();
@@ -60,10 +57,47 @@ public class MdBasisService {
 
         param.clear();
         param.put("mdMId", id);
+        //查询列
         List<MetadataColumn> clist = mcDao.queryForList(param);
         if (clist==null||clist.size()==0) return null;
         for (MetadataColumn mc: clist) {
             ret.addColumn(mc);
+        }
+        return ret;
+    }
+
+    /**
+     * 根据元数据Id，得到元数据信息，包括语义信息
+     * @param id
+     * @return 该元数据信息
+     */
+    public MetadataModel getMetadataModeWithColSemanteme(String id) {
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("id", id);
+        MetadataModel ret = mmDao.getInfoObject(param);
+        if (ret==null) return ret;
+
+        param.clear();
+        param.put("mdMId", id);
+        //查询列
+        List<MetadataColumn> clist = mcDao.queryForList(param);
+        if (clist==null||clist.size()==0) return null;
+        for (MetadataColumn mc: clist) {
+            ret.addColumn(mc);
+        }
+        //查询语义
+        param.put("orderByClause", "cId");//按列排序
+        List<MetadataColSemanteme> cslist = mcsDao.queryForList(param);
+        if (cslist!=null&&cslist.size()>0) {
+            String cId = "";
+            MetadataColumn mc = null;
+            for (MetadataColSemanteme mcs: cslist) {
+                if (!mcs.getColId().equals(cId)) {
+                    mc = ret.getColumnByColId(mcs.getColId());
+                    cId = mcs.getColId();
+                }
+                if (mc!=null) mc.addColSem(mcs);
+            }
         }
         return ret;
     }
