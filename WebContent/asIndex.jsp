@@ -739,7 +739,7 @@ var winOption={
   width:1000,
   modal:true
 };
-openSWinInMain(winOption);
+//openSWinInMain(winOption);
 
 //以上为mht js代码，勿删撒=========================================================
 </script>
