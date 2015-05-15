@@ -320,9 +320,11 @@ public abstract class SaveDataUtils {
 
             //根据长度调整Map，调整积累表数据格式
             Map<String, Integer> strColLenMap = SaveDataUtils.getDBColumnSize(conn, rs, sysMm.getTableName());
-            for (String colName: strColLenMap.keySet()) {
-                Integer inChangeMap = changeLenColMap.get(colName);
-                if (inChangeMap!=null&&inChangeMap<=strColLenMap.get(colName)) changeLenColMap.remove(colName);
+            if (changeLenColMap!=null&&changeLenColMap.size()>0) {
+                for (String colName: strColLenMap.keySet()) {
+                    Integer inChangeMap = changeLenColMap.get(colName);
+                    if (inChangeMap!=null&&inChangeMap<=strColLenMap.get(colName)) changeLenColMap.remove(colName);
+                }
             }
             if (changeLenColMap!=null&&changeLenColMap.size()>0) {
                 for (String _colName: changeLenColMap.keySet()) {

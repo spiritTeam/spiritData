@@ -27,7 +27,7 @@ public class DispatchTask extends Thread {
         while (true) {
             try {
                 sleep(this.interval);
-                System.out.println("=========可执行队列长度:"+tms.getExecuterListSize());
+//                System.out.println("=========可执行队列长度:"+tms.getExecuterListSize());
                 if (tms.getExecuterListSize()>0) {
                     //读取可执行的任务
                     TaskExecutorShell executor = new TaskExecutorShell(tms.getNextCanProcessTaskInfo());

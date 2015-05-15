@@ -267,7 +267,7 @@ public class MdQuotaService {
             try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
             try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
             try { if (ps2!=null) {ps2.close();ps2 = null;} } catch (Exception e) {e.printStackTrace();} finally {ps2 = null;};
-            try { if (conn!=null) {conn.commit(); conn.close(); conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
+            try { if (conn!=null) {conn.close(); conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
         }
         return qt;
     }

@@ -104,7 +104,7 @@ public class GetMDInfos implements TaskProcess {
             //语义列处理
             String tempStr = "";
             if (mc.isPk()) tempStr+=",<semanteme >主键</semanteme>";
-            if (mc.getColSemList()!=null||mc.getColSemList().size()>0) {
+            if (mc.getColSemList()!=null&&mc.getColSemList().size()>0) {
                 for (MetadataColSemanteme mcs: mc.getColSemList()) {
                     if (mcs.getSemantemeType()==SemantemeType.DICT) { //字典
                         tempStr+=",<semanteme semType='"+mcs.getSemantemeType()+"' semCode='"+mcs.getSemantemeCode()+"'>字典</semanteme>";
@@ -125,17 +125,17 @@ public class GetMDInfos implements TaskProcess {
             //范围
             tempStr="";
             if (DataType.getDataType(mc.getColumnType())==DataType.STRING) {
-                tempStr=(qc!=null?"":"长度("+qc.getMin()+"->"+qc.getMax()+")");
+                tempStr=(qc==null?"":"长度("+qc.getMin()+"->"+qc.getMax()+")");
             } else {
-                tempStr=(qc!=null?"":("从("+qc.getMin()+")到("+qc.getMax()+")"));
+                tempStr=(qc==null?"":("从("+qc.getMin()+")到("+qc.getMax()+")"));
             }
             rowM.put("range", tempStr);
             //压缩率
-            float tempRate = (Math.round((qc.getCompressRate()*10000)+5)/100);
+            float tempRate = qc==null?0:(Math.round((qc.getCompressRate()*10000)+5)/100);
             rowM.put("compressRate", qc==null?"":(tempRate+"%"));
             dataList.add(rowM);
             //稀疏率
-            tempRate = (Math.round((qc.getNullRate()*10000)+5)/100);
+            tempRate = qc==null?0:(Math.round((qc.getNullRate()*10000)+5)/100);
             rowM.put("sparseRate", qc==null?"":(tempRate+"%"));
             dataList.add(rowM);
         }

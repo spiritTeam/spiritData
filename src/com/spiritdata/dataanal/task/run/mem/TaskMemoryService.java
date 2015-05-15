@@ -60,6 +60,7 @@ public class TaskMemoryService {
      * @return 加入成功返回true，否则返回false
      */
     public boolean addTaskGroup(TaskGroup tg) {
+        if (tm==null||tm.taskGroupMap==null) return false;
         if (tm.taskGroupMap.size()>tm.MEMORY_MAXSIZE_TASKGROUP) return false; //已经不能插入任务组了
         if (tg.getStatus()!=StatusType.PREPARE&&tg.getStatus()!=StatusType.FAILD) {
             throw new Dtal0403CException("只有为[准备执行]/[执行失败]状态的任务组才能加入任务内存，当前任务组[id="+tg.getId()+"]的状态为["+tg.getStatus().getName()+"]");
