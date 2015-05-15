@@ -125,10 +125,12 @@ function retrievalJsonDJson (domAry) {
     return;
   } else {
     // 当已经全部显示完时关闭定时任务
-    if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) clearInterval(monitor.monitorDrawId);
+	  alert(monitor._alreadyShownId.length);
+    if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) {clearInterval(monitor.monitorDrawId);}
     for (var i=0;i<jsonDInfoArray.length;i++) {
       var jsonDInfo = jsonDInfoArray[i];
-      if (monitor._alreadyShownId.toString().indexOf(jsonDInfo.id)==-1) {
+      var shownIdAry = monitor._alreadyShownId;
+      if (shownIdAry.toString().indexOf(jsonDInfo.id)==-1) {
         //起setInterval,检查d元素是否到位
         if (jsonDInfo.json!=null&&jsonDInfo.json!="") {
           for (var k=0;k<domAry.length;k++) {
@@ -274,6 +276,9 @@ function drawBaiDuPts(jQobj,_data,param){
   var width=500;
   var height=500;
   jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+  var mapDivId = jQobj.attr('id')+"_map";
+  jQobj.append('<div id="'+mapDivId+'"/></div>');
+  $('#'+mapDivId).attr('style','width:'+(width-2)+'px;height:'+(height-2)+'px;');
   //获取坐标列 x、y、z、
   var xCol = param.X;
   var yCol = param.Y;
@@ -336,7 +341,7 @@ function drawBaiDuPts(jQobj,_data,param){
           ],
           function (ec) {
             //获取案件分布地图对象
-            var mapPtAnJian = ec.init(jQobj[0]);
+            var mapPtAnJian = ec.init($('#'+mapDivId)[0]);
             option = {
               title : {
                 text: titleName,
@@ -1042,21 +1047,22 @@ function reportContentParse(matchAry,mismatchAry){
     //showType = text的时候用<span>来替换，其他的showType类型都用<div></div>来替换
     if (ele.attr('text')=="value"){
       //在细分为<d/>和<d></d>这两种情况
-      if (matchStr.match(/></)!=null){
+      if (matchStr.match(/<\/d>/)!=null){
         matchStr = matchStr.replace(/<d\s{1}/,"<span ");
         matchStr = matchStr.replace(/\/d>/,"/span>");
       } else {
         matchStr = matchStr.replace(/<d\s{1}/,"<span ");
-        matchStr = matchStr.replace(/\/>/,"></span>");
+        matchStr = matchStr.substring(0,matchStr.lastIndexOf("/>"))+"></span>";
       }
     } else {
       //在细分为<d/>和<d></d>这两种情况
-      if (matchStr.match(/></)!=null){
+      if (matchStr.match(/<\/d>/)!=null){
         matchStr = matchStr.replace(/<d\s{1}/,"<div ");
         matchStr = matchStr.replace(/\/d>/,"/div>");
       } else {
         matchStr = matchStr.replace(/<d\s{1}/,"<div ");
-        matchStr = matchStr.replace(/\/>/,"></div>");
+        //这里不采用正则的原因是因为decorateView中可能存在/>
+        matchStr = matchStr.substring(0,matchStr.lastIndexOf("/>"))+"></div>";
       }
     }
     //用concat方法把不用处理的字符串和处理后的content拼接起来，组成新的content
