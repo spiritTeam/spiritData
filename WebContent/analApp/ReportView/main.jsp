@@ -35,6 +35,7 @@
 
 .border_no{border:0px solid red; }
 .padding_top5{padding-top:5px;}
+.padding_2px{padding:2px;}
 
 .bt_13_no{border:0px solid transparent;font-size:13px;padding:0px;}
 .td_height_49{height:49px;}
@@ -74,6 +75,11 @@ border-radius:10px;
     display:-moz-inline-box;
     *display:inline;
     display:inline-block;
+}
+.wrap{
+  word-wrap: break-word;
+  word-break:break-all;
+  white-space:normal;
 }
 
 </style>
@@ -191,6 +197,7 @@ function startSearch(){
   var searchParam={"searchStr":searchStr,"startDateStr":startDateStr,"endDateStr":endDateStr};
   //alert("查询参数："+allFields(searchParam));
   var url="<%=path%>/analApp/demoData/reportlist.json";
+  url = "<%=path%>/reportview/searchReportList.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
       try{
@@ -244,7 +251,7 @@ function showSearchResultList(){
     data:{  
       cols:[
         {width:300,text:'报告名',type:'string',flex: false,colClass:'text-left font_15',cssClass:'text-center dg_th_font_bold'},
-        {width:60,text:'大小',type:'number',flex: true,colClass:'text-right font_15',cssClass:'text-center dg_th_font_bold'},
+        {width:80,text:'报告类型',type:'string',flex: true,colClass:'text-left font_15',cssClass:'text-center dg_th_font_bold'},
         {width:60,text:'创建日期',type:'date',flex: true,colClass:'text-left font_15',cssClass:'text-center dg_th_font_bold'},
         {width:30,text:'操作 ',type:'string',flex: true,colClass:'text-center font_15',cssClass:'text-center dg_th_font_bold'}
       ]
@@ -257,7 +264,7 @@ function showSearchResultList(){
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
       var id = jsonRows[i]["id"];
-      var fileName = jsonRows[i]["name"];
+      var fileName = jsonRows[i]["reportName"];
       var fileFull = fileName;
       var unRead = jsonRows[i]["unRead"]; //是否未读过
       var ahrf_file = '<a href="###" onclick="showReport(\''+id+'\',\''+unRead+'\');"><strong>'+fileFull+'</strong></a>';
@@ -269,8 +276,8 @@ function showSearchResultList(){
     	  optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;visibility:hidden;"/>';
       }
       ahrf_file = optRound + ahrf_file;
-      var size = jsonRows[i]["size"];
-      var createDate = jsonRows[i]["createDate"];
+      var fileType = jsonRows[i]["reportType"];
+      var createDate = jsonRows[i]["createTimeStr"];
       //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
       //var arow={checked:false,data:[fileName+"."+suffix,size,createDate],cssClass:cssClassStr};
       //构建操作按钮
@@ -278,7 +285,7 @@ function showSearchResultList(){
       //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">浏览</button>';
       //var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+id+'\');">浏览</button>';
       var optHtml = getOptHtml(jsonRows[i],"floatLeft");
-      var arow={checked:false,data:[ahrf_file,size,createDate,optHtml]};
+      var arow={checked:false,data:[ahrf_file,fileType,createDate,optHtml]};
       dtrows.push(arow);
     }
   }
@@ -304,11 +311,11 @@ function showSearchResultThumb(){
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
       var id = jsonRows[i]["id"];
-      var fileName = jsonRows[i]["name"];
+      var fileName = jsonRows[i]["reportName"];
       var fileFull = fileName;
-      var desc = jsonRows[i]["desc"];
-      var size = jsonRows[i]["size"];
-      var createDate = jsonRows[i]["createDate"];
+      var desc = jsonRows[i]["descn"];
+      var reportType = jsonRows[i]["reportType"];
+      var createDate = jsonRows[i]["createTimeStr"];
       var unRead = jsonRows[i]["unRead"];
       var thumbUrl = jsonRows[i]["thumbUrl"];
       thumbUrl = thumbPath + getStr(thumbUrl,defaultThumbImg);
@@ -320,7 +327,7 @@ function showSearchResultThumb(){
       thumbHtmlStr += '        <img src='+thumbUrl+' alt="缩略图">';
       thumbHtmlStr += '      </div>';
       //鼠标移到图片上时，下拉浮动框显示的内容
-      thumbHtmlStr += '        <span class="caption">'+desc+'</span>';
+      thumbHtmlStr += '        <span class="caption" style="padding:2px;">'+desc+'</span>';
       //缩略图下方显示的内容
       thumbHtmlStr += '      <div class="media-wrapper">';
       //是否未读，如果未读则前面加个小红点用于标识
@@ -331,12 +338,12 @@ function showSearchResultThumb(){
         optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;visibility:hidden;"/>';
       }
       //显示报告名
-      var ahrf_file = '<a href="###" class="card-heading" style="padding:0px;" onclick="showReport(\''+id+'\',\''+unRead+'\');">'+'<strong>'+fileFull+'</strong></a>';
-      var tbHead = '<ul style="list-style:none;width:100%;height:100%;padding-left:0px;margin-top:10px;margin-bottom:0px;"><li class="li_inline" style="padding-bottom:10px;">'+optRound+'</li><li class="li_inline">'+ahrf_file+'</li></ul>';      
+      var ahrf_file = '<a href="###" class="card-heading" style="padding:0px;" onclick="showReport(\''+id+'\',\''+unRead+'\');" title="'+fileFull+'">'+'<strong>'+fileFull+'</strong></a>';
+      var tbHead = '<ul style="list-style:none;width:100%;height:100%;padding-left:0px;margin-top:10px;margin-bottom:0px;"><li class="li_inline" style="padding-bottom:10px;">'+optRound+'</li><li class="li_inline wrap">'+ahrf_file+'</li></ul>';      
       thumbHtmlStr += '        '+tbHead;
       thumbHtmlStr += '      </div>'; 
-      thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
-      thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;创建日期:'+createDate+'';
+      thumbHtmlStr += '      <div class="media-wrapper card-content text-muted " style="padding:2px;">';
+      thumbHtmlStr += '        报告类型：'+reportType+'&nbsp;&nbsp;创建日期：'+createDate+'';
       thumbHtmlStr += '      </div>'; 
       thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
       var optHtml = getOptHtml(jsonRows[i],"floatRight");
@@ -356,13 +363,14 @@ function getOptHtml(aJsonRow,floatStyle){
 	if(!aJsonRow){
 		return "";
 	}
-	var fileId = aJsonRow["id"];
-  var fileName = aJsonRow["name"];
+	var reportId = aJsonRow["id"];
+	var fileId = aJsonRow["fileId"];
+  var fileName = aJsonRow["reportName"];
   var unRead = aJsonRow["unRead"];
   var fileFull = fileName;
   //构建操作按钮
-  var optRelation = '<button type="button" class="btn bt_13_no" onclick="showRelation(\''+fileId+'\');"><i class="icon-list"></i>关系</button>';
-  var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+fileId+'\',\''+unRead+'\');"><i class="icon-building"></i>浏览</button>';
+  var optRelation = '<button type="button" class="btn bt_13_no" onclick="showRelation(\''+reportId+'\');"><i class="icon-list"></i>关系</button>';
+  var optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\',\''+unRead+'\');"><i class="icon-building"></i>浏览</button>';
   var optContent = optReportView+"&nbsp;&nbsp;"+optRelation+"";
   var optHtml = optContent;
   if(typeof(floatStyle) != "undefined" && floatStyle=="floatRight"){
@@ -419,7 +427,7 @@ function showReport(reportId,unRead) {
  */
 function getStr(aStr,defaultStr){
   var retStr = defaultStr;
-  if(typeof(aStr)!="undefined" &&!aStr && aStr.length>0){
+  if(typeof(aStr)!="undefined" && aStr!=null &&!aStr && aStr.length>0){
     retStr = aStr;
   }
   return retStr;

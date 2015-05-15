@@ -6,7 +6,7 @@
   String reportIdStr = request.getParameter("reportId");
   //输入中文后需要做转码，否则会出现乱码
   reportIdStr = new String(reportIdStr.getBytes("ISO-8859-1"),"UTF-8");
-  //System.out.println("reportId="+reportId);
+  //System.out.println("reportId="+reportIdStr);
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -175,9 +175,14 @@ $(function() {
   
   //初始化tabs
   initTabs();
-  
+
   //开始查找报告关联信息
-  searchRelation();
+  try{
+	  searchRelation();  
+  }catch(e){
+	  alert(e.message);
+  }
+  
 });
 
 /**
@@ -212,7 +217,7 @@ function initTabs(){
 //根据reportId异步请求获取报告关联信息
 function searchRelation(){
   //获取父窗口传来的报告ID
-  var reportId = <%=reportIdStr%>;
+  var reportId = "<%=reportIdStr%>";
   //异步查询文件列表  
   var searchParam={"reportId":reportId};
   //alert("查询参数："+allFields(searchParam));
