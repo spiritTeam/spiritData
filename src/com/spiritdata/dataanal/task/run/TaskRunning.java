@@ -96,10 +96,9 @@ public class TaskRunning extends Thread {
             System.out.println("5-启动——任务分发——线程");
             startDispatch();
 
-            /*
             System.out.println("6-启动——清除已完成任务——线程");
             startCleanTaskMemory();
-*/
+
             System.out.println("-------------------------------");
         } catch (InterruptedException e) {
             e.printStackTrace();

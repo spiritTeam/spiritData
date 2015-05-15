@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.FileUtils;
 
+import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.CacheEle;
 import com.spiritdata.framework.core.cache.SystemCache;
@@ -26,6 +28,9 @@ import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
  * @author wh
  */
 public class ReportService {
+    @Resource
+    private FileManageService fmService;
+
     @Resource(name="defaultDAO")
     private MybatisDAO<ReportPo> reportDao;
 
@@ -58,6 +63,17 @@ public class ReportService {
         } catch(Exception e) {
             throw new Dtal1004CException(e);
         }
+    }
+
+    /**
+     * 根据报告Id，得到报告的文件信息
+     * @param id 报告Id
+     * @return 文件信息
+     */
+    public FileInfo getReportFiById(String id) {
+        ReportPo rPo = reportDao.getInfoObject(id);
+        if (rPo==null) return  null;
+        return fmService.getFileInfoById(id);
     }
 
     /**

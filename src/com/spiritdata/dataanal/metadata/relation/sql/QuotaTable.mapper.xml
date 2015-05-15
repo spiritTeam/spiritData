@@ -20,6 +20,9 @@
   <sql id="Base_Column_List">
     id, tmoId, tmId, tableName, allCount, cTime, lmTime, laTime
   </sql>
+  <sql id="Base_Column_List_A">
+    a.id, a.tmoId, a.tmId, a.tableName, a.allCount, a.cTime, a.lmTime, a.laTime
+  </sql>
 
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey">
@@ -57,6 +60,11 @@
   </select>
   <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String">
     select <include refid="Base_Column_List"/> from sa_md_tabquota where id=#{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 获得列表：根据元数据Id，得到该元数据表的指标信息（针对积累表） -->
+  <select id="getInfoByMdMId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List_A"/> from sa_md_tabquota a, sa_md_tabmodel b
+    where a.tableName=b.tableName and b.id = #{id,jdbcType=VARCHAR} and a.tmId=#{id,jdbcType=VARCHAR}
   </select>
 
   <!-- 新增数据 -->

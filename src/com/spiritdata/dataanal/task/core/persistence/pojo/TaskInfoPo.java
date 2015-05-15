@@ -16,6 +16,7 @@ public class TaskInfoPo extends BaseObject {
     private String taskGId; //任务组id
     private String rfId; //结果jsonD文件Id
     private String taskName; //任务名称
+    private String taskType; //任务类型
     private String langType; //执行语言，默认为java
     private String executeFunc; //任务执行方法
     private String param; //任务执行所需的参数，是Json串
@@ -32,79 +33,85 @@ public class TaskInfoPo extends BaseObject {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
     public void setId(String id) {
         this.id = id;
     }
     public String getTaskGId() {
-        return taskGId;
+        return this.taskGId;
     }
     public void setTaskGId(String taskGId) {
         this.taskGId = taskGId;
     }
     public String getRfId() {
-        return rfId;
+        return this.rfId;
     }
     public void setRfId(String rfId) {
         this.rfId = rfId;
     }
     public String getTaskName() {
-        return taskName;
+        return this.taskName;
     }
     public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
+    public String getTaskType() {
+        return this.taskType;
+    }
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
+    }
     public String getLangType() {
-        return langType;
+        return this.langType;
     }
     public void setLangType(String langType) {
         this.langType = langType;
     }
     public String getExecuteFunc() {
-        return executeFunc;
+        return this.executeFunc;
     }
     public void setExecuteFunc(String executeFunc) {
         this.executeFunc = executeFunc;
     }
     public String getParam() {
-        return param;
+        return this.param;
     }
     public void setParam(String param) {
         this.param = param;
     }
     public int getStatus() {
-        return status;
+        return this.status;
     }
     public void setStatus(int status) {
         this.status = status;
     }
     public int getExecuteCount() {
-        return executeCount;
+        return this.executeCount;
     }
     public void setExecuteCount(int executeCount) {
         this.executeCount = executeCount;
     }
     public String getDesc() {
-        return desc;
+        return this.desc;
     }
     public void setDesc(String desc) {
         this.desc = desc;
     }
     public Timestamp getFirstTime() {
-        return firstTime;
+        return this.firstTime;
     }
     public void setFirstTime(Timestamp firstTime) {
         this.firstTime = firstTime;
     }
     public Timestamp getBeginTime() {
-        return beginTime;
+        return this.beginTime;
     }
     public void setBeginTime(Timestamp beginTime) {
         this.beginTime = beginTime;
     }
     public Timestamp getEndTime() {
-        return endTime;
+        return this.endTime;
     }
     public void setEndTime(Timestamp endTime) {
         this.endTime = endTime;

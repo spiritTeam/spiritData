@@ -12,7 +12,7 @@ public abstract class SDConstants {
     public final static String ANAL_MD_NOKEY="METADATA-nokey";//不能为主键的分析标识
     public final static String ANAL_MD_DICT="METADATA-dict";//字典分析标识
     public final static String ANAL_MD_GETINFO="METADATA-get";//获得元数据信息
-    public final static String ANAL_MD_SDICT="METADATA-sigleDice";//单项指标分析
+    public final static String ANAL_MD_SDICT="METADATA-sigleDict";//单项指标分析
     public final static String ANAL_MD_COORD="METADATA-coord";//坐标分析标识
 
     //以下jsonD常量类型信息，JDC=JsonDCode，主要和分析有关

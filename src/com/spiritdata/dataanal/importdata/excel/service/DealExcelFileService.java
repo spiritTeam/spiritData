@@ -12,8 +12,8 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -21,7 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
+import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
@@ -56,7 +56,7 @@ public class DealExcelFileService {
     private Logger logger = Logger.getLogger(DealExcelFileService.class);
 
     @Resource
-    protected DataSource dataSource;
+    protected BasicDataSource dataSource;
 
     @Resource
     private MdSessionService mdSessionService;
@@ -87,7 +87,7 @@ public class DealExcelFileService {
     @Resource
     private FileManageService fmService;
     @Resource
-    private AanlResultFileService arFileService;
+    private AnalResultFileService arFileService;
 
     @Resource
     private BuildReportAfterUploadService buildReport;

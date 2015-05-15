@@ -60,15 +60,21 @@ public class TaskMemoryService {
      * @return 加入成功返回true，否则返回false
      */
     public boolean addTaskGroup(TaskGroup tg) {
+        if (tm==null||tm.taskGroupMap==null) return false;
         if (tm.taskGroupMap.size()>tm.MEMORY_MAXSIZE_TASKGROUP) return false; //已经不能插入任务组了
-        if (tg.getStatus()!=StatusType.PREPARE) throw new Dtal0403CException("只有为准备执行状态的任务组才能加入任务内存");
-        
+        if (tg.getStatus()!=StatusType.PREPARE&&tg.getStatus()!=StatusType.FAILD) {
+            throw new Dtal0403CException("只有为[准备执行]/[执行失败]状态的任务组才能加入任务内存，当前任务组[id="+tg.getId()+"]的状态为["+tg.getStatus().getName()+"]");
+        }
         if (tg.getTaskInfoSize()>0) {
             boolean inserted = false;
             Map<String, TaskInfo> _m = tg.getTaskGraph().getTaskMap();
             for (String tiId: _m.keySet()) {
                 TaskInfo ti = _m.get(tiId);
-                inserted = addTaskInfo(ti);
+                try {
+                    inserted = addTaskInfo(ti);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
                 if (!inserted) break;
             }
             if (inserted) {
@@ -89,7 +95,9 @@ public class TaskMemoryService {
      */
     public boolean addTaskInfo(TaskInfo ti) {
         if ((tm.taskInfoMap.size())>=tm.MEMORY_MAXSIZE_TASKINFO) return false; //任务信息数量已经达到了上限，不能再加入了
-        if (ti.getStatus()!=StatusType.PREPARE) throw new Dtal0403CException("只有为准备执行状态的任务才能加入任务内存");
+        if (ti.getStatus()!=StatusType.PREPARE&&ti.getStatus()!=StatusType.FAILD) {
+            throw new Dtal0403CException("只有为[准备执行]/[执行失败]状态的任务才能加入任务内存，当前任务[id="+ti.getId()+"]的状态为["+ti.getStatus().getName()+"]");
+        }
         if (tm.taskInfoMap.get(ti.getId())==null) {
             tm.taskInfoSortList.add(getInsertIndex(ti), ti.getId());
             ti.setWaiting();
@@ -139,7 +147,7 @@ public class TaskMemoryService {
             selfTi = new TaskInfo(tip);
             selfTi.setTaskGroup(tempTGm.get(tip.getTaskGId()));
             if (tempTGm.get(tip.getTaskGId())!=null) selfTi.getTaskGroup().addTask2Graph(selfTi);
-            tempTIm.put(tip.getId(), new TaskInfo(tip));
+            tempTIm.put(tip.getId(), selfTi);
         }
 
         //3-补充任务中的前置任务
@@ -156,11 +164,21 @@ public class TaskMemoryService {
 
         //4-加入内存结构
         for (String tgId: tempTGm.keySet()) {//任务组
-            addTaskGroup(tempTGm.get(tgId));
+            try {
+                addTaskGroup(tempTGm.get(tgId));
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         }
         for (String tiId: tempTIm.keySet()) {//不属于任何任务组的任务
             selfTi = tempTIm.get(tiId);
-            if (selfTi.getTaskGroup()==null) addTaskInfo(selfTi);
+            if (selfTi.getTaskGroup()==null) {
+                try {
+                    addTaskInfo(selfTi);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
