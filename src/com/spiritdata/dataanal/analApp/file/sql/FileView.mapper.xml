@@ -7,19 +7,18 @@
 <mapper namespace="fileView">
   <!-- 对象定义:元数据列模式 -->
   <resultMap id="FileViewMap" type="FileView">
-    <id     column="id"          property="fileIndexId" jdbcType="VARCHAR"/>
-    <result column="ownerType"   property="ownerType"   jdbcType="INTEGER"/>
-    <result column="ownerId"     property="ownerId"     jdbcType="VARCHAR"/>
-    <result column="fileSize"    property="fileSize"    jdbcType="INTEGER"/>
-    <result column="descn"       property="descn"        jdbcType="VARCHAR"/>
-    <result column="cTime"       property="createTime"  jdbcType="TIMESTAMP"/>
-    <result column="extInfo"     property="clientFileName"   jdbcType="VARCHAR"/>
-    <result column="reportId"     property="reportId"   jdbcType="VARCHAR"/>
-    <result column="fileCategoryId" property="fileCategoryId" jdbcType="VARCHAR"/>
+    <id     column="id"          property="fileIndexId"    jdbcType="VARCHAR"/>
+    <result column="ownerType"   property="ownerType"      jdbcType="INTEGER"/>
+    <result column="ownerId"     property="ownerId"        jdbcType="VARCHAR"/>
+    <result column="fileSize"    property="fileSize"       jdbcType="INTEGER"/>
+    <result column="descn"       property="descn"          jdbcType="VARCHAR"/>
+    <result column="cTime"       property="createTime"     jdbcType="TIMESTAMP"/>
+    <result column="cFileName"   property="clientFileName" jdbcType="VARCHAR"/>
+    <result column="reportid"    property="reportId"       jdbcType="VARCHAR"/>
   </resultMap>
   <!-- 所有列 -->
   <sql id="Base_Column_List">
-    a.id, a.ownerType, a.ownerId, a.fileSize, a.descn, a.cTime, b.extInfo,b.id fileCategoryId
+    a.id id, a.ownerType ownerType, a.ownerId ownerId, a.fileSize fileSize, a.descn descn, a.cTime cTime, b.extInfo extInfo,b.id fileCategoryId
   </sql>
   <!-- 条件子句 -->
   <sql id="WhereClauseByEntiey">
@@ -35,18 +34,20 @@
     </where>
   </sql>
 
-  <!-- 获得查询结果列表 -->
+  <!-- 获得查询结果列表，带有即时报告REPORTID，可以查看即时报告 -->
   <select id="getFileList" resultMap="FileViewMap" parameterType="java.util.Map">
-    select <include refid="Base_Column_List"/> 
-    from (sa_file_index a JOIN sa_file_category b)
+    select b.bId, b.rtype2, b.descn descn2, b.reportid, a.* from vsa_imp_log a
+      left join (select m.fid,n.id reportid, l.* from sa_file_rel l, sa_file_category m, sa_report_info n 
+      where l.bid=m.id and n.fid=m.fid and l.btype=2 and m.type1='REPORT') b
+    on a.cateId=b.aId and b.rtype1=1 and b.rtype2='即时分析'
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
-        <if test="1==1">a.id=b.fid and b.type1='IMP'</if>
-        <if test="ownerId!=null"> and ownerId = #{ownerId,jdbcType=VARCHAR},</if>
-        <if test="ownerType!=null and ownerType!=0"> and ownerType=#{ownerType,jdbcType=INTEGER}</if>
-        <if test="startTime!=null"> <![CDATA[and cTime>= #{startTime,jdbcType=TIMESTAMP}]]>,</if>
-        <if test="endTime!=null"> <![CDATA[and cTime < #{endTime,jdbcType=TIMESTAMP}]]>,</if>
-        <if test="cFileName!=null"> and extInfo like %#{cFileName,jdbcType=VARCHAR}%,</if>
+        <if test="1==1"></if>
+        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR},</if>
+        <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="cFileName!=null"> and a.cFileName like CONCAT('%',#{cFileName,jdbcType=VARCHAR},'%')</if>
       </trim>
     </where>     
     order by a.cTime desc
@@ -55,17 +56,35 @@
   <!-- 获得查询结果列表 -->
   <select id="getFileList2" resultMap="FileViewMap" parameterType="java.util.Map">
     select <include refid="Base_Column_List"/> 
-    from (sa_file_index a JOIN sa_file_category b LEFT JOIN sa_file_rel c LEFT JOIN sa_report_info d)
+    from (sa_file_index a JOIN sa_file_category b)
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
-        <if test="1==1">a.id=b.fid and b.type1='IMP' and (b.id=c.aId and c.aType='2' and c.bType='2' and c.rType2='即时报告')</if>
-        <if test="ownerId!=null"> and ownerId = #{ownerId,jdbcType=VARCHAR},</if>
-        <if test="ownerId!=null"> and ownerId = #{ownerId,jdbcType=VARCHAR},</if>
-        <if test="startTime!=null"> <![CDATA[and cTime>= #{startTime,jdbcType=TIMESTAMP}]]>,</if>
-        <if test="endTime!=null"> <![CDATA[and cTime < #{endTime,jdbcType=TIMESTAMP}]]>,</if>
-        <if test="cFileName!=null"> and extInfo like %#{cFileName,jdbcType=VARCHAR}%,</if>
+        <if test="1==1">a.id=b.fid and b.type1='IMP'</if>
+        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR},</if>
+        <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="cFileName!=null"> and b.extInfo like CONCAT('%',#{cFileName,jdbcType=VARCHAR},'%')</if>
       </trim>
     </where>     
     order by a.cTime desc
   </select>
+  
+  <!-- 获得查询结果列表 ，这个不带reportId-->
+  <select id="getFileListWithoutReportId" resultMap="FileViewMap" parameterType="java.util.Map">
+    select <include refid="Base_Column_List"/> 
+    from (sa_file_index a JOIN sa_file_category b)
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="1==1">a.id=b.fid and b.type1='IMP'</if>
+        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR},</if>
+        <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="cFileName!=null"> and b.extInfo like CONCAT('%',#{cFileName,jdbcType=VARCHAR},'%')</if>
+      </trim>
+    </where>     
+    order by a.cTime desc
+  </select>
+  
 </mapper>
