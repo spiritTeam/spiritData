@@ -36,7 +36,7 @@ public class GetMDInfos implements TaskProcess {
         if (param.get("pType")==null)  throw new Dtal0404CException(new NullPointerException("参数中没有“参数类型pType”的数据！"));
         if (!((String)param.get("pType")).toLowerCase().equals("metadatas")) new Dtal0404CException(new IllegalArgumentException("参数中必须指定参数类型pType是元数据id数组[metadatas]"));
         if (param.get("mids")==null)  throw new Dtal0404CException(new NullPointerException("参数中没有“数据id数组”的数据！"));
-        
+
         ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();//通过此获得Spring中定义的对象，这种方法似乎不好
 
         Map<String, Object> ret = new HashMap<String, Object>();

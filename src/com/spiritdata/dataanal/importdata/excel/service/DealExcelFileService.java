@@ -12,8 +12,8 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -56,7 +56,7 @@ public class DealExcelFileService {
     private Logger logger = Logger.getLogger(DealExcelFileService.class);
 
     @Resource
-    protected DataSource dataSource;
+    protected BasicDataSource dataSource;
 
     @Resource
     private MdSessionService mdSessionService;
