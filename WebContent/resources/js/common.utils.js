@@ -35,6 +35,21 @@ function isEmpty(obj) {
 };
 
 /**
+ * 判断对象是否未定义，或者为空，或者长度为0
+ */
+function isUndefinedNullEmpty(obj) {
+  var ret = true;  
+  if(typeof(obj)!="undefined" && obj!=null){
+    if(typeof(obj)=="string"){
+      if(obj.length>0){ret = false;}
+    }else if(typeof(obj)=="object"){
+      ret = isEmpty(obj);
+    }else{ret = false;}    
+  }
+  return ret;
+};
+
+/**
  * 扩展String属性：得到中英混排文字符串长度
  */
 String.prototype.cnLength = function () {

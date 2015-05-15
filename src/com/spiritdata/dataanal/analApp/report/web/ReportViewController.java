@@ -1,4 +1,4 @@
-package com.spiritdata.analApp.report.web;
+package com.spiritdata.dataanal.analApp.report.web;
 
 import java.io.Serializable;
 import java.util.ArrayList;

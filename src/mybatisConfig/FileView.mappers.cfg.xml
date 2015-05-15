@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <!-- 类别名设置 -->
+  <typeAliases>
+    <typeAlias alias="FileView" type="com.spiritdata.dataanal.analApp.file.pojo.FileViewPo"/>
+  </typeAliases>
+  <mappers>
+    <mapper resource="com/spiritdata/dataanal/analApp/file/sql/FileView.mapper.xml"/>
+  </mappers>
+</configuration>

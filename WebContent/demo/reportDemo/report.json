@@ -27,13 +27,14 @@
           "name":"2、单项指标分析",
           "content":
             "
+             showType:radar <d did='0' showType='radar' param='{^xAxis^:^category^ , ^yAxis^:^num^ , ^max^:^100^}' value='quotas[0]' decorateView='#num#'/>
+             showType:bar <d did='0' showType='bar' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
              showType:map_pts <d did='0' showType='map_pts' param='{^X^:^coordX^, ^Y^:^coordY^ ,^Z^:^coordZ^,^mapType^:^BAIDU^}' value='quotas[2]' 
                decorateView='<tr><td>姓名</td><td>#xm#</td></tr>
                <tr><td>身份证</td><td>#sfz#</td></tr>
                <tr><td>性别</td><td>#sb#</td></tr>
                <tr><td>城市</td><td>#city#</td></tr>::{^envelopeType^:^table^}'
              />
-             showType:bar <d did='0' showType='bar' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
              showType:line <d did='0' showType='line' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#num#'/>
              showType:pie <d did='0' showType='pie' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
              showType:value <d did='1' showType='value' value='excelMdmArray[0].sheetInfo.name' />
