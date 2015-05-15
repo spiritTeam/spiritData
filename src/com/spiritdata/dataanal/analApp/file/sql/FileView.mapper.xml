@@ -39,7 +39,7 @@
     select b.bId, b.rtype2, b.descn descn2, b.reportid, a.* from vsa_imp_log a
       left join (select m.fid,n.id reportid, l.* from sa_file_rel l, sa_file_category m, sa_report_info n 
       where l.bid=m.id and n.fid=m.fid and l.btype=2 and m.type1='REPORT') b
-    on a.cateId=b.aId and b.rtype1=1 and b.rtype2='即时分析'
+    on a.cateId=b.aId and b.rtype1=1 and b.rtype2='即时报告'
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
         <if test="1==1"></if>
