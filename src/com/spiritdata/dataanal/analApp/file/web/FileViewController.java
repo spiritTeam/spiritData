@@ -2,6 +2,7 @@ package com.spiritdata.dataanal.analApp.file.web;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.spiritdata.dataanal.analApp.file.pojo.FileViewPo;
 import com.spiritdata.dataanal.analApp.file.service.FileViewService;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.common.util.SessionUtils;
+import com.spiritdata.framework.util.DateUtils;
 
 /**
  * 文件查询控制器
@@ -56,7 +58,11 @@ public class FileViewController {
 			if(startDateStr==null || startDateStr.trim().length()==0){
 				startTime = null;
 			}else{
-				startTime = Timestamp.valueOf(startDateStr);
+				if(startDateStr.indexOf(" ")==-1){
+					startDateStr += " 00:00:00";
+				}
+				Date dt = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss", startDateStr);
+				startTime = new Timestamp(dt.getTime());
 				paramMap.put("startTime", startTime);
 			}
 			Timestamp endTime =null;
@@ -64,7 +70,11 @@ public class FileViewController {
 			if(endDateStr==null || endDateStr.trim().length()==0){
 				endTime = null;
 			}else{
-				endTime = Timestamp.valueOf(endDateStr);
+				if(endDateStr.indexOf(" ")==-1){
+					endDateStr += " 00:00:00";
+				}
+				Date dt = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss", endDateStr);
+				endTime = new Timestamp(dt.getTime());
 				paramMap.put("endTime", endTime);
 			}			
 			Owner owner = SessionUtils.getOwner(req.getSession());
@@ -73,10 +83,8 @@ public class FileViewController {
 			int ownerType = owner.getOwnerType();
 			//paramMap.put("ownerType", new Integer(ownerType));
 			
-			logger.info("paramMap:"+cFileName+"  "+startDateStr+"  "+endDateStr);
 			List<FileViewPo> dataList = fileViewService.searchFileList(paramMap);
 			int count = dataList!=null?dataList.size():0;
-			logger.info("count="+count);
 			retMap.put("total", new Integer(count));
 			retMap.put("rows", dataList);
 		}catch(Exception ex){
