@@ -33,7 +33,7 @@
                decorateView='<tr><td>姓名</td><td>#xm#</td></tr>
                <tr><td>身份证</td><td>#sfz#</td></tr>
                <tr><td>性别</td><td>#xb#</td></tr>
-               <tr><td>城市</td><td>#city#</td></tr>::{^envelopeType^:^table^}'
+               <tr><td>城市</td><td>#city#</td></tr>::{^envelopeType^:^tabele^}'
              />
              showType:line <d did='0' showType='line' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#num#'/>
              showType:pie <d did='0' showType='pie' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #num#, #percent(num)#' />

@@ -329,9 +329,11 @@ function drawBaiDuPts(jQobj,_data,param){
         var displayReqObj = str2Json(displayReq);
         //按行还是按table解析
         var envelopeType = displayReqObj.envelopeType;
+        //分割后的model
         var subModelAry = resolveMapPtsDecorateView(model,envelopeType);
-        if (envelopeType=="table") {}
-        //初始化坐标
+        
+        //初始化geoCoord数据，用于点的显示
+        //无论envelopeType是否是table，data中添加的name属性均为subModel的第一个
         var colName = subModelAry[0]._colName;
         var geoCoordAry = new Object();
         for (var k=0;k<data.length;k++) {
@@ -379,10 +381,19 @@ function drawBaiDuPts(jQobj,_data,param){
                       return retStr;
                     } else {
                       var dataObj = params.data;
-                      for (var i=0;i<subModelAry.length;i++) {
-                        var subModel = subModelAry[i];
-                        var _colName = subModel._colName;
-                        retStr +=subModel._displayName+":"+dataObj[_colName]+'<br/>';
+                      if (envelopeType=="table") {//table方式显示，
+                        for (var i=0;i<subModelAry.length;i++) {
+                          var subModel = subModelAry[i];
+                          var _colName = subModel._colName;
+                          retStr +=subModel._displayName+":"+dataObj[_colName]+'<br/>';
+                        }
+                      } else {//非table方式显示 
+                        retStr = model;
+                        for (var j=0;j<subModelAry.length;j++) {
+                          var subModel = subModelAry[j];
+                          var _colName = subModel._colName;
+                          retStr = retStr.replace(subModel.colName,dataObj[_colName]);
+                        }
                       }
                     }
                   }
@@ -492,8 +503,8 @@ function resolveMapPtsDecorateView(model,envelopeType){
     for (var ii=0;ii<ary.length;ii++) {
       var _obj = new Object();
       var str = ary[ii];
-      _obj.colName = str.substring(str.indexOf('#'),str.lastIndexOf('#'));
-      _obj._colName =str;
+      _obj._colName = str.substring(str.indexOf('#')+1,str.lastIndexOf('#'));
+      _obj.colName =str;
       subModelAry.push(_obj);
     }
   }
@@ -506,24 +517,33 @@ function resolveMapPtsDecorateView(model,envelopeType){
 function drawBar(jQobj,_DATA){
   var value = jQobj.attr('value');
   eval("var _data=_DATA."+value);
-  //TODO 这里不再有label何data，换为param 未完成
   //获取param属性
   var param =  jQobj.attr('param');
   var paramObj = str2Json(param);
   //x和y
   var xAxis = paramObj.xAxis;
   var yAxis = paramObj.yAxis;
-  var line_dataBody = _data.tableData.tableBody;
-  var ary = [];
-  var height = 50*line_dataBody.length;
-  var width = 70*line_dataBody.length;
-  jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
-  for (var i=0;i<line_dataBody.length;i++) {
-    eval("var _x = line_dataBody[i]."+xAxis);
-    eval("var _y = line_dataBody[i]."+yAxis);
-    ary[i] = [_x,_y];
+  var bar_dataBody = _data.tableData.tableBody;
+  var dataAry = [];
+  var decorateView = jQobj.attr('decorateView');
+  if (decorateView) decorateView = removeSpace(decorateView);
+  var _ary = []; 
+  var ary = decorateView.match(/#.*?#/g);
+  for (var j=0;j<ary.length;j++) {
+    var obj = new Object();
+    obj.col = ary[j];
+    obj._col = ary[j].substring(ary[j].indexOf('#')+1,ary[j].lastIndexOf('#'));
+    _ary.push(obj);
   }
-  $.plot(jQobj, [ary], {
+  var height = 50*bar_dataBody.length;
+  var width = 70*bar_dataBody.length;
+  jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+  for (var i=0;i<bar_dataBody.length;i++) {
+    eval("var _x = bar_dataBody[i]."+xAxis);
+    eval("var _y = bar_dataBody[i]."+yAxis);
+    dataAry[i] = [_x,_y];
+  }
+  $.plot(jQobj, [dataAry], {
     series: {
       bars: {
         show: true,
@@ -553,14 +573,32 @@ function drawBar(jQobj,_DATA){
   //添加滑动所需的框体并且绑定事件
   var hoverId = jQobj.attr('id')+'_hover';
   jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
-  //TODO decorateView解析预留位置
   jQobj.bind("plothover", function(event, pos, obj){
     if (!obj) {
       return;
     }
-    var dataIndex = obj.dataIndex;
-    var pointData =  line_dataBody[dataIndex];
-    $("#"+hoverId).html("<span style='font-weight:bold; color:black;'>" + pointData[xAxis]+":" +pointData[yAxis]+ "</span>");
+    var view = decorateView;
+    if (_ary!=null&&_ary!="") {
+      var dataIndex = obj.dataIndex;
+      var rowData = bar_dataBody[dataIndex];
+      for (var j=0;j<_ary.length;j++) {
+        var _obj = _ary[j];
+        var col = _obj._col;
+        var val = rowData[col];
+        if (val) {
+          view = view.replace(_obj.col,val);
+        } else {
+          if (col.indexOf("percent(")!=-1) {
+            col = col.substring(col.indexOf("(")+1,col.indexOf(")"));
+            val = rowData[col];
+            var sum = getSum(bar_dataBody,col);
+            var percent = getPercent(val,sum,null);
+            view = view.replace(_obj.col,percent);
+          }
+        }
+      }
+    }
+    $("#"+hoverId).html("<span style='font-weight:bold; color:black;'>" +view+ "</span>");
   });
 }
 /**
@@ -570,7 +608,6 @@ function drawBar(jQobj,_DATA){
 function drawLine(jQobj,_DATA){
   var value = jQobj.attr('value');
   eval("var _data=_DATA."+value);
-  // TODO 这里不再有label何data，换为param 未完成
   //获取param属性
   var param =  jQobj.attr('param');
   var paramObj = str2Json(param);
@@ -578,22 +615,27 @@ function drawLine(jQobj,_DATA){
   var xAxis = paramObj.xAxis;
   var yAxis = paramObj.yAxis;
   var line_dataBody = _data.tableData.tableBody;
-  var ary = [];
+  var dataAry = [];
   var height = 20*line_dataBody.length;
   var width = 40*line_dataBody.length;
   jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
   var decorateView = jQobj.attr('decorateView');
   decorateView = removeSpace(decorateView);
-  if (decorateView) {
-    // TODO decorateView解析预留位置
+  var _ary = []; 
+  var ary = decorateView.match(/#.*?#/g);
+  for (var j=0;j<ary.length;j++) {
+    var obj = new Object();
+    obj.col = ary[j];
+    obj._col = ary[j].substring(ary[j].indexOf('#')+1,ary[j].lastIndexOf('#'));
+    _ary.push(obj);
   }
   for (var i=0;i<line_dataBody.length;i++) {
     eval("var _x = line_dataBody[i]."+xAxis);
     eval("var _y = line_dataBody[i]."+yAxis);
-    ary[i] = [_x,_y];
+    dataAry[i] = [_x,_y];
   }
   jQobj.css({"width":"440px", "height":"220px"});
-  $.plot(jQobj, [{label:"最小值", data:ary}], {
+  $.plot(jQobj, [{label:"最小值", data:dataAry}], {
     series: {
       lines: { show: true },
       points: { show: true }
@@ -623,9 +665,28 @@ function drawLine(jQobj,_DATA){
     if (!obj) {
       return;
     }
-    var dataIndex = obj.dataIndex;
-    var pointData =  line_dataBody[dataIndex];
-    $("#"+hoverId).html("<span style='font-weight:bold; color:black;'>" + pointData[xAxis]+":" +pointData[yAxis]+ "</span>");
+    var view = decorateView;
+    if (_ary!=null&&_ary!="") {
+      var dataIndex = obj.dataIndex;
+      var rowData = line_dataBody[dataIndex];
+      for (var j=0;j<_ary.length;j++) {
+        var _obj = _ary[j];
+        var col = _obj._col;
+        var val = rowData[col];
+        if (val) {
+          view = view.replace(_obj.col,val);
+        } else {
+          if (col.indexOf("percent(")!=-1) {
+            col = col.substring(col.indexOf("(")+1,col.indexOf(")"));
+            val = rowData[col];
+            var sum = getSum(line_dataBody,col);
+            var percent = getPercent(val,sum,null);
+            view = view.replace(_obj.col,percent);
+          }
+        }
+      }
+    }
+    $("#"+hoverId).html("<span style='font-weight:bold; color:black;'>"+view+ "</span>");
   });
 }
 /**
