@@ -22,9 +22,9 @@
       "tableData":{
       	"titles":[{"category":"分类"},{"num":"数量"},{"percent(num)":"百分比"}],
         "tableBody":[
-          {"category":"男",   "num":"156", "percent(num)":"78"},
-          {"category":"女",   "num":"40",  "percent(num)":"20"},
-          {"category":"其他", "num":"4",   "percent(num)":"2"}
+          {"category":"男",   "num":"156", "percent1(num)":"78"},
+          {"category":"女",   "num":"40",  "percent1(num)":"20"},
+          {"category":"其他", "num":"4",   "percent1(num)":"2"}
         ]
       }},{"columnName":"col_4",
       "titleName":"籍贯",

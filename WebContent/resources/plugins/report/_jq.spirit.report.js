@@ -125,7 +125,7 @@ function retrievalJsonDJson (domAry) {
     return;
   } else {
     // 当已经全部显示完时关闭定时任务
-	  alert(monitor._alreadyShownId.length);
+    alert(monitor._alreadyShownId.length);
     if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) {clearInterval(monitor.monitorDrawId);}
     for (var i=0;i<jsonDInfoArray.length;i++) {
       var jsonDInfo = jsonDInfoArray[i];
@@ -168,16 +168,56 @@ function parseEle(jQobj, _DATA){
 }
 
 //以下为解析showType代码==============
+/**
+ * showType==radar 地图画点
+ * 实现方法，echarts
+ * 样例 showType:radar <d did='0' showType='radar' param='{^xAxis^:^category^ , ^yAxis^:^num^ , ^max^:^100^}' value='quotas[0]' decorateView='#num#'/>
+ */
 function drawRadar(jQobj,_DATA){
+
+  //基本属性部分
   var value = jQobj.attr('value');
   eval("var _data=_DATA."+value);
   //获取param属性
-  //var param =  jQobj.attr('param');
-  //var paramJson = str2Json(param);
+  var param =  jQobj.attr('param');
+  var paramJson = str2Json(param);
+  //radar半径显示xAxis的值
+  var xAxis = paramJson.xAxis;
+  //radar半径的数值点显示yAxis的值
+  var yAxis = paramJson.yAxis;
+  //半径最大值
+  var max = paramJson.max;
+  //title
+  var title = _data.titleName;
+  //data
+  var data = _data.tableData.tableBody;
   //初始化长宽高
   var width=500;
   var height=500;
   jQobj.attr('style','width:'+width+'px;height:'+height+'px;');
+  
+  //构建radar数据结构
+  //指示器部分数据：由max和xAxis,结构由obj{text,max}的数组组成
+  var indicatorData = [];
+  //seriesData：主要由yAxis组成,结构由obj{value[],name}的数组组成，这里的一个obj代表一组数据，会根据indicatorData一一对应
+  var seriesData = [];
+  //单个的seriesData的value数组
+  var sDataValAry = [];
+  for (var i=0;i<data.length;i++) {
+    var rowData = data[i];
+    //iData
+    var iData = new Object();
+    iData.text = rowData[xAxis];
+    iData.max = max;
+    indicatorData.push(iData);
+    sDataValAry.push(rowData[yAxis]);
+  }
+  //sData
+  var sData = new Object();
+  sData.value = sDataValAry;
+  sData.name = title;
+  seriesData.push(sData);
+  
   try{
     require(
       [
@@ -188,52 +228,31 @@ function drawRadar(jQobj,_DATA){
         //获取案件分布地图对象
         var radar = ec.init(jQobj[0]);
         option = {
-	      title : {
-	        text: '预算 vs 开销（Budget vs spending）',
-	        subtext: '纯属虚构'
-	      },
-	      tooltip : {
-	        trigger: 'axis'
-	      },
-	      legend: {
-	        orient : 'vertical',
-	        x : 'right',
-	        y : 'bottom',
-	        data:['预算分配（Allocated Budget）','实际开销（Actual Spending）']
-	      },
-	      toolbox: {
-	        show : true,
-	        feature : {
-	          mark : {show: true},
-	          dataView : {show: true, readOnly: false},
-	          restore : {show: true},
-	          saveAsImage : {show: true}
-	        }
-	      },
-	      polar : [{
-	        indicator : [
-	          { text: '销售（sales）', max: 6000},
-	          { text: '管理（Administration）', max: 16000},
-	          { text: '信息技术（Information Techology）', max: 30000},
-	          { text: '客服（Customer Support）', max: 38000},
-	          { text: '研发（Development）', max: 52000},
-	          { text: '市场（Marketing）', max: 25000}
-	        ]
-	      }],
-	      calculable : true,
-	      series : [{
-	        name: '预算 vs 开销（Budget vs spending）',
-	        type: 'radar',
-	        data : [{
-	          value : [4300, 10000, 28000, 35000, 50000, 19000],
-	          name : '预算分配（Allocated Budget）'
-	        },
-	        {
-	          value : [5000, 14000, 28000, 31000, 42000, 21000],
-	          name : '实际开销（Actual Spending）'
-	        }]
-	      }]
-	    };
+          title : {
+            text: title,
+          },
+          tooltip : {
+            trigger: 'axis'
+          },
+          legend: {
+            orient : 'vertical',
+            x : 'right',
+            y : 'bottom',
+            data:[]
+          },
+          toolbox: {
+            show : true
+          },
+          polar : [{
+            indicator : indicatorData
+          }],
+          calculable : true,
+          series : [{
+            name: title,
+            type: 'radar',
+            data : seriesData
+          }]
+        };
         radar.setOption(option);
       }
     );
@@ -242,9 +261,8 @@ function drawRadar(jQobj,_DATA){
   }
 }
 /**
+ * showType==map_pts 地图画点
  * 样例:showType:map_pts <d did='0' showType='map_pts' param='{^X^:^coordX^, ^Y^:^coordY^ ,^Z^:^coordZ^,^mapType^:^BAIDU^}' value='quotas[0]'/>
- * 地图画点
- * showType==map_pts
  */
 function drawMapPts(jQobj,_DATA){
   var value = jQobj.attr('value');
@@ -282,7 +300,7 @@ function drawBaiDuPts(jQobj,_data,param){
   //获取坐标列 x、y、z、
   var xCol = param.X;
   var yCol = param.Y;
-  var zCol = param.X;
+  var zCol = param.Z;
   //titleName
   var titleName = _data.tableData.titleName;
   //data
@@ -312,6 +330,7 @@ function drawBaiDuPts(jQobj,_data,param){
         //按行还是按table解析
         var envelopeType = displayReqObj.envelopeType;
         var subModelAry = resolveMapPtsDecorateView(model,envelopeType);
+        if (envelopeType=="table") {}
         //初始化坐标
         var colName = subModelAry[0]._colName;
         var geoCoordAry = new Object();
@@ -322,6 +341,8 @@ function drawBaiDuPts(jQobj,_data,param){
           var z_axis = _d[zCol];
           //和data中的name对应？
           var _name = _d[colName];
+          data[k].name = _name;
+          data[k].value = "";
           var axixAry = [];
           if (x_axis!=null&&x_axis!=""&&y_axis!=null&&y_axis!="") {
             axixAry.push(parseFloat(x_axis));
@@ -345,7 +366,6 @@ function drawBaiDuPts(jQobj,_data,param){
             option = {
               title : {
                 text: titleName,
-                subtext: '纯属虚构',
                 x:'center'
               },
               tooltip : {
@@ -354,17 +374,18 @@ function drawBaiDuPts(jQobj,_data,param){
                   var retStr="";
                   //标头
                   if (params!=""&&params!=null) {
-//                    if (params.seriesName==undefined || params.seriesName=="") {
-//                      return retStr;
-//                    } else {
-                      retStr += params.seriesName+"<br/>";
+                    if (params.seriesName==undefined || params.seriesName=="") {
+                      params.series.tooltip.backgroundColor="rgba(0,0,0,0)";
+                      return retStr;
+                    } else {
+                      var dataObj = params.data;
                       for (var i=0;i<subModelAry.length;i++) {
                         var subModel = subModelAry[i];
                         var _colName = subModel._colName;
-                        retStr +=subModel._displayName+":"+params[_colName]+'<br/>';
+                        retStr +=subModel._displayName+":"+dataObj[_colName]+'<br/>';
                       }
                     }
-//                  }
+                  }
                   return retStr;
                 }
               },
@@ -388,17 +409,40 @@ function drawBaiDuPts(jQobj,_data,param){
                     normal:{label:{show:true}},
                     emphasis:{label:{show:true}}
                   },
-                  data:data
+                  data:[],
+                  markPoint:{
+                    symbolSize:5,
+                    effect : {
+                      //show: true
+                    },
+                    itemStyle:{
+                      normal:{
+                        borderColor:'#87cefa',
+                        borderWidth:1,
+                        label:{
+                          show:false
+                        }
+                      },
+                      emphasis:{
+                        borderColor:'#1e90ff',
+                        borderWidth:5,
+                        label:{
+                          show:false  
+                        }
+                      }
+                    },
+                    data:data
+                  },
+                  geoCoord:geoCoordAry
                 }
               ],
-              geoCoord:geoCoordAry
             };
             mapPtAnJian.setOption(option);
           }
         );
       }
-    } else {//无envelopeType的情况
-      
+    } else {
+      alert("envelopeType解析失败");
     }
   } else {
     alert("解析MapPts_decorateView格式出错:decorateView格式出错！");
@@ -442,6 +486,15 @@ function resolveMapPtsDecorateView(model,envelopeType){
       }
     } else {
       alert("解析MapPts_decorateView格式出错：原因可能是未匹配到完整的<tr></tr>标签");
+    }
+  } else {
+    var ary = model.match(/#.*?#/g);
+    for (var ii=0;ii<ary.length;ii++) {
+      var _obj = new Object();
+      var str = ary[ii];
+      _obj.colName = str.substring(str.indexOf('#'),str.lastIndexOf('#'));
+      _obj._colName =str;
+      subModelAry.push(_obj);
     }
   }
   return subModelAry;
@@ -582,10 +635,6 @@ function drawLine(jQobj,_DATA){
  * _DATA：数据
  */
 function drawPie(jQobj,_DATA){
-  // TODO 未完成本次实现的功能，仅实现显示，还未实现x轴和y轴，及鼠标滑过显示。或许是图例？
-  //  var _data=_DATA[value];
-  //这里不能用var _data=_DATA[value];的写法，可能是因为value中就已经包含[]了
-  //实际的value = quotas[0]
   var value = jQobj.attr('value');
   eval("var _data=_DATA."+value);
   //获取param属性
@@ -594,34 +643,30 @@ function drawPie(jQobj,_DATA){
   //x和y
   var xAxis = paramObj.xAxis;
   var yAxis = paramObj.yAxis;
-  var ary = [];
+  var dataAry = [];
   var pie_dataBody = _data.tableData.tableBody;
   //在pie中解析decorateView='#category#, #percent(num)#'简单格式
   var decorateView = jQobj.attr('decorateView');
-  decorateView = removeSpace(decorateView);
-  if (decorateView) {
-    // TODO decorateView处理预留位置
+  if (decorateView) decorateView = removeSpace(decorateView);
+  var _ary = []; 
+  var ary = decorateView.match(/#.*?#/g);
+  for (var j=0;j<ary.length;j++) {
+    var obj = new Object();
+    obj.col = ary[j];
+    obj._col = ary[j].substring(ary[j].indexOf('#')+1,ary[j].lastIndexOf('#'));
+    _ary.push(obj);
   }
+  
+  //根据param构建显示数据
   for (var i=0;i<pie_dataBody.length;i++) { 
     eval("var _pie_label=pie_dataBody[i]."+xAxis);
     eval("var _pie_data=pie_dataBody[i]."+yAxis);
-    ary[i] = {label:_pie_label,data:_pie_data};
+    dataAry[i] = {label:_pie_label,data:_pie_data};
   }
   //pie div样式
-  jQobj.attr('style','height:150px;width:330px;');
-  //测试代码
-  var data = [],
-  series = Math.floor(Math.random() * 6) + 3;
-
-  for (var i = 0; i < series; i++) {
-    data[i] = {
-      label: "Series" + (i + 1),
-      data: Math.floor(Math.random() * 100) + 1
-    };
-  }
-
+  jQobj.attr('style','height:250px;width:350px;');
   //初始化pie
-  $.plot(jQobj, ary, {
+  $.plot(jQobj, dataAry, {
     series: {
       pie: {
         show: true
@@ -640,8 +685,29 @@ function drawPie(jQobj,_DATA){
     if (!obj) {
       return;
     }
-    var percent = parseFloat(obj.series.percent).toFixed(2);
-    $("#"+hoverId).html("<span style='font-weight:bold; color:" + obj.series.color + "'>" + obj.series.label + "，" + percent + "%</span>");
+    //decorateView样例：decorateView='#category#, #percent(num)#'
+    var view = decorateView;
+    if (_ary!=null&&_ary!="") {
+      var seriesIndex = obj.seriesIndex;
+      var rowData = pie_dataBody[seriesIndex];
+      for (var j=0;j<_ary.length;j++) {
+        var _obj = _ary[j];
+        var col = _obj._col;
+        var val = rowData[col];
+        if (val) {
+          view = view.replace(_obj.col,val);
+        } else {
+          if (col.indexOf("percent(")!=-1) {
+            col = col.substring(col.indexOf("(")+1,col.indexOf(")"));
+            val = rowData[col];
+            var sum = getSum(pie_dataBody,col);
+            var percent = getPercent(val,sum,null);
+            view = view.replace(_obj.col,percent);
+          }
+        }
+      }
+    }
+    $("#"+hoverId).html("<span style='font-weight:bold; color:" + obj.series.color + "'>" + view + "%</span>");
   });
 }
 
@@ -694,21 +760,25 @@ function drawValue (jQobj,_DATA) {
  * @param _DATA:数据 
  */
 function drawText (jQobj,_DATA) {
-  // TODO 还差其他情况
   //value
   var value = jQobj.attr('value');
   value = removeSpace(value);
   //要显示的最终数据
-  var showData = "";
+  var showData = new Object();
+  //value中的"::"的作用是来确定是否需要排序的
+  var valIndex;
   if (value.indexOf("::")==-1) {
-    var valIndex = value;
+    valIndex = value;
     eval("var _data=_DATA."+valIndex);
-    showData = _data;
+    showData.dataBody = _data.tableData.tableBody;
+    showData.titles = _data.tableData.titles;
+    //由于不需要排序，他本是就是元数据
+    showData.sourceData = _data.tableData.tableBody;
   } else {
     //取值规则
     var valDemand = value.substring(value.indexOf("::"),value.length);
     //取值位置
-    var valIndex  = value.substring(0,value.indexOf("::"));
+    valIndex = value.substring(0,value.indexOf("::"));
     //取值范围
     var limit = valDemand.substring(valDemand.indexOf("first(")+6,valDemand.indexOf("|"));
     // oder ->2：升序;1降序
@@ -730,6 +800,7 @@ function drawText (jQobj,_DATA) {
   var dViewBegin = "";
   //decorateView特殊显示部分
   var dViewEnd = "";
+  //decorateView中的"::"是用来确定是否需要前缀Suffix？后缀prefix？
   if (decorateView.indexOf("::")!=-1) {
     dViewBegin = decorateView.substring(0,decorateView.indexOf("::"));
     dViewEnd = decorateView.substring(decorateView.indexOf("::")+2,decorateView.length);
@@ -744,38 +815,49 @@ function drawText (jQobj,_DATA) {
 //以下为公共部分代码==============
 
 /**
- * 求某列的总和
+ * 求某列的总和,如果不能计算，会返回""
  * @param data数据数组
  * @param colName列名
  */
 function getSum(data,colName){
   var sum = 0;
-  for(var i=0;i<data.length;i++) {
-    var val = data[i][colName];
-    sum = sum+parseFloat(val);
+  try{
+    for(var i=0;i<data.length;i++) {
+      var val = data[i][colName];
+      sum = sum+parseFloat(val);
+    }
+    return sum;
+  }catch(e) {
+    return "";
   }
-  return sum;
 }
 
 /**
- * 求一个数的百分数默认保留2位
+ * 求一个数的百分数默认保留2位 如果计算失败会返回""
  * @param num 数值
  * @param sum 总和
- * @param length 保留小数点后几位
+ * @param length 保留小数点后几位,默认两位
  */
 function getPercent(num,sum,length){
   var percent = "";
+  if (!length) length = 2;
   if (num!=""&&num!=null&&sum!=""&&sum!=null&&num<sum) {
+    try {
+      num = parseFloat(num);
+      sum = parseFloat(sum);
+      length = parseFloat(length);
+    } catch(e){
+      return "";
+    }
     percent = (num*100)/sum+"";
     //小数点的位置
     var len = percent.indexOf(".");
-    len = len+length+1;
     if (len!=-1) {
-      if (len<percent.length) {//多余2位的时候
-        percent = percent.substring(0,len);
+      if (len+length<=percent.length) {//多余2位的时候
+        percent = percent.substring(0,len+length+1);
       } else {
-        var _len = len-percent.length;
-        for (var i=0;i<_len;i++) {
+        var _len = len+length+1;
+        for (var i=0;i<_len-percent.length;i++) {
           percent = percent+"0";
         }
       }
@@ -805,7 +887,7 @@ function getDataByShowDemand(dViewBegin,dViewEnd,showData) {
   //求和参数对象数组
   var sumParamAry = [];
   //取一行数据，看能不能得到对应的数据，如不能得到，则需要计算，
-  var _dataRow = _data[0]; 
+  var _dataRow = _data[0];
   for (var i=0;i<colAry.length;i++) {
     var colName = colAry[i].split("#")[1];
     var val = _dataRow[colName];
@@ -840,7 +922,7 @@ function getDataByShowDemand(dViewBegin,dViewEnd,showData) {
             var _cName = sumParamAry[kk]._colName;
             cVal = data[_cName];
             var sum = sumParamAry[kk].sum;
-            cVal = getPercent(parseFloat(cVal),sum,2);
+            cVal = getPercent(parseFloat(cVal),sum,null);
             templet = templet.replace(colAry[k],cVal);
             continue;
           } 
@@ -853,15 +935,17 @@ function getDataByShowDemand(dViewBegin,dViewEnd,showData) {
   
   //3、解析dViewEnd
   var showStr = "";
+  //默认后缀修饰
+  var prefix = "";
+  //默认前缀修饰
+  var suffix = "；";
   if (dViewEnd!=null&&dViewEnd!="") {
     var jsonObj = str2Json(dViewEnd);
-    var prefix = "";
-    var suffix = "；";
     if (jsonObj.prefix) prefix=jsonObj.prefix;
     if (jsonObj.suffix) suffix=jsonObj.suffix;
-    for (var jj=0;jj<showAry.length;jj++) {
-      showStr = showStr+prefix+showAry[jj]+suffix;
-    }
+  }
+  for (var jj=0;jj<showAry.length;jj++) {
+    showStr = showStr+prefix+showAry[jj]+suffix;
   }
   return showStr;
 }
@@ -986,7 +1070,11 @@ function sort(sortType, data, sortCol, limit) {
  * exp:带空格的字符串
  */
 function removeSpace(str){
-  return str.replace(/\s/g,'');
+  if(str) {
+    return str.replace(/\s/g,'');
+  }else{
+    return "";
+  }
 }
 
 /**
@@ -1256,7 +1344,7 @@ function resolveDLIST(_DLIST){
     else jsonDInfo.jsonD_code = "";
     jsonDInfoArray.push(jsonDInfo);
     //jsonDjson 用于存贮jsonD的数据 会在后面赋值
-    monitor.monitorJsonDId = setInterval(getJsonDJson(jsonDInfo),500);
+    monitor.monitorJsonDId = setInterval(getJsonDJson(jsonDInfo),200);
   }
 }
 
