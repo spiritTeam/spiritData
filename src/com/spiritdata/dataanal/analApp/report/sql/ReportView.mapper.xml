@@ -46,7 +46,7 @@
         <if test="ownerType!=null and ownerType!=0"> and ownerType=#{ownerType,jdbcType=INTEGER}</if>
         <if test="startTime!=null"> <![CDATA[and cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
         <if test="endTime!=null"> <![CDATA[and cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
-        <if test="reportName!=null"> and reportName like CONCAT('%',#{reportName,jdbcType=VARCHAR},'%')</if>
+        <if test="searchStr!=null"> and reportName like CONCAT('%',#{searchStr,jdbcType=VARCHAR},'%')</if>
       </trim>
     </where>     
     order by cTime desc

@@ -48,7 +48,7 @@ public class ReportViewController {
 			Map<String,Object> paramMap = new HashMap<String,Object>();
 			String reportName = this.trimStr(req.getParameter("searchStr"));
 			if(reportName!=null){
-				paramMap.put("reportName", reportName);
+				paramMap.put("searchStr", reportName);
 			}
 			Timestamp startTime = this.str2TimeStamp(req.getParameter("startDateStr"));
 			if(startTime!=null){
