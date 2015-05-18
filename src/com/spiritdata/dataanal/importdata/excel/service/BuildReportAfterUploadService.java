@@ -37,7 +37,7 @@ import com.spiritdata.dataanal.task.core.model.TaskGraph;
 import com.spiritdata.dataanal.task.core.model.TaskGroup;
 import com.spiritdata.dataanal.task.core.model.TaskInfo;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
+import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.FileNameUtils;
@@ -53,7 +53,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
     private static final long serialVersionUID = 5557763867374849717L;
 
     @Resource
-    private ReportFileService rfService;
+    private AnalResultFileService arfService;
 
     /**
      * 无参构造函数，用此方式创建对象，必须设置Session
@@ -93,7 +93,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         MetadataModel mm = null;
         MetadataTableMapRel[] tabMapOrgAry = null;
         boolean hasDictTask = false;
-        
+
         //判断数据可用性
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
@@ -188,11 +188,11 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     arf.setId(tempStr);
                                     arf.setJsonDCode(SDConstants.JDC_MD_SDICT);
                                     arf.setAnalType(analSingleDict_Task.getTaskType()); //分析类型
-                                    arf.setSubType(analSingleDict_Task.getId()); //下级分类
+                                    arf.setSubType("task::"+analSingleDict_Task.getId()); //下级分类
 //                                    arf.setObjType("metadata"); //所分析对象
 //                                    arf.setObjId(mm.getId()); //所分析对象的ID
                                     arf.setFileNameSeed(analSingleDict_Task.getTaskType()+File.separator+analSingleDict_Task.getId());
-                                    arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
+                                    arf.setFileName(arfService.buildFileName(arf.getFileNameSeed()));
                                     analSingleDict_Task.setResultFile(arf);
                                     report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
                                     //任务处理end
@@ -259,12 +259,12 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         arf.setId(tempStr);
         arf.setJsonDCode(SDConstants.JDC_MD_INFO);
         arf.setAnalType(getMDInfos_Task.getTaskType()); //分析类型
-        arf.setSubType(getMDInfos_Task.getId()); //下级分类
+        arf.setSubType("task::"+getMDInfos_Task.getId()); //下级分类
 //        arf.setObjType("metadatas"); //所分析对象
 //        arf.setObjId(mids); //所分析对象的ID
 //        arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
         arf.setFileNameSeed(getMDInfos_Task.getTaskType()+File.separator+getMDInfos_Task.getId());
-        arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
+        arf.setFileName(arfService.buildFileName(arf.getFileNameSeed()));
         getMDInfos_Task.setResultFile(arf);
           //任务组装：组装进任务组+组装进report的dlist
         tg.addTask2Graph(getMDInfos_Task);

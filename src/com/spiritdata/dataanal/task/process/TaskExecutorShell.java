@@ -100,7 +100,7 @@ public class TaskExecutorShell implements Runnable {
                             //分析结果文件种子设置
                             AnalResultFile arfSeed = new AnalResultFile();
                             arfSeed.setAnalType(ti.getTaskType()); //分析类型，相当于文件类型表中的type2
-                            arfSeed.setSubType(ti.getId()); //任务Id，三级分类，相当于文件文件类型表中的type3
+                            arfSeed.setSubType("task::"+ti.getId()); //任务Id，三级分类，相当于文件文件类型表中的type3
                             arfSeed.setExtInfo(ti.getParam());
                             arfSeed.setFileNameSeed(ti.getTaskType()+File.separator+ti.getId());
                             arfSeed.setJsonDCode(JDC);

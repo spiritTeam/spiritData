@@ -31,7 +31,6 @@ import com.spiritdata.jsonD.model.JsonDHead;
 import com.spiritdata.jsonD.util.JsonUtils;
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal0202CException;
-import com.spiritdata.dataanal.exceptionC.Dtal1001CException;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 
