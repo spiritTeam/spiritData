@@ -91,7 +91,7 @@ body {
         <td style="width:100px;text-align:center;">
         </td>
         <td style="width:100px;text-align:center;">
-          <a href="#" class="def-nav" style="" onclick="showMainSeg('');">数据上传</a>
+          <a href="#" class="def-nav" style="" onclick="showMainSeg('asIndex.jsp',urlroot);">数据上传</a>
         </td>    
         <td style="width:100px;text-align:center;">
           <a href="#" class="def-nav" onclick="showMainSeg();">用户处理</a>
@@ -275,13 +275,20 @@ function refreshNewReportDIV(){
  * mainSegmentIframe中显示跳转页面
  * 当点击菜单项时，跳转到指定路径的主页面
  */
-var fileroot = "<%=path%>/analApp/"; 
-function showMainSeg(filepath){
-	//alert("showMainSeg():"+filepath);
-  if(typeof(filepath) == "undefined" || !filepath || filepath==""){
-    filepath="constructing.jsp";
+var urlroot = "<%=path%>/";
+var fileroot = urlroot+"analApp/"; 
+function showMainSeg(fileName,filePath){
+	//alert("showMainSeg(): fileName="+fileName+"  filePath="+filePath);
+  if(typeof(fileName) == "undefined" || fileName==null || !fileName || fileName==""){
+	  fileName="constructing.jsp";
   }
-  var fileurl = fileroot+filepath;
+  var fileurl = '';
+  if(typeof(filePath) == "undefined" || filePath==null || !filePath || filePath==""){
+	  fileurl=fileroot+fileName;
+  }else{
+	  fileurl = filePath+fileName;
+  }
+  
   $("#mainSegmentIframe").attr("src",fileurl);
   showIframe("mainSegmentIframe");
 }

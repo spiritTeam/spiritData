@@ -1,18 +1,27 @@
 package com.spiritdata.dataanal.analApp.report.web;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.spiritdata.dataanal.analApp.report.pojo.ReportViewPo;
+import com.spiritdata.dataanal.analApp.report.service.ReportViewService;
+import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.common.util.SessionUtils;
+import com.spiritdata.framework.util.DateUtils;
 
 /**
  * 报表查看相关的控制器
@@ -23,6 +32,47 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value="/reportview")
 public class ReportViewController {
 	private static Logger logger = Logger.getLogger(ReportViewController.class);
+
+    @Resource
+	private ReportViewService reportViewService;
+    
+    /**
+     * 条件查询报告列表
+     * @param req
+     * @return
+     */
+    @RequestMapping("searchReportList.do")
+    public @ResponseBody Map<String,Object> searchReportList(HttpServletRequest req){
+		Map<String,Object> retMap = new HashMap<String,Object>();
+		try{
+			Map<String,Object> paramMap = new HashMap<String,Object>();
+			String reportName = this.trimStr(req.getParameter("searchStr"));
+			if(reportName!=null){
+				paramMap.put("searchStr", reportName);
+			}
+			Timestamp startTime = this.str2TimeStamp(req.getParameter("startDateStr"));
+			if(startTime!=null){
+				paramMap.put("startTime", startTime);
+			}
+			Timestamp endTime = this.str2TimeStamp(req.getParameter("endDateStr"));
+			if(endTime!=null){
+				paramMap.put("endTime", endTime);
+			}
+			Owner owner = SessionUtils.getOwner(req.getSession());
+			String ownerId = owner.getOwnerId();
+			//paramMap.put("ownerId", ownerId);
+			int ownerType = owner.getOwnerType();
+			//paramMap.put("ownerType", new Integer(ownerType));
+			
+			List<ReportViewPo> dataList = reportViewService.searchReportList(paramMap);
+			int count = dataList!=null?dataList.size():0;
+			retMap.put("total", new Integer(count));
+			retMap.put("rows", dataList);			
+		}catch(Exception ex){
+			logger.error("failed to search report list.",ex);
+		}
+		return retMap;
+    }
 
 	/**
 	 * 查看最新生成的还未看过的报告
@@ -345,6 +395,38 @@ public class ReportViewController {
 		}
 		return retMap;
     }
+    
+    /**
+     * 去掉字符串的空格，如果为空则返回NULL
+     * @param strObj
+     * @return
+     */
+    private String trimStr(String astr){    	
+    	return (astr==null || astr.trim().length()==0)?null:astr.trim();
+    }
+    
+    /**
+     * 将时间字符串转化为Timestamp
+     * @param astrTime
+     * @return
+     */
+    private Timestamp str2TimeStamp(String astrTime){
+    	Timestamp retTime = null;    	
+    	try{
+        	String strTime = trimStr(astrTime);
+        	if(strTime!=null){
+        		if(strTime.indexOf(" ")==-1){
+        			strTime += " 00:00:00";
+        		}
+        		Date dt = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss", strTime);
+        		retTime = new Timestamp(dt.getTime());
+        	}
+    	}catch(Exception ex){
+    		logger.error("failed to parse timestamp. strTime="+astrTime,ex);
+    	}
+		return retTime;
+    }
+    
     
     /**
      * 新生成报告BEAN

@@ -44,14 +44,14 @@ public class FileViewController {
 	public @ResponseBody Map<String,Object> searchFileList(HttpServletRequest req){
 		Map<String,Object> retMap = new HashMap<String,Object>();
 		try{
-			logger.info("start search file list ...");
+//			logger.info("start search file list ...");
 			Map<String,Object> paramMap = new HashMap<String,Object>();
 			String cFileName = req.getParameter("searchStr");
 			if(cFileName==null || cFileName.trim().length()==0){
 				cFileName = null;
 			}else{
 				cFileName = cFileName.trim();
-				paramMap.put("cFileName", cFileName);
+				paramMap.put("searchStr", cFileName);
 			}
 			Timestamp startTime = null;
 			String startDateStr = req.getParameter("startDateStr");

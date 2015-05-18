@@ -39,7 +39,7 @@
     select b.bId, b.rtype2, b.descn descn2, b.reportid, a.* from vsa_imp_log a
       left join (select m.fid,n.id reportid, l.* from sa_file_rel l, sa_file_category m, sa_report_info n 
       where l.bid=m.id and n.fid=m.fid and l.btype=2 and m.type1='REPORT') b
-    on a.cateId=b.aId and b.rtype1=1 and b.rtype2='即时分析'
+    on a.cateId=b.aId and b.rtype1=1 and b.rtype2='即时报告'
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
         <if test="1==1"></if>
@@ -47,24 +47,7 @@
         <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
         <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
         <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
-        <if test="cFileName!=null"> and a.cFileName like CONCAT('%',#{cFileName,jdbcType=VARCHAR},'%')</if>
-      </trim>
-    </where>     
-    order by a.cTime desc
-  </select>
-  
-  <!-- 获得查询结果列表 -->
-  <select id="getFileList2" resultMap="FileViewMap" parameterType="java.util.Map">
-    select <include refid="Base_Column_List"/> 
-    from (sa_file_index a JOIN sa_file_category b)
-    <where>
-      <trim prefix="(" suffix=")" prefixOverrides="and">
-        <if test="1==1">a.id=b.fid and b.type1='IMP'</if>
-        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR},</if>
-        <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
-        <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
-        <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
-        <if test="cFileName!=null"> and b.extInfo like CONCAT('%',#{cFileName,jdbcType=VARCHAR},'%')</if>
+        <if test="searchStr!=null"> and a.cFileName like CONCAT('%',#{searchStr,jdbcType=VARCHAR},'%')</if>
       </trim>
     </where>     
     order by a.cTime desc
@@ -81,7 +64,7 @@
         <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
         <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
         <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
-        <if test="cFileName!=null"> and b.extInfo like CONCAT('%',#{cFileName,jdbcType=VARCHAR},'%')</if>
+        <if test="searchStr!=null"> and b.extInfo like CONCAT('%',#{cFileName,jdbcType=VARCHAR},'%')</if>
       </trim>
     </where>     
     order by a.cTime desc
