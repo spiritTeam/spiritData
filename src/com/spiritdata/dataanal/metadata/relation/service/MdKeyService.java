@@ -1,7 +1,6 @@
 package com.spiritdata.dataanal.metadata.relation.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -18,7 +17,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
@@ -140,11 +138,8 @@ public class MdKeyService {
             if (afl!=null&&afl.size()>0) {
                 for (int i=0; i<(afl.size()>10?10:afl.size()); i++) {
                     FileIndexPo fip = afl.get(i);
-                    File f = new File(fip.getPath()+File.separator+fip.getFileName());
-                    if (f.isFile()) {
-                        Map<String, Double> km = parseJsonFile(f, mm);
-                        if (km!=null) keyList.add(km);
-                    }
+                    Map<String, Double> km = parseJsonFile(fip.getPath()+File.separator+fip.getFileName(), mm);
+                    if (km!=null) keyList.add(km);
                 }
                 //根据这些分析结果，分析主键
                 Map<String, Integer> _cm = new HashMap<String, Integer>();//计数Map
@@ -265,16 +260,11 @@ public class MdKeyService {
      * @param mm 元数据模型，用来判断数据是否合规
      * @return key=字段名、value=可行性的Map
      */
-    private Map<String, Double> parseJsonFile(File f, MetadataModel mm) {
+    private Map<String, Double> parseJsonFile(String fullFileName, MetadataModel mm) {
         Map<String, Double> ret = null;
-        FileInputStream fis = null;
         try {
-            ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> analKey = null;
-            fis = new FileInputStream(f);
-            byte[] b=new byte[fis.available()];
-            fis.read(b);
-            String jsonS = new String(b);
+            String jsonS = FileOperUtils.readFile2Str(fullFileName);
             analKey = (Map<String, Object>)JsonUtils.jsonToObj(jsonS, Map.class);
             Map<String, Object> _HEAD = (Map<String, Object>)analKey.get("_HEAD");
             String _code = (String)_HEAD.get("_code");
@@ -300,8 +290,6 @@ public class MdKeyService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        } finally {
-            try { if (fis!=null) fis.close(); } catch(Exception e) {}
         }
     }
 
@@ -376,8 +364,7 @@ public class MdKeyService {
         FileIndexPo fip = null;
         if (afl!=null&&afl.size()>0) { //若有文件，则按文件处理
             fip = afl.get(0); //只取第一个
-            File f = new File(fip.getPath()+File.separator+fip.getFileName());
-            _m = parseJsonFile4NoKey(f, mm);
+            _m = parseJsonFile4NoKey(fip.getPath()+File.separator+fip.getFileName(), mm);
             if (_m!=null||_m.size()==2) noKeyInfo_inFile = (Map<String, List<String>>)_m.get("noKeyInfo");
         }
         //如果传入的“不允许作为主键的列的信息”为空，而从文件中读出的“不允许作为主键的列的信息”存在，则返回从文件中读出的信息
@@ -462,16 +449,11 @@ public class MdKeyService {
      * @param mm 元数据信息
      * @return 不能作为主键的列信息对象及文件中的Json串
      */
-    private Map<String, Object> parseJsonFile4NoKey(File f, MetadataModel mm) {
+    private Map<String, Object> parseJsonFile4NoKey(String fullFileName, MetadataModel mm) {
         Map<String, List<String>> noKeyInfo = null;
         Map<String, Object> ret = new HashMap<String, Object>();
-        FileInputStream fis = null;
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            fis = new FileInputStream(f);
-            byte[] b=new byte[fis.available()];
-            fis.read(b);
-            String jsonS = new String(b);
+            String jsonS = FileOperUtils.readFile2Str(fullFileName);
             Map<String, Object> analNoKey = (Map<String, Object>)JsonUtils.jsonToObj(jsonS, Map.class);
             Map<String, Object> _HEAD = (Map<String, Object>)analNoKey.get("_HEAD");
             String _code = (String)_HEAD.get("_code");
@@ -487,8 +469,6 @@ public class MdKeyService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        } finally {
-            try { if (fis!=null) fis.close(); } catch(Exception e) {}
         }
         return ret;
     }
