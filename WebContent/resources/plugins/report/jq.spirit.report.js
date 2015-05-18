@@ -107,11 +107,17 @@ function resolveAndDraw(){
     var _domAry = $('['+attr+']').toArray();
     domAry[i] = _domAry;
   }
+  console.info(domAry);
   //JsonDSize>0说明是有数据需要请求的
   if (monitor.monitorJsonDSize&&monitor.monitorJsonDSize>0) {
     //用于储存已经显示过的id
     monitor._alreadyShownId = [];
-    monitor.monitorDrawId = setInterval(retrievalJsonDJson(domAry),500);
+    try {
+      //setTimeout('console.info("jsonDInfoArray")', 10000);
+      //monitor.monitorDrawId = setInterval('retrievalJsonDJson("'+domAry+'")',0);
+    }catch(e) {
+      alert(e);
+    }
   } else {
     return;
   }
@@ -122,34 +128,35 @@ function resolveAndDraw(){
  * @param domAry根据jsonDid分组后的dom数组
  */
 function retrievalJsonDJson (domAry) {
-  if (jsonDInfoArray.length==0) {//一条数据都没取到
-    return;
-  } else {
-    // 当已经全部显示完时关闭定时任务
-	  // TODO 人工停顿
-    alert(monitor._alreadyShownId.length);
-    if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) {clearInterval(monitor.monitorDrawId);}
-    for (var i=0;i<jsonDInfoArray.length;i++) {
-      var jsonDInfo = jsonDInfoArray[i];
-      var shownIdAry = monitor._alreadyShownId;
-      if (shownIdAry.toString().indexOf(jsonDInfo.id)==-1) {
-        //起setInterval,检查d元素是否到位
-        if (jsonDInfo.json!=null&&jsonDInfo.json!="") {
-          for (var k=0;k<domAry.length;k++) {
-            var _domAry = domAry[k];
-            if (jsonDInfo.id == $(_domAry[0]).attr('_did')) {
-              //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
-              for (var j=0;j<_domAry.length;j++) {
-                var _DATA = jsonDInfo.json._DATA;
-                parseEle($(_domAry[j]),_DATA);
-              }
-            }
-          }
-          monitor._alreadyShownId.push(jsonDInfo.id);
-        }
-      }
-    }
-  }
+  console.info("11");
+  //已经得到的jsond个数
+//  if (monitor._getJsonDIdAry!=null&&monitor._getJsonDIdAry.length>0) {
+//    _jsonDSize = monitor._getJsonDIdAry.length;
+//    // 当已经全部显示完时关闭定时任务
+//    // TODO 人工停顿
+//    //alert(monitor._alreadyShownId.length);
+//    //if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) {clearInterval(monitor.monitorDrawId);}
+//    for (var i=0;i<jsonDInfoArray.length;i++) {
+//      var jsonDInfo = jsonDInfoArray[i];
+//      var shownIdAry = monitor._alreadyShownId;
+//      if (shownIdAry.toString().indexOf(jsonDInfo.id)==-1) {
+//        //起setInterval,检查d元素是否到位
+//        if (jsonDInfo.json!=null&&jsonDInfo.json!="") {
+//          for (var k=0;k<domAry.length;k++) {
+//            var _domAry = domAry[k];
+//            if (jsonDInfo.id == $(_domAry[0]).attr('_did')) {
+//              //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
+//              for (var j=0;j<_domAry.length;j++) {
+//                var _DATA = jsonDInfo.json._DATA;
+//                parseEle($(_domAry[j]),_DATA);
+//              }
+//            }
+//          }
+//          monitor._alreadyShownId.push(jsonDInfo.id);
+//        }
+//      }
+//    }
+//  } else return;
 }
 
 /**
@@ -1407,7 +1414,7 @@ function resolveDLIST(_DLIST){
     else jsonDInfo.jsonD_code = "";
     jsonDInfoArray.push(jsonDInfo);
     //jsonDjson 用于存贮jsonD的数据 会在后面赋值
-    monitor.monitorJsonDId = setInterval(getJsonDJson(jsonDInfo),200);
+    monitor.monitorJsonDId = setInterval('getJsonDJson()',200);
   }
 }
 
@@ -1416,7 +1423,7 @@ function resolveDLIST(_DLIST){
  * @param jsonDInfo
  */
 function getJsonDJson(jsonDInfo) {
-  if (monitor._getJsonDIdAry.length==monitor.monitorJsonDSize) clearInterval(monitor.monitorJsonDId);
+  //if (monitor._getJsonDIdAry.length==monitor.monitorJsonDSize) clearInterval(monitor.monitorJsonDId);
   var dId = jsonDInfo.id;
   for (var k=0;k<jsonDInfoArray.length;k++) {
     //当已存数组中不包含该id，并且找到对应的jsoDinfo时，进行获取数据
@@ -1434,6 +1441,7 @@ function getJsonDJson(jsonDInfo) {
           if(jsonDObj.jsonType==1){
             jsonDInfo.json = jsonDObj.data;
             monitor._getJsonDIdAry.push(dId);
+            console.info(jsonDObj.data);
           }else{
             alert("获取数据错误");
           }
