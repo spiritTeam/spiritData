@@ -94,7 +94,7 @@ public class WordService {
     @SuppressWarnings("unchecked")
     private void initReportAndJsonD(String reportId) throws Exception {
         //report
-        String reportJson = reportSerivce.getReportJsonById(reportId);
+        String reportJson = "";//reportSerivce.getReportJsonById(reportId);
         Map<String,Object> reportMap = (Map<String, Object>)JsonUtils.jsonToObj(reportJson, Map.class);
         reportMap2been(reportMap);
         //jsonD

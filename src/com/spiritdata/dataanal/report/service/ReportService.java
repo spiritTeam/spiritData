@@ -2,6 +2,7 @@ package com.spiritdata.dataanal.report.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -79,9 +80,13 @@ public class ReportService {
     /**
      * 根据报告Id，得到报告的Json串
      * @param reportId 报告Id
-     * @return 报告json串
+     * @return 报告json串，注意：此Json串格式为Map，包括
+     * <pre>
+     *   type:1=成功；2=失败；3=正在进行
+     *   data:若type=1，是实际的json串
+     * </pre>
      */
-    public String getReportJsonById(String reportId) {
+    public Map<String, Object> getReportJsonById(String reportId) {
         if (StringUtils.isNullOrEmptyOrSpace(reportId)) throw new Dtal1001CException("所给reportId参数为空，无法获取数据！");
         //根据id获取内容，现在先不处理//原文件名templet1.json
         return this.getReportJsonByUri("demo\\reportDemo\\report1.json");
@@ -92,7 +97,7 @@ public class ReportService {
      * @param uri 报告的Uri
      * @return 报告json串
      */
-    public String getReportJsonByUri(String uri) {
+    public Map<String, Object> getReportJsonByUri(String uri) {
         String ret = null;
         if (uri.indexOf("\\\\:")!=-1||uri.indexOf("//:")!=-1) {//走协议方式
             
@@ -110,6 +115,6 @@ public class ReportService {
                 throw new Dtal1001CException("Uri["+uri+"]所指向的地址不可用！");
             }
         }
-        return ret;
+        return null;
     }
 }
