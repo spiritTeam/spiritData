@@ -13,12 +13,13 @@
 <meta http-equiv="expires" content="0"/>
 
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
-
 <!-- 加载ZUI - 开源HTML5跨屏框架 -->
 <link href="<%=path%>/resources/plugins/zui/css/zui.min.css" rel="stylesheet">
 <link href="<%=path%>/resources/plugins/zui/css/example.css" rel="stylesheet">
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
 <script src="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.js"></script>
+<!-- 加载analApp的JS -->
+<script src="<%=path%>/analApp/js/analApp.view.js"></script>
 
 <title>文件主界面</title>
 </head>
@@ -125,7 +126,7 @@ $(function() {
   initSubmitBt();
   initSearchFileInput();
   initDatePicker();
-  
+  _urlPath = "<%=path%>";  
   startSearch();
 });
 
@@ -377,20 +378,5 @@ function getSuffixImgName(suffixName){
   return retName;
 }
 
-//查询结果中，当点击了某个文件，触发此操作
-function showFile(fileId){
-	alert("您点击了："+fileId);
-}
-
-function showReport(reportId) {
-  var winOption={
-    url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
-    title:"报告详情",
-    height:600,
-    width:1000,
-    iframeScroll:"yes"
-  };
-	openSWinInMain(winOption);
-}
 </script>
 </html>
