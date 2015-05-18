@@ -32,7 +32,7 @@ body {
 <script type="text/javascript">
 $(function(){
   var reportId="asdaw";
-  var reportUrl = "<%=path%>/report/getReport.do?uri=demo\\reportDemo\\report.json";
+  var reportUrl = "<%=path%>/report/getReport.do?uri=DataCenter\\report\\0058976379924e948c53a261cd50e6bb\\afterImport(IMPFID-c36e4e52a356481797c537037b72cc68).json";
   //alert("show report url="+reportUrl);
   $.reportJD(reportUrl,reportId);
 });

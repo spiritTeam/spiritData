@@ -97,7 +97,6 @@ public class QuotaTable extends BaseObject {
     public void addColumn(QuotaColumn qc) throws Exception {
         if (qc==null) return;
         if (qc.getId().equals(null)) throw new Exception("列指标Id不能为空");
-        if (qc.getColumn()==null) throw new Exception("列描述不能为空");
 
         MetadataColumn mdc=qc.getColumn();
         if (this.colQuotaList==null) this.colQuotaList=new ArrayList<QuotaColumn>();
