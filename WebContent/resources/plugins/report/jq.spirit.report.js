@@ -61,7 +61,8 @@ function generateReport(reportUrl, reportId) {
           var _DLIST = reportData._DLIST;
           //解析DLIST
           resolveDLIST(_DLIST);
-          $('#rTitle').html(_HEAD._reportName+'<input id="download" onclick="$.download(\''+reportId+'\',\''+deployName+'\');" type="button" value="保存报告"/>');
+          //$('#rTitle').html(_HEAD._reportName+'<input id="download" onclick="$.download(\''+reportId+'\',\''+deployName+'\');" type="button" value="保存报告"/>');
+          $('#rTitle').html(_HEAD._reportName);
           buildSegmentGroup($('#reportFrame'), _REPORT, level, null);
           
           //显示树的部分
@@ -125,6 +126,7 @@ function retrievalJsonDJson (domAry) {
     return;
   } else {
     // 当已经全部显示完时关闭定时任务
+	  // TODO 人工停顿
     alert(monitor._alreadyShownId.length);
     if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) {clearInterval(monitor.monitorDrawId);}
     for (var i=0;i<jsonDInfoArray.length;i++) {
@@ -1437,9 +1439,9 @@ function getJsonDJson(jsonDInfo) {
           }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-            alert(XMLHttpRequest.status);
-            alert(XMLHttpRequest.readyState);
-            alert(textStatus);
+          alert(XMLHttpRequest.status);
+          alert(XMLHttpRequest.readyState);
+          alert(textStatus);
         }
       });
     }
