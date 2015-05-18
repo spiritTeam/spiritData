@@ -38,8 +38,8 @@ public class AnalResultFile extends AbstractToBeStoreFile implements Serializabl
     private String fileName; //分析文件的地址
     private String jsonDCode; //jsonD的Code
 
-    private String analType; //分析类型-METADATA:元数据结构分析，又可分为key/dict/sement，今后根据情况再扩充，用于确定保存的目录
-    private String subType; //下级分类又可分为key/dict/sement，今后根据情况再扩充，用于确定保存的目录
+    private String analType; //对应Type2,分析类型-METADATA:元数据结构分析，又可分为key/dict/sement，今后根据情况再扩充，用于确定保存的目录
+    private String subType; //对应Type3,今后相当于任务Id
 
     private String objId; //所分析的对象Id，MetadataModelId
     private String objType; //分析对象类型

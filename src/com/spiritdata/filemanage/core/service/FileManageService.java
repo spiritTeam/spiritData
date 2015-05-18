@@ -1,9 +1,14 @@
 package com.spiritdata.filemanage.core.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
+import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
@@ -104,5 +109,73 @@ public class FileManageService {
         } catch(Exception e) {
             throw new Flmg0101CException(e);
         }
+    }
+
+    /**
+     * 根据文件Id，得到文件信息
+     * @param id 文件Id
+     * @return 文件信息
+     */
+    public FileInfo getFileInfoById(String id) {
+        FileIndexPo fiPo = fileIndexDao.getInfoObject(id);
+        if (fiPo==null) return null;
+
+        Map<String, Object> param = new HashMap<String, Object>();
+        FileInfo ret = new FileInfo();
+        ret.buildFromPo(fiPo);
+        //处理文件的分类，可能是多个，注意：此处得到的分类列表不递归处理，即没有关系信息
+        param.put("FId", id);
+        List<FileCategoryPo> fcpL = fileCategoryDao.queryForList(param);
+        if (fcpL!=null&&fcpL.size()>0) {
+            for (FileCategoryPo fcp: fcpL) {
+                FileCategory fc = new FileCategory();
+                fc.buildFromPo(fcp);
+                ret.addFileCategoryList(fc);
+            }
+        }
+        //处理文件的关系，注意，关系中的对象Object1/Object2不是递归处理的，即Object中的关系和分类表都是空
+        //正向关系
+        param.clear();
+        param.put("AId", id);
+        param.put("AType", 1);
+        List<FileRelationPo> _12RelList = fileRelationDao.queryForList(param);
+        if (_12RelList!=null&&_12RelList.size()>0) {
+            for (FileRelationPo frp: _12RelList) {
+                Object o=null;
+                if (frp.getBType()==1) {
+                    FileInfo fi = new FileInfo();
+                    fi.setId(frp.getBId());
+                    o=fi;
+                }
+                if (frp.getBType()==2) {
+                    FileCategory fc = new FileCategory();
+                    fc.setId(frp.getBId());
+                    o=fc;
+                }
+                ret.buildRel(o, RelType1.getRelType1(frp.getRType1()), frp.getRType2(), frp.getDesc());
+            }
+        }
+        //文件关系
+        param.clear();
+        param.put("BId", id);
+        param.put("BType", 1);
+        List<FileRelationPo> _21RelList = fileRelationDao.queryForList(param);
+        if (_21RelList!=null&&_21RelList.size()>0) {
+            for (FileRelationPo frp: _21RelList) {
+                Object o=null;
+                if (frp.getAType()==1) {
+                    FileInfo fi = new FileInfo();
+                    fi.setId(frp.getBId());
+                    o=fi;
+                }
+                if (frp.getAType()==2) {
+                    FileCategory fc = new FileCategory();
+                    fc.setId(frp.getBId());
+                    o=fc;
+                }
+                ret.buildRel(o, RelType1.getRelType1(frp.getRType1()).getContrary(), frp.getRType2(), frp.getDesc());
+            }
+        }
+        return ret;
     }
 }

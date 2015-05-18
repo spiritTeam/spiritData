@@ -86,12 +86,6 @@ public class TaskManageService {
                     }
                 }
             }
-
-            //保存到内存
-            //String ownerId = (tg.getOwnerId()).trim();
-            //if (ownerId==null||ownerId.trim().length()==0) { //抛出异常
-            //}
-            //保存到数据库
         } catch(Exception e) {
             //删除
             try {
@@ -145,8 +139,11 @@ public class TaskManageService {
         //任务失效的判断及处理
         ti.setExecuteCount(ti.getExecuteCount()+1);
         if (status==StatusType.FAILD) {//失败
-            int executeLimit = ti.getTaskGroup().getDefaultExecuteCountLimit()==0?tm.getEXECUTECOUNT_LIMIT():ti.getTaskGroup().getDefaultExecuteCountLimit();
-          //执行失败的次数过多，这样的任务是无效的
+            int executeLimit = tm.getEXECUTECOUNT_LIMIT();
+            if (ti.getTaskGroup()!=null&&ti.getTaskGroup().getDefaultExecuteCountLimit()>0) {
+                executeLimit = ti.getTaskGroup().getDefaultExecuteCountLimit();
+            }
+            //执行失败的次数过多，这样的任务是无效的
             if (executeLimit<=ti.getExecuteCount()) ti.setAbatement();
         }
 
@@ -160,6 +157,7 @@ public class TaskManageService {
 
         //检查任务组是否也需要更新
         TaskGroup tg = ti.getTaskGroup();
+        if (tg==null) return;
         Map<String, TaskInfo> tiMap = tg.getTaskGraph().getTaskMap();
         if (tiMap!=null&&tiMap.size()>0) {
             StatusType tg_status = StatusType.SUCCESS; //先设置为执行成功

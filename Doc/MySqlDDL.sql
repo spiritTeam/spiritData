@@ -103,22 +103,7 @@ CREATE TABLE sa_md_colsemanteme (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据语义表';
 
-/**007 元数据表对照[SA_MD_TABMAP_REL]*/
-DROP TABLE IF EXISTS sa_md_tabmap_rel;
-CREATE TABLE sa_md_tabmap_rel (
-  id         varchar(32)      NOT NULL                COMMENT 'uuid(对照表id)',
-  tmId       varchar(32)      NOT NULL                COMMENT '元数据模式Id(表模式ID)',
-  ownerId    varchar(32)      NOT NULL                COMMENT '用户Id或者sessionId',
-  ownerType  int(1) unsigned  NOT NULL                COMMENT '用户类型(1-用户，2-session)',
-  tableName  varchar(40)      NOT NULL                COMMENT '表名称（此名称与业务数据表名称对应）',
-  tableType  int(1) unsigned  NOT NULL  DEFAULT '1'   COMMENT '表类型(1-积累表。2-临时表)',
-  tableDescn varchar(400)               DEFAULT NULL  COMMENT '备注',
-  cTime      timestamp  NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '创建时的系统时间',
-  PRIMARY KEY (id)
-)
-ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据对照关系表';
-
-/**008 元数据表指标[SA_MD_TABLEQUOTA]*/
+/**007 元数据表指标[SA_MD_TABLEQUOTA]*/
 DROP TABLE IF EXISTS sa_md_tabquota;
 CREATE TABLE sa_md_tabquota (
   id        varchar(32)       NOT NULL               COMMENT '标指标Id(UUID)',
@@ -133,7 +118,7 @@ CREATE TABLE sa_md_tabquota (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据表指标';
 
-/**009 元数据列指标[SA_MD_COLUMNQUOTA]*/
+/**008 元数据列指标[SA_MD_COLUMNQUOTA]*/
 DROP TABLE IF EXISTS sa_md_colquota;
 CREATE TABLE sa_md_colquota (
   id            varchar(32)       NOT NULL               COMMENT '列指标Id(UUID)',
@@ -149,11 +134,26 @@ CREATE TABLE sa_md_colquota (
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据列指标表';
 
+/**009 元数据表对照[SA_MD_TABMAP_REL]*/
+DROP TABLE IF EXISTS sa_md_tabmap_rel;
+CREATE TABLE sa_md_tabmap_rel (
+  id         varchar(32)      NOT NULL                COMMENT 'uuid(对照表id)',
+  tmId       varchar(32)      NOT NULL                COMMENT '元数据模式Id(表模式ID)',
+  ownerId    varchar(32)      NOT NULL                COMMENT '用户Id或者sessionId',
+  ownerType  int(1) unsigned  NOT NULL                COMMENT '用户类型(1-用户，2-session)',
+  tableName  varchar(40)      NOT NULL                COMMENT '表名称（此名称与业务数据表名称对应）',
+  tableType  int(1) unsigned  NOT NULL  DEFAULT '1'   COMMENT '表类型(1-积累表。2-临时表)',
+  tableDescn varchar(400)               DEFAULT NULL  COMMENT '备注',
+  cTime      timestamp  NOT NULL  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  COMMENT '创建时的系统时间',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='元数据对照关系表';
+
 /**010 数据文件/实体表对应[SA_IMP_TABMAP_REL]*/
 DROP TABLE IF EXISTS sa_imp_tabmap_rel;
 CREATE TABLE sa_imp_tabmap_rel (
   id              varchar(32)      NOT NULL  COMMENT '文件/实体对应关系ID(UUID)',
-  fId             varchar(32)      NOT NULL  COMMENT '文件日志ID(文件表外键)',
+  fId             varchar(32)      NOT NULL  COMMENT '文件信息ID(文件表外键)',
   tmoId           varchar(32)      NOT NULL  COMMENT '对照表Id(元数据实体表对照Id，外键)',
   tmId            varchar(32)      NOT NULL  COMMENT '元数据模式Id(表模式Id外键)',
   sheetName       varchar(100)     NOT NULL  COMMENT '页签名称',
@@ -223,7 +223,7 @@ VIEW vsa_file_inverserel AS
 /**015 导入文件视图[vSA_IMP_LOG]*/
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vsa_imp_log AS
-  select a.id, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.extInfo AS cFileName, descn, a.cTime
+  select a.id, b.id cateId, ownerId, ownerType, accessType, filePath, fileName, fileExtName, fileSize, b.extInfo AS cFileName, descn, a.cTime
   from sa_file_index a, sa_file_category b
   where a.id=b.fid and b.type1='IMP';
 
@@ -325,7 +325,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vpsa_tasks1 AS (
   select
     a.id MT_Id, concat(d.filePath, '/', d.fileName) MT_RFile,a.langType MT_langType, a.executeFunc MT_executeFunc, a.param MT_param,
-    a.status MT_status, a.taskName MT_tName, a.descn MT_descn, a.firstTime MT_firstTime, a.beginTime MT_beginTime, a.endTime MT_endTime, 
+    a.status MT_status, a.taskName MT_tName, a.taskType MT_tType, a.descn MT_descn, a.firstTime MT_firstTime, a.beginTime MT_beginTime, a.endTime MT_endTime, 
     c.id TG_Id, c.reportId, c.ownerId, c.ownerType, c.status TG_status, c.workName, c.descn TG_descn, c.beginTime TG_beginTime,
     b.preTaskId, b.usedPreData
   from sa_task_info a
@@ -336,10 +336,10 @@ VIEW vpsa_tasks1 AS (
 CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER
 VIEW vpsa_tasks2 AS (
   select
-    m.MT_Id, m.MT_RFile, m.MT_langType, m.MT_executeFunc, m.MT_param, m.MT_status, m.MT_tName, m.MT_descn, m.MT_firstTime, m.MT_beginTime, m.MT_endTime,
+    m.MT_Id, m.MT_RFile, m.MT_langType, m.MT_executeFunc, m.MT_param, m.MT_status, m.MT_tName, m.MT_tNType, m.MT_descn, m.MT_firstTime, m.MT_beginTime, m.MT_endTime,
     m.TG_Id, m.reportId, m.ownerId, m.ownerType, m.TG_status, m.workName, m.TG_descn, m.TG_beginTime,
-    p.id PT_id, p.resultFileid, p.langType PT_langType, p.executeFunc PT_executeFunc, p.param PT_param, p.status PT_status, p.taskName PT_tName, p.descn PT_descn,
-    p.firstTime PT_firstTime, p.beginTime PT_beginTime, p.endTime PT_endTime
+    p.id PT_id, p.resultFileid, p.langType PT_langType, p.executeFunc PT_executeFunc, p.param PT_param, p.status PT_status, p.taskName PT_tName, p.taskType PT_tType,
+    p.descn PT_descn, p.firstTime PT_firstTime, p.beginTime PT_beginTime, p.endTime PT_endTime
   from vpsa_tasks1 m
   left join sa_task_info p on p.id=m.preTaskId
 );

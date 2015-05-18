@@ -11,8 +11,9 @@
     <result column="taskGId"       property="taskGId"       jdbcType="VARCHAR"/>
     <result column="resultFileId"  property="rfId"          jdbcType="VARCHAR"/>
     <result column="taskName"      property="taskName"      jdbcType="VARCHAR"/>
+    <result column="taskType"      property="taskType"      jdbcType="VARCHAR"/>
     <result column="langType"      property="langType"      jdbcType="VARCHAR"/>
-    <result column="executeFunc"    property="executeFunc"    jdbcType="VARCHAR"/>
+    <result column="executeFunc"   property="executeFunc"   jdbcType="VARCHAR"/>
     <result column="param"         property="param"         jdbcType="VARCHAR"/>
     <result column="status"        property="status"        jdbcType="INTEGER"/>
     <result column="executeCount"  property="executeCount"  jdbcType="INTEGER"/>
@@ -24,10 +25,10 @@
 
   <!-- 所有列 -->
   <sql id="Base_Column_List">
-    id, taskGId, resultFileId, taskName, langType, executeFunc, param, status, executeCount, descn, firstTime, beginTime, endTime
+    id, taskGId, resultFileId, taskName, taskType, langType, executeFunc, param, status, executeCount, descn, firstTime, beginTime, endTime
   </sql>
   <sql id="Base_Column_List_A">
-    a.id, a.taskGId, a.resultFileId, a.taskName, a.langType, a.executeFunc, a.param, a.status, a.descn, a.executeCount, a.firstTime, a.beginTime, a.endTime
+    a.id, a.taskGId, a.resultFileId, a.taskName, a.taskType, a.langType, a.executeFunc, a.param, a.status, a.descn, a.executeCount, a.firstTime, a.beginTime, a.endTime
   </sql>
 
   <!-- 条件子句 -->
@@ -38,6 +39,7 @@
         <if test="taskGId!=null"> and taskGId=#{taskGId,jdbcType=VARCHAR}</if>
         <if test="rfId!=null"> and resultFileId=#{rfId,jdbcType=VARCHAR}</if>
         <if test="taskName!=null"> and taskName=#{taskName,jdbcType=VARCHAR}</if>
+        <if test="taskType!=null"> and taskType=#{taskType,jdbcType=VARCHAR}</if>
         <if test="langType!=null"> and langType=#{langType,jdbcType=VARCHAR}</if>
         <if test="executeFunc!=null"> and executeFunc=#{executeFunc,jdbcType=VARCHAR}</if>
         <if test="param!=null"> and param=#{param,jdbcType=VARCHAR}</if>
@@ -79,6 +81,7 @@
       <if test="taskGId!=null">taskGId,</if>
       <if test="rfId!=null">resultFileId,</if>
       <if test="taskName!=null">taskName,</if>
+      <if test="taskType!=null">taskType,</if>
       <if test="langType!=null">langType,</if>
       <if test="executeFunc!=null">executeFunc,</if>
       <if test="param!=null">param,</if>
@@ -94,6 +97,7 @@
       <if test="taskGId!=null">#{taskGId,jdbcType=VARCHAR},</if>
       <if test="rfId!=null">#{rfId,jdbcType=VARCHAR},</if>
       <if test="taskName!=null">#{taskName,jdbcType=VARCHAR},</if>
+      <if test="taskType!=null">#{taskType,jdbcType=VARCHAR},</if>
       <if test="langType!=null">#{langType,jdbcType=VARCHAR},</if>
       <if test="executeFunc!=null">#{executeFunc,jdbcType=VARCHAR},</if>
       <if test="param!=null">#{param,jdbcType=VARCHAR},</if>
@@ -113,6 +117,7 @@
       <if test="taskGId!=null">taskGId=#{taskGId,jdbcType=VARCHAR},</if>
       <if test="rfId!=null">resultFileId=#{rfId,jdbcType=VARCHAR},</if>
       <if test="taskName!=null">taskName=#{taskName,jdbcType=VARCHAR},</if>
+      <if test="taskType!=null">taskType=#{taskType,jdbcType=VARCHAR},</if>
       <if test="langType!=null">langType=#{langType,jdbcType=VARCHAR},</if>
       <if test="executeFunc!=null">executeFunc=#{executeFunc,jdbcType=VARCHAR},</if>
       <if test="param!=null">param=#{param,jdbcType=VARCHAR},</if>

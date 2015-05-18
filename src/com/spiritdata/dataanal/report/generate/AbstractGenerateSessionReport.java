@@ -1,6 +1,8 @@
 package com.spiritdata.dataanal.report.generate;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -15,7 +17,11 @@ import com.spiritdata.dataanal.task.core.service.TaskManageService;
 import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
+import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.model.FileRelation;
+import com.spiritdata.filemanage.core.service.FileManageService;
+import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 
 /**
@@ -29,6 +35,8 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
     private ReportService reportService;
     @Resource
     private TaskManageService tmService;
+    @Resource
+    private FileManageService fmService;
 
     private HttpSession session;//session用来缓存与该会话相关的信息
 
@@ -84,18 +92,26 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         rfSeed.setTaskGId(tg.getId());
         FileInfo impFi = (FileInfo)preTreadParam.get("impFileInfo");
         rfSeed.setFileNameSeed(report.getId()+File.separator+"afterImport(IMPFID-"+impFi.getId()+")");
-
-        ReportFile rf = (ReportFile)rfService.write2FileAsJson(report, rfSeed); //保存文件，并把文件信息回写到report对象中
+        ReportFile rf = (ReportFile)rfService.write2FileAsJson(report, rfSeed);//保存文件，并把文件信息回写到report对象中
         report.setReportFile(rf);
-        //2.2-报告文件数据库存储
-        rfService.saveFile(rf);//报告的json存储
-        //2.3-报告信息数据库存储
+        //2.2-报告文件信息-数据库存储
+        FileInfo reportFi = rfService.saveFile(rf);//报告的json存储
+        //2.3-报告信息-数据库存储
         reportService.saveReport(tr);
+        //2.4-报告与导入文件的关系
+        FileRelation fr = new FileRelation();
+        fr.setElement1(impFi.getFileCategoryList().get(0));
+        fr.setElement2(reportFi.getFileCategoryList().get(0));
+        fr.setCTime(new Timestamp((new Date()).getTime()));
+        fr.setRType1(RelType1.POSITIVE);
+        fr.setRType2("即时报告");
+        fr.setDesc("["+FileNameUtils.getFileName(impFi.getFileCategoryList().get(0).getExtInfo())+"]——文件导入后数据分析报告");
+        fmService.saveFileRelation(fr);//文件关联存储
 
         //3-任务处理，存储，包括持久化和内存，存入内存的数据，任务框架会自动执行
-        tmService.save(tg);
+        tmService.save(tg);//持久化存储
         TaskMemoryService tms = TaskMemoryService.getInstance();
-        tms.addTaskGroup(tg);
+        tms.addTaskGroup(tg);//缓存存储
 
         return report.getId();
     }

@@ -27,7 +27,7 @@ import com.spiritdata.jsonD.model.JsonDHead;
  * 分析文件服务类
  * @author wh
  */
-public class AanlResultFileService extends AbstractWriteString2FileByToBeStoreFile implements WriteJsonD {
+public class AnalResultFileService extends AbstractWriteString2FileByToBeStoreFile implements WriteJsonD {
     @Resource
     private FileManageService fmService;
 

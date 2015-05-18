@@ -167,7 +167,7 @@ public class FileInfo implements Serializable, ModelSwapPo {
      * @return 所建立的关系
      * @throws Exception 如果obj不是符合的类型
      */
-    protected FileRelation _buildRel(Object obj, RelType1 type, String rType2, String desc) throws Exception {
+    protected FileRelation _buildRel(Object obj, RelType1 type, String rType2, String desc) {
         if (!(obj instanceof FileInfo)&&!(obj instanceof FileCategory)) {
             throw new Flmg0002CException(new IllegalArgumentException("另一关联对象只能是FileInfo或FileCategory类型，无法转换！"));
         }
@@ -238,12 +238,8 @@ public class FileInfo implements Serializable, ModelSwapPo {
      * @return 所建立的关系
      * @throws Exception 如果obj不是符合的类型
      */
-    public FileRelation buildRel(Object obj, RelType1 type, String rType2, String desc) throws Exception {
-        FileRelation ret = this._buildRel(obj, type, rType2, desc);
-        FileRelation _contraryRet = ret.getContraryRelation();
-        if (obj instanceof FileInfo) ((FileInfo)obj).buildFileRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
-        if (obj instanceof FileCategory) ((FileCategory)obj).buildFileRel(this, _contraryRet.getRType1(), _contraryRet.getRType2(), _contraryRet.getDesc());
-        return ret;
+    public FileRelation buildRel(Object obj, RelType1 type, String rType2, String desc) {
+        return this._buildRel(obj, type, rType2, desc);
     }
 
     /**
@@ -255,7 +251,7 @@ public class FileInfo implements Serializable, ModelSwapPo {
      * @return 所建立的关系
      * @throws Exception 如果obj不是符合的类型
      */
-    public FileRelation buildFileRel(FileInfo fc, RelType1 type, String rType2, String desc) throws Exception {
+    public FileRelation buildFileRel(FileInfo fc, RelType1 type, String rType2, String desc) {
         return this.buildRel(fc, type, rType2, desc);
     }
 
@@ -268,7 +264,7 @@ public class FileInfo implements Serializable, ModelSwapPo {
      * @return 所建立的关系
      * @throws Exception 如果obj不是符合的类型
      */
-    public FileRelation buildCategoryRel(FileCategory fc, RelType1 type, String rType2, String desc) throws Exception {
+    public FileRelation buildCategoryRel(FileCategory fc, RelType1 type, String rType2, String desc) {
         return this.buildRel(fc, type, rType2, desc);
     }
 

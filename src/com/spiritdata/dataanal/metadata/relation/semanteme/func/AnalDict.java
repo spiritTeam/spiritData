@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
+import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
@@ -36,7 +36,7 @@ public class AnalDict implements AnalMetadata {
     @Resource
     private MdQuotaService mdQuotaService;
     @Resource
-    private AanlResultFileService arfService;
+    private AnalResultFileService arfService;
 
     /**
      * 扫描元数据，分析字典语义，把分析结果写入文件

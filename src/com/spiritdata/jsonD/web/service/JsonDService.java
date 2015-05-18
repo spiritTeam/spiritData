@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.FileUtils;
 
-import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
+import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.CacheEle;
@@ -27,7 +27,7 @@ import com.spiritdata.jsonD.exceptionC.JsonD1001CException;
 
 public class JsonDService {
     @Resource
-    private AanlResultFileService arfService;
+    private AnalResultFileService arfService;
 
     /**
      * 根据jsonD实例的Id，得到jsonD串

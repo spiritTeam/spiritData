@@ -20,7 +20,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.category.ANAL.service.AanlResultFileService;
+import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.util.FileOperUtils;
 import com.spiritdata.framework.util.SequenceUUID;
@@ -44,7 +44,7 @@ public class MdKeyService {
     @Resource
     private MdBasisService mdBasisService;
     @Resource
-    private AanlResultFileService arfService;
+    private AnalResultFileService arfService;
 
     /**
      * 调整元数据主键。

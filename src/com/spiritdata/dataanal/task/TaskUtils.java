@@ -1,10 +1,12 @@
 package com.spiritdata.dataanal.task;
 
+import com.spiritdata.dataanal.task.core.enumeration.TaskLangType;
 import com.spiritdata.dataanal.task.core.model.TaskInfo;
 import com.spiritdata.dataanal.task.process.TaskProcess;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.dataanal.exceptionC.Dtal0401CException;
+import com.spiritdata.dataanal.exceptionC.Dtal0405CException;
 import com.spiritdata.jsonD.model.AccessJsonD;
 
 /**
@@ -31,9 +33,18 @@ public abstract class TaskUtils {
         return aj;
     }
 
-    public static TaskProcess loadClass(TaskInfo ti) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        //注意，这里没有重写classLoader，任务中的
-        TaskProcess tp = (TaskProcess)(Class.forName(ti.getExecuteFunc()).newInstance());
+    public static TaskProcess loadClass(TaskInfo ti) {
+        //注意，这里没有重写classLoader，类必须在classpath中能够找到；
+        TaskProcess tp = null;
+        try {
+            if (ti.getLangType()!=TaskLangType.JAVA) throw new Dtal0405CException("目前只支持Java类的外部函数！");
+            Object o = Class.forName(ti.getExecuteFunc()).newInstance();
+            if (o instanceof TaskProcess) {
+                tp = (TaskProcess)o;
+            } else throw new Dtal0405CException("["+o.getClass().getName()+"]不是<"+TaskProcess.class.getName()+">的子类！");
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            throw new Dtal0405CException(e);
+        }
         return tp;
     }
  }
