@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +140,7 @@ public class MdQuotaService {
             qt.setMdMId(mm.getId());
             qt.setTmoId(tmoId);
             qt.setTableName(tableName);
-            qt.setLmTime(new Timestamp(new Date().getTime()));
+            qt.setLmTime(new Timestamp(System.currentTimeMillis()));
             if (rs.next()) {
                 qt.setAllCount(rs.getLong(1));
             } else {

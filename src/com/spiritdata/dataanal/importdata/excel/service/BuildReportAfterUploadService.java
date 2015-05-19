@@ -3,7 +3,6 @@ package com.spiritdata.dataanal.importdata.excel.service;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -118,7 +117,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         report.setOwner(owner);
         String reportName = "["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后数据分析报告";
         report.setReportName(reportName); //设置报告名称，头的reportName也设置了
-        report.setCTime(new Timestamp((new Date()).getTime())); //设置报告生成时间，同时也设置了头的时间
+        report.setCTime(new Timestamp(System.currentTimeMillis())); //设置报告生成时间，同时也设置了头的时间
         report.setDesc(reportName); //设置报告说明，同时也设置了报告头的说明
         report.setReportType("导入后即时报告");
         rHead.setCode(SDConstants.RP_AFTER_IMP);

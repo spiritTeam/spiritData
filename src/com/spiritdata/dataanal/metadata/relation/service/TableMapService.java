@@ -2,7 +2,6 @@ package com.spiritdata.dataanal.metadata.relation.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +102,7 @@ public class TableMapService {
         insertTmo.setTableName(tableName);
         insertTmo.setTableType(tableType);
         mtmrDao.insert(insertTmo);
-        insertTmo.setCTime(new Timestamp(new Date().getTime()));
+        insertTmo.setCTime(new Timestamp(System.currentTimeMillis()));
         return insertTmo;
     }
 

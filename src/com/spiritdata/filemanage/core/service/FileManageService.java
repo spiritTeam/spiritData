@@ -117,13 +117,15 @@ public class FileManageService {
      * @return 文件信息
      */
     public FileInfo getFileInfoById(String id) {
-        FileIndexPo fiPo = fileIndexDao.getInfoObject(id);
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("id", id);
+        FileIndexPo fiPo = fileIndexDao.getInfoObject(param);
         if (fiPo==null) return null;
 
-        Map<String, Object> param = new HashMap<String, Object>();
         FileInfo ret = new FileInfo();
         ret.buildFromPo(fiPo);
         //处理文件的分类，可能是多个，注意：此处得到的分类列表不递归处理，即没有关系信息
+        param.clear();
         param.put("FId", id);
         List<FileCategoryPo> fcpL = fileCategoryDao.queryForList(param);
         if (fcpL!=null&&fcpL.size()>0) {
@@ -177,5 +179,9 @@ public class FileManageService {
             }
         }
         return ret;
+    }
+
+    public FileCategoryPo getFileCategoryPo(Map<String, Object> m) {
+        return fileCategoryDao.getInfoObject(m);
     }
 }

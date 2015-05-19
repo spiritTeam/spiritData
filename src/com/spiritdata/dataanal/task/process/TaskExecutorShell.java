@@ -4,11 +4,8 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
-
 import javax.servlet.ServletContext;
-
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import com.spiritdata.dataanal.exceptionC.Dtal0402CException;
 import com.spiritdata.dataanal.exceptionC.Dtal0404CException;
 import com.spiritdata.dataanal.report.service.ReportService;
@@ -98,12 +95,15 @@ public class TaskExecutorShell implements Runnable {
                             analDictJsonD.set_HEAD(jsonDHead);
                             analDictJsonD.set_DATA(userResultData);
                             //分析结果文件种子设置
-                            AnalResultFile arfSeed = new AnalResultFile();
-                            arfSeed.setAnalType(ti.getTaskType()); //分析类型，相当于文件类型表中的type2
-                            arfSeed.setSubType("task::"+ti.getId()); //任务Id，三级分类，相当于文件文件类型表中的type3
-                            arfSeed.setExtInfo(ti.getParam());
-                            arfSeed.setFileNameSeed(ti.getTaskType()+File.separator+ti.getId());
-                            arfSeed.setJsonDCode(JDC);
+                            AnalResultFile arfSeed = ti.getResultFile();
+                            if (arfSeed==null) {
+                                arfSeed = new AnalResultFile();
+                                arfSeed.setAnalType(ti.getTaskType()); //分析类型，相当于文件类型表中的type2
+                                arfSeed.setSubType("task::"+ti.getId()); //任务Id，三级分类，相当于文件文件类型表中的type3
+                                arfSeed.setExtInfo(ti.getParam());
+                                arfSeed.setFileNameSeed(ti.getTaskType()+File.separator+ti.getId());
+                                arfSeed.setJsonDCode(JDC);
+                            }
                             AnalResultFileService arfService = (AnalResultFileService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("analResultFileService");
                             AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analDictJsonD, arfSeed);
                             //写数据库
@@ -117,7 +117,7 @@ public class TaskExecutorShell implements Runnable {
                                     FileRelation fr = new FileRelation();
                                     fr.setElement1(reportFi.getFileCategoryList().get(0));
                                     fr.setElement2(arFi);
-                                    fr.setCTime(new Timestamp((new Date()).getTime()));
+                                    fr.setCTime(new Timestamp(System.currentTimeMillis()));
                                     fr.setRType1(RelType1.POSITIVE);
                                     fr.setRType2("报告中的数据");
                                     fr.setDesc(ti.getTaskType()+"::"+ti.getTaskName());

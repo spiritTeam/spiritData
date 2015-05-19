@@ -16,8 +16,8 @@
     <result column="fileExtName" property="extName"    jdbcType="VARCHAR"/>
     <result column="fileSize"    property="fileSize"   jdbcType="INTEGER"/>
     <result column="descn"       property="desc"       jdbcType="VARCHAR"/>
-    <result column="fcTime"      property="fcTime"      jdbcType="TIMESTAMP"/>
-    <result column="flmTime"     property="flmTime"     jdbcType="TIMESTAMP"/>
+    <result column="fcTime"      property="fcTime"     jdbcType="TIMESTAMP"/>
+    <result column="flmTime"     property="flmTime"    jdbcType="TIMESTAMP"/>
     <result column="cTime"       property="CTime"      jdbcType="TIMESTAMP"/>
   </resultMap>
   <!-- 所有列 -->
