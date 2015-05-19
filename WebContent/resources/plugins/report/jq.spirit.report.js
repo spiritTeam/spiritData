@@ -32,6 +32,10 @@ var CONST_MAP_BAIDU = "BAIDU";
  * monitor用于监控setInterval
  */
 var monitor = new Object();
+/**
+ * 根据dId分类的dom数组，
+ */
+var domAry = [];
 //以上为全局变量部分=========
 /**
  * 生成报告方法
@@ -101,23 +105,17 @@ function generateReport(reportUrl, reportId) {
  */
 function resolveAndDraw(){
   //根据jsonDIdAry中的id抓取dom
-  var domAry = new Array();
   for (var i=0;i<jsonDIdAry.length;i++) {
     var attr = "_did="+jsonDIdAry[i];
     var _domAry = $('['+attr+']').toArray();
     domAry[i] = _domAry;
   }
-  console.info(domAry);
   //JsonDSize>0说明是有数据需要请求的
   if (monitor.monitorJsonDSize&&monitor.monitorJsonDSize>0) {
     //用于储存已经显示过的id
     monitor._alreadyShownId = [];
-    try {
-      //setTimeout('console.info("jsonDInfoArray")', 10000);
-      //monitor.monitorDrawId = setInterval('retrievalJsonDJson("'+domAry+'")',0);
-    }catch(e) {
-      alert(e);
-    }
+    //
+    monitor.monitorDrawId = setInterval('retrievalJsonDJson()',500);
   } else {
     return;
   }
@@ -127,36 +125,36 @@ function resolveAndDraw(){
  * 从而进一步解析。
  * @param domAry根据jsonDid分组后的dom数组
  */
-function retrievalJsonDJson (domAry) {
-  console.info("11");
+function retrievalJsonDJson () {
   //已经得到的jsond个数
-//  if (monitor._getJsonDIdAry!=null&&monitor._getJsonDIdAry.length>0) {
-//    _jsonDSize = monitor._getJsonDIdAry.length;
-//    // 当已经全部显示完时关闭定时任务
-//    // TODO 人工停顿
-//    //alert(monitor._alreadyShownId.length);
-//    //if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) {clearInterval(monitor.monitorDrawId);}
-//    for (var i=0;i<jsonDInfoArray.length;i++) {
-//      var jsonDInfo = jsonDInfoArray[i];
-//      var shownIdAry = monitor._alreadyShownId;
-//      if (shownIdAry.toString().indexOf(jsonDInfo.id)==-1) {
-//        //起setInterval,检查d元素是否到位
-//        if (jsonDInfo.json!=null&&jsonDInfo.json!="") {
-//          for (var k=0;k<domAry.length;k++) {
-//            var _domAry = domAry[k];
-//            if (jsonDInfo.id == $(_domAry[0]).attr('_did')) {
-//              //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
-//              for (var j=0;j<_domAry.length;j++) {
-//                var _DATA = jsonDInfo.json._DATA;
-//                parseEle($(_domAry[j]),_DATA);
-//              }
-//            }
-//          }
-//          monitor._alreadyShownId.push(jsonDInfo.id);
-//        }
-//      }
-//    }
-//  } else return;
+  if (monitor._getJsonDIdAry!=null&&monitor._getJsonDIdAry.length>0) {
+    _jsonDSize = monitor._getJsonDIdAry.length;
+    // 当已经全部显示完时关闭定时任务
+    if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) {clearInterval(monitor.monitorDrawId);}
+    console.info("_alreadyShownId==="+monitor._alreadyShownId);
+    for (var i=0;i<jsonDInfoArray.length;i++) {
+      var jsonDInfo = jsonDInfoArray[i];
+      //已经显示过的dId
+      var shownIdAry = monitor._alreadyShownId;
+      if (shownIdAry.toString().indexOf(jsonDInfo.id)==-1) {
+        //起setInterval,检查d元素是否到位
+        if (jsonDInfo.json!=null&&jsonDInfo.json!="") {
+          for (var k=0;k<domAry.length;k++) {
+            var _domAry = domAry[k];
+            if (jsonDInfo.id == $(_domAry[0]).attr('_did')) {
+              //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
+              for (var j=0;j<_domAry.length;j++) {
+                var _DATA = jsonDInfo.json._DATA;
+                parseEle($(_domAry[j]),_DATA);
+              }
+            }
+            var _alreadyShownIdStr = monitor._alreadyShownId.toString();
+            if (_alreadyShownIdStr.indexOf(jsonDInfo.id)==-1) monitor._alreadyShownId.push(jsonDInfo.id);
+          }
+        }
+      }
+    }
+  } else return;
 }
 
 /**
@@ -1402,7 +1400,7 @@ function resolveDLIST(_DLIST){
   if (_DLIST==null||_DLIST==""||_DLIST.length<=0) return null;
   //所有的jsonId
   monitor.monitorJsonDSize = _DLIST.length;
-  monitor._getJsonDIdAry = [];
+  monitor._getJsonDIdAry = "";
   for (var i=0;i<_DLIST.length;i++) {
     //jsonDInfo 囊括了jsonD的信息
     var jsonDInfo = new Object();
@@ -1413,49 +1411,65 @@ function resolveDLIST(_DLIST){
     if (_DLIST[i]._jsonD_code!=""&&_DLIST[i]._jsonD_code!=null) jsonDInfo.jsonD_code = _DLIST[i]._jsonD_code;
     else jsonDInfo.jsonD_code = "";
     jsonDInfoArray.push(jsonDInfo);
-    //jsonDjson 用于存贮jsonD的数据 会在后面赋值
-    monitor.monitorJsonDId = setInterval('getJsonDJson()',200);
   }
+  monitor.monitorJsonDId = setInterval('getJsonDJson()',500);
 }
 
 /**
  * 获取jsonDInfo.json
  * @param jsonDInfo
  */
-function getJsonDJson(jsonDInfo) {
-  //if (monitor._getJsonDIdAry.length==monitor.monitorJsonDSize) clearInterval(monitor.monitorJsonDId);
-  var dId = jsonDInfo.id;
+function getJsonDJson() {
+  var size = monitor._getJsonDIdAry.split(',').length;
+  if (size==monitor.monitorJsonDSize) clearInterval(parseFloat(monitor.monitorJsonDId));
   for (var k=0;k<jsonDInfoArray.length;k++) {
     //当已存数组中不包含该id，并且找到对应的jsoDinfo时，进行获取数据
-    if(monitor._getJsonDIdAry.toString().indexOf(dId)==-1&&dId==jsonDInfoArray[k].id){
+    var jsonDInfo = jsonDInfoArray[k];
+    if (jsonDInfo.json) continue;
+    var dId = jsonDInfo.id;
+    if(monitor._getJsonDIdAry.indexOf(dId)==-1){
       //处理rul
       var _url;
-      jsonDInfo = jsonDInfoArray[k];
       if ((jsonDInfo.url).indexOf("/")!=-1) _url = deployName+"/"+jsonDInfo.url;
       else _url = deployName+jsonDInfo.url;
       //uri
       var pData = {'uri':jsonDInfo.url};
-      $.ajax({type:"post",url:_url,data:pData,async:true,dataType:"text",
-        success:function(json){
-          var jsonDObj = str2JsonObj(json);
-          if(jsonDObj.jsonType==1){
-            jsonDInfo.json = jsonDObj.data;
-            monitor._getJsonDIdAry.push(dId);
-            console.info(jsonDObj.data);
-          }else{
-            alert("获取数据错误");
-          }
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-          alert(XMLHttpRequest.status);
-          alert(XMLHttpRequest.readyState);
-          alert(textStatus);
-        }
-      });
+      //ajax
+      try{
+        //拼接_getJsonDIdAry
+        if (monitor._getJsonDIdAry=="") monitor._getJsonDIdAry = jsonDInfo.id;
+        else monitor._getJsonDIdAry = monitor._getJsonDIdAry+","+jsonDInfo.id;
+        getDataByAjax(pData,_url,dId);
+      }catch(e){
+        alert("ajax获取数据失败！");
+      }
     }
   }
 }
-
+/**
+ * 通过ajax得到jsonDjson
+ */
+function  getDataByAjax(pData,_url,dId){
+  $.ajax({type:"post",url:_url,data:pData,async:true,dataType:'json',
+    success:function(json){
+      var jsonDObj = str2JsonObj(json);
+      if(jsonDObj.jsonType==1){
+        for (var v=0;v<jsonDInfoArray.length;v++) {
+          if (jsonDInfoArray[v].id==dId) {
+            jsonDInfoArray[v].json = jsonDObj.data;
+          }
+        }
+      }else{
+        alert("获取数据失败");
+      }
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      alert(XMLHttpRequest.status);
+      alert(XMLHttpRequest.readyState);
+      alert(textStatus);
+    }
+  });
+}
 /**
  * 初始化pageFrame
  */
