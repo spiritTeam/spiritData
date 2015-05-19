@@ -45,10 +45,7 @@ public class GetMDInfos implements TaskProcess {
         ret.put("sysResultData", sysRd);
 
         //组织为jsond的数据格式
-        Map<String, Object> userRd = new HashMap<String, Object>();
         List<Map<String, Object>> miList = new ArrayList<Map<String, Object>>();//元数据信息的数组
-        userRd.put("metaInfos", miList);
-        ret.put("userResultData", userRd);
         //获得元数据-包括语义信息，获得元数据的指标(统计)信息
         MdBasisService mdbServcie = (MdBasisService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("mdBasisService");
         MdQuotaService mdqServcie = (MdQuotaService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("mdQuotaService");
@@ -60,6 +57,13 @@ public class GetMDInfos implements TaskProcess {
                 miList.add(_getJsonDTable_MM(mm, qt));
             }
         }
+
+        if (miList.size()>0) {
+            sysRd.put("resultType", 1);
+            ret.put("userResultData", miList);
+
+        } else sysRd.put("resultType", 2);
+
         return ret;
     }
 
@@ -133,7 +137,6 @@ public class GetMDInfos implements TaskProcess {
             //压缩率
             float tempRate = qc==null?0:(Math.round((qc.getCompressRate()*10000)+5)/100);
             rowM.put("compressRate", qc==null?"":(tempRate+"%"));
-            dataList.add(rowM);
             //稀疏率
             tempRate = qc==null?0:(Math.round((qc.getNullRate()*10000)+5)/100);
             rowM.put("sparseRate", qc==null?"":(tempRate+"%"));

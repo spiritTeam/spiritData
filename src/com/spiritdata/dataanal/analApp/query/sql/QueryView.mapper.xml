@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+        通用查询(查询文件表、报告表)
+-->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="queryView">
+  <!-- 报告表定义:字段对应 -->
+  <resultMap id="QueryViewMap" type="QueryView">
+    <result column="cTime"       property="createTime"     jdbcType="TIMESTAMP"/>
+    <result column="rowjson"     property="aRowJsonStr"    jdbcType="VARCHAR"/>
+  </resultMap>
+  <!-- 所有列 -->
+  <sql id="Base_Column_List">
+    cTime, rowjson
+  </sql>
+  <!-- 条件子句 -->
+  <sql id="WhereClauseByEntiey">
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="createTime!=null"> and cTime=#{createTime,jdbcType=TIMESTAMP}</if>
+      </trim>
+    </where>
+  </sql>
+  
+  
+  <!-- 获得通用查询结果列表   -->
+  <sql id="queryFileList">
+    select a.ctime,concat('{\"id\":','\"',a.id,'\"',',\"type\":\"file\"',',\"name\":','\"',a.cFileName,'\"',',\"size\":','\"',a.fileSize,'\"'
+      ,',\"createDate\":','\"',a.cTime,'\"',',\"desc\":','\"',a.descn,'\"',',\"suffix\":','\"',a.fileExtName,'\"'
+      ,',\"reportId\":','\"',b.reportid,'\"}') rowjson
+    from vsa_imp_log a 
+    left join (select m.fid,n.id reportid, l.* from sa_file_rel l, sa_file_category m, sa_report_info n 
+      where l.bid=m.id and n.fid=m.fid and l.btype=2 and m.type1='REPORT') b 
+    on a.cateId=b.aId and b.rtype1=1 and b.rtype2='即时报告'
+  </sql>
+  <sql id="queryReportList">
+    select r.cTime,concat('{\"id\":','\"',r.id,'\"',',\"type\":\"report\"',',\"name\":','\"',r.reportName,'\"'
+      ,',\"reportType\":','\"',r.reportType,'\"',',\"createDate\":','\"',r.cTime,'\"',',\"desc\":','\"',r.descn,'\"'
+      ,',\"thumbUrl\":\"\"}') rowjson from sa_report_info r 
+  </sql>
+  <select id="getQueryList" resultMap="QueryViewMap" parameterType="java.util.Map">
+    select  * from (<include refid="queryFileList"/> union <include refid="queryReportList"/> ) as q
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="1==1"></if>
+        <if test="searchStr!=null"> and rowjson like CONCAT('%',#{searchStr,jdbcType=VARCHAR},'%')</if>
+      </trim>
+    </where>     
+    order by cTime desc
+  </select>
+  
+
+  
+</mapper>

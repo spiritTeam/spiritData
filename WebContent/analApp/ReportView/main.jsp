@@ -13,13 +13,14 @@
 <meta http-equiv="expires" content="0"/>
 
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
-
 <!-- 加载ZUI - 开源HTML5跨屏框架 -->
 <link href="<%=path%>/resources/plugins/zui/css/zui.min.css" rel="stylesheet">
 <link href="<%=path%>/resources/plugins/zui/css/example.css" rel="stylesheet">
 <link href="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.css" rel="stylesheet">
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
 <script src="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.js"></script>
+<!-- 加载analApp的JS -->
+<script src="<%=path%>/analApp/js/analApp.view.js"></script>
 
 <title>报告主界面</title>
 </head>
@@ -134,8 +135,8 @@ border-radius:10px;
 $(function() {
   initSubmitBt();
   initSearchFileInput();
-  initDatePicker();
-  
+  initDatePicker();  
+  _urlPath = "<%=path%>";
   startSearch();
 });
 
@@ -387,50 +388,6 @@ function getOptHtml(aJsonRow,floatStyle){
 function getInputSearchFileStr(){
   var searchedStr = ($("#inp_filename").val()==searchTxt)?"":$("#inp_filename").val();
   return searchedStr;
-}
-
-//查询结果中，当点击了某个文件，触发此操作
-function showRelation(reportId){
-  //alert("您点击了："+reportId);  
-  var winOption={
-    url:"<%=path%>/analApp/ReportView/reportRelation.jsp?reportId="+reportId,
-    title:"报告关系",
-    height:600,
-    width:500,
-    iframeScroll:"yes"
-  };
-  openSWinInMain(winOption);
-}
-
-//模态显示报告信息
-function showReport(reportId,unRead) {
-	//alert("showReport() reportId="+reportId+" , unRead="+unRead);
-  //弹出窗口显示报告详情
-	var winOption={
-    url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
-    title:"报告详情",
-    height:600,
-    width:1000,
-    iframeScroll:"yes"
-  };
-  openSWinInMain(winOption);
-  //如果是未读报告，则通知后台已经看了该报告，后台修改查看状态标记为已读@@@
-  if(unRead){
-	  
-  }
-}
-
-/**
- * 返回字符串，如果aStr不存在或为空，则使用默认的字符串
- * @param aStr 指定的字符串
- * @param defaultStr 默认的返回字符串
- */
-function getStr(aStr,defaultStr){
-  var retStr = defaultStr;
-  if(typeof(aStr)!="undefined" && aStr!=null &&!aStr && aStr.length>0){
-    retStr = aStr;
-  }
-  return retStr;
 }
 
 </script>

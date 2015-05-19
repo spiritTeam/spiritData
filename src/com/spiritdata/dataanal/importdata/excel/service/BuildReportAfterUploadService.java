@@ -187,11 +187,11 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     arf = new AnalResultFile();
                                     arf.setId(tempStr);
                                     arf.setJsonDCode(SDConstants.JDC_MD_SDICT);
-                                    arf.setAnalType(SDConstants.ANAL_MD_SDICT); //分析类型
-                                    arf.setSubType("SingleDict"); //下级分类
-                                    arf.setObjType("metadata"); //所分析对象
-                                    arf.setObjId(mm.getId()); //所分析对象的ID
-                                    arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdSingleDict_"+arf.getId());
+                                    arf.setAnalType(analSingleDict_Task.getTaskType()); //分析类型
+                                    arf.setSubType(analSingleDict_Task.getId()); //下级分类
+//                                    arf.setObjType("metadata"); //所分析对象
+//                                    arf.setObjId(mm.getId()); //所分析对象的ID
+                                    arf.setFileNameSeed(analSingleDict_Task.getTaskType()+File.separator+analSingleDict_Task.getId());
                                     arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
                                     analSingleDict_Task.setResultFile(arf);
                                     report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
@@ -258,11 +258,12 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tempStr=SequenceUUID.getPureUUID();
         arf.setId(tempStr);
         arf.setJsonDCode(SDConstants.JDC_MD_INFO);
-        arf.setAnalType(SDConstants.ANAL_MD_GETINFO); //分析类型
-        arf.setSubType("multiple"); //下级分类
-        arf.setObjType("metadatas"); //所分析对象
-        arf.setObjId(mids); //所分析对象的ID
-        arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
+        arf.setAnalType(getMDInfos_Task.getTaskType()); //分析类型
+        arf.setSubType(getMDInfos_Task.getId()); //下级分类
+//        arf.setObjType("metadatas"); //所分析对象
+//        arf.setObjId(mids); //所分析对象的ID
+//        arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
+        arf.setFileNameSeed(getMDInfos_Task.getTaskType()+File.separator+getMDInfos_Task.getId());
         arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
         getMDInfos_Task.setResultFile(arf);
           //任务组装：组装进任务组+组装进report的dlist

@@ -65,10 +65,12 @@ public class TaskExecutorShell implements Runnable {
                 resultMap = tp.process(ti.getParam());
                 //根据结果，设置处理参数
                 if (resultMap!=null&&resultMap.get("sysResultData")!=null) {
-                    Map<String, String> sysResultData = (Map<String, String>)resultMap.get("sysResultData");
-                    if (sysResultData.get("resultType").trim().equals("1")) success=true;
-                    if (sysResultData.get("notSaveResult2File").trim().equals("1")) notSaveResult2File=true;
-                    if (StringUtils.isNullOrEmptyOrSpace(sysResultData.get("JsonDCode"))) JDC=sysResultData.get("JsonDCode");
+                    Map<String, Object> sysResultData = (Map<String, Object>)resultMap.get("sysResultData");
+                    if (sysResultData.get("resultType")!=null&&(Integer)sysResultData.get("resultType")==1) success=true;
+                    if (sysResultData.get("notSaveResult2File")!=null&&(Integer)sysResultData.get("notSaveResult2File")==1) notSaveResult2File=true;
+                    if (sysResultData.get("JsonDCode")!=null) {
+                        if (!StringUtils.isNullOrEmptyOrSpace((sysResultData.get("JsonDCode")+""))) JDC=(String)sysResultData.get("JsonDCode");
+                    }
                 }
             } catch(Exception e) {
                 (new Dtal0404CException(e)).printStackTrace();
@@ -79,13 +81,12 @@ public class TaskExecutorShell implements Runnable {
             else {
                 ti.setSuccessed();
                 if (!notSaveResult2File&&resultMap!=null) {//文件存储为文件
-                    Map<String, Object> userResultData = (Map<String, Object>)resultMap.get("userResultData");
+                    Object userResultData = resultMap.get("userResultData");
                     if (userResultData!=null) { //写文件
                         try {
                             //写文件
-                            if (JDC==null) {
-                                throw new Dtal0402CException("把分析结果以jsonD格式进行存储时，需要明确指定JsonDCode！");
-                            }
+                            if (JDC==null) throw new Dtal0402CException("把分析结果以jsonD格式进行存储时，需要明确指定JsonDCode！");
+
                             JsonD analDictJsonD = new JsonD();
                             //头
                             JsonDHead jsonDHead = new JsonDHead();
