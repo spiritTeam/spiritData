@@ -229,11 +229,11 @@ public class TaskMemoryService {
                 canClean = true;
                 tg = taskGroupMap.get(tgId);
                 for (String tiId: tg.getTaskGraph().getTaskMap().keySet()) {
+                    canClean=false;
                     ti = taskInfoMap.get(tiId);
-                    if (ti.getStatus()==StatusType.PREPARE||ti.getStatus()==StatusType.PROCESSING||ti.getStatus()==StatusType.WAITING) {
-                        canClean = false;
-                        break;
-                    }
+                    canClean = (ti==null);
+                    if (canClean) break;
+                    canClean = (ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE);
                 }
                 if (canClean) {
                     _removeCompeteTaskGroup(tgId);

@@ -127,12 +127,9 @@ public class AnalResultFile extends AbstractToBeStoreFile implements Serializabl
         Map<String, Object> _extInfo = new HashMap<String, Object>();
         if (this.extInfo!=null&&this.extInfo.size()>0) _extInfo.putAll(this.extInfo);
         _extInfo.put("JSOND", this.jsonDCode);
-        _extInfo.put(this.objType, this.objId);
-
+        if (this.objType!=null&&this.objId!=null) _extInfo.put(this.objType, this.objId);
         fc.setExtInfo(JsonUtils.objToJson(_extInfo));
-
         ret.addFileCategoryList(fc);
-
         return ret;
     }
 }

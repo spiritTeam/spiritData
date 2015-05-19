@@ -207,7 +207,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 D_Tag discriptDt = new D_Tag();
                                 discriptDt.setShowType(DtagShowType.TEXT);
                                 discriptDt.setDid(report.getDid(tempStr)+"");
-                                discriptDt.setValue("quote['"+mc.getId()+"']");
+                                discriptDt.setValue("quote[^'"+mc.getId()+"^]");
                                 discriptDt.setValueFilterFun("first(3|num)");
                                 discriptDt.setDecorateView("{#category#}占#percent(num)#%");
                                 if (dm.dictTree.getChildCount()>3) {
@@ -218,7 +218,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 D_Tag tableDt = new D_Tag();
                                 tableDt.setShowType(DtagShowType.TABLE);
                                 tableDt.setDid(report.getDid(tempStr)+"");
-                                tableDt.setValue("quote['"+mc.getId()+"']");
+                                tableDt.setValue("quote[^"+mc.getId()+"^]");
                                 tempContent += discriptDt.toHtmlTag()+"，具体数据为：<br/>"+tableDt.toHtmlTag();
                                 rs1_1_loop.setContent(tempContent);
                                 TreeNode<ReportSegment> rsTn1_1_loop = new TreeNode<ReportSegment>(rs1_1_loop);
@@ -280,7 +280,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                             D_Tag tableDt = new D_Tag();
                             tableDt.setShowType(DtagShowType.TABLE);
                             tableDt.setDid(report.getDid(tempStr)+"");
-                            tableDt.setValue("quote['"+rs.getId()+"']");
+                            tableDt.setValue("mdInfos[^"+rs.getId()+"^]");
                             rs.setContent(rs.getContent()+"，对其结构的分析结果如下：<br/>"+tableDt.toHtmlTag());
                         }
                     }
