@@ -84,7 +84,7 @@
     <filter-class>com.spiritdata.framework.component.login.web.LoginFilter</filter-class>
     <init-param>
       <param-name>ingores</param-name>
-      <param-value>jump.jsp,login.jsp,login.do,hasNewLogin.jsp,noLogin.jsp,login,logout.do,asIndex.jsp,fileUpLoad.do,templet,jsonD,test,plugins,images,checkCodeImges,getReport.do,/demo,report</param-value>
+      <param-value>jump.jsp,login.jsp,login.do,hasNewLogin.jsp,noLogin.jsp,login,logout.do,asIndex.jsp,fileUpLoad.do,templet,jsonD,test,plugins,images,checkCodeImges,getReport.do,/demo,mainAnalApp.jsp,dataUpload.jsp,report</param-value>
     </init-param>
     <init-param>
       <param-name>noLogin</param-name>
@@ -119,6 +119,6 @@
   <!-- end Servlet设置 -->
 
   <welcome-file-list>
-    <welcome-file>asIndex.jsp</welcome-file>
+    <welcome-file>/mainAnalApp.jsp</welcome-file>
   </welcome-file-list>
 </web-app>

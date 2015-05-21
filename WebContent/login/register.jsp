@@ -66,7 +66,7 @@
       <td class="inputTd" style="height:64px; line-height:64px;">
         <div class="alertInput-vCode" style="margin-top:1px;">
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="5" type="text" onBlur="validateCheckCode();"/></div>
-          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh('<%=path %>');" src=""></div>
+          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refreshCCImg('<%=path %>');" src=""></div>
           <div class="alertImg"></div>
           <div class="maskTitle">按右图输入验证码</div>
         </div>
@@ -112,7 +112,7 @@ $(function() {
   }).bind('mouseout',function() {
     win.setMessage({'msg':''});
   });
-  refresh('<%=path%>');
+  refreshCCImg('<%=path%>');
 });
 
 //初始化页面全局参数
@@ -327,7 +327,8 @@ function commit() {
             });
           } else {
             $.messager.alert('注册提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info',function(){
-              window.location.href = "<%=path%>/asIndex.jsp";
+              //window.location.href = "<%=path%>/asIndex.jsp";
+              window.location.href = _MAIN_PAGE;
             });
           }
         }else {

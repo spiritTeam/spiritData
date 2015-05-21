@@ -203,7 +203,8 @@ function commit(){
             mainPage.$.messager.alert('修改提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
           }else{
             $.messager.alert('修改提示',json.retInfo,'info');
-            window.location.href = "<%=path%>/asIndex.jsp";
+            //window.location.href = "<%=path%>/asIndex.jsp";
+            window.location.href = _MAIN_PAGE;
           }
         }else{
           if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info');

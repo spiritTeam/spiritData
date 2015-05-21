@@ -20,6 +20,7 @@ import com.spiritdata.dataanal.analApp.query.pojo.QueryViewPo;
 import com.spiritdata.dataanal.analApp.query.service.QueryViewService;
 import com.spiritdata.dataanal.analApp.report.pojo.ReportViewPo;
 import com.spiritdata.dataanal.analApp.report.service.ReportViewService;
+import com.spiritdata.dataanal.analApp.util.ViewControllerUtil;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
@@ -53,11 +54,7 @@ public class GeneralQueryController {
 			if(searchStr!=null){
 				paramMap.put("searchStr", searchStr);
 			}
-			Owner owner = SessionUtils.getOwner(req.getSession());
-			String ownerId = owner.getOwnerId();
-			//paramMap.put("ownerId", ownerId);
-			int ownerType = owner.getOwnerType();
-			//paramMap.put("ownerType", new Integer(ownerType));
+			ViewControllerUtil.setSearchOwnerInfo(req, paramMap);
 
 			//查询通用列表(包括文件和报告)
 			List<QueryViewPo> generalList = queryViewService.searchGeneralList(paramMap);

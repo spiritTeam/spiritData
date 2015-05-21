@@ -3,20 +3,8 @@
 <%@page import="com.spiritdata.framework.FConstants"%>
 <%@page import="com.spiritdata.dataanal.UGA.pojo.User"%>
 <%
+  //上传页面  
   String path = request.getContextPath();
-  String sid = request.getSession().getId();
-  String activeSuccess = request.getParameter("activeSuccess");
-  //用于验证邮箱后直接转发到主界面并打开修改密码页面。
-  String action = (String)request.getAttribute("action");
-  String actionUrl = "";
-  if(action!=null&&!action.equals("")) actionUrl = (String)request.getAttribute("actionUrl");
-  User user = ((User)session.getAttribute(FConstants.SESSION_USER));
-  String loginName = "";
-  int userState = 0;
-  if (user != null) {
-    loginName = user.getLoginName();
-    userState = user.getUserState();
-  }
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -153,23 +141,13 @@
 
 <!-- 头部:悬浮 -->
 <div id="topSegment">
-  <div style="float:right;">
-    <div>
-    <div style="height: 5px;"></div>
-      <div class="loginButton"><a id="login" onclick="login();" href="#">登录</a></div>
-      <div class="loginButton"><a id="_logout" onclick="logout();" href="#">注销</a></div>
-      <div class="loginButton"><a id="updateUser" onclick="updateUser();" href="#" >修改</a></div>
-      <div class="loginButton"><a id=register onclick="register()" href="#">注册</a></div>&nbsp;&nbsp;&nbsp;&nbsp;
-      <input id="loginName" type="hidden" value="">
-    </div>
-  </div>
 </div>
 
 <!-- 脚部:悬浮 -->
 <div id="footSegment"></div>
 
 <!-- 实际功能区中部 -->
-<div id="mainSegment">
+<div id="mainSegment" style="margin:0 auto;">
   <div id="fileIn">
     <div id="dayLogo"></div>
     <div id="inForm"><form method="post" action="/sa/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">
@@ -192,36 +170,10 @@
 <iframe id="tframe" name="tframe" bordercolor=red frameborder="yes" border=1 width="600" height="200" style="width:600px;heigth:200px; boder:1px solid red;display:none;"></iframe>
 
 <script>
-
 //提示信息
 var _promptMessage="点击选择分析的文件";
 var analysizeing=false;
 var _suClicked=false;
-
-//主窗口参数
-var INIT_PARAM = {
-  //页面中所用到的元素的id，只用到三个Div，另，这三个div应在body层
-  pageObjs: {
-    topId: "topSegment", //头部Id
-    mainId: "mainSegment", //主体Id
-    footId: "footSegment" //尾部Id
-  },
-  page_width: 0,
-  page_height: 0,
-
-  top_height: 30, //顶部高度
-  top_peg: false,
-  top_shadow_color:"#1AE517",//颜色
-
-  foot_height: 75, //脚部高度
-  foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
-
-  win_min_width: -1, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分宽度也照此设置
-  win_min_height: -1, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分高度也照此设置
-  myInit: initPosition,
-  myResize: myResize
-};
-
 //点击大的输入框
 function upfs_clk() {
   _suClicked=false;
@@ -263,26 +215,6 @@ function uploadF() {
 }
 //主函数
 $(function() {
-  //mht代码=============
-  //初始化按钮
-  initButton(null);
-  initPageWin();
-  //mht代码=======
-  var url = window.location.href;
-  if (url.indexOf("?nolog")>0) {
-    var nologType = getUrlParam(window.location.href, "type");
-    if (nologType=="1") login();
-    else if (nologType=="2") {
-      $.messager.alert("提示", "请先登录！", "info", function(){
-        login();
-      });
-    }
-  }
-  var initStr = $.spiritPageFrame(INIT_PARAM);
-  if (initStr) {
-    $.messager.alert("页面初始化失败", initStr, "error");
-    return ;
-  };
   $("#upfs").val(_promptMessage);
   $("#su").mouseover(function(){
     if ($("#upfs").val()!=_promptMessage) {
@@ -296,50 +228,6 @@ $(function() {
   });
   buttonStyle();
 });
-//头中按钮样式
-function buttonStyle(){
-  $(".loginButton").css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
-  $(".loginButton").bind("mouseover",function(){
-    $(this).css({'background-color':'#D9F4DF'}).children().css({'color':'#32C52F'});
-  });
-  $(".loginButton").bind("mouseleave",function(){
-    $(this).css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
-  });
-  //top和foot的background-color
-  $('#footSegment').css({'border':'1px solid #32C52F','background':'#32C52F','opacity':'1'});
-  $('#topSegment').css({'border':'1px solid #95b8e7','border-bottom':'0','background':'#32C52F','overflow':'hidden','border':'0','border-bottom':'0px'});
-}
-//初始化界面
-function initPosition() {//注意，不要在此设置topSegment/mainSegment/footSegment等框架元素的宽高等，否则，页面不会自动进行调整
-  //控制中心区域图片
-  var left=(parseFloat($("#mainSegment").width())-parseFloat($("#fileIn").width()))/2;
-  $("#fileIn").css({"left": left});
-  left = (parseFloat($("#fileIn").width())-parseFloat($("#dayLogo").width()))/2;
-  $("#dayLogo").css({"left": left});
-  left = (parseFloat($("#fileIn").width())-parseFloat($("#inForm").width()))/2;
-  $("#inForm").css({"left": left});
-  //遮罩层
-//  left = (parseFloat($("#mainSegment").width())-parseFloat($("#mask").width()))/2;
-//  $("#mask").css({"left": left+2});
-  //等待提示区
-  left = (parseFloat($("#mainSegment").width())-parseFloat($("#waittingArea").width()))/2;
-  $("#waittingArea").css({"left": left});
-};
-//当界面尺寸改变
-function myResize() {
-  if (INIT_PARAM.page_width==0) {
-    //控制中心区域图片
-    var left=(parseFloat($("#mainSegment").width())-parseFloat($("#fileIn").width()))/2;
-    $("#fileIn").css({"left": left});
-    //遮罩层
-//    left = (parseFloat($("#mainSegment").width())-parseFloat($("#mask").width()))/2;
-//    $("#mask").css({"left": left+2});
-    //等待提示区
-    left = (parseFloat($("#mainSegment").width())-parseFloat($("#waittingArea").width()))/2;
-    $("#waittingArea").css({"left": left});
-  }
-};
-
 //demo
 function showDemo() {
   $("#pp").progressbar();
@@ -574,173 +462,8 @@ function showResult() {
   openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
 }
 
-//以下为mht js代码，勿删撒=========================================================
-function initPageWin(){
-  //是否需要打开修改密码页面
-  var action = "<%=action%>";
-  if(action==1){
-    var loginName = "";
-    var actionUrl = "<%=path+"/"+actionUrl%>";
-    var _url = actionUrl;
-    var winOption={
-      url:_url,
-      title:"修改密码",
-      height:360,
-      width:330,
-      modal:true
-    };
-    modifyWinId = openSWinInMain(winOption);
-  }
-  var activeSuccess  = "<%=activeSuccess%>";
-  if(activeSuccess=='true') $.messager.alert("提示", "激活成功！", "info", function(){ login(); });
-}
-function onlyLogout(ip, mac, browser) {
-  var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
-  if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！";
-  $.messager.alert("提示", msg+"<br/>现返回登录页面。", "info", function(){ logout(); });
-}
-
-//以下为初始化按钮方法
-function initButton(initType) {
-  var lgName;
-  if(initType) lgName = $('#loginName').val();
-  else $('#loginName').val('<%=loginName%>');
-  lgName = $('#loginName').val();
-  if (lgName!=null&&lgName!="") {
-    setLogined(null);
-  } else {
-    setNoLogin();
-  }
-}
-//===根据登录状态，修改页面显示
-function setNoLogin() {
-  $('#_logout').parent().css('display','none');
-  $('#login').parent().css('display','');
-  $('#register').parent().css('display','');
-  $('#updateUser').parent().css('display','none');
-}
-function setLogined(loginName) {
-  $('#_logout').parent().css("display", "");
-  $('#login').parent().css('display','none');
-  $('#register').parent().css('display','none');
-  $('#updateUser').parent().css('display','');
-  if(loginName!=""&&loginName!=null) $('loginName').val(loginName);
-}
-//以上为初始化按钮方法
-
-/**
- * 注销
- */
-function logout() {
-  $("#loginName").val("");
-  var url=_PATH+"/logout.do";
-  $.ajax({type:"post", async:true, url:url, data:null, dataType:"json",
-    success: function(json) {
-      if (json.type==1) {
-        $.messager.alert("注销信息","注销成功!",'info',function(){
-          window.location.href="<%=path%>/asIndex.jsp";
-          setNoLogin();
-        });
-      } else {
-        if(json.data==null){
-          $.messager.alert("提示","您还未登录!",'info');
-          setNoLogin();
-        }else{
-          $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
-            window.location.href="<%=path%>/asIndex.jsp";
-            setNoLogin();
-          });
-        }
-      }
-    },
-    error: function(errorData) {
-      $.messager.alert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
-        window.location.href="<%=path%>/asIndex.jsp?noAuth";
-        setNoLogin();
-      });
-    }
-  });
-};
-var wHeight = "430";
-var wWidth = "330";
-/**
- * 注册
- */
-function register(){
-  var _url ="<%=path%>/login/register.jsp";
-  var winOption={
-    url:_url,
-    title:"注册",
-    height:wHeight,
-    width:wWidth,
-    modal:true,
-    zIndex:-1
-  };
-  openSWinInMain(winOption);
-}
-// 忘记密码
-function forgetPassword(){
-  var _url="<%=path%>/login/forgetPassword.jsp";
-  var title = "忘记密码";
-  var winOption={
-    url:_url,
-    title:title,
-    height:wHeight,
-    width:wWidth,
-    modal:true
-  };
-  openSWinInMain(winOption);
-}
-//修改个人信息
-function updateUser(){
-  var _url="<%=path%>/login/update.jsp?";
-  var title = "修改";
-  var winOption={
-    url:_url,
-    title:title,
-    height:wHeight,
-    width:wWidth,
-    modal:true
-  };
-  openSWinInMain(winOption);
-}
-// 登录
-function login(){
-  var loginType = 1;
-  var _url="<%=path%>/login/login.jsp?loginType="+loginType;
-  var winOption={
-    url:_url,
-    title:"登录",
-    height:wHeight,
-    width:wWidth,
-    modal:true
-  };
-  $('#login').parent().attr('disabled','disabled');
-  openSWinInMain(winOption);
-  setTimeout(function(){
-    $('#login').bind("onclick",function(){login();});
-  }, 1000);
-}
-/**
- * 测试
- */
-function testW() {
-  //newSWin({height:"400px", width:"300px", title:"测试窗口", content:"http://blog.csdn.net/oldwolf1987/article/details/4031534"});
-  openSWinInMain({height:"400px", width:"300px", title:"测试窗口", url:"<%=path%>/jsp2mht/view/cc1.html"});
-  return;
-}
 
 
-var winOption={
-  url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
-  title:"报告详情123",
-  height:600,
-  width:1000,
-  modal:true
-};
-//openSWinInMain(winOption);
-
-//以上为mht js代码，勿删撒=========================================================
 </script>
 </body>
 </html>

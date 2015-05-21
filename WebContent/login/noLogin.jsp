@@ -14,7 +14,8 @@
 </head>
 <body>
 <script type="text/javascript">
-var noLoginUrl="<%=path%>/asIndex.jsp?nolog";
+//var noLoginUrl="<%=path%>/asIndex.jsp?nolog";
+var noLoginUrl = _MAIN_PAGE+"?nolog";
 
 var mainPage=getMainPage();
 winId = getUrlParam(window.location.href, "_winID");

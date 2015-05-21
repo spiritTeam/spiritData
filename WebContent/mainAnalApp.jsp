@@ -1,11 +1,29 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="java.util.*"%>
+<%@page import="com.spiritdata.framework.FConstants"%>
+<%@page import="com.spiritdata.dataanal.UGA.pojo.User"%>
 <%
   String path = request.getContextPath();
+  String sid = request.getSession().getId();
+  String activeSuccess = request.getParameter("activeSuccess");
+  //用于验证邮箱后直接转发到主界面并打开修改密码页面。
+  String action = (String)request.getAttribute("action");
+  String actionUrl = "";
+  if(action!=null&&!action.equals("")) actionUrl = (String)request.getAttribute("actionUrl");
+
+  User user = ((User)session.getAttribute(FConstants.SESSION_USER));
+  String loginName = "";
+  int userState = 0;
+  if (user != null) {
+    loginName = user.getLoginName();
+    userState = user.getUserState();
+  }
+  
+  System.out.println("mainAnalApp.jsp  loginName="+loginName+"  userState="+userState);
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<!-- 用户登录后显示的主页面，包括文件查询、上传、分析，用户管理等功能 -->
+<!-- 默认的应用主页面  -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="cache-control" content="no-cache"/>
@@ -16,13 +34,14 @@
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/plugins/spiritui/themes/default/pageFrame.css"/>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/js/mainPage.utils.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css">
 
 <!-- 加载ZUI - 开源HTML5跨屏框架 -->
 <link href="<%=path%>/resources/plugins/zui/css/zui.min.css" rel="stylesheet">
 <link href="<%=path%>/resources/plugins/zui/css/example.css" rel="stylesheet">
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
 
-<title>用户主界面</title>
+<title>应用主界面</title>
 </head>
 <style>
 body {
@@ -75,10 +94,10 @@ body {
           </div>
         </td>    
         <td style="width:100px;text-align:center;">
-          <a id="a_report" href="#" class="def-nav" onclick="showIframe('mainSegmentIframe_report');">报告<span id="id_report_new" class="label label-badge label-danger" style="padding:5px;z-index:99;">12</span></a>
+          <a id="a_report" href="#" class="def-nav" onclick="showIframe('reportView');">报告<span id="id_report_new" class="label label-badge label-danger" style="padding:5px;z-index:99;">12</span></a>
         </td>      
         <td style="width:100px;text-align:center;">
-          <a href="#" class="def-nav" onclick="showIframe('mainSegmentIframe_file');">文件</a>
+          <a href="#" class="def-nav" onclick="showIframe('fileView');">文件</a>
         </td>        
         <td style="width:380px;text-align:center;">
           <div class="input-group" style="display:block;margin-bottom:5px;">
@@ -91,10 +110,23 @@ body {
         <td style="width:100px;text-align:center;">
         </td>
         <td style="width:100px;text-align:center;">
-          <a href="#" class="def-nav" style="" onclick="showMainSeg('asIndex.jsp',urlroot);">数据上传</a>
+          <a href="#" class="def-nav" style="" onclick="showIframe('dataUpLoadView');">数据上传</a>
         </td>    
         <td style="width:100px;text-align:center;">
-          <a href="#" class="def-nav" onclick="showMainSeg();">用户处理</a>
+          <a href="#" class="def-nav" onclick="showIframe();">用户处理</a>
+        </td> 
+        <td style="width:200px;text-align:center;">
+          <div id="div_u" style="text-align:left;margin-bottom:-5px;">
+            <div style="float:left;color:red;">用户：</div>
+            <div id="div_userName" style="float:left;">未登陆</div>
+            
+            <div style="float:left;height:5px;">&nbsp;&nbsp;</div>
+            <div class="loginButton"><a id="login" onclick="login();" href="#">登录</a></div>
+            <div class="loginButton"><a id="_logout" onclick="logout();" href="#">注销</a></div>
+            <div class="loginButton"><a id="updateUser" onclick="updateUser();" href="#" >修改</a></div>
+            <div class="loginButton"><a id=register onclick="register()" href="#">注册</a></div>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="loginName" type="hidden" value="">
+          </div>
         </td>
       </tr>
     </table>
@@ -133,10 +165,19 @@ var INIT_PARAM = {
 };
 
 /**变量定义区**/
+//菜单定义
+var MENU_INFO = {
+	"defaultView":{"iframeId":"mainSegmentIframe","fileName":"analApp/constructing.jsp"},  
+  "reportView":{"iframeId":"mainSegmentIframe_report","fileName":"analApp/ReportView/main.jsp"},
+  "fileView":{"iframeId":"mainSegmentIframe_file","fileName":"analApp/FileView/main.jsp"},
+  "generalSearchView":{"iframeId":"mainSegmentIframe_search","fileName":"analApp/listView/main.jsp"},
+  "dataUpLoadView":{"iframeId":"mainSegmentIframe","fileName":"dataUpload.jsp"}
+};
 //记录新增报表信息
 var newReportJson={};
 //主函数
 $(function() {
+	//alert("enter mainAnalApp.jsp...");
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
     $.messager.alert("页面初始化失败", initStr, "error");
@@ -145,17 +186,14 @@ $(function() {
   
   initSearchFileInput();
 
-  //初始化iframe
-  $("#mainSegmentIframe_report").attr("src",fileroot+"ReportView/main.jsp");
-  $("#mainSegmentIframe_file").attr("src",fileroot+"FileView/main.jsp");
-  //$("#mainSegmentIframe_search").attr("src",fileroot+"listView/main.jsp");
-  showIframe("mainSegmentIframe_report");
-  
   $('#topSegment').css({'border':'1px solid #95b8e7','border-bottom':'0','background':'#32C52F','overflow':'hidden','border':'0','border-bottom':'0px'});
   //$('#footSegment').css({'border':'1px solid #32C52F','background':'#32C52F','opacity':'1'});
   
+  //初始化iframe
+  //$("#mainSegmentIframe_report").attr("src",fileroot+"ReportView/main.jsp");
+  //$("#mainSegmentIframe_file").attr("src",fileroot+"FileView/main.jsp");  
   //默认进入报告查询页面
-  //showMainSeg('ReportView/main.jsp');
+  //showIframe("mainSegmentIframe_report");
   
   //新报告点击事件
   $("#id_report_new").css("visibility","hidden");
@@ -164,8 +202,27 @@ $(function() {
     //当显示新增条数时，禁用报告按钮
     var objAReport=$("#a_report");
     objAReport.removeAttr("onclick");//去掉a标签中的onclick事件
-    setTimeout(function(){objAReport.attr("onclick","showIframe('mainSegmentIframe_report');");},500);
+    setTimeout(function(){objAReport.attr("onclick","showIframe('reportView');");},500);
   });
+
+  //初始化登陆、注销等按钮
+  initButton(null);
+  buttonStyle();
+  /**
+  var url = window.location.href;
+  if (url.indexOf("?nolog")>0) {
+    var nologType = getUrlParam(window.location.href, "type");
+    if (nologType=="1") login();
+    else if (nologType=="2") {
+      $.messager.alert("提示", "请先登录！", "info", function(){
+        login();
+      });
+    }
+  }
+  */
+  
+  //显示默认页面
+  showIframe("dataUpLoadView");
   
   //定时查询是否有新报告
   searchNewReport();
@@ -211,17 +268,12 @@ var lastSearchStr = "";
 function startSearch(){
   var searchStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
   //alert("您输入了："+ searchStr);
-  var fileName = "listView/main.jsp?searchStr="+searchStr;
-  //showMainSeg(fileName);
+  var fileParam = "searchStr="+searchStr;
   //还需把查询条件传入###
   if(lastSearchStr!=searchStr){	  
-	  $("#mainSegmentIframe_search").attr("src",fileroot+fileName);
 	  lastSearchStr = searchStr;
-  }else if(searchStr=="" && typeof($("#mainSegmentIframe_search").attr("src"))=="undefined"){
-	  //alert("first new");
-	  $("#mainSegmentIframe_search").attr("src",fileroot+fileName);
   }
-  showIframe('mainSegmentIframe_search');
+  showIframe('generalSearchView',fileParam);
 }
 
 /**
@@ -263,34 +315,12 @@ function refreshNewReportDIV(){
 		//当显示新增条数时，禁用报告按钮
     //objAReport.removeAttr("href");//去掉a标签中的href属性
     objAReport.removeAttr("onclick");//去掉a标签中的onclick事件
-    setTimeout(function(){objAReport.attr("onclick","showIframe('mainSegmentIframe_report');");},500);
+    setTimeout(function(){objAReport.attr("onclick","showIframe('reportView');");},500);
 	}else{
 		objShowCount.css("visibility","hidden");
 	  //objAReport.addAttr("href","###");//加上a标签中的href属性
-	  objAReport.attr("onclick","showIframe('mainSegmentIframe_report');");//加上a标签中的onclick事件
+	  objAReport.attr("onclick","showIframe('reportView');");//加上a标签中的onclick事件
 	}
-}
-
-/**
- * mainSegmentIframe中显示跳转页面
- * 当点击菜单项时，跳转到指定路径的主页面
- */
-var urlroot = "<%=path%>/";
-var fileroot = urlroot+"analApp/"; 
-function showMainSeg(fileName,filePath){
-	//alert("showMainSeg(): fileName="+fileName+"  filePath="+filePath);
-  if(typeof(fileName) == "undefined" || fileName==null || !fileName || fileName==""){
-	  fileName="constructing.jsp";
-  }
-  var fileurl = '';
-  if(typeof(filePath) == "undefined" || filePath==null || !filePath || filePath==""){
-	  fileurl=fileroot+fileName;
-  }else{
-	  fileurl = filePath+fileName;
-  }
-  
-  $("#mainSegmentIframe").attr("src",fileurl);
-  showIframe("mainSegmentIframe");
 }
 
 /**
@@ -312,49 +342,15 @@ function showModelNewReportList(){
   openSWinInMain(winOption);
 }
 
-/**
- * 模态显示新报告列表
- * 当点击新报告数量图标时，触发此方法
- */
-function showModelNewReportListOld(){
-	if(newReportArr.length<=0){
-		return;
-	}
-	var contentHtml ="<div style='height:98%;overflow-y:auto;'>";
-	var tableStyle = "style='width:96%;overflow-y:scroll;border:1px solid #DDD;background-color:transparent;margin:0px auto;'";
-	contentHtml += "<table "+ tableStyle +">";
-	var thStyle0 = "style='width:240px;height:18px;background-color:#F1F1F1;border:1px solid #DDD;font-size:12px;font-weight:bold;text-align:center;'";
-	var thStyle1 = "style='width:60px;background-color:#F1F1F1;border:1px solid #DDD;font-size:12px;font-weight:bold;text-align:center;'";
-	var thStyle2 = "style='width:100px;background-color:#F1F1F1;border:1px solid #DDD;font-size:12px;font-weight:bold;text-align:center;'";
-	contentHtml +="<tr><th "+thStyle0+">报告名</th><th "+thStyle1+">大小</th><th "+thStyle2+">生成日期</th></tr>";
-	var tdStyle0 = "style='background-color:#F9F9F9;border:1px solid #DDD;font-size:12px;text-align:left;'";
-	  var tdStyle1 = "style='background-color:#ffffff;border:1px solid #DDD;font-size:12px;text-align:left;'";
-	for(var i=0;i<newReportArr.length;i++){
-		var tdStyle = i%2==0?tdStyle0:tdStyle1;
-		contentHtml += "<tr'><td "+tdStyle+">"+newReportArr[i]+"</td><td "+tdStyle+">1M</td><td "+tdStyle+">2014-01-02</td></tr>";
-	}
-	contentHtml+="</table>";
-	contentHtml+="</div>";
-	
-	var winOption={
-	  //url:"<%=path%>/analApp/demoData/force1.jsp",
-	  content:contentHtml,
-	  title:"未读报告列表",
-	  height:600,
-	  width:500,
-	  iframeScroll:"yes"
-	};
-	openSWinInMain(winOption);
-}
-
 //点击logo图片
 function clickLogo(){
   alert("click logo");
 }
 
 //隐藏所有iframe
-function showIframe(iframeId){
+function showIframe(viewName,fileParam){
 	try{
+		//alert("showIfram viewName="+viewName+"  fileParam="+fileParam);
 	  //先隐藏所有iframe
 	  $("#mainSegmentIframe").css("display","none");
 	  $("#mainSegmentIframe_report").css("display","none");
@@ -362,10 +358,175 @@ function showIframe(iframeId){
 	  $("#mainSegmentIframe_search").css("display","none");
 	
     //显示指定的iframe
+    var iframeId = "";
+    var fileName = "";
+    if(viewName){
+    	if(MENU_INFO[viewName]){ //找到菜单项定义
+    		iframeId = MENU_INFO[viewName].iframeId;
+    		fileName = MENU_INFO[viewName].fileName;
+    	}else{ //未找到菜单项定义,使用默认的
+        iframeId = MENU_INFO.defaultView.iframeId;
+        fileName = MENU_INFO.defaultView.fileName;
+    	}
+    }else{//未找到菜单项定义,使用默认的
+      iframeId = MENU_INFO.defaultView.iframeId;
+      fileName = MENU_INFO.defaultView.fileName;
+    }
+    var fileFull = fileName;
+    //加入参数
+    if(fileParam){
+    	fileFull += "?"+fileParam;
+    }
+    
+    if($("#"+iframeId+"").attr("src") && $("#"+iframeId+"").attr("src").indexOf(fileName)>-1){
+    	//已经加载过了，则不再加载
+    }else{
+    	$("#"+iframeId+"").attr("src",_PATH+"/"+fileFull);	
+    }
 	  $("#"+iframeId+"").css("display","block");
 	}catch(e){
-		$.messager.alert("显示iframe异常", "显示失败：</br> iframeId="+iframeId+"  errMsg:"+(e?e.message:"")+"！<br/>", "error", function(){});
+		$.messager.alert("显示iframe异常", "显示失败：</br> viewName="+viewName+"  errMsg:"+(e?e.message:"")+"！<br/>", "error", function(){});
 	}
 }
+
+/** 用户注册、修改相关内容    */
+//初始化按钮方法
+function initButton(initType) {
+  var lgName;
+  if(initType) lgName = $('#loginName').val();
+  else $('#loginName').val('<%=loginName%>');
+  lgName = $('#loginName').val();
+  if (lgName!=null&&lgName!="") {
+    setLogined(lgName);
+  } else {
+    setNoLogin();
+  }
+}
+//头中按钮样式
+function buttonStyle(){
+  $(".loginButton").css({'background-color':'#32C52F','float':'left'}).children().css({'color':'#FDFFFD'});
+  $(".loginButton").bind("mouseover",function(){
+    $(this).css({'background-color':'#D9F4DF'}).children().css({'color':'#32C52F'});
+  });
+  $(".loginButton").bind("mouseleave",function(){
+    $(this).css({'background-color':'#32C52F'}).children().css({'color':'#FDFFFD'});
+  });
+}
+//===根据登录状态，修改页面显示
+function setNoLogin() {
+  $('#_logout').parent().css('display','none');
+  $('#login').parent().css('display','');
+  $('#register').parent().css('display','');
+  $('#updateUser').parent().css('display','none');
+}
+function setLogined(loginName) {
+	try{
+		//alert("setLogined() loginName="+loginName);
+    $('#_logout').parent().css("display", "");
+    $('#login').parent().css('display','none');
+    $('#register').parent().css('display','none');
+    $('#updateUser').parent().css('display','');
+    if(loginName!=""&&loginName!=null){
+	    $('loginName').val(loginName);
+	    $("#div_userName").html(loginName);
+    }
+	}catch(e){alert(e.message);}
+}
+
+//以下为页面跳转部分============
+//跳转到注册页面
+function register(){
+  var _url ="<%=path%>/login/register.jsp";
+  var winOption={
+    url:_url,
+    title:"注册",
+    height:wHeight,
+    width:wWidth,
+    modal:true,
+    zIndex:-1
+  };
+  openSWinInMain(winOption);
+}
+// 忘记密码
+function forgetPassword(){
+  var _url="<%=path%>/login/forgetPassword.jsp";
+  var title = "忘记密码";
+  var winOption={
+    url:_url,
+    title:title,
+    height:wHeight,
+    width:wWidth,
+    modal:true
+  };
+  openSWinInMain(winOption);
+}
+//修改个人信息
+function updateUser(){
+  var _url="<%=path%>/login/update.jsp?";
+  var title = "修改";
+  var winOption={
+    url:_url,
+    title:title,
+    height:wHeight,
+    width:wWidth,
+    modal:true
+  };
+  openSWinInMain(winOption);
+}
+//以上为页面跳转部分============
+
+//登录
+var wHeight = "430";
+var wWidth = "330";
+function login(){
+  var loginType = 1;
+  var _url="<%=path%>/login/login.jsp?loginType="+loginType;
+  var winOption={
+    url:_url,
+    title:"登录",
+    height:wHeight,
+    width:wWidth,
+    modal:true
+  };
+  $('#login').parent().attr('disabled','disabled');
+  openSWinInMain(winOption);
+  setTimeout(function(){
+    $('#login').bind("onclick",function(){login();});
+  }, 1000);
+}
+
+/**
+ * 注销
+ */
+function logout() {
+  $("#loginName").val("");
+  var url=_PATH+"/logout.do";
+  $.ajax({type:"post", async:true, url:url, data:null, dataType:"json",
+    success: function(json) {
+      if (json.type==1) {
+        $.messager.alert("注销信息","注销成功!",'info',function(){
+          window.location.href=_MAIN_PAGE;
+          setNoLogin();
+        });
+      } else {
+        if(json.data==null){
+          $.messager.alert("提示","您还未登录!",'info');
+          setNoLogin();
+        }else{
+          $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
+            window.location.href=_MAIN_PAGE;
+            setNoLogin();
+          });
+        }
+      }
+    },
+    error: function(errorData) {
+      $.messager.alert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
+        window.location.href=_MAIN_PAGE+"?noAuth";
+        setNoLogin();
+      });
+    }
+  });
+};
 </script>
 </html>

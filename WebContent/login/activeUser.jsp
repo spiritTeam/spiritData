@@ -45,7 +45,7 @@
       <td class="inputTd" >
         <div class="alertInput-vCode" style="margin-top:1px;">
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="5" type="text" onBlur="validateCheckCode();"/></div>
-          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh('<%=path%>');" src=""></div>
+          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refreshCCImg('<%=path%>');" src=""></div>
           <div class="alertImg"></div>
           <div class="maskTitle">按右图输入验证码</div>
         </div>
@@ -80,7 +80,7 @@ $(function() {
 
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100);//初始化maskTitle
-  refresh('<%=path%>');
+  refreshCCImg('<%=path%>');
 });
 //=以下初始化设置=============================================
 // 初始化页面全局参数
@@ -204,7 +204,7 @@ function commit(){
       } else {
         $('#mail')[0].focus();
         $('#mail')[0].select();
-        refresh('<%=path%>');
+        refreshCCImg('<%=path%>');
       }
     });
     else $.messager.confirm('确认对话框', '请仔细检查邮箱，如果邮箱不正确，将不会收到激活邮件!', function(r){
@@ -221,7 +221,8 @@ function commit(){
             $("#mask").hide();
             if(json.success){
               $.messager.alert('提示',json.retInfo,'info');
-              window.location.href = "<%=path%>/asIndex.jsp";
+              //window.location.href = "<%=path%>/asIndex.jsp";
+              window.location.href = _MAIN_PAGE;
             }else{
               $.messager.alert('提示',json.retInfo,'info');
             }
@@ -230,7 +231,7 @@ function commit(){
       } else {
         $('#mail')[0].focus();
         $('#mail')[0].select();
-        refresh('<%=path%>');
+        refreshCCImg('<%=path%>');
       }
     });
   }

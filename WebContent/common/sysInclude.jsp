@@ -18,5 +18,6 @@
 <script type="text/javascript" src="<%=resourcePath%>/resources/js/framework.utils.js"></script>
 
 <script>
-var _PATH = "<%=resourcePath%>";
+  var _PATH = "<%=resourcePath%>";
+  var _MAIN_PAGE = "<%=resourcePath%>/mainAnalApp.jsp";
 </script>
