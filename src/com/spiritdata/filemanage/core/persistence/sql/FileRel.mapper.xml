@@ -17,6 +17,7 @@
     <result column="descn"  property="desc"   jdbcType="VARCHAR"/>
     <result column="cTime"  property="CTime"  jdbcType="TIMESTAMP"/>
   </resultMap>
+
   <!-- 所有列 -->
   <sql id="Base_Column_List">
     id, aType, aId, bType, bId, rType1, rType2, descn, cTime
@@ -42,6 +43,29 @@
   <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
     select count(*) from sa_file_rel
     <if test="_parameter!= null"><include refid="WhereClauseByEntiey"/></if>
+  </select>
+
+  <!-- 判断是否有已经存在的关系-->
+  <select id="findFileRel" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from sa_file_rel
+    <if test="_parameter!= null">
+      <if test="RType1==0"> where rType1=0 and (
+           (aType=#{AType, jdbcType=INTEGER} and aId=#{AId, jdbcType=VARCHAR} and bType=#{BType, jdbcType=INTEGER} and bId=#{BId, jdbcType=VARCHAR})
+           or
+           (aType=#{BType, jdbcType=INTEGER} and aId=#{BId, jdbcType=VARCHAR} and bType=#{AType, jdbcType=INTEGER} and bId=#{AId, jdbcType=VARCHAR})
+         )
+      </if>
+      <if test="RType1==1"> where 
+           (rType1=1 and aType=#{AType, jdbcType=INTEGER} and aId=#{AId, jdbcType=VARCHAR} and bType=#{BType, jdbcType=INTEGER} and bId=#{BId, jdbcType=VARCHAR})
+           or
+           (rType1=-1 and aType=#{BType, jdbcType=INTEGER} and aId=#{BId, jdbcType=VARCHAR} and bType=#{AType, jdbcType=INTEGER} and bId=#{AId, jdbcType=VARCHAR})
+      </if>
+      <if test="RType1==-1"> where
+           (rType1=-1 and aType=#{AType, jdbcType=INTEGER} and aId=#{AId, jdbcType=VARCHAR} and bType=#{BType, jdbcType=INTEGER} and bId=#{BId, jdbcType=VARCHAR})
+           or
+           (rType1=1 and aType=#{BType, jdbcType=INTEGER} and aId=#{BId, jdbcType=VARCHAR} and bType=#{AType, jdbcType=INTEGER} and bId=#{AId, jdbcType=VARCHAR})
+      </if>
+    </if>
   </select>
 
   <!-- 获得列表 -->
