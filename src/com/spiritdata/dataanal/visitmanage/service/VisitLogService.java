@@ -30,6 +30,7 @@ public class VisitLogService {
         param.put("newOwnerId", newOwnerId);
         visitDao.execute("changeOwner", param);
         //修改内存中的用户所属
+        
         return true;
     }
 }

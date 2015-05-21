@@ -83,7 +83,7 @@ public class TaskMemoryService {
                 TaskInfo ti = _m.get(tiId);
                 inserted = false;
                 try {
-                    inserted = addTaskInfo(ti);
+                    inserted = addTaskInfoFromGroup(ti);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -94,13 +94,30 @@ public class TaskMemoryService {
         }
         return false;
     }
+    /*
+     * 从任务组中把任务信息加入内存
+     * @param ti 预加入的任务
+     * @return 加入成功返回true，否则返回false
+     */
+    private boolean addTaskInfoFromGroup(TaskInfo ti) {
+        if ((tm.taskInfoMap.size())>=tm.MEMORY_MAXSIZE_TASKINFO) return false; //任务信息数量已经达到了上限，不能再加入了
+        if (tm.taskInfoMap.get(ti.getId())==null&&tm.runningTaskMap.get(ti.getId())==null) {
+            if (ti.getFirstTime()==null) ti.setFirstTime(new Timestamp(System.currentTimeMillis()));
+            if (ti.getStatus()!=StatusType.SUCCESS&&ti.getStatus()!=StatusType.FAILD&&ti.getStatus()!=StatusType.ABATE) {
+                tm.taskInfoSortList.add(getInsertIndex(ti), ti.getId());
+            }
+            ti.setWaiting();
+            tm.taskInfoMap.put(ti.getId(), ti);
+        }
+        return true;
+    }
 
     /**
      * 把任务信息加入内存
      * @param ti 预加入的任务
      * @return 加入成功返回true，否则返回false
      */
-    public boolean addTaskInfo(TaskInfo ti) {
+    public boolean addTaskInfoSingle(TaskInfo ti) {
         if ((tm.taskInfoMap.size())>=tm.MEMORY_MAXSIZE_TASKINFO) return false; //任务信息数量已经达到了上限，不能再加入了
         if (ti.getStatus()!=StatusType.PREPARE&&ti.getStatus()!=StatusType.FAILD) {
             throw new Dtal0403CException("只有为[准备执行]/[执行失败]状态的任务才能加入任务内存，当前任务[id="+ti.getId()+"]的状态为["+ti.getStatus().getName()+"]");
@@ -217,7 +234,7 @@ public class TaskMemoryService {
             selfTi = tempTIm.get(tiId);
             if (selfTi.getTaskGroup()==null) {
                 try {
-                    addTaskInfo(selfTi);
+                    addTaskInfoSingle(selfTi);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -308,7 +325,7 @@ public class TaskMemoryService {
             for (TaskInfo _ti: taskInfoMap.values()) {
                 String taskId = _ti.getId();
                 if (_ti.getTaskGroup()!=null&&taskGroupMap.get(_ti.getTaskGroup().getId())==null
-                    &&(ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE)) {
+                    &&(_ti.getStatus()==StatusType.SUCCESS||_ti.getStatus()==StatusType.FAILD||_ti.getStatus()==StatusType.ABATE)) {
                     taskInfoMap.remove(taskId);
                     taskInfoSortList.remove(taskId);
                     cleanLimitSize--;
