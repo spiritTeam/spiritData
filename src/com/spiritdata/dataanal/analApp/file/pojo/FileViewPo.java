@@ -41,7 +41,13 @@ public class FileViewPo extends BaseObject{
 	private String ownerId; //文件所有人ID
 	
 	private String ownerType; //所有类型
+	
+	private String tmpTableName; //临时表对应的表名，该表中存储了文件的数据内容
+	
+	private String tmId; //元数据id
 
+	private String sheetName; //页签名称
+	
 	public String getFileIndexId() {
 		return fileIndexId;
 	}
@@ -126,6 +132,30 @@ public class FileViewPo extends BaseObject{
 
 	public void setDescn(String descn) {
 		this.descn = descn;
+	}
+
+	public String getTmId() {
+		return tmId;
+	}
+
+	public void setTmId(String tmId) {
+		this.tmId = tmId;
+	}
+
+	public String getTmpTableName() {
+		return tmpTableName;
+	}
+
+	public void setTmpTableName(String tmpTableName) {
+		this.tmpTableName = tmpTableName;
+	}
+
+	public String getSheetName() {
+		return sheetName;
+	}
+
+	public void setSheetName(String sheetName) {
+		this.sheetName = sheetName;
 	}
 
 }

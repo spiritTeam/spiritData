@@ -7,14 +7,17 @@
 <mapper namespace="fileView">
   <!-- 对象定义:元数据列模式 -->
   <resultMap id="FileViewMap" type="FileView">
-    <id     column="id"          property="fileIndexId"    jdbcType="VARCHAR"/>
-    <result column="ownerType"   property="ownerType"      jdbcType="INTEGER"/>
-    <result column="ownerId"     property="ownerId"        jdbcType="VARCHAR"/>
-    <result column="fileSize"    property="fileSize"       jdbcType="INTEGER"/>
-    <result column="descn"       property="descn"          jdbcType="VARCHAR"/>
-    <result column="cTime"       property="createTime"     jdbcType="TIMESTAMP"/>
-    <result column="cFileName"   property="clientFileName" jdbcType="VARCHAR"/>
-    <result column="reportid"    property="reportId"       jdbcType="VARCHAR"/>
+    <id     column="id"           property="fileIndexId"    jdbcType="VARCHAR"/>
+    <result column="ownerType"    property="ownerType"      jdbcType="INTEGER"/>
+    <result column="ownerId"      property="ownerId"        jdbcType="VARCHAR"/>
+    <result column="fileSize"     property="fileSize"       jdbcType="INTEGER"/>
+    <result column="descn"        property="descn"          jdbcType="VARCHAR"/>
+    <result column="cTime"        property="createTime"     jdbcType="TIMESTAMP"/>
+    <result column="cFileName"    property="clientFileName" jdbcType="VARCHAR"/>
+    <result column="reportid"     property="reportId"       jdbcType="VARCHAR"/>
+    <result column="tmpTableName" property="tmpTableName"   jdbcType="VARCHAR"/>
+    <result column="tmId"         property="tmId"           jdbcType="VARCHAR"/>
+    <result column="sheetName"    property="sheetName"      jdbcType="VARCHAR"/>
   </resultMap>
   <!-- 所有列 -->
   <sql id="Base_Column_List">
@@ -43,7 +46,7 @@
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
         <if test="1==1"></if>
-        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR},</if>
+        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR}</if>
         <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
         <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
         <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
@@ -53,6 +56,34 @@
     order by a.cTime desc
   </select>
   
+  <!-- 显示文件信息，表结构 -->
+  <select id="getFileDataInfo" resultMap="FileViewMap" parameterType="java.util.Map">
+    select a.fid id, b.tablename tmpTableName, a.tmid,a.sheetName, b.ownerId, b.ownerType from sa_imp_tabmap_rel a, sa_md_tabmap_rel b
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="1==1"> and a.tmoid=b.id</if>
+        <if test="ownerId!=null"> and b.ownerId = #{ownerId,jdbcType=VARCHAR}</if>
+        <if test="ownerType!=null and ownerType!=0"> and b.ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="fileId!=null"> and a.fid=#{fileId,jdbcType=VARCHAR}</if>
+      </trim>
+    </where>     
+    order by sheetIndex
+  </select>
+  
+  <!-- 显示文件详细信息，表数据 -->
+  <select id="getFileData" resultMap="FileViewMap" parameterType="java.util.Map">
+    select a.fid id, b.tablename tmpTableName, a.tmid,a.sheetName, b.ownerId, b.ownerType from sa_imp_tabmap_rel a, sa_md_tabmap_rel b
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="1==1"> and a.tmoid=b.id</if>
+        <if test="ownerId!=null"> and b.ownerId = #{ownerId,jdbcType=VARCHAR}</if>
+        <if test="ownerType!=null and ownerType!=0"> and b.ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="fileId!=null"> and a.fid=#{fileId,jdbcType=VARCHAR}</if>
+      </trim>
+    </where>     
+    order by sheetIndex
+  </select>
+  
   <!-- 获得查询结果列表 ，这个不带reportId-->
   <select id="getFileListWithoutReportId" resultMap="FileViewMap" parameterType="java.util.Map">
     select <include refid="Base_Column_List"/> 
@@ -60,7 +91,7 @@
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
         <if test="1==1">a.id=b.fid and b.type1='IMP'</if>
-        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR},</if>
+        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR}</if>
         <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
         <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
         <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>

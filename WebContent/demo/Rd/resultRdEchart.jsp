@@ -1098,6 +1098,7 @@ function drawPtAnJian(ec){
             	//标头
             	var tmpdata = params.seriesName;
                 if(tmpdata==undefined || tmpdata==""){
+                	  params.series.tooltip.backgroundColor="rgba(0,0,0,0)";
                     return retStr;
                 }else{
                 	retStr += tmpdata+'<br/>';

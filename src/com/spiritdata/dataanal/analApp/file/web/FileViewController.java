@@ -2,8 +2,11 @@ package com.spiritdata.dataanal.analApp.file.web;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -18,8 +21,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spiritdata.dataanal.analApp.file.pojo.FileViewPo;
 import com.spiritdata.dataanal.analApp.file.service.FileViewService;
+import com.spiritdata.dataanal.analApp.util.ViewControllerUtil;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.common.util.SessionUtils;
+import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
+import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
+import com.spiritdata.dataanal.metadata.relation.pojo._OwnerMetadata;
+import com.spiritdata.dataanal.metadata.relation.service.MdBasisService;
+import com.spiritdata.dataanal.metadata.relation.service.MdSessionService;
 import com.spiritdata.framework.util.DateUtils;
 
 /**
@@ -29,12 +38,18 @@ import com.spiritdata.framework.util.DateUtils;
  */
 @Controller
 @RequestMapping(value="/fileview")
-public class FileViewController {
+public class FileViewController{
 	private static Logger logger = Logger.getLogger(FileViewController.class);
 
     @Resource
 	private FileViewService fileViewService;
+
+    @Resource
+    private MdSessionService mdSessionService;
 	
+    @Resource
+    private MdBasisService mdBasisService;
+    
 	/**
 	 * 条件查询文件列表
 	 * @param req
@@ -76,12 +91,8 @@ public class FileViewController {
 				Date dt = DateUtils.getDateTime("yyyy-MM-dd HH:mm:ss", endDateStr);
 				endTime = new Timestamp(dt.getTime());
 				paramMap.put("endTime", endTime);
-			}			
-			Owner owner = SessionUtils.getOwner(req.getSession());
-			String ownerId = owner.getOwnerId();
-			//paramMap.put("ownerId", ownerId);
-			int ownerType = owner.getOwnerType();
-			//paramMap.put("ownerType", new Integer(ownerType));
+			}		
+			ViewControllerUtil.setSearchOwnerInfo(req,paramMap);
 			
 			List<FileViewPo> dataList = fileViewService.searchFileList(paramMap);
 			int count = dataList!=null?dataList.size():0;
@@ -92,4 +103,83 @@ public class FileViewController {
 		}
 		return retMap;
 	}
+	/**
+	 * 根据文件ID获取文件数据，用于显示文件内容
+	 * @param req
+	 * @return
+	 */
+    @RequestMapping("getFileData.do")
+	public @ResponseBody Map<String,Object> getFileData(HttpServletRequest req){
+		Map<String,Object> retMap = new HashMap<String,Object>();
+		String fileId = null;
+		try{
+			Map<String,Object> paramMap = new HashMap<String,Object>();
+			fileId = req.getParameter("fileId");
+			if(fileId!=null && fileId.trim().length()>0){
+				paramMap.put("fileId", fileId.trim());
+			}	
+			ViewControllerUtil.setSearchOwnerInfo(req, paramMap);
+
+			List<FileViewPo> dataInfoList = fileViewService.getFileDataInfo(paramMap);
+			int count = dataInfoList!=null?dataInfoList.size():0;
+			retMap.put("totalSheet", new Integer(count)); //一个sheet一张表
+			List<Map<String,Object>> sheetMapList = new ArrayList<Map<String,Object>>();
+			retMap.put("SheetDataList", sheetMapList);
+			for(int i=0;i<count;i++){
+				Map<String,Object> aSheetDataMap = new HashMap<String,Object>();
+				sheetMapList.add(aSheetDataMap);
+				Map<String,Object> fileInfoMap = new HashMap<String,Object>();
+				aSheetDataMap.put("fileInfoMap",fileInfoMap);
+				FileViewPo fvp = (FileViewPo)dataInfoList.get(i);
+				//获取SHEET页签名称
+				String sheetName = fvp.getSheetName();
+				fileInfoMap.put("title", sheetName);
+				fileInfoMap.put("width", new Integer(980));
+				fileInfoMap.put("height", "auto");
+				fileInfoMap.put("fitColumns", true);
+				
+				//获取元数据信息
+				_OwnerMetadata _om = mdSessionService.loadcheckData(req.getSession());
+				MetadataModel mm = _om!=null?_om.getMetadataById(fvp.getTmId()):null;
+				if(mm==null){
+					mm = mdBasisService.getMetadataMode(fvp.getTmId());	
+				}	 
+				//得到列信息
+				List<List<Map<String,Object>>> colsJsonList = new ArrayList<List<Map<String,Object>>>();
+				fileInfoMap.put("columns", colsJsonList);
+				List<Map<String,Object>> colJsonList = new ArrayList<Map<String,Object>>();
+				colsJsonList.add(colJsonList);
+				List<MetadataColumn> colList = mm.getColumnList();
+				//按照columnIndex排序列
+				Collections.sort(colList, new Comparator<MetadataColumn>() {
+		            public int compare(MetadataColumn arg0, MetadataColumn arg1) {
+		                return new Integer(arg0.getColumnIndex()).compareTo(new Integer(arg1.getColumnIndex()));
+		            }
+		        });
+		         
+				//组装列JSON串
+				for(int colidx = 0; colidx < colList.size(); colidx++){
+					Map<String,Object> aColMap = new LinkedHashMap<String,Object>();
+					colJsonList.add(aColMap);
+					MetadataColumn aMetadataCol = (MetadataColumn)colList.get(colidx);
+					aColMap.put("field", aMetadataCol.getColumnName());
+					aColMap.put("title", aMetadataCol.getTitleName());
+//					aColMap.put("width", new Integer(100));
+				}
+				
+				//获取表数据
+				String tmpTableName = fvp.getTmpTableName();
+				logger.info("search tmp fileTable="+tmpTableName);
+				//组装数据JSON
+				List<Map<String,Object>> fileDataList = fileViewService.getFileData(tmpTableName,colList);
+				Map<String,Object> fileDataMap = new LinkedHashMap<String,Object>();
+				aSheetDataMap.put("fileDataMap",fileDataMap);
+				fileDataMap.put("total", fileDataList.size());
+				fileDataMap.put("rows", fileDataList);
+			}
+		}catch(Exception ex){
+			logger.error("failed to get file data. fileId="+fileId,ex);
+		}
+		return retMap;
+    }
 }

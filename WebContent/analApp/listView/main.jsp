@@ -70,10 +70,12 @@ function startSearch(){
   var searchParam={"searchStr":_searchStr};
   var url="<%=path%>/analApp/demoData/commonlist.json";
   url = "<%=path%>/listview/searchGeneralList.do";
-  $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
+  $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
     success:function(jsonStr){
       try{
-        searchResultJsonData = str2JsonObj(jsonStr); 
+    	  //alert(jsonStr.rows[0].aRowJsonStr.desc);
+        //searchResultJsonData = str2JsonObj(jsonStr); 
+        searchResultJsonData = jsonStr; 
         showSearchResult();
       }catch(e){
         $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
@@ -92,10 +94,11 @@ if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResult
   _objList.empty();
   var _searchStr = "<%=searchStr%>";
   var jsonRows = searchResultJsonData.rows;
-  var len = jsonRows.length;  
+  var len = jsonRows.length;
   for(var i=0;i<len;i++){
 	  //读取一条记录的内容
-	  var arow = str2JsonObj(jsonRows[i]["aRowJsonStr"]);
+	  //var arow = str2JsonObj(jsonRows[i]["aRowJsonStr"]);
+	  var arow = jsonRows[i]["aRowJsonStr"];
 	  if(arow==null){
 		  continue;
 	  }
@@ -152,10 +155,11 @@ if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResult
       mediaPlaceHolderDiv.appendTo(mediaPullLeftDiv);
       var thumbUrl = arow["thumbUrl"];
       thumbUrl = thumbPath + getStr(thumbUrl,defaultThumbImg);
+      
       mediaPlaceHolderDiv.append('<img src='+thumbUrl+' style="width:121px;height:75px;cursor:pointer;" onclick="showReport(\''+id+'\');" alt="缩略图">');
       divItemContent.append('<div class="text font_size13">'+'ID：'+highlightStr(id,_searchStr)+'&nbsp;&nbsp;&nbsp;'
     		+'名称：'+highlightStr(fileFull,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'报告类型：'+highlightStr(reportType,_searchStr)+'&nbsp;&nbsp;&nbsp;'
-    		+'上传时间：'+highlightStr(createDate,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'简介：'+highlightStr(desc,_searchStr)+'</div>');
+    		+'上传时间：'+highlightStr(createDate,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'简介：'+highlightStr(desc,_searchStr)+'</div>');      
     }
   }
 }else{
