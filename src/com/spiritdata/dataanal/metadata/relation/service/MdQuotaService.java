@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +140,7 @@ public class MdQuotaService {
             qt.setMdMId(mm.getId());
             qt.setTmoId(tmoId);
             qt.setTableName(tableName);
-            qt.setLmTime(new Timestamp(new Date().getTime()));
+            qt.setLmTime(new Timestamp(System.currentTimeMillis()));
             if (rs.next()) {
                 qt.setAllCount(rs.getLong(1));
             } else {
@@ -212,7 +211,7 @@ public class MdQuotaService {
                 rs.close();rs=null;
                 ps.close();ps=null;
 
-                qt.addColumn(qc);
+                qt.addQuotaCol(qc);
             }
             //计算一次存储一次，首先检查是否已经存在
             Map<String, Object> param = new HashMap<String, Object>();
@@ -225,11 +224,11 @@ public class MdQuotaService {
                 qt.setId(_qt.getId());
                 qtDao.update(qt);
             }
-            List<QuotaColumn> qcl = qt.getColQuotaList();
+            List<QuotaColumn> qcl = qt.getQuotaColList();
             ps = conn.prepareStatement("update sa_md_colquota SET max=?, min=?, nullCount=?, distinctCount=? where cId=? and tqId=?");
             ps2 = conn.prepareStatement("insert into sa_md_colquota ( id, cId, tqId, max, min, nullCount, distinctCount ) values ( ?, ?, ?, ?, ?, ?, ? )");
             if (qcl!=null&&qcl.size()>0) {
-                for (QuotaColumn qc: qt.getColQuotaList()) {
+                for (QuotaColumn qc: qt.getQuotaColList()) {
                     ps.clearParameters();
                     ps.setString(1, qc.getMax());
                     ps.setString(2, qc.getMin());
@@ -278,7 +277,7 @@ public class MdQuotaService {
      * @param mm 元数据模式对象
      * @return 表指标信息
      */
-    public QuotaTable getQuotaInfo(String tableName, MetadataModel mm) {
+    public QuotaTable getQuotaTable(String tableName, MetadataModel mm) {
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("tmId", mm.getId());
         param.put("tableName", tableName);
@@ -297,7 +296,7 @@ public class MdQuotaService {
             }
             if (qcl!=null&&qcl.size()>0) {
                 try {
-                    ret.setColQuotaList(qcl);
+                    ret.setQuotaColList(qcl);
                 } catch (Exception e) {
                     throw new Dtal0201CException("得到表["+tableName+"]的列指标信息", e);
                 }
@@ -308,36 +307,28 @@ public class MdQuotaService {
     }
 
     /**
-     * 根据元数据Id，得到该元数据的指标信息（针对积累表）
-     * @param mdMId 元数据模式Id 
+     * 根据元数据信息，得到元数据的指标信息（针对积累表）
+     * @param mm 元数据信息 
      * @return 指标信息
      */
-    public QuotaTable getMdQuotaInfo(String mdMId) {
-        return _getAllQuotaTableInfo(qtDao.getInfoObject("getInfoByMdMId", mdMId));
-    }
-
-    /**
-     * 根据（不带有列指标信息的）表指标信息，得到全体指标信息，包括列指标信息
-     * @param _qt 不完全的表指标信息
-     * @return 全部的表指标信息
-     */
-    private QuotaTable _getAllQuotaTableInfo(final QuotaTable _qt) {
+    public QuotaTable getQuotaTable(MetadataModel mm) {
+        QuotaTable _qt = qtDao.getInfoObject("getInfoByMdMId", mm.getId());
         if (_qt==null) return null;
-
-        QuotaTable all_qt = _qt;
-        //得到列的指标信息
         Map<String, Object> m = new HashMap<String, Object>();
         m.put("tqId", _qt.getId());
         List<QuotaColumn> qcL = qcDao.queryForList(m);
         if (qcL!=null&&qcL.size()>0) {
             for (QuotaColumn qc: qcL) {
                 try {
-                    all_qt.addColumn(qc);
+                    qc.setColumn(mm.getColumnByColId(qc.getColId()));
+                    _qt.addQuotaCol(qc);
+                    
                 } catch(Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
-        if (all_qt.getColQuotaList()==null||all_qt.getColQuotaList().size()==0) return null;
-        return all_qt;
+        if (_qt.getQuotaColList()==null||_qt.getQuotaColList().size()==0) return null;
+        return _qt;
     }
 }

@@ -7,8 +7,18 @@ var _urlPath;
  * 查看文件详细信息
  * 查询结果中，当点击了某个文件，触发此操作
  */
-function showFile(fileId){
-	alert("您点击了："+fileId);
+function showFile(fileId,fileName){
+  //alert("您点击了：fileId="+fileId+" fileName="+fileName);
+  //alert(_urlPath+"/analApp/FileView/FileDatagrid.jsp?fileId="+fileId+"&fileName="+fileName);
+  var winOption={
+    url:_urlPath+"/analApp/FileView/FileDatagrid.jsp?fileId="+fileId+"&fileName="+fileName,
+    title:"文件详情",
+    height:600,
+    width:1000,
+    iframeScroll:"yes"
+  };
+  //alert(winOption.url);
+  openSWinInMain(winOption);
 };
 
 //模态显示报告信息
@@ -56,23 +66,12 @@ function showRelation(reportId){
 /**
  * 高亮显示指定的字符串
  */
-function highlightStr(astr,token){
-	var retStr = "";
-	if(typeof(astr)=='undefined' || typeof(astr)!='string' || astr==null || astr.length==0){
-		retStr = astr;
-		return retStr;
+function highlightStr(astr,searchStr){
+	var retStr = astr;
+	if (astr&&searchStr&&searchStr.trim().length>0) {
+		retStr = astr.replace(new RegExp(searchStr,'gm'),"<span class=\"highlight\">"+searchStr+"</span>");
 	}
-	while(true){
-	  var idx = astr.indexOf(token);
-		if(idx>-1){
-		  retStr += astr.substring(0,idx)+"<span class=\"highlight\">"+token+"</span>";
-		  astr = astr.substring(idx+token.length);
-		}else{
-			retStr += astr;
-			break;
-		}
-	}
-	return retStr;
+	return retStr;	
 };
 
 /**

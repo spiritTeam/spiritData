@@ -26,7 +26,7 @@
   
   <!-- 获得通用查询结果列表   -->
   <sql id="queryFileList">
-    select a.ctime,concat('{\"id\":','\"',a.id,'\"',',\"type\":\"file\"',',\"name\":','\"',a.cFileName,'\"',',\"size\":','\"',a.fileSize,'\"'
+    select a.ctime,a.ownerId,a.ownerType,concat('{\"id\":','\"',a.id,'\"',',\"type\":\"file\"',',\"name\":','\"',a.cFileName,'\"',',\"size\":','\"',a.fileSize,'\"'
       ,',\"createDate\":','\"',a.cTime,'\"',',\"desc\":','\"',a.descn,'\"',',\"suffix\":','\"',a.fileExtName,'\"'
       ,',\"reportId\":','\"',b.reportid,'\"}') rowjson
     from vsa_imp_log a 
@@ -35,15 +35,17 @@
     on a.cateId=b.aId and b.rtype1=1 and b.rtype2='即时报告'
   </sql>
   <sql id="queryReportList">
-    select r.cTime,concat('{\"id\":','\"',r.id,'\"',',\"type\":\"report\"',',\"name\":','\"',r.reportName,'\"'
+    select r.cTime,r.ownerId,r.ownerType,concat('{\"id\":','\"',r.id,'\"',',\"type\":\"report\"',',\"name\":','\"',r.reportName,'\"'
       ,',\"reportType\":','\"',r.reportType,'\"',',\"createDate\":','\"',r.cTime,'\"',',\"desc\":','\"',r.descn,'\"'
       ,',\"thumbUrl\":\"\"}') rowjson from sa_report_info r 
   </sql>
   <select id="getQueryList" resultMap="QueryViewMap" parameterType="java.util.Map">
-    select  * from (<include refid="queryFileList"/> union <include refid="queryReportList"/> ) as q
+    select  <include refid="Base_Column_List"/> from (<include refid="queryFileList"/> union <include refid="queryReportList"/> ) as q
     <where>
       <trim prefix="(" suffix=")" prefixOverrides="and">
         <if test="1==1"></if>
+        <if test="ownerId!=null"> and ownerId = #{ownerId,jdbcType=VARCHAR}</if>
+        <if test="ownerType!=null and ownerType!=0"> and ownerType=#{ownerType,jdbcType=INTEGER}</if>
         <if test="searchStr!=null"> and rowjson like CONCAT('%',#{searchStr,jdbcType=VARCHAR},'%')</if>
       </trim>
     </where>     

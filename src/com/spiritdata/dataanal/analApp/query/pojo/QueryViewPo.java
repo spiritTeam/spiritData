@@ -1,10 +1,12 @@
 package com.spiritdata.dataanal.analApp.query.pojo;
 
 import java.sql.Timestamp;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.spiritdata.framework.core.model.BaseObject;
+import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
  * 通用查询结果BEAN
@@ -20,7 +22,7 @@ public class QueryViewPo extends BaseObject {
 
 	private Timestamp createTime; //创建时间
 	
-	private String aRowJsonStr; //一行值的JSON字符串
+	private Map<String, Object> aRowJsonStr; //一行值的JSON字符串
 
 	public Timestamp getCreateTime() {
 		return createTime;
@@ -30,12 +32,12 @@ public class QueryViewPo extends BaseObject {
 		this.createTime = createTime;
 	}
 
-	public String getaRowJsonStr() {
+	public Map<String, Object> getaRowJsonStr() {
 		return aRowJsonStr;
 	}
 
 	public void setaRowJsonStr(String aRowJsonStr) {
-		this.aRowJsonStr = aRowJsonStr;
+		this.aRowJsonStr = (Map<String, Object>)JsonUtils.jsonToObj(aRowJsonStr, Map.class);
 	}
 	
 	

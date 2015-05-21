@@ -4,11 +4,8 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
-
 import javax.servlet.ServletContext;
-
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import com.spiritdata.dataanal.exceptionC.Dtal0402CException;
 import com.spiritdata.dataanal.exceptionC.Dtal0404CException;
 import com.spiritdata.dataanal.report.service.ReportService;
@@ -62,7 +59,7 @@ public class TaskExecutorShell implements Runnable {
             try {
                 //2-classLoader
                 TaskProcess tp = TaskUtils.loadClass(this.ti);
-                resultMap = tp.process(ti.getParam());
+                resultMap = tp.process(this.ti.getParam());
                 //根据结果，设置处理参数
                 if (resultMap!=null&&resultMap.get("sysResultData")!=null) {
                     Map<String, Object> sysResultData = (Map<String, Object>)resultMap.get("sysResultData");
@@ -76,10 +73,9 @@ public class TaskExecutorShell implements Runnable {
                 (new Dtal0404CException(e)).printStackTrace();
             }
             //3-执行结束处理
-            this.ti.setEndTime(new Timestamp(System.currentTimeMillis()));
-            if (!success) ti.setFailed();
+            if (!success) this.ti.setFailed();
             else {
-                ti.setSuccessed();
+                this.ti.setSuccessed();
                 if (!notSaveResult2File&&resultMap!=null) {//文件存储为文件
                     Object userResultData = resultMap.get("userResultData");
                     if (userResultData!=null) { //写文件
@@ -93,34 +89,38 @@ public class TaskExecutorShell implements Runnable {
                             jsonDHead.setId(SequenceUUID.getPureUUID());
                             jsonDHead.setCode(JDC);
                             jsonDHead.setCTime(new Date());
-                            jsonDHead.setDesc("分析任务[id="+ti.getId()+"]，分析名称["+ti.getTaskName()+"]"+(StringUtils.isNullOrEmptyOrSpace(ti.getDesc())?"":(":"+ti.getDesc())));
+                            jsonDHead.setDesc("分析任务[id="+this.ti.getId()+"]，分析名称["+this.ti.getTaskName()+"]"+(StringUtils.isNullOrEmptyOrSpace(this.ti.getDesc())?"":(":"+this.ti.getDesc())));
                             //数据体
                             analDictJsonD.set_HEAD(jsonDHead);
                             analDictJsonD.set_DATA(userResultData);
                             //分析结果文件种子设置
-                            AnalResultFile arfSeed = new AnalResultFile();
-                            arfSeed.setAnalType(ti.getTaskType()); //分析类型，相当于文件类型表中的type2
-                            arfSeed.setSubType(ti.getId()); //任务Id，三级分类，相当于文件文件类型表中的type3
-                            arfSeed.setExtInfo(ti.getParam());
-                            arfSeed.setFileNameSeed(ti.getTaskType()+File.separator+ti.getId());
-                            arfSeed.setJsonDCode(JDC);
+                            AnalResultFile arf = this.ti.getResultFile();
+                            if (arf==null) {
+                                arf = new AnalResultFile();
+                                arf.setId(this.ti.getId());
+                                arf.setAnalType(this.ti.getTaskType()); //分析类型，相当于文件类型表中的type2
+                                arf.setSubType("task::"+this.ti.getId()); //任务Id，三级分类，相当于文件文件类型表中的type3
+                                arf.setExtInfo(this.ti.getParam());
+                                arf.setJsonDCode(JDC);
+                            }
+                            arf.setFileNameSeed(this.ti.getTaskType().replace("-", File.separator)+File.separator+this.ti.getId());
                             AnalResultFileService arfService = (AnalResultFileService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("analResultFileService");
-                            AnalResultFile arf = (AnalResultFile)arfService.write2FileAsJson(analDictJsonD, arfSeed);
+                            arf = (AnalResultFile)arfService.write2FileAsJson(analDictJsonD, arf);
                             //写数据库
                             FileInfo arFi = arfService.saveFile(arf);
                             //写文件关联关系，注意这里的关系是文件分类到文件的直接关系
-                            if (!StringUtils.isNullOrEmptyOrSpace(ti.getTaskGroup().getReportId())) {
+                            if (!StringUtils.isNullOrEmptyOrSpace(this.ti.getTaskGroup().getReportId())) {
                                 //通过reportId得到reportFile对象
                                 ReportService rService = (ReportService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("reportService");
-                                FileInfo reportFi = rService.getReportFiById(ti.getTaskGroup().getReportId());
+                                FileInfo reportFi = rService.getReportFiById(this.ti.getTaskGroup().getReportId());
                                 if (reportFi!=null) {
                                     FileRelation fr = new FileRelation();
                                     fr.setElement1(reportFi.getFileCategoryList().get(0));
                                     fr.setElement2(arFi);
-                                    fr.setCTime(new Timestamp((new Date()).getTime()));
+                                    fr.setCTime(new Timestamp(System.currentTimeMillis()));
                                     fr.setRType1(RelType1.POSITIVE);
                                     fr.setRType2("报告中的数据");
-                                    fr.setDesc(ti.getTaskType()+"::"+ti.getTaskName());
+                                    fr.setDesc(this.ti.getTaskType()+"::"+this.ti.getTaskName());
                                     FileManageService fmService = (FileManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("fileManageService");
                                     fmService.saveFileRelation(fr);//文件关联存储
                                 }
@@ -134,9 +134,12 @@ public class TaskExecutorShell implements Runnable {
             //写入数据库
             //这里需要用到Spring的容器
             TaskManageService tmService = (TaskManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("taskManageService");
-            tmService.completeTaskInfo(ti, (success?StatusType.SUCCESS:StatusType.FAILD));
+            this.ti.setEndTime(new Timestamp(System.currentTimeMillis()));
+            tmService.completeTaskInfo(this.ti);
             //把失败的任务再放入内存继续执行
-            if (ti.getStatus()==StatusType.FAILD) (TaskMemoryService.getInstance()).addFaildTaskInfo(ti);
+            TaskMemoryService tms = TaskMemoryService.getInstance();
+            if (this.ti.getStatus()==StatusType.FAILD) tms.addFaildTaskInfo(this.ti);
+            if (this.ti.getStatus()==StatusType.SUCCESS||this.ti.getStatus()==StatusType.ABATE) tms.removeFromRunningMap(this.ti);
         }
     }
 }

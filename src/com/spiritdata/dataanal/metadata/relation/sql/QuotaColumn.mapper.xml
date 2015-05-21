@@ -93,7 +93,6 @@
   <update id="update" parameterType="java.util.Map">
     update sa_md_colquota
     <set>
-      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
       <if test="colId!=null">cId=#{colId,jdbcType=VARCHAR},</if>
       <if test="tqId!=null">tqId=#{tqId,jdbcType=VARCHAR},</if>
       <if test="max!=null">max=#{max,jdbcType=VARCHAR},</if>

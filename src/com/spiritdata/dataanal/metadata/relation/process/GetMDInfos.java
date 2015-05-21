@@ -45,23 +45,23 @@ public class GetMDInfos implements TaskProcess {
         ret.put("sysResultData", sysRd);
 
         //组织为jsond的数据格式
-        List<Map<String, Object>> miList = new ArrayList<Map<String, Object>>();//元数据信息的数组
+        Map<String, Object> miM = new HashMap<String, Object>();//元数据信息的数组
         //获得元数据-包括语义信息，获得元数据的指标(统计)信息
         MdBasisService mdbServcie = (MdBasisService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("mdBasisService");
         MdQuotaService mdqServcie = (MdQuotaService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("mdQuotaService");
         String[] ids = StringUtils.splitString(param.get("mids")+"", ",");
         for (int i=0; i<ids.length; i++) {
             MetadataModel mm = mdbServcie.getMetadataModeWithColSemanteme(ids[i]);
-            QuotaTable qt = mdqServcie.getMdQuotaInfo(ids[i]);
+            QuotaTable qt = mdqServcie.getQuotaTable(mm);
             if (mm!=null) {
-                miList.add(_getJsonDTable_MM(mm, qt));
+                miM.put(mm.getId(), _getJsonDTable_MM(mm, qt));
             }
         }
-
-        if (miList.size()>0) {
+        if (miM.size()>0) {
             sysRd.put("resultType", 1);
-            ret.put("userResultData", miList);
-
+            Map<String, Object> t = new HashMap<String, Object>();
+            t.put("mdInfos", miM);
+            ret.put("userResultData", t);
         } else sysRd.put("resultType", 2);
 
         return ret;
@@ -125,7 +125,7 @@ public class GetMDInfos implements TaskProcess {
             rowM.put("semanteme", tempStr);
             rowM.put("columnIndex", mc.getColumnIndex()+"");
 
-            QuotaColumn qc = qt==null?null:qt.getColQuotaByColId(mc.getId());
+            QuotaColumn qc = qt==null?null:qt.getQuotaColByColId(mc.getId());
             //范围
             tempStr="";
             if (DataType.getDataType(mc.getColumnType())==DataType.STRING) {

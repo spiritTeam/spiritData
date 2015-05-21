@@ -258,7 +258,7 @@ function showSearchResultList(){
 	    var fileName = jsonRows[i]["clientFileName"];
 	    var suffix = jsonRows[i]["suffix"];
 	    var fileFull = fileName;
-	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileIndexId+'\');"><strong>'+fileFull+'</strong></a>';
+	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
 	    
 	    var size = jsonRows[i]["fileSize"];
 	    var createDate = jsonRows[i]["createTimeStr"];
@@ -310,7 +310,7 @@ function showSearchResultThumb(){
 		  thumbHtmlStr += '        <span class="caption" style="padding:2px;">'+desc+'</span>';
 	    //缩略图下方显示的内容
 	    thumbHtmlStr += '      <div class="media-wrapper">';
-		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileIndexId+'\');"><strong>'+fileFull+'</strong></a>';
+		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
 	    thumbHtmlStr += '      </div>';  
 	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted" style="padding:2px;text-align:center;">';
 	    thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;&nbsp;创建日期:'+createDate+'';
@@ -345,7 +345,7 @@ function getOptHtml(aJsonRow,floatStyle){
   var suffix = aJsonRow["suffix"];
   var fileFull = fileName;
   //构建操作按钮
-  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileIndexId+'\');"><i class="icon-list"></i>浏览</button>';
+  var optView = '<button type="button" class="btn bt_13_no" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><i class="icon-list"></i>浏览</button>';
   //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
   var optReport = '';
   if(!isUndefinedNullEmpty(reportId)){

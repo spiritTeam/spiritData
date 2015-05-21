@@ -3,7 +3,6 @@ package com.spiritdata.filemanage.core.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.spiritdata.framework.core.model.ModelSwapPo;
@@ -100,7 +99,7 @@ public class FileCategory implements Serializable, ModelSwapPo {
         fr.setElement2(obj);
         fr.setRType1(type);
         fr.setDesc(desc);
-        fr.setCTime(new Timestamp(new Date().getTime()));
+        fr.setCTime(new Timestamp(System.currentTimeMillis()));
         //关系处理
         boolean canAdd = true;
         switch(type) {

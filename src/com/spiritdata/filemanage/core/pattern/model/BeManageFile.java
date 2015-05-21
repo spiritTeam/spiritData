@@ -13,4 +13,6 @@ public interface BeManageFile {
      * @return 模型化文件信息
      */
     public FileInfo convert2FileInfo();
+
+    public void buildFromFileInfo(FileInfo fi);
 }

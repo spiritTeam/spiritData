@@ -48,13 +48,13 @@ public class AnalDict implements AnalMetadata {
     public Map<String, Object> scanMetadata(MetadataModel mm, Map<String, Object> param) {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new Dtal0203CException("元数据模型信息不包含任何列信息，无法分析！");
 
-        QuotaTable qt = mdQuotaService.getQuotaInfo(mm.getTableName(), mm); //获得指标表
+        QuotaTable qt = mdQuotaService.getQuotaTable(mm.getTableName(), mm); //获得指标表
         if (qt==null) qt = mdQuotaService.caculateQuota(mm, mm.getTableName());//为空，则重新计算指标
         if (qt.getAllCount()==0) return null;//返回空，表中没有数据，无法分析
-        if (qt.getColQuotaList()==null||qt.getColQuotaList().size()==0) return null;
+        if (qt.getQuotaColList()==null||qt.getQuotaColList().size()==0) return null;
         
         Map<String, Object> ret  = new HashMap<String, Object>();
-        for (QuotaColumn qc: qt.getColQuotaList()) {
+        for (QuotaColumn qc: qt.getQuotaColList()) {
             if (qc.getColumn().getColumnType().equals("String")&&qc.getCompressRate()>AnalDict.compressThreshold) {//是字典项
                 ret.put(qc.getColumn().getColumnName(), qc.getCompressRate());
             }

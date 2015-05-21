@@ -1,8 +1,14 @@
 package com.spiritdata.filemanage.core.pattern.service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+
 import com.spiritdata.filemanage.core.pattern.model.ToBeStoreFile;
 import com.spiritdata.filemanage.exceptionC.Flmg0003CException;
-import com.spiritdata.filemanage.util.FileOperUtils;
+import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
 
@@ -35,7 +41,21 @@ public abstract class AbstractWriteString2FileByToBeStoreFile {
      */
     public String write2File(String content, ToBeStoreFile tbsf) {
         String storeFileName = getStoreFileName(tbsf);
-        FileOperUtils.write2File(content, storeFileName);
+        File file = new File(storeFileName);
+        try {
+            if (!file.exists()) {
+                File dirs = new File(FileNameUtils.getFilePath(storeFileName));
+                if (!dirs.exists()) {
+                    if (dirs.mkdirs()) file.createNewFile();
+                    else throw new Flmg0003CException("创建目录["+FileNameUtils.getFilePath(storeFileName)+"]失败，无法写入文件");
+                }
+            }
+            FileUtils.writeStringToFile(file, content, "UTF-8");
+        } catch (FileNotFoundException e) {
+            throw new Flmg0003CException(e);
+        } catch (IOException e) {
+            throw new Flmg0003CException(e);
+        }
         return storeFileName;
     }
 
