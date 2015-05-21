@@ -1,5 +1,8 @@
 package com.spiritdata.jsonD.web.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,23 +24,30 @@ public class JsonDController {
 
     @RequestMapping(value="/jsonD/getJsonD.do")
     @ResponseBody
-    public String getJsonD(HttpServletRequest request, HttpServletResponse response) {
-        String ret = null;
+    public Map<String, Object> getJsonD(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> ret = new HashMap<String, Object>();
         String jsonDId = request.getParameter("jsonDId");
         if (jsonDId!=null) {
             try {
-                ret="{jsonType:1, data:"+jsonDService.getJsonDById(jsonDId)+"}";
+                ret = jsonDService.getJsonDById(jsonDId);
             } catch(Exception e) {
-                ret="{jsonType:0, message:'"+e.getMessage()+"'}";
+                ret.put("jsonType", 0);
+                ret.put("message", e.getMessage());
             }
         }
         String uri = request.getParameter("uri");
         if (uri!=null) {
             try {
-                ret="{jsonType:1, data:"+jsonDService.getJsonDByUri(uri)+"}";
+                ret = jsonDService.getJsonDByUri(uri);
             } catch(Exception e) {
-                ret="{jsonType:0, message:'"+e.getMessage()+"'}";
+                ret.put("jsonType", 0);
+                ret.put("message", e.getMessage());
             }
+        }
+        if (ret==null) {
+            ret = new HashMap<String, Object>();
+            ret.put("jsonType", 0);
+            ret.put("message", "空");
         }
         return ret;
     }

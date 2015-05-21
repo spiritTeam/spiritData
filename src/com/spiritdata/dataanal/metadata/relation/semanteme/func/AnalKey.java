@@ -56,15 +56,15 @@ public class AnalKey implements AnalTable {
     public Map<String, Object> scanOneTable(String tableName, MetadataModel mm, Map<String, Object> param) throws Dtal0202CException {
         if (mm.getColumnList()==null||mm.getColumnList().size()==0) throw new Dtal0202CException("元数据模型信息不包含任何列信息，无法分析！");
 
-        QuotaTable qt = mdQuotaService.getQuotaInfo(tableName, mm); //获得指标表
+        QuotaTable qt = mdQuotaService.getQuotaTable(tableName, mm); //获得指标表
         if (qt==null) qt = mdQuotaService.caculateQuota(mm, tableName);//为空，则重新计算指标
         if (qt.getAllCount()==0) return null;//返回空，表中没有数据，无法分析
-        if (qt.getColQuotaList()==null||qt.getColQuotaList().size()==0) return null;
+        if (qt.getQuotaColList()==null||qt.getQuotaColList().size()==0) return null;
 
         //按指标分析
         Map<String, Object> ret  = new HashMap<String, Object>();
         Float one = new Float("1");
-        for (QuotaColumn qc: qt.getColQuotaList()) {
+        for (QuotaColumn qc: qt.getQuotaColList()) {
             String cType = mm.getColumnByColId(qc.getColId()).getColumnType();
             String cName = mm.getColumnByColId(qc.getColId()).getColumnName();
             String title = mm.getColumnByColId(qc.getColId()).getTitleName().toLowerCase();
@@ -105,7 +105,7 @@ public class AnalKey implements AnalTable {
             }
             //找出可能的列，不包括浮点列，URL列，若是字符串，长度大于128的字符串列;URL列不处理
             List<QuotaColumn> l = new ArrayList<QuotaColumn>();
-            for (QuotaColumn qc: qt.getColQuotaList()) {
+            for (QuotaColumn qc: qt.getQuotaColList()) {
                 if (isWaitKeyCol(qc)>0) l.add(qc);
             }
             //找出列组合

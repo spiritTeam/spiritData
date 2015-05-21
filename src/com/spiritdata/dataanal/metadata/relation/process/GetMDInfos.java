@@ -52,7 +52,7 @@ public class GetMDInfos implements TaskProcess {
         String[] ids = StringUtils.splitString(param.get("mids")+"", ",");
         for (int i=0; i<ids.length; i++) {
             MetadataModel mm = mdbServcie.getMetadataModeWithColSemanteme(ids[i]);
-            QuotaTable qt = mdqServcie.getMdQuotaInfo(ids[i]);
+            QuotaTable qt = mdqServcie.getQuotaTable(mm);
             if (mm!=null) {
                 miM.put(mm.getId(), _getJsonDTable_MM(mm, qt));
             }
@@ -125,7 +125,7 @@ public class GetMDInfos implements TaskProcess {
             rowM.put("semanteme", tempStr);
             rowM.put("columnIndex", mc.getColumnIndex()+"");
 
-            QuotaColumn qc = qt==null?null:qt.getColQuotaByColId(mc.getId());
+            QuotaColumn qc = qt==null?null:qt.getQuotaColByColId(mc.getId());
             //范围
             tempStr="";
             if (DataType.getDataType(mc.getColumnType())==DataType.STRING) {

@@ -65,7 +65,7 @@ public class TaskRunning extends Thread {
      */
     public void run() {
         try {
-            sleep(20000);//多少毫秒后启动任务处理，先让系统的其他启动任务完成，这里设置死为10秒钟
+            sleep(5000);//多少毫秒后启动任务处理，先让系统的其他启动任务完成，这里设置死为10秒钟
             //延迟加载，以便让Spring处理好自己的容器
             System.out.println("-------------------------------");
             System.out.println("===============================");

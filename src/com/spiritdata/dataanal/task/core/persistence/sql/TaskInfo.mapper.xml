@@ -144,6 +144,6 @@
 
   <!-- 获得可够执行的任务组信息 -->
   <select id="getCanExecuteTaskInfos" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/> from sa_task_info where (status=1 or status=4) order by taskGId, firstTime
+    select <include refid="Base_Column_List"/> from sa_task_info where taskGId in (select distinct taskGId from sa_task_info where status=1 or status=4) order by taskGId, firstTime
   </select>
 </mapper>

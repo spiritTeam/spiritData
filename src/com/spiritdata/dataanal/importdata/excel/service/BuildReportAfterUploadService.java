@@ -206,9 +206,10 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 D_Tag discriptDt = new D_Tag();
                                 discriptDt.setShowType(DtagShowType.TEXT);
                                 discriptDt.setDid(report.getDid(tempStr)+"");
-                                discriptDt.setValue("quote[^'"+mc.getId()+"^]");
+                                discriptDt.setValue("quote[^"+mc.getId()+"^]");
                                 discriptDt.setValueFilterFun("first(3|num)");
                                 discriptDt.setDecorateView("{#category#}占#percent(num)#%");
+                                tempContent = "";
                                 if (dm.dictTree.getChildCount()>3) {
                                     tempContent += "["+mm.getTitleName()+"]中，大多数为";
                                 } else {
@@ -254,8 +255,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         getMDInfos_Task.setParam(JsonUtils.objToJson(taskParam));
           //设置文件
         arf = new AnalResultFile();
-        tempStr=SequenceUUID.getPureUUID();
-        arf.setId(tempStr);
+        arf.setId(getMDInfos_Task.getId());
         arf.setJsonDCode(SDConstants.JDC_MD_INFO);
         arf.setAnalType(getMDInfos_Task.getTaskType()); //分析类型
         arf.setSubType("task::"+getMDInfos_Task.getId()); //下级分类

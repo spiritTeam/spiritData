@@ -103,9 +103,8 @@
   <update id="update" parameterType="java.util.Map">
     update sa_file_index
     <set>
-      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
       <if test="ownerType!=null and ownerType!=0">ownerType=#{ownerType,jdbcType=INTEGER},</if>
-      <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR}</if>
+      <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR},</if>
       <if test="accessType!=null and accessType!=0">accessType=#{accessType,jdbcType=INTEGER},</if>
       <if test="path!=null">filePath=#{path,jdbcType=VARCHAR},</if>
       <if test="fileName!=null">fileName=#{fileName,jdbcType=VARCHAR},</if>
