@@ -20,6 +20,21 @@
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.pie.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.categories.js"></script>
 <script type="text/javascript" src="<%=path%>/resources/plugins/Chart.min.js"></script>
+
+<!-- ECharts单文件引入 -->
+<script src="<%=path%>/resources/plugins/echarts-2.2.1/echarts.js"></script>
+<script type="text/javascript">
+/**
+ * echarts
+ */
+// 路径配置
+require.config({
+  paths: {
+    echarts: '<%=path%>/resources/plugins/echarts-2.2.1',
+    zrender: '<%=path%>/resources/plugins/echarts-2.2.1/zrender'
+  }
+});
+</script>
 <title>分析报告</title>
 </head>
 <style>
@@ -31,10 +46,12 @@ body {
 </body>
 <script type="text/javascript">
 $(function(){
-  var reportId="asdaw";
+  var reportId = "asdaw";
+  ///SpiritAnalysis/WebContent/DataCenter/report/ee9a9666cc184575b74b0b12fc5a6e66/afterImport(IMPFID-f268804f936e4720a78f7b7db46e0fb1).json
+  //demo\\reportDemo\\report.json
   var reportUrl = "<%=path%>/report/getReport.do?uri=demo\\reportDemo\\report.json";
   //alert("show report url="+reportUrl);
-  $.reportJD(reportUrl,reportId);
+  generateReport(reportUrl,reportId);
 });
 </script>
 </html>
