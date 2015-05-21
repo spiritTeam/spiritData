@@ -73,7 +73,7 @@ public class ReportService {
      * @return 文件信息
      */
     public FileInfo getReportFiById(String id) {
-        ReportPo rPo = reportDao.getInfoObject(id);
+        ReportPo rPo = reportDao.getInfoObject("getInfoById", id);
         if (rPo==null) return  null;
         return fmService.getFileInfoById(rPo.getFId());
     }

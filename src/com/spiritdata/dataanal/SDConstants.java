@@ -27,5 +27,5 @@ public abstract class SDConstants {
     public final static String RP_AFTER_IMP="SD.TEAM.REPORT::0001";//导入结构化数据后的报告
 
     //以下为Cache中用到的常量
-    public final static String CACHE_TASKS="CacheTask";//缓存在内存中的任务信息标识，
+    public final static String CACHE_NOVISIT="NO_VISIT";//缓存在内存中的任务信息标识，
 }

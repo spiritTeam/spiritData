@@ -22,12 +22,15 @@ import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.exceptionC.Dtal1105CException;
 import com.spiritdata.dataanal.task.core.service.TaskManageService;
+import com.spiritdata.dataanal.visitmanage.service.VisitLogService;
 
 public class LoginServiceImpl implements LoginService {
     @Resource
     private BasicDataSource dataSource;
     @Resource
     private TaskManageService tmService;
+    @Resource
+    private VisitLogService vlService;
 
     @Override
     public Map<String, Object> beforeUserLogin(HttpServletRequest request) {
@@ -86,6 +89,7 @@ public class LoginServiceImpl implements LoginService {
             conn.setAutoCommit(autoCommitFlag);
             //修改任务所有者，这里之所以不按照上面的方式去处理是因为：以上的内容都缓存在Session中，而task缓存在TaskMemery中
             tmService.changeOwnerId(session.getId(), newOwnerId);
+            vlService.changeOwnerId(session.getId(), newOwnerId);
         } catch (Exception e) {
             if (conn!=null) {
                 try {

@@ -81,6 +81,7 @@ public class TaskMemoryService {
             Map<String, TaskInfo> _m = tg.getTaskGraph().getTaskMap();
             for (String tiId: _m.keySet()) {
                 TaskInfo ti = _m.get(tiId);
+                inserted = false;
                 try {
                     inserted = addTaskInfo(ti);
                 } catch(Exception e) {
@@ -104,7 +105,7 @@ public class TaskMemoryService {
         if (ti.getStatus()!=StatusType.PREPARE&&ti.getStatus()!=StatusType.FAILD) {
             throw new Dtal0403CException("只有为[准备执行]/[执行失败]状态的任务才能加入任务内存，当前任务[id="+ti.getId()+"]的状态为["+ti.getStatus().getName()+"]");
         }
-        if (tm.taskInfoMap.get(ti.getId())==null&&tm.runningTaskMap.get(ti.getId())!=null) {
+        if (tm.taskInfoMap.get(ti.getId())==null&&tm.runningTaskMap.get(ti.getId())==null) {
             if (ti.getFirstTime()==null) ti.setFirstTime(new Timestamp(System.currentTimeMillis()));
             if (ti.getStatus()!=StatusType.SUCCESS&&ti.getStatus()!=StatusType.FAILD&&ti.getStatus()!=StatusType.ABATE) {
                 tm.taskInfoSortList.add(getInsertIndex(ti), ti.getId());
@@ -278,7 +279,7 @@ public class TaskMemoryService {
                     ti = taskInfoMap.get(tiId);
                     if (ti!=null) {
                         canClean = (ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE);
-                    }
+                    } else canClean=false;
                     if (!canClean) break;
                 }
                 if (canClean) {
@@ -293,7 +294,7 @@ public class TaskMemoryService {
         if (taskInfoMap.size()>0&&taskInfoSortList.size()>0&&cleanLimitSize>0) {
             for (String tiId: taskInfoSortList) {
                 ti = taskInfoMap.get(tiId);
-                if (ti.getTaskGroup()==null&&(ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE)) {//可删除
+                if (ti!=null&&ti.getTaskGroup()==null&&(ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE)) {//可删除
                     taskInfoMap.remove(tiId);
                     taskInfoSortList.remove(tiId);
                     cleanLimitSize--;
@@ -307,7 +308,7 @@ public class TaskMemoryService {
             for (TaskInfo _ti: taskInfoMap.values()) {
                 String taskId = _ti.getId();
                 if (_ti.getTaskGroup()!=null&&taskGroupMap.get(_ti.getTaskGroup().getId())==null
-                        &&(ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE)) {
+                    &&(ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE)) {
                     taskInfoMap.remove(taskId);
                     taskInfoSortList.remove(taskId);
                     cleanLimitSize--;
