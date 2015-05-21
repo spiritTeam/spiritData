@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.FileUtils;
 
+import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.framework.FConstants;
@@ -30,26 +31,31 @@ public class JsonDService {
     private AnalResultFileService arfService;
 
     /**
-     * 根据jsonD实例的Id，得到jsonD串
+     * 根据jsonD实例的Id(就是对应的文件的Id)，得到jsonD串
      * @param jsonDId jsonD实例的Id
      * @return jsonD串
      */
-    public String getJsonDById(String jsonDId) {
+    public Map<String, Object> getJsonDById(String jsonDId) {
         if (StringUtils.isNullOrEmptyOrSpace(jsonDId)) throw new JsonD1001CException("所给jsonDId参数为空，无法获取数据！");
+        Map<String, Object> retM = new HashMap<String, Object>();
         //先从内存中取
-        String ret = "";
-        //再从数据库和文件系统中取
-        if (StringUtils.isNullOrEmptyOrSpace(ret)) {
+        TaskMemoryService tms = TaskMemoryService.getInstance();
+        retM = tms.getTaskStatus(jsonDId);
+        String _status = retM.get("status")+"";
+        if (_status.equals("3")||_status.equals("-1")) { //执行成功或不在内存，则从文件中读取
+            //再从数据库和文件系统中取
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("id", jsonDId);
             List<FileIndexPo> afl = arfService.getAnalFiles(m);
-            if (afl==null||afl.size()==0) throw new JsonD1001CException("没有查到id="+jsonDId+"的JsonD数据！");
+            if (afl==null||afl.size()==0) throw new JsonD1001CException("没有找到Id为["+jsonDId+"]的的JsonD数据！");
             FileIndexPo fip = afl.get(0);
             String fileUri = FileNameUtils.concatPath(fip.getPath(), fip.getFileName());
             return this.getJsonDByUri(fileUri);
+        } else {
+            retM.put("jsonType", 3);//非成功或失败的其他状态
         }
-        //根据id获取内容，现在先不处理原文件名templet1.json
-        return this.getJsonDByUri("demo\\templetDemo\\afterImport(IMPFID-c56873f1ff954637be9609ee1bc67a40_RID-63f78f9a12b748e5ae442e8e647baa0f).json");
+        if (retM.size()==0) retM=null;
+        return retM;
     }
 
     /**
@@ -58,21 +64,23 @@ public class JsonDService {
      * @return jsonD串
      */
     @SuppressWarnings("unchecked")
-	public String getJsonDByUri(String uri) {
-        String ret = null;
+	public Map<String, Object> getJsonDByUri(String uri) {
+        Map<String, Object> retM = new HashMap<String, Object>();
+        String _jsonStr = "";
+
         if (uri.indexOf("\\\\:")!=-1||uri.indexOf("//:")!=-1) {//走协议方式
             
         } else {//走服务器目录方式
-        	//mht 对uri的修改
-        	if (uri.indexOf("datafile=/")!=-1) {
-        		uri = uri.substring(uri.indexOf("datafile=/")+10, uri.length());
-        	}
-            if (uri.indexOf(":")==-1) uri = FileNameUtils.concatPath(((CacheEle<String>)SystemCache.getCache(FConstants.APPOSPATH)).getContent(), uri);
+            if (uri.charAt(0)=='\\'||uri.charAt(0)=='/') {
+                uri = FileNameUtils.concatPath(((CacheEle<String>)SystemCache.getCache(FConstants.APPOSPATH)).getContent(), uri);
+            }
             File f = FileUtils.getFile(uri);
             if (f.isFile()) {//读取文件
                 try {
-                    ret = FileUtils.readFileToString(f, "UTF-8");
-                    ret = JsonUtils.getCompactJsonStr(ret);
+                    _jsonStr = FileUtils.readFileToString(f, "UTF-8");
+                    _jsonStr = JsonUtils.getCompactJsonStr(_jsonStr);
+                    retM.put("jsonType", 1);
+                    retM.put("data",_jsonStr);
                 } catch(IOException ioe) {
                     throw new JsonD1001CException("读取文件["+uri+"]失败！");
                 }
@@ -80,6 +88,7 @@ public class JsonDService {
                 throw new JsonD1001CException("Uri["+uri+"]所指向的地址不可用！");
             }
         }
-        return ret;
+        if (retM.size()==0) return null;
+        return retM;
     }
 }

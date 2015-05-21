@@ -2,7 +2,6 @@ package com.spiritdata.dataanal.report.generate;
 
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -102,7 +101,7 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         FileRelation fr = new FileRelation();
         fr.setElement1(impFi.getFileCategoryList().get(0));
         fr.setElement2(reportFi.getFileCategoryList().get(0));
-        fr.setCTime(new Timestamp((new Date()).getTime()));
+        fr.setCTime(new Timestamp(System.currentTimeMillis()));
         fr.setRType1(RelType1.POSITIVE);
         fr.setRType2("即时报告");
         fr.setDesc("["+FileNameUtils.getFileName(impFi.getFileCategoryList().get(0).getExtInfo())+"]——文件导入后数据分析报告");

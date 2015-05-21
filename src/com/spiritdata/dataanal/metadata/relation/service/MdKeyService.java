@@ -1,6 +1,7 @@
 package com.spiritdata.dataanal.metadata.relation.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -16,11 +17,12 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.io.FileUtils;
 
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
-import com.spiritdata.filemanage.util.FileOperUtils;
+import com.spiritdata.filemanage.exceptionC.Flmg0003CException;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.model.JsonD;
@@ -263,8 +265,19 @@ public class MdKeyService {
     private Map<String, Double> parseJsonFile(String fullFileName, MetadataModel mm) {
         Map<String, Double> ret = null;
         try {
+            String jsonS = "";
+            File f = FileUtils.getFile(fullFileName);
+            if (f.isFile()) {//读取文件
+                try {
+                    jsonS = FileUtils.readFileToString(f, "UTF-8");
+                } catch(IOException ioe) {
+                    throw new Flmg0003CException("读取文件["+fullFileName+"]失败！");
+                }
+            } else {
+                throw new Flmg0003CException("["+fullFileName+"]所指向的地址不可用！");
+            }
+
             Map<String, Object> analKey = null;
-            String jsonS = FileOperUtils.readFile2Str(fullFileName);
             analKey = (Map<String, Object>)JsonUtils.jsonToObj(jsonS, Map.class);
             Map<String, Object> _HEAD = (Map<String, Object>)analKey.get("_HEAD");
             String _code = (String)_HEAD.get("_code");
@@ -438,7 +451,11 @@ public class MdKeyService {
                 arfService.saveFile(arfSeed);
             }
         } else { //在已有的情况下写入
-            FileOperUtils.write2File(JsonUtils.formatJsonStr(jsonS, null), fip.getPath()+File.separator+fip.getFileName());
+            try {
+                FileUtils.writeStringToFile(new File(fip.getPath()+File.separator+fip.getFileName()), JsonUtils.formatJsonStr(jsonS, null), "UTF-8");
+            } catch (IOException e) {
+                throw new Flmg0003CException("写入文件["+fip.getPath()+File.separator+fip.getFileName()+"]失败！", e);
+            }
         }
         return ret;
     }
@@ -453,7 +470,18 @@ public class MdKeyService {
         Map<String, List<String>> noKeyInfo = null;
         Map<String, Object> ret = new HashMap<String, Object>();
         try {
-            String jsonS = FileOperUtils.readFile2Str(fullFileName);
+            String jsonS = "";
+            File f = FileUtils.getFile(fullFileName);
+            if (f.isFile()) {//读取文件
+                try {
+                    jsonS = FileUtils.readFileToString(f, "UTF-8");
+                } catch(IOException ioe) {
+                    throw new Flmg0003CException("读取文件["+fullFileName+"]失败！");
+                }
+            } else {
+                throw new Flmg0003CException("["+fullFileName+"]所指向的地址不可用！");
+            }
+
             Map<String, Object> analNoKey = (Map<String, Object>)JsonUtils.jsonToObj(jsonS, Map.class);
             Map<String, Object> _HEAD = (Map<String, Object>)analNoKey.get("_HEAD");
             String _code = (String)_HEAD.get("_code");

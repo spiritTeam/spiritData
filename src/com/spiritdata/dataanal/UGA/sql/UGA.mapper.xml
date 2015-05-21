@@ -17,10 +17,7 @@
 </resultMap>
 <update id="updateUser" parameterType="java.util.Map" >
   update plat_user
-  <set >
-    <if test="userId != null" >
-      id = #{userId,jdbcType=VARCHAR},
-    </if>
+  <set>
     <if test="password != null" >
       password = #{password,jdbcType=VARCHAR},
     </if>

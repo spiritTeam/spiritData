@@ -86,4 +86,9 @@ public class ReportFile extends AbstractToBeStoreFile implements Serializable, B
 
         return ret;
     }
+    @Override
+    public void buildFromFileInfo(FileInfo fi) {
+        // TODO Auto-generated method stub
+        
+    }
 }
