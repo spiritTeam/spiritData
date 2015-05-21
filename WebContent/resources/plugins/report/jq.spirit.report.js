@@ -40,15 +40,13 @@ var domAry = [];
 /**
  * 生成报告方法
  */
-function generateReport(reportUrl, reportId) {
+function generateReport(reportUrl) {
   //1、初始化页面
   initPageFrame();
 
   //2、获取report
-  var pData = {'reportId':reportId};
-  //得到path<%=path%>
   deployName = reportUrl.substring(0,reportUrl.indexOf('/report/'));
-  $.ajax({type:"post",url:reportUrl,data:pData,async:true,dataType:"text",
+  $.ajax({type:"post",url:reportUrl ,async:true, dataType:"text",
     success:function(json){
       try{
         //str2JsonObj方法来自common.utils.js 用于吧json字符串变成json对象
@@ -56,6 +54,7 @@ function generateReport(reportUrl, reportId) {
         if (retJson.jsonType==1) {
           //report_json
           var reportData = retJson.data;
+          reportData = str2JsonObj(reportData);
           //3，根据report构造出树和框
           //_REPORT report主体部分
           var _REPORT = reportData._REPORT;
@@ -85,8 +84,8 @@ function generateReport(reportUrl, reportId) {
           });
           //解析~展示 
           resolveAndDraw();
-        }else{
-          $.messager.alert("提示",jsonData.message,'info');
+        }else if(retJson.jsonType==0){
+          $.messager.alert("提示",retJson.message,'info');
         }          
       }catch(e){
         $.messager.alert("提示",e.message,'info');
@@ -817,7 +816,7 @@ function drawPie(jQobj,_DATA){
   var dataAry = [];
   //echarts图例数据 
   //var legendData = [];
-  for (var i=0;i<pie_dataBody.length;i++) { 
+  for (var i=0;i<pie_dataBody.length;i++) {
     eval("var _pie_label=pie_dataBody[i]."+xAxis);
     eval("var _pie_data=pie_dataBody[i]."+yAxis);
     dataAry[i] = {label:_pie_label,data:_pie_data};
@@ -825,7 +824,7 @@ function drawPie(jQobj,_DATA){
     //legendData.push(_pie_label); echarts 的图例
   }
   //pie div样式
-  jQobj.attr('style','height:400px;width:700px;');
+  jQobj.attr('style','height:300px;width:300px;');
   //初始化pie
   $.plot(jQobj, dataAry, {
     series: {
@@ -849,7 +848,24 @@ function drawPie(jQobj,_DATA){
     //decorateView样例：decorateView='#category#, #percent(num)#'
     var view = decorateView;
     if (_ary!=null&&_ary!="") {
-      
+      var seriesIndex = obj.seriesIndex;
+      var rowData = pie_dataBody[seriesIndex];
+      for (var j=0;j<_ary.length;j++) {
+        var _obj = _ary[j];
+        var col = _obj._col;
+        var val = rowData[col];
+        if (val) {
+          view = view.replace(_obj.col,val);
+        } else {
+          if (col.indexOf("percent(")!=-1) {
+            col = col.substring(col.indexOf("(")+1,col.indexOf(")"));
+            val = rowData[col];
+            var sum = getSum(pie_dataBody,col);
+            var percent = getPercent(val,sum,null);
+            view = view.replace(_obj.col,percent);
+          }
+        }
+      }
     }
     $("#"+hoverId).html("<span style='font-weight:bold; color:" + obj.series.color + "'>" + view + "%</span>");
   });
@@ -1545,9 +1561,9 @@ function resolveDLIST(_DLIST){
   for (var i=0;i<_DLIST.length;i++) {
     //jsonDInfo 囊括了jsonD的信息
     var jsonDInfo = new Object();
-    jsonDInfo.id = _DLIST[i]._id;
+    jsonDInfo.id = _DLIST[i].jsonDId;
     jsonDIdAry[i] = jsonDInfo.id;
-    jsonDInfo.url =  _DLIST[i]._url;
+    jsonDInfo.url =  _DLIST[i].url;
     //jsonD_code有时有，有时没有，负值的时候判断下
     if (_DLIST[i]._jsonD_code!=""&&_DLIST[i]._jsonD_code!=null) jsonDInfo.jsonD_code = _DLIST[i]._jsonD_code;
     else jsonDInfo.jsonD_code = "";
@@ -1591,7 +1607,7 @@ function getJsonDJson() {
  * 通过ajax得到jsonDjson
  */
 function  getDataByAjax(pData,_url,dId){
-  $.ajax({type:"post",url:_url,data:pData,async:true,dataType:'json',
+  $.ajax({type:"post",url:_url,data:pData,async:true,dataType:'text',
     success:function(json){
       var jsonDObj = str2JsonObj(json);
       if(jsonDObj.jsonType==1){
@@ -1600,8 +1616,8 @@ function  getDataByAjax(pData,_url,dId){
             jsonDInfoArray[v].json = jsonDObj.data;
           }
         }
-      }else{
-        alert("获取数据失败");
+      }else if(jsonDObj.jsonType==0){
+        alert(jsonDObj.message);
       }
     },
     error: function(XMLHttpRequest, textStatus, errorThrown) {
