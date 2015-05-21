@@ -56,6 +56,8 @@ public class TaskMemory {
     protected Map<String, TaskInfo> taskInfoMap = null;
     //所有可执行任务Id的队列，按照创建时间进行排序 protected 
     protected List<String> taskInfoSortList = null;
+    //正在执行的任务
+    protected Map<String, TaskInfo> runningTaskMap = null;
 
     /**
      * 参数初始化，必须首先执行这个方法，任务内存类才能使用
@@ -69,6 +71,7 @@ public class TaskMemory {
             taskGroupMap = new ConcurrentHashMap<String, TaskGroup>();
             taskInfoMap = new ConcurrentHashMap<String, TaskInfo>();
             taskInfoSortList = new CopyOnWriteArrayList<String>();
+            runningTaskMap = new ConcurrentHashMap<String, TaskInfo>();
         }
     }
 

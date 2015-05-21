@@ -1,5 +1,8 @@
 package com.spiritdata.dataanal.report.web;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,23 +23,30 @@ public class ReportController {
     private ReportService reportService;
     @RequestMapping(value="/report/getReport.do")
     @ResponseBody
-    public String getReport(HttpServletRequest request, HttpServletResponse response) {
-        String ret = null;
+    public Map<String, Object> getReport(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> ret = new HashMap<String, Object>();
         String reportId = request.getParameter("reportId");
         if (reportId!=null) {
             try {
-                ret="{jsonType:1, data:"+reportService.getReportJsonById(reportId)+"}";
+                ret=reportService.getReportJsonById(reportId);
             } catch(Exception e) {
-                ret="{jsonType:0, message:'"+e.getMessage()+"'}";
+                ret.put("jsonType", 0);
+                ret.put("message", e.getMessage());
             }
         }
         String uri = request.getParameter("uri");
         if (uri!=null) {
             try {
-                ret="{jsonType:1, data:"+reportService.getReportJsonByUri(uri)+"}";
+                ret=reportService.getReportJsonByUri(uri);
             } catch(Exception e) {
-                ret="{jsonType:0, message:'"+e.getMessage()+"'}";
+                ret.put("jsonType", 0);
+                ret.put("message", e.getMessage());
             }
+        }
+        if (ret==null) {
+            ret = new HashMap<String, Object>();
+            ret.put("jsonType", 0);
+            ret.put("message", "空");
         }
         return ret;
     }

@@ -95,6 +95,13 @@ public class AnalResultFile extends AbstractToBeStoreFile implements Serializabl
         this.extInfo = extInfo;
     }
 
+    public AnalResultFile() {
+    }
+    public AnalResultFile(FileInfo fi) {
+        if (fi==null) return ;
+        this.buildFromFileInfo(fi);
+    }
+
     /**
      * 转换为模型化文件信息，注意，这里要验证服务器端文件是否存在。<br/>
      * @return 模型化文件信息
@@ -127,12 +134,20 @@ public class AnalResultFile extends AbstractToBeStoreFile implements Serializabl
         Map<String, Object> _extInfo = new HashMap<String, Object>();
         if (this.extInfo!=null&&this.extInfo.size()>0) _extInfo.putAll(this.extInfo);
         _extInfo.put("JSOND", this.jsonDCode);
-        _extInfo.put(this.objType, this.objId);
-
+        if (this.objType!=null&&this.objId!=null) _extInfo.put(this.objType, this.objId);
         fc.setExtInfo(JsonUtils.objToJson(_extInfo));
-
         ret.addFileCategoryList(fc);
-
         return ret;
+    }
+
+    /**
+     * 此方法无法获得相关的文件分类的信息
+     */
+    @Override
+    public void buildFromFileInfo(FileInfo fi) {
+        if (fi!=null) {
+            this.id=fi.getId();
+            this.fileName = fi.getAllFileName();
+        }
     }
 }

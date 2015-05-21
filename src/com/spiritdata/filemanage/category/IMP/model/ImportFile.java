@@ -86,4 +86,9 @@ public class ImportFile implements Serializable, BeManageFile {
 
         return ret;
     }
+    @Override
+    public void buildFromFileInfo(FileInfo fi) {
+        // TODO Auto-generated method stub
+        
+    }
 }

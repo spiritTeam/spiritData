@@ -17,14 +17,14 @@
     "sourceData":"c:/xyz.excel[0]",
     "quotas":[{
       "columnName":"col_1",
-      "titleName":"性别",
+      "titleName":"人员表性别分类数值分布",
       "desc":"人员表性别分类数值分布",
       "tableData":{
       	"titles":[{"category":"分类"},{"num":"数量"},{"percent(num)":"百分比"}],
         "tableBody":[
-          {"category":"男",   "num":"156", "percent1(num)":"78"},
-          {"category":"女",   "num":"40",  "percent1(num)":"20"},
-          {"category":"其他", "num":"4",   "percent1(num)":"2"}
+          {"category":"男",   "num":"60", "percent1(num)":"30"},
+          {"category":"女",   "num":"90",  "percent1(num)":"45"},
+          {"category":"其他", "num":"50",   "percent1(num)":"25"}
         ]
       }},{"columnName":"col_4",
       "titleName":"籍贯",

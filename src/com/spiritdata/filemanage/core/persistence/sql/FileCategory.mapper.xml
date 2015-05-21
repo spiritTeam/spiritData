@@ -83,7 +83,6 @@
   <update id="update" parameterType="java.util.Map">
     update sa_file_category
     <set>
-      <if test="id!=null">id=#{id,jdbcType=VARCHAR},</if>
       <if test="FId!=null">fId=#{FId,jdbcType=VARCHAR},</if>
       <if test="FType1!=null">type1=#{FType1,jdbcType=VARCHAR},</if>
       <if test="FType2!=null">type2=#{FType2,jdbcType=VARCHAR},</if>

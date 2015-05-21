@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -242,7 +241,7 @@ public class DealExcelFileService {
                         FileRelation fr = new FileRelation();
                         fr.setElement1(fi.getFileCategoryList().get(0));
                         fr.setElement2(arFi.getFileCategoryList().get(0));
-                        fr.setCTime(new Timestamp((new Date()).getTime()));
+                        fr.setCTime(new Timestamp(System.currentTimeMillis()));
                         fr.setRType1(RelType1.POSITIVE);
                         fr.setRType2("语义分析-主键");
                         fr.setDesc("分析["+si.getSheetName()+"(sheet"+si.getSheetIndex()+")("+sti.getTableTitleName()+")]的主键");

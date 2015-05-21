@@ -35,7 +35,9 @@
       "mdid":"446655440001",
       "sheetInfo":{
         "name":"案件",
-        "index":"1"
+        "index":"1",
+        "45asd3ed":"“测试value中含有^！！！！”",
+        "45as88d":"“测试value中含有~！！！！”",
       },
       "tableData":{
       	"titles":[{"colName":"元数据名"},{"colType":"元数据类型"},{"details":"详细"},{"semantic":"语义定义"}],

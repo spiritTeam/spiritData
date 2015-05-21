@@ -349,3 +349,23 @@ VIEW vsa_tasks AS (
   from vpsa_tasks2 t
   left join sa_file_index sf on t.resultFileid=sf.id
 );
+
+/**022 访问日志[SA_VISIT_LOG]*/
+DROP TABLE IF EXISTS sa_visit_log;
+CREATE TABLE sa_visit_log (
+  id                varchar(32)      NOT NULL  COMMENT 'fa表ID(UUID)',
+  ownerType         int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
+  ownerId           varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
+  pointInfo         varchar(500)               COMMENT '可能是GPS坐标，以json格式记录',
+  equipmentName     varchar(100)               COMMENT '设备名称',
+  equipmentVersion  varchar(100)               COMMENT '设备型号',
+  exploreName       varchar(100)               COMMENT '浏览器名称',
+  exploreVer        varchar(100)               COMMENT '浏览器',
+  objType           int(2) unsigned  NOT NULL  COMMENT '访问实体的类型，目前包括,REPORT：文件,REPORT：报告,META：元数据,DATAELE：数据单元',
+  objId             varchar(32)                COMMENT '访问实体的ID',
+  objUrl            varchar(500)               COMMENT '访问实体的URL,objId,objUrl可任意',
+  fromUrl           varchar(500)               COMMENT '从那个Url导入的本访问',
+  visitTime         timestamp                  COMMENT '访问时间',
+  PRIMARY KEY (id)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='访问日志';

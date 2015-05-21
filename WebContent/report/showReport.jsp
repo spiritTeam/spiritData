@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%
   String path = request.getContextPath();
-  String sid = request.getSession().getId();
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -45,13 +44,15 @@ body {
 <body>
 </body>
 <script type="text/javascript">
-$(function(){
-  var reportId = "asdaw";
-  ///SpiritAnalysis/WebContent/DataCenter/report/ee9a9666cc184575b74b0b12fc5a6e66/afterImport(IMPFID-f268804f936e4720a78f7b7db46e0fb1).json
-  //demo\\reportDemo\\report.json
-  var reportUrl = "<%=path%>/report/getReport.do?uri=demo\\reportDemo\\report.json";
-  //alert("show report url="+reportUrl);
-  generateReport(reportUrl,reportId);
+var getReportUrl = "<%=path%>/report/getReport.do?";
+$(function() {
+  var param="";
+  uri=getUrlParam(window.location.href, "reportUri");
+  reportId = getUrlParam(window.location.href, "reportId");
+  if (uri) param +="&uri="+encodeURIComponent(uri);
+  if (reportId) param += "&reportId="+reportId;
+  getReportUrl += param.substring(1);
+  generateReport(getReportUrl);
 });
 </script>
 </html>

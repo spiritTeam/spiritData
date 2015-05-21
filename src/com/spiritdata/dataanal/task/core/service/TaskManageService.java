@@ -129,7 +129,8 @@ public class TaskManageService {
      * @param ti 任务信息
      * @param status 任务完成时的状态值
      */
-    public void completeTaskInfo(TaskInfo ti, StatusType status) {
+    public void completeTaskInfo(TaskInfo ti) {
+        StatusType status = ti.getStatus();
         TaskMemory tm = TaskMemory.getInstance();
         if (status!=StatusType.SUCCESS||status!=StatusType.FAILD) new Dtal0403CException(new IllegalArgumentException("status(任务完成状态)只能是4或5，而当前status="+status));
         if (StringUtils.isNullOrEmptyOrSpace(ti.getId())) new Dtal0403CException(new IllegalArgumentException("任务信息中的任务id字段不能是空"));

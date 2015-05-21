@@ -3,7 +3,6 @@ package com.spiritdata.dataanal.importdata.excel.service;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +36,7 @@ import com.spiritdata.dataanal.task.core.model.TaskGraph;
 import com.spiritdata.dataanal.task.core.model.TaskGroup;
 import com.spiritdata.dataanal.task.core.model.TaskInfo;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
-import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
+import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.FileNameUtils;
@@ -53,7 +52,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
     private static final long serialVersionUID = 5557763867374849717L;
 
     @Resource
-    private ReportFileService rfService;
+    private AnalResultFileService arfService;
 
     /**
      * 无参构造函数，用此方式创建对象，必须设置Session
@@ -93,7 +92,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         MetadataModel mm = null;
         MetadataTableMapRel[] tabMapOrgAry = null;
         boolean hasDictTask = false;
-        
+
         //判断数据可用性
         //1-准备数据
         Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>> reportParam = (Map<SheetInfo, Map<SheetTableInfo, Map<String, Object>>>)param.get("reportParam");
@@ -118,7 +117,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         report.setOwner(owner);
         String reportName = "["+FileNameUtils.getFileName(clientFileName)+"]——文件导入后数据分析报告";
         report.setReportName(reportName); //设置报告名称，头的reportName也设置了
-        report.setCTime(new Timestamp((new Date()).getTime())); //设置报告生成时间，同时也设置了头的时间
+        report.setCTime(new Timestamp(System.currentTimeMillis())); //设置报告生成时间，同时也设置了头的时间
         report.setDesc(reportName); //设置报告说明，同时也设置了报告头的说明
         report.setReportType("导入后即时报告");
         rHead.setCode(SDConstants.RP_AFTER_IMP);
@@ -188,11 +187,11 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     arf.setId(tempStr);
                                     arf.setJsonDCode(SDConstants.JDC_MD_SDICT);
                                     arf.setAnalType(analSingleDict_Task.getTaskType()); //分析类型
-                                    arf.setSubType(analSingleDict_Task.getId()); //下级分类
+                                    arf.setSubType("task::"+analSingleDict_Task.getId()); //下级分类
 //                                    arf.setObjType("metadata"); //所分析对象
 //                                    arf.setObjId(mm.getId()); //所分析对象的ID
                                     arf.setFileNameSeed(analSingleDict_Task.getTaskType()+File.separator+analSingleDict_Task.getId());
-                                    arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
+                                    arf.setFileName(arfService.buildFileName(arf.getFileNameSeed()));
                                     analSingleDict_Task.setResultFile(arf);
                                     report.addOneJsonD(TaskUtils.convert2AccessJsonDOne(analSingleDict_Task));
                                     //任务处理end
@@ -207,9 +206,10 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 D_Tag discriptDt = new D_Tag();
                                 discriptDt.setShowType(DtagShowType.TEXT);
                                 discriptDt.setDid(report.getDid(tempStr)+"");
-                                discriptDt.setValue("quote['"+mc.getId()+"']");
+                                discriptDt.setValue("quote[^"+mc.getId()+"^]");
                                 discriptDt.setValueFilterFun("first(3|num)");
                                 discriptDt.setDecorateView("{#category#}占#percent(num)#%");
+                                tempContent = "";
                                 if (dm.dictTree.getChildCount()>3) {
                                     tempContent += "["+mm.getTitleName()+"]中，大多数为";
                                 } else {
@@ -218,7 +218,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 D_Tag tableDt = new D_Tag();
                                 tableDt.setShowType(DtagShowType.TABLE);
                                 tableDt.setDid(report.getDid(tempStr)+"");
-                                tableDt.setValue("quote['"+mc.getId()+"']");
+                                tableDt.setValue("quote[^"+mc.getId()+"^]");
                                 tempContent += discriptDt.toHtmlTag()+"，具体数据为：<br/>"+tableDt.toHtmlTag();
                                 rs1_1_loop.setContent(tempContent);
                                 TreeNode<ReportSegment> rsTn1_1_loop = new TreeNode<ReportSegment>(rs1_1_loop);
@@ -255,16 +255,15 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         getMDInfos_Task.setParam(JsonUtils.objToJson(taskParam));
           //设置文件
         arf = new AnalResultFile();
-        tempStr=SequenceUUID.getPureUUID();
-        arf.setId(tempStr);
+        arf.setId(getMDInfos_Task.getId());
         arf.setJsonDCode(SDConstants.JDC_MD_INFO);
         arf.setAnalType(getMDInfos_Task.getTaskType()); //分析类型
-        arf.setSubType(getMDInfos_Task.getId()); //下级分类
+        arf.setSubType("task::"+getMDInfos_Task.getId()); //下级分类
 //        arf.setObjType("metadatas"); //所分析对象
 //        arf.setObjId(mids); //所分析对象的ID
 //        arf.setFileNameSeed("METADATA"+File.separator+"info"+File.separator+"mdinfos_"+arf.getId());
         arf.setFileNameSeed(getMDInfos_Task.getTaskType()+File.separator+getMDInfos_Task.getId());
-        arf.setFileName(rfService.buildFileName(arf.getFileNameSeed()));
+        arf.setFileName(arfService.buildFileName(arf.getFileNameSeed()));
         getMDInfos_Task.setResultFile(arf);
           //任务组装：组装进任务组+组装进report的dlist
         tg.addTask2Graph(getMDInfos_Task);
@@ -280,7 +279,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                             D_Tag tableDt = new D_Tag();
                             tableDt.setShowType(DtagShowType.TABLE);
                             tableDt.setDid(report.getDid(tempStr)+"");
-                            tableDt.setValue("quote['"+rs.getId()+"']");
+                            tableDt.setValue("mdInfos[^"+rs.getId()+"^]");
                             rs.setContent(rs.getContent()+"，对其结构的分析结果如下：<br/>"+tableDt.toHtmlTag());
                         }
                     }
