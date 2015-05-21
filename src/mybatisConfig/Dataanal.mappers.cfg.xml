@@ -3,6 +3,7 @@
 <configuration>
   <!-- 类别名设置 -->
   <typeAliases>
+    <!-- 元数据相关 -->
     <typeAlias alias="MdM"          type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel"/>
     <typeAlias alias="MdCol"        type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn"/>
     <typeAlias alias="MdColS"       type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme"/>
@@ -10,8 +11,14 @@
     <typeAlias alias="QuotaCol"     type="com.spiritdata.dataanal.metadata.relation.pojo.QuotaColumn"/>
     <typeAlias alias="MdTabRelMap"  type="com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel"/>
     <typeAlias alias="ImpTabMapRel" type="com.spiritdata.dataanal.metadata.relation.pojo.ImpTableMapRel"/>
+    <!-- 字典相关 -->
+    <typeAlias alias="dictMaster" type="com.spiritdata.dataanal.dictionary.persistence.pojo.DictMasterPo"/>
+    <typeAlias alias="dictDetail" type="com.spiritdata.dataanal.dictionary.persistence.pojo.DictDetailPo"/>
+    <!-- 报告相关 -->
+    <typeAlias alias="Report" type="com.spiritdata.dataanal.report.persistence.pojo.ReportPo"/>
   </typeAliases>
   <mappers>
+    <!-- 元数据相关 -->
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/MetadataModel.mapper.xml"/>
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/MetadataColumn.mapper.xml"/>
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/MetadataColSemanteme.mapper.xml"/>
@@ -19,5 +26,10 @@
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/QuotaTable.mapper.xml"/>
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/QuotaColumn.mapper.xml"/>
     <mapper resource="com/spiritdata/dataanal/metadata/relation/sql/ImpTabMapRel.mapper.xml"/>
+    <!-- 字典相关 -->
+    <mapper resource="com/spiritdata/dataanal/dictionary/persistence/sql/DictMaster.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/dictionary/persistence/sql/DictDetail.mapper.xml"/>
+    <!-- 报告相关 -->
+    <mapper resource="com/spiritdata/dataanal/report/persistence/sql/Report.mapper.xml"/>
   </mappers>
 </configuration>

@@ -15,7 +15,7 @@ public class TaskContextConfig {
     //加载数据的间隔时间
     //private int LOAD_INTERVAL = 1*1000*10; //默认是10秒
     //private int LOAD_INTERVAL = 1*1000*1; //测试为1秒
-    private int LOAD_INTERVAL = 1*1000*10; //默认是20分钟，便于调试
+    private int LOAD_INTERVAL = 1*1000*10; //10秒，便于调试
 
     //任务分发到线程池过程的间隔时间
     private int DISPATCH_INTERVAL = 1*1000*1; //默认为1秒

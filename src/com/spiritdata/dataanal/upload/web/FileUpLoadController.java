@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 
 import com.spiritdata.framework.core.web.AbstractFileUploadController;
+import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.dataanal.upload.service.DealUploadFileService;
 
 /** 
@@ -41,5 +43,12 @@ public class FileUpLoadController extends AbstractFileUploadController {
 
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {
+    }
+
+    @Override
+    public void setMySavePath() {
+        HttpSession session = request.getSession();
+        Owner o = SessionUtils.getOwner(session);
+        this.setSavePath(o.getOwnerId());
     }
 }
