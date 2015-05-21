@@ -2,6 +2,9 @@
 <%
   String path = request.getContextPath();
   String sid = request.getSession().getId();
+  String reportId = request.getParameter("reportId");
+  String reportUrl = request.getParameter("reportUrl");
+  
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -46,10 +49,13 @@ body {
 </body>
 <script type="text/javascript">
 $(function(){
+  //reportId和report有初始值，如果能从url中取到，就不用默认值
   var reportId = "asdaw";
+  var reportUrl = "<%=path%>/report/getReport.do?uri=demo\\reportDemo\\report.json";
+  if ("<%=reportId%>"!=null&&"<%=reportId%>"!="") reportId = "<%=reportId%>";
+  if ("<%=reportUrl%>"!=null&&"<%=reportUrl%>"!="") reportUrl = "<%=reportUrl%>";
   ///SpiritAnalysis/WebContent/DataCenter/report/ee9a9666cc184575b74b0b12fc5a6e66/afterImport(IMPFID-f268804f936e4720a78f7b7db46e0fb1).json
   //demo\\reportDemo\\report.json
-  var reportUrl = "<%=path%>/report/getReport.do?uri=demo\\reportDemo\\report.json";
   //alert("show report url="+reportUrl);
   generateReport(reportUrl,reportId);
 });

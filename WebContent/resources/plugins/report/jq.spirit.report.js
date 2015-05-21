@@ -83,7 +83,6 @@ function generateReport(reportUrl, reportId) {
               }
             }
           });
-
           //解析~展示 
           resolveAndDraw();
         }else{
@@ -131,7 +130,6 @@ function retrievalJsonDJson () {
     _jsonDSize = monitor._getJsonDIdAry.length;
     // 当已经全部显示完时关闭定时任务
     if (monitor._alreadyShownId.length==monitor.monitorJsonDSize) {clearInterval(monitor.monitorDrawId);}
-    console.info("_alreadyShownId==="+monitor._alreadyShownId);
     for (var i=0;i<jsonDInfoArray.length;i++) {
       var jsonDInfo = jsonDInfoArray[i];
       //已经显示过的dId
@@ -372,11 +370,13 @@ function drawBaiDuPts(jQobj,_data,param){
           function (ec) {
             //获取案件分布地图对象
             var mapPtAnJian = ec.init($('#'+mapDivId)[0]);
+            //非点图显示方式
             option = {
               title : {
                 text: titleName,
                 x:'center'
               },
+              //tooltip用于调试滑动时的显示效果
               tooltip : {
                 trigger: 'item',
                 formatter: function(params){
@@ -455,6 +455,91 @@ function drawBaiDuPts(jQobj,_data,param){
                 }
               ],
             };
+          //以下为点图的option对象----------------
+//            option = {
+//              title : {
+//                text: titleName,
+//                x:'center'
+//              },
+//              tooltip : {
+//                trigger: 'item',
+//                formatter: function(params){
+//                  var retStr="";
+//                  //标头
+//                  if (params!=""&&params!=null) {
+//                    if (params.seriesName==undefined || params.seriesName=="") {
+//                      params.series.tooltip.backgroundColor="rgba(0,0,0,0)";
+//                      return retStr;
+//                    } else {
+//                      var dataObj = params.data;
+//                      if (envelopeType=="table") {//table方式显示，
+//                        for (var i=0;i<subModelAry.length;i++) {
+//                          var subModel = subModelAry[i];
+//                          var _colName = subModel._colName;
+//                          retStr +=subModel._displayName+":"+dataObj[_colName]+'<br/>';
+//                        }
+//                      } else {//非table方式显示 
+//                        retStr = model;
+//                        for (var j=0;j<subModelAry.length;j++) {
+//                          var subModel = subModelAry[j];
+//                          var _colName = subModel._colName;
+//                          retStr = retStr.replace(subModel.colName,dataObj[_colName]);
+//                        }
+//                      }
+//                    }
+//                  }
+//                  return retStr;
+//                }
+//              },
+//              legend: {
+//                orient: 'vertical',
+//                x:'left',
+//                data:[titleName]
+//              },
+//              toolbox: {
+//                show: true,
+//                orient : 'vertical',
+//                x: 'right',
+//                y: 'center'
+//              },
+//              series : [
+//                {
+//                  name: titleName,
+//                  type: 'map',
+//                  mapType: 'china',
+//                  itemStyle:{
+//                    normal:{label:{show:true}},
+//                    emphasis:{label:{show:true}}
+//                  },
+//                  data:[],
+//                  markPoint:{
+//                    symbolSize:5,
+//                    effect : {
+//                      //show: true
+//                    },
+//                    itemStyle:{
+//                      normal:{
+//                        borderColor:'#87cefa',
+//                        borderWidth:1,
+//                        label:{
+//                          show:false
+//                        }
+//                      },
+//                      emphasis:{
+//                        borderColor:'#1e90ff',
+//                        borderWidth:5,
+//                        label:{
+//                          show:false  
+//                        }
+//                      }
+//                    },
+//                    data:data
+//                  },
+//                  geoCoord:geoCoordAry
+//                }
+//              ],
+//            };
+          //以上为点图的option对象----------------
             mapPtAnJian.setOption(option);
           }
         );
@@ -711,8 +796,10 @@ function drawPie(jQobj,_DATA){
   //x和y
   var xAxis = paramObj.xAxis;
   var yAxis = paramObj.yAxis;
-  var dataAry = [];
   var pie_dataBody = _data.tableData.tableBody;
+  var title = _data.titleName;
+  var desc =  _data.desc;
+  if (desc==null||desc=="") desc=title;
   //在pie中解析decorateView='#category#, #percent(num)#'简单格式
   var decorateView = jQobj.attr('decorateView');
   if (decorateView) decorateView = removeSpace(decorateView);
@@ -726,13 +813,19 @@ function drawPie(jQobj,_DATA){
   }
   
   //根据param构建显示数据
+  //数据主体
+  var dataAry = [];
+  //echarts图例数据 
+  //var legendData = [];
   for (var i=0;i<pie_dataBody.length;i++) { 
     eval("var _pie_label=pie_dataBody[i]."+xAxis);
     eval("var _pie_data=pie_dataBody[i]."+yAxis);
     dataAry[i] = {label:_pie_label,data:_pie_data};
+    //dataAry[i] = {name:_pie_label,value:_pie_data};这一行是echarts数据的格式
+    //legendData.push(_pie_label); echarts 的图例
   }
   //pie div样式
-  jQobj.attr('style','height:250px;width:350px;');
+  jQobj.attr('style','height:400px;width:700px;');
   //初始化pie
   $.plot(jQobj, dataAry, {
     series: {
@@ -756,27 +849,71 @@ function drawPie(jQobj,_DATA){
     //decorateView样例：decorateView='#category#, #percent(num)#'
     var view = decorateView;
     if (_ary!=null&&_ary!="") {
-      var seriesIndex = obj.seriesIndex;
-      var rowData = pie_dataBody[seriesIndex];
-      for (var j=0;j<_ary.length;j++) {
-        var _obj = _ary[j];
-        var col = _obj._col;
-        var val = rowData[col];
-        if (val) {
-          view = view.replace(_obj.col,val);
-        } else {
-          if (col.indexOf("percent(")!=-1) {
-            col = col.substring(col.indexOf("(")+1,col.indexOf(")"));
-            val = rowData[col];
-            var sum = getSum(pie_dataBody,col);
-            var percent = getPercent(val,sum,null);
-            view = view.replace(_obj.col,percent);
-          }
-        }
-      }
+      
     }
     $("#"+hoverId).html("<span style='font-weight:bold; color:" + obj.series.color + "'>" + view + "%</span>");
   });
+  //采用echarts来画
+//  require(
+//    [
+//     'echarts',
+//     'echarts/chart/pie'
+//    ],
+//    function (ec) {
+//      //获取案件分布地图对象
+//      var pie = ec.init(jQobj[0]);
+//      option = {
+//        title : {
+//          text: title,
+//          x:'left'
+//        },
+//        tooltip : {
+//          trigger: 'item',
+//          formatter: function(params){
+//            //"{a} <br/>{b} : {c} ({d}%)"
+//            var view = decorateView;
+//            if (_ary!=null&&_ary!="") {
+//              var dataIndex = params.dataIndex;
+//              var rowData = pie_dataBody[dataIndex];
+//              for (var j=0;j<_ary.length;j++) {
+//                var _obj = _ary[j];
+//                var col = _obj._col;
+//                var val = rowData[col];
+//                if (val) {
+//                  view = view.replace(_obj.col,val);
+//                } else {
+//                  if (col.indexOf("percent(")!=-1) {
+//                    col = col.substring(col.indexOf("(")+1,col.indexOf(")"));
+//                    val = rowData[col];
+//                    var sum = getSum(pie_dataBody,col);
+//                    var percent = getPercent(val,sum,null);
+//                    view = view.replace(_obj.col,percent+"%");
+//                  }
+//                }
+//              }
+//            }
+//            return view;
+//          }
+//        },
+//        legend: {
+//          orient : 'vertical',
+//          x : 'right',
+//          data:legendData
+//        },
+//        calculable : true,
+//        series : [
+//          {
+//            name:desc,
+//            type:'pie',
+//            radius : '55%',
+//            center: ['50%', '60%'],
+//            data:dataAry
+//          }
+//        ]
+//      };
+//      pie.setOption(option);
+//    }
+//  );
 }
 
 /**
@@ -815,7 +952,8 @@ function drawTable (jQobj,_DATA) {//由于修改了getPrposMapAry方法，所有
  */
 function drawValue (jQobj,_DATA) {
   var value = jQobj.attr('value');
-  eval("var _data=_DATA."+value);
+  var _value =str2Json(value);
+  eval("var _data=_DATA."+_value);
   jQobj.html(_data);
 }
 
@@ -1019,16 +1157,20 @@ function getDataByShowDemand(dViewBegin,dViewEnd,showData) {
 }
 
 /**
- * 把decorateView中的"^"和"~"转换成相应的单引号和双引号
- * 然后返回一个json对象
+ * 把report中的"^"和"~"转换成相应的单引号和双引号
+ * 然后返回一个json对象,如果eval转换失败，则直接返回
  * @param jsonStr 需要处理的字符串
  * @returns jsonObj
  */
 function str2Json(jsonStr){
   jsonStr = jsonStr.replace(/\^/g,"\"");
   jsonStr = jsonStr.replace(/\~/g,"\'");
-  var jsonObj = str2JsonObj(jsonStr);
-  return jsonObj;
+  try{
+    var jsonObj = str2JsonObj(jsonStr);
+    return jsonObj;
+  }catch (e) {
+    return jsonStr;
+  }
 }
 
 /**
@@ -1135,7 +1277,6 @@ function sort(sortType, data, sortCol, limit) {
 
 /**
  * 去除str中的空格
- * exp:带空格的字符串
  */
 function removeSpace(str){
   if(str) {

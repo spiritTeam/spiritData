@@ -27,6 +27,9 @@
           "name":"2、单项指标分析",
           "content":
             "
+            showType:value value中带有^ <d did='1' showType='value' value='excelMdmArray[1].sheetInfo[^45asd3ed^]' />
+             showType:value value中带有~  <d did='1' showType='value' value='excelMdmArray[1].sheetInfo[~45as88d~]' />
+             <br/>
              showType:radar <d did='0' showType='radar' param='{^xAxis^:^category^ , ^yAxis^:^num^ , ^max^:^100^}' value='quotas[0]' decorateView='#num#'/>
              showType:bar <d did='0' showType='bar' param='{^xAxis^:^category^, ^yAxis^:^num^}' value='quotas[0]' decorateView='#category#, #percent(num)#' />
              showType:map_pts <d did='0' showType='map_pts' param='{^X^:^coordX^, ^Y^:^coordY^ ,^Z^:^coordZ^,^mapType^:^BAIDU^}' value='quotas[2]' 
