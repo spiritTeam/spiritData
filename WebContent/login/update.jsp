@@ -89,7 +89,7 @@
       <td class="inputTd" >
         <div class="alertInput-vCode" style="margin-top:1px;">
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="6" type="text" onBlur="validateCheckCode();"/></div>
-          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refresh('<%=path%>');" src=""></div>
+          <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refreshCCImg('<%=path%>');" src=""></div>
           <div class="alertImg"></div>
           <div class="maskTitle">按右图输入验证码</div>
         </div>
@@ -123,7 +123,7 @@ $(function() {
 
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100);//初始化maskTitle
-  refresh('<%=path%>');
+  refreshCCImg('<%=path%>');
 });
 //=以下初始化设置=============================================
 // 初始化页面全局参数
@@ -294,7 +294,8 @@ function commit(){
            mainPage.$.messager.alert('修改提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
          }else{
            $.messager.alert('修改提示',json.retInfo,'info');
-           window.location.href = "<%=path%>/asIndex.jsp";
+           //window.location.href = "<%=path%>/asIndex.jsp";
+           window.location.href = _MAIN_PAGE;
          }
        }else{
          if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info');

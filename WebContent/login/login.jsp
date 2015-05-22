@@ -27,6 +27,7 @@
 </form>
 <script>
 //var service = locator.ConnectServer();
+var ignoreCheckCode = "ignoreCheckCode";
 var MACAddr;
 var IPAddr;
 var DomainAddr;
@@ -71,7 +72,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <td class="labelTd">账　号</td>
       <td class="inputTd">
         <div class="alertInput-Text">
-          <input class="alertInputComp" id="loginName" name="loginName" tabindex="1" type="text" onBlur="validateLoginName();"/>
+          <input class="alertInputComp" id="loginName" name="loginName" value="root" tabindex="1" type="text" onBlur="validateLoginName();"/>
           <div class="maskTitle">请输入您的账号</div>
           <div class="alertImg"></div>
         </div>
@@ -81,7 +82,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <td class="labelTd">密　码</td>
       <td class="inputTd">
         <div class="alertInput-Text">
-          <input id="password" class="alertInputComp" name="password" tabindex="2" type="password" onBlur="validatePassword();"/>
+          <input id="password" class="alertInputComp" name="password" value="root" tabindex="2" type="password" onBlur="validatePassword();"/>
           <div class="alertImg"></div>
           <div class="maskTitle">请输入密码</div>
         </div>
@@ -182,6 +183,10 @@ function validateCheckCode(){
   }else{
     $("#checkCode").parent().parent().find(".alertImg").hide();
     vdInfoAry[2] = "验证码为必填项";
+    //用于测试，等正式上线后需去掉！！！
+    if(typeof(ignoreCheckCode)!="undefined" && ignoreCheckCode=="ignoreCheckCode"){
+    	vdInfoAry[2] = "";
+    }
   }
   ma = getMainAlert($("#checkCode"));
   ma.find(".alertImg").attr("title", vdInfoAry[2]);
@@ -311,12 +316,15 @@ function login(pData){
         if(activeType==2){
           if(mainPage) {
             mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
+            	if(mainPage.location.href.indexOf(_MAIN_PAGE)==-1){
+                mainPage.location.href = _MAIN_PAGE;
+            	}
               mainPage.setLogined(pData.loginName);
               closeSWinInMain(winId);
             });
           }else{
             $.messager.alert("登陆信息","登陆成功！",'info');
-            window.location.href = "<%=path%>/asIndex.jsp";
+            window.location.href = _MAIN_PAGE;
           }
         }
       } else if(json.type==2){

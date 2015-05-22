@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spiritdata.dataanal.analApp.report.pojo.ReportViewPo;
 import com.spiritdata.dataanal.analApp.report.service.ReportViewService;
+import com.spiritdata.dataanal.analApp.util.ViewControllerUtil;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.framework.util.DateUtils;
@@ -58,11 +59,7 @@ public class ReportViewController {
 			if(endTime!=null){
 				paramMap.put("endTime", endTime);
 			}
-			Owner owner = SessionUtils.getOwner(req.getSession());
-			String ownerId = owner.getOwnerId();
-			//paramMap.put("ownerId", ownerId);
-			int ownerType = owner.getOwnerType();
-			//paramMap.put("ownerType", new Integer(ownerType));
+			ViewControllerUtil.setSearchOwnerInfo(req, paramMap);
 			
 			List<ReportViewPo> dataList = reportViewService.searchReportList(paramMap);
 			int count = dataList!=null?dataList.size():0;

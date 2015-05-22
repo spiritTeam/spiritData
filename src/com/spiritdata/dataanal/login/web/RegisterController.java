@@ -36,6 +36,7 @@ import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
  */
 @Controller
 public class RegisterController {
+	private String mainPage = "/mainAnalApp.jsp";
     /**
      * 发送重设密码的验证邮件
      */
@@ -215,11 +216,12 @@ public class RegisterController {
             } else {
                 if (user.getValidataSequence().equals(code)) {
                     try {
+                        String deployName = request.getContextPath();
                         //在重定向的基础上修改为转发
                         String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
                         request.setAttribute("action", "1");
                         request.setAttribute("actionUrl", actionUrl);
-                        request.getRequestDispatcher("../asIndex.jsp").forward(request, response);
+                        request.getRequestDispatcher(deployName+mainPage).forward(request, response);
                         return null;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -360,7 +362,7 @@ public class RegisterController {
                     try {
                         String deployName = request.getContextPath();
                         //uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
-                        String redirectUrl = deployName+"/asIndex.jsp?activeSuccess=true";
+                        String redirectUrl = deployName+mainPage+"?activeSuccess=true";
                         response.sendRedirect(redirectUrl);
                         //在重定向的基础上修改为转发
                     } catch (IOException e) {
