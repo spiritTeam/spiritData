@@ -3,6 +3,7 @@ package com.spiritdata.dataanal.visitmanage.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import com.spiritdata.dataanal.visitmanage.persistence.pojo.VisitPo;
@@ -16,6 +17,11 @@ public class VisitLogService {
     @Resource(name="defaultDAO")
     private MybatisDAO<VisitPo> visitDao; //任务组
 
+    @PostConstruct
+    public void initParam() {
+    	visitDao.setNamespace("visitLog");
+    }
+    
     /**
      * 调整所有者Id。登录成功后，切换所有者时所调用的方法
      * @param oldOwnerId 旧所有者Id，目前是SessionId
