@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.common.model.Owner;
-import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.dataanal.visitmanage.persistence.pojo.VisitPo;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;

@@ -28,7 +28,6 @@ public class DataanalCLU extends AbstractCacheLifecycleUnit {
      * 装载未访问列表到内存
      */
     private void loadNoVisitList() {
-        System.out.println("testAABBCCDD");
         Map<String, Map<Owner, List<?>>> ownersNoVisitData = new ConcurrentHashMap<String, Map<Owner, List<?>>>();
         //未访问的报告
         Map<Owner, List<?>> reportData = new ConcurrentHashMap<Owner, List<?>>();
