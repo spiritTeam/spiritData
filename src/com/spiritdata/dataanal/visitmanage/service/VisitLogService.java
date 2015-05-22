@@ -37,10 +37,19 @@ public class VisitLogService {
         //修改内存中的用户所属
         Owner o = new Owner(2, oldOwnerId);
         Map<String, Map<Owner, List<?>>> m = (Map<String, Map<Owner, List<?>>>)SystemCache.getCache(SDConstants.CACHE_NOVISIT);
-        Map<Owner, List<?>> cacheData = m.get("reportData");
-        List<?> noVisitReportL = cacheData.get(o);
-        if (noVisitReportL!=null) {
+        if (m==null) {
             
+        }
+        //若有其他类型的未访问对象，则需要在这里加入新的内容
+        //1-未访问报告方法（若有其他未访问，可照此办理）
+        Map<Owner, List<?>> cacheData = m.get("reportData");
+        if (cacheData==null) {
+            
+        }
+        List<?> noVisitReportL = cacheData.remove(o);
+        if (noVisitReportL!=null) {
+            Owner no = new Owner(1, newOwnerId);
+            cacheData.put(no, noVisitReportL);
         }
         return true;
     }
