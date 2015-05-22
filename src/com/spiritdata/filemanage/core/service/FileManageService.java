@@ -258,4 +258,15 @@ public class FileManageService {
         }
         return true;
     }
+
+    /**
+     * 根据文件Id，得到文件序列化对象
+     * @param id 文件Id
+     * @return 文件序列化对象
+     */
+    public FileIndexPo getFileIndexPoById(String id) {
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("id", id);
+        return fileIndexDao.getInfoObject(param);
+    }
 }
