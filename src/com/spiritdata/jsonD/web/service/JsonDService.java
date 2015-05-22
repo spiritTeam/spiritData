@@ -40,6 +40,7 @@ public class JsonDService {
         if (StringUtils.isNullOrEmptyOrSpace(jsonDId)) throw new JsonD1001CException("所给jsonDId参数为空，无法获取数据！");
         Map<String, Object> retM = new HashMap<String, Object>();
         //先从内存中取
+        //TODO 这段代码使得jsonD不独立了，很别扭
         TaskMemoryService tms = TaskMemoryService.getInstance();
         retM = tms.getTaskStatus(jsonDId);
         String _status = retM.get("status")+"";

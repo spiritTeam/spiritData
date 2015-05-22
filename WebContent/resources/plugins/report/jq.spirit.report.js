@@ -123,7 +123,7 @@ function resolveAndDraw(){
  * 从而进一步解析。
  * @param domAry根据jsonDid分组后的dom数组
  */
-function retrievalJsonDJson () {
+function retrievalJsonDJson () {console.info("trxt");
   //已经得到的jsond个数
   if (monitor._getJsonDIdAry!=null&&monitor._getJsonDIdAry.length>0) {
     _jsonDSize = monitor._getJsonDIdAry.length;
@@ -133,12 +133,12 @@ function retrievalJsonDJson () {
       var jsonDInfo = jsonDInfoArray[i];
       //已经显示过的dId
       var shownIdAry = monitor._alreadyShownId;
-      if (shownIdAry.toString().indexOf(jsonDInfo.id)==-1) {
+      if (shownIdAry.toString().indexOf(jsonDInfo.dId)==-1) {
         //起setInterval,检查d元素是否到位
         if (jsonDInfo.json!=null&&jsonDInfo.json!="") {
           for (var k=0;k<domAry.length;k++) {
             var _domAry = domAry[k];
-            if (jsonDInfo.id == $(_domAry[0]).attr('_did')) {
+            if (jsonDInfo.dId == $(_domAry[0]).attr('_did')) {
               //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
               for (var j=0;j<_domAry.length;j++) {
                 var _DATA = jsonDInfo.json._DATA;
@@ -146,7 +146,7 @@ function retrievalJsonDJson () {
               }
             }
             var _alreadyShownIdStr = monitor._alreadyShownId.toString();
-            if (_alreadyShownIdStr.indexOf(jsonDInfo.id)==-1) monitor._alreadyShownId.push(jsonDInfo.id);
+            if (_alreadyShownIdStr.indexOf(jsonDInfo.dId)==-1) monitor._alreadyShownId.push(jsonDInfo.dId);
           }
         }
       }
@@ -1561,9 +1561,13 @@ function resolveDLIST(_DLIST){
   for (var i=0;i<_DLIST.length;i++) {
     //jsonDInfo 囊括了jsonD的信息
     var jsonDInfo = new Object();
-    jsonDInfo.id = _DLIST[i].jsonDId;
-    jsonDIdAry[i] = jsonDInfo.id;
-    jsonDInfo.url =  _DLIST[i].url;
+    //dId,对应数据中的dId，用于关联数据
+    jsonDInfo.dId = _DLIST[i]._id;
+    //jsonDid,jsonD的id，用于查找jsonD文件的参数
+    jsonDInfo.jsonDId = _DLIST[i].jsonDId;
+    jsonDIdAry[i] = jsonDInfo.dId;
+    //jsonDuri
+    jsonDInfo.url =  _DLIST[i]._url;
     //jsonD_code有时有，有时没有，负值的时候判断下
     if (_DLIST[i]._jsonD_code!=""&&_DLIST[i]._jsonD_code!=null) jsonDInfo.jsonD_code = _DLIST[i]._jsonD_code;
     else jsonDInfo.jsonD_code = "";
@@ -1583,19 +1587,19 @@ function getJsonDJson() {
     //当已存数组中不包含该id，并且找到对应的jsoDinfo时，进行获取数据
     var jsonDInfo = jsonDInfoArray[k];
     if (jsonDInfo.json) continue;
-    var dId = jsonDInfo.id;
+    var dId = jsonDInfo.dId;
     if(monitor._getJsonDIdAry.indexOf(dId)==-1){
       //处理rul
       var _url;
-      if ((jsonDInfo.url).indexOf("/")!=-1) _url = deployName+"/"+jsonDInfo.url;
+      if ((jsonDInfo.url).indexOf("/")!=0) _url = deployName+"/"+jsonDInfo.url;
       else _url = deployName+jsonDInfo.url;
       //uri
-      var pData = {'uri':jsonDInfo.url};
+      var pData = {'jsonDId':jsonDInfo.jsonDId};
       //ajax
       try{
         //拼接_getJsonDIdAry
-        if (monitor._getJsonDIdAry=="") monitor._getJsonDIdAry = jsonDInfo.id;
-        else monitor._getJsonDIdAry = monitor._getJsonDIdAry+","+jsonDInfo.id;
+        if (monitor._getJsonDIdAry=="") monitor._getJsonDIdAry = jsonDInfo.dId+"";
+        else monitor._getJsonDIdAry = monitor._getJsonDIdAry+","+jsonDInfo.dId;
         getDataByAjax(pData,_url,dId);
       }catch(e){
         alert("ajax获取数据失败！");
@@ -1613,7 +1617,8 @@ function  getDataByAjax(pData,_url,dId){
       if(jsonDObj.jsonType==1){
         for (var v=0;v<jsonDInfoArray.length;v++) {
           if (jsonDInfoArray[v].id==dId) {
-            jsonDInfoArray[v].json = jsonDObj.data;
+            var jsonDjson = str2JsonObj(jsonDObj.data);
+            jsonDInfoArray[v].json = jsonDjson;
           }
         }
       }else if(jsonDObj.jsonType==0){

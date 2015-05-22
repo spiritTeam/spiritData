@@ -1,11 +1,16 @@
 package com.spiritdata.dataanal.visitmanage.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.spiritdata.dataanal.SDConstants;
+import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.dataanal.visitmanage.persistence.pojo.VisitPo;
+import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 
 /**
@@ -30,6 +35,15 @@ public class VisitLogService {
         param.put("newOwnerId", newOwnerId);
         visitDao.execute("changeOwner", param);
         //修改内存中的用户所属
+        Owner o = new Owner(2, oldOwnerId);
+        Map<String, Map<Owner, List<?>>> m = (Map<String, Map<Owner, List<?>>>)SystemCache.getCache(SDConstants.CACHE_NOVISIT);
+        Map<Owner, List<?>> cacheData = m.get("reportData");
+        List<?> noVisitReportL = cacheData.get(o);
+        if (noVisitReportL!=null) {
+            
+        }
         return true;
     }
+
+    
 }

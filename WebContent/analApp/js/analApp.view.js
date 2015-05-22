@@ -30,7 +30,8 @@ function showReport(reportId,unRead) {
   //alert("showReport() reportId="+reportId+" , unRead="+unRead);
   //弹出窗口显示报告详情
   var winOption={
-    url:_urlPath+"/demo/Rd/resultRdEchart.jsp",
+    //url:_urlPath+"/demo/Rd/resultRdEchart.jsp",
+    url:_urlPath+"/report/showReport.jsp?reportId="+reportId+"",
     title:"报告详情",
     height:600,
     width:1000,

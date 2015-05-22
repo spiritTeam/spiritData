@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- WEB应用配置，目前主要是针对analApp -->
+<configuration>
+  <!-- 类别名设置 -->
+  <typeAliases>
+    <!-- 文件查询 -->
+    <typeAlias alias="FileView" type="com.spiritdata.dataanal.analApp.file.pojo.FileViewPo"/>    
+    <!-- 报告查询 -->
+    <typeAlias alias="ReportView" type="com.spiritdata.dataanal.analApp.report.pojo.ReportViewPo"/>
+    <!-- 通用查询 -->
+    <typeAlias alias="QueryView" type="com.spiritdata.dataanal.analApp.query.pojo.QueryViewPo"/>
+  </typeAliases>
+  
+  <mappers>
+    <!-- 文件查询 -->
+    <mapper resource="com/spiritdata/dataanal/analApp/file/sql/FileView.mapper.xml"/>    
+    <!-- 报告查询 -->
+    <mapper resource="com/spiritdata/dataanal/analApp/report/sql/ReportView.mapper.xml"/> 
+    <!-- 通用查询 -->
+    <mapper resource="com/spiritdata/dataanal/analApp/query/sql/QueryView.mapper.xml"/>
+  </mappers>
+</configuration>
