@@ -30,6 +30,7 @@ public class JsonDController {
         if (jsonDId!=null) {
             try {
                 ret = jsonDService.getJsonDById(jsonDId);
+                if (ret!=null) return ret;
             } catch(Exception e) {
                 ret.put("jsonType", 0);
                 ret.put("message", e.getMessage());
@@ -39,6 +40,7 @@ public class JsonDController {
         if (uri!=null) {
             try {
                 ret = jsonDService.getJsonDByUri(uri);
+                if (ret!=null) return ret;
             } catch(Exception e) {
                 ret.put("jsonType", 0);
                 ret.put("message", e.getMessage());

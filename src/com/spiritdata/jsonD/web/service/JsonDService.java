@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
+import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.CacheEle;
 import com.spiritdata.framework.core.cache.SystemCache;
@@ -28,7 +29,7 @@ import com.spiritdata.jsonD.exceptionC.JsonD1001CException;
 
 public class JsonDService {
     @Resource
-    private AnalResultFileService arfService;
+    private FileManageService fmService;
 
     /**
      * 根据jsonD实例的Id(就是对应的文件的Id)，得到jsonD串
@@ -44,11 +45,8 @@ public class JsonDService {
         String _status = retM.get("status")+"";
         if (_status.equals("3")||_status.equals("-1")) { //执行成功或不在内存，则从文件中读取
             //再从数据库和文件系统中取
-            Map<String, Object> m = new HashMap<String, Object>();
-            m.put("id", jsonDId);
-            List<FileIndexPo> afl = arfService.getAnalFiles(m);
-            if (afl==null||afl.size()==0) throw new JsonD1001CException("没有找到Id为["+jsonDId+"]的的JsonD数据！");
-            FileIndexPo fip = afl.get(0);
+            FileIndexPo fip = fmService.getFileIndexPoById(jsonDId);
+            if (fip==null) throw new JsonD1001CException("没有找到Id为["+jsonDId+"]的的JsonD数据！");
             String fileUri = FileNameUtils.concatPath(fip.getPath(), fip.getFileName());
             return this.getJsonDByUri(fileUri);
         } else {
