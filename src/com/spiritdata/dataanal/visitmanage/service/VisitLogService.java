@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import com.spiritdata.dataanal.SDConstants;
+import com.spiritdata.dataanal.cache.DataanalCLU;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.visitmanage.persistence.pojo.VisitLogPo;
 import com.spiritdata.framework.core.cache.SystemCache;
@@ -23,6 +24,9 @@ public class VisitLogService {
 
     @Resource
     private ReportVisitService rvService;
+
+    @Resource
+    private DataanalCLU cacheDataAnalManage;
 
     @PostConstruct
     public void initParam() {
@@ -46,7 +50,7 @@ public class VisitLogService {
         Owner o = new Owner(2, oldOwnerId);
         Map<String, Map<Owner, List<?>>> m = (Map<String, Map<Owner, List<?>>>)SystemCache.getCache(SDConstants.CACHE_NOVISIT);
         if (m==null) {
-            
+            cacheDataAnalManage.init();
         }
         //若有其他类型的未访问对象，则需要在这里加入新的内容
         //1-未访问报告方法（若有其他未访问，可照此办理）
