@@ -94,11 +94,34 @@ public class GetMDInfos implements TaskProcess {
         Map<String, Object> tableM = new HashMap<String, Object>();
         tableM.put("mdTitle", flag?(mm.getTitleName()+"("+mm.getId()+")"):mm.getId()+"的元数据信息");
         //title
-        String titleStr = "[{\"titleName\":\"元数据名称\"},{\"columnType\":\"元数据类型\"},{\"columnName\":\"列名称\"},"
-            +"{\"semanteme\":\"元数据语义\"},{\"columnIndex\":\"顺序号\"}, {\"range\":\"范围\"}, {\"compressRate\":\"压缩率\"}, {\"sparseRate\":\"稀疏率\"}}]";
-        tableM.put("titles", titleStr);
-        List<Map<String, String>> dataList = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> titleL = new ArrayList<Map<String, String>>();
+        Map<String, String> oneTitle = new HashMap<String, String>();
+        oneTitle.put("titleName", "元数据名称");
+        titleL.add(oneTitle);
+        oneTitle = new HashMap<String, String>();
+        oneTitle.put("columnType", "元数据类型");
+        titleL.add(oneTitle);
+        oneTitle = new HashMap<String, String>();
+        oneTitle.put("columnName", "列名称");
+        titleL.add(oneTitle);
+        oneTitle = new HashMap<String, String>();
+        oneTitle.put("semanteme", "元数据语义");
+        titleL.add(oneTitle);
+        oneTitle = new HashMap<String, String>();
+        oneTitle.put("columnIndex", "顺序号");
+        titleL.add(oneTitle);
+        oneTitle = new HashMap<String, String>();
+        oneTitle.put("range", "范围");
+        titleL.add(oneTitle);
+        oneTitle = new HashMap<String, String>();
+        oneTitle.put("compressRate", "压缩率");
+        titleL.add(oneTitle);
+        oneTitle = new HashMap<String, String>();
+        oneTitle.put("sparseRate", "稀疏率");
+        titleL.add(oneTitle);
+        tableM.put("titles", titleL);
         //dataList
+        List<Map<String, String>> dataList = new ArrayList<Map<String, String>>();
         tableM.put("dataList", dataList);
         for (MetadataColumn mc: mm.getColumnList()) {
             Map<String, String> rowM = new HashMap<String, String>();

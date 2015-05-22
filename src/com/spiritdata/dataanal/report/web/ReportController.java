@@ -29,6 +29,7 @@ public class ReportController {
         if (reportId!=null) {
             try {
                 ret=reportService.getReportJsonById(reportId);
+                if (ret!=null) return ret;
             } catch(Exception e) {
                 ret.put("jsonType", 0);
                 ret.put("message", e.getMessage());
@@ -38,6 +39,7 @@ public class ReportController {
         if (uri!=null) {
             try {
                 ret=reportService.getReportJsonByUri(uri);
+                if (ret!=null) return ret;
             } catch(Exception e) {
                 ret.put("jsonType", 0);
                 ret.put("message", e.getMessage());

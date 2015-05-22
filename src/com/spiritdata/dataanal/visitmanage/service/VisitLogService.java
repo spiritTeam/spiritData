@@ -1,12 +1,17 @@
 package com.spiritdata.dataanal.visitmanage.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import com.spiritdata.dataanal.SDConstants;
+import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.dataanal.visitmanage.persistence.pojo.VisitPo;
+import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 
 /**
@@ -36,6 +41,24 @@ public class VisitLogService {
         param.put("newOwnerId", newOwnerId);
         visitDao.execute("changeOwner", param);
         //修改内存中的用户所属
+        Owner o = new Owner(2, oldOwnerId);
+        Map<String, Map<Owner, List<?>>> m = (Map<String, Map<Owner, List<?>>>)SystemCache.getCache(SDConstants.CACHE_NOVISIT);
+        if (m==null) {
+            
+        }
+        //若有其他类型的未访问对象，则需要在这里加入新的内容
+        //1-未访问报告方法（若有其他未访问，可照此办理）
+        Map<Owner, List<?>> cacheData = m.get("reportData");
+        if (cacheData==null) {
+            
+        }
+        List<?> noVisitReportL = cacheData.remove(o);
+        if (noVisitReportL!=null) {
+            Owner no = new Owner(1, newOwnerId);
+            cacheData.put(no, noVisitReportL);
+        }
         return true;
     }
+
+    
 }
