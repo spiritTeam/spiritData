@@ -86,7 +86,7 @@
       <param-name>ingores</param-name>
   <!--
       <param-value>jump.jsp,login.jsp,login.do,hasNewLogin.jsp,noLogin.jsp,login,logout.do,asIndex.jsp,fileUpLoad.do,templet,jsonD,test,plugins,images,checkCodeImges,getReport.do,/demo,report</param-value>
-  -->
+   -->
       <param-value>/, \\</param-value>
     </init-param>
     <init-param>
