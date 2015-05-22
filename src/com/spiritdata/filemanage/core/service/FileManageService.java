@@ -48,7 +48,6 @@ public class FileManageService {
             //文件映射表
             FileIndexPo fiPo = fi.convert2Po();
             fi.setId(fiPo.getId());
-            //TODO 还要判断是否已经存在！！！！
             try {
                 fileIndexDao.insert(fiPo);
             } catch(Exception e) {
@@ -116,11 +115,24 @@ public class FileManageService {
      */
     public void saveFileRelation(FileRelation fr) {
         try {
-            //TODO 还要判断是否已经存在！！！！
-            fileRelationDao.insert(fr.convert2Po());
+            FileRelationPo frPo = fr.convert2Po();
+            if (!existRelation(frPo)) fileRelationDao.insert(frPo);
         } catch(Exception e) {
             throw new Flmg0101CException("存储文件关系", e);
         }
+    }
+
+    /**
+     * 是否此关系已经存在
+     * @param fr 文件关系
+     * @return
+     */
+    public boolean existRelation(FileRelationPo frPo) {
+        int c = fileRelationDao.getCount("findFileRel", frPo);
+        return c>0;
+    }
+    public boolean existRelation(FileRelation fr) {
+        return existRelation(fr.convert2Po());
     }
 
     /**
