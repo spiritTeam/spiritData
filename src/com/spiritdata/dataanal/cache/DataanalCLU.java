@@ -21,7 +21,7 @@ public class DataanalCLU extends AbstractCacheLifecycleUnit {
      * 装载未访问列表到内存
      */
     private void loadNoVisitList() {
-        // TODO Auto-generated method stub
+        System.out.println("testAABBCCDD");
         
     }
 }
