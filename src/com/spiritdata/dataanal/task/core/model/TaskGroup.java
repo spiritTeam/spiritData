@@ -68,10 +68,10 @@ public class TaskGroup implements Serializable, ModelSwapPo {
     public StatusType getStatus() {
         return status;
     }
-    public int getSubbCount() {
+    public int getSubCount() {
         return subCount;
     }
-    public void setSubbCount(int subCount) {
+    public void setSubCount(int subCount) {
         this.subCount = subCount;
     }
     public int getDefaultExecuteCountLimit() {

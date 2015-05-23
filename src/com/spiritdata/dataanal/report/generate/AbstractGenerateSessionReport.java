@@ -13,7 +13,6 @@ import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.service.ReportService;
 import com.spiritdata.dataanal.task.core.model.TaskGroup;
 import com.spiritdata.dataanal.task.core.service.TaskManageService;
-import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
@@ -108,10 +107,17 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         fmService.saveFileRelation(fr);//文件关联存储
 
         //3-任务处理，存储，包括持久化和内存，存入内存的数据，任务框架会自动执行
-        TaskMemoryService tms = TaskMemoryService.getInstance();
-        tms.addTaskGroup(tg);//缓存存储
-        tmService.save(tg);//持久化存储
-
+        tmService.save(tg);//先保存数据库
+        /*！！为保证多线程的数据一致性，不能再这里插入缓存：：
+         * 1-若上面保存数据库后，下面写入缓存前，线程读取数据库中的内容，并正确执行，则下面的插入会造成再次执行，浪费资源
+         * 2-弱调换次序：先写内存/再写数据库，则有可能造成——任务执行成功后，无法更新数据库（因为这时还没有插入数据库）
+         * 3-这样可能会造成任务的执行不及时——若要执行，要先写入数据库/再读出/再执行（慢很多）
+         * ！[按照2处理可能是可行的，但还要详细研究考察，目前为快/不进行考查了]
+         */
+        //import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
+        //TaskMemoryService tms = TaskMemoryService.getInstance();
+        //tms.addTaskGroup(tg);//再保存到缓存存储
+ 
         return report.getId();
     }
  }

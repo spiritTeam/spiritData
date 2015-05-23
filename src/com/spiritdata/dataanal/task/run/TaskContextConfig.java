@@ -15,12 +15,11 @@ public class TaskContextConfig {
     //加载数据的间隔时间
     //private int LOAD_INTERVAL = 1*1000*10; //默认是10秒
     //private int LOAD_INTERVAL = 1*1000*1; //测试为1秒
-    private int LOAD_INTERVAL = 1*1000*10; //10秒，便于调试
+    private int LOADCLEAN_INTERVAL = 1*1000*10; //10秒，便于调试
 
     //任务分发到线程池过程的间隔时间
     private int DISPATCH_INTERVAL = 1*1000*1; //默认为1秒
-    //清除已完成任务的时间间隔
-    private int CLEAN_INTERVAL = 1*1000*1; //默认为1秒
+    //清除已完成任务的时间间隔 private int CLEAN_INTERVAL = 1*1000*1; //默认为1秒 删除了，没用了
 
     //每次清除任务组或任务信息的个数
     private int MEMORY_CLEANSIZE_TASK = (1<<4)-1; //2^4-1=15
@@ -45,11 +44,11 @@ public class TaskContextConfig {
         this.MEMORY_MAXSIZE_TASKINFO = MEMORY_MAXSIZE_TASKINFO;
     }
 
-    public int getLOAD_INTERVAL() {
-        return LOAD_INTERVAL;
+    public int getLOADCLEAN_INTERVAL() {
+        return LOADCLEAN_INTERVAL;
     }
-    public void setLOAD_INTERVAL(int LOAD_INTERVAL) {
-        this.LOAD_INTERVAL = LOAD_INTERVAL;
+    public void setLOADCLEAN_INTERVAL(int LOADCLEAN_INTERVAL) {
+        this.LOADCLEAN_INTERVAL = LOADCLEAN_INTERVAL;
     }
 
     public int getDISPATCH_INTERVAL() {
@@ -59,12 +58,12 @@ public class TaskContextConfig {
         this.DISPATCH_INTERVAL = DISPATCH_INTERVAL;
     }
 
-    public int getCLEAN_INTERVAL() {
-        return CLEAN_INTERVAL;
-    }
-    public void setCLEAN_INTERVAL(int CLEAN_INTERVAL) {
-        this.CLEAN_INTERVAL = CLEAN_INTERVAL;
-    }
+//    public int getCLEAN_INTERVAL() {
+//        return CLEAN_INTERVAL;
+//    }
+//    public void setCLEAN_INTERVAL(int CLEAN_INTERVAL) {
+//        this.CLEAN_INTERVAL = CLEAN_INTERVAL;
+//    }
 
     public int getMEMORY_CLEANSIZE_TASK() {
         return MEMORY_CLEANSIZE_TASK;

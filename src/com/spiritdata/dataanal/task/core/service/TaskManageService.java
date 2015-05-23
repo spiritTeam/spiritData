@@ -67,7 +67,7 @@ public class TaskManageService {
 
         int flag = -1;
         try {
-            //1-先存储数据库
+            tg.setSubCount(tg.getTaskInfoSize()); //设置所属子任务个数
             flag = taskGroupDao.insert(tg.convert2Po());
             if (flag==0) throw new Dtal0403CException("存储任务组信息(主表)到数据库失败，没有存储任何数据！");
             if (flag!=1) throw new Dtal0403CException("存储任务组信息(主表)到数据库失败，存入了多于1条的信息！");
@@ -87,7 +87,6 @@ public class TaskManageService {
                 }
             }
         } catch(Exception e) {
-            //删除
             try {
                 taskRelDao.delete("deleteByGroupId", tg.getId());
                 taskInfoDao.delete("deleteByGroupId", tg.getId());
