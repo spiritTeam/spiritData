@@ -23,10 +23,11 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.semanteme.SemantemeType;
 import com.spiritdata.dataanal.metadata.relation.service.MdBasisService;
+import com.spiritdata.dataanal.task.process.TaskProcess;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
 
-public class AnalSingleDict/* implements TaskProcess */{
+public class AnalSingleDict implements TaskProcess {
 
     /**
      * 单向指标项的分析，包括：

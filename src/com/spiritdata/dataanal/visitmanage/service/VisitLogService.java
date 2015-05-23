@@ -51,23 +51,26 @@ public class VisitLogService {
         Map<String, Map<Owner, List<?>>> m = (Map<String, Map<Owner, List<?>>>)SystemCache.getCache(SDConstants.CACHE_NOVISIT);
         if (m==null) {
             cacheDataAnalManage.init();
+            m = (Map<String, Map<Owner, List<?>>>)SystemCache.getCache(SDConstants.CACHE_NOVISIT);
         }
-        //若有其他类型的未访问对象，则需要在这里加入新的内容
-        //1-未访问报告方法（若有其他未访问，可照此办理）
-        Map<Owner, List<?>> cacheData = m.get("reportData");
-        if (cacheData==null) {
-            cacheData = rvService.getNoVisitData();
+        if (m!=null) {
+            //若有其他类型的未访问对象，则需要在这里加入新的内容
+            //1-未访问报告方法（若有其他未访问，可照此办理）
+            Map<Owner, List<?>> cacheData = m.get("reportData");
+            if (cacheData==null) {
+                cacheData = rvService.getNoVisitData();
+                if (cacheData!=null) {
+                    m.put("reportData", cacheData);
+                }
+            }
             if (cacheData!=null) {
-                m.put("reportData", cacheData);
-            }
-        }
-        if (cacheData!=null) {
-            List<?> noVisitReportL = cacheData.remove(o);
-            if (noVisitReportL!=null) {
-                Owner no = new Owner(1, newOwnerId);
-                cacheData.put(no, noVisitReportL);
-            }
-        }
+                List<?> noVisitReportL = cacheData.remove(o);
+                if (noVisitReportL!=null) {
+                    Owner no = new Owner(1, newOwnerId);
+                    cacheData.put(no, noVisitReportL);
+                }
+            } else return false;
+        } else return false;
         return true;
     }
 

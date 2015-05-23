@@ -13,16 +13,17 @@
     <result column="ownerId"   property="ownerId"   jdbcType="VARCHAR"/>
     <result column="workName"  property="workName"  jdbcType="VARCHAR"/>
     <result column="status"    property="status"    jdbcType="INTEGER"/>
+    <result column="subCount"  property="subCount"  jdbcType="INTEGER"/>
     <result column="descn"     property="desc"      jdbcType="VARCHAR"/>
     <result column="beginTime" property="beginTime" jdbcType="TIMESTAMP"/>
   </resultMap>
 
   <!-- 所有列 -->
   <sql id="Base_Column_List">
-    id, reportId, ownerType, ownerId, workName, status, descn, beginTime
+    id, reportId, ownerType, ownerId, workName, status, subCount, descn, beginTime
   </sql>
   <sql id="Base_Column_List_A">
-    a.id, a.reportId, a.ownerType, a.ownerId, a.workName, a.status, a.descn, a.beginTime
+    a.id, a.reportId, a.ownerType, a.ownerId, a.workName, a.status, a.subCount, a.descn, a.beginTime
   </sql>
 
   <!-- 条件子句 -->
@@ -35,6 +36,7 @@
         <if test="ownerId!=null"> and ownerId=#{ownerId,jdbcType=VARCHAR}</if>
         <if test="workName!=null"> and workName=#{workName,jdbcType=VARCHAR}</if>
         <if test="status!=null and status!=0"> and status=#{status,jdbcType=INTEGER}</if>
+        <if test="subCount!=null and subCount!=0"> and subCount=#{subCount,jdbcType=INTEGER}</if>
         <if test="desc!=null"> and descn=#{desc,jdbcType=VARCHAR}</if>
         <if test="beginTime!=null"> and beginTime=#{beginTime,jdbcType=TIMESTAMP}</if>
       </trim>
@@ -71,6 +73,7 @@
       <if test="ownerId!=null">ownerId,</if>
       <if test="workName!=null">workName,</if>
       <if test="status!=null and status!=0">status,</if>
+      <if test="subCount!=null and subCount!=0">subCount,</if>
       <if test="desc!=null">descn,</if>
       <if test="beginTime!=null">beginTime,</if>
     </trim>
@@ -81,6 +84,7 @@
       <if test="ownerId!=null">#{ownerId,jdbcType=VARCHAR},</if>
       <if test="workName!=null">#{workName,jdbcType=VARCHAR},</if>
       <if test="status!=null and status!=0">#{status,jdbcType=INTEGER},</if>
+      <if test="subCount!=null and subCount!=0">#{subCount,jdbcType=INTEGER},</if>
       <if test="desc!=null">#{desc,jdbcType=VARCHAR},</if>
       <if test="beginTime!=null">#{beginTime,jdbcType=TIMESTAMP},</if>
     </trim>
@@ -95,6 +99,7 @@
       <if test="ownerId!=null">ownerId=#{ownerId,jdbcType=VARCHAR},</if>
       <if test="workName!=null">workName=#{workName,jdbcType=VARCHAR},</if>
       <if test="status!=null and status!=0">status=#{status,jdbcType=INTEGER},</if>
+      <if test="subCount!=null and subCount!=0">subCount=#{subCount,jdbcType=INTEGER},</if>
       <if test="desc!=null">descn=#{desc,jdbcType=VARCHAR},</if>
       <if test="beginTime!=null">beginTime=#{beginTime,jdbcType=TIMESTAMP},</if>
     </set>

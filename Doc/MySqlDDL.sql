@@ -259,6 +259,7 @@ CREATE TABLE sa_task_group (
   ownerId     varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
   workName    varchar(100)               COMMENT '任务组名称',
   status      int(1) unsigned  NOT NULL  COMMENT '任务组状态1=准备执行；2=正在执行；3=任务失效；4=执行成功；5=执行失败',
+  subCount    varchar(100)               COMMENT '子任务个数，保证在并发环境下的数据一致性',
   descn       varchar(500)               COMMENT '任务组说明',
   beginTime   timestamp        NOT NULL  DEFAULT CURRENT_TIMESTAMP  COMMENT '任务组开始执行时间，就是创建时间',
   PRIMARY KEY (id)
