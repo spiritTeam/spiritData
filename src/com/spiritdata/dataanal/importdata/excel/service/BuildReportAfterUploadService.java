@@ -243,6 +243,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         mids = mids.substring(1);
         TaskInfo getMDInfos_Task = new TaskInfo();
         getMDInfos_Task.setId(SequenceUUID.getPureUUID());
+        tempStr = getMDInfos_Task.getId();
         getMDInfos_Task.setTaskName("获得元数据信息");
         getMDInfos_Task.setTaskType(SDConstants.ANAL_MD_GETINFO);
         getMDInfos_Task.setLangType(TaskLangType.JAVA);

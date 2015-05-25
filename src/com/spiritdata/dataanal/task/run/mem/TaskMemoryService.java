@@ -142,7 +142,7 @@ public class TaskMemoryService {
      * 先清理数据，再装载数据，这样能够保证数据的一致性
      */
     public void cleanANDloadData() {
-        log.info("[开始装载可执行任务到TaskMemory]"+(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSSS", Locale.CHINESE)).format(new Date()));
+        log.info("[清理任务缓存，并装载可执行任务到缓存]"+(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSSS", Locale.CHINESE)).format(new Date()));
         //这里需要用到Spring的容器
         ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();
         TaskManageService tmService = (TaskManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("taskManageService");
@@ -159,10 +159,11 @@ public class TaskMemoryService {
         int cleanLimitSize = tm.MEMORY_CLEANSIZE_TASK;
         int cleanTG_Count = 0;
         int cleanTI_Count = 0;
+        int cleanDO_Count = 0;
         //一.1 清理内存中的任务结构，注意要在这个过程中，增加已处理对象存储
         //一.1.1 清除任务组
-        boolean canClean = true;
         if (taskGroupMap!=null&&taskGroupMap.size()>0) {
+            boolean canClean = true;
             for (String tgId: taskGroupMap.keySet()) {
                 canClean = false;
                 tg = taskGroupMap.get(tgId);
@@ -170,14 +171,13 @@ public class TaskMemoryService {
                 if (tg.getStatus()==StatusType.SUCCESS||tg.getStatus()==StatusType.ABATE) canClean=true;
                 if (canClean) {
                     //写数据库
-                    if (tmService.updateTaskGroupStatus(tg)) {//更新成功
-                        //写已处理
-                        dealedObjMap.put("group::"+tg.getId(), new Date(System.currentTimeMillis()));
-                        //删除实际数据
-                        _removeTaskGroup(tgId);
-                        cleanLimitSize--;
-                        cleanTG_Count++;
-                    }
+                    tmService.updateTaskGroupStatus(tg);
+                    //写已处理
+                    dealedObjMap.put("group::"+tg.getId(), new Date(System.currentTimeMillis()));
+                    //删除实际数据
+                    _removeTaskGroup(tgId);
+                    cleanLimitSize--;
+                    cleanTG_Count++;
                 }
                 if (cleanLimitSize==0) break;
             }
@@ -197,9 +197,6 @@ public class TaskMemoryService {
                 }
             }
         }
-        if ((cleanTI_Count+cleanTG_Count)>0)
-        System.out.println("本次清除已完成的任务组["+cleanTG_Count+"]个、任务["+cleanTI_Count+"]个。");
-        
         //一.2 清理已处理对象存储
         if (dealedObjMap!=null&&dealedObjMap.size()>0) {
             List<String> _tempL = new ArrayList<String>();
@@ -213,9 +210,14 @@ public class TaskMemoryService {
             if (_tempL.size()>0) {
                 for (String _key: _tempL) {
                     dealedObjMap.remove(_key);
+                    cleanDO_Count++;
                 }
             }
         }
+        if ((cleanTI_Count+cleanTG_Count+cleanDO_Count)>0) {
+            log.info("本次清除已完成的任务组["+cleanTG_Count+"]个、任务["+cleanTI_Count+"]个、已处理对象["+cleanDO_Count+"]个。");
+        }
+
         //二、读取信息并装载数据
         //二.1 从数据库中读取数据
         //二.1.1 构造任务组结构，主表

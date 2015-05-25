@@ -174,10 +174,10 @@ public class TaskManageService {
      * 更新任务组状态
      * @param ti 任务组信息
      */
-    public boolean updateTaskGroupStatus(TaskGroup tg) {
+    public void updateTaskGroupStatus(TaskGroup tg) {
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("id", tg.getId());
         param.put("status", tg.getStatus().getValue());
-        return taskGroupDao.update(param)>0;
+        taskGroupDao.update(param);
     }
 }

@@ -32,7 +32,7 @@ public class DispatchTask extends Thread {
                     //读取可执行的任务
                     TaskInfo ti = tms.getNextCanProcessTaskInfo();
                     if (ti!=null) {
-                        TaskExecutorShell executor = new TaskExecutorShell(tms.getNextCanProcessTaskInfo());
+                        TaskExecutorShell executor = new TaskExecutorShell(ti);
                         TaskThreadPool.executeTask(executor);
                     }
                 }
