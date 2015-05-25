@@ -19,7 +19,7 @@
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css">
 <style>
-#fileIn {
+#fileIn {  
   position:absolute;
   width:650px;
   height:175px;
@@ -129,6 +129,9 @@
   left:473px;
   background-image:url(resources/images/uploadIcon.gif)
 }
+
+.div_center{margin:0 auto;text-align:center;}
+.div_inline{ display:inline} 
 </style>
 </head>
 
@@ -147,16 +150,21 @@
 <div id="footSegment"></div>
 
 <!-- 实际功能区中部 -->
-<div id="mainSegment" style="margin:0 auto;">
+<div id="mainSegment" class="div_center">
   <div id="fileIn">
     <div id="dayLogo"></div>
-    <div id="inForm"><form method="post" action="/sa/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">
-      <input id="upf" name="upf" type=file style="display:none;" onchange="showFileInfo()"/>
-      <div id="upIcon" onclick="upIcon_clk();"></div>
-      <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>
-      <input id="su" type="button" value="分析一下" onclick="uploadF();"/>
-    </form></div>
+    <div id="inForm">
+      <form method="post" action="/sa/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">        
+        <input id="upf" name="upf" type=file style="display:none;" onchange="showFileInfo()"/>        
+        <div>
+          <div id="upIcon" onclick="upIcon_clk();"></div>
+          <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>        
+          <input id="su" type="button" value="分析一下" onclick="uploadF();"/>
+        </div>
+      </form>
+    </div>
   </div>
+  
 <!-- 等待提示区 -->
   <div id="waittingArea">
     <div id="ppbar">
@@ -167,13 +175,97 @@
     </div>
   </div>
 </div>
+
 <iframe id="tframe" name="tframe" bordercolor=red frameborder="yes" border=1 width="600" height="200" style="width:600px;heigth:200px; boder:1px solid red;display:none;"></iframe>
 
 <script>
+
+
 //提示信息
 var _promptMessage="点击选择分析的文件";
 var analysizeing=false;
 var _suClicked=false;
+
+//主窗口参数
+var INIT_PARAM = {
+  //页面中所用到的元素的id，只用到三个Div，另，这三个div应在body层
+  pageObjs: {
+    topId: "topSegment", //头部Id
+    mainId: "mainSegment", //主体Id
+    footId: "footSegment" //尾部Id
+  },
+  page_width: 0,
+  page_height: 0,
+
+  top_height: 0, //顶部高度
+  top_peg: false,
+  top_shadow_color:"#1AE517",//颜色
+
+  foot_height: 0, //脚部高度
+  foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
+
+  win_min_width: -1, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分宽度也照此设置
+  win_min_height: -1, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分高度也照此设置
+  myInit: initPosition,
+  myResize: myResize
+};
+
+
+//主函数
+$(function() {	
+  var initStr = $.spiritPageFrame(INIT_PARAM);
+	if (initStr) {
+	  $.messager.alert("页面初始化失败", initStr, "error");
+	  return ;
+	};
+	
+  $("#upfs").val(_promptMessage);
+  $("#su").mouseover(function(){
+    if ($("#upfs").val()!=_promptMessage) {
+      $(this).attr("title", "");
+      $(this).css({"color":"yellow", "background-color":"#81FC6A"});
+    } else {
+      $(this).attr("title", "请先上传文件");
+    }
+  }).mouseout(function(){
+    $(this).css({"color":"white", "background-color":"#36B148"});
+  });
+  //buttonStyle();
+});
+
+//初始化界面
+function initPosition() {//注意，不要在此设置topSegment/mainSegment/footSegment等框架元素的宽高等，否则，页面不会自动进行调整
+//控制中心区域图片
+var left=(parseFloat($("#mainSegment").width())-parseFloat($("#fileIn").width()))/2;
+$("#fileIn").css({"left": left});
+left = (parseFloat($("#fileIn").width())-parseFloat($("#dayLogo").width()))/2;
+$("#dayLogo").css({"left": left});
+left = (parseFloat($("#fileIn").width())-parseFloat($("#inForm").width()))/2;
+$("#inForm").css({"left": left});
+//遮罩层
+//left = (parseFloat($("#mainSegment").width())-parseFloat($("#mask").width()))/2;
+//$("#mask").css({"left": left+2});
+//等待提示区
+left = (parseFloat($("#mainSegment").width())-parseFloat($("#waittingArea").width()))/2;
+$("#waittingArea").css({"left": left});
+};
+//当界面尺寸改变
+function myResize() {
+if (INIT_PARAM.page_width==0) {
+  //控制中心区域图片
+  var left=(parseFloat($("#mainSegment").width())-parseFloat($("#fileIn").width()))/2;
+  $("#fileIn").css({"left": left});
+  //遮罩层
+//  left = (parseFloat($("#mainSegment").width())-parseFloat($("#mask").width()))/2;
+//  $("#mask").css({"left": left+2});
+  //等待提示区
+  left = (parseFloat($("#mainSegment").width())-parseFloat($("#waittingArea").width()))/2;
+  $("#waittingArea").css({"left": left});
+}
+};
+
+
+
 //点击大的输入框
 function upfs_clk() {
   _suClicked=false;
@@ -213,21 +305,8 @@ function uploadF() {
     $.messager.alert("文件上传失败", e, "error");
   }
 }
-//主函数
-$(function() {
-  $("#upfs").val(_promptMessage);
-  $("#su").mouseover(function(){
-    if ($("#upfs").val()!=_promptMessage) {
-      $(this).attr("title", "");
-      $(this).css({"color":"yellow", "background-color":"#81FC6A"});
-    } else {
-      $(this).attr("title", "请先上传文件");
-    }
-  }).mouseout(function(){
-    $(this).css({"color":"white", "background-color":"#36B148"});
-  });
-  buttonStyle();
-});
+
+
 //demo
 function showDemo() {
   $("#pp").progressbar();
