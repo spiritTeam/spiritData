@@ -2,6 +2,7 @@ package com.spiritdata.dataanal.task.core.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Map;
 
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.task.core.enumeration.StatusType;
@@ -189,5 +190,33 @@ public class TaskGroup implements Serializable, ModelSwapPo {
         if (this.getTaskGraph()==null) return -1;
         if (this.getTaskGraph().getTaskMap()==null) return -1;
         return this.getTaskGraph().getTaskMap().size();
+    }
+
+    /**
+     * 根据子任务情况，调整任务组状态
+     */
+    public void adjustStatus() {
+        Map<String, TaskInfo> tiMap = this.getTaskGraph().getTaskMap();
+        if (tiMap!=null&&tiMap.size()>0) {
+            StatusType tg_status = StatusType.PREPARE; //先设置为执行成功
+            for (String tiId: tiMap.keySet()) {
+                StatusType _status = tiMap.get(tiId).getStatus();
+                if (_status==StatusType.PREPARE) continue;
+                if (_status==StatusType.WAITING||_status==StatusType.PROCESSING) {
+                    if (tg_status==StatusType.PREPARE) tg_status=StatusType.PROCESSING;
+                    break;
+                }
+                if (_status==StatusType.ABATE) {
+                    tg_status=_status;
+                    break;
+                }
+                if (_status==StatusType.FAILD) {
+                    tg_status=StatusType.FAILD;
+                } else  if (_status==StatusType.SUCCESS) {
+                    if (tg_status==StatusType.PREPARE) tg_status=StatusType.SUCCESS;
+                }
+            }
+            this.status=tg_status;
+        }
     }
 }

@@ -664,7 +664,7 @@ function drawBar(jQobj,_DATA){
   //添加滑动所需的框体并且绑定事件
   var hoverId = jQobj.attr('id')+'_hover';
   jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
-  jQobj.bind("plothover", function(event, pos, obj){
+  jQobj.bind("plothover", function(event, pos, obj){
     if (!obj) {
       return;
     }
@@ -752,7 +752,7 @@ function drawLine(jQobj,_DATA){
   //添加滑动所需的div框体并且绑定事件
   var hoverId = jQobj.attr('id')+'_hover';
   jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
-  jQobj.bind("plothover", function(event, pos, obj){
+  jQobj.bind("plothover", function(event, pos, obj){
     if (!obj) {
       return;
     }
@@ -841,7 +841,7 @@ function drawPie(jQobj,_DATA){
   //添加滑动所需的div框体并且绑定事件
   var hoverId = jQobj.attr('id')+'_hover';
   jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
-  jQobj.bind("plothover", function(event, pos, obj){
+  jQobj.bind("plothover", function(event, pos, obj){
     if (!obj) {
       return;
     }

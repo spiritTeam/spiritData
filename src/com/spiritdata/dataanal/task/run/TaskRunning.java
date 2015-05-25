@@ -5,7 +5,7 @@ import java.util.Timer;
 
 import com.spiritdata.dataanal.task.run.mem.TaskMemory;
 import com.spiritdata.dataanal.task.run.monitor.DispatchTask;
-import com.spiritdata.dataanal.task.run.monitor.LoadAndCleanTask;
+import com.spiritdata.dataanal.task.run.monitor.CleanAndLoadTask;
 
 /**
  * <p>任务执行的入口点，今后可以把它作为main函数处理，在新的jvm中启动，以提高效率。
@@ -31,7 +31,7 @@ public class TaskRunning extends Thread {
     //开启任务加载的轮询过程
     private void startLoadClean() {
         Timer loadAclean_TaskTimer = new Timer("load&cleanTaskTimer", true);
-        LoadAndCleanTask lt = new LoadAndCleanTask();
+        CleanAndLoadTask lt = new CleanAndLoadTask();
         loadAclean_TaskTimer.schedule(lt, new Date(), tcc.getLOADCLEAN_INTERVAL());
     }
 
@@ -70,6 +70,7 @@ public class TaskRunning extends Thread {
             System.out.println("  [环境参数]任务信息装载间隔毫秒数:"+this.tcc.getLOADCLEAN_INTERVAL());
             System.out.println("  [环境参数]任务监控分发间隔毫秒数:"+this.tcc.getDISPATCH_INTERVAL());
             //System.out.println("  [环境参数]清除完成任务间隔毫秒数:"+this.tcc.getCLEAN_INTERVAL());
+            System.out.println("  [环境参数]已处理的对象多长时间后才能被删除，毫秒数:"+this.tcc.getCLEANDEALEDOBJ_AFTERTIME());
             System.out.println("  [环境参数]每次清除任务或任务组信息的个数:"+this.tcc.getMEMORY_CLEANSIZE_TASK());
             System.out.println("  [环境参数]任务处理线程的初始化个数:"+this.tcc.getPROCESS_INITSIZE());
             System.out.println("  [环境参数]任务处理线程的最大个数:"+this.tcc.getPROCESS_MAXSIZE());
