@@ -32,7 +32,7 @@ public class VisitLogService {
     public void initParam() {
         visitLogDao.setNamespace("visitLog");
     }
-
+    
     /**
      * 调整所有者Id。登录成功后，切换所有者时所调用的方法
      * @param oldOwnerId 旧所有者Id，目前是SessionId
