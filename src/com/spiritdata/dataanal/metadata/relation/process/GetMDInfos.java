@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.ServletContext;
-
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal0404CException;
 import com.spiritdata.dataanal.metadata.relation.semanteme.SemantemeType;

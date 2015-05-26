@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 import com.spiritdata.framework.core.model.BaseObject;
 
-public class VisitPo extends BaseObject {
+public class VisitLogPo extends BaseObject {
     private static final long serialVersionUID = -5047650691581766045L;
 
     private String id; //任务组id
