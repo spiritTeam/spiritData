@@ -104,8 +104,9 @@ function generateReport(reportUrl) {
 function resolveAndDraw(){
   //根据jsonDIdAry中的id抓取dom
   for (var i=0;i<jsonDIdAry.length;i++) {
-    var attr = "_did="+jsonDIdAry[i];
+    var attr = "did="+jsonDIdAry[i];
     var _domAry = $('['+attr+']').toArray();
+    //alert("_domAry.length="+_domAry.length+" "+allFields(_domAry));
     domAry[i] = _domAry;
   }
   //JsonDSize>0说明是有数据需要请求的
@@ -124,6 +125,7 @@ function resolveAndDraw(){
  * @param domAry根据jsonDid分组后的dom数组
  */
 function retrievalJsonDJson () {console.info("trxt");
+  alert("retrievalJsonDJson(): monitor._getJsonDIds="+monitor._getJsonDIdAry);
   //已经得到的jsond个数
   if (monitor._getJsonDIdAry!=null&&monitor._getJsonDIdAry.length>0) {
     _jsonDSize = monitor._getJsonDIdAry.length;
@@ -135,13 +137,15 @@ function retrievalJsonDJson () {console.info("trxt");
       var shownIdAry = monitor._alreadyShownId;
       if (shownIdAry.toString().indexOf(jsonDInfo.dId)==-1) {
         //起setInterval,检查d元素是否到位
-        if (jsonDInfo.json!=null&&jsonDInfo.json!="") {
+        if (jsonDInfo.jsonData!=null&&jsonDInfo.jsonData!="") {
           for (var k=0;k<domAry.length;k++) {
             var _domAry = domAry[k];
-            if (jsonDInfo.dId == $(_domAry[0]).attr('_did')) {
+            //alert(allFields($(_domAry[0])));
+            alert($(_domAry[0]).attr('did'));
+            if (jsonDInfo.dId == $(_domAry[0]).attr('did')) {
               //相等，说明这个_domAry里面全是这个id的dom，然后进行解析，否则进入下个循环
               for (var j=0;j<_domAry.length;j++) {
-                var _DATA = jsonDInfo.json._DATA;
+                var _DATA = jsonDInfo.jsonData._DATA;
                 parseEle($(_domAry[j]),_DATA);
               }
             }
@@ -664,7 +668,7 @@ function drawBar(jQobj,_DATA){
   //添加滑动所需的框体并且绑定事件
   var hoverId = jQobj.attr('id')+'_hover';
   jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
-  jQobj.bind("plothover", function(event, pos, obj){
+  jQobj.bind("plothover", function(event, pos, obj){
     if (!obj) {
       return;
     }
@@ -752,7 +756,7 @@ function drawLine(jQobj,_DATA){
   //添加滑动所需的div框体并且绑定事件
   var hoverId = jQobj.attr('id')+'_hover';
   jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
-  jQobj.bind("plothover", function(event, pos, obj){
+  jQobj.bind("plothover", function(event, pos, obj){
     if (!obj) {
       return;
     }
@@ -841,7 +845,7 @@ function drawPie(jQobj,_DATA){
   //添加滑动所需的div框体并且绑定事件
   var hoverId = jQobj.attr('id')+'_hover';
   jQobj.append("<div id='"+hoverId+"' style='width:40px;height:20px;'></div>");
-  jQobj.bind("plothover", function(event, pos, obj){
+  jQobj.bind("plothover", function(event, pos, obj){
     if (!obj) {
       return;
     }
@@ -937,9 +941,10 @@ function drawPie(jQobj,_DATA){
  */
 function drawTable (jQobj,_DATA) {//由于修改了getPrposMapAry方法，所有drawTable也要修改
   var value = jQobj.attr('value');
+  value = replaceInnerKH(value);
   eval("var _data=_DATA."+value);
   //数据主体
-  var table_body = _data.tableData.tableBody;
+  var table_body = _data.tableData.dataList;
   //title
   var table_titles = _data.tableData.titles;
   //存储数据的数组
@@ -1189,6 +1194,12 @@ function str2Json(jsonStr){
   }
 }
 
+function replaceInnerKH(str) {
+	str = str.replace(/\^/g,"\"");
+	str = str.replace(/\~/g,"\'");
+	return str;
+}
+
 /**
  * 根据排序需求筛选数据
  * @param _data数据
@@ -1356,7 +1367,8 @@ function reportContentParse(matchAry,mismatchAry){
     
     //单个的标签 
     var matchStr = matchAry[i];
-    matchStr = matchStr.replace(/did/,"id='"+id+"' _did");
+    //matchStr = matchStr.replace(/did/,"id='"+id+"' _did");
+    //matchStr = matchStr.replace(/did/,"id='"+id+"'_did");
     //showType = text的时候用<span>来替换，其他的showType类型都用<div></div>来替换
     if (ele.attr('text')=="value"){
       //在细分为<d/>和<d></d>这两种情况
@@ -1586,7 +1598,7 @@ function getJsonDJson() {
   for (var k=0;k<jsonDInfoArray.length;k++) {
     //当已存数组中不包含该id，并且找到对应的jsoDinfo时，进行获取数据
     var jsonDInfo = jsonDInfoArray[k];
-    if (jsonDInfo.json) continue;
+    if (jsonDInfo.jsonData) continue;
     var dId = jsonDInfo.dId;
     if(monitor._getJsonDIdAry.indexOf(dId)==-1){
       //处理rul
@@ -1611,21 +1623,29 @@ function getJsonDJson() {
  * 通过ajax得到jsonDjson
  */
 function  getDataByAjax(pData,_url,dId){
-  $.ajax({type:"post",url:_url,data:pData,async:true,dataType:'text',
-    success:function(json){
-      var jsonDObj = str2JsonObj(json);
+  //alert("getDataByAjax() pData="+pData+" url="+_url+" dId="+dId);
+  $.ajax({type:"post",url:_url,async:true,data:pData,dataType:'text',
+    success:function(jsonStr){
+      //alert("getDataByAjax() succ jsonStr="+jsonStr);
+      try{
+      var jsonDObj = str2JsonObj(jsonStr);
       if(jsonDObj.jsonType==1){
         for (var v=0;v<jsonDInfoArray.length;v++) {
-          if (jsonDInfoArray[v].id==dId) {
+          //if (jsonDInfoArray[v].id==dId) {
+          if (jsonDInfoArray[v].dId==dId) {
             var jsonDjson = str2JsonObj(jsonDObj.data);
-            jsonDInfoArray[v].json = jsonDjson;
+            jsonDInfoArray[v].jsonData = jsonDjson;
           }
         }
       }else if(jsonDObj.jsonType==0){
         alert(jsonDObj.message);
       }
+      }catch(e){
+        alert("failed to paser jsonStr="+jsonStr+" errMsg="+e.message);
+      }
     },
     error: function(XMLHttpRequest, textStatus, errorThrown) {
+      alert("getDataByAjax() err.");
       alert(XMLHttpRequest.status);
       alert(XMLHttpRequest.readyState);
       alert(textStatus);

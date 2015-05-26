@@ -48,7 +48,7 @@ public class VisitLogService {
         visitLogDao.execute("changeOwner", param);
         //修改内存中的用户所属
         Owner o = new Owner(2, oldOwnerId);
-        Map<String, Map<Owner, List<?>>> m = (Map<String, Map<Owner, List<?>>>)SystemCache.getCache(SDConstants.CACHE_NOVISIT);
+        Map<String, Map<Owner, List<?>>> m = (Map<String, Map<Owner, List<?>>>)(SystemCache.getCache(SDConstants.CACHE_NOVISIT).getContent());
         if (m==null) {
             cacheDataAnalManage.init();
         }
