@@ -313,7 +313,8 @@ function login(pData){
         }
       }else if (json.type==1){
         var activeType = loginInfo.activeType;
-        if(activeType==2){
+        //undefined用于测试，后台没写完，这里会报错，以后需要去掉###
+        if(typeof(activeType="undefined") || activeType==2){
           if(mainPage) {
             mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
             	if(mainPage.location.href.indexOf(_MAIN_PAGE)==-1){

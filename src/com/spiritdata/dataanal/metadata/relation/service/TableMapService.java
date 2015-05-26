@@ -83,8 +83,10 @@ public class TableMapService {
             for (MetadataColumn mc : pks) {
                 if (mc.isCertainPk()) _tempS += ","+mc.getColumnName();
             }
-            if (_tempS.trim().length()>0) _tempS.substring(1);
-            if (_tempS.trim().length()>0) columnStr += ", PRIMARY KEY ("+_tempS+") USING BTREE";
+            _tempS = _tempS.trim();
+            if (_tempS.length()>0) {
+            	columnStr += ", PRIMARY KEY ("+_tempS.substring(1)+") USING BTREE";
+            }
         }
         btm.put("columnStr", columnStr);
         if (!StringUtils.isNullOrEmptyOrSpace(mm.getDesc())) btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDesc());
