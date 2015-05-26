@@ -78,13 +78,13 @@ public class TableMapService {
             columnStr = columnStr.substring(0, columnStr.length()-1)+") USING BTREE";
         }
         //临时表只创建确认主键
+        /*目前临时表不创建主键了？？*/
         String _tempS = "";
         if (tableType==2&&pks.size()>0) {
             for (MetadataColumn mc : pks) {
                 if (mc.isCertainPk()) _tempS += ","+mc.getColumnName();
             }
-            if (_tempS.trim().length()>0) _tempS.substring(1);
-            if (_tempS.trim().length()>0) columnStr += ", PRIMARY KEY ("+_tempS+") USING BTREE";
+            if (_tempS.trim().length()>0) columnStr += ", PRIMARY KEY ("+_tempS.substring(1)+") USING BTREE";
         }
         btm.put("columnStr", columnStr);
         if (!StringUtils.isNullOrEmptyOrSpace(mm.getDesc())) btm.put("tableComment", (tableType==2?"temp::":"")+mm.getDesc());

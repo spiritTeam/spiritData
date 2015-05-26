@@ -358,6 +358,8 @@ CREATE TABLE sa_visit_log (
   ownerType         int(1) unsigned  NOT NULL  COMMENT '用户类型(1-用户，2-session，3-系统)',
   ownerId           varchar(32)      NOT NULL  COMMENT '用户Id或SessionID(或指向用户表)，引起文件生成的用户，可以是系统sys',
   pointInfo         varchar(500)               COMMENT '可能是GPS坐标，以json格式记录',
+  clientIp          varchar(40)                COMMENT '客户端Ip，可接受IPv6',
+  clientMacAddr     varchar(20)                COMMENT '客户端mac地址',
   equipmentName     varchar(100)               COMMENT '设备名称',
   equipmentVersion  varchar(100)               COMMENT '设备型号',
   exploreName       varchar(100)               COMMENT '浏览器名称',
