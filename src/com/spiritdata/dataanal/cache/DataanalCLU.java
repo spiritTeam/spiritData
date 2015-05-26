@@ -43,6 +43,6 @@ public class DataanalCLU extends AbstractCacheLifecycleUnit {
         ownersNoVisitData.put("report", reportData);
         //其他未访问的信息再继续在下面加，这个可以考虑用一个配置文件加载，再说
 
-//        SystemCache.setCache(new CacheEle<Map<String, Map<Owner, List<?>>>>(SDConstants.CACHE_NOVISIT, "用户访问", ownersNoVisitData));
+        SystemCache.setCache(new CacheEle<Map<String, Map<Owner, List<?>>>>(SDConstants.CACHE_NOVISIT, "用户访问", ownersNoVisitData));
     }
 }

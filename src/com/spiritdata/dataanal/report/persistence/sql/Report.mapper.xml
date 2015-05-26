@@ -54,9 +54,12 @@
 
   <!-- 获得未访问的报告列表 -->
   <select id="noVisitList" resultMap="BaseResultMap" parameterType="java.util.Map">
-    select <include refid="Base_Column_List"/> from sa_report_info
-    <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
-    <if test="orderByClause!=null">order by ${orderByClause}</if>
+select <include refid="Base_Column_List_A"/>
+from sa_report_info a
+inner join sa_file_index b on a.fId=b.id
+left join sa_visit_log c on a.id=c.objId and c.objType=1
+left join sa_visit_log d on POSITION(b.filename IN d.objUrl)>0
+where c.id is null and d.id is null and a.ownerType=1
   </select>
 
   <!-- 获得一条数据 -->
