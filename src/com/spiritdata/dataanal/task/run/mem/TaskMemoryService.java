@@ -52,7 +52,7 @@ public class TaskMemoryService {
     }
     public static TaskMemoryService getInstance() {
         TaskMemoryService tms = InstanceHolder.instance;
-        tms.setTadskMemory();
+        tms.setTaskMemory();
         return tms;
     }
     //java的占位单例模式===end
@@ -61,7 +61,7 @@ public class TaskMemoryService {
      * 任务内存数据
      */
     protected TaskMemory tm = null;
-    protected void setTadskMemory() {
+    protected void setTaskMemory() {
         this.tm = TaskMemory.getInstance();
     }
 
