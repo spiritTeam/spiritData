@@ -1,4 +1,4 @@
-package com.spiritdata.dataanal.visitmanage.persistence.pojo;
+package com.spiritdata.dataanal.visitmanage.core.persistence.pojo;
 
 import java.sql.Timestamp;
 

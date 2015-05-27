@@ -1,9 +1,5 @@
 package com.spiritdata.dataanal.visitmanage.run;
 
-import java.util.List;
-import java.util.Map;
-
-import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.visitmanage.run.mem.VisitMemoryService;
 
 public class VisitLogRunning extends Thread {
