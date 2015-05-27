@@ -11,14 +11,20 @@ import javax.annotation.Resource;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.dataanal.visitmanage.core.enumeration.ObjType;
-import com.spiritdata.dataanal.visitmanage.run.mem.VisitMemoryService;
+import com.spiritdata.dataanal.visitmanage.core.persistence.pojo.VisitLogPo;
+import com.spiritdata.dataanal.visitmanage.core.service.VL_CategoryService;
+import com.spiritdata.filemanage.core.model.FileInfo;
+import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
+import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
+import com.spiritdata.framework.util.FileNameUtils;
+import com.spiritdata.dataanal.visitmanage.core.service.AbstractCategoryService;
 
 /**
  * 报告访问服务类
  * @author wh
  */
-public class ReportVisitService {
+public class ReportVisitService extends AbstractCategoryService implements VL_CategoryService {
     @Resource(name="defaultDAO")
     private MybatisDAO<ReportPo> reportDao;
 
@@ -27,11 +33,15 @@ public class ReportVisitService {
         reportDao.setNamespace("report");
     }
 
+    //文件操作
+    @Resource
+    FileManageService fmService;
+
     /**
      * 装载未访问数据
      * @return 未访问数据
      */
-    public Map<Owner, List<?>> loadNoVisitData() {
+    public Map<Owner, List<?>> load_getNoVisitData() {
         Map<Owner, List<?>> ret = new HashMap<Owner, List<?>>();
         //得到用户报告对象
         List<ReportPo> noVisitL = reportDao.queryForList("noVisitList");
@@ -56,22 +66,21 @@ public class ReportVisitService {
         return ret;
     }
 
-    /**
-     * 得到某一用户的未访问报告列表
-     * @param o 所属用户
-     * @return 未访问报告列表
-     */
-    public List<?> getNoVisitList(Owner o) {
-        VisitMemoryService vms = VisitMemoryService.getInstance();
-        return vms.getNoVisitList(o, ObjType.REPORT.getName());
+    @Override
+    public ObjType getCategory() {
+        return ObjType.REPORT;
     }
 
-    /**
-     * 得到的所有未访问报告的数据
-     * @return 所有未访问报告的数据
-     */
-    public Map<Owner, List<?>> getNoVisitMap() {
-        VisitMemoryService vms = VisitMemoryService.getInstance();
-        return vms.getNoVisitData(ObjType.REPORT.getName());
+    @Override
+    public boolean compare(Object cateObj, VisitLogPo vlp) {
+        ReportPo rp = (ReportPo)cateObj;
+        if (vlp.getObjId().equals(rp.getId())) return true;
+        
+        FileIndexPo fip = fmService.getFileIndexPoById(rp.getFId());
+        if (fip!=null) {
+            String pureFileName = FileNameUtils.getPureFileName(fip.getFileName());
+            if (vlp.getObjUrl().indexOf(pureFileName)!=-1) return true;
+        }
+        return false;
     }
 }

@@ -2,6 +2,13 @@ package com.spiritdata.dataanal.visitmanage.core.enumeration;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1202CException;
 
+/**
+ * 访问对象类别，目前只有报告：<br/>
+ * <pre>
+ * REPORT(1)—报告；
+ * </pre>
+ * @author wh
+ */
 public enum ObjType {
     REPORT(1);
 

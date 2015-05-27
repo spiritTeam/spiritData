@@ -6,16 +6,27 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.visitmanage.core.enumeration.ObjType;
 import com.spiritdata.dataanal.visitmanage.core.persistence.pojo.VisitLogPo;
 import com.spiritdata.dataanal.visitmanage.run.mem.VisitMemoryService;
 import com.spiritdata.dataanal.visitmanage.service.ReportVisitService;
+import com.spiritdata.framework.FConstants;
+import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.framework.util.SequenceUUID;
 
 /**
- * 访问日志管理类，这是一个壳程序
+ * 访问日志管理服务类，提供如下服务：<br/>
+ * <pre>
+ * 1-与持久化数据交互的功能在这个服务中提供
+ * 2-用户切换功能
+ * 3-根据日志分类获得分类服务
+ * </pre>
  * @author wh
  */
 public class VisitLogService {
@@ -48,14 +59,6 @@ public class VisitLogService {
     }
 
     /**
-     * 装载未访问的报告信息
-     * @return 未访问的报告信息
-     */
-    public Map<Owner, List<?>> loadNoVisitData_REPORT() {
-        return rvService.loadNoVisitData();
-    }
-
-    /**
      * 保存访问日志信息到数据库
      * @param vlp 访问日志信息
      */
@@ -64,5 +67,16 @@ public class VisitLogService {
         visitLogDao.insert(vlp);
     }
 
-    
+    /**
+     * 根据日志访问对象类别，得到能处理该类别的服务类，类似工厂类
+     * @param vlp 日志访问数据
+     * @return 服务类
+     */
+    public VL_CategoryService getCategoryServiceByObjType(ObjType ot) {
+        if (ot==ObjType.REPORT) {
+            ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();
+            return (VL_CategoryService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("reportVisitService");
+        }
+        return null;
+    }
 }

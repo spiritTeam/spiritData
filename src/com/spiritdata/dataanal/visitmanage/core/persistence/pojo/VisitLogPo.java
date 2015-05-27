@@ -4,6 +4,10 @@ import java.sql.Timestamp;
 
 import com.spiritdata.framework.core.model.BaseObject;
 
+/**
+ * 访问日志的持久化对象，与数据库中sa_visit_log表对应
+ * @author wh
+ */
 public class VisitLogPo extends BaseObject {
     private static final long serialVersionUID = -5047650691581766045L;
 

@@ -10,9 +10,10 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.visitmanage.core.service.VL_CategoryService;
 import com.spiritdata.dataanal.visitmanage.core.service.VisitLogService;
-import com.spiritdata.dataanal.visitmanage.enumeration.ObjType;
-import com.spiritdata.dataanal.visitmanage.persistence.pojo.VisitLogPo;
+import com.spiritdata.dataanal.visitmanage.core.enumeration.ObjType;
+import com.spiritdata.dataanal.visitmanage.core.persistence.pojo.VisitLogPo;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
 
@@ -49,13 +50,14 @@ public class VisitMemoryService {
     }
 
     /**
-     * 初始化方法
+     * 初始化方法，包括装载数据
      */
     public void init() {
         this.vm.init();
         //1-报告访问数据初始化
         this.setVls();
-        Map<Owner, List<?>> reportData = this.vls.loadNoVisitData_REPORT();
+        VL_CategoryService reprotCs = this.vls.getCategoryServiceByObjType(ObjType.REPORT);
+        Map<Owner, List<?>> reportData = reprotCs.load_getNoVisitData();
         this.vm.ownersNoVisitData.put(ObjType.REPORT.getName(), reportData);
         //其他未访问的信息再继续在下面加，这个可以考虑用一个配置文件加载，再说
     }
@@ -79,15 +81,26 @@ public class VisitMemoryService {
         vlp.setVisitTime(new Timestamp(System.currentTimeMillis()));
         this.vm.visitQueue.put(vlp);
         //清理未访问数据
+        VL_CategoryService vlCs = null;
         if (this.vm.ownersNoVisitData!=null) {
             Owner _o = null;
-            Map<Owner, List<?>> oneCategoryMap = this.vm.ownersNoVisitData.get(ObjType.getObjType(vlp.getObjType()).getName());
+            ObjType ot = ObjType.getObjType(vlp.getObjType());
+            Map<Owner, List<?>> oneCategoryMap = this.vm.ownersNoVisitData.get(ot.getName());
+            vlCs = this.vls.getCategoryServiceByObjType(ot);
             if (oneCategoryMap!=null&&oneCategoryMap.size()>0) {
                 for (Owner o: oneCategoryMap.keySet()) {
                     _o= new Owner(vlp.getOwnerType(), vlp.getOwnerId());
                     if (o.equals(_o)) {//移除已访问的信息
                         List<?> l = oneCategoryMap.get(o);
-                        if ()
+                        if (l!=null&&l.size()>0) {
+                            for (Object obj: l) {
+                                if (vlCs.compare(obj, vlp)) {
+                                    l.remove(obj);
+                                    break;
+                                }
+                            }
+                        }
+                        break;
                     }
                 }
             }
@@ -127,6 +140,34 @@ public class VisitMemoryService {
      * @return 调整成功，返回true，否则，返回false
      */
     public boolean changeOwnerId(String oldOwnerId, String newOwnerId) {
+        Owner oldO = new Owner(2, oldOwnerId);
+        Owner newO = new Owner(1, newOwnerId);
+        //调整未访问列表
+        if (this.vm.ownersNoVisitData!=null) {
+            for (String cateStr: this.vm.ownersNoVisitData.keySet()) {
+                Map<Owner, List<?>> oneCategoryMap = this.vm.ownersNoVisitData.get(cateStr);
+                if (oneCategoryMap!=null) {
+                    for (Owner _o: oneCategoryMap.keySet()) {
+                        if (_o.equals(oldO)) {
+                            oneCategoryMap.put(newO, oneCategoryMap.get(oldO));
+                            oneCategoryMap.remove(oldO);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        //调整队列
+        if (this.vm.visitQueue!=null) {
+            VisitLogPo vlp = null;
+            do {
+                vlp = this.vm.visitQueue.peek();
+                if (vlp.getOwnerId().equals(oldOwnerId)&&vlp.getOwnerType()==2) {
+                    vlp.setOwnerId(newOwnerId);
+                    vlp.setOwnerType(1);
+                }
+            } while (vlp!=null);
+        }
         return false;
     }
 }
