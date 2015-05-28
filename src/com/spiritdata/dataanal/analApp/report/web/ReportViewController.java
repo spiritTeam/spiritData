@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spiritdata.dataanal.analApp.report.pojo.ReportViewPo;
 import com.spiritdata.dataanal.analApp.report.service.ReportViewService;
 import com.spiritdata.dataanal.analApp.util.ViewControllerUtil;
-import com.spiritdata.dataanal.common.model.Owner;
-import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.framework.util.DateUtils;
 
 /**

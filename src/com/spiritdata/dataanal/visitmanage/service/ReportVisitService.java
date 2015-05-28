@@ -13,7 +13,6 @@ import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.dataanal.visitmanage.core.enumeration.ObjType;
 import com.spiritdata.dataanal.visitmanage.core.persistence.pojo.VisitLogPo;
 import com.spiritdata.dataanal.visitmanage.core.service.VL_CategoryService;
-import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;

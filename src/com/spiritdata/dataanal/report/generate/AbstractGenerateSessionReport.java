@@ -21,6 +21,9 @@ import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
+import com.spiritdata.dataanal.visitmanage.core.enumeration.ObjType;
+import com.spiritdata.dataanal.visitmanage.run.mem.VisitMemoryService;
 
 /**
  * 以Session为基础的
@@ -114,9 +117,11 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
          * 3-这样可能会造成任务的执行不及时——若要执行，要先写入数据库/再读出/再执行（慢很多）
          * ！[按照2处理可能是可行的，但还要详细研究考察，目前为快/不进行考查了]
          */
-        //import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
-        //TaskMemoryService tms = TaskMemoryService.getInstance();
-        //tms.addTaskGroup(tg);//再保存到缓存存储
+        TaskMemoryService tms = TaskMemoryService.getInstance();
+        tms.addTaskGroup(tg);//再保存到缓存存储
+        //把报告插入未读队列
+        VisitMemoryService vls = VisitMemoryService.getInstance();
+        vls.addNoVisitEle(report.convert2Po(), ObjType.REPORT, report.getOwner());
  
         return report.getId();
     }

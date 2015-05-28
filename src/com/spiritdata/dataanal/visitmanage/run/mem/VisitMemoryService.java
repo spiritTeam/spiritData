@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.dataanal.visitmanage.core.service.VL_CategoryService;
 import com.spiritdata.dataanal.visitmanage.core.service.VisitLogService;
 import com.spiritdata.dataanal.visitmanage.core.enumeration.ObjType;
@@ -78,7 +79,7 @@ public class VisitMemoryService {
      * @throws InterruptedException 
      */
     public void put2Queue(VisitLogPo vlp) throws InterruptedException {
-        vlp.setVisitTime(new Timestamp(System.currentTimeMillis()));
+        if (vlp.getVisitTime()==null) vlp.setVisitTime(new Timestamp(System.currentTimeMillis()));
         this.vm.visitQueue.put(vlp);
         //清理未访问数据
         VL_CategoryService vlCs = null;
@@ -169,5 +170,22 @@ public class VisitMemoryService {
             } while (vlp!=null);
         }
         return false;
+    }
+
+    /**
+     * 向未读数据插入一个对象
+     * @param ele 未读对象
+     * @param ot 对象分类
+     * @param o 所属用户
+     */
+    public void addNoVisitEle(Object ele, ObjType ot, Owner o) {
+        Map<Owner, List<?>> oneCategoryMap = this.vm.ownersNoVisitData.get(ot.getName());
+        if (oneCategoryMap!=null&&oneCategoryMap.size()>0) {
+            for (Owner _o: oneCategoryMap.keySet()) {
+                if (_o.equals(o)) {
+                    ((List<Object>)oneCategoryMap.get(_o)).add(ele);
+                }
+            }
+        }
     }
 }

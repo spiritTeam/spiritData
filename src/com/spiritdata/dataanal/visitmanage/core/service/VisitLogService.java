@@ -1,7 +1,6 @@
 package com.spiritdata.dataanal.visitmanage.core.service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -10,7 +9,6 @@ import javax.servlet.ServletContext;
 
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.visitmanage.core.enumeration.ObjType;
 import com.spiritdata.dataanal.visitmanage.core.persistence.pojo.VisitLogPo;
 import com.spiritdata.dataanal.visitmanage.run.mem.VisitMemoryService;
