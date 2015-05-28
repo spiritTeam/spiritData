@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.spiritdata.dataanal.common.model.Owner;
-import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.dataanal.visitmanage.core.service.VL_CategoryService;
 import com.spiritdata.dataanal.visitmanage.core.service.VisitLogService;
 import com.spiritdata.dataanal.visitmanage.core.enumeration.ObjType;
