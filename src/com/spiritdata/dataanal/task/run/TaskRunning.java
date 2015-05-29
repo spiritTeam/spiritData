@@ -56,7 +56,7 @@ public class TaskRunning extends Thread {
     public static void Beginning(TaskContextConfig tcc) {
         TaskRunning tr = new TaskRunning(tcc);
         tr.setName("taskServiceMain");
-        //tr.start();
+        tr.start();
     }
 
     @Override

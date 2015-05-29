@@ -4,7 +4,7 @@
   <!-- 类别名设置 -->
   <typeAliases>
     <typeAlias alias="WebUser" type="com.spiritdata.dataanal.UGA.pojo.User"/>
-    <typeAlias alias="visitLog" type="com.spiritdata.dataanal.visitmanage.persistence.pojo.VisitPo"/>
+    <typeAlias alias="visitLog" type="com.spiritdata.dataanal.visitmanage.persistence.pojo.VisitLogPo"/>
   </typeAliases>
   <mappers>
     <mapper resource="com/spiritdata/dataanal/UGA/sql/UGA.mapper.xml"/>

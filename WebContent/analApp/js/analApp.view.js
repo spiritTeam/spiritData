@@ -31,13 +31,14 @@ function showReport(reportId,unRead) {
   //alert("showReport() reportId="+reportId+" , unRead="+unRead+" reportUrl="+reportUrl);
   //弹出窗口显示报告详情
   var winOption={
-    //url:_urlPath+"/demo/Rd/resultRdEchart.jsp",
-    url:reportUrl,
+    url:_urlPath+"/demo/Rd/resultRdEchart.jsp",
+    //url:reportUrl,
     title:"报告详情",
     height:600,
     width:1000,
     iframeScroll:"yes"
   };
+  //visitLog(repotId);
   openSWinInMain(winOption);
   //如果是未读报告，则通知后台已经看了该报告，后台修改查看状态标记为已读@@@
   if(typeof(unRead)!="undefined"){
