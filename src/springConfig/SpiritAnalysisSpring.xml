@@ -23,6 +23,7 @@
   <context:component-scan base-package="com.spiritdata.dataanal.metadata.relation.semanteme.func" use-default-filters="true">
   </context:component-scan>
 
-  <!--业务缓存-->
+  <!--业务缓存
   <bean id="cacheDataAnalManage" class="com.spiritdata.dataanal.cache.DataanalCLU"/>
+  又一次删除了-->
 </beans>

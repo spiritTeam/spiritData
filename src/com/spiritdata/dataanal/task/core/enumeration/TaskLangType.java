@@ -21,7 +21,6 @@ public enum TaskLangType {
 
     public static TaskLangType getTaskLangType(String value) {
         if (value.toUpperCase().equals("JAVA")) return TaskLangType.JAVA;
-
         throw new Dtal0402CException("不能识别的语言分类:"+value+"！");
     }
 }

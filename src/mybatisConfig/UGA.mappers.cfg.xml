@@ -4,10 +4,10 @@
   <!-- 类别名设置 -->
   <typeAliases>
     <typeAlias alias="WebUser" type="com.spiritdata.dataanal.UGA.pojo.User"/>
-    <typeAlias alias="visitLog" type="com.spiritdata.dataanal.visitmanage.persistence.pojo.VisitLogPo"/>
+    <typeAlias alias="visitLog" type="com.spiritdata.dataanal.visitmanage.core.persistence.pojo.VisitLogPo"/>
   </typeAliases>
   <mappers>
     <mapper resource="com/spiritdata/dataanal/UGA/sql/UGA.mapper.xml"/>
-    <mapper resource="com/spiritdata/dataanal/visitmanage/persistence/sql/Visit.mapper.xml"/>
+    <mapper resource="com/spiritdata/dataanal/visitmanage/core/persistence/sql/Visit.mapper.xml"/>
   </mappers>
 </configuration>

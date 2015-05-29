@@ -22,6 +22,8 @@ import com.spiritdata.dataanal.analApp.report.service.ReportViewService;
 import com.spiritdata.dataanal.analApp.util.ViewControllerUtil;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.common.util.SessionUtils;
+import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
+import com.spiritdata.dataanal.visitmanage.service.ReportVisitService;
 import com.spiritdata.framework.util.DateUtils;
 
 /**
@@ -35,8 +37,11 @@ public class ReportViewController {
 	private static Logger logger = Logger.getLogger(ReportViewController.class);
 
     @Resource
-	private ReportViewService reportViewService;
-    
+    private ReportViewService reportViewService;
+
+    @Resource
+    private ReportVisitService rvService;
+
     /**
      * 条件查询报告列表
      * @param req
@@ -80,48 +85,27 @@ public class ReportViewController {
     @RequestMapping("searchNewReport.do")
 	public @ResponseBody Map<String,Object> searchNewReport(HttpServletRequest req){
 		Map<String,Object> retMap = new HashMap<String,Object>();
+        List<NewReportBean> dataList = new ArrayList<NewReportBean>(); 
 		try{
-			List<NewRepotBean> dataList = new ArrayList<NewRepotBean>(); 
-		    Random random = new Random();
-		    int count = random.nextInt(50);
-		    int currCount = 0;
-			while(true) {
-			    if(currCount>= count){
-			    	break;
-			    }
-			    
-			    int idx = random.nextInt(100);
-			    String reportId = "rptId"+idx;
-			    String reportName = "report"+idx;
-			    String size = idx+"M";
-			    String createDate = "2015-01-02";
-			    
-			    //检查是否已经有了重名的报告，如果有则抛弃
-			    boolean hasReport = false;
-			    for(NewRepotBean nrb:dataList){
-			    	if(nrb.isSameReportId(reportId)){
-			    		hasReport = true;
-			    		break;
-			    	}
-			    }
-			    if(hasReport){
-			    	continue;
-			    }else{
-			    	NewRepotBean anrb = new NewRepotBean(reportId,reportName,size,createDate);
-			    	dataList.add(anrb);
-			    	currCount++;	
-			    }
-			}
-			retMap.put("total", new Integer(count));
-			retMap.put("rows", dataList);
-			//retMap.put("rows", dataList.toArray());
-			//retMap.put("rows",new ArrayList().add("1"));
+	        Owner o = SessionUtils.getOwner(req.getSession());
+	        List<ReportPo> nvrl = rvService.getNoVisitList(o);
+	        if (nvrl!=null) {
+	            for (ReportPo rp: nvrl) {
+	                dataList.add(new NewReportBean(rp.getId(), rp.getReportName(), rp.getReportType(), DateUtils.convert2TimeChineseStr(rp.getCTime())));
+	            }
+	        }
+	        if (dataList.size()>0) {
+	            retMap.put("total", dataList.size());
+	            retMap.put("rows", dataList);
+	        } else {
+	            retMap.put("total", 0);
+	            retMap.put("rows", null);
+	        }
 		}catch(Exception ex){
 			logger.error("failed to search new report. ",ex);
 		}
 		return retMap;
 	}
-    
 
     /**
      * 查询指定reportId的报告关系信息
@@ -430,22 +414,22 @@ public class ReportViewController {
      * @author yfo
      *
      */
-    class NewRepotBean implements Serializable{
+    class NewReportBean implements Serializable{
     	/**
 		 * 
 		 */
 		private static final long serialVersionUID = 558467119425972711L;
 		public String reportId;
 		public String reportName;
-		public String size;
+		public String reportCategory;
 		public String createDate;
-    	public NewRepotBean(){
+    	public NewReportBean(){
     		
     	}
-    	public NewRepotBean(String reportId,String reportName,String size,String createDate){
+    	public NewReportBean(String reportId,String reportName,String reportCategory,String createDate){
     		this.reportId = reportId;
     		this.reportName = reportName;
-    		this.size = size;
+    		this.reportCategory = reportCategory;
     		this.createDate = createDate;
     	}
     	
@@ -469,11 +453,11 @@ public class ReportViewController {
 		public void setReportName(String reportName) {
 			this.reportName = reportName;
 		}
-		public String getSize() {
-			return size;
+		public String getReportCategory() {
+			return reportCategory;
 		}
-		public void setSize(String size) {
-			this.size = size;
+		public void setReportCategory(String reportCategory) {
+			this.reportCategory = reportCategory;
 		}
 		public String getCreateDate() {
 			return createDate;

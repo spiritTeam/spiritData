@@ -2,6 +2,7 @@ package com.spiritdata.dataanal.task.run.mem;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.spiritdata.dataanal.common.model.Owner;
@@ -40,14 +42,17 @@ import com.spiritdata.jsonD.util.JsonUtils;
  * </pre>
  * @author wh
  */
+//注意，目前任务的失败状态(任务+任务组)都是无用的，都要等变成无效后再处理
 public class TaskMemoryService {
+    protected Logger log = Logger.getLogger(this.getClass());
+
     //java的占位单例模式===begin
     private static class InstanceHolder {
         public static TaskMemoryService instance = new TaskMemoryService();
     }
     public static TaskMemoryService getInstance() {
         TaskMemoryService tms = InstanceHolder.instance;
-        tms.setTadskMemory();
+        tms.setTaskMemory();
         return tms;
     }
     //java的占位单例模式===end
@@ -56,7 +61,7 @@ public class TaskMemoryService {
      * 任务内存数据
      */
     protected TaskMemory tm = null;
-    protected void setTadskMemory() {
+    protected void setTaskMemory() {
         this.tm = TaskMemory.getInstance();
     }
 
@@ -68,104 +73,160 @@ public class TaskMemoryService {
     public boolean addTaskGroup(TaskGroup tg) {
         if (tm==null||tm.taskGroupMap==null) return false;
         if (tm.taskGroupMap.size()>tm.MEMORY_MAXSIZE_TASKGROUP) return false; //已经不能插入任务组了
+        if (tm.dealedObjMap.get("group::"+tg.getId())!=null) return false; //本任务组已经被处理了，不用再加入了
         if (tg.getStatus()!=StatusType.PREPARE&&tg.getStatus()!=StatusType.FAILD) {
             throw new Dtal0403CException("只有为[准备执行]/[执行失败]状态的任务组才能加入任务内存，当前任务组[id="+tg.getId()+"]的状态为["+tg.getStatus().getName()+"]");
         }
+
         if (tg.getTaskInfoSize()>0) {
-            //先插入组
-            if (tm.taskGroupMap.get(tg.getId())==null) {
-                tg.setProcessing();//设置为正在执行
-                tm.taskGroupMap.put(tg.getId(), tg);
-            }
-            boolean inserted = false;
             Map<String, TaskInfo> _m = tg.getTaskGraph().getTaskMap();
+            //插入子表，包括待执行排序列表
+            boolean inserted = false;
             for (String tiId: _m.keySet()) {
                 TaskInfo ti = _m.get(tiId);
                 inserted = false;
                 try {
-                    inserted = addTaskInfo(ti);
+                    inserted = addTaskInfo_4Group(ti);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
                 if (!inserted) break;
             }
-            if (inserted) return true;
-            else _removeTaskGroup(tg.getId());
+            //插入组
+            if (inserted&&tm.taskGroupMap.get(tg.getId())==null) {
+                tg.setProcessing();//设置为正在执行
+                tm.taskGroupMap.put(tg.getId(), tg);
+            }
         }
         return false;
     }
 
-    /**
-     * 把任务信息加入内存
+    /*
+     * 把独立的任务信息加入内存
      * @param ti 预加入的任务
      * @return 加入成功返回true，否则返回false
      */
-    public boolean addTaskInfo(TaskInfo ti) {
-        if ((tm.taskInfoMap.size())>=tm.MEMORY_MAXSIZE_TASKINFO) return false; //任务信息数量已经达到了上限，不能再加入了
+    private boolean addTaskInfo_Single(TaskInfo ti) {
+        if (tm.taskInfoMap.size()>=tm.MEMORY_MAXSIZE_TASKINFO) return false; //任务信息数量已经达到了上限，不能再加入了
+        if (tm.dealedObjMap.get("task::"+ti.getId())!=null) return false; //本任务已经被处理了，不用再加入了
+        if (ti.getTaskGroup()==null) return false; //独立任务不能属于任何任务组
         if (ti.getStatus()!=StatusType.PREPARE&&ti.getStatus()!=StatusType.FAILD) {
-            throw new Dtal0403CException("只有为[准备执行]/[执行失败]状态的任务才能加入任务内存，当前任务[id="+ti.getId()+"]的状态为["+ti.getStatus().getName()+"]");
+            throw new Dtal0403CException("只有为[准备执行]/[执行失败]状态的独立任务才能加入任务内存，当前任务[id="+ti.getId()+"]的状态为["+ti.getStatus().getName()+"]");
         }
-        if (tm.taskInfoMap.get(ti.getId())==null&&tm.runningTaskMap.get(ti.getId())==null) {
-            if (ti.getFirstTime()==null) ti.setFirstTime(new Timestamp(System.currentTimeMillis()));
-            if (ti.getStatus()!=StatusType.SUCCESS&&ti.getStatus()!=StatusType.FAILD&&ti.getStatus()!=StatusType.ABATE) {
-                tm.taskInfoSortList.add(getInsertIndex(ti), ti.getId());
-            }
-            ti.setWaiting();
-            tm.taskInfoMap.put(ti.getId(), ti);
-        }
+        _addTaskInfo(ti);//包括插入待处理排序列表
         return true;
     }
-
-    /**
-     * 把执行失败的任务加入内存，以便再次执行
+    /*
+     * 从任务组把任务信息加入内存
      * @param ti 预加入的任务
      * @return 加入成功返回true，否则返回false
      */
-    public boolean addFaildTaskInfo(TaskInfo ti) {
-        if (ti.getStatus()==StatusType.FAILD) {
-            ti.setWaiting();
-            if (tm.taskInfoMap.get(ti.getId())==null) tm.taskInfoMap.put(ti.getId(), ti);
-            tm.runningTaskMap.remove(ti.getId());
-            if (!_find(ti)) tm.taskInfoSortList.add(getInsertIndex(ti), ti.getId());
-            return true;
-        }
-        return false;
+    private boolean addTaskInfo_4Group(TaskInfo ti) {
+        if (tm.taskInfoMap.size()>=tm.MEMORY_MAXSIZE_TASKINFO) return false; //任务信息数量已经达到了上限，不能再加入了
+        _addTaskInfo(ti);//包括插入待处理排序列表
+        return true;
     }
-
-    /**
-     * 把执行失败的任务加入内存，以便再次执行
-     * @param ti 预加入的任务
-     * @return 加入成功返回true，否则返回false
-     */
-    public boolean removeFromRunningMap(TaskInfo ti) {
-        if (ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.ABATE) {
-            tm.runningTaskMap.remove(ti.getId());
-            return true;
+    private void _addTaskInfo(TaskInfo ti) {
+        if (tm.taskInfoMap.get(ti.getId())==null) {
+            if (ti.getFirstTime()==null) ti.setFirstTime(new Timestamp(System.currentTimeMillis()));
+            tm.taskInfoMap.put(ti.getId(), ti);
+            if (ti.getStatus()!=StatusType.SUCCESS&&ti.getStatus()!=StatusType.FAILD&&ti.getStatus()!=StatusType.ABATE) {
+                _addSortList(ti);
+            }
         }
-        return false;
     }
 
     //以下函数是需要在线程中调用的
     /**
-     * 装载数据库信息到任务内存
+     * 装载并清理内存数据：
+     * 先清理数据，再装载数据，这样能够保证数据的一致性
      */
-    public void loadData() {
-        System.out.println("[开始装载可执行任务到TaskMemory]"+(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSSS", Locale.CHINESE)).format(new Date()));
+    public void cleanANDloadData() {
+        log.info("[清理任务缓存，并装载可执行任务到缓存]"+(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSSS", Locale.CHINESE)).format(new Date()));
         //这里需要用到Spring的容器
         ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();
         TaskManageService tmService = (TaskManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("taskManageService");
         FileManageService fmService = (FileManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("fileManageService");
 
         TaskInfo selfTi, preTi;
+        TaskGroup tg = null;
 
-        //1-构造任务组结构，主表
+        //一、清理数据
+        Map<String, TaskGroup> taskGroupMap = tm.taskGroupMap;
+        Map<String, TaskInfo> taskInfoMap = tm.taskInfoMap;
+        List<String> taskInfoSortList = tm.taskInfoSortList;
+        Map<String, Date> dealedObjMap = tm.dealedObjMap;
+        int cleanLimitSize = tm.MEMORY_CLEANSIZE_TASK;
+        int cleanTG_Count = 0;
+        int cleanTI_Count = 0;
+        int cleanDO_Count = 0;
+        //一.1 清理内存中的任务结构，注意要在这个过程中，增加已处理对象存储
+        //一.1.1 清除任务组
+        if (taskGroupMap!=null&&taskGroupMap.size()>0) {
+            boolean canClean = true;
+            for (String tgId: taskGroupMap.keySet()) {
+                canClean = false;
+                tg = taskGroupMap.get(tgId);
+                tg.adjustStatus();
+                if (tg.getStatus()==StatusType.SUCCESS||tg.getStatus()==StatusType.ABATE) canClean=true;
+                if (canClean) {
+                    //写数据库
+                    tmService.updateTaskGroupStatus(tg);
+                    //写已处理
+                    dealedObjMap.put("group::"+tg.getId(), new Date(System.currentTimeMillis()));
+                    //删除实际数据
+                    _removeTaskGroup(tgId);
+                    cleanLimitSize--;
+                    cleanTG_Count++;
+                }
+                if (cleanLimitSize==0) break;
+            }
+        }
+        //一.1.2 清除单个的任务，不属于任何任务组的任务
+        if (taskInfoMap.size()>0&&cleanLimitSize>0) {
+            for (TaskInfo _ti: taskInfoMap.values()) {
+                if (_ti!=null&&_ti.getTaskGroup()==null&&(_ti.getStatus()==StatusType.SUCCESS||_ti.getStatus()==StatusType.FAILD||_ti.getStatus()==StatusType.ABATE)) {//可删除
+                    //写已处理
+                    dealedObjMap.put("task::"+_ti.getId(), new Date(System.currentTimeMillis()));
+                    //删除
+                    taskInfoMap.remove(_ti.getId());
+                    taskInfoSortList.remove(_ti.getId());
+                    cleanLimitSize--;
+                    cleanTI_Count++;
+                    if (cleanLimitSize==0) break;
+                }
+            }
+        }
+        //一.2 清理已处理对象存储
+        if (dealedObjMap!=null&&dealedObjMap.size()>0) {
+            List<String> _tempL = new ArrayList<String>();
+            for (String key: dealedObjMap.keySet()) {
+                Date _d = dealedObjMap.get(key);
+                if (_d!=null) {
+                    if ((System.currentTimeMillis()-dealedObjMap.get(key).getTime())>tm.getCLEANDEALEDOBJ_AFTERTIME())
+                        _tempL.add(key);
+                }
+            }
+            if (_tempL.size()>0) {
+                for (String _key: _tempL) {
+                    dealedObjMap.remove(_key);
+                    cleanDO_Count++;
+                }
+            }
+        }
+        if ((cleanTI_Count+cleanTG_Count+cleanDO_Count)>0) {
+            log.info("本次清除已完成的任务组["+cleanTG_Count+"]个、任务["+cleanTI_Count+"]个、已处理对象["+cleanDO_Count+"]个。");
+        }
+
+        //二、读取信息并装载数据
+        //二.1 从数据库中读取数据
+        //二.1.1 构造任务组结构，主表
         List<TaskGroupPo> tgL = tmService.getCanExecuteTaskGroups();
         Map<String, TaskGroup> tempTGm = new HashMap<String, TaskGroup>();
         for (TaskGroupPo tgp: tgL) {
             tempTGm.put(tgp.getId(), new TaskGroup(tgp));
         }
-
-        //2-处理任务信息结构
+        //二.1.1.2 处理任务信息结构，子表
         List<TaskInfoPo> tiL = tmService.getCanExecuteTaskInfos();
         Map<String, TaskInfo> tempTIm = new HashMap<String, TaskInfo>();
         Map<String, Object> m = new HashMap<String, Object>();
@@ -192,8 +253,7 @@ public class TaskMemoryService {
             if (tempTGm.get(tip.getTaskGId())!=null) selfTi.getTaskGroup().addTask2Graph(selfTi);
             tempTIm.put(tip.getId(), selfTi);
         }
-
-        //3-补充任务中的前置任务
+        //二.1.3 补充任务中的前置任务
         List<TaskRelPo> trL = tmService.getCanExecuteTaskRels();
         if (trL!=null&&trL.size()>0) {
             for (TaskRelPo trp: trL) {
@@ -204,20 +264,25 @@ public class TaskMemoryService {
                 }
             }
         }
-
-        //4-加入内存结构
+        //二.2 加入内存
+        //二.2.1 任务组
         for (String tgId: tempTGm.keySet()) {//任务组
             try {
-                addTaskGroup(tempTGm.get(tgId));
+                tg = tempTGm.get(tgId);
+                //若tg不是空，并且tg的子任务个数和tg图中的任务个数相同（若不同，则说明任务的读取有问题）,是准备或错误状态
+                if (tg!=null&&(tg.getSubCount()==tg.getTaskInfoSize())&&(tg.getStatus()==StatusType.PREPARE||tg.getStatus()==StatusType.FAILD)) {
+                    addTaskGroup(tg);
+                }
             } catch(Exception e) {
                 e.printStackTrace();
             }
         }
-        for (String tiId: tempTIm.keySet()) {//不属于任何任务组的任务
+        //二.2.1 不属于任何任务组的任务
+        for (String tiId: tempTIm.keySet()) {
             selfTi = tempTIm.get(tiId);
             if (selfTi.getTaskGroup()==null) {
                 try {
-                    addTaskInfo(selfTi);
+                    addTaskInfo_Single(selfTi);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -249,76 +314,22 @@ public class TaskMemoryService {
             }
             if (ret!=null) break;
         }
-        if (ret!=null) {
-            taskInfoId = tm.taskInfoSortList.remove(i);
-            tm.runningTaskMap.put(taskInfoId, ret);
-        }
+        if (ret!=null) tm.taskInfoSortList.remove(i); //删除待处理任务列表
         return ret;
     }
 
     /**
-     * 清除已经完成的任务或任务组
+     * 完成任务后的处理：包括更新数据库+更新缓存结构
+     * @param ti
      */
-    public void cleanTaskMemory() {
-        Map<String, TaskGroup> taskGroupMap = tm.taskGroupMap;
-        Map<String, TaskInfo> taskInfoMap = tm.taskInfoMap;
-        List<String> taskInfoSortList = tm.taskInfoSortList;
-        int cleanLimitSize = tm.MEMORY_CLEANSIZE_TASK; //
-        int cleanTG_Count = 0;
-        int cleanTI_Count = 0;
-
-        TaskGroup tg = null;
-        TaskInfo ti = null;
-        //清除任务组
-        boolean canClean = true;
-        if (taskGroupMap!=null&&taskGroupMap.size()>0) {
-            for (String tgId: taskGroupMap.keySet()) {
-                tg = taskGroupMap.get(tgId);
-                for (String tiId: tg.getTaskGraph().getTaskMap().keySet()) {
-                    canClean=true;
-                    ti = taskInfoMap.get(tiId);
-                    if (ti!=null) {
-                        canClean = (ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE);
-                    } else canClean=false;
-                    if (!canClean) break;
-                }
-                if (canClean) {
-                    _removeTaskGroup(tgId);
-                    cleanLimitSize--;
-                    cleanTG_Count++;
-                }
-                if (cleanLimitSize==0) break;
-            }
-        }
-        //清除单个的任务，不属于任何任务组的任务
-        if (taskInfoMap.size()>0&&taskInfoSortList.size()>0&&cleanLimitSize>0) {
-            for (String tiId: taskInfoSortList) {
-                ti = taskInfoMap.get(tiId);
-                if (ti!=null&&ti.getTaskGroup()==null&&(ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE)) {//可删除
-                    taskInfoMap.remove(tiId);
-                    taskInfoSortList.remove(tiId);
-                    cleanLimitSize--;
-                    cleanTI_Count++;
-                    if (cleanLimitSize==0) break;
-                }
-            }
-        }
-        //清除落单的任务，任务的任务组不在内存中维护的
-        if (taskInfoMap.size()>0&&cleanLimitSize>0) {
-            for (TaskInfo _ti: taskInfoMap.values()) {
-                String taskId = _ti.getId();
-                if (_ti.getTaskGroup()!=null&&taskGroupMap.get(_ti.getTaskGroup().getId())==null
-                    &&(ti.getStatus()==StatusType.SUCCESS||ti.getStatus()==StatusType.FAILD||ti.getStatus()==StatusType.ABATE)) {
-                    taskInfoMap.remove(taskId);
-                    taskInfoSortList.remove(taskId);
-                    cleanLimitSize--;
-                    cleanTI_Count++;
-                    if (cleanLimitSize==0) break;
-                }
-            }
-        }
-        if ((cleanTI_Count+cleanTG_Count)>0)
-        System.out.println("本次清除已完成的任务组["+cleanTG_Count+"]个、任务["+cleanTI_Count+"]个。");
+    public void completeTaskInfo(TaskInfo ti) {
+        ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();
+        TaskManageService tmService = (TaskManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("taskManageService");
+        ti.setEndTime(new Timestamp(System.currentTimeMillis()));
+        //更新数据库
+        tmService.completeTaskInfo(ti);
+        //把失败的任务再放入内存继续执行
+        if (ti.getStatus()==StatusType.FAILD) _addSortList(ti);
     }
 
     /**
@@ -328,6 +339,7 @@ public class TaskMemoryService {
     public int getExecuterListSize() {
         return tm.taskInfoSortList.size();
     }
+
     /**
      * 调整所有者Id。登录成功后，切换所有者时所调用的方法
      * @param oldOwnerId 旧所有者Id，目前是SessionId
@@ -351,6 +363,26 @@ public class TaskMemoryService {
         return true;
     }
 
+    /**
+     * 获取任务状态，此Id也是对应的数据文件的id
+     * @param taskId 任务Id
+     * @return 任务的情况
+     */
+    public Map<String, Object> getTaskStatus(String taskId) {
+        TaskInfo ti = tm.taskInfoMap.get(taskId);
+        Map<String, Object> retM = new HashMap<String, Object>();
+        if (ti==null) {//已经执行完毕，到数据库中查找
+            retM.put("status", -1);
+            retM.put("progress", 1);//已执行100%
+            retM.put("statusName", "未在执行态");
+        } else {
+            retM.put("status", ti.getStatus().getValue());
+            retM.put("progress", 0.5);//已执行100%，这个功能目前还没有
+            retM.put("statusName", ti.getStatus().getName());
+        }
+        return retM; 
+    }
+
     /*
      * 删除指定的任务组，注意这里不判断任务组是否已执行完毕
      */
@@ -360,19 +392,31 @@ public class TaskMemoryService {
             for (String tiId: tg.getTaskGraph().getTaskMap().keySet()) {
                 //删除Map中内容
                 tm.taskInfoMap.remove(tiId);
+                //删除待处理列表
+                tm.taskInfoSortList.remove(tiId);
             }
         }
         tm.taskGroupMap.remove(tgId);
     }
 
     /*
-     * 从任务信息列表中找到插入的位置，按时间排序，越靠前的时间序号越小
-     * @param ti 要插入的任务
-     * @return 插入的索引号
+     * 从待执行列表查找一个任务
      */
-    private int getInsertIndex(TaskInfo ti) {
-        if (tm.taskInfoSortList.size()==0) return 0;
-        return _getInsertIndex(ti);
+    private void _addSortList(TaskInfo ti) {
+        if (ti==null) return;
+        boolean canAdd = true;
+        for (String id: tm.taskInfoSortList) {
+            if (id.equals(ti.getId())) {
+                canAdd = false;
+                break;
+            }
+        }
+        if (canAdd) {
+            int insertIndex = _getInsertIndex(ti);//也可能是其他方法，比如二分法
+            ti.setWaiting();
+            tm.taskInfoSortList.add(insertIndex, ti.getId());
+        }
+        
     }
     /*
      * 从后查找法
@@ -392,33 +436,5 @@ public class TaskMemoryService {
             }
         }
         return 0;
-    }
-
-    private boolean _find(TaskInfo ti) {
-        for (String id: tm.taskInfoSortList) {
-            if (id.endsWith(ti.getId())) return true;
-        }
-        return false;
-    }
-
-    //以下取状态
-    /**
-     * 获取任务状态，此Id也是对应的数据文件的id
-     * @param taskId 任务Id
-     * @return 任务的情况
-     */
-    public Map<String, Object> getTaskStatus(String taskId) {
-        TaskInfo ti = tm.taskInfoMap.get(taskId);
-        Map<String, Object> retM = new HashMap<String, Object>();
-        if (ti==null) {//已经执行完毕，到数据库中查找
-            retM.put("status", -1);
-            retM.put("progress", 1);//已执行100%
-            retM.put("statusName", "未在执行态");
-        } else {
-            retM.put("status", ti.getStatus().getValue());
-            retM.put("progress", 0.5);//已执行100%，这个功能目前还没有
-            retM.put("statusName", ti.getStatus().getName());
-        }
-        return retM; 
     }
 }

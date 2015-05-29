@@ -67,7 +67,7 @@ public class TaskManageService {
 
         int flag = -1;
         try {
-            //1-先存储数据库
+            tg.setSubCount(tg.getTaskInfoSize()); //设置所属子任务个数
             flag = taskGroupDao.insert(tg.convert2Po());
             if (flag==0) throw new Dtal0403CException("存储任务组信息(主表)到数据库失败，没有存储任何数据！");
             if (flag!=1) throw new Dtal0403CException("存储任务组信息(主表)到数据库失败，存入了多于1条的信息！");
@@ -87,7 +87,6 @@ public class TaskManageService {
                 }
             }
         } catch(Exception e) {
-            //删除
             try {
                 taskRelDao.delete("deleteByGroupId", tg.getId());
                 taskInfoDao.delete("deleteByGroupId", tg.getId());
@@ -161,26 +160,24 @@ public class TaskManageService {
         if (tg==null) return;
         Map<String, TaskInfo> tiMap = tg.getTaskGraph().getTaskMap();
         if (tiMap!=null&&tiMap.size()>0) {
-            StatusType tg_status = StatusType.SUCCESS; //先设置为执行成功
-            for (String tiId: tiMap.keySet()) {
-                StatusType _status = tiMap.get(tiId).getStatus();
-                if (_status==StatusType.PREPARE||_status==StatusType.WAITING||_status==StatusType.PROCESSING) {
-                    tg_status=StatusType.PROCESSING;
-                    break;
-                } else if (_status==StatusType.ABATE) {
-                    tg_status=_status;
-                } else {
-                    if (tg_status!=StatusType.ABATE) {
-                        if (_status==StatusType.FAILD) tg_status=StatusType.FAILD;
-                    }
-                }
-            }
-            if (tg_status!=StatusType.PROCESSING) {//更新任务组
+            tg.adjustStatus();
+            if (tg.getStatus()!=StatusType.PREPARE&&tg.getStatus()!=StatusType.PROCESSING) {//更新任务组
                 param.clear();
                 param.put("id", tg.getId());
-                param.put("status", tg_status.getValue());
+                param.put("status", tg.getStatus().getValue());
                 taskGroupDao.update(param);
             }
         }
+    }
+
+    /**
+     * 更新任务组状态
+     * @param ti 任务组信息
+     */
+    public void updateTaskGroupStatus(TaskGroup tg) {
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("id", tg.getId());
+        param.put("status", tg.getStatus().getValue());
+        taskGroupDao.update(param);
     }
 }

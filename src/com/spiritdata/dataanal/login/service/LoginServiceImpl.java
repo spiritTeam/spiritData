@@ -22,7 +22,7 @@ import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.exceptionC.Dtal1105CException;
 import com.spiritdata.dataanal.task.core.service.TaskManageService;
-import com.spiritdata.dataanal.visitmanage.service.VisitLogService;
+import com.spiritdata.dataanal.visitmanage.core.service.VisitLogService;
 
 public class LoginServiceImpl implements LoginService {
     @Resource

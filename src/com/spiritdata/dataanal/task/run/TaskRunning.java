@@ -4,9 +4,8 @@ import java.util.Date;
 import java.util.Timer;
 
 import com.spiritdata.dataanal.task.run.mem.TaskMemory;
-import com.spiritdata.dataanal.task.run.monitor.CleanTaskMemory;
 import com.spiritdata.dataanal.task.run.monitor.DispatchTask;
-import com.spiritdata.dataanal.task.run.monitor.LoadTask;
+import com.spiritdata.dataanal.task.run.monitor.CleanAndLoadTask;
 
 /**
  * <p>任务执行的入口点，今后可以把它作为main函数处理，在新的jvm中启动，以提高效率。
@@ -30,10 +29,10 @@ public class TaskRunning extends Thread {
     }
 
     //开启任务加载的轮询过程
-    private void startLoad() {
-        Timer loadTaskTimer = new Timer("loadTaskTimer", true);
-        LoadTask lt = new LoadTask();
-        loadTaskTimer.schedule(lt, new Date(), tcc.getLOAD_INTERVAL());
+    private void startLoadClean() {
+        Timer loadAclean_TaskTimer = new Timer("load&cleanTaskTimer", true);
+        CleanAndLoadTask lt = new CleanAndLoadTask();
+        loadAclean_TaskTimer.schedule(lt, new Date(), tcc.getLOADCLEAN_INTERVAL());
     }
 
     //开启任务分发过程
@@ -41,13 +40,6 @@ public class TaskRunning extends Thread {
         DispatchTask dt = new DispatchTask(tcc.getDISPATCH_INTERVAL());
         dt.setDaemon(true);
         dt.start();
-    }
-
-    //开启任务组清除的轮询过程
-    private void startCleanTaskMemory() {
-        Timer cleanTaskGroupTimer = new Timer("cleanTaskGroupTimer", true);
-        CleanTaskMemory gtm = new CleanTaskMemory();
-        cleanTaskGroupTimer.schedule(gtm, new Date(), tcc.getCLEAN_INTERVAL());
     }
 
     /**
@@ -59,10 +51,10 @@ public class TaskRunning extends Thread {
         tr.start();
     }
 
-    @Override
     /**
      * 启动任务服务的处理主进程
      */
+    @Override
     public void run() {
         try {
             sleep(5000);//多少毫秒后启动任务处理，先让系统的其他启动任务完成，这里设置死为10秒钟
@@ -75,9 +67,10 @@ public class TaskRunning extends Thread {
             System.out.println("1-任务服务参数加载");
             System.out.println("  [环境参数]任务内存最大任务组数:"+this.tcc.getMEMORY_MAXSIZE_TASKGROUP());
             System.out.println("  [环境参数]任务内存最大任务数:"+this.tcc.getMEMORY_MAXSIZE_TASKINFO());
-            System.out.println("  [环境参数]任务信息装载间隔毫秒数:"+this.tcc.getLOAD_INTERVAL());
+            System.out.println("  [环境参数]任务信息装载间隔毫秒数:"+this.tcc.getLOADCLEAN_INTERVAL());
             System.out.println("  [环境参数]任务监控分发间隔毫秒数:"+this.tcc.getDISPATCH_INTERVAL());
-            System.out.println("  [环境参数]清除完成任务间隔毫秒数:"+this.tcc.getCLEAN_INTERVAL());
+            //System.out.println("  [环境参数]清除完成任务间隔毫秒数:"+this.tcc.getCLEAN_INTERVAL());
+            System.out.println("  [环境参数]已处理的对象多长时间后才能被删除，毫秒数:"+this.tcc.getCLEANDEALEDOBJ_AFTERTIME());
             System.out.println("  [环境参数]每次清除任务或任务组信息的个数:"+this.tcc.getMEMORY_CLEANSIZE_TASK());
             System.out.println("  [环境参数]任务处理线程的初始化个数:"+this.tcc.getPROCESS_INITSIZE());
             System.out.println("  [环境参数]任务处理线程的最大个数:"+this.tcc.getPROCESS_MAXSIZE());
@@ -90,14 +83,11 @@ public class TaskRunning extends Thread {
             System.out.println("3-启动线程池");
             TaskThreadPool.init(this.tcc.getPROCESS_INITSIZE(), this.tcc.getPROCESS_MAXSIZE());
 
-            System.out.println("4-启动——加载任务信息到内存——线程");
-            startLoad();
+            System.out.println("4-启动——[加载任务信息到内存并同时清理内存]线程");
+            startLoadClean();
 
-            System.out.println("5-启动——任务分发——线程");
+            System.out.println("5-启动——[任务分发]线程");
             startDispatch();
-
-            System.out.println("6-启动——清除已完成任务——线程");
-            startCleanTaskMemory();
 
             System.out.println("-------------------------------");
         } catch (InterruptedException e) {

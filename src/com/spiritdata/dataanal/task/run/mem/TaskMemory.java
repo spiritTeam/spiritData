@@ -1,5 +1,6 @@
 package com.spiritdata.dataanal.task.run.mem;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,14 +51,23 @@ public class TaskMemory {
         return this.EXECUTECOUNT_LIMIT;
     }
 
+    //已处理的对象多长时间后才能被删除(这种方法是权宜办法，在极端情况下还是会造成任务的多次执行)
+    private int CLEANDEALEDOBJ_AFTERTIME = 1*1000*10; //默认为1秒 删除了，没用了
+    public int getCLEANDEALEDOBJ_AFTERTIME() {
+        return this.CLEANDEALEDOBJ_AFTERTIME;
+    }
+    public void setCLEANDEALEDOBJ_INTERVAL(int CLEANDEALEDOBJ_AFTERTIME) {
+        this.CLEANDEALEDOBJ_AFTERTIME = CLEANDEALEDOBJ_AFTERTIME;
+    }
+
     //所有可执行任务组
     protected Map<String, TaskGroup> taskGroupMap = null;
     //所有可执行任务信息
     protected Map<String, TaskInfo> taskInfoMap = null;
     //所有可执行任务Id的队列，按照创建时间进行排序 protected 
     protected List<String> taskInfoSortList = null;
-    //正在执行的任务
-    protected Map<String, TaskInfo> runningTaskMap = null;
+    //已处理对象存储，包括对象的ID，用task::{taskId}/group::{groupId}来区分任务和任务组，后面的Date是该对象处理完成的时间点
+    protected Map<String, Date> dealedObjMap = null;
 
     /**
      * 参数初始化，必须首先执行这个方法，任务内存类才能使用
@@ -68,10 +78,12 @@ public class TaskMemory {
             this.setMEMORY_MAXSIZE_TASKINFO(tcc.getMEMORY_MAXSIZE_TASKINFO());
             this.setMEMORY_CLEANSIZE_TASK(tcc.getMEMORY_CLEANSIZE_TASK());
             this.setEXECUTECOUNT_LIMIT(tcc.getEXECUTECOUNT_LIMIT());
+            this.setEXECUTECOUNT_LIMIT(tcc.getEXECUTECOUNT_LIMIT());
+            this.setCLEANDEALEDOBJ_INTERVAL(tcc.getCLEANDEALEDOBJ_AFTERTIME()>tcc.getLOADCLEAN_INTERVAL()?tcc.getCLEANDEALEDOBJ_AFTERTIME():(tcc.getLOADCLEAN_INTERVAL()+1000));
             taskGroupMap = new ConcurrentHashMap<String, TaskGroup>();
             taskInfoMap = new ConcurrentHashMap<String, TaskInfo>();
             taskInfoSortList = new CopyOnWriteArrayList<String>();
-            runningTaskMap = new ConcurrentHashMap<String, TaskInfo>();
+            dealedObjMap = new ConcurrentHashMap<String, Date>();
         }
     }
 

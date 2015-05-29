@@ -60,7 +60,7 @@
   </listener>
   <!-- 任务运行 -->
   <listener>
-    <listener-class>com.spiritdata.dataanal.task.run.WebRunningListener</listener-class>
+    <listener-class>com.spiritdata.dataanal.common.web.WebRunningListener</listener-class>
   </listener>
   <!-- end监听设置 -->
 

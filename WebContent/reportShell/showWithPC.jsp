@@ -34,7 +34,7 @@ require.config({
   }
 });
 </script>
-<title>分析报告</title>
+<title>分析报告壳子</title>
 </head>
 <style>
 body {

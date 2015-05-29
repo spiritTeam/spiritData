@@ -287,7 +287,7 @@ function searchNewReport(){
     success:function(jsonData){
       try{
         newReportJson = jsonData;          
-        if(newReportJson.rows.length>0){
+        if(newReportJson&&newReportJson.rows&&newReportJson.rows.length>0){
        	  refreshNewReportDIV();
         }
       }catch(e){
