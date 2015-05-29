@@ -40,6 +40,7 @@ function showReport(reportId) {
     width:1000,
     iframeScroll:"yes"
   };
+  //visitLog(repotId);
   openSWinInMain(winOption);
   //如果是未读报告，则通知后台已经看了该报告，后台修改查看状态标记为已读@@@
   if(typeof(unRead)!="undefined"){

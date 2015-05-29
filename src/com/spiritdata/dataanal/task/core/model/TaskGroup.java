@@ -2,6 +2,7 @@ package com.spiritdata.dataanal.task.core.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Map;
 
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.task.core.enumeration.StatusType;
@@ -23,6 +24,7 @@ public class TaskGroup implements Serializable, ModelSwapPo {
     private Owner owner; //所有者
     private String workName; //任务组工作名称
     private StatusType status; //任务组状态：1=准备执行；2=正在执行；3=执行成功；4=执行失败；5=任务失效；
+    private int subCount; //子任务个数，保证在并发环境下的数据一致
     private int defaultExecuteCountLimit; //其子任务默认的执行次数的上限，目前不支持各自任务有自己的执行次数上线，此属性是程序属性，不记录在数据库中
     private String desc; //任务组说明
     private Timestamp beginTime; //任务开始启动时间
@@ -66,6 +68,12 @@ public class TaskGroup implements Serializable, ModelSwapPo {
     }
     public StatusType getStatus() {
         return status;
+    }
+    public int getSubCount() {
+        return subCount;
+    }
+    public void setSubCount(int subCount) {
+        this.subCount = subCount;
     }
     public int getDefaultExecuteCountLimit() {
         return defaultExecuteCountLimit;
@@ -146,6 +154,7 @@ public class TaskGroup implements Serializable, ModelSwapPo {
         ret.setOwnerId(this.owner.getOwnerId());
         ret.setWorkName(this.workName);
         ret.setStatus(this.status.getValue());
+        ret.setSubCount(this.subCount);
         ret.setDesc(this.desc);
         return ret;
     }
@@ -167,6 +176,7 @@ public class TaskGroup implements Serializable, ModelSwapPo {
         this.owner = new Owner(_po.getOwnerType(), _po.getOwnerId());
         this.workName = _po.getWorkName();
         this.status = StatusType.getStatusType(_po.getStatus());
+        this.subCount = _po.getSubCount();
         this.desc = _po.getDesc();
         this.beginTime = _po.getBeginTime();
     }
@@ -180,5 +190,33 @@ public class TaskGroup implements Serializable, ModelSwapPo {
         if (this.getTaskGraph()==null) return -1;
         if (this.getTaskGraph().getTaskMap()==null) return -1;
         return this.getTaskGraph().getTaskMap().size();
+    }
+
+    /**
+     * 根据子任务情况，调整任务组状态
+     */
+    public void adjustStatus() {
+        Map<String, TaskInfo> tiMap = this.getTaskGraph().getTaskMap();
+        if (tiMap!=null&&tiMap.size()>0) {
+            StatusType tg_status = StatusType.PREPARE; //先设置为执行成功
+            for (String tiId: tiMap.keySet()) {
+                StatusType _status = tiMap.get(tiId).getStatus();
+                if (_status==StatusType.PREPARE) continue;
+                if (_status==StatusType.WAITING||_status==StatusType.PROCESSING) {
+                    if (tg_status==StatusType.PREPARE) tg_status=StatusType.PROCESSING;
+                    break;
+                }
+                if (_status==StatusType.ABATE) {
+                    tg_status=_status;
+                    break;
+                }
+                if (_status==StatusType.FAILD) {
+                    tg_status=StatusType.FAILD;
+                } else  if (_status==StatusType.SUCCESS) {
+                    if (tg_status==StatusType.PREPARE) tg_status=StatusType.SUCCESS;
+                }
+            }
+            this.status=tg_status;
+        }
     }
 }
