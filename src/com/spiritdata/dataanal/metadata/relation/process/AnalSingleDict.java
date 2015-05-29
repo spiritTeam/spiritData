@@ -29,6 +29,7 @@ import com.spiritdata.dataanal.task.core.service.TaskManageService;
 import com.spiritdata.dataanal.task.process.TaskProcess;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
+import com.spiritdata.jsonD.model.JsonDAtomData;
 
 public class AnalSingleDict implements TaskProcess {
 
@@ -191,10 +192,16 @@ public class AnalSingleDict implements TaskProcess {
         Map<String, Object> ret = new HashMap<String, Object>();
         MetadataColumn mc = (MetadataColumn)groupMap.get("mc");
         MetadataColSemanteme mcs = (MetadataColSemanteme)groupMap.get("mcs");
+        MetadataModel mm = mc.getMdModel();
         List<Map<String, Object>> groupTdList = (List<Map<String, Object>>)groupMap.get("groupData");
-        //
+        
         
         //表数据描述
+        JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
+        ret.putAll(_dataElement.toJsonMap());
+        _dataElement.setAtomData("_tableName", "string", mm.getTableName());
+        ret.putAll(_dataElement.toJsonMap());
+        
         String colName = mc.getColumnName();
         Map<String, Object> tableInfoM = new HashMap<String, Object>();
         ret.put("tableInfo", tableInfoM);
