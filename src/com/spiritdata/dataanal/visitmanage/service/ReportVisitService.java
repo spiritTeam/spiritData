@@ -1,5 +1,7 @@
 package com.spiritdata.dataanal.visitmanage.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +32,6 @@ public class ReportVisitService extends AbstractCategoryService implements VL_Ca
         reportDao.setNamespace("report");
     }
 
-<<<<<<< HEAD
     //文件操作
     @Resource
     FileManageService fmService;
@@ -41,16 +42,27 @@ public class ReportVisitService extends AbstractCategoryService implements VL_Ca
      */
     public Map<Owner, List<?>> load_getNoVisitData() {
         Map<Owner, List<?>> ret = new HashMap<Owner, List<?>>();
-=======
-    public Map<Owner, List<?>> getNoVisitData() {
->>>>>>> refs/heads/master
         //得到用户报告对象
         List<ReportPo> noVisitL = reportDao.queryForList("noVisitList");
         if (noVisitL!=null&&noVisitL.size()>0) {
             String ownerId = "";
-            
+            Owner o=null, _o=null;
+            List<?> ownerReportNoVisitList = null;
+            int ownerType = -1;
+            for (ReportPo rPo: noVisitL) {
+                ownerId=rPo.getOwnerId();
+                ownerType=rPo.getOwnerType();
+                _o = new Owner(ownerId, ownerType);
+                if (!_o.equals(o)) {
+                    if (o!=null) ret.put(o, ownerReportNoVisitList);
+                    ownerReportNoVisitList = new ArrayList<ReportPo>();
+                    o=_o;
+                }
+                ((List<ReportPo>)ownerReportNoVisitList).add(rPo);
+            }
+            ret.put(o, ownerReportNoVisitList);
         }
-        return null;
+        return ret;
     }
 
     @Override

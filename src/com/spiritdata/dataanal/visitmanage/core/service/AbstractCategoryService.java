@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.report.persistence.pojo.ReportPo;
 import com.spiritdata.dataanal.visitmanage.run.mem.VisitMemoryService;
 
 public abstract class AbstractCategoryService implements VL_CategoryService{
@@ -13,9 +14,9 @@ public abstract class AbstractCategoryService implements VL_CategoryService{
      * @param o 所属用户
      * @return 未访问报告列表
      */
-    public List<?> getNoVisitList(Owner o) {
+    public List<ReportPo> getNoVisitList(Owner o) {
         VisitMemoryService vms = VisitMemoryService.getInstance();
-        return vms.getNoVisitList(o, this.getCategory().getName());
+        return (List<ReportPo>)vms.getNoVisitList(o, this.getCategory().getName());
     }
 
     /**
