@@ -83,8 +83,8 @@ function visitLog(objInfo) {
 function visitLog_REPORT(reportInfo) {
 	var param = new Object();
 	param.objType=1;
-	param.objId=reportId;
-	param.objUrl=reportInfo.reportUrl;
+	if (reportInfo&&reportInfo.reportId) param.objId=reportInfo.reportId;
+	if (reportInfo&&reportInfo.reportUrl) param.objUrl=reportInfo.reportUrl;
 	visitLog(param);
 }
 

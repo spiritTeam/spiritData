@@ -26,12 +26,14 @@ function showFile(fileId,fileName){
  * 显示报告详细信息
  * unRead--是否未读报告
  */
-function showReport(reportId,unRead) {
-  var reportUrl = _urlPath+"/report/showReport.jsp?reportId="+reportId+"";
-  //alert("showReport() reportId="+reportId+" , unRead="+unRead+" reportUrl="+reportUrl);
-  //弹出窗口显示报告详情
+function showReport(reportId) {
+	//记录日志
+	var param = new Object();
+	param.reportId=reportId;
+	visitLog_REPORT(param);
+	//显示report内容
+  var reportUrl = _urlPath+"/reportShell/showWithPC.jsp?reportId="+reportId+"";
   var winOption={
-    //url:_urlPath+"/demo/Rd/resultRdEchart.jsp",
     url:reportUrl,
     title:"报告详情",
     height:600,
