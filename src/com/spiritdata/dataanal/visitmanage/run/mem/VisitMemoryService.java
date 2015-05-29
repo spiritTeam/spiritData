@@ -1,6 +1,8 @@
 package com.spiritdata.dataanal.visitmanage.run.mem;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -179,12 +181,22 @@ public class VisitMemoryService {
      */
     public void addNoVisitEle(Object ele, ObjType ot, Owner o) {
         Map<Owner, List<?>> oneCategoryMap = this.vm.ownersNoVisitData.get(ot.getName());
-        if (oneCategoryMap!=null&&oneCategoryMap.size()>0) {
+        boolean found=false, hasCate = false;
+        if (oneCategoryMap!=null) {
+            hasCate=true;
             for (Owner _o: oneCategoryMap.keySet()) {
                 if (_o.equals(o)) {
                     ((List<Object>)oneCategoryMap.get(_o)).add(ele);
+                    found=true;
+                    break;
                 }
             }
+        }
+        if (!found) {
+            List<?> nl = new ArrayList<Object>();
+            ((List<Object>)nl).add(ele);
+            if (!hasCate) oneCategoryMap = new HashMap<Owner, List<?>>();
+            oneCategoryMap.put(o, nl);
         }
     }
 }
