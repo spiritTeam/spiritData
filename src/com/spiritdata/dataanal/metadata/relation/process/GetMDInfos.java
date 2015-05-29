@@ -141,7 +141,7 @@ public class GetMDInfos implements TaskProcess {
                     }
                 }
             }
-            if (tempStr.length()>0) tempStr = tempStr.substring(1);
+            if (tempStr.length()>0) tempStr.substring(1);
             rowM.put("semanteme", tempStr);
             rowM.put("columnIndex", mc.getColumnIndex()+"");
 

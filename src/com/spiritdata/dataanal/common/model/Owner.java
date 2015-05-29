@@ -44,14 +44,13 @@ public class Owner extends BaseObject {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (getClass()!=obj.getClass()) return false;
-
         if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
 
         Owner other = (Owner)obj;
         if (ownerId==null&&other.ownerId!=null) return false;
-        if (!ownerId.equals(other.ownerId)) return false;
+        else if (!ownerId.equals(other.ownerId)) return false;
         if (ownerType!=other.ownerType) return false;
         return true;
     }

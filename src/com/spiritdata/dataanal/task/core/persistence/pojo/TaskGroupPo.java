@@ -18,7 +18,6 @@ public class TaskGroupPo extends BaseObject {
     private String ownerId; //所有者标识（可能是用户id，也可能是SessionID，也可能是'Sys'）
     private String workName; //任务组工作名称
     private int status; //任务组状态：1=准备执行；2=正在执行；3=任务失效；4=执行成功；5=执行失败；
-    private int subCount; //子任务个数，保证在并发环境下的数据一致
     private String desc; //任务组说明
     private Timestamp beginTime; //任务组启动时间
 
@@ -61,12 +60,6 @@ public class TaskGroupPo extends BaseObject {
     }
     public void setStatus(int status) {
         this.status = status;
-    }
-    public int getSubCount() {
-        return subCount;
-    }
-    public void setSubCount(int subCount) {
-        this.subCount = subCount;
     }
     public String getDesc() {
         return desc;

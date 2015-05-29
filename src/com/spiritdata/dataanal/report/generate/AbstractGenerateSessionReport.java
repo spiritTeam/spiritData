@@ -13,6 +13,7 @@ import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.service.ReportService;
 import com.spiritdata.dataanal.task.core.model.TaskGroup;
 import com.spiritdata.dataanal.task.core.service.TaskManageService;
+import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 import com.spiritdata.filemanage.category.REPORT.model.ReportFile;
 import com.spiritdata.filemanage.category.REPORT.service.ReportFileService;
 import com.spiritdata.filemanage.core.enumeration.RelType1;
@@ -122,7 +123,6 @@ public abstract class AbstractGenerateSessionReport implements GenerateReport {
         //把报告插入未读队列
         VisitMemoryService vls = VisitMemoryService.getInstance();
         vls.addNoVisitEle(report.convert2Po(), ObjType.REPORT, report.getOwner());
- 
         return report.getId();
     }
  }

@@ -27,11 +27,12 @@ function showFile(fileId,fileName){
  * unRead--是否未读报告
  */
 function showReport(reportId,unRead) {
-  //alert("showReport() reportId="+reportId+" , unRead="+unRead);
+  var reportUrl = _urlPath+"/report/showReport.jsp?reportId="+reportId+"";
+  //alert("showReport() reportId="+reportId+" , unRead="+unRead+" reportUrl="+reportUrl);
   //弹出窗口显示报告详情
   var winOption={
     //url:_urlPath+"/demo/Rd/resultRdEchart.jsp",
-    url:_urlPath+"/report/showReport.jsp?reportId="+reportId+"",
+    url:reportUrl,
     title:"报告详情",
     height:600,
     width:1000,

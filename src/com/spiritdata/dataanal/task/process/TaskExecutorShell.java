@@ -10,7 +10,9 @@ import com.spiritdata.dataanal.exceptionC.Dtal0402CException;
 import com.spiritdata.dataanal.exceptionC.Dtal0404CException;
 import com.spiritdata.dataanal.report.service.ReportService;
 import com.spiritdata.dataanal.task.TaskUtils;
+import com.spiritdata.dataanal.task.core.enumeration.StatusType;
 import com.spiritdata.dataanal.task.core.model.TaskInfo;
+import com.spiritdata.dataanal.task.core.service.TaskManageService;
 import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
 import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
@@ -129,9 +131,15 @@ public class TaskExecutorShell implements Runnable {
                     }
                 }
             }
-            //处理完成
+            //写入数据库
+            //这里需要用到Spring的容器
+            TaskManageService tmService = (TaskManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("taskManageService");
+            this.ti.setEndTime(new Timestamp(System.currentTimeMillis()));
+            tmService.completeTaskInfo(this.ti);
+            //把失败的任务再放入内存继续执行
             TaskMemoryService tms = TaskMemoryService.getInstance();
-            tms.completeTaskInfo(ti);
+            if (this.ti.getStatus()==StatusType.FAILD) tms.addFaildTaskInfo(this.ti);
+            if (this.ti.getStatus()==StatusType.SUCCESS||this.ti.getStatus()==StatusType.ABATE) tms.removeFromRunningMap(this.ti);
         }
     }
 }

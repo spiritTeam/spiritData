@@ -1,6 +1,5 @@
 package com.spiritdata.dataanal.task.run.monitor;
 
-import com.spiritdata.dataanal.task.core.model.TaskInfo;
 import com.spiritdata.dataanal.task.process.TaskExecutorShell;
 import com.spiritdata.dataanal.task.run.TaskThreadPool;
 import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
@@ -28,13 +27,11 @@ public class DispatchTask extends Thread {
         while (true) {
             try {
                 sleep(this.interval);
+//                System.out.println("=========可执行队列长度:"+tms.getExecuterListSize());
                 if (tms.getExecuterListSize()>0) {
                     //读取可执行的任务
-                    TaskInfo ti = tms.getNextCanProcessTaskInfo();
-                    if (ti!=null) {
-                        TaskExecutorShell executor = new TaskExecutorShell(ti);
-                        TaskThreadPool.executeTask(executor);
-                    }
+                    TaskExecutorShell executor = new TaskExecutorShell(tms.getNextCanProcessTaskInfo());
+                    TaskThreadPool.executeTask(executor);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

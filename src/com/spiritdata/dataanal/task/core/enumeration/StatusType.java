@@ -41,7 +41,7 @@ public enum StatusType {
         if (value==2) return "正在执行";
         if (value==3) return "执行成功";
         if (value==4) return "执行失败";
-        if (value==5) return "失效";
+        if (value==5) return "失效任务";
         if (value==6) return "等待执行";
         throw new Dtal0402CException("不能识别的执行状态分类:"+value+"！");
     }

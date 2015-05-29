@@ -305,7 +305,6 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
             }
         }
         //为测试====END
-
         tr.setTaskGroup(tg);
 
         Map<String, Object> ret = new HashMap<String, Object>();
