@@ -116,10 +116,12 @@ public class VisitMemoryService {
      * @return
      */
     public List<?> getNoVisitList(Owner o, String nvCategory) {
-        Map<Owner, List<?>> categoryMap = this.vm.ownersNoVisitData.get(nvCategory);
-        if (categoryMap!=null&&categoryMap.size()>0) {
-            List<?> ret = categoryMap.get(o);
-            if (ret!=null&&ret.size()>0) return ret;
+        if (this.vm.ownersNoVisitData!=null) {
+            Map<Owner, List<?>> categoryMap = this.vm.ownersNoVisitData.get(nvCategory);
+            if (categoryMap!=null&&categoryMap.size()>0) {
+                List<?> ret = categoryMap.get(o);
+                if (ret!=null&&ret.size()>0) return ret;
+            }
         }
         return null;
     }
@@ -130,8 +132,10 @@ public class VisitMemoryService {
      * @return 某类未访问对象的所有数据
      */
     public Map<Owner, List<?>> getNoVisitData(String nvCategory) {
-        Map<Owner, List<?>> categoryMap = this.vm.ownersNoVisitData.get(nvCategory);
-        if (categoryMap!=null&&categoryMap.size()>0) return categoryMap;
+        if (this.vm.ownersNoVisitData!=null) {
+            Map<Owner, List<?>> categoryMap = this.vm.ownersNoVisitData.get(nvCategory);
+            if (categoryMap!=null&&categoryMap.size()>0) return categoryMap;
+        }
         return null;
     }
 
@@ -161,14 +165,14 @@ public class VisitMemoryService {
         }
         //调整队列
         if (this.vm.visitQueue!=null) {
-            VisitLogPo vlp = null;
-            do {
-                vlp = this.vm.visitQueue.peek();
+            VisitLogPo vlp = this.vm.visitQueue.peek();
+            while (vlp!=null) {
                 if (vlp.getOwnerId().equals(oldOwnerId)&&vlp.getOwnerType()==2) {
                     vlp.setOwnerId(newOwnerId);
                     vlp.setOwnerType(1);
                 }
-            } while (vlp!=null);
+                vlp = this.vm.visitQueue.peek();
+            }
         }
         return false;
     }
@@ -180,6 +184,7 @@ public class VisitMemoryService {
      * @param o 所属用户
      */
     public void addNoVisitEle(Object ele, ObjType ot, Owner o) {
+        if (this.vm.ownersNoVisitData==null) return;
         Map<Owner, List<?>> oneCategoryMap = this.vm.ownersNoVisitData.get(ot.getName());
         boolean found=false, hasCate = false;
         if (oneCategoryMap!=null) {

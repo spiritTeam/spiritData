@@ -15,6 +15,7 @@
  * }
  */
 function visitLog(objInfo) {
+	alert(allFields(objInfo));
   //获得纯页面信息
   function getPurePage() {
     objInfo = new Object();
@@ -24,7 +25,7 @@ function visitLog(objInfo) {
   }
 
   var param = new Object();
-  if (!objInfo||!objInfo.objType) {//若没有参数，则只把当前的页面情况上传，objType=99//这类是普通页面
+	if (!objInfo||!objInfo.objType) {//若没有参数，则只把当前的页面情况上传，objType=99//这类是普通页面
     param = getPurePage();
   } else {
     var objId = objInfo.objId+"";
@@ -34,6 +35,7 @@ function visitLog(objInfo) {
       param.objId=objId;
       param.objUrl=objUrl;
     }
+    param.objType = objInfo.objType;
     if ($.trim(objInfo.fromUrl+"")=="") param.fromUrl=encodeUrlComponent(window.location.href);
   }
   //地图信息，点位信息
@@ -57,8 +59,6 @@ function visitLog(objInfo) {
     param.exploreName=_temp.exploreName;
     param.exploreVer=_temp.exploreVer;
   }
-  if (nowInfo)
-  param.objType=objType;
 
   alert(allFields(param));
   alert(_PATH);

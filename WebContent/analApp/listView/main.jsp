@@ -27,6 +27,7 @@
 <link href="<%=path%>/resources/plugins/zui/css/example.css" rel="stylesheet">
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
 <!-- 加载analApp的JS -->
+<script src="<%=path%>/resources/js/visit.utils.js"></script>
 <script src="<%=path%>/analApp/js/analApp.view.js"></script>
 
 <title>列表显示查询结果主界面</title>

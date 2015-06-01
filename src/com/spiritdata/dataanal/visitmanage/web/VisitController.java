@@ -23,8 +23,9 @@ public class VisitController {
 
     @RequestMapping("gather.do")
     public void save(HttpServletRequest req) throws InterruptedException {
+        if (StringUtils.isNullOrEmptyOrSpace(req.getParameter("objType"))) return ;
+
         Owner o = SessionUtils.getOwner(req.getSession());
-        req.getParameter("");
         VisitLogPo vlp = new VisitLogPo();
         vlp.setOwnerId(o.getOwnerId());
         vlp.setOwnerType(o.getOwnerType());
