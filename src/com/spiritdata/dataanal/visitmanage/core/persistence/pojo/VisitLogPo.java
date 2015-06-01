@@ -20,7 +20,7 @@ public class VisitLogPo extends BaseObject {
     private String equipName; //设备名称
     private String equipVer; //设备型号
     private String exploreName; //浏览器名称
-    private String exploerVer; //浏览器型号
+    private String exploreVer; //浏览器型号
     private int objType; //访问对象类型
     private String objId; //访问对象Id
     private String objUrl; //访问对象Url
@@ -81,11 +81,11 @@ public class VisitLogPo extends BaseObject {
     public void setExploreName(String exploreName) {
         this.exploreName = exploreName;
     }
-    public String getExploerVer() {
-        return exploerVer;
+    public String getExploreVer() {
+        return exploreVer;
     }
-    public void setExploerVer(String exploerVer) {
-        this.exploerVer = exploerVer;
+    public void setExploreVer(String exploreVer) {
+        this.exploreVer = exploreVer;
     }
     public int getObjType() {
         return objType;
