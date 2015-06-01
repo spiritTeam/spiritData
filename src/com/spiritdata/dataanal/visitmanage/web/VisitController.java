@@ -41,7 +41,7 @@ public class VisitController {
         vlp.setEquipVer(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
         temp = req.getParameter("exploreName");
         vlp.setExploreName(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
-        temp = req.getParameter("exploerVer");
+        temp = req.getParameter("exploreVer");
         vlp.setExploreVer(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
         temp = req.getParameter("objType");
         vlp.setObjType(StringUtils.isNullOrEmptyOrSpace(temp)?null:Integer.parseInt(temp));
