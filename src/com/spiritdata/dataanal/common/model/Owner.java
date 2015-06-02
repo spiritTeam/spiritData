@@ -54,4 +54,15 @@ public class Owner extends BaseObject {
         if (ownerType!=other.ownerType) return false;
         return true;
     }
+
+	@Override
+	public int hashCode() {
+		int retInt = 0;
+		String str = this.ownerId+":"+this.ownerType;
+		for(int i=0;i<str.length();i++){
+			char achar = str.charAt(i);
+			retInt += achar;
+		}
+		return retInt;
+	}
 }
