@@ -175,7 +175,15 @@ public class AnalSingleDict implements TaskProcess {
         if (userDataM.size()>0) {
             sysRd.put("resultType", 1);
             Map<String, Object> t = new HashMap<String, Object>();
-            t.put("quote", userDataM);
+            //表数据描述
+            Map<String, Object> tbInfoM = new HashMap<String, Object>();
+            JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
+            _dataElement.setAtomData("_tableName", "string", mm.getTableName());
+            tbInfoM.putAll(_dataElement.toJsonMap());
+            t.put("tbInfo", tbInfoM);
+            //字典项统计数据
+            t.put("dictData", userDataM);
+            
             ret.put("userResultData", t);
         } else sysRd.put("resultType", 2);
 
@@ -196,16 +204,10 @@ public class AnalSingleDict implements TaskProcess {
         List<Map<String, Object>> groupTdList = (List<Map<String, Object>>)groupMap.get("groupData");
         
         
-        //表数据描述
-        JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
-        ret.putAll(_dataElement.toJsonMap());
-        _dataElement.setAtomData("_tableName", "string", mm.getTableName());
-        ret.putAll(_dataElement.toJsonMap());
-        
         String colName = mc.getColumnName();
         Map<String, Object> tableInfoM = new HashMap<String, Object>();
-        ret.put("tableInfo", tableInfoM);
-        tableInfoM.put("tableName", mc.getMdModel().getTableName());
+        ret.put("colInfo", tableInfoM);
+        //tableInfoM.put("tableName", mc.getMdModel().getTableName());
         tableInfoM.put("titleName", mc.getTitleName());
         tableInfoM.put("colName", colName);
         //表数据处理
