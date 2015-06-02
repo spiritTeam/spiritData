@@ -30,26 +30,29 @@ function showReport(reportId) {
 	//记录日志
 	var param = new Object();
 	param.reportId=reportId;
+	param.reportId=null;
 	visitLog_REPORT(param);
-	//显示report内容
-  var reportUrl = _urlPath+"/reportShell/showWithPC.jsp?reportId="+reportId+"";
-  var winOption={
-    url:reportUrl,
-    title:"报告详情",
-    height:600,
-    width:1000,
-    iframeScroll:"yes"
-  };
-  //visitLog(repotId);
-  openSWinInMain(winOption);
-  //如果是未读报告，则通知后台已经看了该报告，后台修改查看状态标记为已读@@@
-  if(typeof(unRead)!="undefined"){
-    if(typeof(unRead)=="boolean" && unRead){
-    	
-    }else if(typeof(unRead)=="string" && unRead.toUpperCase()=="TRUE"){
-    	
-    }	  
-  }
+	//新的report框架
+	showReportSerial();
+//	//显示report内容
+//  var reportUrl = _urlPath+"/reportShell/showWithPC.jsp?reportId="+reportId+"";
+//  var winOption={
+//    url:reportUrl,
+//    title:"报告详情",
+//    height:600,
+//    width:1000,
+//    iframeScroll:"yes"
+//  };
+//  //visitLog(repotId);
+//  openSWinInMain(winOption);
+//  //如果是未读报告，则通知后台已经看了该报告，后台修改查看状态标记为已读@@@
+//  if(typeof(unRead)!="undefined"){
+//    if(typeof(unRead)=="boolean" && unRead){
+//    	
+//    }else if(typeof(unRead)=="string" && unRead.toUpperCase()=="TRUE"){
+//    	
+//    }	  
+//  }
 };
 
 /**
