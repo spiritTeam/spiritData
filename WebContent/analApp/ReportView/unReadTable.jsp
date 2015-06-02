@@ -54,7 +54,7 @@ $(function() {
       //alert(rowIndex+" "+field+"  "+value);  
       //当点击了某个新报告后，此报告名的字体变色，表示已经不是未读的报告
       if(field=="reportName"){
-    	  showReport(value,rowIndex);
+    	  showReport(value);
     	  var _objRepName = $('#divtb').find("table[class='datagrid-btable']").find("td[field='reportName']")[rowIndex];
     	  $(_objRepName).find("font").css("color","green");
       }
@@ -89,20 +89,6 @@ function refreshNewReportTable(jsonData){
 	$('#tb_unReadReport').datagrid('loadData',jsonData);
 }
 
-//模态显示报告信息
-function showReport(reportId,rowidx) {
-  //弹出窗口显示报告详情
-  var winOption={
-    url:"<%=path%>/demo/Rd/resultRdEchart.jsp",
-    title:"报告详情",
-    height:600,
-    width:1000,
-    iframeScroll:"yes"
-  };
-  openSWinInMain(winOption);
-  //如果是未读报告，则通知后台已经看了该报告，后台修改查看状态标记为已读@@@
-
-}
 
 </script>
 </html>
