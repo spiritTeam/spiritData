@@ -27,13 +27,14 @@ function visitLog(objInfo) {
   if (!objInfo||!objInfo.objType) {//若没有参数，则只把当前的页面情况上传，objType=99//这类是普通页面
     param = getPurePage();
   } else {
-    var objId = objInfo.objId+"";
-    var objUrl = objInfo.objUrl+"";
+    var objId = objInfo.objId?objInfo.objId:"";
+    var objUrl = objInfo.objUrl?objInfo.objUrl:"";
     if (($.trim(objId)+$.trim(objUrl))=="") param = getPurePage();
     else {
-      param.objId=objId;
-      param.objUrl=objUrl;
+      if (objId!="") param.objId=objId;
+      if (objUrl!="") param.objUrl=objUrl;
     }
+    param.objType = objInfo.objType;
     if ($.trim(objInfo.fromUrl+"")=="") param.fromUrl=encodeUrlComponent(window.location.href);
   }
   //地图信息，点位信息
@@ -55,18 +56,14 @@ function visitLog(objInfo) {
   _temp = _getExploreInfo();
   if (_temp) {
     param.exploreName=_temp.exploreName;
-    param.exploreVer=_temp.exploreVer;
+    if (_temp.exploreVer) param.exploreVer=_temp.exploreVer;
   }
-  if (nowInfo)
-  param.objType=objType;
 
-  alert(allFields(param));
-  alert(_PATH);
   $.ajax({
-  	type: "POST",
-  	url: _PATH+"/vLog/gather.do",
-  	async: true,
-  	data: param
+    type: "POST",
+    url: _PATH+"/vLog/gather.do",
+    async: true,
+    data: param
   });
 }
 
@@ -81,11 +78,11 @@ function visitLog(objInfo) {
  * }
  */
 function visitLog_REPORT(reportInfo) {
-	var param = new Object();
-	param.objType=1;
-	if (reportInfo&&reportInfo.reportId) param.objId=reportInfo.reportId;
-	if (reportInfo&&reportInfo.reportUrl) param.objUrl=reportInfo.reportUrl;
-	visitLog(param);
+  var param = new Object();
+  param.objType=1;
+  if (reportInfo&&reportInfo.reportId) param.objId=reportInfo.reportId;
+  if (reportInfo&&reportInfo.reportUrl) param.objUrl=reportInfo.reportUrl;
+  visitLog(param);
 }
 
 //以下是生成各类信息的数据
@@ -122,5 +119,17 @@ function _getEquipInfo() {
  */
 /*目前还得不到这样的信息*/
 function _getExploreInfo() {
-  return null;
+  var _b = getBrowserVersion();
+  var ret = new Object();
+  if (_b=="未知") {
+    ret.exploreName="未知";
+  } else {
+  	if (_b.indexOf(" ")!=-1) {
+      ret.exploreName=_b.substring(0, _b.indexOf(" "));
+      ret.exploreVer=_b.substring(_b.indexOf(" ")+1);;
+  	} else {
+      ret.exploreName=_b;
+  	}
+  }
+  return ret;
 }

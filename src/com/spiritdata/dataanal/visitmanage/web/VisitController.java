@@ -23,8 +23,9 @@ public class VisitController {
 
     @RequestMapping("gather.do")
     public void save(HttpServletRequest req) throws InterruptedException {
+        if (StringUtils.isNullOrEmptyOrSpace(req.getParameter("objType"))) return ;
+
         Owner o = SessionUtils.getOwner(req.getSession());
-        req.getParameter("");
         VisitLogPo vlp = new VisitLogPo();
         vlp.setOwnerId(o.getOwnerId());
         vlp.setOwnerType(o.getOwnerType());
@@ -40,8 +41,8 @@ public class VisitController {
         vlp.setEquipVer(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
         temp = req.getParameter("exploreName");
         vlp.setExploreName(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
-        temp = req.getParameter("exploerVer");
-        vlp.setExploerVer(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("exploreVer");
+        vlp.setExploreVer(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
         temp = req.getParameter("objType");
         vlp.setObjType(StringUtils.isNullOrEmptyOrSpace(temp)?null:Integer.parseInt(temp));
         temp = req.getParameter("objId");

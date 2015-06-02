@@ -13,6 +13,9 @@
 <meta http-equiv="expires" content="0"/>
 
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
+<!-- 加载analApp的JS -->
+<script src="<%=path%>/resources/js/visit.utils.js"></script>
+<script src="<%=path%>/analApp/js/analApp.view.js"></script>
 
 <title>未读报告列表页面</title>
 </head>
