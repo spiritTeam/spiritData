@@ -72,14 +72,20 @@ public class ReportVisitService extends AbstractCategoryService implements VL_Ca
 
     @Override
     public boolean compare(Object cateObj, VisitLogPo vlp) {
-        ReportPo rp = (ReportPo)cateObj;
-        if (vlp.getObjId().equals(rp.getId())) return true;
-        
-        FileIndexPo fip = fmService.getFileIndexPoById(rp.getFId());
-        if (fip!=null) {
-            String pureFileName = FileNameUtils.getPureFileName(fip.getFileName());
-            if (vlp.getObjUrl().indexOf(pureFileName)!=-1) return true;
+        if (vlp==null) return false;
+        if (cateObj==null) return false;
+        try {
+            ReportPo rp = (ReportPo)cateObj;
+            if (vlp.getObjId()!=null&&vlp.getObjId().equals(rp.getId())) return true;
+
+            FileIndexPo fip = fmService.getFileIndexPoById(rp.getFId());
+            if (fip!=null) {
+                String pureFileName = FileNameUtils.getPureFileName(fip.getFileName());
+                if (vlp.getObjUrl()!=null&&vlp.getObjUrl().indexOf(pureFileName)!=-1) return true;
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 }
