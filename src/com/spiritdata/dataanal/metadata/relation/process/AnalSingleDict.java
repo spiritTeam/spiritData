@@ -29,6 +29,7 @@ import com.spiritdata.dataanal.task.core.service.TaskManageService;
 import com.spiritdata.dataanal.task.process.TaskProcess;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
+import com.spiritdata.jsonD.model.JsonDAtomData;
 
 public class AnalSingleDict implements TaskProcess {
 
@@ -174,7 +175,15 @@ public class AnalSingleDict implements TaskProcess {
         if (userDataM.size()>0) {
             sysRd.put("resultType", 1);
             Map<String, Object> t = new HashMap<String, Object>();
-            t.put("quote", userDataM);
+            //表数据描述
+            Map<String, Object> tbInfoM = new HashMap<String, Object>();
+            JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
+            _dataElement.setAtomData("_tableName", "string", mm.getTableName());
+            tbInfoM.putAll(_dataElement.toJsonMap());
+            t.put("tbInfo", tbInfoM);
+            //字典项统计数据
+            t.put("dictData", userDataM);
+            
             ret.put("userResultData", t);
         } else sysRd.put("resultType", 2);
 
@@ -191,14 +200,14 @@ public class AnalSingleDict implements TaskProcess {
         Map<String, Object> ret = new HashMap<String, Object>();
         MetadataColumn mc = (MetadataColumn)groupMap.get("mc");
         MetadataColSemanteme mcs = (MetadataColSemanteme)groupMap.get("mcs");
+        MetadataModel mm = mc.getMdModel();
         List<Map<String, Object>> groupTdList = (List<Map<String, Object>>)groupMap.get("groupData");
-        //
         
-        //表数据描述
+        
         String colName = mc.getColumnName();
         Map<String, Object> tableInfoM = new HashMap<String, Object>();
-        ret.put("tableInfo", tableInfoM);
-        tableInfoM.put("tableName", mc.getMdModel().getTableName());
+        ret.put("colInfo", tableInfoM);
+        //tableInfoM.put("tableName", mc.getMdModel().getTableName());
         tableInfoM.put("titleName", mc.getTitleName());
         tableInfoM.put("colName", colName);
         //表数据处理
