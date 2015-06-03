@@ -21,9 +21,14 @@
  * }
  */
 function generateReport(param) {
+	//1-得到获得报告的Url
 	var _getUrl = reportParse.parseParam(param);
 	if (!_getUrl) return ;
-	alert(_getUrl);
+
+	//2-初始化界面
+	alert($("body").html());
+	$("body").html("");//清空页面
+	alert("s::"+$("body").html());
 }
 
 /**
@@ -41,6 +46,7 @@ var reportParse ={
    * }
    */
   parseParam: function(param) {
+    var mPage =getMainPage();
     //1-参数校验
     var checkOk = true;
     var _msg = "", _temp = null, _url = null;
@@ -83,3 +89,48 @@ var reportParse ={
     return _url;
   }
 };
+
+/**
+ * 采用pageFrame框架，初始化报告界面
+ */
+function initPageFrame(){
+  //1、画pageFrame
+  //1-1:头部元素
+  var topSegment =$('<div id="topSegment"><div id="rTitle"></div></div>');
+  $("body").append(topSegment);
+  //1-2:主体元素
+  var mainSegment = $('<div id="mainSegment"></div>');
+  //1-2-1:右侧的报告结构树
+  var sideFrame = $('<div id="sideFrame"><div id="catalogTree" style="border:1px solid #E6E6E6; width:258px;"></div></div>');
+  mainSegment.append(sideFrame);
+  //1-2-2:报告主体
+  var reportFrame = $('<div id="reportFrame"></div>');
+  mainSegment.append(reportFrame);
+  $("body").append(mainSegment);
+  //1-3:尾部元素
+  var footSegment = $('<div id="footSegment"></div>');
+  $("body").append(footSegment);
+  //INIT_PARAM
+  var INIT_PARAM = {
+    pageObjs: {
+      topId: "topSegment",
+      mainId: "mainSegment"
+    },
+    page_width: -1,
+    page_height: -1,
+    top_shadow_color:"#E6E6E6",
+    top_height: 60,
+    top_peg: false,
+    myInit: initPos,
+    myResize: initPos
+  };
+  function initPos() {
+    $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth"));
+    $("#sideFrame").css("left", $("#reportFrame").width());
+  }
+  var initStr = $.spiritPageFrame(INIT_PARAM);
+  if (initStr) {
+    $.messager.alert("页面初始化失败", initStr, "error");
+    return ;
+  };
+}

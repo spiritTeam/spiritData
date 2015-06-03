@@ -21,7 +21,7 @@ var ReportSerialShow = {
    *   reportGetUrl: //获得report的json的Url，可以为空，也可以设置，目前不用设置，默认的为report/getReport.do
    *   //以下为窗口设置
    *   title: //窗口标题拦，默认为“报告详情”
-   *   height: //窗口高度，默认为600
+   *   height: //窗口高度，默认为580
    *   width: //窗口宽度，默认为900
    *   iframeScroll: //窗口时否有滚动条，默认有滚动条
    * }
@@ -53,7 +53,7 @@ var ReportSerialShow = {
     }
     //处理窗口显示参数
     winOption.title=(param.title?param.title:"报告详情");
-    winOption.height=(param.height?param.height:600);
+    winOption.height=(param.height?param.height:580);
     winOption.width=(param.width?param.width:900);
     winOption.iframeScroll=(param.iframeScroll?param.iframeScroll:"yes");
     //获得report.json的Uri

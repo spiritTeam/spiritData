@@ -30,16 +30,9 @@ require.config({
 </script>
 <!-- report -->
 <script type="text/javascript" src="<%=path%>/reportFrame/serial/js/spirit.report.parse.js"></script>
-<link type="text/css" rel="stylesheet" href="<%=path%>/resources/plugins/report/css/report.css"/>
+<link type="text/css" rel="stylesheet" href="<%=path%>/reportFrame/serial/css/report.serial.css"/>
+
 <title>序列化报告显示壳容器</title>
-</head>
-<style>
-body {
-  background-color:#fff;
-}
-</style>
-<body>
-</body>
 <script type="text/javascript">
 var getReportUrl = _PATH+"/report/getReport.do?";
 $(function() {
@@ -51,7 +44,13 @@ $(function() {
   var getUrl = getUrlParam(window.location.href, "getUrl");
   if (getUrl&&$.trim(getUrl)!=""&&$.trim(getUrl)!="undefined") rP.getUrl = getUrl;
 
-  generateReport(null);
+  generateReport(rP);
 });
 </script>
+</head>
+<style>
+</style>
+<body>
+AABBCCDDDDCCC
+</body>
 </html>
