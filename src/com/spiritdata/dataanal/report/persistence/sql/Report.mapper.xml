@@ -62,7 +62,7 @@ from sa_report_info a
 inner join sa_file_index b on a.fId=b.id
 left join sa_visit_log c on a.id=c.objId and c.objType=1
 left join sa_visit_log d on POSITION(b.filename IN d.objUrl)>0
-where c.id is null and d.id is null and a.ownerType=1
+where c.id is null and d.id is null and a.ownerType=1 order by a.ownerId,a.cTime desc
   </select>
 
   <!-- 获得一条数据 -->
