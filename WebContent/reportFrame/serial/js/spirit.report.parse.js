@@ -21,43 +21,65 @@
  * }
  */
 function generateReport(param) {
-  //1-参数校验
-  var checkOk = true;
-  var _msg = "", _temp = null, _url = null;
-  //1.1-校验整个参数
-  if (!param) {
-    _msg = "参数为空，无法显示报告！";
-    if (mPage) mPage.$.messager.alert("提示", _msg, "error");
-    else alert(_msg);
-    checkOk = false;
-  }
-  //1.2-校验报告Id或Uri，若有Uri，则Id被忽略
-  if (checkOk) {
-    _temp = param.reportUri;
-    if (_temp&&$.trim(_temp)!=""&&$.trim(_temp)!="undefined") {
-      _url = "?uri="+encodeURIComponent(param.reportUri);
-    } else {
-      _temp = param.reportId;
+	var _getUrl = reportParse.parseParam(param);
+	if (!_getUrl) return ;
+	alert(_getUrl);
+}
+
+/**
+ * 报告解析对象
+ */
+var reportParse ={
+  /**
+   * 解析参数，并得到获得报告数据的Url，此方法中若有不合法的参数，会调用平台message(目前采用easyUi的message)方法给出提示。
+   * 若不能解析为获得报告的Url则返回null
+   * @param param解析报告的参数，主要是获得报告的必要信息，包括
+   * param = {
+   *   getUrl: 获得报告的Url比如getReport.do，可为空，默认为：report/getReport.do?（一般不用设置，除非有新的获得报告的方法），注意设置时，开头不要以“/”开头，以此为开头，将不会自动加入_PATH的前缀
+   *   reportUri：获得报告json的直接Uri
+   *   reportId：报告Id
+   * }
+   */
+  parseParam: function(param) {
+    //1-参数校验
+    var checkOk = true;
+    var _msg = "", _temp = null, _url = null;
+    //1.1-校验整个参数
+    if (!param) {
+      _msg = "参数为空，无法显示报告！";
+      if (mPage) mPage.$.messager.alert("提示", _msg, "error");
+      else alert(_msg);
+      checkOk = false;
+    }
+    //1.2-校验报告Id或Uri，若有Uri，则Id被忽略
+    if (checkOk) {
+      _temp = param.reportUri;
       if (_temp&&$.trim(_temp)!=""&&$.trim(_temp)!="undefined") {
-        _url = "?reportId="+param.reportId;
-      } else {//两个参数都没有设置，出错了
-        _msg="报告Uri或Id至少指定一项，目前两项都未指定，无法显示报告！";
-        if (mPage) mPage.$.messager.alert("提示", _msg, "error");
-        else alert(_msg);
-        checkOk = false;
+        _url = "?uri="+encodeURIComponent(param.reportUri);
+      } else {
+        _temp = param.reportId;
+        if (_temp&&$.trim(_temp)!=""&&$.trim(_temp)!="undefined") {
+          _url = "?reportId="+param.reportId;
+        } else {//两个参数都没有设置，出错了
+          _msg="报告Uri或Id至少指定一项，目前两项都未指定，无法显示报告！";
+          if (mPage) mPage.$.messager.alert("提示", _msg, "error");
+          else alert(_msg);
+          checkOk = false;
+        }
       }
     }
-  }
-  if (!checkOk) return;//若校验不通过，则后面的逻辑都不做了
-  //1.3-组装获取report数据的Url
-  _temp = param.getUrl;
-  if (_temp&&$.trim(_temp)!=""&&$.trim(_temp)!="undefined") {
-  	_temp=decodeURIComponent(_temp);
-    if (_temp.indexOf("/")!=0&&_temp.indexOf("\\")!=0) {//无根，加上根
-      _temp=_PATH+"/"+_temp;
+    if (!checkOk) return null;//若校验不通过，则后面的逻辑都不做了
+    //1.3-组装获取report数据的Url
+    _temp = param.getUrl;
+    if (_temp&&$.trim(_temp)!=""&&$.trim(_temp)!="undefined") {
+      _temp=decodeURIComponent(_temp);
+      if (_temp.indexOf("/")!=0&&_temp.indexOf("\\")!=0) {//无根，加上根
+        _temp=_PATH+"/"+_temp;
+      }
+      _url = _temp+_url;
+    } else {
+      _url = _PATH+"/report/getReport.do"+_url;
     }
-    _url = _temp+_url;
-  } else {
-    _url = _PATH+"/report/getReport.do"+_url;
+    return _url;
   }
-}
+};

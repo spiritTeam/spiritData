@@ -51,7 +51,7 @@ $(function() {
   var getUrl = getUrlParam(window.location.href, "getUrl");
   if (getUrl&&$.trim(getUrl)!=""&&$.trim(getUrl)!="undefined") rP.getUrl = getUrl;
 
-  generateReport(rP);
+  generateReport(null);
 });
 </script>
 </html>
