@@ -92,7 +92,7 @@ public class FileViewPo extends BaseObject{
 	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
 		try{
-			this.createTimeStr = DateUtils.convert2LocalStr("yyyy-MM-dd HH:mm:ss", createTime);
+			this.createTimeStr = DateUtils.convert2TimeChineseStr(createTime);
 		}catch(Exception ex){
 			logger.error("failed to conver timestamp to str. timestamp="+createTime,ex);
 		}
