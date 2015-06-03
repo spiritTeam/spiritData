@@ -26,9 +26,8 @@ function generateReport(param) {
 	if (!_getUrl) return ;
 
 	//2-初始化界面
-	alert($("body").html());
 	$("body").html("");//清空页面
-	alert("s::"+$("body").html());
+	initPageFrame();
 }
 
 /**
@@ -99,9 +98,9 @@ function initPageFrame(){
   var topSegment =$('<div id="topSegment"><div id="rTitle"></div></div>');
   $("body").append(topSegment);
   //1-2:主体元素
-  var mainSegment = $('<div id="mainSegment"></div>');
+  var mainSegment = $('<div id="mainSegment" style="background-color:yellow;border:2px solid red;"></div>');
   //1-2-1:右侧的报告结构树
-  var sideFrame = $('<div id="sideFrame"><div id="catalogTree" style="border:1px solid #E6E6E6; width:258px;"></div></div>');
+  var sideFrame = $('<div id="sideFrame"><div id="catalogTree" style="height:100px; border:1px solid blue;"></div></div>');
   mainSegment.append(sideFrame);
   //1-2-2:报告主体
   var reportFrame = $('<div id="reportFrame"></div>');
@@ -114,13 +113,16 @@ function initPageFrame(){
   var INIT_PARAM = {
     pageObjs: {
       topId: "topSegment",
-      mainId: "mainSegment"
+      mainId: "mainSegment",
+      footId: "footSegment"
     },
-    page_width: -1,
-    page_height: -1,
+    page_width: 850,
+    page_height: 1000,
     top_shadow_color:"#E6E6E6",
     top_height: 60,
     top_peg: false,
+    foot_height: 0, //脚部高度，目前先不使用页脚
+    foot_peg: true,
     myInit: initPos,
     myResize: initPos
   };

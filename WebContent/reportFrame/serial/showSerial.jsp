@@ -29,7 +29,7 @@ require.config({
 });
 </script>
 <!-- report -->
-<script type="text/javascript" src="<%=path%>/reportFrame/serial/js/spirit.report.parse.js"></script>
+<script type="text/javascript" src="<%=path%>/reportFrame/serial/js/spirit.report.serial.parse.js"></script>
 <link type="text/css" rel="stylesheet" href="<%=path%>/reportFrame/serial/css/report.serial.css"/>
 
 <title>序列化报告显示壳容器</title>

@@ -2,3 +2,27 @@ body {
   background-color:#fff;
 }
 
+/**
+ * 头部设置
+ */
+/*报告标题*/
+#rTitle {
+  height:40px; padding:10px; padding-left: 30px; font-size:36px; font-weight:bold;
+}
+
+/**
+ *右侧树
+ */
+#sideFrame {
+  width:270px; padding-left:20px; position:fixed;
+}
+#catalogTree {
+  border:1px solid #E6E6E6; width:258px;
+}
+
+/**
+ * 页脚设置
+ */
+#footSegment {
+  border:0px;
+}
