@@ -17,23 +17,23 @@ function showFile(fileId,fileName){
     width:1000,
     iframeScroll:"yes"
   };
-  //alert(winOption.url);
   openSWinInMain(winOption);
 };
 
 //模态显示报告信息
 /**
- * 显示报告详细信息
- * unRead--是否未读报告
+ * 显示报告内容
+ * modifyByWH：
  */
 function showReport(reportId) {
 	//记录日志
 	var param = new Object();
 	param.reportId=reportId;
-	param.reportId=null;
 	visitLog_REPORT(param);
 	//新的report框架
-	showReportSerial();
+	//ReportSerialShow.show();
+  ReportSerialShow.showById(reportId);
+};
 //	//显示report内容
 //  var reportUrl = _urlPath+"/reportShell/showWithPC.jsp?reportId="+reportId+"";
 //  var winOption={
@@ -53,7 +53,6 @@ function showReport(reportId) {
 //    	
 //    }	  
 //  }
-};
 
 /**
  * 显示报告的关联信息

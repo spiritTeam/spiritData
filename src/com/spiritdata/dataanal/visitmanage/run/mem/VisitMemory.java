@@ -20,6 +20,7 @@ public class VisitMemory {
         public static VisitMemory instance = new VisitMemory();
     }
     public static VisitMemory getInstance() {
+        InstanceHolder.instance.init();
         return InstanceHolder.instance;
     }
 
@@ -32,7 +33,7 @@ public class VisitMemory {
      * 参数初始化，必须首先执行这个方法，访问日志内存类才能使用
      */
     public void init() {
-        ownersNoVisitData = new ConcurrentHashMap<String, Map<Owner, List<?>>>();
-        visitQueue = new LinkedBlockingQueue<VisitLogPo>();
+        if (ownersNoVisitData==null) ownersNoVisitData = new ConcurrentHashMap<String, Map<Owner, List<?>>>();
+        if (visitQueue==null) visitQueue = new LinkedBlockingQueue<VisitLogPo>();
     }
 }

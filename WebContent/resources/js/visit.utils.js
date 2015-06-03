@@ -36,9 +36,10 @@ function visitLog(objInfo) {
       if (objUrl!="") param.objUrl=objUrl;
     }
     param.objType = objInfo.objType;
-    if ($.trim(objInfo.fromUrl+"")=="") param.fromUrl=window.location.href;
+    if (!objInfo.fromUrl||$.trim(objInfo.fromUrl+"")=="") param.fromUrl=window.location.href;
+    else param.fromUrl=objInfo.fromUrl;
   }
-  alert("=====\n"+allFields(param));
+
   //地图信息，点位信息
   var _temp = _getPointInfo();
   if (_temp&&(_temp instanceof string)) param.poinInfo = temp;
@@ -84,7 +85,6 @@ function visitLog_REPORT(reportInfo) {
   param.objType=1;
   if (reportInfo&&reportInfo.reportId) param.objId=reportInfo.reportId;
   if (reportInfo&&reportInfo.reportUrl) param.objUrl=reportInfo.reportUrl;
-  alert(allFields(param));
   visitLog(param);
 }
 

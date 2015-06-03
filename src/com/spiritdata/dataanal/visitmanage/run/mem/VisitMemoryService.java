@@ -55,7 +55,6 @@ public class VisitMemoryService {
      * 初始化方法，包括装载数据
      */
     public void init() {
-        this.vm.init();
         //1-报告访问数据初始化
         this.setVls();
         VL_CategoryService reprotCs = this.vls.getCategoryServiceByObjType(ObjType.REPORT);
@@ -81,6 +80,9 @@ public class VisitMemoryService {
      */
     public void put2Queue(VisitLogPo vlp) throws InterruptedException {
         if (vlp.getVisitTime()==null) vlp.setVisitTime(new Timestamp(System.currentTimeMillis()));
+        if (this.vm==null||this.vm.visitQueue==null) this.setVisitMemory();
+        if (this.vls==null) this.setVls();
+
         this.vm.visitQueue.put(vlp);
         //清理未访问数据
         VL_CategoryService vlCs = null;
@@ -164,17 +166,15 @@ public class VisitMemoryService {
             }
         }
         //调整队列
-        if (this.vm.visitQueue!=null) {
-            VisitLogPo vlp = this.vm.visitQueue.peek();
-            while (vlp!=null) {
+        if (this.vm.visitQueue!=null&&this.vm.visitQueue.size()>0) {
+            for (VisitLogPo vlp: this.vm.visitQueue) {
                 if (vlp.getOwnerId().equals(oldOwnerId)&&vlp.getOwnerType()==2) {
                     vlp.setOwnerId(newOwnerId);
                     vlp.setOwnerType(1);
                 }
-                vlp = this.vm.visitQueue.peek();
             }
         }
-        return false;
+        return true;
     }
 
     /**
