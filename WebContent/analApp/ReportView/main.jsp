@@ -43,6 +43,7 @@
 .td_height_49{height:49px;}
 .font_15{font-size:15px;}
 .div_float_left{float:left;}
+.div_inline{ display:inline} 
 
 .roundBase {
 border-radius: 5px; /* 所有角都使用半径为5px的圆角，此属性为CSS3标准属性 */
@@ -73,10 +74,11 @@ border: 1px #a72525 solid;
 -webkit-border-radius: 10px;
 border-radius:10px;
 } 
-.li_inline{   
+.li_inline{  
     display:-moz-inline-box;
     *display:inline;
-    display:inline-block;
+    display:inline-block; 
+    float:left;
 }
 .wrap{
   word-wrap: break-word;
@@ -268,7 +270,8 @@ function showSearchResultList(){
       var id = jsonRows[i]["id"];
       var fileName = jsonRows[i]["reportName"];
       var fileFull = fileName;
-      var unRead = jsonRows[i]["unRead"]; //是否未读过
+      //var unRead = jsonRows[i]["unRead"]; //是否未读过
+      var unRead = getMainPage().isUnReadReportById(id); //是否未读过
       var ahrf_file = '<a href="###" onclick="showReport(\''+id+'\',\''+unRead+'\');"><strong>'+fileFull+'</strong></a>';
       //是否未读，如果未读则前面加个小红点用于标识
       var optRound = '';
@@ -318,7 +321,8 @@ function showSearchResultThumb(){
       var desc = jsonRows[i]["descn"];
       var reportType = jsonRows[i]["reportType"];
       var createDate = jsonRows[i]["createTimeStr"];
-      var unRead = jsonRows[i]["unRead"];
+      //var unRead = jsonRows[i]["unRead"];
+      var unRead = getMainPage().isUnReadReportById(id); //是否未读过
       var thumbUrl = jsonRows[i]["thumbUrl"];
       thumbUrl = thumbPath + getStr(thumbUrl,defaultThumbImg);
       
@@ -335,13 +339,14 @@ function showSearchResultThumb(){
       //是否未读，如果未读则前面加个小红点用于标识
       var optRound = '';
       if(unRead){
-        optRound = '<span class="circleFillRed" style="display:block;text-align:center;float:right;"></span>';
+        optRound = '<span class="circleFillRed" style="display:block;text-align:center;float:left;"></span>';
       }else{
         optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;visibility:hidden;"/>';
       }
       //显示报告名
       var ahrf_file = '<a href="###" class="card-heading" style="padding:0px;" onclick="showReport(\''+id+'\',\''+unRead+'\');" title="'+fileFull+'">'+'<strong>'+fileFull+'</strong></a>';
-      var tbHead = '<ul style="list-style:none;width:100%;height:100%;padding-left:0px;margin-top:10px;margin-bottom:0px;"><li class="li_inline" style="padding-bottom:10px;">'+optRound+'</li><li class="li_inline wrap">'+ahrf_file+'</li></ul>';      
+      //var tbHead = '<ul style="list-style:none;width:100%;height:100%;padding-left:0px;margin-top:10px;margin-bottom:0px;"><li class="li_inline" style="padding-bottom:10px;">'+optRound+'</li><li class="li_inline wrap">'+ahrf_file+'</li></ul>';      
+      var tbHead = '<div><div class="div_float_left,div_inline">'+optRound+'</div><div class="div_float_left,div_inline">'+ahrf_file+'</div></div>';
       thumbHtmlStr += '        '+tbHead;
       thumbHtmlStr += '      </div>'; 
       thumbHtmlStr += '      <div class="media-wrapper card-content text-muted " style="padding:2px;">';
