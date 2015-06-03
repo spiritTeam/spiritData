@@ -302,6 +302,9 @@ function searchNewReport(){
   }); 	
 }
 
+
+//*** begin 处理未读报告 ***//
+
 /**
  * 刷新是否有新报告生成的DIV
  */
@@ -336,11 +339,30 @@ function showModelNewReportList(){
     //content:contentHtml,
     title:"未读报告列表",
     height:600,
-    width:500,
+    width:750,
     iframeScroll:"yes"
   };
   openSWinInMain(winOption);
 }
+
+/**
+ * 返回指定的报告ID是否为未读报告
+ * 当条件查询报告的时候，触发此方法
+ * 如果areportId在newReportJson中，则返回true
+ */
+function isUnReadReportById(areportId){	 
+  if(newReportJson&&newReportJson.rows&&newReportJson.rows.length>0 && areportId){
+	  for(var i=0;i<newReportJson.rows.length;i++){
+		  var aRow = newReportJson.rows[i];
+		  if(aRow.reportId && aRow.reportId==areportId){
+			  return true;
+		  }
+	  }
+  }
+  return false;
+}
+
+//*** end 处理未读报告 ***//
 
 //点击logo图片
 function clickLogo(){

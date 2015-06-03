@@ -24,14 +24,12 @@ function showFile(fileId,fileName){
 //模态显示报告信息
 /**
  * 显示报告详细信息
- * unRead--是否未读报告
+ * reportId--报告的ID
+ * unReadId--未读报告小圆点标识的ID，用于查看报告后隐藏该小圆点，在主页面上显示的未读报告总数-1，未读报告JSON中减去REPORTID所对应的记录
  */
-function showReport(reportId) {
-	//记录日志
-	var param = new Object();
-	param.reportId=reportId;
-	visitLog_REPORT(param);
-	//显示report内容
+function showReport(reportId,unReadId) {
+  //alert("showReport() reportId="+reportId+" unReadId="+unReadId);
+  //显示report内容
   var reportUrl = _urlPath+"/reportShell/showWithPC.jsp?reportId="+reportId+"";
   var winOption={
     url:reportUrl,
@@ -42,6 +40,25 @@ function showReport(reportId) {
   };
   //visitLog(repotId);
   openSWinInMain(winOption);  
+
+  //如果是未读报告，则隐藏未读小红点标志，并把未读总数-1
+  if(unReadId){
+	$("#"+unReadId).css("visibility","hidden");
+	var newReportJson = getMainPage().newReportJson;
+	  for(var i=0;i<newReportJson.rows.length;i++){
+		  var aRow = newReportJson.rows[i];
+		  if(aRow.reportId && aRow.reportId==reportId){
+			  newReportJson.rows.splice(i,1);
+			  getMainPage().refreshNewReportDIV();
+			  break;
+		  }
+	  }
+  }
+
+  //记录日志
+  var param = new Object();
+  param.reportId=reportId;
+  visitLog_REPORT(param);  
 };
 
 /**
