@@ -28,13 +28,13 @@
 </style>
 <body class="padding_top5" style="background-color:#FFFFFF">
   <div id="divtb" class="div border_no">
-    <table id="tb_unReadReport" class="easyui-datagrid" style="overflow-x:hidden;overflow-y:scroll;width:480px;height:520px;"
+    <table id="tb_unReadReport" class="easyui-datagrid" style="overflow-x:hidden;overflow-y:scroll;width:730px;height:530px;"
            data-options="singleSelect:true,collapsible:true">
       <thead>
         <tr>
-          <th data-options="field:'reportName',width:290,halign:'center',align:'left'"><label style='font-weight: bolder;color:blue;'>报告名</label></th>
-          <th data-options="field:'size',width:60,halign:'center',align:'right'"><label style='font-weight: bolder;color:blue;'>大小</label></th>
-          <th data-options="field:'createDate',width:100,halign:'center',align:'left'"><label style='font-weight: bolder;color:blue;'>生成日期</label></th>
+          <th data-options="field:'reportName',width:380,halign:'center',align:'left'"><label style='font-weight: bolder;color:blue;'>报告名</label></th>
+          <th data-options="field:'reportCategory',width:120,halign:'center',align:'left'"><label style='font-weight: bolder;color:blue;'>报告类型</label></th>
+          <th data-options="field:'createDate',width:200,halign:'center',align:'left'"><label style='font-weight: bolder;color:blue;'>生成日期</label></th>
         </tr>
       </thead>
     </table>    
@@ -80,7 +80,6 @@ $(function() {
   
 });
 
-
 /**
  * 当有新数据来时，更新报告列表
  */
@@ -88,7 +87,5 @@ function refreshNewReportTable(jsonData){
   //jsonData = {"total":100,"rows":[{"reportName":"report1","size":"1M","createDate":"2015-01-02","reportId":"12345"}]};
 	$('#tb_unReadReport').datagrid('loadData',jsonData);
 }
-
-
 </script>
 </html>
