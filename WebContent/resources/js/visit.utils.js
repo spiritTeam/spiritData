@@ -19,7 +19,8 @@ function visitLog(objInfo) {
   function getPurePage() {
     objInfo = new Object();
     objInfo.objType=99;
-    objInfo.objUrl=encodeUrlComponent(window.location.href);
+//    objInfo.objUrl=encodeURIComponent(window.location.href);
+    objInfo.objUrl=window.location.href;
     return objInfo;
   }
 
@@ -35,8 +36,10 @@ function visitLog(objInfo) {
       if (objUrl!="") param.objUrl=objUrl;
     }
     param.objType = objInfo.objType;
-    if ($.trim(objInfo.fromUrl+"")=="") param.fromUrl=encodeUrlComponent(window.location.href);
+    if (!objInfo.fromUrl||$.trim(objInfo.fromUrl+"")=="") param.fromUrl=window.location.href;
+    else param.fromUrl=objInfo.fromUrl;
   }
+
   //地图信息，点位信息
   var _temp = _getPointInfo();
   if (_temp&&(_temp instanceof string)) param.poinInfo = temp;
@@ -124,11 +127,10 @@ function _getExploreInfo() {
   if (_b=="未知") {
     ret.exploreName="未知";
   } else {
-  	if (_b.indexOf(" ")!=-1) {
+  	if (_b.indexOf(" ")==-1) ret.exploreName=_b;
+  	else {
       ret.exploreName=_b.substring(0, _b.indexOf(" "));
       ret.exploreVer=_b.substring(_b.indexOf(" ")+1);;
-  	} else {
-      ret.exploreName=_b;
   	}
   }
   return ret;

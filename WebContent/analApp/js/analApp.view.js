@@ -17,7 +17,6 @@ function showFile(fileId,fileName){
     width:1000,
     iframeScroll:"yes"
   };
-  //alert(winOption.url);
   openSWinInMain(winOption);
 };
 
@@ -30,7 +29,6 @@ function showFile(fileId,fileName){
 function showReport(reportId,unReadId) {
   //alert("showReport() reportId="+reportId+" unReadId="+unReadId);
   //显示report内容
-  var reportUrl = _urlPath+"/reportShell/showWithPC.jsp?reportId="+reportId+"";
   var winOption={
     url:reportUrl,
     title:"报告详情",
@@ -38,9 +36,13 @@ function showReport(reportId,unReadId) {
     width:1000,
     iframeScroll:"yes"
   };
-  //visitLog(repotId);
-  openSWinInMain(winOption);  
+  ReportSerialShow.showById(reportId);
 
+  //记录日志
+  var param = new Object();
+  param.reportId=reportId;
+  visitLog_REPORT(param);  
+  
   //如果是未读报告，则隐藏未读小红点标志，并把未读总数-1
   if(unReadId){
 	$("#"+unReadId).css("visibility","hidden");
@@ -54,11 +56,6 @@ function showReport(reportId,unReadId) {
 		  }
 	  }
   }
-
-  //记录日志
-  var param = new Object();
-  param.reportId=reportId;
-  visitLog_REPORT(param);  
 };
 
 /**

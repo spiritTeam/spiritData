@@ -96,9 +96,10 @@ public class LoginServiceImpl implements LoginService {
                     conn.rollback();
                     conn.setAutoCommit(autoCommitFlag);
                 } catch (SQLException sqlE) {
-                    throw new Dtal1105CException(sqlE.getMessage());
+                    throw new Dtal1105CException(sqlE.getMessage(), e);
                 }
             }
+            throw new Dtal1105CException(e);
         } finally {
             try { if (st!=null) {st.close();st = null;} } catch (Exception e) {e.printStackTrace();} finally {st = null;};
             try { if (conn!=null) {conn.close();conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
