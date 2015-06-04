@@ -63,7 +63,7 @@
 
     //1-画里面的内容
     //a)头
-    var headDiv=$("<div class='sWin_head'><div class='sWin_icon' /><div class='sWin_title' /><div class='sWin_msg' /><div class='sWin_closeBtn' /></div>");
+    var headDiv=$("<div class='sWin_head'><div class='sWin_icon'/><div class='sWin_title'/><div class='sWin_msg'/><div class='sWin_closeBtn'/></div>");
     winDiv.append(headDiv);
     //窗口头
     if (_options.headCss) headDiv.css(headCss);

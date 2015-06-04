@@ -21,8 +21,8 @@ import com.spiritdata.dataanal.report.service.ReportService;
 public class ReportController {
     @Resource
     private ReportService reportService;
-    @RequestMapping(value="/report/getReport.do")
-    @ResponseBody
+
+    @RequestMapping(value="/report/getReport.do") @ResponseBody
     public Map<String, Object> getReport(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> ret = new HashMap<String, Object>();
         String reportId = request.getParameter("reportId");
