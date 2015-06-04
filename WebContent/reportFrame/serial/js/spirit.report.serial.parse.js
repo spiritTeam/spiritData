@@ -21,19 +21,23 @@
  * }
  */
 function generateReport(param) {
-	//1-得到获得报告的Url
-	var _getUrl = reportParse.parseParam(param);
-	if (!_getUrl) return ;
+  //1-得到获得报告的Url
+  var _getUrl = reportParse.parseParam(param);
+  if (!_getUrl) return ;
 
-	//2-初始化界面
-	$("body").html("");//清空页面
-	initPageFrame();
+  //2-初始化界面
+  $("body").html("");//清空页面
+  initPageFrame();
+
+  //3-读取report.json
+  reportParse.get_parseReport(_getUrl);
 }
 
 /**
  * 报告解析对象
  */
 var reportParse ={
+  mPage:null, //主页面
   /**
    * 解析参数，并得到获得报告数据的Url，此方法中若有不合法的参数，会调用平台message(目前采用easyUi的message)方法给出提示。
    * 若不能解析为获得报告的Url则返回null
@@ -45,14 +49,14 @@ var reportParse ={
    * }
    */
   parseParam: function(param) {
-    var mPage =getMainPage();
+  	if (!this.mPage) this.mPage=getMainPage();
     //1-参数校验
     var checkOk = true;
     var _msg = "", _temp = null, _url = null;
     //1.1-校验整个参数
     if (!param) {
       _msg = "参数为空，无法显示报告！";
-      if (mPage) mPage.$.messager.alert("提示", _msg, "error");
+      if (this.mPage) mPage.$.messager.alert("提示", _msg, "error");
       else alert(_msg);
       checkOk = false;
     }
@@ -67,7 +71,7 @@ var reportParse ={
           _url = "?reportId="+param.reportId;
         } else {//两个参数都没有设置，出错了
           _msg="报告Uri或Id至少指定一项，目前两项都未指定，无法显示报告！";
-          if (mPage) mPage.$.messager.alert("提示", _msg, "error");
+          if (this.mPage) mPage.$.messager.alert("提示", _msg, "error");
           else alert(_msg);
           checkOk = false;
         }
@@ -86,6 +90,39 @@ var reportParse ={
       _url = _PATH+"/report/getReport.do"+_url;
     }
     return _url;
+  },
+  /**
+   * 获得报告数据，注意这里采取ajax的同步方式，返回获得的数据
+   * @param url 获得数据的Url
+   */
+  get_parseReport:function(getUrl) {
+  	if (!this.mPage) this.mPage=getMainPage();
+    var _msg = "";
+    $.ajax({type:"get",url:getUrl ,async:true, dataType:"json",
+      success:function(json){
+        alert(json.jsonType);
+        if (json.jsonType!=1) {
+          _msg = json.message;
+          alert(this.mPage);
+          if (this.mPage) mPage.$.messager.alert("提示", _msg, "error");
+          else alert(_msg);
+        } else {//解析，并画内容
+        	this.parseAndDraw(str2JsonObj(json.data));
+        }
+      }
+    });
+  },
+
+  //以下都为内部调用函数
+  /**
+   * 解析report数据，进行第一次扫描：
+   * 1-画出报告结构
+   * 2-计算整理树对象
+   * 3-记录d标签结构
+   * @param rptData 报告对象，注意，必须是javascript对象
+   */
+  parseAndDraw:function(rptData) {
+  	alert(allFields(rptData));
   }
 };
 
@@ -116,8 +153,8 @@ function initPageFrame(){
       mainId: "mainSegment",
       footId: "footSegment"
     },
-    page_width: 850,
-    page_height: 1000,
+    page_width: -1,
+    page_height: -1,
     top_shadow_color:"#E6E6E6",
     top_height: 60,
     top_peg: false,
