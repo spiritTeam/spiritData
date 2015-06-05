@@ -122,7 +122,7 @@ var reportParse ={
    * @param rptData 报告对象，注意，必须是javascript对象
    */
   parseAndDraw:function(rptData) {
-  	alert(allFields(rptData));
+  	alert("====\n"+allFields(rptData));
   }
 };
 
