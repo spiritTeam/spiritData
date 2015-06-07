@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 精灵报告解析及展示方法
  * 需要用到：
  * JS——jquery+spirit.pageFrame
@@ -34,10 +34,16 @@ function generateReport(param) {
 }
 
 /**
- * 报告解析对象
+ * 为辅助解析的数据结构
+ */
+var parseSysData = {
+  mdObj:new Obejct() //为监控DList读取设置的对象
+};
+
+/**
+ * 报告解析对象,此对象主要是方法的集合。
  */
 var reportParse ={
-  mPage:null, //主页面
   /**
    * 解析参数，并得到获得报告数据的Url，此方法中若有不合法的参数，会调用平台message(目前采用easyUi的message)方法给出提示。
    * 若不能解析为获得报告的Url则返回null
@@ -49,14 +55,14 @@ var reportParse ={
    * }
    */
   parseParam: function(param) {
-  	if (!this.mPage) this.mPage=getMainPage();
+    var mPage=getMainPage();
     //1-参数校验
     var checkOk = true;
     var _msg = "", _temp = null, _url = null;
     //1.1-校验整个参数
     if (!param) {
       _msg = "参数为空，无法显示报告！";
-      if (this.mPage) mPage.$.messager.alert("提示", _msg, "error");
+      if (mPage) mPage.$.messager.alert("提示", _msg, "error");
       else alert(_msg);
       checkOk = false;
     }
@@ -71,7 +77,7 @@ var reportParse ={
           _url = "?reportId="+param.reportId;
         } else {//两个参数都没有设置，出错了
           _msg="报告Uri或Id至少指定一项，目前两项都未指定，无法显示报告！";
-          if (this.mPage) mPage.$.messager.alert("提示", _msg, "error");
+          if (mPage) mPage.$.messager.alert("提示", _msg, "error");
           else alert(_msg);
           checkOk = false;
         }
@@ -96,18 +102,17 @@ var reportParse ={
    * @param url 获得数据的Url
    */
   get_parseReport:function(getUrl) {
-  	if (!this.mPage) this.mPage=getMainPage();
+    var mPage=getMainPage();
     var _msg = "";
     $.ajax({type:"get",url:getUrl ,async:true, dataType:"json",
-      success:function(json){
-        alert(json.jsonType);
+      success: function(json) {
         if (json.jsonType!=1) {
           _msg = json.message;
-          alert(this.mPage);
-          if (this.mPage) mPage.$.messager.alert("提示", _msg, "error");
+          if (mPage) mPage.$.messager.alert("提示", _msg, "error");
           else alert(_msg);
         } else {//解析，并画内容
-        	this.parseAndDraw(str2JsonObj(json.data));
+          var _data = eval("(" +json.data+ ")");
+          reportParse.parseAndDraw(_data);
         }
       }
     });
@@ -122,7 +127,53 @@ var reportParse ={
    * @param rptData 报告对象，注意，必须是javascript对象
    */
   parseAndDraw:function(rptData) {
-  	alert("====\n"+allFields(rptData));
+    //解析DLIST，并轮询获取之
+    parseSysData.mdObj = reportParse.parseDList(rptData._DLIST);
+    //获得报告名称，并显示
+    $('#rTitle').html(rptData._HEAD._reportName);
+    //解析REPORT，报告主体
+    reportParse.parseReport(rptData._REPORT);
+  },
+
+  /**
+   * 解析DList，并返回需要的结构，此结构用于
+   * @param _DLIST DList对象
+   */
+  parseDList: function(_DLIST) {
+    if (_DLIST==null||_DLIST==""||_DLIST.length<=0) return ;
+    var monitDListObj = new Object();
+    monitDListObj.allSize = _DLIST.length; //监控对象：Dlist总数
+    monitDListObj.okSize = 0; //成功获得数据的节点数
+    monitDListObj.faildSize = 0; //获得数据失败节点个数
+    monitDListObj.dList = new Array(_DLIST.length); //数据列表——数组
+    for (var i=0;i<_DLIST.length;i++) {
+      var oneData = new Object();
+      oneData.url = _DLIST[i]._url;
+      oneData.jdCode = _DLIST[i]._jsonDCode;
+      oneData.getFlag = 0; //获取状态，0还需获取；1:获取成功；2获取失败
+      oneData.dataStr = ""; //获取的数据，以字符串方式存储
+      monitDListObj.dList[_DLIST._id]=oneData;
+    }
+    return monitDListObj;
+  },
+
+  /**
+   * 解析DList，并返回需要的结构，此结构用于
+   * //1-画报告的Html；
+   * //2-得到报告的树结构，包括树下D标签及D数据的对应关系，并返回
+   * //3-得到D标签——转换后的DIV|SPAN元素/D数据的对应关系
+   * @param _REPORT Report数据
+   */
+  parseReport: function(_REPORT) {
+    if (!_REPORT) return ;
+    var treeData = new Object();
+    var divDtagMap = new Object();
+    var level = 0;
+    if (_REPORT&&_REPORT.length>0) {
+    	for (int i=0; i<_REPORT.length; i++) {
+        recursionSegs(_REPORT, treeData, divDtagMap, level, $("#reportFrame"));
+    	}
+    }
   }
 };
 
@@ -172,4 +223,15 @@ function initPageFrame(){
     $.messager.alert("页面初始化失败", initStr, "error");
     return ;
   };
+};
+
+/**
+ * 递归扫描report内容，并构造需要的结构
+ * @param segs 短信息
+ * @param td
+ * @param ddm
+ * @param l
+ */
+function recursionSeg(segs, td, ddm, l) {
+	
 }
