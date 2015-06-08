@@ -37,7 +37,8 @@ function generateReport(param) {
  * 为辅助解析的数据结构
  */
 var parseSysData = {
-  mdObj:new Obejct() //为监控DList读取设置的对象
+  monitorData:new Obejct(), //为监控DList读取设置的对象
+  treeData:null //生成树，此树包括parent属性
 };
 
 /**
@@ -128,11 +129,20 @@ var reportParse ={
    */
   parseAndDraw:function(rptData) {
     //解析DLIST，并轮询获取之
-    parseSysData.mdObj = reportParse.parseDList(rptData._DLIST);
+    parseSysData.monitorData = reportParse.parseDList(rptData._DLIST);
     //获得报告名称，并显示
     $('#rTitle').html(rptData._HEAD._reportName);
-    //解析REPORT，报告主体
-    reportParse.parseReport(rptData._REPORT);
+    //解析REPORT（报告主体），并画报告的主体
+    var ret = reportParse.parseReport(rptData._REPORT);
+    if (ret==0) {//出错了，给出提示，并结束后续的处理、
+      var mPage=getMainPage();
+      if (mPage) mPage.$.messager.alert("提示", ret.msg, "error");
+      return ;
+    };
+    //画树
+    parseSysData.treeData = ret.treeRoot;
+    
+    //启动获取数据的轮询过程
   },
 
   /**
@@ -150,7 +160,8 @@ var reportParse ={
       var oneData = new Object();
       oneData.url = _DLIST[i]._url;
       oneData.jdCode = _DLIST[i]._jsonDCode;
-      oneData.getFlag = 0; //获取状态，0还需获取；1:获取成功；2获取失败
+      oneData.getFlag = 0; //获取状态，0还需获取；1获取成功；2获取失败
+      oneData.drawFlag = 0; //画D标签的状态：0未画；1正在画；2画完了
       oneData.dataStr = ""; //获取的数据，以字符串方式存储
       monitDListObj.dList[_DLIST._id]=oneData;
     }
@@ -166,14 +177,25 @@ var reportParse ={
    */
   parseReport: function(_REPORT) {
     if (!_REPORT) return ;
-    var treeData = new Object();
-    var divDtagMap = new Object();
+
     var level = 0;
+    var treeRoot = new Object();
+    var divDtagMap = new Object();
+
+    //处理系统跟结点
+    treeRoot.id=-1;
+    treeRoot.text="系统根结点";
     if (_REPORT&&_REPORT.length>0) {
-    	for (int i=0; i<_REPORT.length; i++) {
-        recursionSegs(_REPORT, treeData, divDtagMap, level, $("#reportFrame"));
-    	}
+      for (int i=0; i<_REPORT.length; i++) {
+        var ret = recursionSegs(_REPORT[i], treeRoot, divDtagMap, level, $("#reportFrame"), i);
+        if (ret.type==0) { //出错了，不进行处理了
+          return ret;
+        }
+      }
     }
+    ret.treeRoot = treeRoot;
+    //返回内容
+    return ret;
   }
 };
 
@@ -227,11 +249,71 @@ function initPageFrame(){
 
 /**
  * 递归扫描report内容，并构造需要的结构
- * @param segs 短信息
- * @param td
- * @param ddm
- * @param l
+ * @param segs 报告的一个segment
+ * @param ptn 树对象
+ * @param ddm div与Dtag的对应关系
+ * @param l 树的Level
+ * @param jqObj jquery的dom对象
+ * @param index 数组中的下标
+ * @returns 若解析错误，则放回false
  */
-function recursionSeg(segs, td, ddm, l) {
-	
+function recursionSegs(segs, ptn, ddm, l, jqObj, index) {
+  var ret = new Object();
+
+  var rankId = l+":"+index; //级别Id
+  var pTnId = (td)?td.id:null;//上级结点id
+  var priorityName = (segs.name&&$.trim(segs.name))?segs.name:((segs.title&&$.trim(segs.title))?segs.title:null);
+  var priorityTitle = (segs.title&&$.trim(segs.title))?segs.title:((segs.name&&$.trim(segs.name))?segs.name:null);
+
+  //1-处理树
+  var treeNode = new Object();
+  //1.1-树结点id
+  treeNode.id = pTnId?pTnId+"_"+rankId:"_tn_"+rankId;
+  if (segs.id&&$.trim(segs.id)) treeNode.sgid="_tnsg_"+segs.id;//若有段落id，则记录一下
+  else {
+    ret.type = 0; //处理失败
+    ret.meg = "在处理段落时，发现段落没有设置id，无法处理！";
+    if (ptn.id==-1) ret.msg += "此段落为根段落的"+index+"个子段落";
+    else ret.msg += "此段落为id=["+ptn.id+"]段落的"+index+"个子段落";
+    return ret;
+  }
+  //1.2-树结点名称
+  if (priorityName) treeNode.text = priorityName;
+  if (!treeNode.text||!$.trim(treeNode.text)) {
+    ret.type = 0; //处理失败
+    ret.meg = "在处理id=["+treeNode.id+"]的段落时，发现段落的名称或标题没有设置，无法处理";
+    return ret;
+  }
+  //1.3把树节点挂接到上级节点
+  if (!ptn.children) ptn.children = new Array();
+  treeNode.parent=ptn;
+  ptn.children[index]=treeNode;
+
+  //2-画显示对象
+  //2.1-每个segment的框架
+  var docEle_html = '<div id="segment_'+rankId+'" class="segment segment_'+l+'"><ul>'
+    + '<li id="segTitle_'+rankId+'" class="segTitle segTitle_'+l+'">'+priorityTitle+'</li>';
+  if (segs.content&&$.trim(segs.content)) docEle_html
+    +='<li id="segContent_'+rankId+'" class="segContent segContent_'+l+'"></li>';
+  if (segs.subSegs&&segs.subSegs.length>0) docEle_html
+    +='<li id="segSubs_'+rankId+'"><div id="ssBody_'+rankId+'" class="segSubs"></div></li>';
+  //2.2-生成具体的段内容
+  if (segs.content&&$.trim(segs.content)) {
+  	var _content = segs.content;
+  	//找到D标签
+  }
+  var docEle = $(docEle_html);//本级doc对象，以jquery方式处理
+  jqObj.append(docEle);
+
+  //3-处理div与Dtag的对应关系
+
+  //递归
+  if (segs.subSegs&&segs.subSegs.length>0) {
+    for (var i=0; i<segs.subSegs.length; i++) {
+      var ret = recursionSegs(segs.subSegs[i], ptn, ddm, l+1, $("#ssBody_"+rankId), i);
+      if (ret.type==0) { //出错了，不能再处理了
+        return ret;
+      }
+    }
+  }
 }

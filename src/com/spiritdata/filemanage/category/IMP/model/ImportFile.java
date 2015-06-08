@@ -71,7 +71,7 @@ public class ImportFile implements Serializable, BeManageFile {
         ret.setId(this.id);
         ret.setOwner(this.owner);
         ret.setAccessType(1);
-        ret.setDesc("导入数据，文件为:"+FileNameUtils.getFileName(this.serverFileName)+"；导入时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f))));
+        ret.setDesc("导入数据，文件为:"+FileNameUtils.getFileName(this.serverFileName)+"；导入时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime(f))));
         //分类信息
         FileCategory fc = new FileCategory();
         fc.setFType1(FileCategoryType1.IMP);

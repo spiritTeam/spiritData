@@ -133,7 +133,7 @@ public class FileInfo implements Serializable, ModelSwapPo {
         this.setPath(FileNameUtils.getFilePath(file.getAbsolutePath()));
         this.setFileName(FileNameUtils.getFileName(file.getAbsolutePath()));
         this.setFileSize(file.length());
-        this.setFcTime(new Timestamp(FileUtils.getFileCreateTime4Win(this.file)));
+        this.setFcTime(new Timestamp(FileUtils.getFileCreateTime(this.file)));
         this.setFlmTime(new Timestamp(this.file.lastModified()));
     }
 
@@ -352,7 +352,7 @@ public class FileInfo implements Serializable, ModelSwapPo {
             String allFileName = this.file.getAbsolutePath();
             ret.setPath(FileNameUtils.getFilePath(allFileName));
             ret.setFileName(FileNameUtils.getFileName(allFileName));
-            ret.setFcTime(new Timestamp(FileUtils.getFileCreateTime4Win(this.file)));
+            ret.setFcTime(new Timestamp(FileUtils.getFileCreateTime(this.file)));
             ret.setFlmTime(new Timestamp(this.file.lastModified()));
         } else {
             ret.setPath(this.path);

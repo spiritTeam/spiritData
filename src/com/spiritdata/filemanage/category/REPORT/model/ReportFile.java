@@ -75,7 +75,7 @@ public class ReportFile extends AbstractToBeStoreFile implements Serializable, B
         ret.setId(this.id);
         ret.setOwner(this.owner);
         ret.setAccessType(1);
-        ret.setDesc("分析报告文件:"+FileNameUtils.getFileName(this.fileName)+"；生成报告时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f)))
+        ret.setDesc("分析报告文件:"+FileNameUtils.getFileName(this.fileName)+"；生成报告时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime(f)))
                 +"；报告文件Id："+this.reportId+"，对应的任务组ID："+this.taskGId);
         //分类信息
         FileCategory fc = new FileCategory();
