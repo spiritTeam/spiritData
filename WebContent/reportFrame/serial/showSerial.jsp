@@ -51,6 +51,5 @@ $(function() {
 <style>
 </style>
 <body>
-AABBCCDDDDCCC
 </body>
 </html>

@@ -1554,7 +1554,7 @@ function buildSegmentGroup(jObj, segArray, treeLevel, parent) {
     }
     
     //subSeg部分 这部分写在树的下面是因为要使用treeNode作为参数
-    if (segArray[i].subSeg) buildSegmentGroup(segGroup, segArray[i].subSeg, treeLevel+1, treeNode);
+    if (segArray[i].subSegs) buildSegmentGroup(segGroup, segArray[i].subSeg, treeLevel+1, treeNode);
   }
   jObj.append(segGroup);
   return segGroup;
