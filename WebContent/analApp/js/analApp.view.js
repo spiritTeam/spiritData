@@ -1,3 +1,4 @@
+
 //变量定义
 
 var _urlPath;
@@ -30,14 +31,12 @@ function showReport(reportId,unReadId) {
   //alert("showReport() reportId="+reportId+" unReadId="+unReadId);
   //显示report内容
   var winOption={
-    //url:_urlPath+"/demo/Rd/resultRd.jsp",
     title:"报告详情",
     height:600,
     width:1000,
     iframeScroll:"yes"
   };
-  //openSWinInMain(winOption);
-  ReportSerialShow.showById(reportId,winOption);
+  ReportSerialShow.showById(reportId, winOption);
 
   //记录日志
   var param = new Object();
