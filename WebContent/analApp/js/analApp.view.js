@@ -30,13 +30,14 @@ function showReport(reportId,unReadId) {
   //alert("showReport() reportId="+reportId+" unReadId="+unReadId);
   //显示report内容
   var winOption={
-    url:reportUrl,
+    //url:_urlPath+"/demo/Rd/resultRd.jsp",
     title:"报告详情",
     height:600,
     width:1000,
     iframeScroll:"yes"
   };
-  ReportSerialShow.showById(reportId);
+  //openSWinInMain(winOption);
+  ReportSerialShow.showById(reportId,winOption);
 
   //记录日志
   var param = new Object();
