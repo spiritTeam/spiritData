@@ -35,7 +35,7 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"content\":\""+tempStr+"\"";
             //处理子树
             if (oneSeg.getChildren()!=null&&oneSeg.getChildren().size()>0) {
-                ret +=",\"subSeg\":"+convertList2Json(oneSeg.getChildren());
+                ret +=",\"subSegs\":"+convertList2Json(oneSeg.getChildren());
             }
             ret +="}";
         }
@@ -58,7 +58,7 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"content\":\""+tempStr+"\"";
             //处理子树
             if (oneSeg.getChildren()!=null&&oneSeg.getChildren().size()>0) {
-                ret +=",\"subSeg\":"+convertList2Json(oneSeg.getChildren());
+                ret +=",\"subSegs\":"+convertList2Json(oneSeg.getChildren());
             }
             ret +="}";
         }

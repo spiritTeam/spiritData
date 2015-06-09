@@ -45,7 +45,8 @@ public class WordController implements ServletContextAware{
         HttpSession session = request.getSession();
         User user = ((User)session.getAttribute(FConstants.SESSION_USER));
         Map<String,Object> retMap = wordService.expWord(reportId,user);
-        if((boolean)retMap.get("success")==true){
+        //if((boolean)retMap.get("success")==true) {
+        if(true) {
             String reportName = (String) retMap.get("reportName");
             //以下为下载部分代码
             //获取网站部署路径(通过ServletContext对象)，用于确定下载文件位置，从而实现下载 

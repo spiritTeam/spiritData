@@ -1,4 +1,7 @@
 ﻿/.settings
+.settings
+/test
+/bakSetting.rar
 /Doc
 /WebContent/log
 /WebContent/DataCenter
@@ -10,9 +13,8 @@
 /WebContent/WEB-INF/lib
 /WebContent/WEB-INF/classes
 /pom.xml
-
 /.classpath
 /.project
 /target
 
-/test
+

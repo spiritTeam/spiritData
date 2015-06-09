@@ -123,7 +123,7 @@ public class AnalResultFile extends AbstractToBeStoreFile implements Serializabl
         if (this.CTime==null) this.CTime=new Timestamp(new Date().getTime());
         ret.setCTime(this.CTime);
         */
-        ret.setDesc("分析结果文件，文件为:"+FileNameUtils.getFileName(this.fileName)+"；得到分析结果时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime4Win(f)))
+        ret.setDesc("分析结果文件，文件为:"+FileNameUtils.getFileName(this.fileName)+"；得到分析结果时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime(f)))
                 +"；分析类型："+this.analType+"::"+this.subType+"，jsonD代码："+this.jsonDCode);
         //分类信息
         FileCategory fc = new FileCategory();
