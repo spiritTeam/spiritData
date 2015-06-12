@@ -51,7 +51,7 @@ public class JsonDService {
             String fileUri = FileNameUtils.concatPath(fip.getPath(), fip.getFileName());
             return this.getJsonDByUri(fileUri);
         } else {
-            retM.put("jsonType", 3);//非成功或失败的其他状态
+            retM.put("jsonType", 2);//非成功或失败的其他状态
         }
         if (retM.size()==0) retM=null;
         return retM;

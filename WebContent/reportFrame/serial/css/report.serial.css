@@ -26,3 +26,31 @@ body {
 #footSegment {
   border:0px;
 }
+
+/**
+ * 标签解释失败的提示区域
+ */
+.dtagParseErr {
+  border:1px solid red; color:red; font-style:oblique; font-style:italic
+}
+.dtagParseErrDiv {
+  height:100px; width:140px;
+  background-color:#eee;
+}
+
+/**
+ * 标签显示区域
+ */
+.dtagText {
+  	
+}
+.dtagdiv {
+  height:100px; width:140px;
+}
+
+/**
+ * 提示错误的span元素
+ */
+.errMsgSpan {
+  color:red;
+}

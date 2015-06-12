@@ -26,30 +26,36 @@ public class JsonDController {
     @ResponseBody
     public Map<String, Object> getJsonD(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> ret = new HashMap<String, Object>();
-        String jsonDId = request.getParameter("jsonDId");
-        if (jsonDId!=null) {
-            try {
-                ret = jsonDService.getJsonDById(jsonDId);
-                if (ret!=null) return ret;
-            } catch(Exception e) {
-                ret.put("jsonType", 0);
-                ret.put("message", e.getMessage());
+        try {
+            String jsonDId = request.getParameter("jsonDId");
+            if (jsonDId!=null) {
+                try {
+                    ret = jsonDService.getJsonDById(jsonDId);
+                    if (ret!=null) return ret;
+                } catch(Exception e) {
+                    ret.put("jsonType", 0);
+                    ret.put("message", e.getMessage());
+                }
             }
-        }
-        String uri = request.getParameter("uri");
-        if (uri!=null) {
-            try {
-                ret = jsonDService.getJsonDByUri(uri);
-                if (ret!=null) return ret;
-            } catch(Exception e) {
-                ret.put("jsonType", 0);
-                ret.put("message", e.getMessage());
+            String uri = request.getParameter("uri");
+            if (uri!=null) {
+                try {
+                    ret = jsonDService.getJsonDByUri(uri);
+                    if (ret!=null) return ret;
+                } catch(Exception e) {
+                    ret.put("jsonType", 0);
+                    ret.put("message", e.getMessage());
+                }
             }
+        } catch(Exception e) {
+            if (ret==null) ret = new HashMap<String, Object>();
+            ret.put("jsonType", 0);
+            ret.put("message", e.getMessage());
         }
         if (ret==null) {
             ret = new HashMap<String, Object>();
             ret.put("jsonType", 0);
-            ret.put("message", "空");
+            ret.put("message", "未知问题");
         }
         return ret;
     }
