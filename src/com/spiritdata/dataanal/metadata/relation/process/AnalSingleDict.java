@@ -199,8 +199,11 @@ public class AnalSingleDict implements TaskProcess {
     private Map<String, Object> _getJsonDTable_SD(Map<String, Object> groupMap, Map<String, Object> sumRow, Map<String, String> titleM) {
         Map<String, Object> ret = new HashMap<String, Object>();
         MetadataColumn mc = (MetadataColumn)groupMap.get("mc");
+        MetadataColSemanteme mcs = (MetadataColSemanteme)groupMap.get("mcs");
+        MetadataModel mm = mc.getMdModel();
         List<Map<String, Object>> groupTdList = (List<Map<String, Object>>)groupMap.get("groupData");
-
+        
+        
         String colName = mc.getColumnName();
         Map<String, Object> tableInfoM = new HashMap<String, Object>();
         ret.put("colInfo", tableInfoM);
@@ -210,20 +213,29 @@ public class AnalSingleDict implements TaskProcess {
         //表数据处理
         Map<String, Object> tableM = new HashMap<String, Object>();
         //title
-        if (titleM==null) titleM = new HashMap<String, String>();
-        titleM.put("category", mc.getTitleName());
-        titleM.put("count", "数量"); 
-        titleM.put("percent(count):", "百分比"); 
-//    	//加入数值类型统计信息列名
-//    	if(titleM!=null && titleM.size()>0){
-//    		Iterator<String> iterTitleM = titleM.keySet().iterator();
-//    		while(iterTitleM.hasNext()){
-//    			String keyTitleM = (String)iterTitleM.next();
-//    			String valTitleM = (String)titleM.get(keyTitleM);
-//    	        titleM.put(keyTitleM, valTitleM); 
-//    		}
-//    	}
-        tableM.put("titles", titleM); 
+        List<Map<String, String>> titleL = new ArrayList<Map<String, String>>();
+        Map<String, String> oneTitle = new HashMap<String, String>();
+    	oneTitle.put("category", mc.getTitleName()); 
+    	titleL.add(oneTitle);
+        oneTitle = new HashMap<String, String>();
+    	oneTitle.put("count", "数量"); 
+    	titleL.add(oneTitle);
+        oneTitle = new HashMap<String, String>();
+    	oneTitle.put("percent(count):", "百分比"); 
+    	titleL.add(oneTitle);
+    	//加入数值类型统计信息列名
+    	if(titleM!=null && titleM.size()>0){
+    		Iterator iterTitleM = titleM.keySet().iterator();
+    		while(iterTitleM.hasNext()){
+    			String keyTitleM = (String)iterTitleM.next();
+    			String valTitleM = (String)titleM.get(keyTitleM);
+    	        oneTitle = new HashMap<String, String>();
+    	    	oneTitle.put(keyTitleM, valTitleM); 
+    	    	titleL.add(oneTitle);    					
+    		}
+    	}
+    	
+        tableM.put("titles", titleL);
         //dataList
         List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
         tableM.put("dataList", dataList);
@@ -238,7 +250,7 @@ public class AnalSingleDict implements TaskProcess {
         	rowM.put("percent(count):", percent);
         	//加入数值类型统计信息列值
         	if(titleM!=null && titleM.size()>0){
-        		Iterator<String> iterTitleM = titleM.keySet().iterator();
+        		Iterator iterTitleM = titleM.keySet().iterator();
         		while(iterTitleM.hasNext()){
         			String keyTitleM = (String)iterTitleM.next();
         			Object valTitleM = (Object)groupRow.get(keyTitleM);
