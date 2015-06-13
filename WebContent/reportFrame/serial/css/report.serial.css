@@ -1,3 +1,27 @@
+/**
+ * 头部设置
+ */
+/*报告标题*/
+#rTitle {
+  height:40px; padding:10px; padding-left: 30px; font-size:36px; font-weight:bold;
+}
+
+/**
+ *右侧树
+ */
+#sideFrame {
+  width:270px; padding-left:20px; position:fixed;
+}
+#catalogTree {
+  border:1px solid #E6E6E6; width:258px;
+}
+
+/**
+ * 页脚设置
+ */
+#footSegment {
+  border:0px;
+=======
 body {
   background-color:#fff;
 }
@@ -25,4 +49,45 @@ body {
  */
 #footSegment {
   border:0px;
+}
+
+/**
+ * 标签解释失败的提示区域
+ */
+.dtagParseErr {
+  border:1px solid red; color:red; font-style:oblique; font-style:italic
+}
+.dtagParseErrDiv {
+  height:100px; width:140px;
+  background-color:#eee;
+}
+
+/**
+ * 标签显示区域
+ */
+.dtagText {
+  	
+}
+.dtagdiv {
+  height:100px; width:140px;
+}
+
+/**
+ * 提示错误的span元素
+ */
+.errMsgSpan {
+  color:red;
+}
+
+/**
+ * 提示框
+ */
+#tooltip{
+  position:absolute;
+  width:40px; height:30px;
+  display:none;
+  border:1px solid #fdd;
+  padding:2px;
+  background-color:#fee;
+  opacity:0.8;
 }

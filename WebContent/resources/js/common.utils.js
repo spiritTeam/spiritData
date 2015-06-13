@@ -38,33 +38,11 @@ function isEmpty(obj) {
  * 判断对象是否未定义，或者为空，或者长度为0
  */
 function isUndefinedNullEmpty(obj) {
-  var ret = true;  
-  if(typeof(obj)!="undefined" && obj!=null){
-    if(typeof(obj)=="string"){
-      if(obj.length>0){ret = false;}
-    }else if(typeof(obj)=="object"){
-      ret = isEmpty(obj);
-    }else{ret = false;}    
-  }
-  return ret;
-};
-
-/**
- * 扩展String属性：得到中英混排文字符串长度
- */
-String.prototype.cnLength = function () {
-  return ((this.replace(/[^x00-xFF]/g, "**")).length);
-};
-
-/**
- * 删除数组中的元素
- */
-Array.prototype.removeByIndex = function (i){
-  if (i>=0 && i < this.length) {
-    var ret = this.slice(0,i).concat(this.slice(i+1));
-    this.length = 0;
-    this.push.apply(this,ret);
-  }
+	if (obj) {
+	  if (typeof(obj)=="string") return (obj.length==0);
+	  if (typeof(obj)=="object") for (var name in obj) return false;
+	  return false;
+	} else return true;
 };
 
 /**
@@ -139,9 +117,9 @@ function getUUID(len,radix) {
  * @param varStr 变量名称
  * @returns javascript对象
  */
-function str2JsonObj(jsonStr) {
-  eval("var jsonObj="+jsonStr+";");
-  return eval(jsonObj);
+function str2JsonObj(varName, jsonStr) {
+  eval("var "+varName+"="+jsonStr+";");
+  return eval(varName);
 }
 
 /**
@@ -209,4 +187,32 @@ Date.prototype.Format = function(fmt) {
     }
   }
   return fmt;
+}
+
+//扩展方法
+/**
+ * 扩展String属性：得到中英混排文字符串长度
+ */
+String.prototype.cnLength = function () {
+  return ((this.replace(/[^x00-xFF]/g, "**")).length);
+};
+
+/**
+ * 删除数组中的元素
+ */
+Array.prototype.removeByIndex = function (i){
+  if (i>=0 && i < this.length) {
+    var ret = this.slice(0,i).concat(this.slice(i+1));
+    this.length = 0;
+    this.push.apply(this,ret);
+  }
+};
+
+/**
+ * 在指定位置i插入对象item
+ * @param i 插入的数组中的位置
+ * @param item 元素对象
+ */
+Array.prototype.insertAt = function (index, item) {
+  this.splice(index, 0, item);
 };
