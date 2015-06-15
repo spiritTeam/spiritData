@@ -91,3 +91,49 @@ body {
   background-color:#fee;
   opacity:0.8;
 }
+
+/**
+ * 段标签群
+ */
+/* 段 */
+.segment {
+  border:1px solid red;
+}
+/* 段标题 */
+.segTitle{
+  border:1px solid blue;
+}
+/* 段内容 */
+.segContent{
+  border:1px solid green;
+}
+
+/* 第1级段 */
+.segment_1 {
+}
+/* 第1级段标题 */
+.segTitle_1 {
+}
+/* 第1级段内容 */
+.segContent_1 {
+}
+
+/* 第2级段 */
+.segment_2 {
+}
+/* 第2级段标题 */
+.segTitle_2 {
+}
+/* 第2级段内容 */
+.segContent_2 {
+}
+
+/* 第3级段 */
+.segment_3 {
+}
+/* 第3级段标题 */
+.segTitle_3 {
+}
+/* 第3级段内容 */
+.segContent_3 {
+}
