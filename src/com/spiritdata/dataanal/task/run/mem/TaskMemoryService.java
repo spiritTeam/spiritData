@@ -369,7 +369,8 @@ public class TaskMemoryService {
      * @return 任务的情况
      */
     public Map<String, Object> getTaskStatus(String taskId) {
-        TaskInfo ti = tm.taskInfoMap.get(taskId);
+        TaskInfo ti = null;
+        if (tm!=null&&tm.taskInfoMap!=null)ti = tm.taskInfoMap.get(taskId);
         Map<String, Object> retM = new HashMap<String, Object>();
         if (ti==null) {//已经执行完毕，到数据库中查找
             retM.put("status", -1);
