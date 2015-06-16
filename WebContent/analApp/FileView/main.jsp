@@ -21,6 +21,7 @@
 <!-- 加载analApp的JS -->
 <script src="<%=path%>/resources/js/visit.utils.js"></script>
 <script src="<%=path%>/analApp/js/analApp.view.js"></script>
+<script src="<%=path%>/reportFrame/serial/js/spirit.report.serial.utils.js"></script>
 
 <title>文件主界面</title>
 </head>

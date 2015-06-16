@@ -3,10 +3,10 @@
 <%
   String path = request.getContextPath();
   String fileId = request.getParameter("fileId");
-  fileId = new String(fileId.getBytes("ISO-8859-1"),"UTF-8");
-  //System.out.println("fileId="+fileId);
+  //fileId = new String(fileId.getBytes("ISO-8859-1"),"UTF-8");
+  //System.out.println("fileId="+fileId+" fileName=");
   String fileName = request.getParameter("fileName");
-  fileName = new String(fileName.getBytes("ISO-8859-1"),"UTF-8");
+  //fileName = new String(fileName.getBytes("ISO-8859-1"),"UTF-8");
   //System.out.println("fileName="+fileName);
 %>
 <!DOCTYPE html>
