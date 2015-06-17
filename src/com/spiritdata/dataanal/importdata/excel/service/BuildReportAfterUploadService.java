@@ -200,7 +200,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 if (rsTn1.getChild(tempStr)==null) rsTn1.addChild(rsTn1_1);
                                 ReportSegment rs1_1_loop = new ReportSegment();
                                 rs1_1_loop.setNodeName(mc.getTitleName()+"指标");
-                                rs1_1_loop.setTitle("<div style='font-height:bold;'>"+mm.getTitleName()+"["+mc.getTitleName()+"]<div/>指标");
+                                rs1_1_loop.setTitle("<span style='font-weight:bold;'>"+mm.getTitleName()+"["+mc.getTitleName()+"]</span>指标");
                                 rs1_1_loop.setId(SequenceUUID.getPureUUID());
                                 DictModel dm = _od.getDictModelById(mcs.getSemantemeCode());
                                 D_Tag discriptDt = new D_Tag();

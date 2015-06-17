@@ -96,7 +96,7 @@ public class GetMDInfos implements TaskProcess {
         titleM.put("columnType", "元数据类型");
         titleM.put("columnName", "列名称");
         titleM.put("semanteme", "元数据语义");
-        titleM.put("columnIndex", "顺序号");
+//        titleM.put("columnIndex", "顺序号");
         titleM.put("range", "范围");
         titleM.put("compressRate", "压缩率");
         titleM.put("sparseRate", "稀疏率");
@@ -109,7 +109,7 @@ public class GetMDInfos implements TaskProcess {
             rowM.put("titleName", mc.getTitleName());
             rowM.put("columnType", DataType.getDataType(mc.getColumnType()).getName());
             rowM.put("columnName", mc.getColumnName());
-            //语义列处理
+            //语义列处理 , 这个最好在语义中解释
             String tempStr = "";
             if (mc.isPk()) tempStr+=",<semanteme >主键</semanteme>";
             if (mc.getColSemList()!=null&&mc.getColSemList().size()>0) {
@@ -127,7 +127,7 @@ public class GetMDInfos implements TaskProcess {
             }
             if (tempStr.length()>0) tempStr=tempStr.substring(1);
             rowM.put("semanteme", tempStr);
-            rowM.put("columnIndex", mc.getColumnIndex()+"");
+//            rowM.put("columnIndex", mc.getColumnIndex()+"");
 
             QuotaColumn qc = qt==null?null:qt.getQuotaColByColId(mc.getId());
             //范围

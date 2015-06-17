@@ -21,7 +21,7 @@ public class WebRunningListener implements ServletContextListener {
             //TaskContextConfig tcc = new TaskContextConfig();
             //TaskRunning.Beginning(tcc);
             //访问日志框架启动
-            //VisitLogRunning.Beginning();
+            VisitLogRunning.Beginning();
         } catch(Exception e) {
             logger.error("初始化任务执行环境异常：",e);
         }

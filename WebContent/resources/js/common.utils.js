@@ -38,11 +38,10 @@ function isEmpty(obj) {
  * 判断对象是否未定义，或者为空，或者长度为0
  */
 function isUndefinedNullEmpty(obj) {
-	if (obj) {
-	  if (typeof(obj)=="string") return (obj.length==0);
-	  if (typeof(obj)=="object") for (var name in obj) return false;
-	  return false;
-	} else return true;
+  if (!obj) return true;
+  if (typeof(obj)=="string") return (obj.length==0);
+  if (typeof(obj)=="object") for (var name in obj) return false;
+  return false;
 };
 
 /**
@@ -114,12 +113,10 @@ function getUUID(len,radix) {
 /**
  * 把json串转换为对象
  * @param jsonStr json串
- * @param varStr 变量名称
  * @returns javascript对象
  */
-function str2JsonObj(varName, jsonStr) {
-  eval("var "+varName+"="+jsonStr+";");
-  return eval(varName);
+function str2JsonObj(jsonStr) {
+  return eval("(" +jsonStr+ ")");
 }
 
 /**
@@ -131,7 +128,6 @@ function str2JsonObj(varName, jsonStr) {
 function formField2Object(formId) {
   var o = {};
   var _form = $("#"+formId).form();
-
   if (_form) {
     $.each(_form.serializeArray(),function(){
       if(o[this['name']]){
