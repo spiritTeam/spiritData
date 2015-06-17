@@ -226,7 +226,7 @@ $(function() {
   
   //定时查询是否有新报告
   searchNewReport();
-  //setInterval(searchNewReport,30*1000);//半分钟获取一次未读足以
+  setInterval(searchNewReport,30*1000);//半分钟获取一次未读足以
 });
 
 //初始化界面
