@@ -237,6 +237,7 @@ $(function() {
   //定时查询是否有新报告
   searchNewReport();
   setInterval(searchNewReport,30*1000);//半分钟获取一次未读足以
+  
 });
 
 //初始化界面
@@ -268,6 +269,7 @@ function initSearchFileInput(){
   var _objSearch = $("#idSearchFile");
   _objSearch.keydown(function(e){
     if(e.keyCode == 13){
+    	//alert("搜索输入框按回车按钮了");
       startSearch();
     }
   });
@@ -278,7 +280,7 @@ var lastSearchStr = "";
 function startSearch(){
   var searchStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
   //alert("您输入了："+ searchStr);
-  var fileParam = "searchStr="+searchStr;
+  var fileParam = "searchStr="+searchStr+"&refreshme=yes";
   //还需把查询条件传入###
   if(lastSearchStr!=searchStr){	  
 	  lastSearchStr = searchStr;
@@ -411,7 +413,11 @@ function showIframe(viewName,fileParam){
     }
     
     if($("#"+iframeId+"").attr("src") && $("#"+iframeId+"").attr("src").indexOf(fileName)>-1){
-    	//已经加载过了，则不再加载
+    	if($("#"+iframeId+"").attr("src").indexOf("refreshme=yes")>-1){ //如果强制刷新，则重新请求
+    		$("#"+iframeId+"").attr("src",_PATH+"/"+fileFull); 
+    	}else{//已经加载过了，则不再加载
+    		//alert("已经加载过了，不再加载！");
+    	}
     }else{
     	$("#"+iframeId+"").attr("src",_PATH+"/"+fileFull);	
     }
@@ -569,9 +575,30 @@ function uploadFile(){
 		//提交上传文件
 		$("#upfs").val($("#upf").val());
 		//alert($("#upf").val());
-		$('#afUpload').submit();
+		$('#afUpload').form('submit',{
+			async:true,
+			success:function(respStr){
+			  //prompt('',"succ upload file. resp str="+respStr);
+			  var respJson = null;
+			  try{respJson=str2JsonObj("jsonObj",respStr);}catch(e){alert("str 2 json err. jsonStr="+respStr);}
+			  if(respJson.message && respJson.message[0] && respJson.message[0].success=="TRUE"){
+				  //alert("succ upload file.");
+				  //查找是否生成新报告
+				  searchNewReport();
+				  //跳转到报告页面
+				  setTimeout(function(a,b){return function(){showIframe(a,b);}}('reportView','refreshme=yes'),1*1000);
+				  //showIframe('reportView','refreshme=yes');				  
+			  }else{
+				  alert("上传文件失败 .");
+			  }
+			},
+			error:function(errData){
+				alert("failed to upload file. errData="+errData);
+			}
+		});
+		//$('#afUpload').submit();
 		//跳转到报告页面
-		showIframe('reportView');
+		//showIframe('reportView');
 	}catch(e){
 		alert("failed to upload file.  e="+e.message);
 	}
