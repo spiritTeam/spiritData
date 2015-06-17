@@ -3,6 +3,7 @@
 <%
   request.setCharacterEncoding("UTF-8");
   String path = request.getContextPath();
+  //查找参数
   String searchStr = request.getParameter("searchStr");
   //输入中文后需要做转码，否则会出现乱码
   if(searchStr!=null){
@@ -10,7 +11,6 @@
   }else{
 	  searchStr = "";
   }
-  //System.out.println("searchStr="+searchStr);
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">

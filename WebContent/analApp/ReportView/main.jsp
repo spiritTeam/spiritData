@@ -267,8 +267,8 @@ function showSearchResultList(){
   };
   //组装显示结果行
   var dtrows =[];
-  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
-    var jsonRows = searchResultJsonData.rows;
+  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){    
+	  var jsonRows = searchResultJsonData.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
       var id = jsonRows[i]["id"];
