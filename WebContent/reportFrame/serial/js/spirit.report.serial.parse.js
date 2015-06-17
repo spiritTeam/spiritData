@@ -12,6 +12,18 @@
  * 5-处理jsonD的对象：包括填充数据
  */
 
+function transTagType(showType) {
+  if (showType=="value") return "值";
+  if (showType=="text") return "文本";
+  if (showType=="table") return "表格";
+  if (showType=="pie") return "饼图";
+  if (showType=="bar") return "柱图";
+  if (showType=="line") return "折线图";
+  if (showType=="radar") return "雷达图";
+  if (showType=="map_pts") return "地图";
+  return "";
+}
+
 /**
  * 主函数，生成报告。
  * 报告的生成，需要一个干净的html容器。
@@ -47,7 +59,7 @@ function generateReport(param) {
     var topSegment=$('<div id="topSegment"><div id="rTitle"></div></div>');
     $("body").append(topSegment);
     //1-2:主体元素
-    var mainSegment=$('<div id="mainSegment" style="background-color:yellow;border:2px solid red;"></div>');
+    var mainSegment=$('<div id="mainSegment" style="padding:10px"></div>');
     //1-2-1:右侧的报告结构树
     var sideFrame=$('<div id="sideFrame"><div id="catalogTree"></div></div>');
     mainSegment.append(sideFrame);
@@ -85,7 +97,7 @@ function generateReport(param) {
       return ;
     };
   };
-}
+};
 
 //=DTag对象===========================
 var D_tag={
@@ -178,7 +190,7 @@ var D_tag={
       return str;
     }
   }
-}
+};
 //=end DTag对象===========================
 
 /**
@@ -186,10 +198,10 @@ var D_tag={
  * 数据结构
  */
 var parseSysData={
-  monitorData:new Obejct(), //为监控DList读取设置的对象
+  monitorData:new Object(), //为监控DList读取设置的对象
   treeData:null, //生成树，此树包括parent属性
-  ddtagdomMap:null //数据|d标签|dom对象的映射对应关系
-  poolThreadId:-1; //轮询进程号
+  ddtagdomMap:null, //数据|d标签|dom对象的映射对应关系
+  poolThreadId:-1 //轮询进程号
 };
 
 /**
@@ -266,6 +278,11 @@ var reportParse={
           var _data=eval("(" +json.data+ ")");
           reportParse.parseAndDraw(_data);
         }
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        _msg="通过["+getUrl+"]请求数据失败。<br/>status="+XMLHttpRequest.status;
+        if (mPage) mPage.$.messager.alert("提示", _msg, "error");
+        else alert(_msg);
       }
     });
   },
@@ -285,7 +302,7 @@ var reportParse={
     $('#rTitle').html(rptData._HEAD._reportName);
     //解析REPORT（报告主体），并画报告的主体
     var ret=reportParse.parseReport(rptData._REPORT);
-    if (ret==0) {//出错了，给出提示，并结束后续的处理、
+    if (ret==0) {//出错了，给出提示，并结束后续的处理
       var mPage=getMainPage();
       if (mPage) mPage.$.messager.alert("提示", ret.msg, "error");
       return ;
@@ -293,12 +310,12 @@ var reportParse={
     //画树
     parseSysData.treeData=ret.treeRoot;
     $('#catalogTree').tree({animate:true});
-    $('#catalogTree').tree("loadData", parseSysData.treeData);
+    $('#catalogTree').tree("loadData", parseSysData.treeData.children);
     //为树结点绑定锚点
     $('#catalogTree').tree({
-      onClick: function(node){
-        var topSegHeight=$("#topSegment").height()+3;  
-        $("body").animate({scrollTop:$("#"+node.segId).offset().top - topSegHeight});  
+      onClick: function(node) {
+        var topSegHeight=$("#topSegment").height()+3;
+        $("body").animate({scrollTop:$("#"+node.segId).offset().top - topSegHeight});
       }
     });
     parseSysData.ddtagdomMap=ret.dm;
@@ -324,7 +341,7 @@ var reportParse={
       oneData.getFlag=0; //获取状态并获取次数，0还需获取；-1获取成功；-2获取失败
       oneData.drawFlag=0; //画D标签的状态：0未画；1正在画；2画完了
       oneData.progress=0; //数据处理进度，从0-1的一个数值
-      monitDListObj.dList[_DLIST._id]=oneData;
+      monitDListObj.dList[_DLIST[i]._id]=oneData;
     }
     return monitDListObj;
   },
@@ -347,143 +364,142 @@ var reportParse={
     treeRoot.id=-1;
     treeRoot.text="系统根结点";
     if (_REPORT&&_REPORT.length>0) {
-      for (int i=0; i<_REPORT.length; i++) {
-        var ret=recursionSegs(_REPORT[i], treeRoot, dtagMap, level, $("#reportFrame"), i);
-        if (ret.type==0) { //出错了，不进行处理了
+      for (var i=0; i<_REPORT.length; i++) {
+        var ret=reportParse.recursionSegs(_REPORT[i], treeRoot, dtagMap, level, $("#reportFrame"), i);
+        if (ret) { //出错了，不进行处理了
           return ret;
         }
       }
     }
+    var ret= new Object();
     ret.treeRoot=treeRoot;
     ret.dm=dtagMap;
     //返回内容
     return ret;
+  },
 
-    //内部私有函数
-    /*
-     * 递归扫描report内容，并构造需要的结构
-     * @param segs 报告的一个segment
-     * @param ptn 树对象
-     * @param ddm div与Dtag的对应关系
-     * @param l 树的Level
-     * @param jqObj jquery的dom对象
-     * @param index 数组中的下标
-     * @returns 若解析错误，则放回false
-     */
-    function recursionSegs(segs, ptn, ddm, l, jqObj, index) {
-      var ret=new Object();
+  //内部私有函数
+  /*
+   * 递归扫描report内容，并构造需要的结构
+   * @param segs 报告的一个segment
+   * @param ptn 树对象
+   * @param ddm div与Dtag的对应关系
+   * @param l 树的Level
+   * @param jqObj jquery的dom对象
+   * @param index 数组中的下标
+   * @returns 若解析错误，则放回false
+   */
+  recursionSegs: function(segs, ptn, ddm, l, jqObj, index) {
+    var ret=new Object();
 
-      var rankId=l+"__"+index; //级别Id
-      var pTnId=(td)?td.id:null;//上级结点id
-      var priorityName=(segs.name&&$.trim(segs.name))?segs.name:((segs.title&&$.trim(segs.title))?segs.title:null);
-      var priorityTitle=(segs.title&&$.trim(segs.title))?segs.title:((segs.name&&$.trim(segs.name))?segs.name:null);
+    var rankId=l+"__"+index; //级别Id
+    var pTnId=(ptn)?ptn.id:null;//上级结点id
+    var priorityName=(segs.name&&$.trim(segs.name))?segs.name:((segs.title&&$.trim(segs.title))?segs.title:null);
+    var priorityTitle=(segs.title&&$.trim(segs.title))?segs.title:((segs.name&&$.trim(segs.name))?segs.name:null);
 
-      //1-处理树
-      var treeNode=new Object();
-      treeNode.segId='segment__'+rankId;
-      //1.1-树结点id
-      treeNode.id=pTnId?pTnId+"_"+rankId:"_tn__"+rankId;
-      if (segs.id&&$.trim(segs.id)) treeNode.sgid="_tnsg__"+segs.id;//若有段落id，则记录一下
-      else {
-        ret.type=0; //处理失败
-        ret.meg="在处理段落时，发现段落没有设置id，无法处理！";
-        if (ptn.id==-1) ret.msg+="此段落为根段落的"+index+"个子段落";
-        else ret.msg+="此段落为id=["+ptn.id+"]段落的"+index+"个子段落";
-        return ret;
-      }
-      //1.2-树结点名称
-      if (priorityName) treeNode.text=priorityName;
-      if (!treeNode.text||!$.trim(treeNode.text)) {
-        ret.type=0; //处理失败
-        ret.meg="在处理id=["+treeNode.id+"]的段落时，发现段落的名称或标题没有设置，无法处理";
-        return ret;
-      }
-      //1.3把树节点挂接到上级节点
-      if (!ptn.children) ptn.children=new Array();
-      treeNode.parent=ptn;
-      ptn.children[index]=treeNode;
+    //1-处理树
+    var treeNode=new Object();
+    treeNode.segId='segment__'+rankId;
+    //1.1-树结点id
+    treeNode.id=(pTnId&&pTnId!=-1)?pTnId+"_"+rankId:"_tn__"+rankId;
+    if (segs.id&&$.trim(segs.id)) treeNode.sgid="_tnsg__"+segs.id;//若有段落id，则记录一下
+    else {
+      ret="在处理段落时，发现段落没有设置id，无法处理！";
+      if (ptn.id==-1) ret.msg+="此段落为根段落的"+index+"个子段落";
+      else ret+="此段落为id=["+ptn.id+"]段落的"+index+"个子段落";
+      return ret;
+    }
+    //1.2-树结点名称
+    if (priorityName) treeNode.text=priorityName;
+    if (!treeNode.text||!$.trim(treeNode.text)) {
+      ret="在处理id=["+treeNode.id+"]的段落时，发现段落的名称或标题没有设置，无法处理";
+      return ret;
+    }
+    //1.3把树节点挂接到上级节点
+    if (!ptn.children) ptn.children=new Array();
+    treeNode.parent=ptn;
+    ptn.children[index]=treeNode;
 
-      //2-画显示对象
-      //2.1-每个segment的框架
-      var docEle_html='<div id="segment__'+rankId+'" class="segment segment_'+l+'"><ul>'
-        + '<li id="segTitle__'+rankId+'" class="segTitle segTitle_'+l+'">'+priorityTitle+'</li>';
-      if (segs.content&&$.trim(segs.content)) docEle_html
-        +='<li id="segContent__'+rankId+'" class="segContent segContent_'+l+'"></li>';
-      if (segs.subSegs&&segs.subSegs.length>0) docEle_html
-        +='<li id="segSubs__'+rankId+'"><div id="ssBody__'+rankId+'" class="segSubs"></div></li>';
-      var jqDocEle=$(docEle_html);//本级doc对象，以jquery方式处理
-      //2.2-生成具体的段内容
-      if (segs.content&&$.trim(segs.content)) {
-        var _content=segs.content;
-        //找到D标签
-        var ml=_content.match(/<d.*?(<\/d>|\/>)/gi);//match list
-        if (ml&&ml.length>0) {
-          for (var i=0; i<ml.length; i++) {
-            var dTag=new D_tag.buildByDTagHtml(ml[i]);
-            //根据dTag生成替换对象
-            var _replaceDom=null;
-            if (!dTag.showType) {
-              _replaceDom="<p id='rpDom__"+rankId+"__"+j+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</p>";
+    //2-画显示对象
+    //2.1-每个segment的框架
+    var docEle_html='<div id="segment__'+rankId+'" class="segment segment_'+l+'"><ul>'
+      + '<li id="segTitle__'+rankId+'" class="segTitle segTitle_'+l+'">'+priorityTitle+'</li>';
+    if (segs.content&&$.trim(segs.content)) docEle_html
+      +='<li id="segContent__'+rankId+'" class="segContent segContent_'+l+'"></li>';
+    if (segs.subSegs&&segs.subSegs.length>0) docEle_html
+      +='<li id="segSubs__'+rankId+'"><div id="ssBody__'+rankId+'" class="segSubs"></div></li>';
+    var jqDocEle=$(docEle_html);//本级doc对象，以jquery方式处理
+    //2.2-生成具体的段内容
+    if (segs.content&&$.trim(segs.content)) {
+      var _content=segs.content;
+      //找到D标签
+      var ml=_content.match(/<d.*?(<\/d>|\/>)/gi);//match list
+      if (ml&&ml.length>0) {
+        for (var i=0; i<ml.length; i++) {
+          var dTag=new D_tag.buildByDTagHtml(ml[i]);
+          //根据dTag生成替换对象
+          var _replaceDom=null;
+          if (!dTag.showType) {
+            _replaceDom="<p id='rpDom__"+rankId+"__"+i+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</p>";
+          } else {
+            if (dTag.transLog) {
+              if (dTag.showType=="value"||dTag.showType=="text") _replaceDom="<span id='rpDom__"+rankId+"__"+i+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</span>";
+              else _replaceDom="<div id='rpDom__"+rankId+"__"+i+"' class='dtagParseErr dtagParseErrDiv'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</div>";
             } else {
-              if (dTag.transLog) {
-                if (dTag.showType=="value"||dTag.showType=="text") _replaceDom="<span id='rpDom__"+rankId+"__"+j+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</span>";
-                else _replaceDom="<div id='rpDom__"+rankId+"__"+j+"' class='dtagParseErr dtagParseErrDiv'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</div>";
+              if (dTag.showType=="value"||dTag.showType=="text") {
+                _replaceDom="<span id='rpDom__"+rankId+"__"+i+"' class='dtagTextWaiting'>"+transTagType(dTag.showType)+"</span>";
               } else {
-                if (dTag.showType=="value"||dTag.showType=="text") {
-                  _replaceDom="<span id='rpDom__"+rankId+"__"+j+"' class='dtagText'></span>";
-                } else {
-                  _replaceDom="<div id='rpDom__"+rankId+"__"+j+"' class='dtagDiv'></div>";
-                }
-                _content.replace(ml[i], _replaceDom);
-                addDindex2TreeNode(treeNode, dTag.did);//加入树结点的dArray属性(包含所有下级结点中的D标签的did的列表)
-                addMap2Ddm("rpDom__"+rankId+"__"+j, dTag, ddm);//加入ddm——对应关系对象
+                _replaceDom="<div id='rpDom__"+rankId+"__"+i+"' class='dtagDiv'>"+transTagType(dTag.showType)+"</div>";
               }
+              _content=_content.replace(ml[i], _replaceDom);
+              reportParse.addDindxt2TreeNode(treeNode, dTag.did);//加入树结点的dArray属性(包含所有下级结点中的D标签的did的列表)
+              reportParse.addMap2Ddm("rpDom__"+rankId+"__"+i, dTag, ddm);//加入ddm——对应关系对象
             }
           }
         }
-        jqDocEle.find("#segContent__"+rankId).html(_content);
       }
-      jqObj.append(jqDocEle);
+      jqDocEle.find("#segContent__"+rankId).html(_content);
+    }
+    jqObj.append(jqDocEle);
 
-      //递归
-      if (segs.subSegs&&segs.subSegs.length>0) {
-        for (var i=0; i<segs.subSegs.length; i++) {
-          var ret=recursionSegs(segs.subSegs[i], ptn, ddm, l+1, $("#ssBody_"+rankId), i);
-          if (ret.type==0) { //出错了，不能再处理了
-            return ret;
-          }
+    //递归
+    if (segs.subSegs&&segs.subSegs.length>0) {
+      for (var i=0; i<segs.subSegs.length; i++) {
+        var _ret=reportParse.recursionSegs(segs.subSegs[i], treeNode, ddm, l+1, $("#ssBody__"+rankId), i);
+        if (_ret) { //出错了，不能再处理了
+          return _ret;
         }
       }
     }
-    /*
-     * 把dIndex加入树结点，包括上级结点
-     * @param tn 树结点
-     * @param dindex jsonD在本report中的序号
-     */
-    function addDindxt2TreeNode(tn, dindex) {
-      if (!tn.dArray) tn.dArray=new Array();
-      var found=false;
-      for (var i=0; i<tn.dArray.length; i++) {
-        if (tn.dArray[i]==dindex) {
-          found=true;
-          break;
-        }
+  },
+  /*
+   * 把dIndex加入树结点，包括上级结点
+   * @param tn 树结点
+   * @param dindex jsonD在本report中的序号
+   */
+  addDindxt2TreeNode: function(tn, dindex) {
+    if (!tn.dArray) tn.dArray=new Array();
+    var found=false;
+    for (var i=0; i<tn.dArray.length; i++) {
+      if (tn.dArray[i]==dindex) {
+        found=true;
+        break;
       }
-      if (!found) tn.dArray.push(dindex);
-      if (tn.parent) addDindxt2TreeNode(tn.parent, dindex);
     }
-    /*
-     * 把映射关系加入全局映射对象
-     * @param domId 替换d标签的dom对象的Id
-     * @param dtag d标签对象
-     * @param ddm 全局映射对象
-     */
-    function addMap2Ddm(domId, dtag, ddm) {
-      if (!ddm) ddm=new Object();
-      var mapL=ddm[dtag.did];
-      if (!mapL) ddm[dtag.did]=new Array();
-      ddm[domId]=dtag;
-    }
+    if (!found) tn.dArray.push(dindex);
+    if (tn.parent) reportParse.addDindxt2TreeNode(tn.parent, dindex);
+  },
+  /* 
+   * 把映射关系加入全局映射对象
+   * @param domId 替换d标签的dom对象的Id
+   * @param dtag d标签对象
+   * @param ddm 全局映射对象
+   */
+  addMap2Ddm: function(domId, dtag, ddm) {
+    if (!ddm) ddm=new Object();
+    var mapL=ddm[dtag.did];
+    if (!mapL) ddm[dtag.did]=new Object();
+    ddm[dtag.did][domId]=dtag;
   }
 };
 
@@ -495,34 +511,39 @@ function getDataFromDListAndDrawDTag() {
   var _msg="";
 
   var md=parseSysData.monitorData;
-  if (!md||!md.allSize||!md.okSize||!md.faildSize||!md.dList) {
+  if (!md||!md.dList) {
     clearInterval(parseSysData.poolThreadId);
     _msg="监控参数异常，无法获得数据";
     if (mPage) mPage.$.messager.alert("提示", _msg, "error");
     else alert(_msg);
+    return ;
   }
-  if (md.dList.length==0||(md.okSize+md.faildSize)>md.allSize) clearInterval(parseSysData.poolThreadId);
+  if (md.dList.length==0||(md.okSize+md.faildSize)>md.allSize) {
+    clearInterval(parseSysData.poolThreadId);
+    return;
+  }
 
   //以下是真正的处理过程
   var i=0;
   for (;i<md.dList.length;i++) {
     var thisD=md.dList[i];
     if (thisD) {
-      var getJsonDUrl=thisD.url;
-      $.ajax({type:"get",url:getJsonDUrl ,async:true, dataType:"json",
+      if (thisD.getFlag==-1||thisD.getFlag==-2) continue;
+      var getJsonDUrl=_PATH+"/"+thisD.url;
+      $.ajax({type:"get", url:getJsonDUrl, async:true, dataType:"json", _index: i,
         success: function(json) {
           if (json.jsonType==0) {//获取失败
             md.faildSize++;
             thisD.getFlag=-2;//失败
             thisD.drawFlag=1;//正在画
-            d_tagDeal.dealReadErrData(i, json.message);
+            d_tagDeal.dealReadErrData(this._index, json.message);
             thisD.drawFlag=2;//画完了
           } if (json.jsonType==1) {//获取成功：解析，并填充d标签内容
-            md.okSize++
+            md.okSize++;
             var _data=eval("(" +json.data+ ")");
             thisD.getFlag=-1;//成功
             thisD.drawFlag=1;//正在画
-            d_tagDeal.dealReadSucData(i, _data);
+            d_tagDeal.dealReadSucData(this._index, _data);
             thisD.drawFlag=2;//画完了
           } if (json.jsonType==2) {//在运行中，处理
             thisD.getFlag++;//获取次数+1 //目前获取次数不做处理
@@ -531,6 +552,13 @@ function getDataFromDListAndDrawDTag() {
             thisD.progress=json.progress;
           } else {//很异常，目前先不做处理
           }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          md.faildSize++;
+          thisD.getFlag=-2;//失败
+          thisD.drawFlag=1;//正在画
+          d_tagDeal.dealReadErrData(this._index, "status="+XMLHttpRequest.status);
+          thisD.drawFlag=2;//画完了
         }
       });
     } else {
@@ -541,7 +569,7 @@ function getDataFromDListAndDrawDTag() {
       break;
     }
   }
-}
+};
 
 //=DTag对象的处理=begin==========================
 //与parseSysData中的数据配合使用
@@ -558,8 +586,13 @@ var d_tagDeal={
     for(var p in map) {
       if (typeof(p)!="function") {
         var jqObj=$("#"+p);
-        if ($.trim(jqObj.html())) jqObj.html(jqObj.html()+"<br/><span class='errMsgSpan'>"+errMsg+"</span>");
-        else jqObj.html("<span class='errMsgSpan'>"+errMsg+"</span>");
+        if (jqObj) {
+          var oldStr = jqObj.html();
+          if (oldStr) {
+            oldStr = oldStr.substr(0, oldStr.indexOf("<")==-1?oldStr.length:oldStr.indexOf("<"));
+          }
+          jqObj.html(oldStr+"<span class='errMsgSpan'>ERR:"+errMsg+"</span>");
+        }
       }
     }
   },
@@ -580,9 +613,10 @@ var d_tagDeal={
         var dataOk=true;
         var _pointData=null
         try {
-          _pointData=eval("(d."+tag.value.dPoint+")");
+          _pointData=eval("(d._DATA."+dtag.value.dPoint+")");
         } catch(e) {
           _pointData=e.message;
+          if (_pointData.indexOf("undefined")!=-1) _pointData = "数据文件中'"+dtag.value.dPoint+"'未定义"
           dataOk=false;
         }
         if (!dataOk) jqObj.html("<span class='errMsgSpan'>"+_pointData+"</span>");
@@ -597,21 +631,26 @@ var d_tagDeal={
    * @param d 要处理的数据(已经从jsonD中的_DATA中取到的数据)
    */
   drawTagArea: function(jqEle, dtag, d) {
+    if (jqEle.html().indexOf("<")!=-1) {//已经画过了
+      dtag.drawFlag=2;
+      return;
+    }
     if (dtag.showType=="value") d_tagDeal.draw.drawValue(jqEle, dtag, d);
     else {
       var errMsg="";
-      if (!d.dataList||d.dataList.length==0) errMsg="表数据中没有任何数据";
-      else errMsg=d_tagDeal.tableDataFun.checkMatch(dtag, d); //检查数据的匹配情况，并把结果追加到dtag中的tdParseData中去
+      var _tData=d.tableData;
+      if (!_tData.dataList||_tData.dataList.length==0) errMsg="表数据中没有任何数据";
+      else errMsg=d_tagDeal.tableDataFun.checkMatch(dtag, _tData); //检查数据的匹配情况，并把结果追加到dtag中的tdParseData中去
       if (errMsg) jqEle.html("<span class='errMsgSpan'>"+errMsg+"</span>");
       else {
         //TODO 检查d数据是否符合，如titles中的内容是否和dlist中的内容能够匹配
-        if (dtag.showType=="text") d_tagDeal.draw.drawText(jqEle, dtag, d);
-        else if (dtag.showType=="table") d_tagDeal.draw.drawTable(jqEle, dtag, d);
-        else if (dtag.showType=="pie") d_tagDeal.draw.drawPie(jqEle, dtag, d);
-        else if (dtag.showType=="line") d_tagDeal.draw.drawLine(jjqEle, dtag, d);
-        else if (dtag.showType=="bar") d_tagDeal.draw.drawBar(jqEle, dtag, d);
-        else if (dtag.showType=="radar") d_tagDeal.draw.drawRadar(jqEle, dtag, d); //雷达图
-        else if (dtag.showType=="map_pts") d_tagDeal.draw.drawMapPts(jqEle, dtag, d); //地图画点
+        if (dtag.showType=="text") d_tagDeal.draw.drawText(jqEle, dtag, _tData);
+        else if (dtag.showType=="table") d_tagDeal.draw.drawTable(jqEle, dtag, _tData);
+        else if (dtag.showType=="pie") d_tagDeal.draw.drawPie(jqEle, dtag, _tData);
+        else if (dtag.showType=="line") d_tagDeal.draw.drawLine(jjqEle, dtag, _tData);
+        else if (dtag.showType=="bar") d_tagDeal.draw.drawBar(jqEle, dtag, _tData);
+        else if (dtag.showType=="radar") d_tagDeal.draw.drawRadar(jqEle, dtag, _tData); //雷达图
+        else if (dtag.showType=="map_pts") d_tagDeal.draw.drawMapPts(jqEle, dtag, _tData); //地图画点
       }
     }
   },
@@ -623,6 +662,7 @@ var d_tagDeal={
       if (dtag.decorateView) {
         if (dtag.decorateView.view) htmlStr=dtag.decorateView.view.replace(/#value#/gi, d);
       }
+      jqEle.attr("class", "dtagTextShow");
       jqEle.html(htmlStr);
     },
     //画文本段:jqEle(html元素的jquery对象)，dtag(标签信息)，d(表数据)
@@ -630,10 +670,10 @@ var d_tagDeal={
       var htmlStr="";
       var tp=dtag.tdParseData; //语法分析后的记录
       if (tp.decorate.errMsg||tp.sort.errMsg) {
-        if (tp.decorate.errMsg) htmlStr="预显示的["+tp.decorate.errMsg+"]字段在表数据中不存在";
+        if (tp.decorate.errMsg) htmlStr="欲显示的["+tp.decorate.errMsg+"]字段在表数据中不存在";
         if (tp.sort.errMsg) htmlStr=(htmlStr?"，":"")+"过滤函数中所指明的["+tp.decorate.errMsg+"]字段在表数据中不存在";
       }
-      if (htmlStr) htmlStr="<span class='errMsgSpan'>"+_pointData+"</span>";
+      if (htmlStr) htmlStr="<span class='errMsgSpan'>"+htmlStr+"</span>";
       else {//获取数据
         var fTdata=d_tagDeal.tableDataFun.filterData(dtag, d);
         if (fTdata.errMsg) htmlStr="<span class='errMsgSpan'>"+errMsg+"</span>";
@@ -641,14 +681,14 @@ var d_tagDeal={
           //获得分割符
           var splitChar=(dtag.decorateView.ext&&dtag.decorateView.ext.suffix)?dtag.decorateView.ext.suffix:"、";
           var oneRowSource,oneRow;
-          for (var i=0; i<fTData.dList.length; i++) {
-            oneRow=fTData.dList[i];
+          for (var i=0; i<fTdata.dList.length; i++) {
+            oneRow=fTdata.dList[i];
             oneRowSource=dtag.decorateView.view;
             //替换
             var ml=oneRowSource.match(/#.+?#/gi);
             if (ml&&ml.length>0) {
-              for (var j=0; j<ml.length; j++) { 
-                oneRowSource.replace(ml[j], oneRow[ml[j].substr(1, ml[i].length-2)]);
+              for (var j=0; j<ml.length; j++) {
+                oneRowSource=oneRowSource.replace(ml[j], oneRow[ml[j].substr(1, ml[j].length-2)]);
               }
             }
             htmlStr+=splitChar+oneRowSource;
@@ -656,6 +696,7 @@ var d_tagDeal={
           htmlStr=htmlStr.substr(splitChar.length);
         }
       }
+      jqEle.attr("class", "dtagTextShow");
       jqEle.html(htmlStr);
     },
     drawTable: function(jqEle, dtag, d) {
@@ -674,15 +715,16 @@ var d_tagDeal={
             _oneT.field=p;
             _oneT.title=fTdata.titles[p];
             _oneT.width=100;
-            if (gridWidth<800) gridWidth+=101;
+            cols[0].push(_oneT);
+            if (gridWidth<600) gridWidth+=101;
           }
         }
-        if (gridWidth<800) gridWidth++; 
-        jqEle.css("width", gridWidth+"px");
+        if (gridWidth<800) gridWidth++;
+        jqEle.css({"width":gridWidth+"px", "margin-top":"5px"});
         jqEle.datagrid({
           singleSelect:true,
           columns:cols,
-          data:fTData.dList
+          data:fTdata.dList
         });
       }
     },
@@ -694,19 +736,19 @@ var d_tagDeal={
       } else {
         //准备数据
         var pieData = new Array();
-        for (var i=0; i<fTData.dList.length; i++) {
-          var row = fTData.dList[i];
+        for (var i=0; i<fTdata.dList.length; i++) {
+          var row = fTdata.dList[i];
           pieData.push({"label":row[dtag.tdParseData.param["xAxis"]], "data":row[dtag.tdParseData.param["yAxis"]]});
         }
         $.plot(jqEle, dataAry, {
           series: {pie: {show: true}},
           grid: {hoverable: true}
-        };
+        });
         jqEle.bind("plothover", function(event, pos, obj) {
-        	if (!obj) {
-        		d_tagDeal.draw.hideTooltip();
-        		return;
-        	}
+          if (!obj) {
+            d_tagDeal.draw.hideTooltip();
+            return;
+          }
           var opt = {
             "top":pos.pageX+5,
             "left":pos.pageY+5
@@ -738,7 +780,7 @@ var d_tagDeal={
       qH.css(opt).show();
     },
     hideTooltip: function() {
-    	$("#_tooltip").hide();
+      $("#_tooltip").hide();
     }
   },
 
@@ -783,7 +825,7 @@ var d_tagDeal={
             break;
           }
         }
-        if (!found) mergeTitles.push[tempTitles2[i]];
+        if (!found) mergeTitles.push(tempTitles2[i]);
       }
       if (tp.sort&&tp.sort.sortCol) {
         found=false;
@@ -793,17 +835,17 @@ var d_tagDeal={
             break;
           }
         }
+        if (!found) mergeTitles.push(tp.sort.sortCol);
       }
-      if (!found) mergeTitles.puth(tp.sort.sortCol);
       //3-根据合并后的列构造返回的titles，这里需要注意，那些需要计算百分比的列，在这里也要处理
-      if (isAllTitels) {
+      if (isAllTitles) {
         ret.titles=d.titles;
       } else {
         ret.titles=new Object();
-        for (i=0; i<mergeTitle.length; i++) {
+        for (i=0; i<mergeTitles.length; i++) {
           for (var p in d.titles) {
             if (typeof(p)!="function") {
-              if (p==mergeTitle[i]) {
+              if (p==mergeTitles[i]) {
                 ret.titles[p]=d.titles[p];
                 break;
               }
@@ -839,15 +881,15 @@ var d_tagDeal={
       //计算百分比
       var countPecent=false;
       var newPercentedL=new Array();
-      if (tp.percentL&&tp.percentL.length=0) {
+      if (tp.percentL&&tp.percentL.length>0) {
         countPecent=true;
         //首先计算总数
         var sum=new Array();
-        for (j=0; j<tp.percentL.length; j++) sum[j]=0;
+        for (j=0; j<tp.percentL.length; j++) sum[tp.percentL[j]]=0;
         for (i=0; i<d.dataList.length; i++) {
           var row=d.dataList[i];
           for (j=0; j<tp.percentL.length; j++) {
-            sum[j]+=row[tp.percent[j]];
+            sum[tp.percentL[j]]+=row[tp.percentL[j]];
           }
         }
         //组合新的数据
@@ -857,13 +899,15 @@ var d_tagDeal={
           for (var p in ret.titles) {
             nRow[p]=row[p];
           }
+          var _lastPercent = 1;
           for(j=0; j<tp.percentL.length; j++) {
-            var _n=sum[j]==0?"":row[p]/sum[j];
-            if (_n) {
-              _n+=0.00005;
-              _n=_n+"";
-              _n=_n.substring(0, _n.indexOf(".")+4);
-              while(_n.charAt(_n.length-1)=='0') _n=_n.substring(0,_n.length-2);
+          	var _n=_lastPercent;
+            if (j!=tp.percentL.length-1) {
+              _n=sum[tp.percentL[j]]==0?"":row[tp.percentL[j]]/sum[tp.percentL[j]];
+              if (_n) {
+              	_n = Math.round(_n*10000)/100.00;
+              }
+              _lastPercent-=_n;
             }
             nRow["percent("+tp.percentL[j]+")"]=_n;
           }
@@ -881,14 +925,14 @@ var d_tagDeal={
           insertIndex=-1;
           if (sort.sortType==1) {//从大到小
             for (j=0; j<newSortL.length; j++) {
-              if (row[sort.sortCol]>=newSort[j][sort.sortCol]) {
+              if (row[sort.sortCol]>=newSortL[j][sort.sortCol]) {
                 insertIndex=j;
                 break;
               }
             }
           } else {//从小到大
             for (j=0; j<newSortL.length; j++) {
-              if (row[sort.sortCol]<=newSort[j][sort.sortCol]) {
+              if (row[sort.sortCol]<=newSortL[j][sort.sortCol]) {
                 insertIndex=j;
                 break;
               }
@@ -896,7 +940,7 @@ var d_tagDeal={
           }
           if (insertIndex==-1) newSortL[newSortL.length]=row;
           else {
-            newSort.insertAt(j, row);
+            newSortL.insertAt(j, row);
           }
         }
       }
@@ -961,7 +1005,7 @@ var d_tagDeal={
           if (!ret.decorate) ret.decorate=new Object();
           if (!ret.decorate.defL) ret.decorate.defL=new Array();
           for (var i=0; i<ml.length; i++) {
-            ret.decorate.defL[i]=ml[i].substr(1, ml[i].length-2));
+            ret.decorate.defL[i]=ml[i].substr(1, ml[i].length-2);
           }
         }
       }
@@ -991,7 +1035,7 @@ var d_tagDeal={
      */
     checkDtag: function(dtag) {
       var tp=dtag.tdParseData, showType=dtag.showType;
-      if (showType=='text'&&(!tp.decorateL||tp.decorateL.length==0)) return "[showType="+showType+"]类型的D标签，decorateView(显示修饰)属性中需要包含字段描述";
+      if (showType=='text'&&(!tp.decorate||tp.decorate.length==0)) return "[showType="+showType+"]类型的D标签，decorateView(显示修饰)属性中需要包含字段描述";
       if ((showType=='pie'||showType=='bar'||showType=='line'||showType=='radar'||showType=='map_pts')&&(!tp.paramL||tp.paramL.length==0))
         return "[showType="+showType+"]类型的D标签，decorateView(显示修饰)属性中需要包含字段描述";
       return "";
@@ -1015,7 +1059,7 @@ var d_tagDeal={
       var tp=dtag.tdParseData;
       var _defineSort=d.sort;
       var _defineTitles=d.titles;
-      if (!isEmpty(_defineTitles)) return "表数据不合法，titles没有定义。"; //用到了common.utils.js中的方法
+      if (isEmpty(_defineTitles)) return "表数据不合法，titles没有定义。"; //用到了common.utils.js中的方法
       //匹配参数列
       if (tp.param&&tp.param.defL&&tp.param.defL.length>0) {
         matchList("param", tp.param.defL, _defineTitles, tp);
@@ -1051,7 +1095,14 @@ var d_tagDeal={
             }
             if (find) {
               if (!tp.percentL) tp.percentL=new Array();
-              tp.percentL.push(_a);
+              var _find=false;
+              for (; j<tp.percentL; j++) {
+                if (tp.percentL[j]==_a) {
+                  _find=true;
+                  break;
+                }
+              }
+              if (!_find) tp.percentL.push(_a);
             }
           }
         }
@@ -1074,9 +1125,10 @@ var d_tagDeal={
        *   注意：通过本检查，会扩充dtag.tdParseData的内容，会包括百分比计算列(percentL)的列表
        */
       function matchList(mType, cl, tl, tp) {
+      	if (tp[mType].okL&&tp[mType].okL.length>0) return;
         var find=false;
         var _a, _b;
-        var i=0;
+        var i=0, j=0;
         var err="", okL=new Array();
         if (cl&&cl.length>0) {
           for (; i<cl.length; i++) {
@@ -1106,7 +1158,14 @@ var d_tagDeal={
                 }
                 if (find) {
                   if (!tp.percentL) tp.percentL=new Array();
-                  tp.percentL.push(_a);
+                  var _find=false;
+                  for (; j<tp.percentL; j++) {
+                    if (tp.percentL[j]==_a) {
+                      _find=true;
+                      break;
+                    }
+                  }
+                  if (!_find) tp.percentL.push(_a);
                 }
               }
             }
@@ -1118,14 +1177,14 @@ var d_tagDeal={
           }
           if (err) {
             err=err.substr(1);
-            eval("tp."+mType+".errMsg=err");
+            tp[mType].errMsg=err;
           }
-          if (okL.length<cl.length) {
-            eval("tp."+mType+".okL.push(_a)");
+          if (okL.length>0) {
+            tp[mType].okL=okL;
           }
         }
       }
     }
   }
-}
+};
 //=DTag对象的处理=end==========================

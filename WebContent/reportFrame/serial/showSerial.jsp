@@ -14,8 +14,11 @@
 <script type="text/javascript" src="<%=path%>/resources/plugins/flot/jquery.flot.categories.js"></script>
 <!-- 雷达图，也可考虑用eChart -->
 <script type="text/javascript" src="<%=path%>/resources/plugins/Chart.min.js"></script>
+<!-- report解析 -->
+<script type="text/javascript" src="<%=path%>/reportFrame/serial/js/spirit.report.serial.parse.js"></script>
+<link type="text/css" rel="stylesheet" href="<%=path%>/reportFrame/serial/css/report.serial.css"/>
 <!-- ECharts单文件引入 -->
-<script src="<%=path%>/resources/plugins/echarts-2.2.1/echarts.js"></script>
+<script type="text/javascript" src="<%=path%>/resources/plugins/echarts-2.2.1/echarts.js"></script>
 <script type="text/javascript">
 /**
  * echarts
@@ -29,8 +32,6 @@ require.config({
 });
 </script>
 <!-- report -->
-<script type="text/javascript" src="<%=path%>/reportFrame/serial/js/spirit.report.serial.parse.js"></script>
-<link type="text/css" rel="stylesheet" href="<%=path%>/reportFrame/serial/css/report.serial.css"/>
 
 <title>序列化报告显示壳容器</title>
 <script type="text/javascript">
