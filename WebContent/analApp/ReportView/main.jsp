@@ -142,6 +142,8 @@ $(function() {
   initDatePicker();  
   _urlPath = "<%=path%>";
   startSearch();
+  //定期自动查询报告，前提是必须先访问这个页面才行
+  setInterval(startSearch,30*1000);
 });
 
 //初始化查询输入框
@@ -193,6 +195,7 @@ var objDatatable = null; //列表显示对象
 
 //取出输入条件，提交查询
 function startSearch(){
+	//alert("start search report ...");
   //var searchStr = getInputSearchFileStr();
   var searchStr = $("#inp_filename").val();
   var startDateStr = $("#startDate").val();
@@ -206,7 +209,7 @@ function startSearch(){
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
       try{
-        searchResultJsonData = str2JsonObj(jsonStr); 
+        searchResultJsonData = str2JsonObj("jsonObj",jsonStr); 
         showSearchResult(showType);
       }catch(e){
         $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
