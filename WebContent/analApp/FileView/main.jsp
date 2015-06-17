@@ -194,7 +194,8 @@ function startSearch(){
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
       try{
-    	  searchResultJsonData = str2JsonObj(jsonStr); 
+    	  //alert("fileSearch() search result="+jsonStr);
+    	  searchResultJsonData = str2JsonObj("jsonObj",jsonStr); 
     	  showSearchResult(showType);
       }catch(e){
         $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
