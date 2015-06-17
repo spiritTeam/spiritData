@@ -27,7 +27,7 @@
 </form>
 <script>
 //var service = locator.ConnectServer();
-var ignoreCheckCode = "ignoreCheckCode";
+var ignoreCheckCode = false; //是否忽略验证码. true-忽略验证码
 var MACAddr;
 var IPAddr;
 var DomainAddr;
@@ -72,7 +72,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <td class="labelTd">账　号</td>
       <td class="inputTd">
         <div class="alertInput-Text">
-          <input class="alertInputComp" id="loginName" name="loginName" value="root" tabindex="1" type="text" onBlur="validateLoginName();"/>
+          <input class="alertInputComp" id="loginName" name="loginName" value="" tabindex="1" type="text" onBlur="validateLoginName();"/>
           <div class="maskTitle">请输入您的账号</div>
           <div class="alertImg"></div>
         </div>
@@ -82,7 +82,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <td class="labelTd">密　码</td>
       <td class="inputTd">
         <div class="alertInput-Text">
-          <input id="password" class="alertInputComp" name="password" value="root" tabindex="2" type="password" onBlur="validatePassword();"/>
+          <input id="password" class="alertInputComp" name="password" value="" tabindex="2" type="password" onBlur="validatePassword();"/>
           <div class="alertImg"></div>
           <div class="maskTitle">请输入密码</div>
         </div>
@@ -184,7 +184,7 @@ function validateCheckCode(){
     $("#checkCode").parent().parent().find(".alertImg").hide();
     vdInfoAry[2] = "验证码为必填项";
     //用于测试，等正式上线后需去掉！！！
-    if(typeof(ignoreCheckCode)!="undefined" && ignoreCheckCode=="ignoreCheckCode"){
+    if(ignoreCheckCode){
     	vdInfoAry[2] = "";
     }
   }
