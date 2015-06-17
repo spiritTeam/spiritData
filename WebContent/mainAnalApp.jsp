@@ -110,11 +110,9 @@ body {
         <td style="width:100px;text-align:center;">
         </td>
         <td style="width:100px;text-align:center;">
-          <a href="#" class="def-nav" style="" onclick="showIframe('dataUpLoadView');">数据上传</a>
-        </td>    
-        <td style="width:100px;text-align:center;">
-          <a href="#" class="def-nav" onclick="showIframe();">用户处理</a>
-        </td> 
+          <a href="#" class="def-nav" style="" onclick='$("#upf").click();'>数据上传</a>
+          <!-- <a href="#" class="def-nav" style="" onclick="showIframe('dataUpLoadView');">数据上传</a>  -->
+        </td>  
         <td style="width:200px;text-align:center;">
           <div id="div_u" style="text-align:left;margin-bottom:-5px;">
             <div style="float:left;color:red;">用户：</div>
@@ -131,10 +129,20 @@ body {
       </tr>
     </table>
   </div>
+  <div id="inForm" style="display:none;">
+    <form method="post" action="<%=path%>/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">        
+      <input id="upf" name="upf" type=file style="display:none;" onchange="uploadFile()"/>        
+      <div>
+        <div id="upIcon" onclick="upIcon_clk();"></div>
+        <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>        
+        <input id="su" type="button" value="分析一下" onclick="uploadF();"/>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- 脚部:悬浮 
-<div id="footSegment" style="padding:10px 10px 0 10px;display:none;"></div>
+<div id="footSegment" style="padding:0px;display:none;"></div>
 -->
 
 <!-- 中间主框架 -->
@@ -144,6 +152,8 @@ body {
   <iframe id="mainSegmentIframe_file"></iframe>
   <iframe id="mainSegmentIframe_search"></iframe>
 </div>
+
+<iframe id="tframe" name="tframe" bordercolor=red frameborder="yes" border=1 width="600" height="200" style="width:600px;heigth:200px; boder:1px solid red;display:none;"></iframe>
 
 </body>
 <script>
@@ -222,7 +232,7 @@ $(function() {
   */
   
   //显示默认页面
-  showIframe("dataUpLoadView");
+  showIframe("reportView");
   
   //定时查询是否有新报告
   searchNewReport();
@@ -550,5 +560,21 @@ function logout() {
     }
   });
 };
+
+/**
+ * 数据上传
+ */
+function uploadFile(){
+	try{
+		//提交上传文件
+		$("#upfs").val($("#upf").val());
+		//alert($("#upf").val());
+		$('#afUpload').submit();
+		//跳转到报告页面
+		showIframe('reportView');
+	}catch(e){
+		alert("failed to upload file.  e="+e.message);
+	}
+}
 </script>
 </html>
