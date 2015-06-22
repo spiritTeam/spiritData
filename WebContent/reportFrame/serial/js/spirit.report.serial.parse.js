@@ -142,7 +142,13 @@ var D_tag={
       if (_pos==-1) this.value.dPoint=_tempStr;//数据获取指针
       else {
         this.value.dPoint=_tempStr.substring(0, _pos);
-        this.value.dFilter=_tempStr.substr(_pos+2);
+        _pos=_tempStr.indexOf("::");
+        if (_pos!=-1) this.value.dFilter=new Array();
+        while (_pos!=-1) {
+          _tempStr=_tempStr.substr(_pos+2);
+          _pos=_tempStr.indexOf("::");
+          this.value.dFilter.push(_pos==-1?_tempStr:_tempStr.substring(0, _pos));
+        }
       }
     }
     //4-param
@@ -451,11 +457,11 @@ var reportParse={
               } else {
                 _replaceDom="<div id='rpDom__"+rankId+"__"+i+"' class='dtagDiv'>"+transTagType(dTag.showType)+"</div>";
               }
-              _content=_content.replace(ml[i], _replaceDom);
               reportParse.addDindxt2TreeNode(treeNode, dTag.did);//加入树结点的dArray属性(包含所有下级结点中的D标签的did的列表)
               reportParse.addMap2Ddm("rpDom__"+rankId+"__"+i, dTag, ddm);//加入ddm——对应关系对象
             }
           }
+          _content=_content.replace(ml[i], _replaceDom);
         }
       }
       jqDocEle.find("#segContent__"+rankId).html(_content);
@@ -587,9 +593,9 @@ var d_tagDeal={
       if (typeof(p)!="function") {
         var jqObj=$("#"+p);
         if (jqObj) {
-          var oldStr = jqObj.html();
+          var oldStr=jqObj.html();
           if (oldStr) {
-            oldStr = oldStr.substr(0, oldStr.indexOf("<")==-1?oldStr.length:oldStr.indexOf("<"));
+            oldStr=oldStr.substr(0, oldStr.indexOf("<")==-1?oldStr.length:oldStr.indexOf("<"));
           }
           jqObj.html(oldStr+"<span class='errMsgSpan'>ERR:"+errMsg+"</span>");
         }
@@ -616,7 +622,7 @@ var d_tagDeal={
           _pointData=eval("(d._DATA."+dtag.value.dPoint+")");
         } catch(e) {
           _pointData=e.message;
-          if (_pointData.indexOf("undefined")!=-1) _pointData = "数据文件中'"+dtag.value.dPoint+"'未定义"
+          if (_pointData.indexOf("undefined")!=-1) _pointData="数据文件中'"+dtag.value.dPoint+"'未定义"
           dataOk=false;
         }
         if (!dataOk) jqObj.html("<span class='errMsgSpan'>"+_pointData+"</span>");
@@ -715,12 +721,33 @@ var d_tagDeal={
             _oneT.field=p;
             _oneT.title=fTdata.titles[p];
             _oneT.width=100;
-            cols[0].push(_oneT);
-            if (gridWidth<600) gridWidth+=101;
+            var conInsert=true;
+            if (dtag.param&&dtag.tdParseData&&dtag.tdParseData.param) {
+              var filterCols=dtag.tdParseData.param.okL?dtag.tdParseData.param.okL:dtag.tdParseData.param.defL;
+              if (filterCols&&filterCols.length>0) {
+                canInsert=false;
+                for (var i=0; i<filterCols.length; i++) {
+                  if (filterCols[i]==p) {
+                    canInsert=true;
+                    for (var _p in dtag.param) {
+                      if (dtag.param[_p]==p) {
+                        _oneT.title=_p;
+                        break;
+                      }
+                    }
+                    break;
+                  }
+                }
+              }
+            }
+            if (canInsert) {
+              cols[0].push(_oneT);
+              if (gridWidth<600) gridWidth+=101;
+            }
           }
         }
         if (gridWidth<800) gridWidth++;
-        jqEle.css({"width":gridWidth+"px", "margin-top":"5px"});
+        jqEle.css({"width":(gridWidth+10)+"px", "margin-top":"5px"});
         jqEle.datagrid({
           singleSelect:true,
           columns:cols,
@@ -734,13 +761,14 @@ var d_tagDeal={
         htmlStr="<span class='errMsgSpan'>"+errMsg+"</span>";
         jqEle.html(htmlStr);
       } else {
+        jqEle.html("");
         //准备数据
-        var pieData = new Array();
+        var pieData=new Array();
         for (var i=0; i<fTdata.dList.length; i++) {
-          var row = fTdata.dList[i];
-          pieData.push({"label":row[dtag.tdParseData.param["xAxis"]], "data":row[dtag.tdParseData.param["yAxis"]]});
+          var row=fTdata.dList[i];
+          pieData.push({"label":row[dtag.param["xAxis"]], "data":row[dtag.param["yAxis"]]});
         }
-        $.plot(jqEle, dataAry, {
+        $.plot(jqEle, pieData, {
           series: {pie: {show: true}},
           grid: {hoverable: true}
         });
@@ -749,9 +777,9 @@ var d_tagDeal={
             d_tagDeal.draw.hideTooltip();
             return;
           }
-          var opt = {
-            "top":pos.pageX+5,
-            "left":pos.pageY+5
+          var opt={
+            "top":pos.pageY+5,
+            "left":pos.pageX+5
           };
           var content=pieData[obj.seriesIndex]["label"]+":"+pieData[obj.seriesIndex]["data"];
           d_tagDeal.draw.showTooltip(opt, content);
@@ -772,10 +800,12 @@ var d_tagDeal={
     },
     showTooltip: function(opt, cont) {
       var qH=$("#_tooltip");
+      console.log(qH.length);
       if (qH.length==0) {
-        $('<div id="_tooltip"></div>').appendTo("body");
+        $("body").append('<div id="_tooltip"></div>');
         qH=$("#_tooltip");
       }
+      console.log(qH.html());
       qH.html(cont);
       qH.css(opt).show();
     },
@@ -893,22 +923,22 @@ var d_tagDeal={
           }
         }
         //组合新的数据
+        var _lastPercent=new Object();
+        for (i=0; i<tp.percentL.length; i++) _lastPercent[tp.percentL[i]]=1;
+
         for (i=0; i<d.dataList.length; i++) {
           var nRow=new Object();
           var row=d.dataList[i];
           for (var p in ret.titles) {
             nRow[p]=row[p];
           }
-          var _lastPercent = 1;
           for(j=0; j<tp.percentL.length; j++) {
-          	var _n=_lastPercent;
-            if (j!=tp.percentL.length-1) {
+            var _n=_lastPercent[tp.percentL[j]];
+            if (i!=d.dataList.length-1) {
               _n=sum[tp.percentL[j]]==0?"":row[tp.percentL[j]]/sum[tp.percentL[j]];
-              if (_n) {
-              	_n = Math.round(_n*10000)/100.00;
-              }
-              _lastPercent-=_n;
+              if (_n) _lastPercent[tp.percentL[j]]=_lastPercent[tp.percentL[j]]-_n;
             }
+            if (_n) _n=Math.round(_n*10000)/100.00;
             nRow["percent("+tp.percentL[j]+")"]=_n;
           }
           newPercentedL.push(nRow);
@@ -965,6 +995,8 @@ var d_tagDeal={
           if ((increase++)>getSize) break;
         }
       }
+      return ret;
+
       //内部函数
       function generateNR(ts, r) {//按ts:titles的顺序，从r:row中取数据
         var nr=new Object();
@@ -973,7 +1005,6 @@ var d_tagDeal={
         }
         return nr;
       }
-      return ret;
     },
     /**
      * 表数据解析d标签，返回辅助数据，包括2个列表和1个排序字段的标签名：
@@ -986,10 +1017,10 @@ var d_tagDeal={
      */
     parseDtag: function(dtag) {
       var ret=new Object();
-      var ml;
+      var ml, _ml;
+      var i=0;
       //参数列列表
       if (dtag.param) {
-        var i=0;
         for(var p in dtag.param) {
           if (typeof(p)!="function"&&p!="mapType") {//地图中的mapType不是在数列表中的
             if (!ret.param) ret.param=new Object();
@@ -1004,25 +1035,37 @@ var d_tagDeal={
         if (ml&&ml.length>0) {
           if (!ret.decorate) ret.decorate=new Object();
           if (!ret.decorate.defL) ret.decorate.defL=new Array();
-          for (var i=0; i<ml.length; i++) {
+          for (i=0; i<ml.length; i++) {
             ret.decorate.defL[i]=ml[i].substr(1, ml[i].length-2);
           }
         }
       }
-      //排序字段
+      //函数分析
       if (dtag.value&&dtag.value.dFilter) {
-        var _pos=dtag.value.dFilter.indexOf("first");
-        if (_pos!=-1) {//目前只针对first
-          //TODO 这里不对first的过滤方法是否符合标准进行检查
-          ret.sort=new Object();
-          var _temp=dtag.value.dFilter; 
-          ml=_temp.match(/\|.+?\)/);
-          _ml=_temp.match(/\(.+?\|/);
-          if (ml&&ml.length==1&&_ml&&_ml.length==1) {
-            ret.sort.tbSize=_ml[0].substr(1, _ml[0].length-2);//很别扭，先这样
-            ret.sort.sortCol=ml[0].substr(1, ml[0].length-2);
-            ret.sort.sortType=(_pos==0?1:2);
-          }
+        for (i=0; i<dtag.value.dFilter.length; i++) {
+          var _fun=dtag.value.dFilter[i];
+          var _pos=_fun.indexOf("!");
+          if (_fun.indexOf("first")!=-1) {
+            //TODO 这里不对first的过滤方法是否符合标准进行检查
+            ret.sort=new Object();
+            ml=_fun.match(/\|.+?\)/);
+            _ml=_fun.match(/\(.+?\|/);
+            if (ml&&ml.length==1&&_ml&&_ml.length==1) {
+              ret.sort.tbSize=_ml[0].substr(1, _ml[0].length-2);//很别扭，先这样
+              ret.sort.sortCol=ml[0].substr(1, ml[0].length-2);
+              ret.sort.sortType=(_pos==0?1:2);
+            }
+          }/* else
+          if (_fun.indexOf("filterCol")!=-1) {
+            var _p1=_fun.indexOf("("), _p2=_fun.lastIndexOf(")");
+            _fun=_fun.substring(_p1+1, _p2);
+            ret.filterCol=new Array();
+            while(_fun.indexOf(",")!=-1) {
+              ret.filterCol.push($.trim(_fun.substring(0,_fun.indexOf(","))));
+              _fun=_fun.substr(_fun.indexOf(",")+1);
+            }
+            ret.filterCol.push($.trim(_fun));
+          }*/
         }
       }
       return ret;
@@ -1036,7 +1079,7 @@ var d_tagDeal={
     checkDtag: function(dtag) {
       var tp=dtag.tdParseData, showType=dtag.showType;
       if (showType=='text'&&(!tp.decorate||tp.decorate.length==0)) return "[showType="+showType+"]类型的D标签，decorateView(显示修饰)属性中需要包含字段描述";
-      if ((showType=='pie'||showType=='bar'||showType=='line'||showType=='radar'||showType=='map_pts')&&(!tp.paramL||tp.paramL.length==0))
+      if ((showType=='pie'||showType=='bar'||showType=='line'||showType=='radar'||showType=='map_pts')&&(!tp.param||tp.param.length==0))
         return "[showType="+showType+"]类型的D标签，decorateView(显示修饰)属性中需要包含字段描述";
       return "";
     },
@@ -1112,6 +1155,15 @@ var d_tagDeal={
           tp.sort.sortOkCol=_a;
         }
       }
+      //处理错误信息
+      var errMsg="";
+      if (tp.param&&tp.param.errMsg) errMsg+=","+"param(类型参数)属性中指定的字段["+tp.param.errMsg+"]不存在";
+      if (tp.decorate&&tp.decorate.errMsg) errMsg+=","+"decorateView(显示修饰)属性中指定的字段["+tp.decorate.errMsg+"]不存在";
+      if (tp.sort&&tp.sort.errMsg) errMsg+=","+"过滤函数(first)中指定的排序字段["+tp.param.errMsg+"]不存在";
+      if (errMsg) {
+        errMsg=errMsg.substr(1);
+        return errMsg;
+      }
 
       //内部私有函数
       /* 
@@ -1125,7 +1177,7 @@ var d_tagDeal={
        *   注意：通过本检查，会扩充dtag.tdParseData的内容，会包括百分比计算列(percentL)的列表
        */
       function matchList(mType, cl, tl, tp) {
-      	if (tp[mType].okL&&tp[mType].okL.length>0) return;
+        if (tp[mType].okL&&tp[mType].okL.length>0) return;
         var find=false;
         var _a, _b;
         var i=0, j=0;
@@ -1169,19 +1221,14 @@ var d_tagDeal={
                 }
               }
             }
-            if (!find) {//没找到，出错了
-              err+=","+cl[i];
-            } else {
-              okL.push(_a);
-            }
+            if (!find) err+=","+cl[i]; //没找到，出错了
+            else okL.push(_a);
           }
           if (err) {
             err=err.substr(1);
             tp[mType].errMsg=err;
           }
-          if (okL.length>0) {
-            tp[mType].okL=okL;
-          }
+          if (okL.length>0) tp[mType].okL=okL;
         }
       }
     }

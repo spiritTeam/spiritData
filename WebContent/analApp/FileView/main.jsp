@@ -195,7 +195,7 @@ function startSearch(){
     success:function(jsonStr){
       try{
     	  //alert("fileSearch() search result="+jsonStr);
-    	  searchResultJsonData = str2JsonObj("jsonObj",jsonStr); 
+    	  searchResultJsonData = str2JsonObj(jsonStr); 
     	  showSearchResult(showType);
       }catch(e){
         $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});

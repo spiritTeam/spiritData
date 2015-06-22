@@ -18,8 +18,8 @@ public class WebRunningListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent arg0) {
         try {
             //任务框架启动
-            //TaskContextConfig tcc = new TaskContextConfig();
-            //TaskRunning.Beginning(tcc);
+            TaskContextConfig tcc = new TaskContextConfig();
+            TaskRunning.Beginning(tcc);
             //访问日志框架启动
             VisitLogRunning.Beginning();
         } catch(Exception e) {

@@ -201,15 +201,14 @@ function startSearch(){
   var startDateStr = $("#startDate").val();
   var endDateStr = $("#endDate").val();
   
-  //异步查询文件列表  
+  //异步查询文件列表
   var searchParam={"searchStr":searchStr,"startDateStr":startDateStr,"endDateStr":endDateStr};
   //alert("查询参数："+allFields(searchParam));
-  var url="<%=path%>/analApp/demoData/reportlist.json";
-  url = "<%=path%>/reportview/searchReportList.do";
+  var url="<%=path%>/reportview/searchReportList.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
       try{
-        searchResultJsonData = str2JsonObj("jsonObj",jsonStr); 
+        searchResultJsonData = str2JsonObj(jsonStr); 
         showSearchResult(showType);
       }catch(e){
         $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});

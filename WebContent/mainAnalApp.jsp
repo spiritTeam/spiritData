@@ -580,7 +580,7 @@ function uploadFile(){
 			success:function(respStr){
 			  //prompt('',"succ upload file. resp str="+respStr);
 			  var respJson = null;
-			  try{respJson=str2JsonObj("jsonObj",respStr);}catch(e){alert("str 2 json err. jsonStr="+respStr);}
+			  try{respJson=str2JsonObj(respStr);}catch(e){alert("str 2 json err. jsonStr="+respStr);}
 			  if(respJson.message && respJson.message[0] && respJson.message[0].success=="TRUE"){
 				  //alert("succ upload file.");
 				  //查找是否生成新报告

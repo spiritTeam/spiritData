@@ -221,7 +221,7 @@ public class AnalSingleDict implements TaskProcess {
     	oneTitle.put("count", "数量"); 
     	titleL.add(oneTitle);
         oneTitle = new HashMap<String, String>();
-    	oneTitle.put("percent(count):", "百分比"); 
+    	oneTitle.put("percent(count)", "百分比"); 
     	titleL.add(oneTitle);
     	//加入数值类型统计信息列名
     	if(titleM!=null && titleM.size()>0){
@@ -247,7 +247,7 @@ public class AnalSingleDict implements TaskProcess {
         	float aRowCount = groupRow.get("allCount")==null?0:Float.parseFloat(groupRow.get("allCount").toString());
         	float colCount =  sumRow.get("allCount")==null?0:Float.parseFloat(sumRow.get("allCount").toString());
         	float percent = aRowCount * 100 / colCount;
-        	rowM.put("percent(count):", percent);
+        	rowM.put("percent(count)", percent);
         	//加入数值类型统计信息列值
         	if(titleM!=null && titleM.size()>0){
         		Iterator iterTitleM = titleM.keySet().iterator();

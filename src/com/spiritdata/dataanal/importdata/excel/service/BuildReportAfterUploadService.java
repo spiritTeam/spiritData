@@ -206,7 +206,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 D_Tag discriptDt = new D_Tag();
                                 discriptDt.setShowType(DtagShowType.TEXT);
                                 discriptDt.setDid(report.getDid(tempStr)+"");
-                                discriptDt.setValue("quote[^"+mc.getId()+"^]");
+                                discriptDt.setValue("dictData[^"+mc.getColumnName()+"^]");
                                 discriptDt.setValueFilterFun("first(3|num)");
                                 discriptDt.setDecorateView("{#category#}占#percent(num)#%");
                                 tempContent = "";

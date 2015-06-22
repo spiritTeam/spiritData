@@ -54,7 +54,7 @@ $(function() {
 
 //查询指定文件ID的数据 
 function startSearch(){
-  //异步查询文件列表  
+  //异步查询文件列表
   var searchParam={"fileId":_fileId};
   var url="<%=path%>/fileview/getFileData.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
