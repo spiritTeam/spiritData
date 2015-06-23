@@ -32,8 +32,6 @@ var MACAddr;
 var IPAddr;
 var DomainAddr;
 var sDNSName;
-//1表示为正常登陆，2表示非正常登陆，为激活邮箱而要修改邮箱
-var loginType;
 //uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
 //uTMessage表示要提示的信息
 var uT=<%=uT%>,uTMessage = "";
@@ -44,9 +42,6 @@ if(uT==1){
   uTMessage = "修改密码成功!";
   $.messager.alert('提示',uTMessage,'info');
 }
-
-//service.Security_.ImpersonationLevel=3;
-//service.InstancesOfAsync(foo, 'Win32_NetworkAdapterConfiguration');
 </script>
 
 <script language="JScript" event="OnCompleted(hResult,pErrorObject, pAsyncContext)" for="foo">
@@ -153,7 +148,6 @@ function initPageParam(){
   mainPage = getMainPage();
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
-  loginType = parseFloat(getUrlParam(window.location.href, "loginType"));
   $('#delimiter').css('display','none');
   $('#activeUser').css('display','none');
 }
@@ -293,7 +287,7 @@ function login(pData){
       $('#checkCode').val('');
       var loginInfo = json.data;
       var retInfo = loginInfo.retInfo;
-      if(json.type==-1){
+      if (json.type==-1) {
         if(loginInfo.activeType!=""&&loginInfo.activeType!=null){
           var activeType = loginInfo.activeType;
           if(activeType==1){
@@ -311,19 +305,15 @@ function login(pData){
           if(mainPage) mainPage.$.messager.alert('登录信息',retInfo,'info');
           else $.messager.alert('登录信息',retInfo,'info');
         }
-      }else if (json.type==1){
+      } else if (json.type==1) {//登陆成功
         var activeType = loginInfo.activeType;
-        //undefined用于测试，后台没写完，这里会报错，以后需要去掉###
-        if(typeof(activeType="undefined") || activeType==2){
-          if(mainPage) {
-            mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function(){
-            	if(mainPage.location.href.indexOf(_MAIN_PAGE)==-1){
-                mainPage.location.href = _MAIN_PAGE;
-            	}
+        if (activeType==2) {
+          if (mainPage) {
+            mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function() {
               mainPage.setLogined(pData.loginName);
               closeSWinInMain(winId);
             });
-          }else{
+          } else {
             $.messager.alert("登陆信息","登陆成功！",'info');
             window.location.href = _MAIN_PAGE;
           }
