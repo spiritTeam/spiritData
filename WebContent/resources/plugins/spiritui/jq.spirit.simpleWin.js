@@ -18,7 +18,7 @@
     height: 480, //窗口的高度
     title: "窗口标题",
     onBeforeClose: null, //窗口关闭之前
-    zIndex:1000
+    zIndex:3000
   };
 
   /**

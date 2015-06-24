@@ -14,127 +14,9 @@
 <meta http-equiv="expires" content="0"/>
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 
-<link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
-<link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css">
-<style>
-#fileIn {
-  position:absolute;
-  width:650px;
-  height:175px;
-  top:50px;
-}
-#dayLogo {
-  position:absolute;
-  width:450px;
-  height:160px;
-}
-#mlogo {
-  float:right;
-  max-height:158px;
-  height:expression(this.width>184?this.height=this.height*184/this.width:auto);
-  width:expression(this.width>184?184:auto);
-  max-width:184px; 
-}
-#internet, #plus {
-  position:absolute;
-  font-size:70px;
-  font-weight:900;
-  color:#CC3333;
-  font-style:oblique;
-  font-family:'黑体';
-}
-#descript {
-  position:absolute;
-  font-size:24px;
-  font-weight:bold;
-  font-family:'黑体';
-  color:#055A2E;
-}
-#inForm {
-  position:absolute;
-  padding:0px;
-  margin:0px;
-  width:640px;
-  height:36px;
-  top:165px;
-}
-#upf {display:none;}
-#upIcon {
-  position:absolute;
-  width:25px;
-  height:25px;
-  border:1px solid blue;
-  top:4px;
-  left:9px;
-  background-image:url(../resources/images/uploadIcon.gif)
-}
-#su {
-  width:100px;
-  height:35px;
-  display:inline-block;
-  border:1px solid #067239;
-  border-left:0px;
-  border-radius:0 3px 3px 0;
-  background-image:-webkit-linear-gradient(bottom, #64CD4F 31%, #43D454);
-  background-color:#399D27;
-  font:15px 宋体 Tahoma, Helvetica, Arial, 'Microsoft YaHei', sans-serif;
-  color:#fff;
-  margin-left:-7px;
-}
-#upfs {
-  width:495px;
-  height:33px;
-  display:inline-block;
-  border:1px solid #067239;
-  border-radius:3px 0 0 3px;
-  padding-left:35px;
-  font:12px 宋体 Tahoma, Helvetica, Arial, 'Microsoft YaHei', sans-serif;
-  color:#bfbfbf;
-}
-
-/*休息等待区*/
-#waittingArea {
-  position:absolute;
-  border:1px solid #BCCBDC;
-  width:505px;
-  height:300px;
-  top:230px;
-  display:none;
-}
-#ppbar {
-  position:absolute;
-  width:505px;
-  height:35px;
-}
-#pp {
-  position:absolute;
-  width:435px;
-  top:6px;
-  left:20px;
-}
-#logshow {
-  position:absolute;
-  border-top:1px solid #BCCBDC;
-  width:505px;
-  height:264px;
-  top:35px;
-  overflow-y:auto;
-}
-#showResult {
-  position:absolute;
-  width:25px;
-  height:25px;
-  border:1px solid blue;
-  border-radius:3px;
-  top:4px;
-  left:473px;
-  background-image:url(resources/images/uploadIcon.gif)
-}
-
-.div_center{margin:0 auto;text-align:center;}
-.div_inline{ display:inline} 
-</style>
+<link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
+<link rel="stylesheet" type="text/css" href="css/homepage.css"/>
 </head>
 
 <body class="_body">
@@ -143,7 +25,7 @@
   <div id="fileIn">
     <div id="dayLogo">
       <img id="mlogo" src="../resources/images/logo/main_logo.png"/>
-      <div id="internet">互联网</div>
+      <div id="internet" onclick="test()">互联网</div>
       <div id="plus">+</div>
       <div id="descript">无模式开放数据分析平台</div>
     </div>
@@ -168,12 +50,12 @@
     </div>
   </div>
 </div>
-<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:none;"></iframe>
+<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:yes;"></iframe>
 <script>
 var mainPage;
 //提示信息
 var _promptMessage="点击选择分析的文件";
-var analysizeing=false;
+var checkProcessId=-1;
 var _suClicked=false;
 
 //主窗口参数
@@ -230,8 +112,8 @@ $(function() {
 
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
-  	if (mainPage) mainPage.$.messager.alert("页面初始化失败", initStr, "error");
-  	else $.messager.alert("页面初始化失败", initStr, "error");
+    if (mainPage) mainPage.$.messager.alert("页面初始化失败", initStr, "error");
+    else $.messager.alert("页面初始化失败", initStr, "error");
     return ;
   };
   $("#upfs").val(_promptMessage);
@@ -276,9 +158,31 @@ function uploadF() {
     if (form.encoding) form.encoding = 'multipart/form-data';
     else form.enctype = 'multipart/form-data';
     $(form).submit();
+    //等待处理
+    if (mainPage.__STATUS==0&&!mainPage._loginName) {
+      if (mainPage) mainPage.showMask(1, "正在上传文件，请等待...");
+      checkProcessId = setInterval(checkUploadStatus, 200);
+    }
   } catch(e) {
-  	if (mainPage) mainPage.$.messager.alert("文件上传失败", e, "error");
-  	else $.messager.alert("文件上传失败", e, "error");
+    if (mainPage) mainPage.$.messager.alert("文件上传失败", e, "error");
+    else $.messager.alert("文件上传失败", e, "error");
+  }
+}
+function checkUploadStatus() {
+  var ret = document.getElementById('tframe').contentWindow.document.body.innerHTML;
+  if (!ret) return;
+  else {
+    ret = eval("("+ret+")");
+    clearInterval(checkProcessId);//删除进程
+    var success=(ret.jsonType==1&&(ret.message.length==1&&ret.message[0].success));
+    if (success) {//成功
+      mainPage.__STATUS=1;
+      mainPage.setPage();
+    } else {
+      if (mainPage) mainPage.$.messager.alert("文件上传失败", ret.exception, "error");
+      else $.messager.alert("文件上传失败", ret.exception, "error");
+    }
+    mainPage.showMask(0);
   }
 }
 

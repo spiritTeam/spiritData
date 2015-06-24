@@ -1,0 +1,119 @@
+@CHARSET "UTF-8";
+
+/*=主页=========*/
+#fileIn {
+  position:absolute;
+  width:650px;
+  height:175px;
+  top:50px;
+}
+#dayLogo {
+  position:absolute;
+  width:450px;
+  height:160px;
+}
+#mlogo {
+  float:right;
+  max-height:158px;
+  height:expression(this.width>184?this.height=this.height*184/this.width:auto);
+  width:expression(this.width>184?184:auto);
+  max-width:184px; 
+}
+#internet, #plus {
+  position:absolute;
+  font-size:70px;
+  font-weight:900;
+  color:#CC3333;
+  font-style:oblique;
+  font-family:'黑体';
+}
+#descript {
+  position:absolute;
+  font-size:24px;
+  font-weight:bold;
+  font-family:'黑体';
+  color:#055A2E;
+}
+#inForm {
+  position:absolute;
+  padding:0px;
+  margin:0px;
+  width:640px;
+  height:36px;
+  top:165px;
+}
+#upf {display:none;}
+#upIcon {
+  position:absolute;
+  width:25px;
+  height:25px;
+  border:1px solid blue;
+  top:4px;
+  left:9px;
+  background-image:url(../../resources/images/uploadIcon.gif)
+}
+#su {
+  width:100px;
+  height:35px;
+  display:inline-block;
+  border:1px solid #067239;
+  border-left:0px;
+  border-radius:0 3px 3px 0;
+  background-image:-webkit-linear-gradient(bottom, #64CD4F 31%, #43D454);
+  background-color:#399D27;
+  font:15px 宋体 Tahoma, Helvetica, Arial, 'Microsoft YaHei', sans-serif;
+  color:#fff;
+  margin-left:-7px;
+}
+#upfs {
+  width:495px;
+  height:33px;
+  display:inline-block;
+  border:1px solid #067239;
+  border-radius:3px 0 0 3px;
+  padding-left:35px;
+  font:12px 宋体 Tahoma, Helvetica, Arial, 'Microsoft YaHei', sans-serif;
+  color:#bfbfbf;
+}
+
+/*休息等待区*/
+#waittingArea {
+  position:absolute;
+  border:1px solid #BCCBDC;
+  width:505px;
+  height:300px;
+  top:230px;
+  display:none;
+}
+#ppbar {
+  position:absolute;
+  width:505px;
+  height:35px;
+}
+#pp {
+  position:absolute;
+  width:435px;
+  top:6px;
+  left:20px;
+}
+#logshow {
+  position:absolute;
+  border-top:1px solid #BCCBDC;
+  width:505px;
+  height:264px;
+  top:35px;
+  overflow-y:auto;
+}
+#showResult {
+  position:absolute;
+  width:25px;
+  height:25px;
+  border:1px solid blue;
+  border-radius:3px;
+  top:4px;
+  left:473px;
+  background-image:url(resources/images/uploadIcon.gif)
+}
+
+.div_center{margin:0 auto;text-align:center;}
+.div_inline{ display:inline} 

@@ -159,7 +159,7 @@ var D_tag={
       }
     } else { //解析param
       _tempStr=replaceInnerKH(_tempStr);
-      this.param=eval("(" +_tempStr+ ")");
+      this.param=eval("("+_tempStr+")");
     }
     //5-decorateView
     _tempStr=jqObj.attr("decorateView");
@@ -170,7 +170,7 @@ var D_tag={
       if (_pos==-1) this.decorateView.view=_tempStr;//数据获取指针
       else {
         this.decorateView.view=$.trim(_tempStr.substring(0, _pos));
-        this.decorateView.ext=eval("(" +_tempStr.substr(_pos+2)+ ")");
+        this.decorateView.ext=eval("("+_tempStr.substr(_pos+2)+")");
       }
     }
     if (this.showType=="text"&&(!this.decorateView||!this.decorateView.view)) {
@@ -281,7 +281,7 @@ var reportParse={
           if (mPage) mPage.$.messager.alert("提示", _msg, "error");
           else alert(_msg);
         } else {//解析，并画内容
-          var _data=eval("(" +json.data+ ")");
+          var _data=eval("("+json.data+")");
           reportParse.parseAndDraw(_data);
         }
       },
@@ -546,7 +546,7 @@ function getDataFromDListAndDrawDTag() {
             thisD.drawFlag=2;//画完了
           } if (json.jsonType==1) {//获取成功：解析，并填充d标签内容
             md.okSize++;
-            var _data=eval("(" +json.data+ ")");
+            var _data=eval("("+json.data+")");
             thisD.getFlag=-1;//成功
             thisD.drawFlag=1;//正在画
             d_tagDeal.dealReadSucData(this._index, _data);

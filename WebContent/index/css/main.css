@@ -15,9 +15,11 @@ body { background-color:#fff;}
   background-repeat:no-repeat;
   background-position:center;
   background-image:url(../../resources/images/waiting_circle.gif);
+  display:none;
 }
 #maskTitle {
   position:absolute;
+  font-weight:bold;
 }
 .main_logo {
   position:absolute; top:5px; left:13px; width:130px; height:40px;

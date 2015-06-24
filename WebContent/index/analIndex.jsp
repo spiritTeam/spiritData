@@ -38,7 +38,7 @@
 <body>
 <!-- 遮罩层 -->
 <div id="mask" style="display:yes; position:absolute;vertical-align:middle;text-align:center; align:center;">
-  <span style="font-weight:bold;" id="maskTitle">正在分析，请稍候...</span>
+  <div id="maskTitle">正在分析，请稍候...</div>
 </div>
 
 <!-- 头部:悬浮 -->
@@ -64,9 +64,6 @@
     <div class="loginButton" id="logout" onclick="logout()">&nbsp;注&nbsp;销&nbsp;</div>
     <div class="loginButton" id="updateUser" onclick="updateUser()">&nbsp;修&nbsp;改&nbsp;</div>
     <div class="loginButton" id="register" onclick="register()">&nbsp;注&nbsp;册&nbsp;</div>
-
-    <div class="loginButton" id="test1" onclick="test1()">test1</div>
-    <div class="loginButton" id="test2" onclick="test2()">test2</div>
   </div>
 </div>
 
@@ -160,7 +157,7 @@ function initPosition() {
     $(this).width($("#mainSegment").width()-4).height($("#mainSegment").height()-4);
   });
   $("#mask").css({"width":$(window).width()-2, "height":$(window).height()-2});
-  $("#maskTitle").css({"margin-top":"100px"});
+  $("#maskTitle").css({"top":$(window).height()/2+40, "left":($(window).width()-2-$("#maskTitle").width())/2});
 }
 //当界面尺寸改变
 function myResize() {
@@ -168,6 +165,7 @@ function myResize() {
     $(this).width($("#mainSegment").width()-4).height($("#mainSegment").height()-4);
   });
   $("#mask").css({"width":$(window).width()-2, "height":$(window).height()-2});
+  $("#maskTitle").css({"top":$(window).height()/2+40, "left":($(window).width()-2-$("#maskTitle").width())/2});
 }
 
 //=====显示状态的处理
@@ -175,6 +173,7 @@ function myResize() {
 function setPage() {
   if (__STATUS==0&&!_loginName) setNologNoupf();
   if (__STATUS==0&&_loginName) setHaslogNoupf();
+  if (__STATUS==1&&!_loginName) setNologHasupf();
   if (__STATUS==1&&_loginName) setHaslogHasUpf();
 }
 //设置为：未登录/未上传文件
@@ -210,13 +209,35 @@ function setHaslogNoupf() {
   $("#loginName").html(_loginName);
   $("#loginName").attr("title", _loginName);
 }
-//设置为：已登录/未上传文件
-function setHaslogNoUpf() {
-
+//设置为：未登录/已上传文件
+function setNologHasupf() {
+  //显示页签
+  $("#nav_report").show();
+  $("#nav_file").show();
+  $("#funBar").show();
+  //点击报告页
+  $("#nav_report").click();
+  //显示登录区域
+  $("#login").show();
+  $("#logout").hide();
+  $("#updateUser").hide();
+  $("#register").show();
+  $("#userShow").hide();
 }
 //设置为：已登录/已上传文件
 function setHaslogHasUpf() {
-
+  //显示页签
+  $("#nav_report").show();
+  $("#nav_file").show();
+  $("#funBar").show();
+  //点击报告页
+  $("#nav_report").click();
+  //显示登录区域
+  $("#login").hide();
+  $("#logout").show();
+  $("#updateUser").show();
+  $("#register").hide();
+  $("#userShow").show();
 }
 
 //=======切换iframe页面
@@ -321,13 +342,10 @@ function setLogined(loginName) {
 //显示遮罩层，flag=1为显示,flag=0为隐藏，message是遮罩层的名称
 function showMask(flag, message) {
   if (flag) {
-  	$("#maskTitle").html(message+"...");
+  	$("#maskTitle").html(message+(message.indexOf("...")==-1?"...":""));
     $("#mask").show();
+    $("#maskTitle").css({"left":($(window).width()-2-$("#maskTitle").width())/2});
   } else $("#mask").hide();
-}
-
-function test1() {
-  showMask(1, "test");
 }
 </script>
 </html>
