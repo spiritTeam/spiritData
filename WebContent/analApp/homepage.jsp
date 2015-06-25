@@ -111,8 +111,7 @@ $(function() {
   mainPage = getMainPage();
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
-    if (mainPage) mainPage.$.messager.alert("页面初始化失败", initStr, "error");
-    else $.messager.alert("页面初始化失败", initStr, "error");
+  	showAlert("页面初始化失败", initStr, "error");
     return ;
   };
   $("#upfs").val(_promptMessage);
@@ -166,8 +165,7 @@ function uploadF() {
       if (mainPage) mainPage.setAfterUpload();
     }
   } catch(e) {
-    if (mainPage) mainPage.$.messager.alert("文件上传失败", e, "error");
-    else $.messager.alert("文件上传失败", e, "error");
+  	showAlert("文件上传失败", e, "error");
   }
 }
 function checkUploadStatus() {
@@ -195,8 +193,7 @@ function checkUploadStatus() {
       	else msg=allFields(ret.message[0]);
       }
       if (!msg) msg="未知问题";
-      if (mainPage) mainPage.$.messager.alert("文件上传失败", msg, "error");
-      else $.messager.alert("文件上传失败", msg, "error");
+      showAlert("文件上传失败", msg, "error");
     }
     mainPage.showMask(0);
   }
