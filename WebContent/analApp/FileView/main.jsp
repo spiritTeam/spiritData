@@ -198,11 +198,11 @@ function startSearch(){
     	  searchResultJsonData = str2JsonObj(jsonStr); 
     	  showSearchResult(showType);
       }catch(e){
-        $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+        showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
     error:function(errorData){
-      $.messager.alert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+      showAlert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 
 }
@@ -377,7 +377,7 @@ function getSuffixImgName(suffixName){
     if(typeof(retName) == "undefined" || retName==null || retName.length==0){
     	retName = fileSuffixImg["default"];
     }
-  }catch(e){alert("failed to fecth img suffix name. suffix="+suffixName+" err:"+e.message);}
+  }catch(e){showAlert("获取图片后缀名","failed to fecth img suffix name. suffix="+suffixName+" err:"+e.message,"error");}
   return retName;
 }
 
