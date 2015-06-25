@@ -279,13 +279,12 @@ var lastSearchStr = "";
 //取出输入条件，提交查询
 function startSearch(){
   var searchStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
-  //alert("您输入了："+ searchStr);
   var fileParam = "searchStr="+searchStr+"&refreshme=yes";
-  //还需把查询条件传入###
-  if(lastSearchStr!=searchStr){	  
-	  lastSearchStr = searchStr;
+  if (lastSearchStr!=searchStr) {//若查询不相等，则需要重新查询
+    lastSearchStr = searchStr;
+  } else {//仅显示就可以了
+  	
   }
-  showIframe('generalSearchView',fileParam);
 }
 
 /**
