@@ -169,7 +169,7 @@ function initPos() {
 $(function() {
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
-    $.messager.alert("页面初始化失败", initStr, "error");
+    showAlert("页面初始化失败", initStr, "error");
     return ;
   };
   
@@ -180,9 +180,8 @@ $(function() {
   try{
 	  searchRelation();  
   }catch(e){
-	  alert(e.message);
-  }
-  
+	  showAlert("查找报告关联信息",e.message,"error");
+  }  
 });
 
 /**
@@ -209,7 +208,7 @@ function initTabs(){
   $('#div_tabs').tabs({  
     border:true,  
     onSelect:function(title){  
-      //alert(title+' is selected');  
+      //showAlert("点击了TAB",title+' is selected');  
     }  
   });  
 }
@@ -220,7 +219,6 @@ function searchRelation(){
   var reportId = "<%=reportIdStr%>";
   //异步查询文件列表  
   var searchParam={"reportId":reportId};
-  //alert("查询参数："+allFields(searchParam));
   var url="<%=path%>/reportview/searchReportRelation.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
@@ -231,11 +229,11 @@ function searchRelation(){
         //画关系表
         drawRelationTabs(jsonData);
       }catch(e){
-        $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+        showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
     error:function(errorData){
-      $.messager.alert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+      showAlert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 
 }
@@ -324,7 +322,7 @@ function drawRelationForce(forceData){
 	     console.log(myChart.chart.force.getPosition());
 	   });
   }catch(e){
-	   $.messager.alert("画关系图异常", "画关系图失败：</br>"+(e?e.message:"")+"！<br/>", "error", function(){});
+	   showAlert("画关系图异常", "画关系图失败：</br>"+(e?e.message:"")+"！<br/>", "error", function(){});
   }
 }
 
