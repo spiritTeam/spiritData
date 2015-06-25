@@ -51,7 +51,6 @@ $(function() {
       }
     },
     onClickCell: function (rowIndex, field, value) {
-      //alert(rowIndex+" "+field+"  "+value);  
       //当点击了某个新报告后，此报告名的字体变色，表示已经不是未读的报告
       if(field=="reportName"){
     	  showReport(value);
