@@ -187,10 +187,10 @@ var MENU_INFO = {
 var newReportJson={};
 //主函数
 $(function() {
-	//alert("enter mainAnalApp.jsp...");
+	//showAlert("页面初始化","开始初始化");
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
-    $.messager.alert("页面初始化失败", initStr, "error");
+    showAlert("页面初始化失败", initStr, "error");
     return ;
   };
   
@@ -224,7 +224,7 @@ $(function() {
     var nologType = getUrlParam(window.location.href, "type");
     if (nologType=="1") login();
     else if (nologType=="2") {
-      $.messager.alert("提示", "请先登录！", "info", function(){
+      showAlert("提示", "请先登录！", "info", function(){
         login();
       });
     }
@@ -304,12 +304,12 @@ function searchNewReport(){
         }
       }catch(e){
     	  //alert("解析新报告异常    "+e.message);
-        $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+        showAlert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
     error:function(errorData){
     	//alert("err");
-      //$.messager.alert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+      //showAlert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 	
 }
@@ -423,7 +423,7 @@ function showIframe(viewName,fileParam){
     }
 	  $("#"+iframeId+"").css("display","block");
 	}catch(e){
-		$.messager.alert("显示iframe异常", "显示失败：</br> viewName="+viewName+"  errMsg:"+(e?e.message:"")+"！<br/>", "error", function(){});
+		showAlert("显示iframe异常", "显示失败：</br> viewName="+viewName+"  errMsg:"+(e?e.message:"")+"！<br/>", "error", function(){});
 	}
 }
 
@@ -542,16 +542,16 @@ function logout() {
   $.ajax({type:"post", async:true, url:url, data:null, dataType:"json",
     success: function(json) {
       if (json.type==1) {
-        $.messager.alert("注销信息","注销成功!",'info',function(){
+        showAlert("注销信息","注销成功!",'info',function(){
           window.location.href=_MAIN_PAGE;
           setNoLogin();
         });
       } else {
         if(json.data==null){
-          $.messager.alert("提示","您还未登录!",'info');
+          showAlert("提示","您还未登录!",'info');
           setNoLogin();
         }else{
-          $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
+          showAlert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
             window.location.href=_MAIN_PAGE;
             setNoLogin();
           });
@@ -559,7 +559,7 @@ function logout() {
       }
     },
     error: function(errorData) {
-      $.messager.alert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
+      showAlert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
         window.location.href=_MAIN_PAGE+"?noAuth";
         setNoLogin();
       });
