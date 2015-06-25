@@ -111,3 +111,51 @@ function closeSWinInMain(winId) {
   if (mainPage) mainPage.closeSWin(winId);
   else closeSWin(winId);
 }
+
+//***begin 主页面弹框显示信息***//
+/**
+ * 主页面中弹出对话框，调用easyui的message
+ * @param title 标题
+ * @param msg   消息内容
+ * @param icon  图标
+ * @param fn    回调函数
+ */
+function showAlert(title, msg, icon, fn) {
+  var mPage=getMainPage();
+  if(mPage){
+    if(icon && fn){
+      mPage.$.messager.alert(title,msg,icon,fn);  
+    }else if(icon){
+      mPage.$.messager.alert(title,msg,icon);  
+    }else if(title && msg){
+      mPage.$.messager.alert(title,msg);  
+    }else{
+      mPage.$.messager.alert(title,title);
+    }
+  }else{
+    alert(msg);
+  }
+}
+/**
+ * 主页面中弹出对话框，调用easyui的message
+ * @param title 标题
+ * @param msg   消息内容
+ * @param fn    回调函数
+ */
+function showConfirm(title, msg, fn) {
+  var mPage=getMainPage();
+  if(mPage){
+    if(fn){
+      mPage.$.messager.confirm(title,msg,function(data){fn(data);});        
+    }else{
+      mPage.$.messager.confirm(title,msg,function(data){});        
+    }    
+  }else{
+    var res = confirm(msg);
+    if(fn){
+      fn(res);	
+    }
+  }
+}
+
+//***end 主页面弹框显示信息***//

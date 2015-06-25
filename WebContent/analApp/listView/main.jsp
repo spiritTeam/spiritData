@@ -65,7 +65,6 @@ $(function() {
 //开始查询
 function startSearch(){
 	var _searchStr = "<%=searchStr%>";
-	//alert("startSearch() searchStr="+_searchStr);
 	searchResultJsonData = {};
   //异步查询文件列表  
   var searchParam={"searchStr":_searchStr};
@@ -74,16 +73,15 @@ function startSearch(){
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
     success:function(jsonStr){
       try{
-    	  //alert(jsonStr.rows[0].aRowJsonStr.desc);
         //searchResultJsonData = str2JsonObj(jsonStr); 
         searchResultJsonData = jsonStr; 
         showSearchResult();
       }catch(e){
-        $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+        showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
     error:function(errorData){
-      $.messager.alert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+      showAlert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 
 }

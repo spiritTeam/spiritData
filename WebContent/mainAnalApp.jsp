@@ -187,10 +187,10 @@ var MENU_INFO = {
 var newReportJson={};
 //主函数
 $(function() {
-	//alert("enter mainAnalApp.jsp...");
+	//showAlert("页面初始化","开始初始化");
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
-    $.messager.alert("页面初始化失败", initStr, "error");
+    showAlert("页面初始化失败", initStr, "error");
     return ;
   };
   
@@ -224,7 +224,7 @@ $(function() {
     var nologType = getUrlParam(window.location.href, "type");
     if (nologType=="1") login();
     else if (nologType=="2") {
-      $.messager.alert("提示", "请先登录！", "info", function(){
+      showAlert("提示", "请先登录！", "info", function(){
         login();
       });
     }
@@ -269,7 +269,6 @@ function initSearchFileInput(){
   var _objSearch = $("#idSearchFile");
   _objSearch.keydown(function(e){
     if(e.keyCode == 13){
-    	//alert("搜索输入框按回车按钮了");
       startSearch();
     }
   });
@@ -302,13 +301,11 @@ function searchNewReport(){
        	  refreshNewReportDIV();
         }
       }catch(e){
-    	  //alert("解析新报告异常    "+e.message);
-        $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+        showAlert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
     error:function(errorData){
-    	//alert("err");
-      //$.messager.alert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+      //showAlert("查询新报告异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 	
 }
@@ -377,13 +374,12 @@ function isUnReadReportById(areportId){
 
 //点击logo图片
 function clickLogo(){
-  alert("click logo");
+  showAlert("click logo");
 }
 
 //隐藏所有iframe
 function showIframe(viewName,fileParam){
 	try{
-		//alert("showIfram viewName="+viewName+"  fileParam="+fileParam);
 	  //先隐藏所有iframe
 	  $("#mainSegmentIframe").css("display","none");
 	  $("#mainSegmentIframe_report").css("display","none");
@@ -415,14 +411,14 @@ function showIframe(viewName,fileParam){
     	if($("#"+iframeId+"").attr("src").indexOf("refreshme=yes")>-1){ //如果强制刷新，则重新请求
     		$("#"+iframeId+"").attr("src",_PATH+"/"+fileFull); 
     	}else{//已经加载过了，则不再加载
-    		//alert("已经加载过了，不再加载！");
+    		//showAlert("已经加载过了，不再加载！");
     	}
     }else{
     	$("#"+iframeId+"").attr("src",_PATH+"/"+fileFull);	
     }
 	  $("#"+iframeId+"").css("display","block");
 	}catch(e){
-		$.messager.alert("显示iframe异常", "显示失败：</br> viewName="+viewName+"  errMsg:"+(e?e.message:"")+"！<br/>", "error", function(){});
+		showAlert("显示iframe异常", "显示失败：</br> viewName="+viewName+"  errMsg:"+(e?e.message:"")+"！<br/>", "error", function(){});
 	}
 }
 
@@ -458,7 +454,6 @@ function setNoLogin() {
 }
 function setLogined(loginName) {
 	try{
-		//alert("setLogined() loginName="+loginName);
     $('#_logout').parent().css("display", "");
     $('#login').parent().css('display','none');
     $('#register').parent().css('display','none');
@@ -467,7 +462,7 @@ function setLogined(loginName) {
 	    $('loginName').val(loginName);
 	    $("#div_userName").html(loginName);
     }
-	}catch(e){alert(e.message);}
+	}catch(e){showAlert("设置登录错误",e.message,"error");}
 }
 
 //以下为页面跳转部分============
@@ -541,16 +536,16 @@ function logout() {
   $.ajax({type:"post", async:true, url:url, data:null, dataType:"json",
     success: function(json) {
       if (json.type==1) {
-        $.messager.alert("注销信息","注销成功!",'info',function(){
+        showAlert("注销信息","注销成功!",'info',function(){
           window.location.href=_MAIN_PAGE;
           setNoLogin();
         });
       } else {
         if(json.data==null){
-          $.messager.alert("提示","您还未登录!",'info');
+          showAlert("提示","您还未登录!",'info');
           setNoLogin();
         }else{
-          $.messager.alert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
+          showAlert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
             window.location.href=_MAIN_PAGE;
             setNoLogin();
           });
@@ -558,7 +553,7 @@ function logout() {
       }
     },
     error: function(errorData) {
-      $.messager.alert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
+      showAlert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
         window.location.href=_MAIN_PAGE+"?noAuth";
         setNoLogin();
       });
@@ -573,33 +568,32 @@ function uploadFile(){
 	try{
 		//提交上传文件
 		$("#upfs").val($("#upf").val());
-		//alert($("#upf").val());
 		$('#afUpload').form('submit',{
 			async:true,
 			success:function(respStr){
 			  //prompt('',"succ upload file. resp str="+respStr);
 			  var respJson = null;
-			  try{respJson=str2JsonObj(respStr);}catch(e){alert("str 2 json err. jsonStr="+respStr);}
+			  try{respJson=str2JsonObj(respStr);}catch(e){showAlert("上传异常","str 2 json err. jsonStr="+respStr,"error");}
 			  if(respJson.message && respJson.message[0] && respJson.message[0].success=="TRUE"){
-				  //alert("succ upload file.");
+				  //showAlert("succ upload file.");
 				  //查找是否生成新报告
 				  searchNewReport();
 				  //跳转到报告页面
 				  setTimeout(function(a,b){return function(){showIframe(a,b);}}('reportView','refreshme=yes'),1*1000);
 				  //showIframe('reportView','refreshme=yes');				  
 			  }else{
-				  alert("上传文件失败 .");
+				  showAlert("上传文件结果","上传文件失败 .","error");
 			  }
 			},
 			error:function(errData){
-				alert("failed to upload file. errData="+errData);
+				showAlert("上传文件提交失败","failed to upload file. errData="+errData,"error");
 			}
 		});
 		//$('#afUpload').submit();
 		//跳转到报告页面
 		//showIframe('reportView');
 	}catch(e){
-		alert("failed to upload file.  e="+e.message);
+		showAlert("上传异常","failed to upload file.  e="+e.message,"error");
 	}
 }
 </script>

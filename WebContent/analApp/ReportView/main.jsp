@@ -211,18 +211,18 @@ function startSearch(){
         searchResultJsonData = str2JsonObj(jsonStr); 
         showSearchResult(showType);
       }catch(e){
-        $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+        showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
     error:function(errorData){
-      $.messager.alert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+      showAlert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 
 }
 
 //显示查询结果
 function showSearchResult(_showType){
-  //alert("showSearchResult() showType="+_showType);
+  //showAlert("showSearchResult()","showType="+_showType,"info");
   showType = _showType;
   $('#dgList').css("display","none");
   $('#dgThumb').css("display","none");
