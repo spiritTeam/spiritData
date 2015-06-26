@@ -20,5 +20,4 @@
 
 <script>
   var _PATH = "<%=resourcePath%>";
-  var _MAIN_PAGE = "<%=resourcePath%>/mainAnalApp.jsp";
 </script>

@@ -197,11 +197,7 @@ String.prototype.cnLength = function () {
  * 删除数组中的元素
  */
 Array.prototype.removeByIndex = function (i){
-  if (i>=0 && i < this.length) {
-    var ret = this.slice(0,i).concat(this.slice(i+1));
-    this.length = 0;
-    this.push.apply(this,ret);
-  }
+  if (i>=0 && i<this.length) this.splice(i,1);
 };
 
 /**

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 
 import com.spiritdata.framework.core.web.AbstractFileUploadController;
+import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.dataanal.upload.service.DealUploadFileService;
@@ -43,6 +44,9 @@ public class FileUpLoadController extends AbstractFileUploadController {
 
     @Override
     public void afterUploadAllFiles(List<Map<String, Object>> uploadInfoMapList,Map<String, Object> arg1, Map<String, Object> arg2) {
+        //在session中记录一下，使用本Session已经传送过文件了，以便操作页面显示
+        HttpSession session = request.getSession();
+        session.setAttribute(SDConstants.SESSION_HAD_UPLOAD, "had");
     }
 
     @Override

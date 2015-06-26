@@ -241,25 +241,7 @@ function commit(){
     msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
   }
   if (msgs.length>0) {
-    if(mainPage) mainPage.$.messager.alert('修改提示', msgs,'info',function(){
-      for (var i=0; i<vdInfoAry.length; i++) {
-        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
-      }
-      if (i==0) {
-        $('#oldPassword')[0].focus();
-        $('#oldPassword')[0].select();
-      }else if (i==1) {
-        $('#password')[0].focus();
-        $('#password')[0].select();
-      }else if (i==2) {
-        $('#confirmPassword')[0].focus();
-        $('#confirmPassword')[0].select();
-      } else {
-        $('#checkCode')[0].focus();
-        $('#checkCode')[0].select();
-      }
-    });
-    else $.messager.alert('修改提示', msgs,'info',function(){
+    showAlert('修改提示', msgs, 'info', function() {
       for (var i=0; i<vdInfoAry.length; i++) {
         if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
       }
@@ -294,12 +276,10 @@ function commit(){
            mainPage.$.messager.alert('修改提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
          }else{
            $.messager.alert('修改提示',json.retInfo,'info');
-           //window.location.href = "<%=path%>/asIndex.jsp";
-           window.location.href = _MAIN_PAGE;
+           window.location.href = window.location.href;
          }
        }else{
-         if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info');
-         else $.messager.alert('提示',json.retInfo,'info');
+         showAlert('提示',json.retInfo,'info');
        }
      }
    });

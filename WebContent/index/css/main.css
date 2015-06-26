@@ -54,11 +54,11 @@ body { background-color:#fff;}
 .main_funbar {
   position:absolute;
   width:300px; height:50px;
-  left:475px; padding-top:9px;
-  border:0px solid red;
+  left:460px; padding-top:9px;
+  padding-left:15px;
 }
 .upf_btn {
-  position:absolute; left:255px; top:9px; width:34px;
+  position:absolute; left:785px; top:9px; width:34px;
   line-height:48px; height:34px;
   border-radius:4px; border:1px solid #ccc;
   background-color: #F2F2F2;
@@ -84,7 +84,6 @@ body { background-color:#fff;}
   font-size:14px;
   width:40px; height:25px; line-height:25px;
   text-align: center;
-  border-radius:4px;
 }
 .lb_mouseOver {
   color:#fff;
@@ -95,18 +94,72 @@ body { background-color:#fff;}
 }
 #userShow {
   color:#fff;
+  margin:4px;
+  font-size:14px;
+  height:25px; line-height:25px;
+  text-align: center;
+}
+#loginName {
   overflow: hidden;
   white-space:nowrap;
   word-warp: break-word;
   word-break: break-all;/*Only work in IE*/
   text-overflow: ellipsis;/*Not working in FF*/
   width:100px;
-  height:30px;
-  margin-top:-6px;
+  height:24px; text-height:24px;
   font-size:12px;
-  margin-right:10px;
+  align:right;
+  text-decoration:underline;
 }
-#loginName {
+#userMenu {
+  padding-top:2px;
+  background-color:#F6F6F9;
+  width:80px;height:65px;
+  border-radius:4px;
+  border:1px solid #C2C1C2;
+  -moz-box-shadow: 2px 2px 2px #E5E5E5;
+  -webkit-box-shadow: 2px 2px 2px #E5E5E5;
+  box-shadow: 2px 2px 2px #E5E5E5;
+  z-index:1101;
+  margin:5px;
+  margin-left:20px;
+  margin-bottom:20px;
+}
+#userMenuShell {
+  position:absolute;
+  z-index:1100;
+  display:none;
+}
+.menuItem {
+  color:#929293;
+  padding-top:2px;
+  height:25px; text-height:25px;
+  text-align:center;
+  valign:middle;
+  font-size:14px;
+  margin-top:3px;
+}
+.menuItem_mouseOver {
+  color:#fff;
+  cursor:pointer;
+  text-decoration:underline;
+  text-shadow:0px 0px 1px #fff;
+  background-color:#81FC6A;
+}
+#newReportFlag {
+  position:absolute;
+  top:7px; left:168px;
+  width:20px; height:19px; text-height:19px;
+  padding-top:1px;
+  padding-left:-1px;
+  text-align:center;
+  border:1px solid red;
+  background-color:red;
+  border-radius:14px;
+  z-index:1005;
+  color:#fff;
   font-weight:bold;
+  cursor:pointer;
+  display:none;
 }
 /*=主界面框架=END========*/

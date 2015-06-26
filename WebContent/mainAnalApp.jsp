@@ -279,11 +279,11 @@ var lastSearchStr = "";
 function startSearch(){
   var searchStr = ($("#idSearchFile").val()==searchTxt)?"":$("#idSearchFile").val();
   var fileParam = "searchStr="+searchStr+"&refreshme=yes";
-  //还需把查询条件传入###
-  if(lastSearchStr!=searchStr){	  
-	  lastSearchStr = searchStr;
+  if (lastSearchStr!=searchStr) {//若查询不相等，则需要重新查询
+    lastSearchStr = searchStr;
+  } else {//仅显示就可以了
+  	
   }
-  showIframe('generalSearchView',fileParam);
 }
 
 /**
@@ -537,7 +537,7 @@ function logout() {
     success: function(json) {
       if (json.type==1) {
         showAlert("注销信息","注销成功!",'info',function(){
-          window.location.href=_MAIN_PAGE;
+          window.location.href=window.location.href;
           setNoLogin();
         });
       } else {
@@ -546,7 +546,7 @@ function logout() {
           setNoLogin();
         }else{
           showAlert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
-            window.location.href=_MAIN_PAGE;
+            window.location.href=window.location.href;
             setNoLogin();
           });
         }
@@ -554,7 +554,7 @@ function logout() {
     },
     error: function(errorData) {
       showAlert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
-        window.location.href=_MAIN_PAGE+"?noAuth";
+        window.location.href=window.location.href+"?noAuth";
         setNoLogin();
       });
     }

@@ -6,6 +6,8 @@ public abstract class SDConstants {
     public final static String SESSION_OWNER_RMDUNIT="OnwerRmdUnit";
     //所有者字典信息Session缓存
     public final static String SESSION_OWNER_DICT="OnwerDictUnit";
+    //是否有实质操作了——即上传文件了
+    public final static String SESSION_HAD_UPLOAD="HadUpload";
 
     //以下为分析方法相关的常量
     public final static String ANAL_MD_KEY="METADATA-key";//主键分析标识

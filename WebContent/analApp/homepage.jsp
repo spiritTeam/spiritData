@@ -31,10 +31,10 @@
     </div>
     <div id="inForm">
       <form method="post" action="/sa/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">        
-        <input id="upf" name="upf" type=file style="display:yes;" onchange="showFileInfo()"/>        
+        <input id="upf" name="upf" type=file style="display:yes;" onchange="showFileInfo()"/>
         <div>
           <div id="upIcon" onclick="upIcon_clk();"></div>
-          <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>        
+          <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>
           <input id="su" type="button" value="分析一下" onclick="uploadF();"/>
         </div>
       </form>
@@ -50,7 +50,7 @@
     </div>
   </div>
 </div>
-<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:yes;"></iframe>
+<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:none;"></iframe>
 <script>
 var mainPage;
 //提示信息
@@ -109,11 +109,9 @@ function myResize() {
 //主函数
 $(function() {
   mainPage = getMainPage();
-
   var initStr = $.spiritPageFrame(INIT_PARAM);
   if (initStr) {
-    if (mainPage) mainPage.$.messager.alert("页面初始化失败", initStr, "error");
-    else $.messager.alert("页面初始化失败", initStr, "error");
+  	showAlert("页面初始化失败", initStr, "error");
     return ;
   };
   $("#upfs").val(_promptMessage);
@@ -162,25 +160,41 @@ function uploadF() {
     if (mainPage.__STATUS==0&&!mainPage._loginName) {
       if (mainPage) mainPage.showMask(1, "正在上传文件，请等待...");
       checkProcessId = setInterval(checkUploadStatus, 200);
+    } else {
+      $("#upfs").val(_promptMessage);
+      if (mainPage) mainPage.setAfterUpload();
     }
   } catch(e) {
-    if (mainPage) mainPage.$.messager.alert("文件上传失败", e, "error");
-    else $.messager.alert("文件上传失败", e, "error");
+  	showAlert("文件上传失败", e, "error");
   }
 }
 function checkUploadStatus() {
-  var ret = document.getElementById('tframe').contentWindow.document.body.innerHTML;
+  var ret = document.getElementById('tframe').contentWindow.document.body;
+  if (!ret) return; 
+  ret = ret.innerHTML;
+  console.log(ret);
   if (!ret) return;
   else {
     ret = eval("("+ret+")");
     clearInterval(checkProcessId);//删除进程
-    var success=(ret.jsonType==1&&(ret.message.length==1&&ret.message[0].success));
+    var success=(ret.jsonType==1&&ret.data&&(ret.data.length==1&&ret.data[0].success));
     if (success) {//成功
-      mainPage.__STATUS=1;
-      mainPage.setPage();
+      if (mainPage) {
+        $("#upfs").val(_promptMessage);
+        mainPage.__STATUS=1;
+        mainPage.setAfterUpload();
+        mainPage.getNoVisitReports();
+      }
     } else {
-      if (mainPage) mainPage.$.messager.alert("文件上传失败", ret.exception, "error");
-      else $.messager.alert("文件上传失败", ret.exception, "error");
+      var msg = "";
+      if (ret.data) {
+      	msg=allFields(ret.data[0]);
+      } else {
+      	if (ret.message instanceof string) msg=ret.message;
+      	else msg=allFields(ret.message[0]);
+      }
+      if (!msg) msg="未知问题";
+      showAlert("文件上传失败", msg, "error");
     }
     mainPage.showMask(0);
   }

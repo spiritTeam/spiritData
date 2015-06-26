@@ -58,7 +58,6 @@ var ReportSerialShow = {
     winOption.iframeScroll=(param.iframeScroll?param.iframeScroll:"yes");
     //获得report.json的Uri
     if (param.reportGetUrl) winOption.url+="&getUrl="+encodeURIComponent(param.reportGetUrl);
-
     //打开窗口
     openSWinInMain(winOption);
   },

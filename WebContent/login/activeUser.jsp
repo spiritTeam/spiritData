@@ -157,7 +157,7 @@ function commit(){
     msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
   }
   if (msgs.length>0) {
-    if(mainPage) mainPage.$.messager.alert('修改提示', msgs,'info',function(){
+    showAlert('修改提示', msgs,'info',function() {
       for (var i=0; i<vdInfoAry.length; i++) {
         if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
       }
@@ -168,21 +168,9 @@ function commit(){
         $('#checkCode')[0].focus();
         $('#checkCode')[0].select();
       }
-    });
-    else $.messager.alert('修改提示', msgs,'info',function(){
-      for (var i=0; i<vdInfoAry.length; i++) {
-        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
-      }
-      if (i==0) {
-        $('#mail')[0].focus();
-        $('#mail')[0].select();
-      } else if (i==1) {
-        $('#checkCode')[0].focus();
-        $('#checkCode')[0].select();
-      }
-    });
+  	});
   } else {
-    if (mainPage) mainPage.$.messager.confirm('确认对话框', '请仔细检查邮箱，如果邮箱不正确，将不会收到激活邮件!', function(r){
+  	showConfirm('确认对话框', '请仔细检查邮箱，如果邮箱不正确，将不会收到激活邮件!', function() {
       if (r) {
         var mailAdress = $("#mail").val();
         var pData={
@@ -206,34 +194,7 @@ function commit(){
         $('#mail')[0].select();
         refreshCCImg('<%=path%>');
       }
-    });
-    else $.messager.confirm('确认对话框', '请仔细检查邮箱，如果邮箱不正确，将不会收到激活邮件!', function(r){
-      if (r) {
-        var mailAdress = $("#mail").val();
-        var pData={
-          "loginName":$("#loginName").val(),
-          "mailAdress":mailAdress
-        };
-        $("#mask").show();
-        var _url="<%=path%>/login/activeUserAgain.do";
-        $.ajax({type:"post",async:false,url:_url,data:pData,dataType:"json",
-          success:function(json) {
-            $("#mask").hide();
-            if(json.success){
-              $.messager.alert('提示',json.retInfo,'info');
-              //window.location.href = "<%=path%>/asIndex.jsp";
-              window.location.href = _MAIN_PAGE;
-            }else{
-              $.messager.alert('提示',json.retInfo,'info');
-            }
-          }
-        });
-      } else {
-        $('#mail')[0].focus();
-        $('#mail')[0].select();
-        refreshCCImg('<%=path%>');
-      }
-    });
+    }};
   }
 }
 </script>
