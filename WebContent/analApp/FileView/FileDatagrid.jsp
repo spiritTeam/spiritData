@@ -55,8 +55,8 @@ $(function() {
 //查询指定文件ID的数据 
 function startSearch(){
   //异步查询文件列表
-  var searchParam={"fileId":_fileId};
-  var url="<%=path%>/fileview/getFileData.do";
+  var searchParam={"fileId":_fileId,"pageNumber":1,"pageSize":15};
+  var url="<%=path%>/fileview/getFilePageData.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
       try{
@@ -68,24 +68,22 @@ function startSearch(){
         	showTabs(); //先画TABS，然后每个TAB里面再显示表格
         }
       }catch(e){
-        $.messager.alert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+        showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
     error:function(errorData){
-      $.messager.alert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+      showAlert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 
 }
 
-//显示表格数据 
+//显示单个表格数据 
 function showDatagrid(){
 	//$("#div_main").datagrid(searchResultJsonData.SheetDataList[0]);
 	//return;
 	var objDatagrid = $('<div id="div_datatable" style="width:950px;"></div>');
 	$("#div_main").append(objDatagrid);
-	objDatagrid.addClass("div_center");
-	objDatagrid.datagrid(searchResultJsonData.SheetDataList[0]["fileInfoMap"]);
-	objDatagrid.datagrid("loadData", searchResultJsonData.SheetDataList[0]["fileDataMap"]);
+  initDatagrid(objDatagrid,searchResultJsonData.SheetDataList[0]);
 }
 
 //显示TABS 
@@ -112,11 +110,72 @@ function showTabs(){
   for(var i=0;i<searchResultJsonData.totalSheet;i++){
 	  var tabid = "tab"+i;
 	  var objDatagrid = $("#"+tabid);
-	  objDatagrid.addClass("div_center");
-	  objDatagrid.datagrid(searchResultJsonData.SheetDataList[i]["fileInfoMap"]);
-	  objDatagrid.datagrid("loadData", searchResultJsonData.SheetDataList[i]["fileDataMap"]);
-  }
-  
+	  initDatagrid(objDatagrid,searchResultJsonData.SheetDataList[i]);
+  }  
+}
+
+//初始化datagrid
+function initDatagrid(objDatagrid,dgDataJson){
+  try{
+    //设置样式
+    objDatagrid.addClass("div_center");
+    //表名、长宽、列等设置
+	  objDatagrid.datagrid(dgDataJson["fileInfoMap"]);
+    var opts = objDatagrid.datagrid('options');
+    //设置分页
+    var pager = objDatagrid.datagrid('getPager');  
+    pager.pagination({ 
+      pageSize: 15,//每页显示的记录条数，默认为10 
+      pageList: [15,20,30,50,100],//可以设置每页记录条数的列表 
+      beforePageText: '第',//页数文本框前显示的汉字 
+      afterPageText: '页    共 {pages} 页', 
+      displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
+      /*onBeforeRefresh:function(){
+          $(this).pagination('loading');
+          alert('before refresh');
+          $(this).pagination('loaded');
+      }*/ 
+      onSelectPage: function (pageNumber, pageSize) {
+        //showAlert("点击分页",'onSelectPage pageNumber:' + pageNumber + ',pageSize:' + pageSize,"info");
+        opts.pageNumber = pageNumber;
+        opts.pageSize = pageSize;
+        $(pager).pagination('refresh',{
+          pageNumber:pageNumber,
+          pageSize:pageSize
+        });
+        //showAlert(dgDataJson.tableName+"   "+dgDataJson.selCols);
+        getTablePageData(dgDataJson.tableName,dgDataJson.selCols,pageNumber, pageSize,objDatagrid);
+      }
+    });
+
+    //getData(1,15); 
+    //加载数据
+    
+    objDatagrid.datagrid("loadData", dgDataJson["fileDataMap"]);		
+	}catch(e){
+		//showAlert(e.message);
+	}
+}
+
+//请求分页查询，获取返回结果，在datagrid中显示
+function getTablePageData(tableName,selCols,pageNumber, pageSize,objDatagrid){
+	//异步查询文件列表
+	var searchParam={"tableName":tableName,"selCols":selCols,"pageNumber":pageNumber,"pageSize":pageSize};
+	var url="<%=path%>/fileview/getTablePageData.do";
+	$.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
+	  success:function(jsonStr){
+	    try{
+	      //alert(jsonStr);
+	      searchResultJsonData = str2JsonObj(jsonStr); 
+	      objDatagrid.datagrid("loadData", searchResultJsonData); 
+	    }catch(e){
+	      showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+	    }
+	  },
+	  error:function(errorData){
+	    showAlert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+	  }
+	});
 }
 
 

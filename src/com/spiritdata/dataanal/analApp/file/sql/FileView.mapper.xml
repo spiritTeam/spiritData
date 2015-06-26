@@ -70,18 +70,10 @@
     order by sheetIndex
   </select>
   
-  <!-- 显示文件详细信息，表数据 -->
-  <select id="getFileData" resultMap="FileViewMap" parameterType="java.util.Map">
-    select a.fid id, b.tablename tmpTableName, a.tmid,a.sheetName, b.ownerId, b.ownerType from sa_imp_tabmap_rel a, sa_md_tabmap_rel b
-    <where>
-      <trim prefix="(" suffix=")" prefixOverrides="and">
-        <if test="1==1"> and a.tmoid=b.id</if>
-        <if test="ownerId!=null"> and b.ownerId = #{ownerId,jdbcType=VARCHAR}</if>
-        <if test="ownerType!=null and ownerType!=0"> and b.ownerType=#{ownerType,jdbcType=INTEGER}</if>
-        <if test="fileId!=null"> and a.fid=#{fileId,jdbcType=VARCHAR}</if>
-      </trim>
-    </where>     
-    order by sheetIndex
+  
+  <!-- 分页显示文件详细信息，表数据 -->
+  <select id="getTablePageData" resultType="java.util.Map" parameterType="java.util.Map" statementType="STATEMENT">
+    <![CDATA[select ${aTableCols} from ${aTableName}]]>
   </select>
   
   <!-- 获得查询结果列表 ，这个不带reportId-->

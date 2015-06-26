@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +15,19 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.log4j.Logger;
+
 import com.spiritdata.dataanal.analApp.file.pojo.FileViewPo;
+import com.spiritdata.dataanal.analApp.file.web.FileViewController;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
+import com.spiritdata.framework.core.model.Page;
 import com.spiritdata.framework.util.DateUtils;
 
 public class FileViewService {
+	private static Logger logger = Logger.getLogger(FileViewService.class);
+
 
     @Resource(name="defaultDAO")
     private MybatisDAO<FileViewPo> fileViewDao;
@@ -100,5 +108,29 @@ public class FileViewService {
     	return retList;
     }
     
-
+    /**
+     * 分页查询临时表数据，组装成easyui的datagrid里的JSON数据格式
+     * @param tableName
+     * @param colList
+     * @return
+     */
+    public Map<String,Object> getTablePageData(String tableName,String cols,int pageNumber,int pageSize){
+    	Map<String,Object> datagridDataJsonMap = new HashMap<String,Object>();
+    	try{
+    		//组装sql里需要的变量
+    		Map<String,String> searchParam = new HashMap<String,String>();
+    		searchParam.put("aTableName", tableName);    		
+    		searchParam.put("aTableCols", cols);
+    		
+    		Page<Map<String,Object>> page = fileViewDao.pageQueryAutoTranform(null, "getTablePageData", searchParam, pageNumber, pageSize);
+    		int totalTableCount = page.getDataCount();
+    		Collection<Map<String,Object>> dataCollect = page.getResult();
+    		List<Map<String,Object>> fileDataList = (List<Map<String,Object>>)dataCollect;
+    		datagridDataJsonMap.put("total", totalTableCount);
+    		datagridDataJsonMap.put("rows", fileDataList);
+    	}catch(Exception ex){
+    		logger.error("failed to get file page data. tableName="+tableName+" pageNumber="+pageNumber+" pageSize="+pageSize,ex);
+    	}
+    	return datagridDataJsonMap;
+    }
 }
