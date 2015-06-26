@@ -194,7 +194,7 @@ function commit(){
         $('#mail')[0].select();
         refreshCCImg('<%=path%>');
       }
-    }};
+    });
   }
 }
 </script>

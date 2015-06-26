@@ -62,6 +62,7 @@ public class AnalSingleDict implements TaskProcess {
         List<String> fieldL = new ArrayList<String>();//列选择器字符串
         Map<String, String> titleM = new LinkedHashMap<String, String>();//列描述对象，为生成title描述
         String tempColStr = "", groupSql = "";
+        List<String> numColNameList = new ArrayList<String>();
 
         for (MetadataColumn mc: mm.getColumnList()) {
             if (mc.isPk()) continue;
@@ -93,6 +94,8 @@ public class AnalSingleDict implements TaskProcess {
                 titleM.put("AVG_"+colName, mc.getTitleName()+"平均值");
                 titleM.put("MAX_"+colName, mc.getTitleName()+"最大值");
                 titleM.put("MIN_"+colName, mc.getTitleName()+"最小值");
+                titleM.put("percent(SUM_"+colName+")", mc.getTitleName()+"百分比");
+                numColNameList.add(colName);
             }
         }
         if (dictColM!=null&&dictColM.size()>0) {
@@ -124,6 +127,7 @@ public class AnalSingleDict implements TaskProcess {
             rs = ps.executeQuery();
             if (rs.next()) {
                 for (String key: titleM.keySet()) {
+                	if(key.indexOf("percent(")>-1){continue;}
                     sumRow.put(key, rs.getObject(key));
                 }
             }
@@ -142,6 +146,7 @@ public class AnalSingleDict implements TaskProcess {
                     groupRow = new HashMap<String, Object>();
                     groupRow.put(colName, rs.getObject(colName));
                     for (String key: titleM.keySet()) {
+                    	if(key.indexOf("percent(")>-1){continue;}
                         groupRow.put(key, rs.getObject(key));
                     }                    
                     groupTdList.add(groupRow);
@@ -168,7 +173,7 @@ public class AnalSingleDict implements TaskProcess {
 
         Map<String, Object> userDataM = new HashMap<String, Object>();//元数据信息的数组
         for (Map<String, Object> gM: groupList) {
-            userDataM.put(((MetadataColumn)gM.get("mc")).getColumnName(),_getJsonDTable_SD(gM, sumRow,titleM));
+            userDataM.put(((MetadataColumn)gM.get("mc")).getColumnName(),_getJsonDTable_SD(gM, sumRow,titleM,numColNameList));
         }
         if (userDataM.size()>0) {
             sysRd.put("resultType", 1);
@@ -194,7 +199,7 @@ public class AnalSingleDict implements TaskProcess {
      * @param qt 元数据指标信息
      * @return 转换完的数据
      */
-    private Map<String, Object> _getJsonDTable_SD(Map<String, Object> groupMap, Map<String, Object> sumRow, Map<String, String> titleM) {
+    private Map<String, Object> _getJsonDTable_SD(Map<String, Object> groupMap, Map<String, Object> sumRow, Map<String, String> titleM,List<String> numColNameList) {
         Map<String, Object> ret = new HashMap<String, Object>();
         MetadataColumn mc = (MetadataColumn)groupMap.get("mc");
         List<Map<String, Object>> groupTdList = (List<Map<String, Object>>)groupMap.get("groupData");
@@ -231,17 +236,31 @@ public class AnalSingleDict implements TaskProcess {
             Map<String, Object> rowM = new HashMap<String, Object>();
             rowM.put("category", groupRow.get(colName));
             rowM.put("count", groupRow.get("allCount"));
-            //百分比
+            //计算字典项的百分比
             float aRowCount = groupRow.get("allCount")==null?0:Float.parseFloat(groupRow.get("allCount").toString());
             float colCount =  sumRow.get("allCount")==null?0:Float.parseFloat(sumRow.get("allCount").toString());
             float percent = aRowCount * 100 / colCount;
+        	percent = (float)(Math.round(percent*100))/100;
+            rowM.put("percent(SUM_"+colName+")", percent);
             rowM.put("percent(count)", percent);
+            //计算各个数值列项的百分比
+            for(int nidx=0;nidx<numColNameList.size();nidx++){
+            	String ncolName = (String)numColNameList.get(nidx);
+            	String ncolSumName = "SUM_"+ncolName;
+            	aRowCount = groupRow.get(ncolSumName)==null?0:Float.parseFloat(groupRow.get(ncolSumName).toString());
+            	colCount =  sumRow.get(ncolSumName)==null?0:Float.parseFloat(sumRow.get(ncolSumName).toString());
+            	percent = aRowCount * 100 / colCount;
+            	percent = (float)(Math.round(percent*100))/100;
+            	rowM.put("percent(SUM_"+ncolName+")", percent);
+            }
+            
             //加入数值类型统计信息列值
             if(titleM!=null && titleM.size()>0){
                 Iterator<String> iterTitleM = titleM.keySet().iterator();
                 while(iterTitleM.hasNext()){
                     String keyTitleM = (String)iterTitleM.next();
                     Object valTitleM = (Object)groupRow.get(keyTitleM);
+                	if(keyTitleM.indexOf("percent(")>-1){continue;}
                     rowM.put(keyTitleM, valTitleM);
                 }
             }

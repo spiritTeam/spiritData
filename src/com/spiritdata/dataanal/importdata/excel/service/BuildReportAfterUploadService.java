@@ -3,8 +3,10 @@ package com.spiritdata.dataanal.importdata.excel.service;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
 import com.spiritdata.dataanal.exceptionC.Dtal1003CException;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetInfo;
 import com.spiritdata.dataanal.importdata.excel.pojo.SheetTableInfo;
+import com.spiritdata.dataanal.metadata.enumeration.DataType;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColSemanteme;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
@@ -158,11 +161,21 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                 rs1_1.setTitle("单项指标分析");
                 rs1_1.setId(tempStr);
                 TreeNode<ReportSegment> rsTn1_1 = new TreeNode<ReportSegment>(rs1_1);
+
+            	//找出数值列(col_1,col2)
+            	List<MetadataColumn> numColList = new ArrayList<MetadataColumn>();
+            	for (MetadataColumn mc: mm.getColumnList()) {
+            		if (mc.isPk()) continue;
+                    DataType colDT = DataType.getDataType(mc.getColumnType());
+                    if (colDT==DataType.DOUBLE||colDT==DataType.LONG||colDT==DataType.INTEGER) {
+                    	numColList.add(mc);
+                    }
+            	}
                 //字典处理——表内各字典项，可能没有字典项
                 hasDictTask = false;
                 for (MetadataColumn mc: mm.getColumnList()) {
                     List<MetadataColSemanteme> csl = mc.getColSemList();
-                    if (csl!=null&&csl.size()>0) {
+                    if (csl!=null&&csl.size()>0) {                    	
                         for (int i=0; i<csl.size(); i++) {
                             MetadataColSemanteme mcs = csl.get(i);
                             if (mcs.getSemantemeType()==1&&_od!=null&&_od.getDictModelById(mcs.getSemantemeCode())!=null) {//是字典
@@ -203,23 +216,86 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 rs1_1_loop.setTitle("<span style='font-weight:bold;'>"+mm.getTitleName()+"["+mc.getTitleName()+"]</span>指标");
                                 rs1_1_loop.setId(SequenceUUID.getPureUUID());
                                 DictModel dm = _od.getDictModelById(mcs.getSemantemeCode());
+                                
+                                //构建显示内容
+                                tempContent = "";
+                                //第一步：显示字典项单项指标分析，只有字典项的二维表和饼图
+                                //显示文本
                                 D_Tag discriptDt = new D_Tag();
                                 discriptDt.setShowType(DtagShowType.TEXT);
                                 discriptDt.setDid(report.getDid(tempStr)+"");
                                 discriptDt.setValue("dictData[^"+mc.getColumnName()+"^]");
-                                discriptDt.setValueFilterFun("first(3|num)");
+                                discriptDt.setValueFilterFun("first(3|count)");
                                 discriptDt.setDecorateView("{#category#}占#percent(count)#%");
-                                tempContent = "";
                                 if (dm.dictTree.getChildCount()>3) {
-                                    tempContent += "["+mm.getTitleName()+"]中，大多数为";
+                                    tempContent += "["+mc.getTitleName()+"]中，大多数为";
                                 } else {
-                                    tempContent += "["+mm.getTitleName()+"]中，";
+                                    tempContent += "["+mc.getTitleName()+"]中，";
                                 }
+                                //显示二维表格
                                 D_Tag tableDt = new D_Tag();
                                 tableDt.setShowType(DtagShowType.TABLE);
                                 tableDt.setDid(report.getDid(tempStr)+"");
                                 tableDt.setValue("dictData[^"+mc.getColumnName()+"^]");
-                                tempContent += discriptDt.toHtmlTag()+"，具体数据为：<br/>"+tableDt.toHtmlTag();
+                                  //显示哪些列
+                                Map<String,String> showTBColMap = new LinkedHashMap<String,String>();
+                                showTBColMap.put(mc.getTitleName(), "category");
+                                showTBColMap.put("数量", "count");
+                                showTBColMap.put("百分比", "percent(count)");
+                                tableDt.setParam(showTBColMap);
+                                //显示饼图
+                                D_Tag pieDt = new D_Tag();
+                                pieDt.setShowType(DtagShowType.PIE);
+                                pieDt.setDid(report.getDid(tempStr)+"");
+                                pieDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                Map<String,String> showPieColMap = new HashMap<String,String>();
+                                showPieColMap.put("xAxis", "category");
+                                showPieColMap.put("yAxis", "count");
+                                pieDt.setParam(showPieColMap);
+                                pieDt.setDecorateView("#category#, #percent(count)#");
+                                tempContent += discriptDt.toHtmlTag()+"，具体数据为：<br/>"+tableDt.toHtmlTag()+pieDt.toHtmlTag();
+                                //第二：针对每个字典项，循环数值列，显示二维表和饼图
+                                for(int nidx=0;nidx<numColList.size();nidx++){
+                                	MetadataColumn acolmc = (MetadataColumn)numColList.get(nidx);
+                                	String colName = acolmc.getColumnName();
+                                	String sumCol = "SUM_"+colName;
+                                    //第一步：显示字典项和某个数值项的二维表和饼图
+                                    //显示文本
+                                    discriptDt = new D_Tag();
+                                    discriptDt.setShowType(DtagShowType.TEXT);
+                                    discriptDt.setDid(report.getDid(tempStr)+"");
+                                    discriptDt.setValue("dictData[^"+mc.getColumnName()+"^]");
+                                    discriptDt.setValueFilterFun("first(3|"+sumCol+")");
+                                    discriptDt.setDecorateView("{#category#}占#percent("+sumCol+")#%");
+                                    if (dm.dictTree.getChildCount()>3) {
+                                        tempContent += "["+mc.getTitleName()+"]["+acolmc.getTitleName()+"]中，大多数为";
+                                    } else {
+                                        tempContent += "["+mc.getTitleName()+"]["+acolmc.getTitleName()+"]中，";
+                                    }
+                                    //显示二维表格
+                                    tableDt = new D_Tag();
+                                    tableDt.setShowType(DtagShowType.TABLE);
+                                    tableDt.setDid(report.getDid(tempStr)+"");
+                                    tableDt.setValue("dictData[^"+mc.getColumnName()+"^]");
+                                      //显示哪些列
+                                    showTBColMap = new LinkedHashMap<String,String>();
+                                    showTBColMap.put(mc.getTitleName(), "category");
+                                    showTBColMap.put(acolmc.getTitleName(), sumCol);
+                                    showTBColMap.put("百分比", "percent("+sumCol+")");
+                                    tableDt.setParam(showTBColMap);
+                                    //显示饼图
+                                    pieDt = new D_Tag();
+                                    pieDt.setShowType(DtagShowType.PIE);
+                                    pieDt.setDid(report.getDid(tempStr)+"");
+                                    pieDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    showPieColMap = new HashMap<String,String>();
+                                    showPieColMap.put("xAxis", "category");
+                                    showPieColMap.put("yAxis", sumCol);
+                                    pieDt.setParam(showPieColMap);
+                                    pieDt.setDecorateView("#category#, #percent("+sumCol+")#");
+                                    tempContent += "<br/>"+discriptDt.toHtmlTag()+"，具体数据为：<br/>"+tableDt.toHtmlTag()+pieDt.toHtmlTag();                                	
+                                }                                
+                                //加到节点上
                                 rs1_1_loop.setContent(tempContent);
                                 TreeNode<ReportSegment> rsTn1_1_loop = new TreeNode<ReportSegment>(rs1_1_loop);
                                 rsTn1_1.addChild(rsTn1_1_loop);
