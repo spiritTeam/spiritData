@@ -149,9 +149,8 @@ function validateCheckCode(){
 //提交方法
 function commit(){
   var msgs = "";
-  for (var i=0; i<vdInfoAry.length; i++) {
-    if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
-  }
+  for (var i=0; i<vdInfoAry.length; i++) if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
+
   if (msgs.length>0) {
     msgs = msgs.substr(5);
     msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
@@ -194,7 +193,7 @@ function commit(){
         $('#mail')[0].select();
         refreshCCImg('<%=path%>');
       }
-    }};
+    });
   }
 }
 </script>
