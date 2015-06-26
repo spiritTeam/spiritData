@@ -208,7 +208,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 discriptDt.setDid(report.getDid(tempStr)+"");
                                 discriptDt.setValue("dictData[^"+mc.getColumnName()+"^]");
                                 discriptDt.setValueFilterFun("first(3|num)");
-                                discriptDt.setDecorateView("{#category#}占#percent(num)#%");
+                                discriptDt.setDecorateView("{#category#}占#percent(count)#%");
                                 tempContent = "";
                                 if (dm.dictTree.getChildCount()>3) {
                                     tempContent += "["+mm.getTitleName()+"]中，大多数为";
