@@ -537,7 +537,7 @@ function logout() {
     success: function(json) {
       if (json.type==1) {
         showAlert("注销信息","注销成功!",'info',function(){
-          window.location.href=_MAIN_PAGE;
+          window.location.href=window.location.href;
           setNoLogin();
         });
       } else {
@@ -546,7 +546,7 @@ function logout() {
           setNoLogin();
         }else{
           showAlert("错误", "注销失败："+json.data+"！</br>返回登录页面。", "error", function(){
-            window.location.href=_MAIN_PAGE;
+            window.location.href=window.location.href;
             setNoLogin();
           });
         }
@@ -554,7 +554,7 @@ function logout() {
     },
     error: function(errorData) {
       showAlert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
-        window.location.href=_MAIN_PAGE+"?noAuth";
+        window.location.href=window.location.href+"?noAuth";
         setNoLogin();
       });
     }

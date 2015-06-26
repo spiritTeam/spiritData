@@ -234,10 +234,8 @@ function commit(){
     msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
   }
   if (msgs.length>0) {
-    if (mainPage) mainPage.$.messager.alert('登陆提示', msgs,'info',function(){
-      for (var i=0; i<vdInfoAry.length; i++) {
-        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
-      }
+  	showAlert('登陆提示', msgs, 'info', function() {
+      for (var i=0; i<vdInfoAry.length; i++) if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
       if (i==0) {
         $('#loginName')[0].focus();
         $('#loginName')[0].select();
@@ -248,22 +246,7 @@ function commit(){
         $('#checkCode')[0].focus();
         $('#checkCode')[0].select();
       }
-    });
-    else $.messager.alert('登陆提示', msgs,'info',function(){
-      for (var i=0; i<vdInfoAry.length; i++) {
-        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
-      }
-      if (i==0) {
-        $('#loginName')[0].focus();
-        $('#loginName')[0].select();
-      } else if (i==1) {
-        $('#password')[0].focus();
-        $('#password')[0].select();
-      } else {
-        $('#checkCode')[0].focus();
-        $('#checkCode')[0].select();
-      }
-    });
+  	});
   } else {
     var pData={
       "loginName":$("#loginName").val(),
@@ -294,16 +277,12 @@ function login(pData){
             $('#activeUser').css('display','');
             $('#delimiter').css('display','');
             userInfo = loginInfo.user;
-            if(mainPage) mainPage.$.messager.confirm('确认对话框', "您的账号未激活，点击确定激活账号！", function(r){
-              if (r) activeUser();
-            });
-            else $.messager.confirm('确认对话框', "您的账号未激活，点击确定激活账号！", function(r){
+            showConfirm('确认对话框', "您的账号未激活，点击确定激活账号！", function(r) {
               if (r) activeUser();
             });
           }
         }else {
-          if(mainPage) mainPage.$.messager.alert('登录信息',retInfo,'info');
-          else $.messager.alert('登录信息',retInfo,'info');
+          showAlert('登录信息',retInfo,'info');
         }
       } else if (json.type==1) {//登陆成功
         var activeType = loginInfo.activeType;
@@ -315,21 +294,16 @@ function login(pData){
             });
           } else {
             $.messager.alert("登陆信息","登陆成功！",'info');
-            window.location.href = _MAIN_PAGE;
+            window.location.href = window.location.href;
           }
         }
-      } else if(json.type==2){
-        if(mainPage) mainPage.$.messager.alert("登录信息", "登录失败："+json.data, "error");
-        else $.messager.alert("登录信息", "登录失败："+json.data, "error");
       } else {
-        if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常："+json.data, "error");
-        else $.messager.alert("登录信息", "登录异常："+json.data, "error");
+        showAlert("登录信息", "登录失败："+json.data, "error");
       }
     },
     error:function(errorData ){
-      if (errorData ){
-        if(mainPage) mainPage.$.messager.alert("登录信息", "登录异常：未知！", "error");
-        else $.messager.alert("登录信息", "登录异常：未知！", "error");
+      if (errorData ) {
+        showAlert("登录信息", "登录异常：未知！", "error");
       }
     }
   });

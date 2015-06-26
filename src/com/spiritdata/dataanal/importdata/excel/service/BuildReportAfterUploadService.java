@@ -218,7 +218,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 D_Tag tableDt = new D_Tag();
                                 tableDt.setShowType(DtagShowType.TABLE);
                                 tableDt.setDid(report.getDid(tempStr)+"");
-                                tableDt.setValue("quote[^"+mc.getId()+"^]");
+                                tableDt.setValue("dictData[^"+mc.getColumnName()+"^]");
                                 tempContent += discriptDt.toHtmlTag()+"，具体数据为：<br/>"+tableDt.toHtmlTag();
                                 rs1_1_loop.setContent(tempContent);
                                 TreeNode<ReportSegment> rsTn1_1_loop = new TreeNode<ReportSegment>(rs1_1_loop);

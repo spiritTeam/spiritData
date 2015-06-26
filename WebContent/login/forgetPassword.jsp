@@ -87,28 +87,18 @@ function validateLoginName(){
 //提交信息
 function commit(){
   var msgs = "";
-  for (var i=0; i<vdInfoAry.length; i++) {
-    if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
-  }
+  for (var i=0; i<vdInfoAry.length; i++) if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
+
   if (msgs.length>0) {
     msgs = msgs.substr(5);
     msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
   }
   if (msgs.length>0) {
-    if (mainPage) mainPage.$.messager.alert('提示', msgs,'info',function(){
-      for (var i=0; i<vdInfoAry.length; i++) {
-        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
-      }
+  	showAlert('提示', msgs,'info',function() {
+      for (var i=0; i<vdInfoAry.length; i++) if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
       $('#loginName')[0].focus();
       $('#loginName')[0].select();
-    });
-    else $.messager.alert('提示', msgs,'info',function(){
-      for (var i=0; i<vdInfoAry.length; i++) {
-        if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
-      }
-      $('#loginName')[0].focus();
-      $('#loginName')[0].select();
-    });
+  	});
   } else {
     $('#mask').show();
     var val = $('#loginName').val();

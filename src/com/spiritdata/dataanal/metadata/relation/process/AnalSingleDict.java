@@ -25,7 +25,6 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataColumn;
 import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.semanteme.SemantemeType;
 import com.spiritdata.dataanal.metadata.relation.service.MdBasisService;
-import com.spiritdata.dataanal.task.core.service.TaskManageService;
 import com.spiritdata.dataanal.task.process.TaskProcess;
 import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.SystemCache;
@@ -69,15 +68,15 @@ public class AnalSingleDict implements TaskProcess {
             //找字典项
             mcsL = mc.getColSemList();
             if (mcsL!=null && mcsL.size()>0){ //判断是否字典项
-            	boolean isDict = false;
-            	for (MetadataColSemanteme mcs: mcsL) {
-            		if (mcs.getSemantemeType()==SemantemeType.DICT) {
-            			dictColM.put(mc, mcs);
-            			isDict = true;
-            			break;
-            		}
-            	}
-            	if (isDict) continue;
+                boolean isDict = false;
+                for (MetadataColSemanteme mcs: mcsL) {
+                    if (mcs.getSemantemeType()==SemantemeType.DICT) {
+                        dictColM.put(mc, mcs);
+                        isDict = true;
+                        break;
+                    }
+                }
+                if (isDict) continue;
             }
             //数值列
             DataType colDT = DataType.getDataType(mc.getColumnType());
@@ -98,7 +97,6 @@ public class AnalSingleDict implements TaskProcess {
         }
         if (dictColM!=null&&dictColM.size()>0) {
             sysRd.put("resultType", 2);
-            //return ret;
         }
         //数据分析
         Map<String, Object> sumRow = new HashMap<String, Object>();
@@ -119,7 +117,7 @@ public class AnalSingleDict implements TaskProcess {
             tempColStr = "count(*) allCount";
             titleM.put("allCount", "总个数");
             for (String s: fieldL) {
-            	tempColStr += ","+s;
+                tempColStr += ","+s;
             }
             String countSql = "select "+tempColStr+" from "+mm.getTableName();
             ps = conn.prepareStatement(countSql);
@@ -170,7 +168,7 @@ public class AnalSingleDict implements TaskProcess {
 
         Map<String, Object> userDataM = new HashMap<String, Object>();//元数据信息的数组
         for (Map<String, Object> gM: groupList) {
-        	userDataM.put(((MetadataColumn)gM.get("mc")).getColumnName(),_getJsonDTable_SD(gM, sumRow,titleM));
+            userDataM.put(((MetadataColumn)gM.get("mc")).getColumnName(),_getJsonDTable_SD(gM, sumRow,titleM));
         }
         if (userDataM.size()>0) {
             sysRd.put("resultType", 1);
@@ -199,8 +197,6 @@ public class AnalSingleDict implements TaskProcess {
     private Map<String, Object> _getJsonDTable_SD(Map<String, Object> groupMap, Map<String, Object> sumRow, Map<String, String> titleM) {
         Map<String, Object> ret = new HashMap<String, Object>();
         MetadataColumn mc = (MetadataColumn)groupMap.get("mc");
-        MetadataColSemanteme mcs = (MetadataColSemanteme)groupMap.get("mcs");
-        MetadataModel mm = mc.getMdModel();
         List<Map<String, Object>> groupTdList = (List<Map<String, Object>>)groupMap.get("groupData");
         
         
@@ -213,50 +209,42 @@ public class AnalSingleDict implements TaskProcess {
         //表数据处理
         Map<String, Object> tableM = new HashMap<String, Object>();
         //title
-        List<Map<String, String>> titleL = new ArrayList<Map<String, String>>();
-        Map<String, String> oneTitle = new HashMap<String, String>();
-    	oneTitle.put("category", mc.getTitleName()); 
-    	titleL.add(oneTitle);
-        oneTitle = new HashMap<String, String>();
-    	oneTitle.put("count", "数量"); 
-    	titleL.add(oneTitle);
-        oneTitle = new HashMap<String, String>();
-    	oneTitle.put("percent(count)", "百分比"); 
-    	titleL.add(oneTitle);
-    	//加入数值类型统计信息列名
-    	if(titleM!=null && titleM.size()>0){
-    		Iterator iterTitleM = titleM.keySet().iterator();
-    		while(iterTitleM.hasNext()){
-    			String keyTitleM = (String)iterTitleM.next();
-    			String valTitleM = (String)titleM.get(keyTitleM);
-    	        oneTitle = new HashMap<String, String>();
-    	    	oneTitle.put(keyTitleM, valTitleM); 
-    	    	titleL.add(oneTitle);    					
-    		}
-    	}
-    	
-        tableM.put("titles", titleL);
+        Map<String, String> _titleM = new HashMap<String, String>();
+        _titleM.put("category", mc.getTitleName()); 
+        _titleM.put("count", "数量"); 
+        _titleM.put("percent(count)", "百分比"); 
+        //加入数值类型统计信息列名
+        if(titleM!=null && titleM.size()>0){
+            Iterator<String> iterTitleM = titleM.keySet().iterator();
+            while(iterTitleM.hasNext()){
+                String keyTitleM = (String)iterTitleM.next();
+                String valTitleM = (String)titleM.get(keyTitleM);
+                _titleM.put(keyTitleM, valTitleM); 
+            }
+        }
+
+        tableM.put("titles", _titleM);
         //dataList
         List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
         tableM.put("dataList", dataList);
         for(Map<String, Object> groupRow : groupTdList){
-        	Map<String, Object> rowM = new HashMap<String, Object>();
-        	rowM.put("category", groupRow.get(colName));
-        	rowM.put("count", groupRow.get("allCount"));
-        	//百分比
-        	float aRowCount = groupRow.get("allCount")==null?0:Float.parseFloat(groupRow.get("allCount").toString());
-        	float colCount =  sumRow.get("allCount")==null?0:Float.parseFloat(sumRow.get("allCount").toString());
-        	float percent = aRowCount * 100 / colCount;
-        	rowM.put("percent(count)", percent);
-        	//加入数值类型统计信息列值
-        	if(titleM!=null && titleM.size()>0){
-        		Iterator iterTitleM = titleM.keySet().iterator();
-        		while(iterTitleM.hasNext()){
-        			String keyTitleM = (String)iterTitleM.next();
-        			Object valTitleM = (Object)groupRow.get(keyTitleM);
-                	rowM.put(keyTitleM, valTitleM);
-        		}
-        	}
+            Map<String, Object> rowM = new HashMap<String, Object>();
+            rowM.put("category", groupRow.get(colName));
+            rowM.put("count", groupRow.get("allCount"));
+            //百分比
+            float aRowCount = groupRow.get("allCount")==null?0:Float.parseFloat(groupRow.get("allCount").toString());
+            float colCount =  sumRow.get("allCount")==null?0:Float.parseFloat(sumRow.get("allCount").toString());
+            float percent = aRowCount * 100 / colCount;
+            rowM.put("percent(count)", percent);
+            //加入数值类型统计信息列值
+            if(titleM!=null && titleM.size()>0){
+                Iterator<String> iterTitleM = titleM.keySet().iterator();
+                while(iterTitleM.hasNext()){
+                    String keyTitleM = (String)iterTitleM.next();
+                    Object valTitleM = (Object)groupRow.get(keyTitleM);
+                    rowM.put(keyTitleM, valTitleM);
+                }
+            }
             dataList.add(rowM);            
         }
         ret.put("tableData", tableM);

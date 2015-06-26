@@ -20,15 +20,9 @@ var noLoginUrl = _MAIN_PAGE+"?nolog";
 var mainPage=getMainPage();
 winId = getUrlParam(window.location.href, "_winID");
 if (winId) {
-  if (mainPage) {
-  	mainPage.$.messager.alert("提示", "请先登录！", "info", function() {
-      mainPage.location.href=noLoginUrl+"&type=1";
-    });
-  } else {
-    $.messager.alert("提示", "请先登录！", "info", function() {
-      window.location.href=noLoginUrl+"&type=1";
-    });
-  }
+  showAlert("提示", "请先登录！", "info", function() {
+    mainPage.location.href=noLoginUrl+"&type=1";
+  });
 } else {
   if (mainPage) {
     mainPage.location.href=noLoginUrl+"&type=2";

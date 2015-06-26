@@ -183,6 +183,7 @@ function checkUploadStatus() {
         $("#upfs").val(_promptMessage);
         mainPage.__STATUS=1;
         mainPage.setAfterUpload();
+        mainPage.getNoVisitReports();
       }
     } else {
       var msg = "";

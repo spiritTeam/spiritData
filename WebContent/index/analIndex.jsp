@@ -330,7 +330,6 @@ function logout() {
     },
     error: function(errorData) {
       $.messager.alert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"!</br>返回未登录首页。", "error", function(){
-        window.location.href=_MAIN_PAGE+"?noAuth";
         _loginName="";
         __STATUS=0;
         setInitPage();

@@ -721,7 +721,7 @@ var d_tagDeal={
             _oneT.field=p;
             _oneT.title=fTdata.titles[p];
             _oneT.width=100;
-            var conInsert=true;
+            var canInsert=true;
             if (dtag.param&&dtag.tdParseData&&dtag.tdParseData.param) {
               var filterCols=dtag.tdParseData.param.okL?dtag.tdParseData.param.okL:dtag.tdParseData.param.defL;
               if (filterCols&&filterCols.length>0) {

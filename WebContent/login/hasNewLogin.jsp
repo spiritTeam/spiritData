@@ -27,15 +27,15 @@ $(function(){
       success: function(json) {
         var msg = "您已经在["+ip+"("+mac+")]客户端用["+browser+"]浏览器重新登录了，当前登录失效！<br/>请重新登录！";
         if ((!ip&&!mac)||(ip+mac=="")) msg = "您已经在另一客户端用["+browser+"]浏览器重新登录了，当前登录失效！<br/>请重新登录！";
-        $.messager.alert("提示", msg, "info", function(){
-        	//topWin.location.href="<%=path%>/asIndex.jsp";
-        	topWin.location.href = _MAIN_PAGE;
+        showAlert('提示', msgs, 'info', function() {
+          topWin.location.href = topWin.location.href;
         });
       },
       error: function(errorData) {
-        $.messager.alert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function(){
-      	  //topWin.location.href="<%=path%>/asIndex.jsp?noAuth";
-        	topWin.location.href=_MAIN_PAGE+"?noAuth";
+        showAlert("错误", "注销失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>返回登录页面。", "error", function() {
+          var topUrl=topWin.location.href;
+          if (topUrl.indexOf("?")!=-1) topUrl.substring(0, topUrl.indexOf("?")-1);
+          topWin.location.href=topUrl+"?noAuth";
         });
       }
     });
