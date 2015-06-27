@@ -99,7 +99,8 @@ var __STATUS=("<%=hadUpload%>"=="null")?"0":"1"; //状态，刚打开主页的�
 var newReportJson = null; //未读报告列表
 var lastSearchStr = ""; //上一次查询的搜索串
 var searchTxt = "请输入查询内容..."; //查询提示信息
-
+var curFrameIndex = -1; //当前激活的页面
+var _curFrameIndex = -1;  //为上传所准备的当前激活的页面
 
 //登陆窗口大小
 var wHeight = "430";
@@ -193,6 +194,10 @@ $(function() {
       };
     }
   });
+  //搜索输入区域，回车就查询
+  $("#searchAll").keydown(function(e) {
+    if(e.keyCode==13) startSearch();
+  });
   //================显示状态
   setInitPage();
   getNoVisitReports();//先查一次
@@ -264,6 +269,11 @@ function setLoginPage() {
 
 //=======切换iframe页面，无搜索页
 function switchIF(_type, _param) {
+  if (_curFrameIndex!=-1&&_curFrameIndex!=_type) _curFrameIndex=-1;
+
+  if (_type==curFrameIndex) return;
+  else curFrameIndex=_type;
+
   $("#ifmHomepage").css("display","none");
   $("#ifmReport").css("display","none");
   $("#ifmFile").css("display","none");
@@ -283,12 +293,17 @@ function switchIF(_type, _param) {
     ifmId="ifmFile";
     break;
   }
+
   if (ifmId) {
     var curObj=$("#"+ifmId);
+    if (curObj.attr("_src")) {
+      var _url = curObj.attr("_src");
+      if (_param) _url+=(_url.indexOf("?")==-1?"?":"&")+_param;
+    }
     if (!curObj.attr("src")||curObj.attr("src").indexOf(curObj.attr("_src"))==-1) {//地址错误，需要重新设置src
-      if (curObj.attr("_src")) {
-      	var _url = curObj.attr("_src");
-      	if (_param) _url+=(_url.indexOf("?")==-1?"?":"&")+_param;
+      curObj.attr("src",_PATH+"/"+_url);
+    } else {
+      if (_param=='refreshme=yes') {//强制刷新
         curObj.attr("src",_PATH+"/"+_url);
       }
     }
@@ -363,13 +378,41 @@ function selF() {
 }
 function uploadF() {
   try {
+    _curFrameIndex=curFrameIndex;
+    
     var form = $('#afUpload');
     $(form).attr('action', _PATH+'/fileUpLoad.do');
     $(form).attr('method', 'POST');
     $(form).attr('target', 'tframe');
     if (form.encoding) form.encoding = 'multipart/form-data';
     else form.enctype = 'multipart/form-data';
-    $(form).submit();
+    $(form).form('submit',{
+      async: true,
+      success: function(respStr) {
+        var respJson = null;
+        try {
+          respJson=str2JsonObj(respStr);
+        } catch(e) {
+          showAlert("上传异常","str 2 json err. jsonStr="+respStr,"error");
+        }
+        var success=(respJson.jsonType==1&&respJson.data&&(respJson.data.length==1&&respJson.data[0].success));
+        if (success) {
+          if (_curFrameIndex!=-1||_curFrameIndex!=1) {//切换到报告页，并刷新
+            setTimeout(function() { //这个时间可能不能获得任何结果，但还是请求一次数据，200毫秒
+              getNoVisitReports();
+              //切换到报告页
+              var repNav = $("#nav_report");
+              repNav.attr(onclick,"switchIF(1, 'refreshme=yes')");
+              repNav.click();
+              repNav.attr(onclick,"switchIF(1)");
+            }, 200);
+          }
+        } else showAlert("上传文件结果","上传文件失败 .","error");
+      },
+      error: function(errData) {
+        showAlert("上传文件提交失败","failed to upload file. errData="+errData,"error");
+      }
+    });
   } catch(e) {
     if (mainPage) mainPage.$.messager.alert("文件上传失败", e, "error");
     else $.messager.alert("文件上传失败", e, "error");
@@ -388,14 +431,14 @@ function getNoVisitReports() {//得到未访问列表信息
           setNoVisitReportNum(jsonData.rows.length);
           newReportJson = jsonData;
         }
-      }catch(e){
+      } catch(e) {
         $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
     error: function(errorData) {
-      $.messager.alert("查询未访问报告异常", "查询异常：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});    	
+      $.messager.alert("查询未访问报告异常", "查询异常：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});      
     }
-  });   
+  });
 }
 function showNoVisitReportList() {//显示未读报告
   var winOption={
@@ -411,14 +454,35 @@ function setNoVisitReportNum(num) {//设置未访问报告标签的值
   var _num = parseInt(num);
   if (!_num) return;
   if (_num>0) {
-  	$("#newReportFlag").attr("repNum", _num);//记录下来
+    $("#newReportFlag").attr("repNum", _num);//记录下来
     $("#newReportFlag").html(_num>100?"...":_num+"");
     $("#newReportFlag").show();
   } else {
     $("#newReportFlag").hide();
   }
 }
-function incremeNoVisitReportNum(num) {//增加未访问报告标签的值，可以是负数
+/**
+ * 返回指定的报告ID是否为未读报告，为报告页调用做准备
+ * 当条件查询报告的时候，触发此方法
+ * 如果areportId在newReportJson中，则返回true
+ */
+function isUnReadReportById(areportId) {
+  if ((newReportJson&&newReportJson.rows&&newReportJson.rows.length>0)&&areportId) {
+    for(var i=0;i<newReportJson.rows.length;i++) {
+      var aRow = newReportJson.rows[i];
+      if (aRow.reportId && aRow.reportId==areportId) return true;
+    }
+  }
+  return false;
+}
+/**
+ * 增加或删除未访问报告标签的值
+ * tag:增加或删除标志：0:增加，1删除
+ */
+function incremeNoVisitReportNum(tag, reportList) {
+  var _tag = tag;
+  if (_tag!=0) _tag=1;//默认是删除
+//////////////////////////////////////////////////////??????????????????????????????????????????/  
   var _num = parseInt(num);
   if (!_num) return;
   var curNum=0;
@@ -434,6 +498,8 @@ function incremeNoVisitReportNum(num) {//增加未访问报告标签的值，可
 
 //==============搜索
 function startSearch() {
+  if (_curFrameIndex!=-1&&_curFrameIndex!=3) _curFrameIndex=-1;
+  curFrameIndex=3;
   $("#ifmHomepage").css("display","none");
   $("#ifmReport").css("display","none");
   $("#ifmFile").css("display","none");
@@ -444,10 +510,10 @@ function startSearch() {
 
   var curObj=$("#ifmSearch");
   if (!curObj.attr("src")||curObj.attr("src").indexOf(curObj.attr("_src"))==-1) {//地址错误，需要重新设置src
-  	if (curObj.attr("_src")) {
-  	  var _url = curObj.attr("_src");
-  	  _url +="?"+urlParam;
-  	  curObj.attr("src",_PATH+"/"+_url);
+    if (curObj.attr("_src")) {
+      var _url = curObj.attr("_src");
+      _url +="?"+urlParam;
+      curObj.attr("src",_PATH+"/"+_url);
     }
   } else {//若原来iframe已经加载过
     if (lastSearchStr!=searchStr) {//若查询不相等，则需要重新查询

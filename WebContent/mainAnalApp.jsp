@@ -290,7 +290,7 @@ function startSearch(){
  * 异步请求后台，查找是否有新的报告生成
  */
 function searchNewReport(){
-	//异步查询是否有新增报表   
+  //异步查询是否有新增报表   
   var searchParam={"searchType":"fectchNewReport","searchStr":""};
   var url="<%=path%>/reportview/searchNewReport.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",

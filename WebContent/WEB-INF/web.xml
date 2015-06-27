@@ -122,6 +122,6 @@
   <!-- end Servlet设置 -->
 
   <welcome-file-list>
-    <welcome-file>/mainAnalApp.jsp</welcome-file>
+    <welcome-file>/index/analIndex.jsp</welcome-file>
   </welcome-file-list>
 </web-app>
