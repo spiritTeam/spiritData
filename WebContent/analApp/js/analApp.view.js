@@ -25,7 +25,7 @@ function showFile(fileId,fileName){
  * reportId--报告的ID
  * unReadId--未读报告小圆点标识的ID，用于查看报告后隐藏该小圆点，在主页面上显示的未读报告总数-1，未读报告JSON中减去REPORTID所对应的记录
  */
-function showReport(reportId,unReadId) {
+function showReport(reportId, unReadId) {
   //显示report内容
   var winOption={
     title:"报告详情",
@@ -41,17 +41,12 @@ function showReport(reportId,unReadId) {
   visitLog_REPORT(param);  
   
   //如果是未读报告，则隐藏未读小红点标志，并把未读总数-1
-  if(unReadId){
-	$("#"+unReadId).css("visibility","hidden");
-	var newReportJson = getMainPage().newReportJson;
-	  for(var i=0;i<newReportJson.rows.length;i++){
-		  var aRow = newReportJson.rows[i];
-		  if(aRow.reportId && aRow.reportId==reportId){
-			  newReportJson.rows.splice(i,1);
-			  getMainPage().refreshNewReportDIV();
-			  break;
-		  }
-	  }
+  if (unReadId) {
+    $("#"+unReadId).css("visibility","hidden");
+    var delRep = new Object();
+    delRep.reportId=reportId;
+    var mPage=getMainPage();
+    if (mPage) mPage.incremeNoVisitReports(1, delRep);
   }
 };
 
@@ -74,11 +69,11 @@ function showRelation(reportId){
  * 高亮显示指定的字符串
  */
 function highlightStr(astr,searchStr){
-	var retStr = astr;
-	if (astr&&searchStr&&searchStr.trim().length>0) {
-		retStr = astr.replace(new RegExp(searchStr,'gm'),"<span class=\"highlight\">"+searchStr+"</span>");
-	}
-	return retStr;	
+  var retStr = astr;
+  if (astr&&searchStr&&searchStr.trim().length>0) {
+    retStr = astr.replace(new RegExp(searchStr,'gm'),"<span class=\"highlight\">"+searchStr+"</span>");
+  }
+  return retStr;
 };
 
 /**

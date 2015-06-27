@@ -9,7 +9,7 @@
   if(searchStr!=null){
     searchStr = new String(searchStr.getBytes("ISO-8859-1"),"UTF-8");
   }else{
-	  searchStr = "";
+    searchStr = "";
   }
 %>
 <!DOCTYPE html>
@@ -58,23 +58,22 @@ var searchResultJsonData = null; //保存查询后的结果
 
 //主函数
 $(function() {
-	_urlPath = "<%=path%>";
-	startSearch();
+  startSearch();
 });
 
 //开始查询
 function startSearch(){
-	var _searchStr = "<%=searchStr%>";
-	searchResultJsonData = {};
+  var _searchStr = "<%=searchStr%>";
+  alert(_searchStr);
+  searchResultJsonData = {};
   //异步查询文件列表  
   var searchParam={"searchStr":_searchStr};
-  var url="<%=path%>/analApp/demoData/commonlist.json";
-  url = "<%=path%>/listview/searchGeneralList.do";
+  var url = "<%=path%>/listview/searchGeneralList.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
-    success:function(jsonStr){
-      try{
+    success: function(jsonStr) {
+      try {
         //searchResultJsonData = str2JsonObj(jsonStr); 
-        searchResultJsonData = jsonStr; 
+        searchResultJsonData=jsonStr; 
         showSearchResult();
       }catch(e){
         showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
@@ -87,98 +86,95 @@ function startSearch(){
 }
 
 //显示查询结果
-function showSearchResult(){
-if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
-  var _objList = $('#sectionListId');
-  _objList.empty();
-  var _searchStr = "<%=searchStr%>";
-  var jsonRows = searchResultJsonData.rows;
-  var len = jsonRows.length;
-  for(var i=0;i<len;i++){
-	  //读取一条记录的内容
-	  //var arow = str2JsonObj(jsonRows[i]["aRowJsonStr"]);
-	  var arow = jsonRows[i]["aRowJsonStr"];
-	  if(arow==null){
-		  continue;
-	  }
-	    	
+function showSearchResult() {
+  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
+    var _objList = $('#sectionListId');
+    _objList.empty();
+    var _searchStr = "<%=searchStr%>";
+    var jsonRows = searchResultJsonData.rows;
+    var len = jsonRows.length;
+    for(var i=0;i<len;i++){
+      //读取一条记录的内容
+      //var arow = str2JsonObj(jsonRows[i]["aRowJsonStr"]);
+      var arow = jsonRows[i]["aRowJsonStr"];
+      if (arow==null) continue;
+      //创建一条记录的div
+      var divItem = $('<div class="item"></div>');
+      divItem.appendTo(_objList);
+      //创建item-heading
+      var divItemHead = $('<div class="item-heading"></div>');    
+      divItemHead.appendTo(divItem);  
+      //创建 item-content
+      var divItemContent = $('<div class="item-content"></div>');
+      divItemContent.appendTo(divItem);
+      //创建item-footer       
+      var divItemFooter = $('<div class="item-footer"></div>');
+      divItemFooter.appendTo(divItem);
+      
+      var id = arow["id"];
+      var fileName = arow["name"];
+      var fileFull = fileName;
+      var createDate = arow["createDate"];
+      var desc = arow["desc"];    
+      var fileType = arow["type"];
+      var flag = "FILE";
+      if(fileType=="file"){
+        var reportId = arow["reportId"];
+        var size = arow["size"];
+        var suffix = arow["suffix"];
+        if(typeof(suffix)!="undefined" && suffix!=null && suffix.length>0){
+          if(suffix.charAt(0)=="."){
+            suffix = suffix.substring(1);
+          }
+          //fileFull += "."+suffix;
+          flag = suffix.toUpperCase();
+        }
+        //item-head内容
+        divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
+        divItemHead.append('<h4><span class="label label-primary font_size15">'+flag+'</span>&nbsp; <a href="###" class="href_file" onclick="showFile(\''+id+'\');">'+fileFull+'</a></h4>');
+        //item-content内容
+        divItemContent.append('<div class="text font_size13">'+'ID：'+highlightStr(id,_searchStr)+'&nbsp;&nbsp;&nbsp;'
+          +'名称：'+highlightStr(fileFull,_searchStr)+'&nbsp;&nbsp;&nbsp;'
+          +'报告ID：'+highlightStr(reportId,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'大小：'+highlightStr(size,_searchStr)+'&nbsp;&nbsp;&nbsp;'
+          +'上传时间：'+highlightStr(createDate,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'简介：'+highlightStr(desc,_searchStr)+'</div>');
+      } else if (fileType=="report") {
+        var reportType = arow["reportType"];
+        flag = "RPT";
+        //item-head内容
+        divItemHead.append('<div class="pull-right"><a href="###" onclick="showReport(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showRelation(\''+id+'\');"><i class="icon-building"></i>关系</a></div>');
+        divItemHead.append('<h4><span class="label label-success font_size15">'+flag+'</span>&nbsp; <a href="###" onclick="showReport(\''+id+'\');" class="href_file">'+fileFull+'</a></h4>');
+        //item-content内容
+        var mediaPullLeftDiv = $('<div class="media pull-left"></div>');
+        mediaPullLeftDiv.appendTo(divItemContent);
+        var mediaPlaceHolderDiv = $('<div class="media-place-holder" style="width:121px;height:75px;line-height:75px"></div>');
+        mediaPlaceHolderDiv.appendTo(mediaPullLeftDiv);
+        var thumbUrl = arow["thumbUrl"];
+        thumbUrl = thumbPath + getStr(thumbUrl,defaultThumbImg);
+        
+        mediaPlaceHolderDiv.append('<img src='+thumbUrl+' style="width:121px;height:75px;cursor:pointer;" onclick="showReport(\''+id+'\');" alt="缩略图">');
+        divItemContent.append('<div class="text font_size13">'+'ID：'+highlightStr(id,_searchStr)+'&nbsp;&nbsp;&nbsp;'
+          +'名称：'+highlightStr(fileFull,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'报告类型：'+highlightStr(reportType,_searchStr)+'&nbsp;&nbsp;&nbsp;'
+          +'上传时间：'+highlightStr(createDate,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'简介：'+highlightStr(desc,_searchStr)+'</div>');      
+      }
+    }
+  } else {
+    var _objList = $('#sectionListId');
+    _objList.empty();
     //创建一条记录的div
     var divItem = $('<div class="item"></div>');
     divItem.appendTo(_objList);
     //创建item-heading
     var divItemHead = $('<div class="item-heading"></div>');    
     divItemHead.appendTo(divItem);  
+    divItemHead.append('<h4><span class="label label-primary font_size15">没有数据</span></h4>');
     //创建 item-content
     var divItemContent = $('<div class="item-content"></div>');
     divItemContent.appendTo(divItem);
+    divItemContent.append('<div class="text font_size13">没有检索到相关数据！</div>');
     //创建item-footer       
     var divItemFooter = $('<div class="item-footer"></div>');
     divItemFooter.appendTo(divItem);
-    
-    var id = arow["id"];
-    var fileName = arow["name"];
-    var fileFull = fileName;
-    var createDate = arow["createDate"];
-    var desc = arow["desc"];    
-    var fileType = arow["type"];
-    var flag = "FILE";
-    if(fileType=="file"){
-    	var reportId = arow["reportId"];
-      var size = arow["size"];
-      var suffix = arow["suffix"];
-      if(typeof(suffix)!="undefined" && suffix!=null && suffix.length>0){
-    	  if(suffix.charAt(0)=="."){
-    		  suffix = suffix.substring(1);
-    	  }
-        //fileFull += "."+suffix;
-        flag = suffix.toUpperCase();
-      }
-      //item-head内容
-      divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
-      divItemHead.append('<h4><span class="label label-primary font_size15">'+flag+'</span>&nbsp; <a href="###" class="href_file" onclick="showFile(\''+id+'\');">'+fileFull+'</a></h4>');
-      //item-content内容
-      divItemContent.append('<div class="text font_size13">'+'ID：'+highlightStr(id,_searchStr)+'&nbsp;&nbsp;&nbsp;'
-        +'名称：'+highlightStr(fileFull,_searchStr)+'&nbsp;&nbsp;&nbsp;'
-    		+'报告ID：'+highlightStr(reportId,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'大小：'+highlightStr(size,_searchStr)+'&nbsp;&nbsp;&nbsp;'
-    		+'上传时间：'+highlightStr(createDate,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'简介：'+highlightStr(desc,_searchStr)+'</div>');
-    }else if(fileType=="report"){
-      var reportType = arow["reportType"];
-      flag = "RPT";
-      //item-head内容
-      divItemHead.append('<div class="pull-right"><a href="###" onclick="showReport(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showRelation(\''+id+'\');"><i class="icon-building"></i>关系</a></div>');
-      divItemHead.append('<h4><span class="label label-success font_size15">'+flag+'</span>&nbsp; <a href="###" onclick="showReport(\''+id+'\');" class="href_file">'+fileFull+'</a></h4>');
-      //item-content内容
-      var mediaPullLeftDiv = $('<div class="media pull-left"></div>');
-      mediaPullLeftDiv.appendTo(divItemContent);
-      var mediaPlaceHolderDiv = $('<div class="media-place-holder" style="width:121px;height:75px;line-height:75px"></div>');
-      mediaPlaceHolderDiv.appendTo(mediaPullLeftDiv);
-      var thumbUrl = arow["thumbUrl"];
-      thumbUrl = thumbPath + getStr(thumbUrl,defaultThumbImg);
-      
-      mediaPlaceHolderDiv.append('<img src='+thumbUrl+' style="width:121px;height:75px;cursor:pointer;" onclick="showReport(\''+id+'\');" alt="缩略图">');
-      divItemContent.append('<div class="text font_size13">'+'ID：'+highlightStr(id,_searchStr)+'&nbsp;&nbsp;&nbsp;'
-    		+'名称：'+highlightStr(fileFull,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'报告类型：'+highlightStr(reportType,_searchStr)+'&nbsp;&nbsp;&nbsp;'
-    		+'上传时间：'+highlightStr(createDate,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'简介：'+highlightStr(desc,_searchStr)+'</div>');      
-    }
   }
-}else{
-	var _objList = $('#sectionListId');
-	_objList.empty();
-  //创建一条记录的div
-  var divItem = $('<div class="item"></div>');
-  divItem.appendTo(_objList);
-  //创建item-heading
-  var divItemHead = $('<div class="item-heading"></div>');    
-  divItemHead.appendTo(divItem);  
-  divItemHead.append('<h4><span class="label label-primary font_size15">没有数据</span></h4>');
-  //创建 item-content
-  var divItemContent = $('<div class="item-content"></div>');
-  divItemContent.appendTo(divItem);
-  divItemContent.append('<div class="text font_size13">没有检索到相关数据！</div>');
-  //创建item-footer       
-  var divItemFooter = $('<div class="item-footer"></div>');
-  divItemFooter.appendTo(divItem);
-}
 }
 
 </script>

@@ -169,19 +169,18 @@ function initSubmitBt(){
 }
 
 //初始化日期选择控件 
-function initDatePicker(){
-    $('.form-date').datetimepicker(
-    {
-        language:  'zh-CN',
-        weekStart: 1,
-        todayBtn:  1,
-        autoclose: 1,
-        todayHighlight: 1,
-        startView: 2,
-        minView: 2,
-        forceParse: 0,
-        format: 'yyyy-mm-dd'
-    });
+function initDatePicker() {
+  $('.form-date').datetimepicker ({
+    language:  'zh-CN',
+    weekStart: 1,
+    todayBtn:  1,
+    autoclose: 1,
+    todayHighlight: 1,
+    startView: 2,
+    minView: 2,
+    forceParse: 0,
+    format: 'yyyy-mm-dd'
+  });
 }
 
 //定义查询方式和保存查询结果
@@ -195,8 +194,6 @@ var objDatatable = null; //列表显示对象
 
 //取出输入条件，提交查询
 function startSearch(){
-	//alert("start search report ...");
-  //var searchStr = getInputSearchFileStr();
   var searchStr = $("#inp_filename").val();
   var startDateStr = $("#startDate").val();
   var endDateStr = $("#endDate").val();
@@ -206,11 +203,11 @@ function startSearch(){
   //alert("查询参数："+allFields(searchParam));
   var url="<%=path%>/reportview/searchReportList.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
-    success:function(jsonStr){
-      try{
+    success:function(jsonStr) {
+      try {
         searchResultJsonData = str2JsonObj(jsonStr); 
         showSearchResult(showType);
-      }catch(e){
+      } catch(e) {
         showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
     },
@@ -266,8 +263,8 @@ function showSearchResultList(){
   };
   //组装显示结果行
   var dtrows =[];
-  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){    
-	  var jsonRows = searchResultJsonData.rows;
+  if (searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0) {
+    var jsonRows = searchResultJsonData.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
       var id = jsonRows[i]["id"];
@@ -282,8 +279,8 @@ function showSearchResultList(){
       if(unRead){
         optRound = '<span id="'+unReadId+'" class="div_float_left circleFillRed" style="margin-left:5px;"/>';
         ahrf_file = '<a href="###" onclick="showReport(\''+id+'\',\''+unReadId+'\');"><strong>'+fileFull+'</strong></a>';
-      }else{
-    	  optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;visibility:hidden;"/>';
+      } else {
+    	optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;visibility:hidden;"/>';
         ahrf_file = '<a href="###" onclick="showReport(\''+id+'\');"><strong>'+fileFull+'</strong></a>';
       }
       ahrf_file = optRound + ahrf_file;

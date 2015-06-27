@@ -158,10 +158,11 @@ function uploadF() {
     $(form).submit();
     //等待处理
     if (mainPage.__STATUS==0&&!mainPage._loginName) {
-      if (mainPage) mainPage.showMask(1, "正在上传文件，请等待...");
+      if (mainPage) mainPage.showMask(1, "正在上传文件，进行即时分析。<br/>请等待...");
       checkProcessId = setInterval(checkUploadStatus, 200);
     } else {
       $("#upfs").val(_promptMessage);
+      mainPage.needRefresh=[1,1,1,1];
       if (mainPage) mainPage.setAfterUpload();
     }
   } catch(e) {
@@ -182,6 +183,7 @@ function checkUploadStatus() {
       if (mainPage) {
         $("#upfs").val(_promptMessage);
         mainPage.__STATUS=1;
+        mainPage.needRefresh=[1,1,1,1];
         mainPage.setAfterUpload();
         mainPage.getNoVisitReports();
       }

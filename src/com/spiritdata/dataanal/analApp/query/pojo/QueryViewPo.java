@@ -37,8 +37,7 @@ public class QueryViewPo extends BaseObject {
 	}
 
 	public void setaRowJsonStr(String aRowJsonStr) {
-		this.aRowJsonStr = (Map<String, Object>)JsonUtils.jsonToObj(aRowJsonStr, Map.class);
+        aRowJsonStr = aRowJsonStr.replaceAll("\\\\", "/");
+        this.aRowJsonStr = (Map<String, Object>)JsonUtils.jsonToObj(aRowJsonStr, Map.class);
 	}
-	
-	
 }

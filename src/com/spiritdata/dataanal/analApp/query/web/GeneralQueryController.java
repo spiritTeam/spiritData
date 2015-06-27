@@ -51,9 +51,7 @@ public class GeneralQueryController {
 			//组装查询参数
 			Map<String,Object> paramMap = new HashMap<String,Object>();
 			String searchStr = this.trimStr(req.getParameter("searchStr"));
-			if(searchStr!=null){
-				paramMap.put("searchStr", searchStr);
-			}
+			if (searchStr!=null) paramMap.put("searchStr", searchStr);
 			ViewControllerUtil.setSearchOwnerInfo(req, paramMap);
 
 			//查询通用列表(包括文件和报告)

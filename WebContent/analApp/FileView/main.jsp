@@ -138,7 +138,7 @@ function initSearchFileInput(){
   var _objSearch = $("#inp_filename");
   _objSearch.keydown(function(e){
     if(e.keyCode == 13){
-    	startSearch();
+      startSearch();
     }
   });
 }
@@ -150,7 +150,7 @@ function initSubmitBt(){
   }).mouseout(function(){
     //$(this).css("color","#000000");
   }).click(function(){   
-	  startSearch();
+    startSearch();
   });
 }
 
@@ -182,11 +182,11 @@ var objDatatable = null; //列表显示对象
 
 //取出输入条件，提交查询
 function startSearch(){
-	//var searchStr = getInputSearchFileStr();
-	var searchStr = $("#inp_filename").val();
-	var startDateStr = $("#startDate").val();
-	var endDateStr = $("#endDate").val();
-	
+  //var searchStr = getInputSearchFileStr();
+  var searchStr = $("#inp_filename").val();
+  var startDateStr = $("#startDate").val();
+  var endDateStr = $("#endDate").val();
+  
   //异步查询文件列表  
   var searchParam={"searchStr":searchStr,"startDateStr":startDateStr,"endDateStr":endDateStr};
   var url="<%=path%>/analApp/demoData/filelist.json";
@@ -194,9 +194,9 @@ function startSearch(){
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
       try{
-    	  //alert("fileSearch() search result="+jsonStr);
-    	  searchResultJsonData = str2JsonObj(jsonStr); 
-    	  showSearchResult(showType);
+        //alert("fileSearch() search result="+jsonStr);
+        searchResultJsonData = str2JsonObj(jsonStr); 
+        showSearchResult(showType);
       }catch(e){
         showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
@@ -209,26 +209,26 @@ function startSearch(){
 
 //显示查询结果
 function showSearchResult(_showType){
-	//alert("showSearchResult() showType="+_showType);
-	showType = _showType;
+  //alert("showSearchResult() showType="+_showType);
+  showType = _showType;
   $('#dgList').css("display","none");
   $('#dgThumb').css("display","none");
     
-	if(showType == SHOW_TYPE_LIST){
+  if(showType == SHOW_TYPE_LIST){
     showSearchResultList();
-	}else if(showType == SHOW_TYPE_THUMB){
+  }else if(showType == SHOW_TYPE_THUMB){
     showSearchResultThumb();
-	}else{
-		showType = SHOW_TYPE_LIST;
+  }else{
+    showType = SHOW_TYPE_LIST;
     showSearchResultList();
-	}
+  }
 }
 
 //列表显示查询结果
 function showSearchResultList(){
-	var _objList = $('#dgList');
-	_objList.empty();
-	_objList.css("display","block");
+  var _objList = $('#dgList');
+  _objList.empty();
+  _objList.css("display","block");
   //构建dbopts
   var dbopts={
     customizable: true, 
@@ -254,25 +254,25 @@ function showSearchResultList(){
   //组装显示结果行
   var dtrows =[];
   if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
-	  var jsonRows = searchResultJsonData.rows;
-	  var len = jsonRows.length;
-	  for(var i=0;i<len;i++){
-	    var fileIndexId = jsonRows[i]["fileIndexId"];
-	    var fileName = jsonRows[i]["clientFileName"];
-	    var suffix = jsonRows[i]["suffix"];
-	    var fileFull = fileName;
-	    var ahrf_file = '<a href="###" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
-	    
-	    var size = jsonRows[i]["fileSize"];
-	    var createDate = jsonRows[i]["createTimeStr"];
-	    
-	    //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
-	    //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
-	    //构建操作按钮
+    var jsonRows = searchResultJsonData.rows;
+    var len = jsonRows.length;
+    for(var i=0;i<len;i++){
+      var fileIndexId = jsonRows[i]["fileIndexId"];
+      var fileName = jsonRows[i]["clientFileName"];
+      var suffix = jsonRows[i]["suffix"];
+      var fileFull = fileName;
+      var ahrf_file = '<a href="###" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
+      
+      var size = jsonRows[i]["fileSize"];
+      var createDate = jsonRows[i]["createTimeStr"];
+      
+      //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
+      //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
+      //构建操作按钮
       var optHtml = getOptHtml(jsonRows[i],"floatCenter");
-	    var arow={checked:false,data:[ahrf_file,size,createDate,optHtml]};
-	    dtrows.push(arow);
-	  }
+      var arow={checked:false,data:[ahrf_file,size,createDate,optHtml]};
+      dtrows.push(arow);
+    }
   }
   dbopts.data.rows = dtrows;
   //构建datatable
@@ -281,52 +281,52 @@ function showSearchResultList(){
   objDatatable.find("table").addClass("table-bordered table-striped");
   //$("tr",objDatatable).css("height","49px");
 
-	//添加到dglist中
+  //添加到dglist中
   _objList.append(objDatatable);
 }
 
 //缩略图显示查询结果
 function showSearchResultThumb(){
-	var _objThumb = $('#dgThumb');
-	_objThumb.css("display","block");
-	var thumbHtmlStr = '';
-	if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
-	  thumbHtmlStr += '<section class="cards">';
-	  var jsonRows = searchResultJsonData.rows;
-	  var len = jsonRows.length;
-	  for(var i=0;i<len;i++){
-		  var fileIndexId = jsonRows[i]["fileIndexId"];
-		  var fileName = jsonRows[i]["clientFileName"];
-	    var suffix = jsonRows[i]["suffix"];
-	    var thumbImgUrl = thumbPath + getSuffixImgName(suffix);
-	    var fileFull = fileName;
-	    var size = jsonRows[i]["fileSize"];
-	    var createDate = jsonRows[i]["createTimeStr"];
-	    var desc = jsonRows[i]["descn"];
-	    thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-2">';
-	    thumbHtmlStr += '    <div class="card">';
-		  thumbHtmlStr += '      <div class="media-wrapper">';
-	    //显示的缩略图片
-		  thumbHtmlStr += '        <img src='+thumbImgUrl+' alt="">';
-	    thumbHtmlStr += '      </div>';   
-	    //鼠标移到图片上时，下拉浮动框显示的内容
-		  thumbHtmlStr += '        <span class="caption" style="padding:2px;">'+desc+'</span>';
-	    //缩略图下方显示的内容
-	    thumbHtmlStr += '      <div class="media-wrapper">';
-		  thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
-	    thumbHtmlStr += '      </div>';  
-	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted" style="padding:2px;text-align:center;">';
-	    thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;&nbsp;创建日期:'+createDate+'';
-	    thumbHtmlStr += '      </div>'; 
-	    thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
-	    var optHtml = getOptHtml(jsonRows[i],"floatRight");
-	    thumbHtmlStr += '        '+optHtml+'';
-	    thumbHtmlStr += '      </div>';  
-		  thumbHtmlStr += '    </div>';
-		  thumbHtmlStr += '  </div>';   
-		}
-	  thumbHtmlStr += '</section>';
-	}
+  var _objThumb = $('#dgThumb');
+  _objThumb.css("display","block");
+  var thumbHtmlStr = '';
+  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
+    thumbHtmlStr += '<section class="cards">';
+    var jsonRows = searchResultJsonData.rows;
+    var len = jsonRows.length;
+    for(var i=0;i<len;i++){
+      var fileIndexId = jsonRows[i]["fileIndexId"];
+      var fileName = jsonRows[i]["clientFileName"];
+      var suffix = jsonRows[i]["suffix"];
+      var thumbImgUrl = thumbPath + getSuffixImgName(suffix);
+      var fileFull = fileName;
+      var size = jsonRows[i]["fileSize"];
+      var createDate = jsonRows[i]["createTimeStr"];
+      var desc = jsonRows[i]["descn"];
+      thumbHtmlStr += '  <div class="col-md-4 col-sm-6 col-lg-2">';
+      thumbHtmlStr += '    <div class="card">';
+      thumbHtmlStr += '      <div class="media-wrapper">';
+      //显示的缩略图片
+      thumbHtmlStr += '        <img src='+thumbImgUrl+' alt="">';
+      thumbHtmlStr += '      </div>';   
+      //鼠标移到图片上时，下拉浮动框显示的内容
+      thumbHtmlStr += '        <span class="caption" style="padding:2px;">'+desc+'</span>';
+      //缩略图下方显示的内容
+      thumbHtmlStr += '      <div class="media-wrapper">';
+      thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
+      thumbHtmlStr += '      </div>';  
+      thumbHtmlStr += '      <div class="media-wrapper card-content text-muted" style="padding:2px;text-align:center;">';
+      thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;&nbsp;创建日期:'+createDate+'';
+      thumbHtmlStr += '      </div>'; 
+      thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
+      var optHtml = getOptHtml(jsonRows[i],"floatRight");
+      thumbHtmlStr += '        '+optHtml+'';
+      thumbHtmlStr += '      </div>';  
+      thumbHtmlStr += '    </div>';
+      thumbHtmlStr += '  </div>';   
+    }
+    thumbHtmlStr += '</section>';
+  }
     
   _objThumb.html(thumbHtmlStr);
 }
@@ -352,9 +352,9 @@ function getOptHtml(aJsonRow,floatStyle){
   //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
   var optReport = '';
   if(!isUndefinedNullEmpty(reportId)){
-	  optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
+    optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
   }else{
-	  optReport = '<button type="button" style="visibility:hidden;" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
+    optReport = '<button type="button" style="visibility:hidden;" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
   }
   var optContent = ""+optView+"&nbsp;&nbsp;"+optReport+"&nbsp;";
   var optHtml = optContent;
@@ -367,15 +367,15 @@ function getOptHtml(aJsonRow,floatStyle){
 //根据文件后缀名查找相应的图标，如果没有找到则返回default默认的图标
 function getSuffixImgName(suffixName){
   var retName = fileSuffixImg["default"];
-  try{
-	  if(typeof(suffixName) != "undefined" && suffixName!=null && suffixName.length>0){
-		  if(suffixName.charAt(0)=="."){
-			  suffixName = suffixName.substring(1);
-		  }
-	  }
+  try {
+    if(typeof(suffixName) != "undefined" && suffixName!=null && suffixName.length>0){
+      if(suffixName.charAt(0)=="."){
+        suffixName = suffixName.substring(1);
+      }
+    }
     retName = fileSuffixImg[suffixName];
     if(typeof(retName) == "undefined" || retName==null || retName.length==0){
-    	retName = fileSuffixImg["default"];
+      retName = fileSuffixImg["default"];
     }
   }catch(e){showAlert("获取图片后缀名","failed to fecth img suffix name. suffix="+suffixName+" err:"+e.message,"error");}
   return retName;

@@ -101,6 +101,7 @@ var lastSearchStr = ""; //上一次查询的搜索串
 var searchTxt = "请输入查询内容..."; //查询提示信息
 var curFrameIndex = -1; //当前激活的页面
 var _curFrameIndex = -1;  //为上传所准备的当前激活的页面
+var needRefresh = [1,1,1,1];//是否需要刷新，0不需要刷新，1需要刷新，needRefresh[1]报告；needRefresh[2]文件；needRefresh[3]查询；needRefresh[0]首页，不需要
 
 //登陆窗口大小
 var wHeight = "430";
@@ -296,15 +297,17 @@ function switchIF(_type, _param) {
 
   if (ifmId) {
     var curObj=$("#"+ifmId);
-    if (curObj.attr("_src")) {
-      var _url = curObj.attr("_src");
-      if (_param) _url+=(_url.indexOf("?")==-1?"?":"&")+_param;
-    }
+    var _url = curObj.attr("_src");
+    if (_param) _url+=(_url.indexOf("?")==-1?"?":"&")+_param;
+    if (needRefresh[_type]==1)  _url+=(_url.indexOf("?")==-1?"?":"&")+"refreshme=yes";
+
     if (!curObj.attr("src")||curObj.attr("src").indexOf(curObj.attr("_src"))==-1) {//地址错误，需要重新设置src
       curObj.attr("src",_PATH+"/"+_url);
+      needRefresh[_type]=0;
     } else {
-      if (_param=='refreshme=yes') {//强制刷新
+      if (needRefresh[_type]==1) {//强制刷新
         curObj.attr("src",_PATH+"/"+_url);
+        needRefresh[_type]=0;
       }
     }
     if (curObj.attr("src")) curObj.css("display","block");
@@ -379,7 +382,7 @@ function selF() {
 function uploadF() {
   try {
     _curFrameIndex=curFrameIndex;
-    
+
     var form = $('#afUpload');
     $(form).attr('action', _PATH+'/fileUpLoad.do');
     $(form).attr('method', 'POST');
@@ -401,10 +404,8 @@ function uploadF() {
             setTimeout(function() { //这个时间可能不能获得任何结果，但还是请求一次数据，200毫秒
               getNoVisitReports();
               //切换到报告页
-              var repNav = $("#nav_report");
-              repNav.attr(onclick,"switchIF(1, 'refreshme=yes')");
-              repNav.click();
-              repNav.attr(onclick,"switchIF(1)");
+              needRefresh=[1,1,1,1];
+              $("#nav_report").click();
             }, 200);
           }
         } else showAlert("上传文件结果","上传文件失败 .","error");
@@ -427,8 +428,8 @@ function getNoVisitReports() {//得到未访问列表信息
     success: function(jsonData) {
       try {
         //刷新报告
-        if (jsonData&&jsonData.rows&&jsonData.rows.length>0) {
-          setNoVisitReportNum(jsonData.rows.length);
+        if (jsonData&&jsonData.rows&&jsonData.total>0) {
+          setNoVisitReportNum(jsonData.total);
           newReportJson = jsonData;
         }
       } catch(e) {
@@ -455,7 +456,8 @@ function setNoVisitReportNum(num) {//设置未访问报告标签的值
   if (!_num) return;
   if (_num>0) {
     $("#newReportFlag").attr("repNum", _num);//记录下来
-    $("#newReportFlag").html(_num>100?"...":_num+"");
+    $("#newReportFlag").html(_num>99?"...":_num+"");
+    if (_num>99) $("#newReportFlag").attr("title", _num); else $("#newReportFlag").attr("title", ""); 
     $("#newReportFlag").show();
   } else {
     $("#newReportFlag").hide();
@@ -467,8 +469,8 @@ function setNoVisitReportNum(num) {//设置未访问报告标签的值
  * 如果areportId在newReportJson中，则返回true
  */
 function isUnReadReportById(areportId) {
-  if ((newReportJson&&newReportJson.rows&&newReportJson.rows.length>0)&&areportId) {
-    for(var i=0;i<newReportJson.rows.length;i++) {
+  if ((newReportJson&&newReportJson.rows&&newReportJson.total>0)&&areportId) {
+    for(var i=0;i<newReportJson.total;i++) {
       var aRow = newReportJson.rows[i];
       if (aRow.reportId && aRow.reportId==areportId) return true;
     }
@@ -478,22 +480,63 @@ function isUnReadReportById(areportId) {
 /**
  * 增加或删除未访问报告标签的值
  * tag:增加或删除标志：0:增加，1删除
+ * reportList:报告对象列表，或报告对象本身，元素必须包括reportId属性
  */
-function incremeNoVisitReportNum(tag, reportList) {
+function incremeNoVisitReports(tag, reportList) {
   var _tag = tag;
   if (_tag!=0) _tag=1;//默认是删除
-//////////////////////////////////////////////////////??????????????????????????????????????????/  
-  var _num = parseInt(num);
-  if (!_num) return;
-  var curNum=0;
-  if ($("#newReportFlag").is(":visible")) {
-    curNum=$("#newReportFlag").attr("repNum");
-    curNum=parseInt(curNum);
+
+  //当前数
+  var _curNum = $("#newReportFlag").attr("repNum");
+  var __curNum=_curNum;
+
+  if (_tag==1) { //删除
+    if ($.isArray(reportList)) {
+      var delRep = new Array();
+      for (var i=0; i<reportList.length; i++) {
+        if (reportList[i].reportId) {
+          for (var j=0; j<newReportJson.total; j++) {
+            if (reportList[i].reportId==newReportJson.rows[j].reportId) {
+              delRep.push(j);
+              break;
+            }
+          }
+        }
+      }
+      if (delRep.length>0) {
+        for (var k=0; k<delRep.length; k++) {
+          newReportJson.rows.removeByIndex(delRep[k]);
+          newReportJson.total--;
+          _curNum--;
+        }
+      }
+    } else {//只有一个对象
+      if (reportList.reportId) {
+        for (var j=0; j<newReportJson.total; j++) {
+          if (reportList.reportId==newReportJson.rows[j].reportId) {
+            newReportJson.rows.removeByIndex(j);
+            newReportJson.total--;
+            _curNum--;
+            break;
+          }
+        }
+      }
+    } 
+  } else { //增加
+    if ($.isArray(reportList)) {
+      for (var i=0; i<reportList.length; i++) {
+        newReportJson.rows.push(reportList[i]);
+        newReportJson.total++;
+        _curNum++;
+      }
+    } else {//只有一个对象
+      newReportJson.rows.push(reportList[i]);
+      newReportJson.total++;
+      _curNum++;
+    }
   }
-  if (curNum) {
-    curNum=curNum+_num;
-    setNoVisitReportNum(curNum);
-  }
+
+  if (_curNum!=__curNum) setNoVisitReportNum(_curNum);
 }
 
 //==============搜索
@@ -505,20 +548,19 @@ function startSearch() {
   $("#ifmFile").css("display","none");
   $("#ifmSearch").css("display","none");
 
-  var searchStr = ($("#idSearchFile").val()==searchTxt?"":$("#idSearchFile").val());
-  var urlParam = "searchStr="+encodeURIComponent(searchStr)+"&refreshme=yes";
+  var searchStr = ($("#searchAll").val()==searchTxt?"":$("#searchAll").val());
+  var urlParam = "searchStr="+encodeURIComponent(searchStr);
 
   var curObj=$("#ifmSearch");
+  var _url = curObj.attr("_src");
   if (!curObj.attr("src")||curObj.attr("src").indexOf(curObj.attr("_src"))==-1) {//地址错误，需要重新设置src
     if (curObj.attr("_src")) {
-      var _url = curObj.attr("_src");
       _url +="?"+urlParam;
       curObj.attr("src",_PATH+"/"+_url);
     }
   } else {//若原来iframe已经加载过
     if (lastSearchStr!=searchStr) {//若查询不相等，则需要重新查询
       lastSearchStr = searchStr;
-      var _url = curObj.attr("_src");
       _url +="?"+urlParam;
       curObj.attr("src",_PATH+"/"+_url);
     }
