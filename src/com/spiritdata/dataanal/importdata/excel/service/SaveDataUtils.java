@@ -74,7 +74,6 @@ public abstract class SaveDataUtils {
         Map<String, Object> titleCol = null;
         //日志信息准备
 //        int _log_readAllCount/*读取总行数*/, _log_insertOkCount=0/*新增成功行数*/, _log_insertFailCount=0/*新增失败行数*/, _log_ignoreCount=0/*忽略行数*/;
-        
         Dialect dialect = null;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -140,7 +139,12 @@ public abstract class SaveDataUtils {
                     }
                 }
                 boolean canInsert = true;
-                for (int j=0; j<paramArray.length; j++) {
+                int paLength=rowData.size()<paramArray.length?rowData.size():paramArray.length;//配合，readOneRow去掉后续空列的功能
+                int j=0;
+                for (j=paLength; j<paramArray.length; j++) {
+                    paramArray[j]="null";
+                }
+                for (j=0; j<paramArray.length; j++) {
                     if (paramArray[j]==null) {
                         canInsert = false;
                         break;
@@ -172,7 +176,7 @@ public abstract class SaveDataUtils {
                 }
 
                 try{
-                    for (int j=0; j<paramArray.length; j++) {
+                    for (j=0; j<paramArray.length; j++) {
                         ps.setObject(j+1, paramArray[j]);
                     }
                     int insertOk = ps.executeUpdate();
@@ -388,7 +392,12 @@ public abstract class SaveDataUtils {
                     }
                 }
                 boolean canSave = false;
-                for (int j=0; j<paramArray4Insert.length; j++) {
+                int paLength=rowData.size()<paramArray4Insert.length?rowData.size():paramArray4Insert.length;//配合，readOneRow去掉后续空列的功能
+                int j=0;
+                for (j=paLength; j<paramArray4Insert.length; j++) {
+                    paramArray4Insert[j]="null";
+                }
+                for (j=0; j<paLength; j++) {
                     if (paramArray4Insert[j]!=null) {
                         canSave = true;
                         break;
@@ -401,7 +410,6 @@ public abstract class SaveDataUtils {
                 }
                 //先修改，再新增
                 boolean canInsert = true;
-                int j=0;
                 if (updateSql!=null) {
                     psUpdate.clearParameters();
                     try{

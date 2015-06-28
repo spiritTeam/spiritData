@@ -103,14 +103,14 @@ public class PoiParseUtils {
                 if (isAreaBottomRow(lastButOneRow)) perhapsNum=numList.get(numList.size()-2);//可能的表头行底行
                 if (perhapsNum>-1) {
                     //如果最后两行列结构相同,splitRowNum就可能是表头分割行，否则不是
-                    if (!compareSameColumn2Row(lastButOneRow, lastRow)) perhapsNum=-1;
+                    if (!compareSimilarColumn2Row(lastButOneRow, lastRow)) perhapsNum=-1;
                 }
             }
             if (perhapsNum!=-1&&splitRowNum==-1&&numList.size()>2&&perhapsNum==numList.get(numList.size()-3)) {
                 //再多判断一行
                 perhapsSplitRow = catchRows.get(numList.get(numList.size()-3));
                 lastRow = catchRows.get(numList.get(numList.size()-1));
-                if (!compareSameColumn2Row(perhapsSplitRow, lastRow)) perhapsNum=-1;
+                if (!compareSimilarColumn2Row(perhapsSplitRow, lastRow)) perhapsNum=-1;
                 else splitRowNum=perhapsNum;
             }
             if (perhapsNum!=-1&&splitRowNum!=-1) break;//找到了分割行号
@@ -253,8 +253,8 @@ public class PoiParseUtils {
     private boolean dealOneRowData4DataStructureAnal(List<Map<String, Object>> rowData, SheetTableInfo sti, int rowNum) { //
         try {
             if (rowData!=null&&!isEmptyRow(rowData)/*放弃空行*/) {
-                List<Map<String, Object>> _rowData = convert2DataRow(rowData);//转换为为数据处理的行
-                if (_rowData.size()==sti.getTitleInfo().size()) {//若与title同构，则进行处理，否则不进行处理
+                List<Map<String, Object>> _rowData = convert2DataRow(rowData);//转换为——为数据处理的行
+                if (_rowData.size()<=sti.getTitleInfo().size()) {//若与title类似，则进行处理，否则不进行处理
                     for (int j=0; j<_rowData.size(); j++) {
                         Map<String, Object> _cellMap = _rowData.get(j);
                         Map<String, Object> titleColumnMap = sti.getTitleInfo().get(j);
@@ -330,15 +330,21 @@ public class PoiParseUtils {
         Cell cell = null; //单元格信息
         Map<String, Object> _cellMap = null;
         List<Map<String, Object>> rd = new ArrayList<Map<String, Object>>();
-
-        for (int i=0; i<rowData.getLastCellNum(); i++) {
+        int i=0;
+        for (; i<rowData.getLastCellNum(); i++) {
             cell = rowData.getCell(i);
             if (cell!=null) {
                 _cellMap = getCellMap(cell);
                 rd.add(_cellMap);
             }
         }
-        
+        //把最后一列的空去掉
+        for (i=rd.size()-1; i>=0; i--) {
+            Map<String, Object> nd = (Map<String, Object>)rd.get(i).get("nativeData");
+            if ((Integer)nd.get("dType")==3) {
+                rd.remove(i);
+            }
+        }
         return rd.size()==0?null:rd;
     }
 
@@ -606,8 +612,7 @@ public class PoiParseUtils {
      * @return 若是相同的列，返回true，否则返回false
      */
     private boolean sameColumn(Map<String, Object> cell1, Map<String, Object> cell2) {
-        if ((Integer)cell1.get("firstCol")==(Integer)cell2.get("firstCol")&&(Integer)cell1.get("lastCol")==(Integer)cell2.get("lastCol")) return true;
-        return false;
+        return ((Integer)cell1.get("firstCol")==(Integer)cell2.get("firstCol")&&(Integer)cell1.get("lastCol")==(Integer)cell2.get("lastCol"));
     }
 
     /*
@@ -615,23 +620,22 @@ public class PoiParseUtils {
      * @param cell1 第一单元格
      * @param cell2 第二单元格
      * @return 若是相同的行，返回true，否则返回false
-     */
     private boolean sameRow(Map<String, Object> cell1, Map<String, Object> cell2) {
-        if ((Integer)cell1.get("firstRow")==(Integer)cell2.get("firstRow")&&(Integer)cell1.get("lastRow")==(Integer)cell2.get("lastRow")) return true;
-        return false;
+        return ((Integer)cell1.get("firstRow")==(Integer)cell2.get("firstRow")&&(Integer)cell1.get("lastRow")==(Integer)cell2.get("lastRow"));
     }
+     */
 
     /*
      * 判断第一个单元格列是否包括第二个单元格列，主要用于合并单元格的处理
      * @param cell1 第一单元格
      * @param cell2 第二单元格
      * @return 若是包含的列，返回true，否则返回false
-     */
     private boolean containColumns(Map<String, Object> cell1, Map<String, Object> cell2) {
         if ((Integer)cell1.get("firstRow")==(Integer)cell2.get("firstRow")&&(Integer)cell1.get("lastRow")==(Integer)cell2.get("lastRow")) return false;
         if ((Integer)cell1.get("firstRow")>=(Integer)cell2.get("firstRow")&&(Integer)cell1.get("lastRow")<=(Integer)cell2.get("lastRow")) return true;
         return false;
     }
+     */
 
     /*
      * 判断第一个单元格行是否包括第二个单元格行，主要用于合并单元格的处理
@@ -709,16 +713,16 @@ public class PoiParseUtils {
         return true;
     }
     /*
-     * 比较两行是否列结构相同
+     * 比较两行是否列结构相似，以第一行为准
      * @param firstRow 第一行数据，以cellMap为list中的元素
      * @param secondRow 第二行数据，以cellMap为list中的元素
      * @return 若一样返回true，否则返回false
      */
-    private boolean compareSameColumn2Row(List<Map<String, Object>> firstRow, List<Map<String, Object>> secondRow) {
+    private boolean compareSimilarColumn2Row(List<Map<String, Object>> firstRow, List<Map<String, Object>> secondRow) {
         if (firstRow==null||firstRow.size()==0) return false;
         if (secondRow==null||secondRow.size()==0) return false;
-        if (firstRow.size()!=secondRow.size()) return false;
-        for (int i=0; i<firstRow.size(); i++) {
+        if (firstRow.size()<secondRow.size()) return false;
+        for (int i=0; i<secondRow.size(); i++) {
             Map<String, Object> cell1 = firstRow.get(i);
             Map<String, Object> cell2 = secondRow.get(i);
             if (!sameColumn(cell1, cell2)) return false;
@@ -755,7 +759,7 @@ public class PoiParseUtils {
 
 /**
  * 分析表结构，得到元数据信息
- * @author wangxia
+ * @author wh
  */
 class Thread_anay_MetadataTableInfo implements Runnable {
     private PoiParseUtils caller;

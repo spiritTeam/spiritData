@@ -36,7 +36,7 @@ import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
  */
 @Controller
 public class RegisterController {
-	private String mainPage = "/mainAnalApp.jsp";
+	private String mainPage = "/index/analIndex.jsp";
     /**
      * 发送重设密码的验证邮件
      */

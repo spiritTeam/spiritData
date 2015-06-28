@@ -202,7 +202,7 @@ $(function() {
   //================显示状态
   setInitPage();
   getNoVisitReports();//先查一次
-  setInterval(getNoVisitReports,30*1000);//半分钟获取一次未读足以，获取未读报告
+//  setInterval(getNoVisitReports,30*1000);//半分钟获取一次未读足以，获取未读报告
 });
 
 //初始化界面
