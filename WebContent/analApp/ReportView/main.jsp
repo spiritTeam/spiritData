@@ -193,6 +193,9 @@ var searchResultJsonData = null; //保存查询后的结果
 var objDatatable = null; //列表显示对象
 
 //取出输入条件，提交查询
+var maxAlertCount_searchReports=3;
+var maxCount_searchReports=1000;
+var alertCount_searchReports=0;
 function startSearch(){
   var searchStr = $("#inp_filename").val();
   var startDateStr = $("#startDate").val();
@@ -208,11 +211,29 @@ function startSearch(){
         searchResultJsonData = str2JsonObj(jsonStr); 
         showSearchResult(showType);
       } catch(e) {
-        showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+        alertCount_searchReports++;
+        if (alertCount_searchReports<maxAlertCount_searchReports) {
+          showAlert("刷新报告信息异常", "查询结果解析成JSON失败："+(e.message)+"！", "error", function(){});
+        }
+        if (alertCount_searchReports==maxAlertCount_searchReports) {
+          showAlert("获得未读报告异常", "查询结果解析成JSON失败："+(e.message)+"！<br/>已提示多次，系统将进入提示静默状态！", "error", function(){});
+        }
+        if (alertCount_searchReports>maxCount_searchReports) {//清除计数，推出静默状态
+          alertCount_searchReports=0;
+        }
       }
     },
     error:function(errorData){
-      showAlert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
+      alertCount_searchReports++;
+      if (alertCount_searchReports<maxAlertCount_searchReports) {
+        showAlert("刷新报告信息异常", "查询失败："+(errorData?errorData.responseText+"！":""), "error", function(){});
+      }
+      if (alertCount_searchReports==maxAlertCount_searchReports) {
+        showAlert("获得未读报告异常", "查询失败："+(errorData?errorData.responseText+"！":"")+"<br/>已提示多次，系统将进入提示静默状态！", "error", function(){});
+      }
+      if (alertCount_searchReports>maxCount_searchReports) {//清除计数，推出静默状态
+        alertCount_searchReports=0;
+      }
     }
   }); 
 }

@@ -11,7 +11,6 @@
   String loginName = "";
   if (user!=null) loginName = user.getLoginName();
   String hadUpload = ""+session.getAttribute(SDConstants.SESSION_HAD_UPLOAD);
-  System.out.println("-----------------------"+hadUpload);
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -77,7 +76,7 @@
   <iframe frameborder="no" style="display:none;" id="ifmSearch" _src="analApp/listView/main.jsp"></iframe>
 </div>
 
-<form method="post" action="/sa/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe" style="width:0px; height:0px;">        
+<form method="post" action="<%=path%>/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe" style="width:0px; height:0px;">        
   <input id="upf" name="upf" type="file" style="display:none;" onchange="uploadF()"/>
 </form>
 <iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:none;"></iframe>
@@ -332,6 +331,8 @@ function logout() {
         $.messager.alert("注销信息","注销成功!",'info',function(){
           _loginName="";
           __STATUS=0;
+          $("#newReportFlag").hide();
+          newReportJson = null;
           setInitPage();
         });
       } else {
@@ -421,6 +422,10 @@ function uploadF() {
 }
 
 //======获取未读报告
+//提示次数
+var maxAlertCount_getNoVisitReports=3;
+var maxCount_getNoVisitReports=1000;
+var alertCount_getNoVisitReports=0;
 function getNoVisitReports() {//得到未访问列表信息
   var searchParam={"searchType":"fectchNewReport","searchStr":""};
   var url="<%=path%>/reportview/searchNewReport.do";
@@ -433,11 +438,29 @@ function getNoVisitReports() {//得到未访问列表信息
           newReportJson = jsonData;
         }
       } catch(e) {
-        $.messager.alert("解析新报告异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
+        alertCount_getNoVisitReports++;
+        if (alertCount_getNoVisitReports<maxAlertCount_getNoVisitReports) {
+          $.messager.alert("获得未读报告异常", "查询结果解析成JSON失败："+(e.message)+"！", "error", function(){});
+        }
+        if (alertCount_getNoVisitReports==maxAlertCount_getNoVisitReports) {
+          $.messager.alert("获得未读报告异常", "查询结果解析成JSON失败："+(e.message)+"！<br/>已提示多次，系统将进入提示静默状态！", "error", function(){});
+        }
+        if (alertCount_getNoVisitReports>maxCount_getNoVisitReports) {//清除计数，推出静默状态
+          alertCount_getNoVisitReports=0;
+        }
       }
     },
     error: function(errorData) {
-      $.messager.alert("查询未访问报告异常", "查询异常：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});      
+      alertCount_getNoVisitReports++;
+      if (alertCount_getNoVisitReports<maxAlertCount_getNoVisitReports) {
+        $.messager.alert("查询未访问报告异常", "查询异常："+(errorData?errorData.responseText+"！":""), "error", function(){});      
+      }
+      if (alertCount_getNoVisitReports==maxAlertCount_getNoVisitReports) {
+        $.messager.alert("查询未访问报告异常", "查询异常："+(errorData?errorData.responseText+"！":"")+"<br/>已提示多次，系统将进入提示静默状态！", "error", function(){});      
+      }
+      if (alertCount_getNoVisitReports>maxCount_getNoVisitReports) {//清除计数，推出静默状态
+        alertCount_getNoVisitReports=0;
+      }
     }
   });
 }

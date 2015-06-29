@@ -25,6 +25,7 @@ import com.spiritdata.filemanage.core.enumeration.RelType1;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.model.FileRelation;
 import com.spiritdata.filemanage.core.service.FileManageService;
+import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
 import com.spiritdata.dataanal.common.util.SessionUtils;
 import com.spiritdata.dataanal.dictionary.model._OwnerDictionary;
 import com.spiritdata.dataanal.dictionary.service.DictSessionService;
@@ -122,8 +123,8 @@ public class DealExcelFileService {
             }
             if (excelType==0) {
                 logger.info("以excel格式读取文件["+fi.getAllFileName()+"]失败");
+                throw new Flmg0002CException("以excel格式读取文件["+fi.getAllFileName()+"]失败，您所上传的Excel文档版本为Excel2003之前的。");
                 //TODO 不支持的版本信息要提示到用户界面去
-                return;
             }
         } finally {
             try {if (fis!=null) fis.close(); } catch (Exception e) {e.printStackTrace();} finally {fis = null;};

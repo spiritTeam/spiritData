@@ -13,6 +13,7 @@ import com.spiritdata.dataanal.importdata.excel.service.DealExcelFileService;
 import com.spiritdata.filemanage.category.IMP.model.ImportFile;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.filemanage.core.service.FileManageService;
+import com.spiritdata.filemanage.exceptionC.Flmg0002CException;
 
 /**
  * 处理上传文件
@@ -32,16 +33,16 @@ public class DealUploadFileService {
      */
     public void dealUploadFile(Map<String, Object> uploadInfoMap, HttpSession session) throws Exception  {
         //记录文件
+        ImportFile ifl = getFileInfo(uploadInfoMap, session);
+        FileInfo fi = fmService.saveFile(ifl);
         try {
-            ImportFile ifl = getFileInfo(uploadInfoMap, session);
-            FileInfo fi = fmService.saveFile(ifl);
             //得到文件扩展名
             String extName = FileNameUtils.getExt(ifl.getServerFileName());
             if (extName.toUpperCase().indexOf(".XLS")==0||extName.toUpperCase().indexOf(".XLSX")==0) {
                 //对excel进行处理
                 dealExcelService.process(fi, session);
             } else { //处理其他文件类型的文件
-                
+                throw new Flmg0002CException("目前只能处理excl2003之后的电子表格数据。");
             }
         } catch(Exception e) {
             if (e instanceof Dtal0101CException) throw e;

@@ -285,7 +285,7 @@ public class RegisterController {
         if (user==null||user.getLoginName().equals(loginName)) {
             if (user==null) user = userService.getUserByLoginName(loginName);
             if (user==null) {
-                retInfo = "登录名错误！";
+                retInfo = "不存在登录名为["+loginName+"]的用户！";
                 ee = new Dtal1104CException(retInfo);
                 retMap.put("success", false);
                 retMap.put("retInfo", ee.getMessage());
@@ -346,7 +346,7 @@ public class RegisterController {
         String code = authCode.substring(authCode.lastIndexOf("~")+1);
         User user = userService.getUserById(userId);
         if (user==null) {
-            retInfo = "该用户不存在！";
+            retInfo = "不存在用户Id为["+userId+"]的用户！";
             ee = new Dtal1104CException(retInfo);
             retMap.put("success", false);
             retMap.put("retInfo",ee.getMessage());
@@ -418,12 +418,12 @@ public class RegisterController {
             User user = null;
             try {
                 user = userService.getUserByLoginName(loginName);
-                if (user!=null) retInfo+= "<br/>["+loginName+"]账号已被使用";
+                if (user!=null) retInfo+= "<br/>["+loginName+"]账号已被注册。";
                 user = userService.getUserByMailAdress(mailAdress);
-                if (user!=null) retInfo+= "<br/>["+mailAdress+"]邮箱已被注册";
+                if (user!=null) retInfo+= "<br/>["+mailAdress+"]邮箱已被注册。";
                 if (retInfo.length()>0) {
                     retMap.put("success", false);
-                    ee = new Dtal1104CException(retInfo.substring(5));
+                    ee = new Dtal1104CException(retInfo);
                     retMap.put("retInfo", ee.getMessage());
                     return retMap;
                 }
@@ -452,13 +452,14 @@ public class RegisterController {
                     String deployName = request.getContextPath();
                     int  serverPort = request.getServerPort();
                     String serverName = request.getServerName();
-                    String mailMessage = "请点击以下链接激活绑定邮箱，如果不成功，把链接复制到浏览器地址栏访问\n"
-                            + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+user.getValidataSequence();
+                    String mailMessage = "请点击以下链接激活账号：\n"
+                            + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+user.getValidataSequence()
+                            + "\n或把以上链接复制到浏览器地址栏，以激活帐号。";
                     //调用发送邮件线程减少前台相应时间
                     SendMail sendMail = new SendMail(user.getMailAdress(),mailMessage);
                     sendMail.start();
                     retMap.put("success", true);
-                    retInfo = "注册成功！";
+                    retInfo = "注册成功！<br/>‘激活连接’已发至您所注册的邮箱！";
                     retMap.put("retInfo", retInfo);
                     return retMap;
                 }else{

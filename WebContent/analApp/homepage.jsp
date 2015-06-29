@@ -30,7 +30,7 @@
       <div id="descript">无模式开放数据分析平台</div>
     </div>
     <div id="inForm">
-      <form method="post" action="/sa/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">        
+      <form method="post" action="<%=path%>/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">        
         <input id="upf" name="upf" type=file style="display:yes;" onchange="showFileInfo()"/>
         <div>
           <div id="upIcon" onclick="upIcon_clk();"></div>
