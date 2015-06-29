@@ -3,11 +3,13 @@
 <%
   String path = request.getContextPath();
   String fileId = request.getParameter("fileId");
-  //fileId = new String(fileId.getBytes("ISO-8859-1"),"UTF-8");
-  //System.out.println("fileId="+fileId+" fileName=");
   String fileName = request.getParameter("fileName");
-  //fileName = new String(fileName.getBytes("ISO-8859-1"),"UTF-8");
-  //System.out.println("fileName="+fileName);
+  String _OSNAME = System.getProperties().getProperty("os.name");
+  //if (_OSNAME.toUpperCase().startsWith("WINDOW")) {
+  //  fileId = new String(fileId.getBytes("ISO-8859-1"),"UTF-8");
+  //  fileName = new String(fileName.getBytes("ISO-8859-1"),"UTF-8");
+  //}
+  //System.out.println("fileId="+fileId+"  fileName="+fileName);
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
