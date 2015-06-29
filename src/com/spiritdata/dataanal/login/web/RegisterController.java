@@ -1,7 +1,6 @@
 package com.spiritdata.dataanal.login.web;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ import com.spiritdata.dataanal.login.util.RandomValidateCode;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
 
 /**
- * 用于登陆和注册
+ * 用于登录和注册
  * @author mht
  */
 @Controller
@@ -50,7 +49,7 @@ public class RegisterController {
         String retInfo = "";
         Exception ee = null;
         if (user==null) {
-            retInfo = "没有账号为"+loginName+"的用户";
+            retInfo = "不存在账号为["+loginName+"]的用户";
             ee = new Dtal1104CException(retInfo);
             retMap.put("success", false);
             retMap.put("retInfo", ee.getMessage());
@@ -331,13 +330,17 @@ public class RegisterController {
      * 激活新注册用户
      */
     @RequestMapping("login/activeUser.do")
-    public @ResponseBody Map<String,Object> activeMail(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> retMap = new HashMap<String,Object>();
+    public @ResponseBody Map<String,Object> activeUser(HttpServletRequest request, HttpServletResponse response){
         String authCode = request.getParameter("authCode");
-        Exception ee = null;
+        String aciveFlag = "0"; //状态：
+        String deployName = request.getContextPath();
         String retInfo = "";
+
+        Map<String,Object> retMap = new HashMap<String,Object>();
+
+        Exception ee = null;
         if (authCode==null) {
-            retInfo = "激活码不完整！请重新新点击激活链接或从登录页面再次发送激活邮件！";
+            retInfo = "激活码不完整！请重新访问激活链接或从在登录页面用未激活帐号登录后再次发送激活邮件！";
             ee = new Dtal1101CException(retInfo);
             retMap.put("success", false);
             retMap.put("retInfo", ee.getMessage());
@@ -349,37 +352,44 @@ public class RegisterController {
             retInfo = "不存在用户Id为["+userId+"]的用户！";
             ee = new Dtal1104CException(retInfo);
             retMap.put("success", false);
-            retMap.put("retInfo",ee.getMessage());
-        } else {
-            if (user.getUserState()==0) {
-                if (user.getValidataSequence().equals(code)) {
-                    user.setUserState(1);
-                    user.setUserType(1);
-                    userService.updateUser(user);
-                    retInfo = "激活成功！";
-                    retMap.put("success", true);
-                    retMap.put("retInfo",retInfo);
-                    try {
-                        String deployName = request.getContextPath();
-                        //uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
-                        String redirectUrl = deployName+mainPage+"?activeSuccess=true";
-                        response.sendRedirect(redirectUrl);
-                        //在重定向的基础上修改为转发
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    retInfo = "激活码不完整！请重新新点击激活链接或从登录页面再次发送激活邮件！";
-                    ee = new Dtal1101CException(retInfo);
-                    retMap.put("success", false);
-                    retMap.put("retInfo", ee.getMessage());
-                }
+            retMap.put("retInfo", ee.getMessage());
+        } else if (user.getUserState()==0) {
+            if (user.getValidataSequence().equals(code)) {
+                user.setUserState(1);
+                user.setUserType(1);
+                userService.updateUser(user);
+                retInfo = "激活成功！";
+                retMap.put("success", true);
+                retMap.put("retInfo",retInfo);
+                //uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
+                aciveFlag="1";//成功激活
             } else {
-                retInfo = "您的账号已经激活！";
+                aciveFlag="2";//激活码不正常
+                retInfo = "激活码不正常！";
                 ee = new Dtal1101CException(retInfo);
                 retMap.put("success", false);
                 retMap.put("retInfo", ee.getMessage());
             }
+        } else {
+            aciveFlag="3";//已激活，无需再次激活
+            retInfo = "已激活，无需再次激活！";
+            ee = new Dtal1101CException(retInfo);
+            retMap.put("success", false);
+            retMap.put("retInfo", ee.getMessage());
+        }
+
+        try {
+            String _url = deployName+"/login.do?activeFlag="+aciveFlag;
+            if (aciveFlag.equals("1")||aciveFlag.equals("3")) {
+                _url += "&loginName="+user.getLoginName()+"&password="+user.getPassword();
+                response.sendRedirect(_url);
+            } else {
+                response.sendRedirect(deployName+"/index/analIndex.jsp?activeFlag="+aciveFlag);
+            }
+        } catch(Exception e) {
+            retInfo = "激活后页面跳转异常！";
+            retMap.put("success", false);
+            retMap.put("retInfo", e.getMessage());
         }
         return retMap;
     }

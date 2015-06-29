@@ -101,8 +101,9 @@ var searchTxt = "请输入查询内容..."; //查询提示信息
 var curFrameIndex = -1; //当前激活的页面
 var _curFrameIndex = -1;  //为上传所准备的当前激活的页面
 var needRefresh = [1,1,1,1];//是否需要刷新，0不需要刷新，1需要刷新，needRefresh[1]报告；needRefresh[2]文件；needRefresh[3]查询；needRefresh[0]首页，不需要
+var activeFlag=getUrlParam(window.location.href, "activeFlag");
 
-//登陆窗口大小
+//登录窗口大小
 var wHeight = "430";
 var wWidth = "330";
 
@@ -202,6 +203,17 @@ $(function() {
   setInitPage();
   getNoVisitReports();//先查一次
   setInterval(getNoVisitReports,30*1000);//半分钟获取一次未读足以，获取未读报告
+  if (activeFlag) {
+    var msg="", _type="info";
+    if (activeFlag==0||activeFlag==2) {
+      msg="激活码不正确，激活失败！";
+      _type="error";
+    }
+    else if (activeFlag==1) msg="帐号激活成功！<br/>感谢您使用“灵派诺达”提供的数据服务功能！";
+    else if (activeFlag==3) msg="帐号已经激活！<br/>请您放心使用“灵派诺达”提供的数据服务功能！";
+
+    if (msg) $.messager.alert("帐号激活", msg, _type);
+  }
 });
 
 //初始化界面
@@ -235,7 +247,7 @@ function setInitPage() {//刚进入系统或浏览器刷新：看是否用该ses
   }
   //点击主页
   $("#nav_homepage").click();
-  setLoginPage();//登陆状态
+  setLoginPage();//登录状态
 }
 //1----页签状态处理
 function setAfterUpload() {//上传文件后，现实所有页签，并定位到报告页面
@@ -259,7 +271,7 @@ function setLoginPage() {
     $("#nav_report").show();
     $("#nav_file").show();
     $("#funBar").show();
-  } else {//未登陆
+  } else {//未登录
     $("#login").show();
     $("#register").show();
     $("#userShow").hide();

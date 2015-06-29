@@ -133,7 +133,7 @@ $(function() {
   document.onkeydown = function(e) { 
     var ev = document.all ? window.event : e;
     if(ev.keyCode==13) {
-      //在回车登陆的时候验证一下
+      //在回车登录的时候验证一下
       validatePassword();
       validateLoginName();
       validateCheckCode();
@@ -179,7 +179,7 @@ function validateCheckCode(){
     vdInfoAry[2] = "验证码为必填项";
     //用于测试，等正式上线后需去掉！！！
     if(ignoreCheckCode){
-    	vdInfoAry[2] = "";
+      vdInfoAry[2] = "";
     }
   }
   ma = getMainAlert($("#checkCode"));
@@ -191,7 +191,6 @@ function validateCheckCode(){
 //跳转到注册页面
 function register(){
   var winId = getUrlParam(window.location.href, "_winID");
-  var win = getSWinInMain(winId);
   win.modify({title:"注册"});
   window.location.href="<%=path%>/login/register.jsp?_winID="+winId;
 }
@@ -223,7 +222,7 @@ function activeUser(){
 }
 //以上为页面跳转部分============
 
-//提交登陆信息
+//提交登录信息
 function commit(){
   var msgs = "";
   for (var i=0; i<vdInfoAry.length; i++) {
@@ -234,7 +233,7 @@ function commit(){
     msgs = "<div style='margin-left:40px;'>"+msgs+"</div>";
   }
   if (msgs.length>0) {
-  	showAlert('登陆提示', msgs, 'info', function() {
+    showAlert('登录提示', msgs, 'info', function() {
       for (var i=0; i<vdInfoAry.length; i++) if (vdInfoAry[i]&&vdInfoAry[i].length>0) break;
       if (i==0) {
         $('#loginName')[0].focus();
@@ -246,7 +245,7 @@ function commit(){
         $('#checkCode')[0].focus();
         $('#checkCode')[0].select();
       }
-  	});
+    });
   } else {
     var pData={
       "loginName":$("#loginName").val(),
@@ -270,36 +269,34 @@ function login(pData){
       $('#checkCode').val('');
       var loginInfo = json.data;
       var retInfo = loginInfo.retInfo;
+      var activeFlag = loginInfo.activeFlag;
+
       if (json.type==-1) {
-        if(loginInfo.activeType!=""&&loginInfo.activeType!=null){
-          var activeType = loginInfo.activeType;
-          if(activeType==1){
-            $('#activeUser').css('display','');
-            $('#delimiter').css('display','');
-            userInfo = loginInfo.user;
-            showConfirm('确认对话框', "您的账号未激活，点击确定激活账号！", function(r) {
-              if (r) activeUser();
-            });
-          }
-        }else {
-          showAlert('登录信息',retInfo,'info');
+        errMsg ='登录失败'+(retInfo?("："+retInfo):"！");
+        if (activeFlag==0) {//未激活
+          showConfirm('登录信息', errMsg, function(r) {
+            $('#activeUser').show();
+            $('#delimiter').show();
+            if (r) activeUser();
+          });
+        } else　showAlert('登录信息', '登录失败'+(retInfo?("："+retInfo):"！"), 'error');
+      } else if (json.type==1) {//登录成功
+        if (activeFlag==0) {//未激活
+          showConfirm('登录信息', retInfo, function(r) {
+            $('#activeUser').css('display','yes');
+            $('#delimiter').css('display','yes');
+            if (r) activeUser();
+          });
         }
-      } else if (json.type==1) {//登陆成功
-        var activeType = loginInfo.activeType;
-        if (activeType==2) {
-          if (mainPage) {
-            mainPage.$.messager.alert("登陆信息","登陆成功！",'info',function() {
-              mainPage.setLogined(pData.loginName);
-              closeSWinInMain(winId);
-            });
-          } else {
-            $.messager.alert("登陆信息","登陆成功！",'info');
-            window.location.href = window.location.href;
-          }
+        else if (activeFlag==1) {//已激活
+          showAlert("登录信息", "登录成功！", "info", function() {
+            if (mainPage) mainPage.setLogined(pData.loginName);
+            else window.location.href = window.location.href;
+            closeSWinInMain(winId);
+          });
         }
-      } else {
-        showAlert("登录信息", "登录失败："+json.data, "error");
       }
+      else showAlert("登录信息", "登录失败："+json.data, "error");
     },
     error:function(errorData ){
       if (errorData ) {

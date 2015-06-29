@@ -41,20 +41,26 @@ public class LoginServiceImpl implements LoginService {
     public Map<String, Object> afterUserLoginOk(UgaUser user, HttpServletRequest request) {
         Map<String,Object> retMap = new HashMap<String,Object>();
         try {
+            String activeFlag = request.getParameter("activeFlag");
             //激活邮箱
             User u = (User)user;
+            String activeUrl = request.getContextPath()+"/index/analIndex.jsp?activeFlag=";
             //==0,未发邮箱激活
             if (u.getUserState()==0) {
-                retMap.put("activeType",1);
-                retMap.put("retInfo", "您未通过邮箱激活账号,请登录邮箱激活,如果验证信息误删，请点击“激活”");
+                retMap.put("activeFlag",0);
+                retMap.put("retInfo", "账号还未激活！");
                 retMap.put("user", user);
+                //处理激活
+                if (activeFlag!=null) retMap.put("redirectUrl", activeUrl+"0");
             } else {
                 changeOwnerId(request.getSession(), user.getUserId());
                 String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
                 FileUtils.deleteFile(new File(toDeletURI));
-                retMap.put("activeType",2);
-                retMap.put("retInfo", "登录成功!");
+                retMap.put("activeFlag",1);
+                retMap.put("retInfo", "登录成功！");
                 retMap.put("success", "success");
+                //处理激活
+                if (activeFlag!=null) retMap.put("redirectUrl", activeUrl+activeFlag);
             }
         } catch(Exception e) {
             retMap.put("success", "false");
