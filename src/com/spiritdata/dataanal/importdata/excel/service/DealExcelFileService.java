@@ -123,7 +123,7 @@ public class DealExcelFileService {
             }
             if (excelType==0) {
                 logger.info("以excel格式读取文件["+fi.getAllFileName()+"]失败");
-                throw new Flmg0002CException("以excel格式读取文件["+fi.getAllFileName()+"]失败，您所上传的Excel文档版本为Excel2003之前的。");
+                throw new Flmg0002CException("以excel格式读取文件["+fi.getAllFileName()+"]失败，您所上传的Excel文档版本为Excel97之前的版本。");
                 //TODO 不支持的版本信息要提示到用户界面去
             }
         } finally {

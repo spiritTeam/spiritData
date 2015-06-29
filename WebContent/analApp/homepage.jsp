@@ -50,7 +50,7 @@
     </div>
   </div>
 </div>
-<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:none;"></iframe>
+<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:yes;"></iframe>
 <script>
 var mainPage;
 //提示信息
@@ -179,8 +179,9 @@ function checkUploadStatus() {
     ret = eval("("+ret+")");
     clearInterval(checkProcessId);//删除进程
     var success=(ret.jsonType==1&&ret.data&&(ret.data.length==1&&ret.data[0].success));
-    if (success) {//成功
+    if (success+""=="TRUE") {//成功
       if (mainPage) {
+      	alert("DDD");
         $("#upfs").val(_promptMessage);
         mainPage.__STATUS=1;
         mainPage.needRefresh=[1,1,1,1];
@@ -196,7 +197,7 @@ function checkUploadStatus() {
       	else msg=allFields(ret.message[0]);
       }
       if (!msg) msg="未知问题";
-      showAlert("文件上传失败", msg, "error");
+      showAlert("上传", "数据文件上传失败！", "error");
     }
     mainPage.showMask(0);
   }

@@ -42,7 +42,7 @@ public class DealUploadFileService {
                 //对excel进行处理
                 dealExcelService.process(fi, session);
             } else { //处理其他文件类型的文件
-                throw new Flmg0002CException("目前只能处理excl2003之后的电子表格数据。");
+                throw new Flmg0002CException("目前只能处理excl97之后的电子表格数据。");
             }
         } catch(Exception e) {
             if (e instanceof Dtal0101CException) throw e;
