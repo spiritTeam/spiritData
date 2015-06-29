@@ -42,8 +42,9 @@ public class LoginServiceImpl implements LoginService {
         Map<String,Object> retMap = new HashMap<String,Object>();
         try {
             String activeFlag = request.getParameter("activeFlag");
-            //激活邮箱
             User u = (User)user;
+            retMap.put("userLoginName", u.getLoginName());
+            retMap.put("userMail", u.getMailAdress());
             String activeUrl = request.getContextPath()+"/index/analIndex.jsp?activeFlag=";
             //==0,未发邮箱激活
             if (u.getUserState()==0) {

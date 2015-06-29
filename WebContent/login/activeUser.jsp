@@ -26,7 +26,7 @@
       <td class="labelTd">账　号</td>
       <td class="inputTd">
         <div class="alertInput-Text">
-          <input class="alertInputComp" id="loginName" name="loginName" tabindex="1" type="text" disabled="disabled" />
+          <input class="alertInputComp" id="loginName" name="loginName" tabindex="1" type="text" disabled="disabled""/>
           <div class="maskTitle">请输入您的账号</div>
         </div>
       </td>
@@ -35,7 +35,7 @@
       <td class="labelTd">邮　箱</td>
       <td class="inputTd">
         <div class="alertInput-Text">
-          <input class="alertInputComp" id="mail" name="mail" tabindex="2" type="text" onblur="validateMail();" />
+          <input class="alertInputComp" id="mail" name="mail" tabindex="2" type="text" onblur="validateMail();"/>
         </div>
         <div id="mailAlertImg" style="width:16px;height:16px;position:absolute;left:295px;top:70px;display:block;"></div>
       </td>
@@ -54,7 +54,7 @@
     <tr>
       <td colspan="2" class="commitBottonTd">
         <div id="commitButton" class="commitDiv" onclick="commit();">
-          <span>激　活</span>
+          <span>重新向邮箱发送激活信息</span>
         </div>
       </td>
     </tr>
@@ -70,6 +70,7 @@ var vdInfoAry = ['邮箱不能为空','验证码不能为空'];
  * 主函数
  */
 $(function() {
+	
   initPageParam();
   initMask();//初始化遮罩
 
@@ -97,6 +98,8 @@ function initPageParam(){
     $('#password').val(s[2]);
     validateMail();
   }
+  $("#loginName").val(getUrlParam(window.location.href, "userName"));
+  $("#mail").val(getUrlParam(window.location.href, "mailAddress"));
 }
 //=以上初始化设置=============================================
 
@@ -169,29 +172,21 @@ function commit(){
       }
   	});
   } else {
-  	showConfirm('确认对话框', '请仔细检查邮箱，如果邮箱不正确，将不会收到激活邮件!', function() {
-      if (r) {
-        var mailAdress = $("#mail").val();
-        var pData={
-          "loginName":$("#loginName").val(),
-          "mailAdress":mailAdress
-        };
-        $("#mask").show();
-        var _url="<%=path%>/login/activeUserAgain.do";
-        $.ajax({type:"post",async:false,url:_url,data:pData,dataType:"json",
-          success:function(json) {
-            $("#mask").hide();
-            if(json.success){
-              mainPage.$.messager.alert('修改提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
-            }else{
-              mainPage.$.messager.alert('提示',json.retInfo,'info');
-            }
-          }
-        });
-      } else {
-        $('#mail')[0].focus();
-        $('#mail')[0].select();
-        refreshCCImg('<%=path%>');
+    var mailAdress = $("#mail").val();
+    var pData={
+      "loginName":$("#loginName").val(),
+      "mailAdress":mailAdress
+    };
+    $("#mask").show();
+    var _url="<%=path%>/login/activeUserAgain.do";
+    $.ajax({type:"post",async:false,url:_url,data:pData,dataType:"json",
+      success:function(json) {
+        $("#mask").hide();
+        if(json.success){
+          mainPage.$.messager.alert('修改提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
+        }else{
+          mainPage.$.messager.alert('提示',json.retInfo,'info');
+        }
       }
     });
   }

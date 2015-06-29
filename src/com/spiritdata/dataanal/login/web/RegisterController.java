@@ -297,23 +297,20 @@ public class RegisterController {
                     retMap.put("retInfo", ee.getMessage());
                     return retMap;
                 } else {
-                    //发布名
                     String deployName = request.getContextPath();
-                    //serverPort
-                    int serverPort = request.getServerPort();
-                    //serverName
+                    int  serverPort = request.getServerPort();
                     String serverName = request.getServerName();
-                    //验证url=serverName+deployName+servletPath
-                    String validatsaSequence = SequenceUUID.getPureUUID();
-                    user.setValidataSequence(validatsaSequence);
-                    String mailMessage = "请前往以下地址激活账号\n"+serverName+":"+serverPort+deployName+"/login/activeUser.do?authCode="+user.getUserId()+"~"+validatsaSequence;
+                    String mailMessage = "请点击以下链接激活账号：\n"
+                            + serverName+":"+serverPort+deployName+ "/login/activeUser.do?authCode="+user.getUserId()+"~"+user.getValidataSequence()
+                            + "\n或把以上链接复制到浏览器地址栏，以激活帐号。";
+                    //调用发送邮件线程减少前台相应时间
+                    SendMail sendMail = new SendMail(user.getMailAdress(),mailMessage);
+                    sendMail.start();
                     //更新邮箱并储存
                     if (!user.getMailAdress().equals(newMail)) user.setMailAdress(newMail);
                     userService.updateUser(user);
-                    SendMail sendMail = new SendMail(user.getMailAdress(),mailMessage);
-                    sendMail.start();
                     retMap.put("success", true);
-                    retInfo = "已经向您的邮箱发送一封邮件，请激活账号";
+                    retInfo = "‘激活连接’已发至您所注册的邮箱！";
                     retMap.put("retInfo", retInfo);
                     return retMap;
                 }
@@ -326,6 +323,7 @@ public class RegisterController {
             return retMap;
         }
     }
+
     /**
      * 激活新注册用户
      */
@@ -411,6 +409,7 @@ public class RegisterController {
             return retMap;
         }
     }
+
     /**
      * 注册:注册后成功后，向用户邮箱发送验证邮件
      */
@@ -458,7 +457,6 @@ public class RegisterController {
                     //删除图片
                     String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
                     FileUtils.deleteFile(new File(toDeletURI));
-                    //
                     String deployName = request.getContextPath();
                     int  serverPort = request.getServerPort();
                     String serverName = request.getServerName();
@@ -494,6 +492,7 @@ public class RegisterController {
         }
     }
 }
+
 /**
  * 用于发送邮件，减少等待时间
  * @author mht
@@ -513,11 +512,10 @@ class SendMail extends Thread{
     }
     public void run(){
         SendValidataUrlToMail svu = new SendValidataUrlToMail();
-            try {
-                svu.send(mailAdress, "北京灵派诺达股份有限公司", mailMessage);
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
+        try {
+            svu.send(mailAdress, "北京灵派诺达股份有限公司", mailMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }
-

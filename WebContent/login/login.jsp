@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
   String path = request.getContextPath();
-  String uT = request.getParameter("uT");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -26,22 +25,11 @@
   <input type="hidden" name="txtDNSName"/>
 </form>
 <script>
-//var service = locator.ConnectServer();
 var ignoreCheckCode = false; //是否忽略验证码. true-忽略验证码
 var MACAddr;
 var IPAddr;
 var DomainAddr;
 var sDNSName;
-//uT=1,表示激活成功过来的账号，uT=2表示修改密码成功后跳转的，ut=3表示正常的跳转的
-//uTMessage表示要提示的信息
-var uT=<%=uT%>,uTMessage = "";
-if(uT==1){
-  uTMessage = "激活成功!";
-  $.messager.alert('提示',uTMessage,'info');
-}else if(uT==2) {
-  uTMessage = "修改密码成功!";
-  $.messager.alert('提示',uTMessage,'info');
-}
 </script>
 
 <script language="JScript" event="OnCompleted(hResult,pErrorObject, pAsyncContext)" for="foo">
@@ -90,7 +78,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
           <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="3" type="text" onBlur="validateCheckCode();"/></div>
           <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refreshCCImg('<%=path %>');" src=""></div>
           <div class="alertImg"></div>
-          <div class="maskTitle">按右图输入验证码</div>
+          <div class="maskTitle">输入验证码,见右图</div>
         </div>
       </td>
     </tr>
@@ -116,6 +104,7 @@ var checkCode="";
 var userInfo = null;
 //此数组有5个元素，分别代表5个需要验证的输入框
 var vdInfoAry = ['账号为必填项','密码为必填项','验证码为必填项'];
+var _userName=null, _ma=null;
 /**
  * 主函数
  */
@@ -130,16 +119,6 @@ $(function() {
   setCorrectPosition();//设置正确的位置
   setTimeout(initMaskTitle, 100);//初始化maskTitle
   refreshCCImg('<%=path%>');
-  document.onkeydown = function(e) { 
-    var ev = document.all ? window.event : e;
-    if(ev.keyCode==13) {
-      //在回车登录的时候验证一下
-      validatePassword();
-      validateLoginName();
-      validateCheckCode();
-      commit();
-    }
-  };
 });
 //初始化页面全局参数
 function initPageParam(){
@@ -207,13 +186,11 @@ function forgetPassword(){
   openSWinInMain(winOption);
 }
 //重新发送激活邮件到邮箱
-function activeUser(){
-  var _userInfo = "";
-  if (userInfo!=null) _userInfo = userInfo.loginName+","+userInfo.mailAdress+","+userInfo.password;
-  var _url="<%=path%>/login/activeUser.jsp?_winID="+winId+"&_userInfo="+_userInfo;
+function activeUser() {
+  var _url="<%=path%>/login/activeUser.jsp?userName="+_userName+"&mailAddress="+_ma;
   var winOption={
     url:_url,
-    title:"激活",
+    title:"重发激活码",
     height:'330',
     width:'330',
     modal:true
@@ -223,7 +200,10 @@ function activeUser(){
 //以上为页面跳转部分============
 
 //提交登录信息
-function commit(){
+function commit() {
+  validatePassword();
+  validateLoginName();
+  validateCheckCode();
   var msgs = "";
   for (var i=0; i<vdInfoAry.length; i++) {
     if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
@@ -259,6 +239,7 @@ function commit(){
     login(pData);
   }
 }
+
 //用于提交
 function login(pData){
   var url="<%=path%>/login.do";
@@ -268,25 +249,31 @@ function login(pData){
       refreshCCImg('<%=path%>');
       $('#checkCode').val('');
       var loginInfo = json.data;
+      _userName=loginInfo.userLoginName;
+      _ma=loginInfo.userMail;
+
       var retInfo = loginInfo.retInfo;
       var activeFlag = loginInfo.activeFlag;
 
+      errMsg ='登录失败'+(retInfo?("："+retInfo):"！")+"<br/>请到所注册邮箱获得‘激活连接’，或点击右下角[激活]功能，重新发送激活邮件。";
       if (json.type==-1) {
-        errMsg ='登录失败'+(retInfo?("："+retInfo):"！");
         if (activeFlag==0) {//未激活
-          showConfirm('登录信息', errMsg, function(r) {
-            $('#activeUser').show();
-            $('#delimiter').show();
-            if (r) activeUser();
-          });
+          refreshCCImg('<%=path%>');
+          $('#checkCode').val('');
+          showAlert('登录信息', errMsg, 'error');
+          $('#activeUser').show();
+          $('#delimiter').show();
+          if (mainPage) mainPage.$("#mask").hide();
         } else　showAlert('登录信息', '登录失败'+(retInfo?("："+retInfo):"！"), 'error');
       } else if (json.type==1) {//登录成功
         if (activeFlag==0) {//未激活
-          showConfirm('登录信息', retInfo, function(r) {
-            $('#activeUser').css('display','yes');
-            $('#delimiter').css('display','yes');
-            if (r) activeUser();
-          });
+          refreshCCImg('<%=path%>');
+          $('#checkCode').val('');
+          showAlert('登录信息', errMsg, 'error');
+          $('#activeUser').show();
+          $('#delimiter').show();
+          $("#checkCode").val("");
+          if (mainPage) mainPage.$("#mask").hide();
         }
         else if (activeFlag==1) {//已激活
           showAlert("登录信息", "登录成功！", "info", function() {
@@ -304,9 +291,6 @@ function login(pData){
       }
     }
   });
-  mainPage.$("#mask").hide();
-  refreshCCImg('<%=path%>');
-  $('#checkCode').val('');
 }
 </script>
 </html>

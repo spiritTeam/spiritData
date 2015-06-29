@@ -161,13 +161,21 @@
     winDiv.resize=function(){//当窗口调整大小时，resize不进行处理
       //var abc='ddd';
     };
-    winDiv.close=function(){
+    winDiv.close=function(wCount){
       var opt = $.data(this, "spiritSimpleWin");
       if (opt.onBeforeClose) opt.onBeforeClose(winDiv.attr("id"));
       winDiv.remove();
       $("body>div._wMask").css("display", "none");
-      //删除对象
-      //resize去掉
+      /*
+      if (!wCount||wCount<=0) $("body>div._wMask").css("display", "none");
+      else {
+      	alert(maskDiv.css("z-index"));
+        maskDiv.css({
+          "z-index": opt.zIndex-1,
+          "display":"block"
+        });
+      }
+      */
     };
     /**
      * 修改参数，目前只修改标题

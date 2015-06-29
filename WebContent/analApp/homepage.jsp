@@ -27,7 +27,7 @@
       <img id="mlogo" src="../resources/images/logo/main_logo.png"/>
       <div id="internet" onclick="test()">互联网</div>
       <div id="plus">+</div>
-      <div id="descript">无模式开放数据分析平台</div>
+      <div id="descript">无模式·开放型·数据分析平台</div>
     </div>
     <div id="inForm">
       <form method="post" action="<%=path%>/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">        
@@ -88,9 +88,9 @@ function initPosition() {//注意，不要在此设置topSegment/mainSegment/foo
   $("#dayLogo").css({"left": left});
   left = (parseFloat($("#fileIn").width())-parseFloat($("#inForm").width()))/2;
   $("#inForm").css({"left": left});
-  $("#internet").css({"left":"20px", "top":"50px"});
-  $("#plus").css({"left":"228px", "top":"65px"});
-  $("#descript").css({"left":"-1px", "top":"126px"});
+  $("#internet").css({"left":"65px", "top":"50px"});
+  $("#plus").css({"left":"270px", "top":"65px"});
+  $("#descript").css({"left":"-25px", "top":"126px"});
   $("#plugs").css({"left":"-1px", "top":"126px"});
   left = (parseFloat($("#mainSegment").width())-parseFloat($("#waittingArea").width()))/2;
   $("#waittingArea").css({"left": left});

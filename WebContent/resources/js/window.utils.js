@@ -213,11 +213,12 @@ function closeSWin(sWinId) {
   for (;i<len;i++) {
     if (sWinId==sWinArray[i].sWinId) {
       _i=i;
-      sWinArray[i].sWinOBJ.close();
+      sWinArray[i].sWinOBJ.close(sWinArray.length-1);
       break;
     }
   }
   if (_i==-1) $.messager.alert('关闭窗口错误','未找到Id='+winId+'的窗口，无法关闭!','error');
+  else sWinArray.removeByIndex(_i);
 }
 
 /**
