@@ -61,7 +61,7 @@ function startSearch() {
   //异步查询文件列表  
   var searchParam={"searchStr":_searchStr};
   var url = "<%=path%>/listview/searchGeneralList.do";
-  alert(allFields(searchParam));
+  //alert(allFields(searchParam));
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
     success: function(jsonStr) {
       try {
@@ -122,7 +122,11 @@ function showSearchResult() {
           flag = suffix.toUpperCase();
         }
         //item-head内容
-        divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
+        if(reportId && reportId!=null && reportId.length>0){
+        	divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
+        }else{
+        	divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" style="visibility:hidden;" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
+        }
         divItemHead.append('<h4><span class="label label-primary font_size15">'+flag+'</span>&nbsp; <a href="###" class="href_file" onclick="showFile(\''+id+'\');">'+fileFull+'</a></h4>');
         //item-content内容
         divItemContent.append('<div class="text font_size13">'+'ID：'+highlightStr(id,_searchStr)+'&nbsp;&nbsp;&nbsp;'
