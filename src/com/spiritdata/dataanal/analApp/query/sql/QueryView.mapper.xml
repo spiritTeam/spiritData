@@ -28,7 +28,7 @@
   <sql id="queryFileList">
     select a.ctime,a.ownerId,a.ownerType,concat('{\"id\":','\"',a.id,'\"',',\"type\":\"file\"',',\"name\":','\"',a.cFileName,'\"',',\"size\":','\"',a.fileSize,'\"'
       ,',\"createDate\":','\"',a.cTime,'\"',',\"desc\":','\"',a.descn,'\"',',\"suffix\":','\"',a.fileExtName,'\"'
-      ,',\"reportId\":','\"',b.reportid,'\"}') rowjson
+      ,',\"reportId\":','\"',(case when b.reportid is null then '' else b.reportid end),'\"}') rowjson
     from vsa_imp_log a 
     left join (select m.fid,n.id reportid, l.* from sa_file_rel l, sa_file_category m, sa_report_info n 
       where l.bid=m.id and n.fid=m.fid and l.btype=2 and m.type1='REPORT') b 

@@ -66,9 +66,10 @@ public class JsonDService {
         String _jsonStr = "";
 
         if (uri.indexOf("\\\\:")!=-1||uri.indexOf("//:")!=-1) {//走协议方式
-            
         } else {//走服务器目录方式
-            if ((uri.charAt(0)!='\\'&&uri.charAt(0)!='/')||(uri.indexOf(':')>4)) {
+            String _OSNAME = System.getProperties().getProperty("os.name");
+            if ((_OSNAME.toUpperCase().startsWith("WINDOW")&&uri.charAt(0)!='\\'&&uri.charAt(0)!='/'&&uri.indexOf(':')==-1)
+              ||((!_OSNAME.toUpperCase().startsWith("WINDOW"))&&uri.charAt(0)!='\\'&&uri.charAt(0)!='/')) {
                 uri = FileNameUtils.concatPath(((CacheEle<String>)SystemCache.getCache(FConstants.APPOSPATH)).getContent(), uri);
             }
             File f = FileUtils.getFile(uri);
