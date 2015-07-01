@@ -21,6 +21,7 @@
 <!-- 加载analApp的JS -->
 <script src="<%=path%>/resources/js/visit.utils.js"></script>
 <script src="<%=path%>/analApp/js/analApp.view.js"></script>
+<script src="<%=path%>/reportFrame/serial/js/spirit.report.serial.utils.js"></script>
 
 <title>列表显示查询结果主界面</title>
 </head>
@@ -52,6 +53,7 @@ _searchStr = decodeURIComponent(_searchStr);
 
 //主函数
 $(function() {
+	_urlPath = "<%=path%>";  
   startSearch();
 });
 
@@ -123,11 +125,11 @@ function showSearchResult() {
         }
         //item-head内容
         if(reportId && reportId!=null && reportId.length>0){
-        	divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
+        	divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\',\''+fileFull+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
         }else{
-        	divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" style="visibility:hidden;" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
+        	divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\',\''+fileFull+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" style="visibility:hidden;" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
         }
-        divItemHead.append('<h4><span class="label label-primary font_size15">'+flag+'</span>&nbsp; <a href="###" class="href_file" onclick="showFile(\''+id+'\');">'+fileFull+'</a></h4>');
+        divItemHead.append('<h4><span class="label label-primary font_size15">'+flag+'</span>&nbsp; <a href="###" class="href_file" onclick="showFile(\''+id+'\',\''+fileFull+'\');">'+fileFull+'</a></h4>');
         //item-content内容
         divItemContent.append('<div class="text font_size13">'+'ID：'+highlightStr(id,_searchStr)+'&nbsp;&nbsp;&nbsp;'
           +'名称：'+highlightStr(fileFull,_searchStr)+'&nbsp;&nbsp;&nbsp;'

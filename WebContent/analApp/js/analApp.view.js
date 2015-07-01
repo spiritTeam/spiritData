@@ -9,6 +9,7 @@ var _urlPath;
  * 查询结果中，当点击了某个文件，触发此操作
  */
 function showFile(fileId,fileName){
+  //alert("showFile() fileId="+fileId+" fileName="+fileName);
   var winOption={
     url:_urlPath+"/analApp/FileView/FileDatagrid.jsp?fileId="+fileId+"&fileName="+fileName,
     title:"文件详情",
@@ -26,6 +27,7 @@ function showFile(fileId,fileName){
  * unReadId--未读报告小圆点标识的ID，用于查看报告后隐藏该小圆点，在主页面上显示的未读报告总数-1，未读报告JSON中减去REPORTID所对应的记录
  */
 function showReport(reportId, unReadId) {
+  //alert("showReport() reportId="+reportId+" unReadId="+unReadId);
   //显示report内容
   var winOption={
     title:"报告详情",
