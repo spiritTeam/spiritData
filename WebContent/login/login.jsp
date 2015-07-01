@@ -175,6 +175,8 @@ function register(){
 }
 //未登录的忘记密码页面
 function forgetPassword(){
+  showAlert('忘记密码', "请用您的注册邮箱给我公司QQ邮箱1794595752@qq.com发送您的帐号信息，我们会随后与您联系！", 'info');
+  return;
   var _url="<%=path%>/login/forgetPassword.jsp?modType=2";
   var winOption={
     url:_url,
@@ -241,7 +243,8 @@ function commit() {
 }
 
 //用于提交
-function login(pData){
+function login(pData) {
+  $("#waittingText").html("登录中，请稍候...");
   var url="<%=path%>/login.do";
   $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
     success:function(json){
@@ -261,8 +264,9 @@ function login(pData){
           refreshCCImg('<%=path%>');
           $('#checkCode').val('');
           showAlert('登录信息', errMsg, 'error');
-          $('#activeUser').show();
-          $('#delimiter').show();
+//          $('#activeUser').show();
+  //        $('#delimiter').show();
+          $("#checkCode").val("");
           if (mainPage) mainPage.$("#mask").hide();
         } else　showAlert('登录信息', '登录失败'+(retInfo?("："+retInfo):"！"), 'error');
       } else if (json.type==1) {//登录成功
@@ -270,8 +274,8 @@ function login(pData){
           refreshCCImg('<%=path%>');
           $('#checkCode').val('');
           showAlert('登录信息', errMsg, 'error');
-          $('#activeUser').show();
-          $('#delimiter').show();
+    //      $('#activeUser').show();
+      //    $('#delimiter').show();
           $("#checkCode").val("");
           if (mainPage) mainPage.$("#mask").hide();
         }

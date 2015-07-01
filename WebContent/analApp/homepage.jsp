@@ -50,7 +50,7 @@
     </div>
   </div>
 </div>
-<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:yes;"></iframe>
+<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:none;"></iframe>
 <script>
 var mainPage;
 //提示信息
@@ -173,7 +173,6 @@ function checkUploadStatus() {
   var ret = document.getElementById('tframe').contentWindow.document.body;
   if (!ret) return; 
   ret = ret.innerHTML;
-  console.log(ret);
   if (!ret) return;
   else {
     ret = eval("("+ret+")");
@@ -181,7 +180,6 @@ function checkUploadStatus() {
     var success=(ret.jsonType==1&&ret.data&&(ret.data.length==1&&ret.data[0].success));
     if (success+""=="TRUE") {//成功
       if (mainPage) {
-      	alert("DDD");
         $("#upfs").val(_promptMessage);
         mainPage.__STATUS=1;
         mainPage.needRefresh=[1,1,1,1];

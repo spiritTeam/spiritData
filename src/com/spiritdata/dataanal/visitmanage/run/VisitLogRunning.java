@@ -30,7 +30,6 @@ public class VisitLogRunning extends Thread {
         try {
             sleep(5000);//多少毫秒后启动任务处理，先让系统的其他启动任务完成，这里设置死为10秒钟
             //延迟加载，以便让Spring处理好自己的容器
-            System.out.println("-------------------------------");
             System.out.println("===============================");
             System.out.println("访问日志处理服务启动");
             System.out.println("===============================");
@@ -41,8 +40,6 @@ public class VisitLogRunning extends Thread {
             
             System.out.println("2-启动——[访问日志写入数据库]线程");
             save2DB();
-
-            System.out.println("-------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
         }

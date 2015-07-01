@@ -59,7 +59,6 @@ public class TaskRunning extends Thread {
         try {
             sleep(5000);//多少毫秒后启动任务处理，先让系统的其他启动任务完成，这里设置死为10秒钟
             //延迟加载，以便让Spring处理好自己的容器
-            System.out.println("-------------------------------");
             System.out.println("===============================");
             System.out.println("任务处理服务启动");
             System.out.println("===============================");
@@ -88,8 +87,6 @@ public class TaskRunning extends Thread {
 
             System.out.println("5-启动——[任务分发]线程");
             startDispatch();
-
-            System.out.println("-------------------------------");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -96,10 +96,10 @@ function initPageParam(){
     $('#loginName').val(s[0]);
     $('#mail').val(s[1]);
     $('#password').val(s[2]);
-    validateMail();
   }
   $("#loginName").val(getUrlParam(window.location.href, "userName"));
   $("#mail").val(getUrlParam(window.location.href, "mailAddress"));
+  validateMail();
 }
 //=以上初始化设置=============================================
 
@@ -150,7 +150,8 @@ function validateCheckCode(){
 }
 //=以上为验证=============================================
 //提交方法
-function commit(){
+function commit() {
+  $("#waittingText").html("邮件发送中，请稍候...");
   var msgs = "";
   for (var i=0; i<vdInfoAry.length; i++) if (vdInfoAry[i]&&vdInfoAry[i].length>0) msgs+="<br/>"+vdInfoAry[i]+"；";
 

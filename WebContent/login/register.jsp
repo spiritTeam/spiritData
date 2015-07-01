@@ -301,11 +301,11 @@ function commit() {
         $("#mask").hide();
         if (json.success) {
           if(mainPage) {
-            mainPage.$.messager.alert('注册提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info',function(){
+            mainPage.$.messager.alert('注册提示',"<div style='margin-left:40px;'>注册成功！</div>",'info',function() {
               closeSWinInMain(winId);
             });
           } else {
-            $.messager.alert('注册提示',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'info',function(){
+            $.messager.alert('注册提示',"<div style='margin-left:40px;'>注册成功！</div>",'info',function() {
               window.location.href = window.location.href;
             });
           }
