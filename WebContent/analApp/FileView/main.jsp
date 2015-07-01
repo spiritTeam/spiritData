@@ -91,14 +91,16 @@ border-radius:10px;
         </td>        
         <td style="width:100px;">   
           <div class="col-md-4">
-            <input id="startDate" type="text" class='form-control form-date' placeholder='开始日期' readonly>
-          </div>       
+            <input id="startDate" type="text" class='form-control form-date' placeholder='开始日期' readonly> 
+          </div>      
+          <div id="div_close_startData" class='sWin_closeBtn'/></div> 
         </td>        
         <td style="width:10px;">   
           --      
         </td>           
         <td style="width:100px;">   
-          <div class="col-md-4"><input id="endDate" type="text" class='form-control form-date' placeholder='结束日期' readonly></div>       
+          <div class="col-md-4"><input id="endDate" type="text" class='form-control form-date' placeholder='结束日期' readonly></div>    
+          <div id="div_close_endData" class='sWin_closeBtn'/></div>         
         </td>          
         <td style="width:100px;text-align:right;">   
           <button class="btn btn-default" onclick="startSearch();">查  询</button>
@@ -128,6 +130,8 @@ $(function() {
   initSubmitBt();
   initSearchFileInput();
   initDatePicker();
+  //初始化日期清除按钮
+  initDataCloseBT();
   _urlPath = "<%=path%>";  
   startSearch();
 });
@@ -168,6 +172,55 @@ function initDatePicker(){
       forceParse: 0,
       format: 'yyyy-mm-dd'
   });
+}
+
+//初始化日期清除按钮
+function initDataCloseBT(){
+//初始化开始日期，首先定位关闭按钮的位置，其次加入点击事件
+var objStartDate = $("#startDate"); 
+var sleft = px2Float(objStartDate.offset().left);
+var swidth = px2Float(objStartDate.css("width"));
+var spos = sleft + swidth;
+//alert(sleft+" + "+swidth+" = "+spos);
+var objCloseStartBT = $("#div_close_startData");
+objCloseStartBT.css("left",spos);
+var stop = px2Float(objCloseStartBT.css("top"))+2; 
+objCloseStartBT.css("top",stop);
+objCloseStartBT.click(function(){
+  objStartDate.datetimepicker("reset");
+});
+//初始化结束日期
+var objEndDate = $("#endDate"); 
+var eleft = px2Float(objEndDate.offset().left);
+var ewidth = px2Float(objEndDate.css("width"));
+var epos = eleft + ewidth;
+//alert(eleft+" + "+ewidth+" = "+epos);
+var objCloseEndBT = $("#div_close_endData");
+objCloseEndBT.css("left",epos);
+var etop = px2Float(objCloseEndBT.css("top"))+2; 
+objCloseEndBT.css("top",etop);
+objCloseEndBT.click(function(){
+  objEndDate.datetimepicker("reset");
+});
+}
+
+//将带有px后缀的数值字符串，去掉px并转换成float类型
+function px2Float(pxStr){
+if(pxStr){
+  if(typeof(pxStr)=="string"){
+    var idx = pxStr.indexOf("px");
+    if(idx>-1){
+      return parseFloat(pxStr.substring(0,idx));
+    }else{
+      return parseFloat(pxStr);
+    } 
+  }else if(typeof(pxStr)=="number"){
+    return parseFloat(pxStr);
+  }else{
+    return parseFloat(pxStr);
+  } 
+}
+return pxStr;
 }
 
 //定义查询方式和保存查询结果
