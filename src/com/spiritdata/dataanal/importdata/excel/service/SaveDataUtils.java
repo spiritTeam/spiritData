@@ -138,9 +138,10 @@ public abstract class SaveDataUtils {
                         }
                     }
                 }
-                boolean canInsert = true;
-                int paLength=rowData.size()<paramArray.length?rowData.size():paramArray.length;//配合，readOneRow去掉后续空列的功能
                 int j=0;
+                boolean canInsert = true;
+                /*
+                int paLength=rowData.size()<paramArray.length?rowData.size():paramArray.length;//配合，readOneRow去掉后续空列的功能
                 for (j=paLength; j<paramArray.length; j++) {
                     paramArray[j]="null";
                 }
@@ -150,11 +151,15 @@ public abstract class SaveDataUtils {
                         break;
                     }
                 }
+                for (j=0; j<paramArray.length; j++) {
+                    if (paramArray[j].equals("null")) paramArray[j]=null;
+                }
                 if (!canInsert) {
 //                    _log_ignoreCount++;
 //                    _log_ignoreMap.put(i, "第"+i+"行数据与元数据不匹配，行数据为<<>>，元数据为<<>>。");
                     continue;
                 }
+                */
                 //TODO 注意这里可能要判断列组合，现在先不做处理
                 //根据长度判断是否能够插入，构造不能插入的列，这个主要为MySql数据库来处理
                 for (int k=0; k<sysMm.getColumnList().size(); k++) {
@@ -175,7 +180,7 @@ public abstract class SaveDataUtils {
                     continue;
                 }
 
-                try{
+                try {
                     for (j=0; j<paramArray.length; j++) {
                         ps.setObject(j+1, paramArray[j]);
                     }
@@ -187,6 +192,7 @@ public abstract class SaveDataUtils {
   //                      _log_failMap.put(i,  "第"+i+"行数据新增失败，原因未知！");
                     }
                 } catch(SQLException sqlE) {
+                    sqlE.printStackTrace();
       //              _log_insertFailCount++;
     //                _log_failMap.put(i,  "第"+i+"行数据新增失败，原因为："+sqlE.getMessage());
                 }
@@ -214,6 +220,7 @@ public abstract class SaveDataUtils {
   //                      _log_failMap.put(i,  "第"+i+"行数据新增失败，原因未知！");
                     }
                 } catch(SQLException sqlE) {
+                    sqlE.printStackTrace();
       //              _log_insertFailCount++;
     //                _log_failMap.put(i,  "第"+i+"行数据新增失败，原因为："+sqlE.getMessage());
                 }
@@ -336,7 +343,6 @@ public abstract class SaveDataUtils {
                     ps.execute();
                 }
             }
-
 //            int keyCount=0;
             int _mmDType, _infoDType;
             Object v;
@@ -391,9 +397,10 @@ public abstract class SaveDataUtils {
                         }
                     }
                 }
+                int j=0;
+                /*
                 boolean canSave = false;
                 int paLength=rowData.size()<paramArray4Insert.length?rowData.size():paramArray4Insert.length;//配合，readOneRow去掉后续空列的功能
-                int j=0;
                 for (j=paLength; j<paramArray4Insert.length; j++) {
                     paramArray4Insert[j]="null";
                 }
@@ -403,11 +410,15 @@ public abstract class SaveDataUtils {
                         break;
                     }
                 }
+                for (j=0; j<paramArray4Insert.length; j++) {
+                    if (paramArray4Insert[j].equals("null")) paramArray4Insert[j]=null;
+                }
                 if (!canSave) {
 //                    _log_ignoreCount++;
                     _log_ignoreMap.put(i, "第"+i+"行数据与元数据不匹配，行数据为<<>>，元数据为<<>>。");
                     continue;
                 }
+                */
                 //先修改，再新增
                 boolean canInsert = true;
                 if (updateSql!=null) {
@@ -419,7 +430,6 @@ public abstract class SaveDataUtils {
                         int updateOk = psUpdate.executeUpdate();
                         if (updateOk>0) {
                             canInsert=false;
-//                            _log_updateOkCount += updateOk;
                         } else {
                             canInsert=true;
                         }
