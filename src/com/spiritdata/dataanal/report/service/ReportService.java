@@ -114,7 +114,7 @@ public class ReportService {
         if (uri.indexOf("\\\\:")!=-1||uri.indexOf("//:")!=-1) {//走协议方式
             
         } else {//走服务器目录方式
-            if (uri.charAt(0)=='\\'||uri.charAt(0)=='/') {
+            if ((uri.charAt(0)!='\\'&&uri.charAt(0)!='/')||(uri.indexOf(':')>0&&uri.indexOf(':')<4)) {
                 uri = FileNameUtils.concatPath(((CacheEle<String>)SystemCache.getCache(FConstants.APPOSPATH)).getContent(), uri);
             }
             File f = FileUtils.getFile(uri);

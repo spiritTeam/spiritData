@@ -50,7 +50,7 @@
     </div>
   </div>
 </div>
-<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:yes;"></iframe>
+<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:none;"></iframe>
 <script>
 var mainPage;
 //提示信息

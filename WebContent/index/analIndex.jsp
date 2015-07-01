@@ -197,7 +197,7 @@ $(function() {
   });
   //搜索输入区域，回车就查询
   $("#searchAll").keydown(function(e) {
-    if(e.keyCode==13) startSearch();
+    if(e.keyCode==13&&$("#searchAll").is(":visible")) startSearch();
   });
   //================显示状态
   setInitPage();
@@ -445,7 +445,7 @@ function getNoVisitReports() {//得到未访问列表信息
     success: function(jsonData) {
       try {
         //刷新报告
-        if (jsonData&&jsonData.rows&&jsonData.total>0) {
+        if (jsonData&&jsonData.rows&&jsonData.total>=0) {
           setNoVisitReportNum(jsonData.total);
           newReportJson = jsonData;
         }
@@ -488,15 +488,12 @@ function showNoVisitReportList() {//显示未读报告
 }
 function setNoVisitReportNum(num) {//设置未访问报告标签的值
   var _num = parseInt(num);
-  if (!_num) return;
   if (_num>0) {
     $("#newReportFlag").attr("repNum", _num);//记录下来
     $("#newReportFlag").html(_num>99?"...":_num+"");
     if (_num>99) $("#newReportFlag").attr("title", _num); else $("#newReportFlag").attr("title", ""); 
     $("#newReportFlag").show();
-  } else {
-    $("#newReportFlag").hide();
-  }
+  } else $("#newReportFlag").hide();
 }
 /**
  * 返回指定的报告ID是否为未读报告，为报告页调用做准备
@@ -569,8 +566,7 @@ function incremeNoVisitReports(tag, reportList) {
       newReportJson.total++;
       _curNum++;
     }
-  }
-
+  };
   if (_curNum!=__curNum) setNoVisitReportNum(_curNum);
 }
 

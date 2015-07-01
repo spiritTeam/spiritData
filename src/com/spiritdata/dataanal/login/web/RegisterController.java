@@ -449,7 +449,8 @@ public class RegisterController {
                 user.setMailAdress(mailAdress);
                 user.setUserName(userName);
                 user.setUserId(SequenceUUID.getPureUUID());
-                user.setUserState(0);
+//              user.setUserState(0);
+                user.setUserState(1); //默认激活
                 user.setUserType(1);
                 user.setValidataSequence(validatsaSequence);
                 int rst = userService.insertUser(user);
