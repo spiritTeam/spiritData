@@ -64,9 +64,12 @@ function startSearch(){
       try{
     	  //alert(jsonStr);
         searchResultJsonData = str2JsonObj(jsonStr); 
-        if(searchResultJsonData.totalSheet==1){
-        	showDatagrid(); //只显示表格
-        }else if(searchResultJsonData.totalSheet>1){
+        //if(searchResultJsonData.totalSheet==1){
+        //	showDatagrid(); //只显示表格
+        //}else if(searchResultJsonData.totalSheet>1){
+        //	showTabs(); //先画TABS，然后每个TAB里面再显示表格
+        //}
+        if(searchResultJsonData && searchResultJsonData.totalSheet>0){
         	showTabs(); //先画TABS，然后每个TAB里面再显示表格
         }
       }catch(e){
@@ -122,6 +125,7 @@ function initDatagrid(objDatagrid,dgDataJson){
     //设置样式
     objDatagrid.addClass("div_center");
     //表名、长宽、列等设置
+    dgDataJson["fileInfoMap"].title=""; //不显示表头
 	  objDatagrid.datagrid(dgDataJson["fileInfoMap"]);
     var opts = objDatagrid.datagrid('options');
     //设置分页
