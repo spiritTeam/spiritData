@@ -3,7 +3,6 @@ package com.spiritdata.jsonD.web.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -11,7 +10,6 @@ import javax.annotation.Resource;
 import org.apache.commons.io.FileUtils;
 
 import com.spiritdata.dataanal.task.run.mem.TaskMemoryService;
-import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.framework.FConstants;
@@ -70,7 +68,7 @@ public class JsonDService {
         if (uri.indexOf("\\\\:")!=-1||uri.indexOf("//:")!=-1) {//走协议方式
             
         } else {//走服务器目录方式
-            if ((uri.charAt(0)!='\\'&&uri.charAt(0)!='/')||(uri.indexOf(':')>0&&uri.indexOf(':')<4)) {
+            if ((uri.charAt(0)!='\\'&&uri.charAt(0)!='/')||(uri.indexOf(':')>4)) {
                 uri = FileNameUtils.concatPath(((CacheEle<String>)SystemCache.getCache(FConstants.APPOSPATH)).getContent(), uri);
             }
             File f = FileUtils.getFile(uri);
