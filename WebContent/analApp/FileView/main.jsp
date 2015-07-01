@@ -16,6 +16,7 @@
 <!-- 加载ZUI - 开源HTML5跨屏框架 -->
 <link href="<%=path%>/resources/plugins/zui/css/zui.min.css" rel="stylesheet">
 <link href="<%=path%>/resources/plugins/zui/css/example.css" rel="stylesheet">
+<link href="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.css" rel="stylesheet">
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
 <script src="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.js"></script>
 <!-- 加载analApp的JS -->
@@ -37,11 +38,13 @@
 
 .border_no{border:0px solid red; }
 .padding_top5{padding-top:5px;}
+.padding_2px{padding:2px;}
 
 .bt_13_no{border:0px solid transparent;font-size:13px;padding:0px;}
 .td_height_49{height:49px;}
 .font_15{font-size:15px;}
 .div_float_left{float:left;}
+.div_inline{ display:inline} 
 
 .roundBase {
 border-radius: 5px; /* 所有角都使用半径为5px的圆角，此属性为CSS3标准属性 */
@@ -72,7 +75,17 @@ border: 1px #a72525 solid;
 -webkit-border-radius: 10px;
 border-radius:10px;
 } 
-
+.li_inline{  
+    display:-moz-inline-box;
+    *display:inline;
+    display:inline-block; 
+    float:left;
+}
+.wrap{
+  word-wrap: break-word;
+  word-break:break-all;
+  white-space:normal;
+}
 </style>
 <body class="padding_top5" style="background-color:#FFFFFF">
   <div class="div border_no">
@@ -114,7 +127,7 @@ border-radius:10px;
           </a>
         </td>
       </tr>
-    </table>    
+    </table> 
   </div>
              
   <div class="div border_no" style="border:0px solid red; ">
@@ -176,32 +189,32 @@ function initDatePicker(){
 
 //初始化日期清除按钮
 function initDataCloseBT(){
-//初始化开始日期，首先定位关闭按钮的位置，其次加入点击事件
-var objStartDate = $("#startDate"); 
-var sleft = px2Float(objStartDate.offset().left);
-var swidth = px2Float(objStartDate.css("width"));
-var spos = sleft + swidth;
-//alert(sleft+" + "+swidth+" = "+spos);
-var objCloseStartBT = $("#div_close_startData");
-objCloseStartBT.css("left",spos);
-var stop = px2Float(objCloseStartBT.css("top"))+2; 
-objCloseStartBT.css("top",stop);
-objCloseStartBT.click(function(){
-  objStartDate.datetimepicker("reset");
-});
-//初始化结束日期
-var objEndDate = $("#endDate"); 
-var eleft = px2Float(objEndDate.offset().left);
-var ewidth = px2Float(objEndDate.css("width"));
-var epos = eleft + ewidth;
-//alert(eleft+" + "+ewidth+" = "+epos);
-var objCloseEndBT = $("#div_close_endData");
-objCloseEndBT.css("left",epos);
-var etop = px2Float(objCloseEndBT.css("top"))+2; 
-objCloseEndBT.css("top",etop);
-objCloseEndBT.click(function(){
-  objEndDate.datetimepicker("reset");
-});
+  //初始化开始日期，首先定位关闭按钮的位置，其次加入点击事件
+  var objStartDate = $("#startDate"); 
+  var sleft = px2Float(objStartDate.offset().left);
+  var swidth = px2Float(objStartDate.css("width"));
+  var spos = sleft + swidth;
+  //alert(sleft+" + "+swidth+" = "+spos);
+  var objCloseStartBT = $("#div_close_startData");
+  objCloseStartBT.css("left",spos);
+  var stop = px2Float(objCloseStartBT.css("top"))+2; 
+  objCloseStartBT.css("top",stop);
+  objCloseStartBT.click(function(){
+    objStartDate.datetimepicker("reset");
+  });
+  //初始化结束日期
+  var objEndDate = $("#endDate"); 
+  var eleft = px2Float(objEndDate.offset().left);
+  var ewidth = px2Float(objEndDate.css("width"));
+  var epos = eleft + ewidth;
+  //alert(eleft+" + "+ewidth+" = "+epos);
+  var objCloseEndBT = $("#div_close_endData");
+  objCloseEndBT.css("left",epos);
+  var etop = px2Float(objCloseEndBT.css("top"))+2; 
+  objCloseEndBT.css("top",etop);
+  objCloseEndBT.click(function(){
+    objEndDate.datetimepicker("reset");
+  });
 }
 
 //将带有px后缀的数值字符串，去掉px并转换成float类型
