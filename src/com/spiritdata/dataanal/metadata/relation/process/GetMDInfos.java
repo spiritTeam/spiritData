@@ -2,10 +2,14 @@ package com.spiritdata.dataanal.metadata.relation.process;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
+
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import com.spiritdata.dataanal.SDConstants;
 import com.spiritdata.dataanal.exceptionC.Dtal0404CException;
 import com.spiritdata.dataanal.metadata.relation.semanteme.SemantemeType;
@@ -91,7 +95,7 @@ public class GetMDInfos implements TaskProcess {
         Map<String, Object> tableM = new HashMap<String, Object>();
         tableM.put("mdTitle", flag?(mm.getTitleName()+"("+mm.getId()+")"):mm.getId()+"的元数据信息");
         //title
-        Map<String, String> titleM = new HashMap<String, String>();
+        Map<String, String> titleM = new LinkedHashMap<String, String>();
         titleM.put("titleName", "元数据名称");
         titleM.put("columnType", "元数据类型");
         titleM.put("columnName", "列名称");
