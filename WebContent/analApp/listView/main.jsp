@@ -3,14 +3,6 @@
 <%
   request.setCharacterEncoding("UTF-8");
   String path = request.getContextPath();
-  //查找参数
-  String searchStr = request.getParameter("searchStr");
-  //输入中文后需要做转码，否则会出现乱码
-  if(searchStr!=null){
-    searchStr = new String(searchStr.getBytes("ISO-8859-1"),"UTF-8");
-  }else{
-    searchStr = "";
-  }
 %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -55,6 +47,8 @@ a:link{color:#0000CC;}
 var thumbPath = "<%=path%>/analApp/images/"; //报告缩略图所存储的路径
 var defaultThumbImg = "pie.png"; //默认显示的缩略图名称
 var searchResultJsonData = null; //保存查询后的结果
+var _searchStr = getUrlParam(window.location.href, "searchStr");
+_searchStr = decodeURIComponent(_searchStr);
 
 //主函数
 $(function() {
@@ -62,17 +56,16 @@ $(function() {
 });
 
 //开始查询
-function startSearch(){
-  var _searchStr = "<%=searchStr%>";
-  alert(_searchStr);
+function startSearch() {
   searchResultJsonData = {};
   //异步查询文件列表  
   var searchParam={"searchStr":_searchStr};
   var url = "<%=path%>/listview/searchGeneralList.do";
+  alert(allFields(searchParam));
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
     success: function(jsonStr) {
       try {
-        //searchResultJsonData = str2JsonObj(jsonStr); 
+        //searchResultJsonData = str2JsonObj(jsonStr);
         searchResultJsonData=jsonStr; 
         showSearchResult();
       }catch(e){
@@ -90,7 +83,6 @@ function showSearchResult() {
   if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
     var _objList = $('#sectionListId');
     _objList.empty();
-    var _searchStr = "<%=searchStr%>";
     var jsonRows = searchResultJsonData.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
@@ -176,6 +168,5 @@ function showSearchResult() {
     divItemFooter.appendTo(divItem);
   }
 }
-
 </script>
 </html>
