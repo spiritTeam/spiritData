@@ -305,7 +305,7 @@
           _rm.spiritUtils("setHeightByViewHeight", $(target).height());
         }
         //调用用户定义点击事件
-        if (tabData.onClick) tabData.onClick($(this)); //该页签的点击事件
+        if (tabData.onClick) eval(tabData.onClick);//该页签的点击事件
         else { //调用总的点击事件
         	if (_options.onClick) _options.onClick(tabData.title, tabData, this);
         }

@@ -15,6 +15,8 @@
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 
 <script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
+<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.tabs.js"></script>
+<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.simpleWin.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=path%>/resources/css/mainPage.css"/>
 <link rel="stylesheet" type="text/css" href="css/homepage.css"/>
 </head>
@@ -41,6 +43,46 @@
     </div>
   </div>
   <!-- 等待提示区 -->
+  <div id="desc">
+    <div id="tabBar">
+    </div>
+    <div id="tabPanels">
+      <div id="versionDesc" class="tabPanel">
+<span>目前版本</span>：Ver(0.00…00..0.1.0)版(内部公开测试——0.0.1版)<br/>
+<br/>
+<span>提供功能：</span>对电子表格数据Excel的无模式分析。并且仅能分析：<br/>
+1-对一个Excel中的多个页签进行处理<br/>
+2-每个页签中的数据表的表头要尽量简单<br/>
+<br/>
+内测版本，功能不完善。预理解报告功能，可浏览<a href="#" onclick="showDemo()" style="text-decoration:underline;">分析报告样例</a>。
+      </div>
+      <div id="declare" class="tabPanel">
+<span>在公开内测阶段，我们将：</span><br/>
+1-保证您所上传数据资产的安全性。<br/>
+2-对内测中存在的问题进行及时修改。<br/>
+3-版本更新时对数据进行的调整，可能导致您的数据资产丢失，请保管好您的数据资产。<br/>
+4-提前2天对“版本更新”在此进行公示。<br/>
+5-有问题可以通过QQ号1794595752或QQ邮箱1794595752@qq.com与我们联系。<br/>
+&nbsp;&nbsp;也可联系团队成员：王晖(13910672205)、原锋(13522876218)<br/>
+<br/>
+<span>建议：</span><br/>
+1-您在登录后使用本网站提供的数据服务，我们会对同一账号的数据资产进行统一管理和分析。<br/>
+2-目前只支持对电子表格Excel数据的无模式分析。<br/>
+<br/>
+      </div>
+      <div id="introduce" class="tabPanel">
+在全球互联的背景下，围绕数据的“生产、采集整理、交换/交易、数学分析、智能应用”必将形成全新的产业链条，我们将在其中做出自己的贡献。<br/>
+<br/>
+以数据为核心，努力提供“好用、有用”的互联网数据分析服务是我们现阶段的目标。<br/>
+<br/>
+感谢团队中的每个人为此做出的创造性的贡献！<br/>
+<br/>
+<br/>
+    <span>北京灵派诺达科技有限公司<span>
+      </div>
+    </div>
+  </div>
+  <!-- 等待提示区 -->
   <div id="waittingArea">
     <div id="ppbar">
       <div id="pp"></div>
@@ -48,6 +90,9 @@
     </div>
     <div id="logshow">
     </div>
+  </div>
+  <div id="icp" class="icp">
+  ©2015 灵派诺达 京ICP备15028482号 
   </div>
 </div>
 <iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:none;"></iframe>
@@ -94,6 +139,11 @@ function initPosition() {//注意，不要在此设置topSegment/mainSegment/foo
   $("#plugs").css({"left":"-1px", "top":"126px"});
   left = (parseFloat($("#mainSegment").width())-parseFloat($("#waittingArea").width()))/2;
   $("#waittingArea").css({"left": left});
+  left = (parseFloat($("#mainSegment").width())-parseFloat($("#tabBar").width()))/2;
+  $("#desc").css({"left": left, "top":$("#inForm").offset().top+50, "position":"absolute"});
+  $("#tabPanels").css({"top":$("#tabBar").css("height")});
+  var top2=$("#desc").offset().top+230;
+  $("#icp").css({"left":left, "top":top2});
 }
 //当界面尺寸改变
 function myResize() {
@@ -103,6 +153,9 @@ function myResize() {
     $("#fileIn").css({"left": left});
     left = (parseFloat($("#mainSegment").width())-parseFloat($("#waittingArea").width()))/2;
     $("#waittingArea").css({"left": left});
+    left = (parseFloat($("#mainSegment").width())-parseFloat($("#tabBar").width()))/2;
+    $("#desc").css({"left": left});
+    $("#icp").css({"left":left});
   }
 }
 
@@ -125,6 +178,15 @@ $(function() {
   }).mouseout(function(){
     $(this).css({"color":"white", "background-color":"#36B148"});
   });
+  //介绍区域tab控制
+  $("#tabBar").spiritTabs({id:"1"
+    , tabs:[
+      {title:"版本及功能", onClick:"changeTab(1)"}
+     ,{title:"声明", onClick:"changeTab(2)"}
+     ,{title:"介绍", onClick:"changeTab(3)"}
+    ]
+  });
+  $("#tabBar>div").first().click();
 });
 
 //点击大的输入框
@@ -202,7 +264,24 @@ function checkUploadStatus() {
 }
 
 function showResult() {
-  openSWin({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, modal:true});
+  openSWinInMain({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
+}
+function changeTab(tabIndex) {
+  $("#tabBar>div").each(function(i) {
+  	$(this).css({"height":"30px"});
+    $(this).css({"padding-top":"0px"});
+  	if (i==tabIndex-1) {
+      $(this).css({"height":"28px"});
+      $(this).css({"text-height":"28px"});
+  	}
+  });
+  $(".tabPanel").hide();
+  if (tabIndex==1) $("#versionDesc").show();
+  else if (tabIndex==2) $("#declare").show();
+  else if (tabIndex==3) $("#introduce").show();
+}
+function showDemo() {
+  openSWinInMain({"title":"分析报告Demo", "url":"demo/Rd/resultRdEchart.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
 }
 </script>
 </body>
