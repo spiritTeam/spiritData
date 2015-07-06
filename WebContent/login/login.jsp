@@ -171,12 +171,12 @@ function validateCheckCode(){
 function register(){
   var winId = getUrlParam(window.location.href, "_winID");
   win.modify({title:"注册"});
-  window.location.href="<%=path%>/login/register.jsp?_winID="+winId;
+  window.location.href="<%=path%>/login/register.jsp?_winID="+winId+"&_from=loginPage";
 }
 //未登录的忘记密码页面
-function forgetPassword(){
-  showAlert('忘记密码', "请用您的注册邮箱给我公司QQ邮箱1794595752@qq.com发送您的帐号信息，我们会随后与您联系！", 'info');
-  return;
+function forgetPassword() {
+//  showAlert('忘记密码', "请用您的注册邮箱给我公司QQ邮箱1794595752@qq.com发送您的帐号信息，我们会随后与您联系！", 'info');
+//  return;
   var _url="<%=path%>/login/forgetPassword.jsp?modType=2";
   var winOption={
     url:_url,

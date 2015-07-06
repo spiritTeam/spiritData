@@ -80,7 +80,11 @@
       </td>
     </tr>
   </table></form>
-</div></center>
+</div>
+<div id="extBar" align="right" style="width:310px;margin-top:13px;margin-right:10px;">
+  <a id="backLogin" onclick="backLogin();" href="#">《返回登录</a>
+</div>
+</center>
 </body>
 <script type="text/javascript">
 //win
@@ -120,6 +124,9 @@ function initPageParam(){
   mainPage = getMainPage();
   winId = getUrlParam(window.location.href, "_winID");
   win=getSWinInMain(winId);
+  $("#extBar").hide();
+  var _from=getUrlParam(window.location.href, "_from");
+  if (_from=="loginPage") $("#extBar").show();
 }
 
 //=以下验证=============================================
@@ -315,6 +322,12 @@ function commit() {
       }
     });
   }
+}
+//退回登录
+function backLogin() {
+  var winId = getUrlParam(window.location.href, "_winID");
+  win.modify({title:"登录"});
+  window.location.href="<%=path%>/login/login.jsp?_winID="+winId;
 }
 </script>
 </html>

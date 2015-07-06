@@ -16,7 +16,7 @@ CREATE TABLE plat_user (
   PRIMARY KEY (id),
   UNIQUE KEY loginName (loginName) USING BTREE,
   UNIQUE KEY mailAdress (mailAdress) USING BTREE
-) 
+)
 ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 /**002 字典组[PLAT_DICTM]*/

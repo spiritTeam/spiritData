@@ -165,17 +165,14 @@
       var opt = $.data(this, "spiritSimpleWin");
       if (opt.onBeforeClose) opt.onBeforeClose(winDiv.attr("id"));
       winDiv.remove();
-      $("body>div._wMask").css("display", "none");
-      /*
-      if (!wCount||wCount<=0) $("body>div._wMask").css("display", "none");
+      if ($("body>div.sWin").length==0) $("body>div._wMask").css("display", "none");
       else {
-      	alert(maskDiv.css("z-index"));
-        maskDiv.css({
-          "z-index": opt.zIndex-1,
-          "display":"block"
+        var maxIndex = 0;
+        $("body>div.sWin").each(function(){
+        	if ($(this).css("z-index")>maxIndex) maxIndex=$(this).css("z-index");
         });
+        $("body>div._wMask").css("z-index", maxIndex-1);
       }
-      */
     };
     /**
      * 修改参数，目前只修改标题

@@ -35,14 +35,14 @@
     <tr>
       <td colspan="2">
         <div id="infoDiv" class="prompt">
-                    　　您在输入完账号后，请点击“发送邮件”按钮，我们将为您重新发送一封邮件到您的邮箱。请注意查收。
+        请输入账号，请点击“发送找回密码邮件”按钮，系统将为您发送一封“找回密码功能的”邮件到您所注册的邮箱。<br>邮件可能会发到垃圾邮件分类中，请注意查收。
         </div>
       </td>
     </tr>
     <tr>
       <td colspan="2" class="commitBottonTd">
         <div id="commitButton" class="commitDiv" onclick="commit();">
-          <span>发送邮件</span>
+          <span>发送找回密码邮件</span>
         </div>
       </td>
     </tr>
@@ -109,13 +109,8 @@ function commit(){
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json) {
         $('#mask').hide();
-        if(json.success){
-          if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
-          else $.messager.alert('提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
-        }else{
-          if(mainPage) mainPage.$.messager.alert('提示',json.retInfo,'info');
-          else $.messager.alert('提示',json.retInfo,'info');
-        }
+        if (json.success) showAlert('提示', json.retInfo, 'info', function(){closeSWinInMain(winId);});
+        else showAlert('提示',json.retInfo,'info');
       }
     });
   }
