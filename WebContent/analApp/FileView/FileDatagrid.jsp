@@ -34,10 +34,10 @@
 .datagrid-header-row td{background-color:blue;color:#fff}
 </style>
 <body class="padding_top5 div_center" style="background-color:#FFFFFF;width:1000px;">
-  <div id="div_fileName" class="border_no head1" style="padding:5px;width:960px;">    
+  <div id="div_fileName" class="border_no head1" style="padding:5px;">    
   </div>
-  <div id="div_main" class="div_center" style="width:960px;">  
-    <div id="div_tabs" class="easyui-tabs" style="width:950px;height:500px;display:none;"></div>  
+  <div id="div_main" class="div_center" style="">  
+    <div id="div_tabs" class="easyui-tabs" style="height:500px;display:none;"></div>  
   </div>           
 </body>
 
@@ -57,7 +57,9 @@ $(function() {
 
 //初始化DIV_MAIN的位置，使其居中
 function initDivMain(){
-	$("#div_main").css({"left":(($(window).width()-$("#div_main").width())/2),"padding-left":12});
+	$("#div_main").css({"width":($(window).width()-10)});
+	$("#div_main").css({"left":($(window).width()-$("#div_main").width())/2});
+	//$("#div_main").css({"left":(($(window).width()-$("#div_main").width())/2),"padding-left":10});
 }
 
 //查询指定文件ID的数据 
@@ -111,33 +113,52 @@ function showTabs(){
 	  var tabid = "tab"+i;
 	  objTabs.tabs('add',{
 	    title: tabtitle,
-	    content: '<div id='+tabid+' style="width:98%">aaa</div>',
+	    content: '<div style="width:100%;height:100%;"><table id='+tabid+' class="easyui-datagrid" style="width:200px;height:200px;"></table></div>',
 	    closable: false
 	  });		  	  
+	  //alert(tabid+"  "+tabtitle+"  "+$("#"+tabid).width());
   }   
-  objTabs.tabs("select", 0);
+  objTabs.tabs({
+	  onSelect:function(title,index){
+		  //调整表格的宽度和高度
+		  //fitDataGrid();
+	  }
+  });
+  
   
   //加载datagrid
   for(var i=0;i<searchResultJsonData.totalSheet;i++){
 	  var tabid = "tab"+i;
 	  var objDatagrid = $("#"+tabid);
+	  //alert(tabid+"  "+objDatagrid.width());
 	  initDatagrid(objDatagrid,searchResultJsonData.SheetDataList[i]);
-  }  
+  }    
+  //调整表格的宽度和高度
+  //fitDataGrid(searchResultJsonData.totalSheet);
 }
 
 //初始化datagrid
 function initDatagrid(objDatagrid,dgDataJson){
   try{
+	  var myPageSize = 15;
     //设置样式
     objDatagrid.addClass("div_center");
+    objDatagrid.css({"padding-left":"2px"});
     //表名、长宽、列等设置
     dgDataJson["fileInfoMap"].title=""; //不显示表头
+    var objpb = $("#div_tabs").find(".panel-body");
+    var pbwidth = objpb.width();
+    var pbheight = objpb.height();
+    dgDataJson["fileInfoMap"].height=pbheight;
+    dgDataJson["fileInfoMap"].width=pbwidth;
+
+    //alert(JSON.stringify(dgDataJson));
 	  objDatagrid.datagrid(dgDataJson["fileInfoMap"]);
     var opts = objDatagrid.datagrid('options');
     //设置分页
     var pager = objDatagrid.datagrid('getPager');  
     pager.pagination({ 
-      pageSize: 15,//每页显示的记录条数，默认为10 
+      pageSize: myPageSize,//每页显示的记录条数，默认为10 
       pageList: [15,20,30,50,100],//可以设置每页记录条数的列表 
       beforePageText: '第',//页数文本框前显示的汉字 
       afterPageText: '页    共 {pages} 页', 
@@ -157,13 +178,16 @@ function initDatagrid(objDatagrid,dgDataJson){
         });
         //showAlert(dgDataJson.tableName+"   "+dgDataJson.selCols);
         getTablePageData(dgDataJson.tableName,dgDataJson.selCols,pageNumber, pageSize,objDatagrid);
+        //调整表格的宽度和高度
+        //fitDataGrid();
       }
     });
 
     //getData(1,15); 
     //加载数据
     
-    objDatagrid.datagrid("loadData", dgDataJson["fileDataMap"]);		
+    objDatagrid.datagrid("loadData", dgDataJson["fileDataMap"]); 
+    //loadTableDatas(objDatagrid,dgDataJson["fileDataMap"],myPageSize);
 	}catch(e){
 		//showAlert(e.message);
 	}
@@ -180,6 +204,7 @@ function getTablePageData(tableName,selCols,pageNumber, pageSize,objDatagrid){
 	      //alert(jsonStr);
 	      searchResultJsonData = str2JsonObj(jsonStr); 
 	      objDatagrid.datagrid("loadData", searchResultJsonData); 
+	      //loadTableDatas(objDatagrid,searchResultJsonData,pageSize);
 	    }catch(e){
 	      showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
 	    }
@@ -188,6 +213,50 @@ function getTablePageData(tableName,selCols,pageNumber, pageSize,objDatagrid){
 	    showAlert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
 	  }
 	});
+}
+
+//加载数据，如果行数不够则补空行
+function loadTableDatas(objDatagrid,dataJson,pageSize){
+	if(dataJson){
+		objDatagrid.datagrid("loadData", dataJson);	
+	}
+	var count =0;
+	if(dataJson.rows && pageSize){
+		count = pageSize - dataJson.rows.length;
+	}
+	
+	for(var i=0;i<count;i++){
+		//objDatagrid.datagrid("appendRow", {});
+	}
+}
+
+//调整表格的宽度和高度
+function fitDataGrid(tbsize){
+	//alert("fitDataGrid()");
+	var objpb = $("#div_tabs").find(".panel-body");
+	var pbwidth = objpb.width();
+	var pbheight = objpb.height();
+	var objdg = objpb.find(".datagrid");
+	objdg.css({"width":pbwidth,"height":pbheight});
+	//objdg.find(".datagrid-wrap").css({"width":pbwidth,"height":pbheight,"overflow-y":"auto"});
+	//objdg.find(".datagrid-wrap").css({"width":pbwidth,"height":pbheight});
+	for(var i=0;i<tbsize?tbsize:0;i++){
+	  var tabid = "tab"+i;
+		var objDatagrid = $("#"+tabid);		
+		objDatagrid.css({"width":pbwidth,"height":pbheight,"overflow-y":"auto"});
+		//alert(tabid+"  "+objDatagrid.width()+"  "+objDatagrid.height());
+	}    
+	
+	
+	
+	//-----------
+	//var objdv = objdg.find(".datagrid-view");
+	//objdv.css({"width":pbwidth,"height":pbheight});
+	//alert(objdv.width()+" "+objdv.height());
+	//var dgpagerheight = objdg.find(".datagrid-pager").height();
+	//objdv.find(".datagrid-view2").css({"height":(pbheight-dgpagerheight)});
+	//objdv.find(".datagrid-view2").find(".datagrid-body").css({"height":(pbheight-dgpagerheight)});
+	//objdv.find(".datagrid-view2").find(".datagrid-body").find(".datagrid-btable").css({"height":(pbheight-dgpagerheight)});
 }
 
 
