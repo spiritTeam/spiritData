@@ -44,6 +44,7 @@ function generateReport(param) {
   if (!_getUrl) return ;
 
   //2-初始化界面
+  $("html").css("overflow-x","hidden"); 
   $("body").html("");//清空页面
   initPageFrame();
 
@@ -88,7 +89,7 @@ function generateReport(param) {
       myResize: initPos
     };
     function initPos() {
-      $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth"));
+      $("#reportFrame").spiritUtils("setWidthByViewWidth", $("body").width()-$("#sideFrame").spiritUtils("getViewWidth")-15);
       $("#sideFrame").css("left", $("#reportFrame").width());
     }
     var initStr=$.spiritPageFrame(INIT_PARAM);
@@ -321,7 +322,8 @@ var reportParse={
     $('#catalogTree').tree({
       onClick: function(node) {
         var topSegHeight=$("#topSegment").height()+3;
-        $("body").animate({scrollTop:$("#"+node.segId).offset().top - topSegHeight});
+        if (node.segId=="segment0_0") $("body,html").animate({scrollTop:0});
+        else $("body,html").animate({scrollTop:$("#"+node.segId).offset().top - topSegHeight});
       }
     });
     parseSysData.ddtagdomMap=ret.dm;
@@ -398,17 +400,18 @@ var reportParse={
   recursionSegs: function(segs, ptn, ddm, l, jqObj, index) {
     var ret=new Object();
 
-    var rankId=l+"__"+index; //级别Id
     var pTnId=(ptn)?ptn.id:null;//上级结点id
     var priorityName=(segs.name&&$.trim(segs.name))?segs.name:((segs.title&&$.trim(segs.title))?segs.title:null);
     var priorityTitle=(segs.title&&$.trim(segs.title))?segs.title:((segs.name&&$.trim(segs.name))?segs.name:null);
 
     //1-处理树
     var treeNode=new Object();
-    treeNode.segId='segment__'+rankId;
     //1.1-树结点id
-    treeNode.id=(pTnId&&pTnId!=-1)?pTnId+"_"+rankId:"_tn__"+rankId;
-    if (segs.id&&$.trim(segs.id)) treeNode.sgid="_tnsg__"+segs.id;//若有段落id，则记录一下
+    var rankId=l+"_"+index; //级别Id
+    treeNode.id=(pTnId&&pTnId!=-1)?pTnId+"__"+rankId:"_tn"+rankId;
+    rankId=treeNode.id.substr(3);
+    treeNode.segId='segment'+rankId;
+    if (segs.id&&$.trim(segs.id)) treeNode.sgid="_tnsg_"+segs.id;//若有段落id，则记录一下
     else {
       ret="在处理段落时，发现段落没有设置id，无法处理！";
       if (ptn.id==-1) ret.msg+="此段落为根段落的"+index+"个子段落";
@@ -428,12 +431,12 @@ var reportParse={
 
     //2-画显示对象
     //2.1-每个segment的框架
-    var docEle_html='<div id="segment__'+rankId+'" class="segment segment_'+l+'"><ul>'
-      + '<li id="segTitle__'+rankId+'" class="segTitle segTitle_'+l+'">'+priorityTitle+'</li>';
+    var docEle_html='<div id="segment'+rankId+'" class="segment segment_'+l+'"><ul>'
+      + '<li id="segTitle'+rankId+'" class="segTitle segTitle_'+l+'">'+priorityTitle+'</li>';
     if (segs.content&&$.trim(segs.content)) docEle_html
-      +='<li id="segContent__'+rankId+'" class="segContent segContent_'+l+'"></li>';
+      +='<li id="segContent'+rankId+'" class="segContent segContent_'+l+'"></li>';
     if (segs.subSegs&&segs.subSegs.length>0) docEle_html
-      +='<li id="segSubs__'+rankId+'"><div id="ssBody__'+rankId+'" class="segSubs"></div></li>';
+      +='<li id="segSubs'+rankId+'"><div id="ssBody'+rankId+'" class="segSubs"></div></li>';
     var jqDocEle=$(docEle_html);//本级doc对象，以jquery方式处理
     //2.2-生成具体的段内容
     if (segs.content&&$.trim(segs.content)) {
@@ -446,32 +449,32 @@ var reportParse={
           //根据dTag生成替换对象
           var _replaceDom=null;
           if (!dTag.showType) {
-            _replaceDom="<p id='rpDom__"+rankId+"__"+i+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</p>";
+            _replaceDom="<p id='rpDom"+rankId+"_"+i+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</p>";
           } else {
             if (dTag.transLog) {
-              if (dTag.showType=="value"||dTag.showType=="text") _replaceDom="<span id='rpDom__"+rankId+"__"+i+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</span>";
-              else _replaceDom="<div id='rpDom__"+rankId+"__"+i+"' class='dtagParseErr dtagParseErrDiv'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</div>";
+              if (dTag.showType=="value"||dTag.showType=="text") _replaceDom="<span id='rpDom"+rankId+"_"+i+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</span>";
+              else _replaceDom="<div id='rpDom"+rankId+"_"+i+"' class='dtagParseErr dtagParseErrDiv'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</div>";
             } else {
               if (dTag.showType=="value"||dTag.showType=="text") {
-                _replaceDom="<span id='rpDom__"+rankId+"__"+i+"' class='dtagTextWaiting'>"+transTagType(dTag.showType)+"</span>";
+                _replaceDom="<span id='rpDom"+rankId+"_"+i+"' class='dtagTextWaiting'>"+transTagType(dTag.showType)+"</span>";
               } else {
-                _replaceDom="<div id='rpDom__"+rankId+"__"+i+"' class='dtagDiv'>"+transTagType(dTag.showType)+"</div>";
+                _replaceDom="<div id='rpDom"+rankId+"_"+i+"' class='dtagDiv'>"+transTagType(dTag.showType)+"</div>";
               }
               reportParse.addDindxt2TreeNode(treeNode, dTag.did);//加入树结点的dArray属性(包含所有下级结点中的D标签的did的列表)
-              reportParse.addMap2Ddm("rpDom__"+rankId+"__"+i, dTag, ddm);//加入ddm——对应关系对象
+              reportParse.addMap2Ddm("rpDom"+rankId+"_"+i, dTag, ddm);//加入ddm——对应关系对象
             }
           }
           _content=_content.replace(ml[i], _replaceDom);
         }
       }
-      jqDocEle.find("#segContent__"+rankId).html(_content);
+      jqDocEle.find("#segContent"+rankId).html(_content);
     }
     jqObj.append(jqDocEle);
 
     //递归
     if (segs.subSegs&&segs.subSegs.length>0) {
       for (var i=0; i<segs.subSegs.length; i++) {
-        var _ret=reportParse.recursionSegs(segs.subSegs[i], treeNode, ddm, l+1, $("#ssBody__"+rankId), i);
+        var _ret=reportParse.recursionSegs(segs.subSegs[i], treeNode, ddm, l+1, $("#ssBody"+rankId), i);
         if (_ret) { //出错了，不能再处理了
           return _ret;
         }
