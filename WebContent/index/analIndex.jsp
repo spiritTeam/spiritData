@@ -99,7 +99,6 @@ var newReportJson = null; //未读报告列表
 var lastSearchStr = ""; //上一次查询的搜索串
 var searchTxt = "请输入查询内容..."; //查询提示信息
 var curFrameIndex = -1; //当前激活的页面
-var _curFrameIndex = -1;  //为上传所准备的当前激活的页面
 var needRefresh = [1,1,1,1];//是否需要刷新，0不需要刷新，1需要刷新，needRefresh[1]报告；needRefresh[2]文件；needRefresh[3]查询；needRefresh[0]首页，不需要
 var activeFlag=getUrlParam(window.location.href, "activeFlag");
 
@@ -250,7 +249,9 @@ function setInitPage() {//刚进入系统或浏览器刷新：看是否用该ses
   setLoginPage();//登录状态
 }
 //1----页签状态处理
-function setAfterUpload() {//上传文件后，现实所有页签，并定位到报告页面
+function setAfterFirstUpload() {//上传文件后，显示所有页签，并定位到报告页面，只在未登录状态，第一次上传起作用
+  __STATUS=1;
+  getNoVisitReports();
   //显示页签
   $("#nav_report").show();
   $("#nav_file").show();
@@ -281,16 +282,12 @@ function setLoginPage() {
 
 //=======切换iframe页面，无搜索页
 function switchIF(_type, _param) {
-  if (_curFrameIndex!=-1&&_curFrameIndex!=_type) _curFrameIndex=-1;
-
-  if (_type==curFrameIndex) return;
+  if (_type==curFrameIndex&&needRefresh[_type]==0) return;
   else curFrameIndex=_type;
 
-  $("#ifmHomepage").css("display","none");
-  $("#ifmReport").css("display","none");
-  $("#ifmFile").css("display","none");
-  $("#ifmSearch").css("display","none");
-
+  $("iframe").each(function(){
+    $(this).css("display","none");
+  });
   $("#upf_btn").show();
   var ifmId="";
   switch(_type) {
@@ -312,14 +309,9 @@ function switchIF(_type, _param) {
     if (_param) _url+=(_url.indexOf("?")==-1?"?":"&")+_param;
     if (needRefresh[_type]==1)  _url+=(_url.indexOf("?")==-1?"?":"&")+"refreshme=yes";
 
-    if (!curObj.attr("src")||curObj.attr("src").indexOf(curObj.attr("_src"))==-1) {//地址错误，需要重新设置src
+    if (!curObj.attr("src")||curObj.attr("src").indexOf(curObj.attr("_src"))==-1||needRefresh[_type]==1) {//地址错误，需要重新设置src 或 强制刷新
       curObj.attr("src",_PATH+"/"+_url);
       needRefresh[_type]=0;
-    } else {
-      if (needRefresh[_type]==1) {//强制刷新
-        curObj.attr("src",_PATH+"/"+_url);
-        needRefresh[_type]=0;
-      }
     }
     if (curObj.attr("src")) curObj.css("display","block");
   }
@@ -394,7 +386,14 @@ function selF() {
 }
 function uploadF() {
   try {
-    _curFrameIndex=curFrameIndex;
+    var fileName=$("#upf").val();
+    var _pos=fileName.lastIndexOf('.');
+    if (_pos==-1) showAlert("数据上传", "抱歉！目前系统不支持对此格式文件的数据处理。", "warning");
+    var _ext = fileName.substr(_pos);
+    if (_ext.toUpperCase()!=".XLS"&&_ext.toUpperCase()!=".XLSX") {
+      showAlert("数据上传", "抱歉！目前系统不支持对此格式文件的数据处理。", "warning");
+      return;
+    }
 
     var form = $('#afUpload');
     $(form).attr('action', _PATH+'/fileUpLoad.do');
@@ -412,16 +411,12 @@ function uploadF() {
           showAlert("上传异常","str 2 json err. jsonStr="+respStr,"error");
         }
         var success=(respJson.jsonType==1&&respJson.data&&(respJson.data.length==1&&respJson.data[0].success));
-        if (success) {
-          if (_curFrameIndex!=-1||_curFrameIndex!=1) {//切换到报告页，并刷新
-            setTimeout(function() { //这个时间可能不能获得任何结果，但还是请求一次数据，200毫秒
-              getNoVisitReports();
-              //切换到报告页
-              needRefresh=[1,1,1,1];
-              $("#nav_report").click();
-            }, 200);
-          }
-        } else showAlert("上传文件结果","上传文件失败 .","error");
+        if (success) getNoVisitReports();//重新获取未读
+        else {
+          var msg = respJson.data?respJson.data:respJson.message;
+          if (!(msg instanceof string)) msg = allFields(msg);
+          showAlert("上传文件结果", msg, "error");
+        }
       },
       error: function(errData) {
         showAlert("上传文件提交失败","failed to upload file. errData="+errData,"error");
@@ -438,6 +433,22 @@ function uploadF() {
 var maxAlertCount_getNoVisitReports=3;
 var maxCount_getNoVisitReports=1000;
 var alertCount_getNoVisitReports=0;
+function equalNoVisitList(curNoVisitList, newReadNoVisitList) {
+  if (!newReportJson||!curNoVisitList) return false;
+  if (curNoVisitList.total!=newReadNoVisitList.total) return false;
+  var ret = true;
+  for (var i=0; i<curNoVisitList.rows.length; i++) {
+    var found=false;
+    for (var j=0; j<newReadNoVisitList.rows.length; j++) {
+      if (curNoVisitList.rows[i].reportId==newReadNoVisitList.rows[j].reportId) {
+        found=true;
+        break;
+      }
+    }
+    if (!found) return false;
+  }
+  return ret;
+}
 function getNoVisitReports() {//得到未访问列表信息
   var searchParam={"searchType":"fectchNewReport","searchStr":""};
   var url="<%=path%>/reportview/searchNewReport.do";
@@ -446,8 +457,15 @@ function getNoVisitReports() {//得到未访问列表信息
       try {
         //刷新报告
         if (jsonData&&jsonData.rows&&jsonData.total>=0) {
-          setNoVisitReportNum(jsonData.total);
-          newReportJson = jsonData;
+          var isNewNoVisitList;
+          if (!equalNoVisitList(newReportJson,jsonData)) {
+            setNoVisitReportNum(jsonData.total);
+            newReportJson = jsonData;
+            $('#ifmReport').attr('src', $('#ifmReport').attr('src'));
+            $('#ifmFile').attr('src', $('#ifmReport').attr('src'));
+            $('#ifmSearch').attr('src', $('#ifmSearch').attr('src'));
+            //这里应该刷新所有页面
+          }
         }
       } catch(e) {
         alertCount_getNoVisitReports++;
@@ -489,7 +507,7 @@ function showNoVisitReportList() {//显示未读报告
 function setNoVisitReportNum(num) {//设置未访问报告标签的值
   var _num = parseInt(num);
   if (_num>0) {
-    $("#newReportFlag").attr("repNum", _num);//记录下来
+    $("#newReportFlag").attr("noVisitRepNum", _num);//记录下来
     $("#newReportFlag").html(_num>99?"...":_num+"");
     if (_num>99) $("#newReportFlag").attr("title", _num); else $("#newReportFlag").attr("title", ""); 
     $("#newReportFlag").show();
@@ -519,7 +537,7 @@ function incremeNoVisitReports(tag, reportList) {
   if (_tag!=0) _tag=1;//默认是删除
 
   //当前数
-  var _curNum = $("#newReportFlag").attr("repNum");
+  var _curNum = $("#newReportFlag").attr("noVisitRepNum");
   var __curNum=_curNum;
 
   if (_tag==1) { //删除
@@ -572,7 +590,6 @@ function incremeNoVisitReports(tag, reportList) {
 
 //==============搜索
 function startSearch() {
-  if (_curFrameIndex!=-1&&_curFrameIndex!=3) _curFrameIndex=-1;
   curFrameIndex=3;
   $("#ifmHomepage").css("display","none");
   $("#ifmReport").css("display","none");

@@ -99,7 +99,7 @@
 <script>
 var mainPage;
 //提示信息
-var _promptMessage="点击选择分析的文件";
+var _promptMessage="点击选择分析的文件，目前仅支持Excel电子表格文件";
 var checkProcessId=-1;
 var _suClicked=false;
 
@@ -210,6 +210,15 @@ function uploadF() {
     $("#upf").click();
     return;
   }
+  //校验文件格式
+  var fileName=$("#upfs").val();
+  var _pos=fileName.lastIndexOf('.');
+  if (_pos==-1) showAlert("数据上传", "抱歉！目前系统不支持对此格式文件的数据处理。", "warning");
+  var _ext = fileName.substr(_pos);
+  if (_ext.toUpperCase()!=".XLS"&&_ext.toUpperCase()!=".XLSX") {
+    showAlert("数据上传", "抱歉！目前系统不支持对此格式文件的数据处理。", "warning");
+    return;
+  }
   try {
     var form = $('#afUpload');
     $(form).attr('action', _PATH+'/fileUpLoad.do');
@@ -224,8 +233,7 @@ function uploadF() {
       checkProcessId = setInterval(checkUploadStatus, 200);
     } else {
       $("#upfs").val(_promptMessage);
-      mainPage.needRefresh=[1,1,1,1];
-      if (mainPage) mainPage.setAfterUpload();
+      if (mainPage) mainPage.setAfterFirstUpload();
     }
   } catch(e) {
   	showAlert("文件上传失败", e, "error");
@@ -243,10 +251,7 @@ function checkUploadStatus() {
     if (success+""=="TRUE") {//成功
       if (mainPage) {
         $("#upfs").val(_promptMessage);
-        mainPage.__STATUS=1;
-        mainPage.needRefresh=[1,1,1,1];
-        mainPage.setAfterUpload();
-        mainPage.getNoVisitReports();
+        mainPage.setAfterFirstUpload();
       }
     } else {
       var msg = "";
@@ -257,7 +262,7 @@ function checkUploadStatus() {
       	else msg=allFields(ret.message[0]);
       }
       if (!msg) msg="未知问题";
-      showAlert("上传", "数据文件上传失败！", "error");
+      showAlert("数据上传", "数据文件上传失败！<br/>"+msg, "error");
     }
     mainPage.showMask(0);
   }
