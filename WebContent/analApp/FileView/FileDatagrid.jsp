@@ -25,18 +25,18 @@
 <title>文件详细数据显示页面</title>
 </head>
 <style>
-.div{padding:2px;border:0px solid #ddd;width:98%;height:98%;margin:0 auto;overflow-y:auto;overflow-x:hidden;}
+.div2{padding:2px;border:0px solid #ddd;width:98%;height:98%;margin:0 auto;overflow-y:auto;overflow-x:hidden;}
 .border_no{border:0px solid red; }
 .padding_top5{padding-top:5px;}
-.head1{font-weight:bold;font-size:16px;}
+.head1{font-weight:bold;font-size:18px;}
 .div_center{margin:0 auto;text-align:center;}
 //easyui
 .datagrid-header-row td{background-color:blue;color:#fff}
 </style>
 <body class="padding_top5 div_center" style="background-color:#FFFFFF;width:1000px;">
-  <div id="div_fileName" class="div border_no head1">    
+  <div id="div_fileName" class="border_no head1" style="padding:5px;width:960px;">    
   </div>
-  <div id="div_main" class="div div_center" style="width:960px;">  
+  <div id="div_main" class="div_center" style="width:960px;">  
     <div id="div_tabs" class="easyui-tabs" style="width:950px;height:500px;display:none;"></div>  
   </div>           
 </body>
@@ -51,8 +51,14 @@ $(function() {
 	_fileId = "<%=fileId%>";
 	_fileName = "<%=fileName%>";
 	$("#div_fileName").html("文件名："+_fileName+"");
+	initDivMain();
 	startSearch();
 });
+
+//初始化DIV_MAIN的位置，使其居中
+function initDivMain(){
+	$("#div_main").css({"left":(($(window).width()-$("#div_main").width())/2),"padding-left":12});
+}
 
 //查询指定文件ID的数据 
 function startSearch(){
