@@ -45,23 +45,23 @@ public class LoginServiceImpl implements LoginService {
             User u = (User)user;
             retMap.put("userLoginName", u.getLoginName());
             retMap.put("userMail", u.getMailAdress());
-            String activeUrl = request.getContextPath()+"/index/analIndex.jsp?activeFlag=";
+            retMap.put("activeFlag", u.getUserState());
+            //处理激活
+            String activeUrl = request.getContextPath()+"/index/analIndex.jsp?activeFlag="+u.getUserState();
+            if (activeFlag!=null) retMap.put("redirectUrl", activeUrl);
             //==0,未发邮箱激活
             if (u.getUserState()==0) {
-                retMap.put("activeFlag",0);
                 retMap.put("retInfo", "账号还未激活！");
                 retMap.put("user", user);
-                //处理激活
-                if (activeFlag!=null) retMap.put("redirectUrl", activeUrl+"0");
+            } else if (u.getUserState()==2) {
+                retMap.put("retInfo", "账号已失效！");
+                retMap.put("user", user);
             } else {
                 changeOwnerId(request.getSession(), user.getUserId());
                 String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
                 FileUtils.deleteFile(new File(toDeletURI));
-                retMap.put("activeFlag",1);
                 retMap.put("retInfo", "登录成功！");
                 retMap.put("success", "success");
-                //处理激活
-                if (activeFlag!=null) retMap.put("redirectUrl", activeUrl+activeFlag);
             }
         } catch(Exception e) {
             retMap.put("success", "false");

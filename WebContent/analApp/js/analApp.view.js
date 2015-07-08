@@ -9,9 +9,10 @@ var _urlPath;
  * 查询结果中，当点击了某个文件，触发此操作
  */
 function showFile(fileId,fileName){
-  //alert("showFile() fileId="+fileId+" fileName="+fileName);
+  var urlFile = _urlPath+"/analApp/FileView/FileDatagrid.jsp?fileId="+fileId+"&fileName="+fileName; 
+  //alert("showFile() fileId="+fileId+" fileName="+fileName+" url="+urlFile);
   var winOption={
-    url:_urlPath+"/analApp/FileView/FileDatagrid.jsp?fileId="+fileId+"&fileName="+fileName,
+    url:urlFile,
     title:"文件详情",
     height:600,
     width:1000,
