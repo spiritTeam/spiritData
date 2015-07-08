@@ -15,6 +15,11 @@
 <jsp:include page="/common/sysInclude.jsp" flush="true"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/login/css/login.css" />
 <script type="text/javascript" src="<%=path %>/login/js/login.js"></script>
+<style type="text/css">
+#mainDiv {padding-top:30px;}
+.labelTd{height:60px; line-height:60px;}
+.commitBottonTd {height:90px;}
+</style>
 </head>
 <body>
 <!-- 遮罩层 -->
@@ -35,8 +40,8 @@
       </td>
     </tr>
     <tr>
-      <td class="labelTd">新密码</td>
-      <td class="inputTd">
+      <td class="labelTd" style="height:75px; line-height:75px; margin-top:20px;">新密码</td>
+      <td class="inputTd" style="height:75px; line-height:75px; margin-top:20px;">
         <div class="alertInput-Text">
           <input id="password" class="alertInputComp" name="password" tabindex="4" type="password" onBlur="validatePassword();"/>
           <div class="alertImg"></div>
@@ -45,8 +50,8 @@
       </td>
     </tr>
     <tr>
-      <td class="labelTd" style="height:35px; line-height:35px;">确　认</td>
-      <td class="inputTd" style="height:35px; line-height:35px;">
+      <td class="labelTd" style="height:35px; line-height:35px; margin-top:20px;">确　认</td>
+      <td class="inputTd" style="height:35px; line-height:35px; margin-top:20px;">
         <div class="alertInput-Text">
           <input id="confirmPassword" class="alertInputComp" name="confirmPassword" tabindex="5" type="password" onBlur="comfirmPassword();"/>
           <div class="alertImg"></div>
@@ -56,7 +61,7 @@
     </tr>
     <tr>
       <td colspan="2" class="commitBottonTd">
-        <div id="commitButton" style="margin-top: 30px;" class="commitDiv" onclick="commit();">
+        <div id="commitButton" style="margin-top:40px;" class="commitDiv" onclick="commit();">
           <span>修改密码</span>
         </div>
       </td>
@@ -184,10 +189,9 @@ function commit(){
     $.ajax({type:"post", async:false, url:url, data:pData, dataType:"json",
       success:function(json){
         $('#mask').show();
-        if(json){
-          if(mainPage){
-            mainPage.$.messager.alert('修改提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
-          }else{
+        if (json) {
+          if(mainPage) mainPage.$.messager.alert('修改提示',json.retInfo,'info',function(){closeSWinInMain(winId);});
+          else{
             $.messager.alert('修改提示',json.retInfo,'info');
             window.location.href = window.location.href;
           }

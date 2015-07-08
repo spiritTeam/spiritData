@@ -1,7 +1,7 @@
 package com.spiritdata.dataanal.exceptionC;
 
 /**
- * DataAnal激活码激活失败，内部码为1101，基本信息为'激活码激活失败'
+ * DataAnal用户管理异常，内部码为1101，基本信息为'用户管理异常'
  * 请参看:
  * {@linkplain com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel MetadataModel} 包
  * @author wh,mht
@@ -9,18 +9,18 @@ package com.spiritdata.dataanal.exceptionC;
 public class Dtal1101CException extends DtalCException {
     private static final long serialVersionUID = 7076807147636335529L;
 
-    private static String myBaseMsg = "激活码激活失败";
+    private static String myBaseMsg = "用户管理异常";
     private static int myCode = 1101;
 
     /**
-     * 构造没有详细消息内容的——'激活码激活失败'异常
+     * 构造没有详细消息内容的——'用户管理异常'异常
      */
     public Dtal1101CException() {
         super(myCode, myBaseMsg);
     }
 
     /**
-     * 构造有详细消息内容的——'激活码激活失败'异常
+     * 构造有详细消息内容的——'用户管理异常'异常
      * @param message 详细消息
      */
     public Dtal1101CException(String msg) {
@@ -28,7 +28,7 @@ public class Dtal1101CException extends DtalCException {
     }
 
     /**
-     * 根据指定的原因和(cause==null?null:cause.toString())的详细消息构造新——'激活码激活失败'异常
+     * 根据指定的原因和(cause==null?null:cause.toString())的详细消息构造新——'用户管理异常'异常
      * @param cause 异常原因，以后通过Throwable.getCause()方法获取它。允许使用null值，指出原因不存在或者是未知的异常
      */
     public Dtal1101CException(Throwable cause) {
@@ -36,7 +36,7 @@ public class Dtal1101CException extends DtalCException {
     }
 
     /**
-     * 根据指定的原因和(cause==null?null:cause.toString())的详细消息，以及详细消息构造新——'激活码激活失败'异常
+     * 根据指定的原因和(cause==null?null:cause.toString())的详细消息，以及详细消息构造新——'用户管理异常'异常
      * @param message 详细消息
      * @param cause 异常原因，以后通过Throwable.getCause()方法获取它。允许使用null值，指出原因不存在或者是未知的异常
      */

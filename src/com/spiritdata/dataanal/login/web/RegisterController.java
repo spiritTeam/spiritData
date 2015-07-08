@@ -174,8 +174,7 @@ public class RegisterController {
         return retInfo;
     }
     /**
-     * 接收验证邮件,如果找到用户，并且验证信息正确，
-     * 转发到修改页面。
+     * 用户找回密码：接收验证邮件,如果找到用户，并且验证信息正确，转发到修改页面。
      * @return 暂时未return，而是重定向到login页面
      */
     @RequestMapping("login/activeModifyPassword.do")
@@ -184,43 +183,32 @@ public class RegisterController {
         String authCode = request.getParameter("authCode");
         String retInfo = "";
         Exception ee = null;
-        if (authCode==null) {
-            retMap.put("success", false);
-            retInfo = "激活码不完整!请重新新点击激活链接或从登录页面再次发送激活邮件!";
-            ee = new Dtal1101CException(retInfo);
-            retMap.put("retInfo", ee.getMessage());
-            return retMap;
-        }
-        String userId = authCode.substring(0,authCode.lastIndexOf("~"));
-        String code = authCode.substring(authCode.lastIndexOf("~")+1);
-        User user = userService.getUserById(userId);
-        if (user==null) {
-            retMap.put("success", false);
-            retInfo = "验证码缺失!";
-            ee = new Dtal1101CException(retInfo);
-            retMap.put("retInfo", ee.getMessage());
-        } else {
-            if (user.getUserState()==2) {
-                retMap.put("success", false);
-                retInfo = "链接已失效！";
-                ee = new Dtal1101CException(retInfo);
-                retMap.put("retInfo", ee.getMessage());
-            } else {
-                if (!user.getValidataSequence().equals(code)) {
-                    retMap.put("success", false);
-                    retInfo = "激活码不完整!请重新点击激活链接或从登录页面再次发送激活邮件!";
-                    ee = new Dtal1101CException(retInfo);
-                    retMap.put("retInfo",ee.getMessage());
+        if (authCode==null) retInfo = "连接非法，无法找回密码!";
+        else {
+            String userId = authCode.substring(0,authCode.lastIndexOf("~"));
+            String code = authCode.substring(authCode.lastIndexOf("~")+1);
+            User user = userService.getUserById(userId);
+            if (user==null) retInfo = "没有对应的账号，无法找回密码!";
+            else {
+                if (!user.getValidataSequence().equals(code)) retInfo = "验证码不匹配，无法找回密码!";
+                else {
+                    //为安全起见，把用户改为失效状态
+                    user.setUserState(2);
+                    userService.updateUser(user);
+                    //在重定向的基础上修改为转发
+                    String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
+                    request.setAttribute("actionUrl", actionUrl);
                 }
             }
         }
         try {
-//            String deployName = request.getContextPath();//request.getContextPath(); "http://www.0pidata.com"
-            //在重定向的基础上修改为转发
-            String actionUrl = "/login/modifyPassword.jsp?modifyType=1&loginName="+user.loginName;
-            request.setAttribute("action", "1");
-            request.setAttribute("actionUrl", actionUrl);
-            request.setAttribute("retMap", retMap);
+            request.setAttribute("fromModifyUser", "1");
+            if (!retInfo.equals("")) {
+                retMap.put("success", false);
+                ee = new Dtal1101CException(retInfo);
+                retMap.put("retInfo", ee.getMessage());
+                request.setAttribute("retMap", retMap);
+            }
             request.getRequestDispatcher(mainPage).forward(request, response);
             return null;
         } catch (Exception e) {
@@ -239,26 +227,37 @@ public class RegisterController {
     public @ResponseBody Map<String,Object> modifyPassword(HttpServletRequest request){
         Map<String,Object> retMap = new HashMap<String,Object>();
         String retInfo = "";
-        HttpSession session =request.getSession();
         String loginName = request.getParameter("loginName");
-        User user = (User) session.getAttribute(FConstants.SESSION_USER);
+        User user = userService.getUserByLoginName(loginName);
         String password = request.getParameter("password");
         Exception ee = null;
-        if (user!=null) user.setPassword(password);
-        else user = userService.getUserByLoginName(loginName);
-        user.setPassword(password);
-        user.setUserState(1);
-        user.setValidataSequence("");
-        int i = userService.updateUser(user);
-        if (i==1) {
-            retInfo = "修改密码成功!";
-            retMap.put("success", true);
-            retMap.put("retInfo", retInfo);
-        } else {
-            retInfo = "修改密码失败!";
+        if (user==null) {
+            retInfo = "找不到对应的用户，无法修改密码!";
             ee = new Dtal1102CException(retInfo);
             retMap.put("success", false);
             retMap.put("retInfo", ee.getMessage());
+        } else {
+            if (user.getUserState()==2) {
+                user.setPassword(password);
+                user.setUserState(1);
+                user.setValidataSequence(SequenceUUID.getPureUUID());
+                int i = userService.updateUser(user);
+                if (i==1) {
+                    retInfo = "修改密码成功!";
+                    retMap.put("success", true);
+                    retMap.put("retInfo", retInfo);
+                } else {
+                    retInfo = "修改密码失败!";
+                    ee = new Dtal1102CException(retInfo);
+                    retMap.put("success", false);
+                    retMap.put("retInfo", ee.getMessage());
+                }
+            } else {
+                retInfo = "用户状态不合法，无法修改密码!";
+                ee = new Dtal1102CException(retInfo);
+                retMap.put("success", false);
+                retMap.put("retInfo", ee.getMessage());
+            }
         }
         return retMap;
     }
