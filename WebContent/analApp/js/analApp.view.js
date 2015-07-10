@@ -44,8 +44,11 @@ function showReport(reportId, unReadId) {
   visitLog_REPORT(param);  
   
   //如果是未读报告，则隐藏未读小红点标志，并把未读总数-1
+  //alert("unReadId="+unReadId);
   if (unReadId) {
     $("#"+unReadId).css("visibility","hidden");
+    $("#"+unReadId).css("background-color","inherit");
+    //alert("hidden round dot..."+$("#"+unReadId).css("visibility"));
     var delRep = new Object();
     delRep.reportId=reportId;
     var mPage=getMainPage();
