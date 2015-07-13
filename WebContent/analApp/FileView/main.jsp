@@ -309,6 +309,7 @@ function showSearchResultList(){
   var _objList = $('#dgList');
   _objList.empty();
   _objList.css("display","block");
+  var showType = "list";
   //构建dbopts
   var dbopts={
     customizable: true, 
@@ -343,14 +344,14 @@ function showSearchResultList(){
       var fileFull = fileName;
       var reportId = jsonRows[i]["reportId"];
       //var ahrf_file = '<a href="###" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
-      var ahrf_file = getFileHrefHtml(fileIndexId,fileFull,reportId);
+      var ahrf_file = getFileHrefHtml(fileIndexId,fileFull,reportId,showType);
       var size = jsonRows[i]["fileSize"];
       var createDate = jsonRows[i]["createTimeStr"];
       
       //var cssClassStr= i%2==0?"":"dg_td_bgcolor_lightblue";
       //var arow={checked:false,data:[fileName+"."+suffix,size,createData],cssClass:cssClassStr};
       //构建操作按钮
-      var optHtml = getOptHtml(jsonRows[i],"floatCenter");
+      var optHtml = getOptHtml(jsonRows[i],"floatCenter",showType);
       var arow={checked:false,data:[ahrf_file,size,createDate,optHtml]};
       dtrows.push(arow);
     }
@@ -370,6 +371,7 @@ function showSearchResultList(){
 function showSearchResultThumb(){
   var _objThumb = $('#dgThumb');
   _objThumb.css("display","block");
+  var showType = "thumb";
   var thumbHtmlStr = '';
   if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
     thumbHtmlStr += '<section class="cards">';
@@ -397,14 +399,14 @@ function showSearchResultThumb(){
       //缩略图下方显示的内容
       thumbHtmlStr += '      <div class="media-wrapper"><div class="thumbText">';
       //thumbHtmlStr += '        <a href="###" class="card-heading" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong>'+fileFull+'</strong></a>';
-      var fileHrefHtml = getFileHrefHtml(fileIndexId,fileFull,reportId,"card-heading");
+      var fileHrefHtml = getFileHrefHtml(fileIndexId,fileFull,reportId,showType,"card-heading");
       thumbHtmlStr += fileHrefHtml;
       thumbHtmlStr += '      </div></div>';  
       thumbHtmlStr += '      <div class="media-wrapper card-content text-muted" style="padding:2px;text-align:center;">';
       thumbHtmlStr += '        大小:'+size+'&nbsp;&nbsp;&nbsp;创建日期:'+createDate+'';
       thumbHtmlStr += '      </div>'; 
       thumbHtmlStr += '      <div class="media-wrapper card-content text-muted">';
-      var optHtml = getOptHtml(jsonRows[i],"floatRight");
+      var optHtml = getOptHtml(jsonRows[i],"floatRight",showType);
       thumbHtmlStr += '        '+optHtml+'';
       thumbHtmlStr += '      </div>';  
       thumbHtmlStr += '    </div>';
@@ -422,7 +424,7 @@ function showSearchResultThumb(){
       var textFontSize=$($(this).parent().find("a")[0]).css("font-size");
       var textText=$($(this).parent().find("a")[0]).text();
       var textLength=(textText.cnLength()*(parseInt(textFontSize)/2))+textText.length+11;
-      console.log(textText+":"+textFontSize+":"+textText.cnLength()+":"+textLength);
+      //console.log(textText+":"+textFontSize+":"+textText.cnLength()+":"+textLength);
       $(this).css("width",textLength)
       .css("padding-left", (parseInt($(this).parent().width())-textLength)/2);
     });
@@ -436,7 +438,7 @@ function getInputSearchFileStr(){
 }
 
 //组装一行操作按钮
-function getOptHtml(aJsonRow,floatStyle){
+function getOptHtml(aJsonRow,floatStyle,showType){
   if(!aJsonRow){
     return "";
   }
@@ -450,7 +452,7 @@ function getOptHtml(aJsonRow,floatStyle){
   //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
   var optReport = '';
   if(!isUndefinedNullEmpty(reportId)){
-	  var unReadId = getUnReadReportId(reportId);
+	  var unReadId = getUnReadReportId(reportId,showType);
     optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\',\''+unReadId+'\');"><i class="icon-building"></i>报告</button>';
   }else{
     optReport = '<button type="button" style="visibility:hidden;" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
@@ -485,9 +487,10 @@ function getSuffixImgName(suffixName){
  * fileIndexId -- 文件的ID
  * fileFull -- 文件中文全名，带后缀
  * reportId -- 由此文件生成的报告ID，如果没有则为NULL
+ * unReadPre -- 未读ID的前缀，如果是列表则为list_，如果是卡片则为thumb_
  */
-function getFileHrefHtml(fileIndexId,fileFull,reportId,hrefClass) {
-	var unReadId = getUnReadReportId(reportId);	
+function getFileHrefHtml(fileIndexId,fileFull,reportId,showType,hrefClass) {
+	var unReadId = getUnReadReportId(reportId,showType);
   var optRound = '<div id="'+unReadId+'" class="'+(unReadId?'circleFillRed':'circleOpacity')+'"/>';
 	return '<a href="#" class="'+(hrefClass?hrefClass:'')+'" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');">'+optRound+fileFull+'</a>';
   //是否未读，如果未读则前面加个小红点用于标识
@@ -510,13 +513,13 @@ function getFileHrefHtml(fileIndexId,fileFull,reportId,hrefClass) {
 /**
  * 根据reportId获取未读报告的ID
  */
-function getUnReadReportId(reportId){
+function getUnReadReportId(reportId,showType){
   var retId = null;
   //if(!isUndefinedNullEmpty(reportId)){
 	if(reportId){
 		var unRead = getMainPage().isUnReadReportById(reportId); //是否报告未读过
 		if(unRead){
-			retId = "unRead_List_"+reportId;
+			retId = "unRead_"+showType+"_"+reportId;
 		}		
 	}
 	return retId;

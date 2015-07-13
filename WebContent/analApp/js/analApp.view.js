@@ -46,9 +46,10 @@ function showReport(reportId, unReadId) {
   //如果是未读报告，则隐藏未读小红点标志，并把未读总数-1
   //alert("unReadId="+unReadId);
   if (unReadId) {
+	//alert($("#"+unReadId).css("visibility"));
     $("#"+unReadId).css("visibility","hidden");
     $("#"+unReadId).css("background-color","inherit");
-    //alert("hidden round dot..."+$("#"+unReadId).css("visibility"));
+    //console.log("hidden round dot... id="+unReadId+" "+$("#"+unReadId).css("visibility"));
     var delRep = new Object();
     delRep.reportId=reportId;
     var mPage=getMainPage();
