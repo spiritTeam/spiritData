@@ -95,3 +95,20 @@ function getStr(aStr,defaultStr){
   }
   return retStr;
 };
+
+/**
+ * 根据reportId获取未读报告的ID
+ * reportId -- 由此文件生成的报告ID，如果没有则为NULL
+ * showType -- 显示类型， 列表显示、卡片显示，用于标识未读报告ID前缀
+ */
+function getUnReadReportId(reportId,showType){
+  var retId = null;
+  //if(!isUndefinedNullEmpty(reportId)){
+	if(reportId){
+		var unRead = getMainPage().isUnReadReportById(reportId); //是否报告未读过
+		if(unRead){
+			retId = "unRead_"+showType+"_"+reportId;
+		}		
+	}
+	return retId;
+}
