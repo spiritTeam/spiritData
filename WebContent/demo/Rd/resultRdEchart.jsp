@@ -703,7 +703,7 @@ $(function() {
   var A1_4_cc = [['A',144],['B',122],['C',10000],['D',0],['E',200],['F',300],['G',500],['其他',0]];
   var A1_4_cd = [['A',18],['B',122],['C',125],['D',0],['E',33],['F',45],['G',12],['其他',0]];
   $.plot("#chartA1_4_c", [
-      {label:"总值", data:A1_4_ca},
+      {label:"总值123", data:A1_4_ca},
       {label:"平均值", data:A1_4_cb},
       {label:"最大值", data:A1_4_cc},
       {label:"最小值", data:A1_4_cd}
@@ -730,6 +730,7 @@ $(function() {
       {label:"最小值", data:[["9-28",12],["9-29",34],["9-30",30],["9-31",24],["10-1",3],["10-2",5],["10-3",7],["10-4",10],["10-5",11],["10-6",23],["10-7",34],["10-8",56],["10-9",34]]}
     ], {
     series: {
+      bars: { show: true },
       lines: { show: true },
       points: { show: true }
     },
@@ -744,7 +745,7 @@ $(function() {
       tickLength:40,
       tickDecimals:0
     },
-    legend:{show:true}
+    legend:{show:false}
   });
 
   $.plot("#chartA1_4_e", [
@@ -769,18 +770,14 @@ $(function() {
   });
 
   $.plot("#chartA1_4_f", [
-      {label:"值", data:[["w1",120],["w2",340],["w3",300],["w4",240]], bars:{
+      {label:"值qq2", data:[["w1",120],["w2",340],["w3",300],["w4",240]], bars:{
         show:true,
-        barWidth: 0.3,
+        barWidth: 0.1,
         align: "center",
-        fill:0.3
-      }, lines:{show:false}, points:{show:false}},
+        fill:1
+      }},
       {label:"增长率", data:[null,["w2",240],["w3",200],["w4",340]], lines:{show:true}, points:{show:false}}
     ], {
-    series: {
-      lines: { show: true },
-      points: { show: true }
-    },
     xaxis: {
       mode: "categories",
       autoscaleMargin: 0.05,
@@ -791,8 +788,7 @@ $(function() {
       position:'left',
       tickLength:40,
       tickDecimals:0
-    },
-    legend:{show:true}
+    }
   });
 
   $.plot("#chartA1_4_g", [
