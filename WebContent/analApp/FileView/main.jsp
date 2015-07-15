@@ -155,7 +155,7 @@ border-radius:10px;
 </body>
 <script>
 //*** begin 常量定义 ***
-var pageSize = 2; //每页显示的条数
+var pageSize = 10; //每页显示的条数
 //*** end 常量定义 ***
 
 //*** begin 变量定义 ***
