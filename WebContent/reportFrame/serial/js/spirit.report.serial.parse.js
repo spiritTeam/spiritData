@@ -1,4 +1,17 @@
-﻿/**
+﻿//v1.0::
+//1-对report的解析
+//2-对d标签的解析
+//3-对data的轮训读取
+//4-容错的处理
+//5-文本、表格、饼图、柱图、折线图的实现
+//v2.0::
+//1-ds的实现
+//2-调整结构，使得结构更加清晰
+//3-修改了D标签与DList数据的对应，更好的容错，更好的性能
+//
+//计划：完成style的处理，以及多分类的其他处理
+
+/**
  * 精灵报告解析及展示方法
  * 需要用到：
  * JS——jquery+spirit.pageFrame
@@ -12,6 +25,10 @@
  * 5-处理jsonD的对象：包括填充数据
  */
 
+/**
+ * 显示类型到文本的转换(目前只支持中文)
+ * 若没有对应的显示类型放回空串
+ */
 function transTagType(showType) {
   if (showType=="value") return "值";
   if (showType=="text") return "文本";
@@ -23,6 +40,18 @@ function transTagType(showType) {
   if (showType=="map_pts") return "地图";
   return "";
 }
+
+/**
+ * 解析report数据中生成的，为完成整体逻辑所记录的
+ * 数据结构
+ */
+var parseSysData={
+  monitorData:new Object(), //为监控DList读取设置的对象
+  treeData:null, //生成树，此树包括parent属性
+  ddtagdomMap:null, //数据|d标签|dom对象的映射对应关系
+  ddtagsdomMap:null, //数据|ds标签|dom对象的映射对应关系
+  poolThreadId:-1 //轮询进程号
+};
 
 /**
  * 主函数，生成报告。
@@ -100,117 +129,6 @@ function generateReport(param) {
   };
 };
 
-//=DTag对象===========================
-var D_tag={
-  /*
-  did:null, //对应的data编码，report中_DLIST里的jsonD标签的顺序号  
-  showType:null, //显示类型
-  value:null, //数据，获取_DATA中的那个对象，解析是一个对象，包括:dPoint(字符串)或dFilter(字符串)
-  param:null, //showType附属说明，在标签串中以json格式存在，解析后应该是一个对象
-  decorateView:null, //显示修饰语法
-  tdParseData:null,//表数据解析后的数据结构，辅助数据类型，value类型没有这个属性
-  transLog:null, //转换的记录，若转换成功，则此对象为空，否则此对象为错误转换的说明(要分行记录)
-  */
-  /**
-   * 通过html获得本对象的构造函数
-   */
-  buildByDTagHtml: function(dtagHtml) {
-    this.transLog="";
-    var jqObj=$(dtagHtml);
-    var _pos=-1;
-
-    //1-did
-    var _tempStr=jqObj.attr("did");
-    if (!_tempStr) this.transLog+="\nD标签没有设置数据编码did";
-    else this.did=_tempStr;
-    //2-showType
-    _tempStr=jqObj.attr("showType");
-    if (!_tempStr) this.transLog+="\nD标签没有设置显示类型showType";
-    else {
-      _tempStr=_tempStr.toLowerCase();
-      if (_tempStr=="value"||_tempStr=="text"||_tempStr=="table"||_tempStr=="pie"||_tempStr=="line"||_tempStr=="bar"||_tempStr=="radar"||_tempStr=="map_pts")
-        this.showType=_tempStr;
-      else
-        this.transLog+="\nD标签的显示类型[showType="+_tempStr+"]所指定的类型不合法";
-    }
-    //3-value
-    _tempStr=jqObj.attr("value");
-    if (!_tempStr) this.transLog="\nD标签没有设置数据值value";
-    else { //解析value
-      this.value=new Object();
-      _tempStr=replaceInnerKH(_tempStr);
-      _pos=_tempStr.indexOf("::");
-      if (_pos==-1) this.value.dPoint=_tempStr;//数据获取指针
-      else {
-        this.value.dPoint=_tempStr.substring(0, _pos);
-        _pos=_tempStr.indexOf("::");
-        if (_pos!=-1) this.value.dFilter=new Array();
-        while (_pos!=-1) {
-          _tempStr=_tempStr.substr(_pos+2);
-          _pos=_tempStr.indexOf("::");
-          this.value.dFilter.push(_pos==-1?_tempStr:_tempStr.substring(0, _pos));
-        }
-      }
-    }
-    //4-param
-    _tempStr=jqObj.attr("param");
-    if (!_tempStr) {
-      if (this.showType!='value'&&this.showType!='text'&&this.showType!='table'&&this.showType!='map_pts') {
-        this.transLog="\n类型为["+this.showType+"]的D标签没有设置类型参数param";
-      }
-    } else { //解析param
-      _tempStr=replaceInnerKH(_tempStr);
-      this.param=eval("("+_tempStr+")");
-    }
-    //5-decorateView
-    _tempStr=jqObj.attr("decorateView");
-    if (_tempStr) { //解析param
-      this.decorateView=new Object();
-      _tempStr=replaceInnerKH(_tempStr);
-      _pos=_tempStr.indexOf("::");
-      if (_pos==-1) this.decorateView.view=_tempStr;//数据获取指针
-      else {
-        this.decorateView.view=$.trim(_tempStr.substring(0, _pos));
-        this.decorateView.ext=eval("("+_tempStr.substr(_pos+2)+")");
-      }
-    }
-    if (this.showType=="text"&&(!this.decorateView||!this.decorateView.view)) {
-      this.transLog+="\n[showType=text]类型的D标签，必须设置decorateView(显示修饰)属性";
-    }
-
-    //6-查合法性
-    if (this.showType!="value") {
-      this.tdParseData=d_tagDeal.tableDataFun.parseDtag(this);
-      _tempStr=d_tagDeal.tableDataFun.checkDtag(this);
-      if (_tempStr) this.transLog+="\n"+_tempStr;
-    }
-
-    if (this.transLog) this.transLog=(this.transLog+"").substring(1);
-
-    //内部函数
-    /*
-     * 内部串^|~的转码
-     */
-    function replaceInnerKH(str) {
-      str=str.replace(/\^/g,"\"");
-      str=str.replace(/\~/g,"\'");
-      return str;
-    }
-  }
-};
-//=end DTag对象===========================
-
-/**
- * 解析report数据中生成的，为完成整体逻辑所记录的
- * 数据结构
- */
-var parseSysData={
-  monitorData:new Object(), //为监控DList读取设置的对象
-  treeData:null, //生成树，此树包括parent属性
-  ddtagdomMap:null, //数据|d标签|dom对象的映射对应关系
-  poolThreadId:-1 //轮询进程号
-};
-
 /**
  * 报告解析对象,此对象主要是方法的集合。
  */
@@ -259,10 +177,15 @@ var reportParse={
     _temp=param.getUrl;
     if (_temp&&$.trim(_temp)!=""&&$.trim(_temp)!="undefined") {
       _temp=decodeURIComponent(_temp);
-      if (_temp.indexOf("/")!=0&&_temp.indexOf("\\")!=0) {//无根，加上根
+      if (_temp.indexOf("/")!=0&&_temp.indexOf("\\")!=0
+        &&(_temp.indexOf("file:")!=0)
+      ) {//无根，加上根
         _temp=_PATH+"/"+_temp;
       }
       _url=_temp+_url;
+      if (_temp.indexOf("file:///")==0) {
+        _url="file:///"+param.reportUri
+      }
     } else {
       _url=_PATH+"/report/getReport.do"+_url;
     }
@@ -327,8 +250,9 @@ var reportParse={
       }
     });
     parseSysData.ddtagdomMap=ret.dm;
+    parseSysData.ddtagsdomMap=ret.dsm;
     //启动获取数据的轮询过程
-    parseSysData.poolThreadId=setInterval(getDataFromDListAndDrawDTag, 2000);//2秒钟获取一次数据
+    parseSysData.poolThreadId=setInterval(reportParse.getDataFromDListAndDraw, 2000);//2秒钟获取一次数据
   },
 
   /**
@@ -367,13 +291,14 @@ var reportParse={
     var level=0;
     var treeRoot=new Object();
     var dtagMap=new Object();
+    var dtagsMap=new Object();
 
     //处理系统跟结点
     treeRoot.id=-1;
     treeRoot.text="系统根结点";
     if (_REPORT&&_REPORT.length>0) {
       for (var i=0; i<_REPORT.length; i++) {
-        var ret=reportParse.recursionSegs(_REPORT[i], treeRoot, dtagMap, level, $("#reportFrame"), i);
+        var ret=reportParse.recursionSegs(_REPORT[i], treeRoot, dtagMap, dtagsMap, level, $("#reportFrame"), i);
         if (ret) { //出错了，不进行处理了
           return ret;
         }
@@ -382,6 +307,7 @@ var reportParse={
     var ret= new Object();
     ret.treeRoot=treeRoot;
     ret.dm=dtagMap;
+    ret.dsm=dtagsMap;
     //返回内容
     return ret;
   },
@@ -392,12 +318,13 @@ var reportParse={
    * @param segs 报告的一个segment
    * @param ptn 树对象
    * @param ddm div与Dtag的对应关系
+   * @param ddsm div与Dtags的对应关系
    * @param l 树的Level
    * @param jqObj jquery的dom对象
    * @param index 数组中的下标
    * @returns 若解析错误，则放回false
    */
-  recursionSegs: function(segs, ptn, ddm, l, jqObj, index) {
+  recursionSegs: function(segs, ptn, ddm, ddsm, l, jqObj, index) {
     var ret=new Object();
 
     var pTnId=(ptn)?ptn.id:null;//上级结点id
@@ -441,26 +368,47 @@ var reportParse={
     //2.2-生成具体的段内容
     if (segs.content&&$.trim(segs.content)) {
       var _content=segs.content;
-      //找到D标签
-      var ml=_content.match(/<d.*?(<\/d>|\/>)/gi);//match list
+      var i=0;
+      var _replaceDom=null;
+      //先找Ds标签
+      var ml=_content.match(/<ds.*?(<\/ds>)/gi);//match list
       if (ml&&ml.length>0) {
-        for (var i=0; i<ml.length; i++) {
+        var oneDs="";
+        var dtagsDivId="rpDoms"+rankId+"_"+i;
+        for (; i<ml.length; i++) {
+          oneDs = ml[i];
+          _replaceDom=null;
+          _replaceDom="<div id='"+dtagsDivId+"'";
+          var dTags=new D_Tags.buildByDtagsHtml(oneDs, dtagsDivId, treeNode);
+          if (dTags.transLog) {
+            _replaceDom+=" class='dtagParseErr dtagParseErrDiv'>"+(dTags.transLog?dTags.transLog:"ds解析异常，无法处理")+"</div>"
+          } else {
+            _replaceDom+=" class='dtagDiv'>图形组</div>";
+            ddsm[dtagsDivId]=dTags;
+          }
+          _content=_content.replace(oneDs, _replaceDom);
+        }
+      }
+      //找到D标签
+      ml=_content.match(/<d .*?(<\/d>|\/>)/gi);//match list
+      if (ml&&ml.length>0) {
+        for (i=0; i<ml.length; i++) {
           var dTag=new D_tag.buildByDTagHtml(ml[i]);
           //根据dTag生成替换对象
-          var _replaceDom=null;
+          _replaceDom=null;
           if (!dTag.showType) {
             _replaceDom="<p id='rpDom"+rankId+"_"+i+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</p>";
           } else {
             if (dTag.transLog) {
-              if (dTag.showType=="value"||dTag.showType=="text") _replaceDom="<span id='rpDom"+rankId+"_"+i+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</span>";
-              else _replaceDom="<div id='rpDom"+rankId+"_"+i+"' class='dtagParseErr dtagParseErrDiv'>"+(dTag.transLog?dTag.transLog:"d标签没有showType，无法处理")+"</div>";
+              if (dTag.showType=="value"||dTag.showType=="text") _replaceDom="<span id='rpDom"+rankId+"_"+i+"' class='dtagParseErr'>"+(dTag.transLog?dTag.transLog:"未知问题")+"</span>";
+              else _replaceDom="<div id='rpDom"+rankId+"_"+i+"' class='dtagParseErr dtagParseErrDiv'>"+(dTag.transLog?dTag.transLog:"未知问题")+"</div>";
             } else {
               if (dTag.showType=="value"||dTag.showType=="text") {
                 _replaceDom="<span id='rpDom"+rankId+"_"+i+"' class='dtagTextWaiting'>"+transTagType(dTag.showType)+"</span>";
               } else {
                 _replaceDom="<div id='rpDom"+rankId+"_"+i+"' class='dtagDiv'>"+transTagType(dTag.showType)+"</div>";
               }
-              reportParse.addDindxt2TreeNode(treeNode, dTag.did);//加入树结点的dArray属性(包含所有下级结点中的D标签的did的列表)
+              reportParse.addDindex2TreeNode(treeNode, dTag.did);//加入树结点的dArray属性(包含所有下级结点中的D标签的did的列表)
               reportParse.addMap2Ddm("rpDom"+rankId+"_"+i, dTag, ddm);//加入ddm——对应关系对象
             }
           }
@@ -474,7 +422,7 @@ var reportParse={
     //递归
     if (segs.subSegs&&segs.subSegs.length>0) {
       for (var i=0; i<segs.subSegs.length; i++) {
-        var _ret=reportParse.recursionSegs(segs.subSegs[i], treeNode, ddm, l+1, $("#ssBody"+rankId), i);
+        var _ret=reportParse.recursionSegs(segs.subSegs[i], treeNode, ddm, ddsm, l+1, $("#ssBody"+rankId), i);
         if (_ret) { //出错了，不能再处理了
           return _ret;
         }
@@ -486,7 +434,7 @@ var reportParse={
    * @param tn 树结点
    * @param dindex jsonD在本report中的序号
    */
-  addDindxt2TreeNode: function(tn, dindex) {
+  addDindex2TreeNode: function(tn, dindex) {
     if (!tn.dArray) tn.dArray=new Array();
     var found=false;
     for (var i=0; i<tn.dArray.length; i++) {
@@ -496,7 +444,7 @@ var reportParse={
       }
     }
     if (!found) tn.dArray.push(dindex);
-    if (tn.parent) reportParse.addDindxt2TreeNode(tn.parent, dindex);
+    if (tn.parent) reportParse.addDindex2TreeNode(tn.parent, dindex);
   },
   /* 
    * 把映射关系加入全局映射对象
@@ -509,86 +457,210 @@ var reportParse={
     var mapL=ddm[dtag.did];
     if (!mapL) ddm[dtag.did]=new Object();
     ddm[dtag.did][domId]=dtag;
-  }
-};
+  },
+  /*
+   * 从Dlist中获取数据并根据获取的数据画d标签和ds标签
+   */
+  getDataFromDListAndDraw: function() {
+    var mPage=getMainPage();
+    var _msg="";
+    var i=0;
 
-/**
- * 从Dlist中获取数据并根据获取的数据画d标签
- */
-function getDataFromDListAndDrawDTag() {
-  var mPage=getMainPage();
-  var _msg="";
-
-  var md=parseSysData.monitorData;
-  if (!md||!md.dList) {
-    clearInterval(parseSysData.poolThreadId);
-    _msg="监控参数异常，无法获得数据";
-    if (mPage) mPage.$.messager.alert("提示", _msg, "error");
-    else alert(_msg);
-    return ;
-  }
-  if (md.dList.length==0||(md.okSize+md.faildSize)>md.allSize) {
-    clearInterval(parseSysData.poolThreadId);
-    return;
-  }
-
-  //以下是真正的处理过程
-  var i=0;
-  for (;i<md.dList.length;i++) {
-    var thisD=md.dList[i];
-    if (thisD) {
-      if (thisD.getFlag==-1||thisD.getFlag==-2) continue;
-      var getJsonDUrl=_PATH+"/"+thisD.url;
-      $.ajax({type:"get", url:getJsonDUrl, async:true, dataType:"json", _index: i,
-        success: function(json) {
-          if (json.jsonType==0) {//获取失败
-            md.faildSize++;
-            thisD.getFlag=-2;//失败
-            thisD.drawFlag=1;//正在画
-            d_tagDeal.dealReadErrData(this._index, json.message);
-            thisD.drawFlag=2;//画完了
-          } if (json.jsonType==1) {//获取成功：解析，并填充d标签内容
-            md.okSize++;
-            var _data=eval("("+json.data+")");
-            thisD.getFlag=-1;//成功
-            thisD.drawFlag=1;//正在画
-            d_tagDeal.dealReadSucData(this._index, _data);
-            thisD.drawFlag=2;//画完了
-          } if (json.jsonType==2) {//在运行中，处理
-            thisD.getFlag++;//获取次数+1 //目前获取次数不做处理
-            thisD.drawFlag=0;//还未画
-            //处理进度
-            thisD.progress=json.progress;
-          } else {//很异常，目前先不做处理
-          }
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-          md.faildSize++;
-          thisD.getFlag=-2;//失败
-          thisD.drawFlag=1;//正在画
-          d_tagDeal.dealReadErrData(this._index, "status="+XMLHttpRequest.status);
-          thisD.drawFlag=2;//画完了
-        }
-      });
-    } else {
+    var md=parseSysData.monitorData;
+    if (!md||!md.dList) {
       clearInterval(parseSysData.poolThreadId);
       _msg="监控参数异常，无法获得数据";
       if (mPage) mPage.$.messager.alert("提示", _msg, "error");
       else alert(_msg);
-      break;
+      return ;
+    }
+    if (md.dList.length==0||(md.okSize+md.faildSize)>md.allSize) {
+      clearInterval(parseSysData.poolThreadId);
+      return;
+    }
+
+    //找到有意义的数据源：从ddtagdomMap和ddtagsdomMap中找出
+    var usedDataItemIndex = new Array();
+    var p;
+    var ddm = parseSysData.ddtagdomMap;
+    var ddsm = parseSysData.ddtagsdomMap;
+    if (ddm) {
+      for(p in ddm) {
+        if (typeof(p)!="function") {
+          usedDataItemIndex.push(p);
+        }
+      }
+    }
+    if (ddsm) {
+      for(p in ddsm) {
+        if (typeof(p)!="function"&&ddsm[p]&&ddsm[p].dArray&&ddsm[p].dArray.length>0) {
+          for (i=0; i<ddsm[p].dArray.length; i++) {
+            var oneTag=ddsm[p].dArray[i];
+            if (oneTag&&oneTag.dTag&&oneTag.dTag.did) usedDataItemIndex.push(oneTag.dTag.did);
+          }
+        }
+      }
+    }
+    //以下是真正的处理过程
+    for (i=0; i<usedDataItemIndex.length; i++) {
+      var thisD=md.dList[usedDataItemIndex[i]];
+      if (thisD) {
+        if (thisD.getFlag==-1||thisD.getFlag==-2) continue;
+        var getJsonDUrl=_PATH+"/"+thisD.url;
+        $.ajax({type:"get", url:getJsonDUrl, async:true, dataType:"json", _index: i,
+          success: function(json) {
+            if (json.jsonType==0) {//获取失败
+              md.faildSize++;
+              thisD.getFlag=-2;//失败
+              thisD.drawFlag=1;//正在画
+              D_tag.dealReadDataErr(this._index, json.message);
+              D_Tags.dealReadDataErr(this._index, json.message);
+              thisD.drawFlag=2;//画完了
+            } if (json.jsonType==1) {//获取成功：解析，并填充d标签内容
+              md.okSize++;
+              var _data=eval("("+json.data+")");
+              thisD.getFlag=-1;//成功
+              thisD.drawFlag=1;//正在画
+              D_tag.dealReadDataOk(this._index, _data);
+              D_Tags.dealReadDataOk(this._index, _data);
+              thisD.drawFlag=2;//画完了
+            } if (json.jsonType==2) {//在运行中，处理
+              thisD.getFlag++;//获取次数+1 //目前获取次数不做处理
+              thisD.drawFlag=0;//还未画
+              //处理进度
+              thisD.progress=json.progress;
+            } else {//很异常，目前先不做处理
+            }
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            md.faildSize++;
+            thisD.getFlag=-2;//失败
+            thisD.drawFlag=1;//正在画
+            D_tag.dealReadDataErr(this._index, "status="+XMLHttpRequest.status);
+            D_Tags.dealReadDataErr(this._index, "status="+XMLHttpRequest.status);
+            thisD.drawFlag=2;//画完了
+          }
+        });
+      } else {
+        clearInterval(parseSysData.poolThreadId);
+        _msg="监控参数异常，无法获得数据";
+        if (mPage) mPage.$.messager.alert("提示", _msg, "error");
+        else alert(_msg);
+        break;
+      }
     }
   }
 };
 
-//=DTag对象的处理=begin==========================
-//与parseSysData中的数据配合使用
-var d_tagDeal={
+//=DTag处理=begin==========================
+var D_tag={
+    /*
+    ==dTag对象说明
+    did:null, //对应的data编码，report中_DLIST里的jsonD标签的顺序号
+    showType:null, //显示类型
+    value:null, //数据，获取_DATA中的那个对象，解析是一个对象，包括:dPoint(字符串)或dFilter(字符串)
+    param:null, //showType附属说明，在标签串中以json格式存在，解析后应该是一个对象
+    decorateView:null, //显示修饰语法
+    tdParseData:null,//表数据解析后的数据结构，辅助数据类型，value类型没有这个属性
+    transLog:null, //转换的记录，若转换成功，则此对象为空，否则此对象为错误转换的说明(要分行记录)
+    */
+    /**
+     * 通过html获得Dtag对象
+     */
+  buildByDTagHtml: function(dtagHtml) {
+    var ret = new Object();
+    ret.transLog="";
+    var jqObj=$(dtagHtml);
+    var _pos=-1;
+
+    //1-did
+    var _tempStr=jqObj.attr("did");
+    if (!_tempStr) ret.transLog+="\nD标签没有设置数据编码did";
+    else {
+      ret.did=_tempStr;
+      if (parseSysData&&parseSysData.monitorData&&parseSysData.monitorData.dList&&parseSysData.monitorData.dList.length>0) {
+        if (!parseSysData.monitorData.dList[ret.did]) {
+          ret.transLog+="\nD标签对应的did未对应任何数据。";
+        }
+      } else ret.transLog+="\nD标签对应的did未对应任何数据。";
+    }
+    //2-showType
+    _tempStr=jqObj.attr("showType");
+    if (!_tempStr) ret.transLog+="\nD标签没有设置显示类型showType";
+    else {
+      _tempStr=_tempStr.toLowerCase();
+      if (_tempStr=="value"||_tempStr=="text"||_tempStr=="table"||_tempStr=="pie"||_tempStr=="line"||_tempStr=="bar"||_tempStr=="radar"||_tempStr=="map_pts")
+        ret.showType=_tempStr;
+      else
+        ret.transLog+="\nD标签的显示类型[showType="+_tempStr+"]所指定的类型不合法";
+    }
+    //3-value
+    _tempStr=jqObj.attr("value");
+    if (!_tempStr) ret.transLog="\nD标签没有设置数据值value";
+    else { //解析value
+      ret.value=new Object();
+      _tempStr=replaceInnerKH(_tempStr);
+      _pos=_tempStr.indexOf("::");
+      if (_pos==-1) ret.value.dPoint=_tempStr;//数据获取指针
+      else {
+        ret.value.dPoint=_tempStr.substring(0, _pos);
+        _pos=_tempStr.indexOf("::");
+        if (_pos!=-1) ret.value.dFilter=new Array();
+        while (_pos!=-1) {
+          _tempStr=_tempStr.substr(_pos+2);
+          _pos=_tempStr.indexOf("::");
+          ret.value.dFilter.push(_pos==-1?_tempStr:_tempStr.substring(0, _pos));
+        }
+      }
+    }
+    //4-param
+    _tempStr=jqObj.attr("param");
+    if (!_tempStr) {
+      if (ret.showType!='value'&&ret.showType!='text'&&ret.showType!='table'&&ret.showType!='map_pts') {
+        ret.transLog="\n类型为["+ret.showType+"]的D标签没有设置类型参数param";
+      }
+    } else { //解析param
+      _tempStr=replaceInnerKH(_tempStr);
+      ret.param=eval("("+_tempStr+")");
+    }
+    //5-decorateView
+    _tempStr=jqObj.attr("decorateView");
+    if (_tempStr) { //解析param
+      ret.decorateView=new Object();
+      _tempStr=replaceInnerKH(_tempStr);
+      _pos=_tempStr.indexOf("::");
+      if (_pos==-1) ret.decorateView.view=_tempStr;//数据获取指针
+      else {
+        ret.decorateView.view=$.trim(_tempStr.substring(0, _pos));
+        ret.decorateView.ext=eval("("+_tempStr.substr(_pos+2)+")");
+      }
+    }
+    if (ret.showType=="text"&&(!ret.decorateView||!ret.decorateView.view)) {
+      ret.transLog+="\n[showType=text]类型的D标签，必须设置decorateView(显示修饰)属性";
+    }
+
+    //6-查合法性
+    if (ret.showType!="value") {
+      ret.tdParseData=D_tag.tableDataFun.parseDtag(ret);
+      _tempStr=D_tag.tableDataFun.checkDtag(ret);
+      if (_tempStr) ret.transLog+="\n"+_tempStr;
+    }
+    if (ret.transLog) ret.transLog=(ret.transLog+"").substring(1);
+
+    return ret;
+    //内部函数：内部串^|~的转码
+    function replaceInnerKH(str) {
+      str=str.replace(/\^/g,"\"");
+      str=str.replace(/\~/g,"\'");
+      return str;
+    }
+  },
   /**
    * 若读取数据错误，处理相关联的D标签区域，把错误信息显示出来
    * @param dindex report中_DLIST里的jsonD标签的顺序号
    * @param errMsg 错误信息
    */
-  dealReadErrData: function(dindex, errMsg) {
+  dealReadDataErr: function(dindex, errMsg) {
     var map=parseSysData.ddtagdomMap[dindex];
     if (!map) return;
     var p;//dom对象的id
@@ -596,11 +668,11 @@ var d_tagDeal={
       if (typeof(p)!="function") {
         var jqObj=$("#"+p);
         if (jqObj) {
-          var oldStr=jqObj.html();
-          if (oldStr) {
-            oldStr=oldStr.substr(0, oldStr.indexOf("<")==-1?oldStr.length:oldStr.indexOf("<"));
-          }
-          jqObj.html(oldStr+"<span class='errMsgSpan'>ERR:"+errMsg+"</span>");
+//          var oldStr=jqObj.html();
+//          if (oldStr) {
+//            oldStr=oldStr.substr(0, oldStr.indexOf("<")==-1?oldStr.length:oldStr.indexOf("<"));
+//          }
+          jqObj.html("<span class='errMsgSpan'>"+errMsg+"</span>");
         }
       }
     }
@@ -610,7 +682,7 @@ var d_tagDeal={
    * @param dindex report中_DLIST里的jsonD标签的顺序号
    * @param d 读出的数据，是json各式
    */
-  dealReadSucData: function(dindex, d) {
+  dealReadDataOk: function(dindex, d) {
     var map=parseSysData.ddtagdomMap[dindex];
     if (!map) return;
     var p;//dom对象的id
@@ -625,11 +697,11 @@ var d_tagDeal={
           _pointData=eval("(d._DATA."+dtag.value.dPoint+")");
         } catch(e) {
           _pointData=e.message;
-          if (_pointData.indexOf("undefined")!=-1) _pointData="数据文件中'"+dtag.value.dPoint+"'未定义"
+          if (_pointData.indexOf("undefined")!=-1) _pointData="数据文件中'"+dtag.value.dPoint+"'未定义";
           dataOk=false;
         }
         if (!dataOk) jqObj.html("<span class='errMsgSpan'>"+_pointData+"</span>");
-        else d_tagDeal.drawTagArea(jqObj, dtag, _pointData);
+        else D_tag.drawTagArea(jqObj, dtag, _pointData);
       }
     }
   },
@@ -644,22 +716,22 @@ var d_tagDeal={
       dtag.drawFlag=2;
       return;
     }
-    if (dtag.showType=="value") d_tagDeal.draw.drawValue(jqEle, dtag, d);
+    if (dtag.showType=="value") D_tag.draw.drawValue(jqEle, dtag, d);
     else {
       var errMsg="";
       var _tData=d.tableData;
       if (!_tData.dataList||_tData.dataList.length==0) errMsg="表数据中没有任何数据";
-      else errMsg=d_tagDeal.tableDataFun.checkMatch(dtag, _tData); //检查数据的匹配情况，并把结果追加到dtag中的tdParseData中去
+      else errMsg=D_tag.tableDataFun.checkMatch(dtag, _tData); //检查数据的匹配情况，并把结果追加到dtag中的tdParseData中去
       if (errMsg) jqEle.html("<span class='errMsgSpan'>"+errMsg+"</span>");
       else {
         //TODO 检查d数据是否符合，如titles中的内容是否和dlist中的内容能够匹配
-        if (dtag.showType=="text") d_tagDeal.draw.drawText(jqEle, dtag, _tData);
-        else if (dtag.showType=="table") d_tagDeal.draw.drawTable(jqEle, dtag, _tData);
-        else if (dtag.showType=="pie") d_tagDeal.draw.drawPie(jqEle, dtag, _tData);
-        else if (dtag.showType=="line") d_tagDeal.draw.drawLine(jjqEle, dtag, _tData);
-        else if (dtag.showType=="bar") d_tagDeal.draw.drawBar(jqEle, dtag, _tData);
-        else if (dtag.showType=="radar") d_tagDeal.draw.drawRadar(jqEle, dtag, _tData); //雷达图
-        else if (dtag.showType=="map_pts") d_tagDeal.draw.drawMapPts(jqEle, dtag, _tData); //地图画点
+        if (dtag.showType=="text") D_tag.draw.drawText(jqEle, dtag, _tData);
+        else if (dtag.showType=="table") D_tag.draw.drawTable(jqEle, dtag, _tData);
+        else if (dtag.showType=="pie") D_tag.draw.drawPie(jqEle, dtag, _tData);
+        else if (dtag.showType=="line") D_tag.draw.drawLine(jqEle, dtag, _tData);
+        else if (dtag.showType=="bar") D_tag.draw.drawBar(jqEle, dtag, _tData);
+        else if (dtag.showType=="radar") D_tag.draw.drawRadar(jqEle, dtag, _tData); //雷达图
+        else if (dtag.showType=="map_pts") D_tag.draw.drawMapPts(jqEle, dtag, _tData); //地图画点
       }
     }
   },
@@ -684,8 +756,8 @@ var d_tagDeal={
       }
       if (htmlStr) htmlStr="<span class='errMsgSpan'>"+htmlStr+"</span>";
       else {//获取数据
-        var fTdata=d_tagDeal.tableDataFun.filterData(dtag, d);
-        if (fTdata.errMsg) htmlStr="<span class='errMsgSpan'>"+errMsg+"</span>";
+        var fTdata=D_tag.tableDataFun.filterData(dtag, d);
+        if (fTdata.errMsg) htmlStr="<span class='errMsgSpan'>"+fTdata.errMsg+"</span>";
         else {
           //获得分割符
           var splitChar=(dtag.decorateView.ext&&dtag.decorateView.ext.suffix)?dtag.decorateView.ext.suffix:"、";
@@ -708,10 +780,11 @@ var d_tagDeal={
       jqEle.attr("class", "dtagTextShow");
       jqEle.html(htmlStr);
     },
+    //画表格:jqEle(html元素的jquery对象)，dtag(标签信息)，d(表数据)
     drawTable: function(jqEle, dtag, d) {
-      var fTdata=d_tagDeal.tableDataFun.filterData(dtag, d);
+      var fTdata=D_tag.tableDataFun.filterData(dtag, d);
       if (fTdata.errMsg) {
-        htmlStr="<span class='errMsgSpan'>"+errMsg+"</span>";
+        htmlStr="<span class='errMsgSpan'>"+fTdata.errMsg+"</span>";
         jqEle.html(htmlStr);
       } else {
         //获得列对象
@@ -758,10 +831,11 @@ var d_tagDeal={
         });
       }
     },
+    //画饼图:jqEle(html元素的jquery对象)，dtag(标签信息)，d(表数据)
     drawPie: function(jqEle, dtag, d) {
-      var fTdata=d_tagDeal.tableDataFun.filterData(dtag, d);
+      var fTdata=D_tag.tableDataFun.filterData(dtag, d);
       if (fTdata.errMsg) {
-        htmlStr="<span class='errMsgSpan'>"+errMsg+"</span>";
+        htmlStr="<span class='errMsgSpan'>"+fTdata.errMsg+"</span>";
         jqEle.html(htmlStr);
       } else {
         jqEle.html("");
@@ -777,25 +851,107 @@ var d_tagDeal={
         });
         jqEle.bind("plothover", function(event, pos, obj) {
           if (!obj) {
-            d_tagDeal.draw.hideTooltip();
+            D_tag.draw.hideTooltip();
             return;
           }
-          var opt={
-            "top":pos.pageY+5,
-            "left":pos.pageX+5
-          };
+          var opt={"top":pos.pageY+5,"left":pos.pageX+5};
           var content=pieData[obj.seriesIndex]["label"]+":"+pieData[obj.seriesIndex]["data"];
-          d_tagDeal.draw.showTooltip(opt, content);
+          D_tag.draw.showTooltip(opt, content);
         });
       }
     },
-    drawLine: function(jqEle, tdata) {
-      
+    //画折线图:jqEle(html元素的jquery对象)，dtag(标签信息)，d(表数据)
+    drawLine: function(jqEle, dtag, d) {
+      var fTdata=D_tag.tableDataFun.filterData(dtag, d);
+      if (fTdata.errMsg) {
+        htmlStr="<span class='errMsgSpan'>"+fTdata.errMsg+"</span>";
+        jqEle.html(htmlStr);
+      } else {
+        jqEle.html("");
+        //准备数据
+        var lineData=new Array();
+        for (var i=0; i<fTdata.dList.length; i++) {
+          var row=fTdata.dList[i];
+          lineData.push([row[dtag.param["xAxis"]], row[dtag.param["yAxis"]]]);
+        }
+        $.plot(jqEle, [{"label":d.titles[dtag.param["xAxis"]], "data":lineData}], {
+          series: {
+            lines: {show: true},
+            points: {show: true}
+          },
+          grid: {
+            hoverable: true,
+            borderWidth: {top: 0, right: 0, bottom: 1, left: 1}
+          },
+          xaxis: {
+            mode: "categories",
+            autoscaleMargin: 0.05,
+            tickLength: 0
+          },
+          yaxis:{
+            show:true,
+            position:'left',
+            tickLength:40,
+            tickDecimals:0
+          }
+        });
+        jqEle.bind("plothover", function(event, pos, obj) {
+          if (!obj) {
+            D_tag.draw.hideTooltip();
+            return;
+          }
+          var opt={"top":pos.pageY+5, "left":pos.pageX+5};
+          var content=barData[obj.dataIndex][0]+":"+barData[obj.dataIndex][1];
+          D_tag.draw.showTooltip(opt, content);
+        });
+      }
     },
-    drawBar: function(jqEle, tdata) {
-      
+    //画柱图:jqEle(html元素的jquery对象)，dtag(标签信息)，d(表数据)
+    drawBar: function(jqEle, dtag, d) {
+      var fTdata=D_tag.tableDataFun.filterData(dtag, d);
+      if (fTdata.errMsg) {
+        htmlStr="<span class='errMsgSpan'>"+fTdata.errMsg+"</span>";
+        jqEle.html(htmlStr);
+      } else {
+        jqEle.html("");
+        //准备数据
+        var barData=new Array();
+        for (var i=0; i<fTdata.dList.length; i++) {
+          var row=fTdata.dList[i];
+          barData.push([row[dtag.param["xAxis"]], row[dtag.param["yAxis"]]]);
+        }
+        $.plot(jqEle, [{"label":d.titles[dtag.param["xAxis"]], "data":barData}], {
+          series: {
+            bars: {show: true, barWidth: 0.3, align: "center", fill:0.6}
+          },
+          grid: {
+            hoverable: true,
+            borderWidth: {top: 0, right: 0, bottom: 1, left: 1}
+          },
+          xaxis: {
+            mode: "categories",
+            autoscaleMargin: 0.05,
+            tickLength: 0
+          },
+          yaxis:{
+            show:true,
+            position:'left',
+            tickLength:40,
+            tickDecimals:0
+          }
+        });
+        jqEle.bind("plothover", function(event, pos, obj) {
+          if (!obj) {
+            D_tag.draw.hideTooltip();
+            return;
+          }
+          var opt={"top":pos.pageY+5, "left":pos.pageX+5};
+          var content=barData[obj.dataIndex][0]+":"+barData[obj.dataIndex][1];
+          D_tag.draw.showTooltip(opt, content);
+        });
+      }
     },
-    drawRadar: function(jqEle, tdata) {
+    drawRadar: function(jqEle, tdata) {//雷达图
       
     },
     drawMapPts: function(jqEle, tdata) {
@@ -803,12 +959,10 @@ var d_tagDeal={
     },
     showTooltip: function(opt, cont) {
       var qH=$("#_tooltip");
-      console.log(qH.length);
       if (qH.length==0) {
         $("body").append('<div id="_tooltip"></div>');
         qH=$("#_tooltip");
       }
-      console.log(qH.html());
       qH.html(cont);
       qH.css(opt).show();
     },
@@ -1097,8 +1251,8 @@ var d_tagDeal={
       if (dtag.showType=="value") return null;//合法：对value类型的D标签来说，对表数据进行匹配检查没有意义
       else {
         if (!dtag.tdParseData) {
-          dtag.tdParseData=d_tagDeal.tableDataFun.parseDtag(dtag);
-          var _tempMsg=d_tagDeal.tableDataFun.checkDtag(dtag);
+          dtag.tdParseData=D_tag.tableDataFun.parseDtag(dtag);
+          var _tempMsg=D_tag.tableDataFun.checkDtag(dtag);
           if (_tempMsg) return _tempMsg;
         }
       }
@@ -1237,4 +1391,183 @@ var d_tagDeal={
     }
   }
 };
-//=DTag对象的处理=end==========================
+//=DTag处理=end==========================
+
+//=DTags处理=begin==========================
+var D_Tags={
+  /*
+  dsid:null, //整篇文档中，Dtags的编号
+  loadAll:yes|no|err,//是否
+  dArray:null, //每个dTag标签对应的情况，包括如下：
+    index:序号
+    dTag:dtag对象
+    loadData:装载的数据，若为空，则说明没有装载上数据
+  */
+  /**
+   * 通过html获得Dtags对象。
+   * 若其中一个Dtag标签有错误，则整个过程停止
+   */
+  buildByDtagsHtml: function(dtagsHtml, divId, treeNode) {
+    var ret = new Object();
+    var i=0;
+    ret.dsid=divId;
+    ret.loadAll="no";
+    ml=dtagsHtml.match(/<d .*?(<\/d>|\/>)/gi);//match list
+    if (ml&&ml.length>0) {
+      for (; i<ml.length; i++) {
+        var oneTagInTags = new Object();
+        oneTagInTags.index=i;
+        var dtag=new D_tag.buildByDTagHtml(ml[i]);
+        oneTagInTags.dtag=dtag;
+        oneTagInTags.loadData=null;
+        oneTagInTags.transLog=dtag.transLog;
+        if (dtag.showType&&(dtag.showType!='line'&&dtag.showType!='bar')) {
+          oneTagInTags.transLog=(dtag.transLog?dtag.transLog+"\n":"")+"图形组目前仅支持[柱图]和[折线图]的组合，目前图形为["+transTagType(dTag.showType)+"]，无法组合。";
+        }
+        if (!ret.dArray) ret.dArray=new Array();
+        ret.dArray.push(oneTagInTags);
+        if (oneTagInTags.transLog) break;//若有一个图形组的子图有问题，则整个图形组视为错误
+        reportParse.addDindex2TreeNode(treeNode, dtag.did);//加入树结点的dArray属性(包含所有下级结点中的D标签的did的列表)
+      }
+    }
+    ret.transLog="";
+    if (ret.dArray&&ret.dArray.length>0) {
+      for (i=0; i<ret.dArray.length; i++) {
+        if (ret.dArray[i].transLog) ret.transLog+="\n子图["+transTagType(ret.dArray[i].dtag.showType)+"]问题如下："+ret.dArray[i].transLog;
+      }
+    }
+    ret.transLog=$.trim(ret.transLog);
+    if (!ret.transLog) ret.transLog=null;
+
+    return ret;
+  },
+  /**
+   * 若读取数据错误，处理相关联的Ds标签区域，把错误信息显示出来
+   * @param dindex report中_DLIST里的jsonD标签的顺序号
+   * @param errMsg 错误信息
+   */
+  dealReadDataErr: function(dindex, errMsg) {
+    var ddsm=parseSysData.ddtagsdomMap;
+    if (!ddsm) return;
+
+    var msg="";
+    for(var p in ddsm) {
+      if (typeof(p)!="function") {
+        dTags=ddsm[p];
+        msg="";
+        if (dTags.dArray) {
+          for (var i=0; i<dTags.dArray.length; i++) {
+            var dtag = dTags.dArray[i].dtag;
+            if (dtag.did==dindex) {
+              msg+="<br\>类型为["+transTagType(dtag.showType)+"]的子图("+dTags.dArray[i].index+")："+errMsg;
+            }
+          }
+        }
+        msg=$.trim(msg);
+        var jqObj=$("#"+p);
+        if (msg&&jqObj) jqObj.html("<span class='errMsgSpan'>"+msg.substr(4)+"</span>");
+      }
+    }
+  },
+  /**
+   * 若读取数据成功，按Ds标签的定义显示数据
+   * @param dindex report中_DLIST里的jsonD标签的顺序号
+   * @param d 读出的数据，是json各式
+   */
+  dealReadDataOk: function(dindex, d) {
+    var ddsm=parseSysData.ddtagsdomMap;
+    if (!ddsm) return;
+
+    var errMsg="";
+    var p;//dom对象的id
+    for(var p in ddsm) {
+      if (typeof(p)!="function") {
+        dTags=ddsm[p];
+        if (dTags.dArray) {
+          var i=0;
+          for (; i<dTags.dArray.length; i++) {
+            var dtag=dTags.dArray[i].dtag;
+            if (dtag.did==dindex) {//准备数据
+              errMsg="";
+              var dataOk=true;
+              var _pointData=null
+              try {
+                _pointData=eval("(d._DATA."+dtag.value.dPoint+")");
+              } catch(e) {
+                _pointData=e.message;
+                if (_pointData.indexOf("undefined")!=-1) _pointData="数据文件中'"+dtag.value.dPoint+"'未定义";
+                dataOk=false;
+              }
+              if (!dataOk) dTags.dArray[i].loadData=_pointData;
+              else {
+                var _tData=_pointData.tableData;
+                if (!_tData.dataList||_tData.dataList.length==0) errMsg="表数据中没有任何数据";
+                else errMsg=D_tag.tableDataFun.checkMatch(dtag, _tData); //检查数据的匹配情况，并把结果追加到dtag中的tdParseData中去
+                if (errMsg) dTags.dArray[i].loadData=errMsg;
+                else {
+                	var fTdata=D_tag.tableDataFun.filterData(dtag, _tData);
+                  if (fTdata.errMsg) dTags.dArray[i].loadData=fTdata.errMsg;
+                  else {
+                    var loadData=new Array();
+                    for (var j=0; j<fTdata.dList.length; j++) {
+                      var row=fTdata.dList[j];
+                      loadData.push([row[dtag.param["xAxis"]], row[dtag.param["yAxis"]]]);
+                    }
+                    if (dtag.showType=="bar") {
+                      dTags.dArray[i].loadData={"label":_tData.titles[dtag.param["xAxis"]], "data":loadData, "bars":{show:true, barWidth: 0.3, align: "center", fill:0.6}};
+                    } else if (dtag.showType=="line") {
+                      dTags.dArray[i].loadData={"label":_tData.titles[dtag.param["xAxis"]], "data":loadData, "lines":{show:true}, "points":{show:true}};
+                    }
+                  }
+                }
+              }
+            }
+          }
+          var canDraw=true;
+          errMsg="";
+          for (i=0; i<dTags.dArray.length; i++) {
+            if (!dTags.dArray[i].loadData) {
+              canDraw=false;
+              break;
+            }
+            if (typeof(dTags.dArray[i].loadData)=='string') {
+            	errMsg+="<br\>类型为["+transTagType(dtag.showType)+"]的子图("+dTags.dArray[i].index+")："+dTags.dArray[i].loadData;
+            }
+          }
+          if (canDraw) {
+            var jqObj=$("#"+p);
+            if (errMsg&&jqObj) jqObj.html("<span class='errMsgSpan'>"+errMsg.substr(4)+"</span>");
+            else D_Tags.drawTags(jqObj, dTags);
+          };
+        }
+      }
+    }
+  },
+  //画折线图:jqEle(html元素的jquery对象)，dtag(标签信息)，d(表数据)
+  drawTags: function(jqEle, dTags) {
+  	if (dTags&&dTags.dArray&&dTags.dArray.length>0) {
+  		var series=new Array();
+  		for (var i=0; i<dTags.dArray.length; i++) {
+  			series.push(dTags.dArray[i].loadData);
+  		}
+      $.plot(jqEle, series, {
+        grid: {
+          hoverable: true,
+          borderWidth: {top: 0, right: 0, bottom: 1, left: 1}
+        },
+        xaxis: {
+          mode: "categories",
+          autoscaleMargin: 0.05,
+          tickLength: 0
+        },
+        yaxis:{
+          show:true,
+          position:'left',
+          tickLength:40,
+          tickDecimals:0
+        }
+      });
+  	}
+  }
+};
+//=DTags处理=end==========================

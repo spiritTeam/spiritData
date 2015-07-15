@@ -3,7 +3,7 @@ package com.spiritdata.dataanal.report.model;
 import java.io.Serializable;
 import java.util.Map;
 
-import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1005CException;
 import com.spiritdata.dataanal.report.enumeration.DtagShowType;
 import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
@@ -76,9 +76,9 @@ public class D_Tag implements Serializable{
      * @return
      */
     public String toHtmlTag() {
-        if (StringUtils.isNullOrEmptyOrSpace(this.did)) throw new Dtal1002CException("D标签不规范：did属性必须设置且不能为空！");
-        if (this.showType==null) throw new Dtal1002CException("D标签不规范：showType属性必须设置！");
-        if (StringUtils.isNullOrEmptyOrSpace(this.value)) throw new Dtal1002CException("D标签不规范：value属性必须设置且不能为空！");
+        if (StringUtils.isNullOrEmptyOrSpace(this.did)) throw new Dtal1005CException("D标签不规范：did属性必须设置且不能为空！");
+        if (this.showType==null) throw new Dtal1005CException("D标签不规范：showType属性必须设置！");
+        if (StringUtils.isNullOrEmptyOrSpace(this.value)) throw new Dtal1005CException("D标签不规范：value属性必须设置且不能为空！");
 
         String temp = "";
         String ret = "<d"; //标签开始

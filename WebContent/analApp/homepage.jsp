@@ -29,7 +29,7 @@
       <img id="mlogo" src="../resources/images/logo/main_logo.png"/>
       <div id="internet" onclick="test()">互联网</div>
       <div id="plus">+</div>
-      <div id="descript">无模式·开放型·数据分析平台</div>
+      <div id="descript">无模式·开放型·数据探索平台</div>
     </div>
     <div id="inForm">
       <form method="post" action="<%=path%>/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">        
@@ -37,7 +37,7 @@
         <div>
           <div id="upIcon" onclick="upIcon_clk();"></div>
           <input id="upfs" name="upfs" type="text" readonly="readonly" onclick="upfs_clk();"/>
-          <input id="su" type="button" value="分析一下" onclick="uploadF();"/>
+          <input id="su" type="button" value="探索一下" onclick="uploadF();"/>
         </div>
       </form>
     </div>
@@ -54,7 +54,7 @@
 1-对一个Excel中的多个页签进行处理<br/>
 2-每个页签中的数据表的表头要尽量简单<br/>
 <br/>
-内测版本，功能不完善。预理解报告功能，可浏览<a href="#" onclick="showDemo()" style="text-decoration:underline;">分析报告样例</a>。
+内测版本，功能不完善。预理解报告功能，可浏览<a href="#" onclick="showDemo()" style="text-decoration:underline;">报告样例</a>。
       </div>
       <div id="declare" class="tabPanel">
 <span>在公开内测阶段，我们将：</span><br/>
@@ -269,7 +269,7 @@ function checkUploadStatus() {
 }
 
 function showResult() {
-  openSWinInMain({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
+  openSWinInMain({"title":"探索分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
 }
 function changeTab(tabIndex) {
   $("#tabBar>div").each(function(i) {
@@ -286,7 +286,7 @@ function changeTab(tabIndex) {
   else if (tabIndex==3) $("#introduce").show();
 }
 function showDemo() {
-  openSWinInMain({"title":"分析报告Demo", "url":"demo/Rd/resultRdEchart.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
+  openSWinInMain({"title":"探索分析报告Demo", "url":"demo/Rd/resultRdEchart.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
 }
 </script>
 </body>

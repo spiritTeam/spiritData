@@ -35,7 +35,7 @@
 <link href="<%=path%>/resources/plugins/zui/css/example.css" rel="stylesheet">
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
 
-<title>互联网+无模式开放数据分析平台—灵派诺达</title>
+<title>互联网+无模式开放数据探索分析平台—灵派诺达</title>
 </head>
 <body>
 <!-- 遮罩层 -->
