@@ -116,7 +116,7 @@ function closeSWinInMain(winId) {
  * 主页面中弹出对话框，调用easyui的message
  * @param title 标题
  * @param msg   消息内容
- * @param icon  图标
+ * @param icon  图标 info,error
  * @param fn    回调函数
  */
 function showAlert(title, msg, icon, fn) {

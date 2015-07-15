@@ -22,6 +22,7 @@
 <!-- 加载analApp的JS -->
 <script src="<%=path%>/resources/js/visit.utils.js"></script>
 <script src="<%=path%>/analApp/js/analApp.view.js"></script>
+<script src="<%=path%>/analApp/js/zui.pager.js"></script>
 <script src="<%=path%>/reportFrame/serial/js/spirit.report.serial.utils.js"></script>
 
 <title>文件主界面</title>
@@ -147,9 +148,20 @@ border-radius:10px;
     <div id="dgList" style="display:none;"></div>
     <!-- 查询结果缩略图显示 -->
     <div id="dgThumb" style="display:none;"></div>
+    <!-- 分页条 -->
+    <div id="div_pager" style="">
+    </div>
   </div>
 </body>
 <script>
+//*** begin 常量定义 ***
+var pageSize = 2; //每页显示的条数
+//*** end 常量定义 ***
+
+//*** begin 变量定义 ***
+var pager = null; //分页对象
+//*** end 变量定义 ***
+
 //主函数
 $(function() {
   initSubmitBt();
@@ -157,9 +169,24 @@ $(function() {
   initDatePicker();
   //初始化日期清除按钮
   initDataCloseBT();
+  //初始化分页
+  initPager();
+  
+  //设置路径
   _urlPath = "<%=path%>";  
   startSearch();
 });
+
+//初始化分页
+function initPager(){
+  pager = new $.ZuiPager({"pageSize":pageSize,"divPageId":"div_pager","onSelectPage":function onSelectPage(pageNumber, pageSize){selectPage(pageNumber,pageSize);}}); 
+  pager.initPager();
+}
+//选择了某个页面
+function selectPage(pageNumber, pageSize){
+	//alert("onSelectPage()... pageNumber="+pageNumber+";pageSize="+pageSize);
+	startSearch({"pageNumber":pageNumber, "pageSize":pageSize});
+}
 
 //初始化查询输入框
 var searchTxt = "请输入查询内容...";
@@ -260,23 +287,29 @@ var objDatatable = null; //列表显示对象
 var unReadObjJsonArr = []; //当缩略图显示时，未读小红点位置需要调整到文件名左上角
 
 //取出输入条件，提交查询
-function startSearch(){
+function startSearch(searchParam){
+	//清除未读报告信息
 	unReadObjJsonArr = [];
+	//设置查询条件
   //var searchStr = getInputSearchFileStr();
-  var searchStr = $("#inp_filename").val();
-  var startDateStr = $("#startDate").val();
-  var endDateStr = $("#endDate").val();
+  if(!searchParam){
+	  searchParam = {"pageNumber":1, "pageSize":pageSize};
+  }
+  searchParam.searchStr = $("#inp_filename").val();
+  searchParam.startDateStr = $("#startDate").val();
+  searchParam.endDateStr = $("#endDate").val();
   
   //异步查询文件列表  
-  var searchParam={"searchStr":searchStr,"startDateStr":startDateStr,"endDateStr":endDateStr};
+  //alert("startSearch(): searchParam="+JSON.stringify(searchParam));
   var url="<%=path%>/analApp/demoData/filelist.json";
-  url = "<%=path%>/fileview/searchFileList.do";
+  url = "<%=path%>/fileview/searchFilePageList.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
       try{
         //alert("fileSearch() search result="+jsonStr);
         searchResultJsonData = str2JsonObj(jsonStr); 
         showSearchResult(showType);
+        pager.setTotalCount(searchResultJsonData.total);
       }catch(e){
         showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
@@ -374,7 +407,7 @@ function showSearchResultThumb(){
   var showType = "thumb";
   var thumbHtmlStr = '';
   if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
-    thumbHtmlStr += '<section class="cards">';
+    thumbHtmlStr += '<section id="section_thumb" class="cards">';
     var jsonRows = searchResultJsonData.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
@@ -427,8 +460,11 @@ function showSearchResultThumb(){
       //console.log(textText+":"+textFontSize+":"+textText.cnLength()+":"+textLength);
       $(this).css("width",textLength)
       .css("padding-left", (parseInt($(this).parent().width())-textLength)/2);
-    });
+    });    
   },1*200);
+  
+  //卡片 section居中
+  //alert($("#dgThumb").width()+"  "+$("#section_thumb").width());
 }
 
 //获得输入的查询内容

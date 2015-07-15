@@ -45,6 +45,33 @@ public class FileViewService {
     public List<FileViewPo> searchFileList(Map paramMap){
     	return fileViewDao.queryForList("getFileList",paramMap);
     }
+
+    /**
+     * 条件查询文件列表
+     * @param paramMap
+     * @return
+     */
+    public int searchFileListCount(Map paramMap){
+    	return fileViewDao.getCount("getFileListCount",paramMap);
+    }
+
+    /**
+     * 条件查询文件列表，分页查询
+     * @param paramMap
+     * @return
+     */
+    public Map<String,Object> searchFilePageList(Map paramMap){
+    	Map<String,Object> datagridDataJsonMap = new HashMap<String,Object>();
+		int pageNumber = ((Integer)paramMap.get("pageNumber")).intValue();
+		int pageSize = ((Integer)(paramMap.get("pageSize"))).intValue();
+		Page<Map<String,Object>> page = fileViewDao.pageQueryAutoTranform("getFileListCount", "getFilePageList", paramMap, pageNumber, pageSize);
+		int totalTableCount = page.getDataCount();
+		Collection<Map<String,Object>> dataCollect = page.getResult();
+		List<Map<String,Object>> fileDataList = (List<Map<String,Object>>)dataCollect;
+		datagridDataJsonMap.put("total", totalTableCount);
+		datagridDataJsonMap.put("rows", fileDataList);		
+    	return datagridDataJsonMap;
+    }
     
     /**
      * 获取指定ID的文件数据
