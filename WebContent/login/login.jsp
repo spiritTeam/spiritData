@@ -75,7 +75,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
       <td class="labelTd">验证码</td>
       <td class="inputTd">
         <div class="alertInput-vCode">
-          <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="3" type="text" onBlur="validateCheckCode();"/></div>
+          <div id="vCodeInput"><input id="checkCode" class="alertInputComp" name="checkCode" tabindex="3" type="text" onBlur="validateCheckCode();" onkeypress="checkCodeKeyDown(event);" onkeydown="checkCodeKeyDown()"/></div>
           <div id="vCodeImg"><img id="vcimg" title="点击更换" onclick="javascript:refreshCCImg('<%=path %>');" src=""></div>
           <div class="alertImg"></div>
           <div class="maskTitle">输入验证码,见右图</div>
@@ -136,6 +136,7 @@ function validatePassword() {
   var val = $("#password").val();
   if (val) vdInfoAry[1] = "";
   else vdInfoAry[1] = "密码为必填项";
+  //$("#password").focus();
 }
 // 账号验证
 function validateLoginName(){
@@ -143,19 +144,23 @@ function validateLoginName(){
   //验证loginName是否为空
   if (val) vdInfoAry[0] = "";
   else vdInfoAry[0] = "账号为必填项";
+  //$('#loginName').focus();
 }
 //验证码验证
 function validateCheckCode(){
+	var valided = true;
   var val = ($('#checkCode').val()).toUpperCase();
   if (val) {
     win.setMessage({'msg':''});
     vdInfoAry[2] = "";
     if(val!=checkCode){
       vdInfoAry[2] = "验证码填写错误";
+      valided = false;
     }
   }else{
     $("#checkCode").parent().parent().find(".alertImg").hide();
     vdInfoAry[2] = "验证码为必填项";
+    valided = false;
     //用于测试，等正式上线后需去掉！！！
     if(ignoreCheckCode){
       vdInfoAry[2] = "";
@@ -163,6 +168,18 @@ function validateCheckCode(){
   }
   ma = getMainAlert($("#checkCode"));
   ma.find(".alertImg").attr("title", vdInfoAry[2]);
+  //$('#checkCode').focus();
+  return valided;
+}
+//监测验证码输入
+function checkCodeKeyDown(e){
+	//alert("checkCodeKeyDown()");
+	var e = e||window.event;
+	if(e.keyCode == 13){//回车
+		//if(validateCheckCode()){
+			commit();
+		//}
+	}
 }
 //=以上为验证=============================================
 
@@ -268,7 +285,7 @@ function login(pData) {
   //        $('#delimiter').show();
           $("#checkCode").val("");
           if (mainPage) mainPage.$("#mask").hide();
-        } else　showAlert('登录信息', '登录失败'+(retInfo?("："+retInfo):"！"), 'error');
+        } else showAlert('登录信息', '登录失败'+(retInfo?("："+retInfo):"！"), 'error');
       } else if (json.type==1) {//登录成功
         if (activeFlag==0) {//未激活
           refreshCCImg('<%=path%>');

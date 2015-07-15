@@ -392,7 +392,7 @@ function showSearchResultThumb(){
     for(var i=0;i<len;i++){
       var id = jsonRows[i]["id"];
       var fileName = jsonRows[i]["reportName"];
-      var fileFull = fileName;
+      var fileFull = fileName;//.substring(0,3);
       var desc = jsonRows[i]["descn"];
       var reportType = jsonRows[i]["reportType"];
       var createDate = jsonRows[i]["createTimeStr"];

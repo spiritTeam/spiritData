@@ -36,6 +36,25 @@ a:link{color:#0000CC;}
 .items .item{padding:10px 0px;border-bottom:0px solid #E5E5E5;transition:all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1) 0s;}
 .media{max-width:100%;text-align:center;vertical-align:middle;background-color:#FFF;border:0px solid #DDD;color:#AAA;}
 .highlight{background-color:yellow;font-weight:bold;font-style:italic}
+
+/*** begin 小红圆点，标识未读报告 ***/
+.circleFillRed {
+float:left;
+width: 10px;
+height: 10px;
+background-color: #ff0000;
+-webkit-border-radius: 10px;
+border-radius:10px;
+}
+.circleOpacity {
+float:left;
+width: 10px;
+height: 10px;
+background-color: inherit;
+-webkit-border-radius: 10px;
+border-radius:10px;
+}
+/*** end 小红圆点，标识未读报告 ***/
 </style>
 <body class="padding_top5" style="background-color:#FFFFFF">
   <div class="list div_float_left" style="width:60%;margin:0 auto;padding:10px 20px 10px 160px;">
@@ -112,7 +131,7 @@ function showSearchResult() {
       var desc = arow["desc"];    
       var fileType = arow["type"];
       var flag = "FILE";
-      if(fileType=="file"){
+      if(fileType=="file"){ //文件类型
         var reportId = arow["reportId"];
         var size = arow["size"];
         var suffix = arow["suffix"];
@@ -129,18 +148,22 @@ function showSearchResult() {
         }else{
         	divItemHead.append('<div class="pull-right"><a href="###" onclick="showFile(\''+id+'\',\''+fileFull+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" style="visibility:hidden;" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</a></div>');
         }
-        divItemHead.append('<h4><span class="label label-primary font_size15">'+flag+'</span>&nbsp; <a href="###" class="href_file" onclick="showFile(\''+id+'\',\''+fileFull+'\');">'+fileFull+'</a></h4>');
+        divItemHead.append('<h4><span class="label label-primary font_size15">'+flag+'</span>&nbsp; <a href="###" class="href_file" style="padding-left:20px;" onclick="showFile(\''+id+'\',\''+fileFull+'\');">'+fileFull+'</a></h4>');
         //item-content内容
         divItemContent.append('<div class="text font_size13">'+'ID：'+highlightStr(id,_searchStr)+'&nbsp;&nbsp;&nbsp;'
           +'名称：'+highlightStr(fileFull,_searchStr)+'&nbsp;&nbsp;&nbsp;'
           +'报告ID：'+highlightStr(reportId,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'大小：'+highlightStr(size,_searchStr)+'&nbsp;&nbsp;&nbsp;'
           +'上传时间：'+highlightStr(createDate,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'简介：'+highlightStr(desc,_searchStr)+'</div>');
-      } else if (fileType=="report") {
+      } else if (fileType=="report") { //报告类型
         var reportType = arow["reportType"];
         flag = "RPT";
+        var unReadId = getUnReadReportId(id,"list");        
         //item-head内容
-        divItemHead.append('<div class="pull-right"><a href="###" onclick="showReport(\''+id+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showRelation(\''+id+'\');"><i class="icon-building"></i>关系</a></div>');
-        divItemHead.append('<h4><span class="label label-success font_size15">'+flag+'</span>&nbsp; <a href="###" onclick="showReport(\''+id+'\');" class="href_file">'+fileFull+'</a></h4>');
+        divItemHead.append('<div class="pull-right"><a href="###" onclick="showReport(\''+id+'\',\''+unReadId+'\');"><i class="icon-list"></i>浏览</a> &nbsp;<a href="#" onclick="showRelation(\''+id+'\');"><i class="icon-building"></i>关系</a></div>');
+        //divItemHead.append('<h4><span class="label label-success font_size15">'+flag+'</span>&nbsp; <a href="###" onclick="showReport(\''+id+'\');" class="href_file">'+fileFull+'</a></h4>');
+        var optRound = '<div id="'+unReadId+'" class="'+(unReadId?'circleFillRed':'circleOpacity')+'" style="margin-left:10px;" />';
+        var hrefReportHtml = '<a href="###" onclick="showReport(\''+id+'\',\''+unReadId+'\');" class="href_file">'+optRound+fileFull+'</a>';
+        divItemHead.append('<h4><span class="label label-success font_size15" style="float:left;">'+flag+'</span>&nbsp;'+hrefReportHtml+'</h4>');
         //item-content内容
         var mediaPullLeftDiv = $('<div class="media pull-left"></div>');
         mediaPullLeftDiv.appendTo(divItemContent);
