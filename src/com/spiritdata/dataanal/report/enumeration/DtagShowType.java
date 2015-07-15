@@ -1,6 +1,6 @@
 package com.spiritdata.dataanal.report.enumeration;
 
-import com.spiritdata.dataanal.exceptionC.Dtal1002CException;
+import com.spiritdata.dataanal.exceptionC.Dtal1005CException;
 
 /**
  * D标签的显示类型，目前有：<br/>
@@ -36,5 +36,5 @@ public enum DtagShowType {
         if (value.toUpperCase().equals("LINE")) return DtagShowType.LINE;
         if (value.toUpperCase().equals("RADAR")) return DtagShowType.RADAR;
         if (value.toUpperCase().equals("MAP_PTS")) return DtagShowType.MAP_PTS;
-        throw new Dtal1002CException("不能识别的D标签类型:"+value+"！");    }
+        throw new Dtal1005CException("不能识别的D标签类型:"+value+"！");    }
 }

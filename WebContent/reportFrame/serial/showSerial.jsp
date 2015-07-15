@@ -35,7 +35,7 @@ require.config({
 
 <title>序列化报告显示壳容器</title>
 <script type="text/javascript">
-var getReportUrl = _PATH+"/report/getReport.do?";
+//var getReportUrl = _PATH+"/report/getReport.do?";
 $(function() {
   var rP = new Object();
   var reportUri=getUrlParam(window.location.href, "reportUri");
