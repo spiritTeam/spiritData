@@ -286,7 +286,7 @@ function setLoginPage() {
 }
 //=====显示状态的处理 end
 
-//=======切换iframe页面，无搜索页
+//=======切换iframe页面，无搜索页，并刷新
 function switchIF(_type, _param) {
   if (_type==curFrameIndex&&needRefresh[_type]==0) return;
   else curFrameIndex=_type;
@@ -467,10 +467,9 @@ function getNoVisitReports() {//得到未访问列表信息
           if (!equalNoVisitList(newReportJson,jsonData)) {
             setNoVisitReportNum(jsonData.total);
             newReportJson = jsonData;
-            $('#ifmReport').attr('src', $('#ifmReport').attr('src'));
-            $('#ifmFile').attr('src', $('#ifmReport').attr('src'));
-            $('#ifmSearch').attr('src', $('#ifmSearch').attr('src'));
-            //这里应该刷新所有页面
+            switchIF(curFrameIndex);
+            //刷新查询
+            if (curFrameIndex==3) startSearch();
           }
         }
       } catch(e) {

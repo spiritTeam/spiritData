@@ -189,8 +189,8 @@ function initDatePicker() {
 
 //初始化日期清除按钮
 function initDataCloseBT(){
-	//初始化开始日期，首先定位关闭按钮的位置，其次加入点击事件
-	var objStartDate = $("#startDate"); 
+  //初始化开始日期，首先定位关闭按钮的位置，其次加入点击事件
+  var objStartDate = $("#startDate"); 
   var sleft = px2Float(objStartDate.offset().left);
   var swidth = px2Float(objStartDate.css("width"));
   var spos = sleft + swidth;
@@ -199,7 +199,7 @@ function initDataCloseBT(){
   var stop = px2Float(objCloseStartBT.css("top"))+2; 
   objCloseStartBT.css("top",stop);
   objCloseStartBT.click(function(){
-	  objStartDate.datetimepicker("reset");
+    objStartDate.datetimepicker("reset");
   });
   //初始化结束日期
   var objEndDate = $("#endDate"); 
@@ -211,27 +211,27 @@ function initDataCloseBT(){
   var etop = px2Float(objCloseEndBT.css("top"))+2; 
   objCloseEndBT.css("top",etop);
   objCloseEndBT.click(function(){
-	  objEndDate.datetimepicker("reset");
+    objEndDate.datetimepicker("reset");
   });
 }
 
 //将带有px后缀的数值字符串，去掉px并转换成float类型
 function px2Float(pxStr){
-	if(pxStr){
-		if(typeof(pxStr)=="string"){
-			var idx = pxStr.indexOf("px");
-			if(idx>-1){
-			  return parseFloat(pxStr.substring(0,idx));
-			}else{
-				return parseFloat(pxStr);
-			}	
-		}else if(typeof(pxStr)=="number"){
-			return parseFloat(pxStr);
-		}else{
-			return parseFloat(pxStr);
-		}	
-	}
-	return pxStr;
+  if(pxStr){
+    if(typeof(pxStr)=="string"){
+      var idx = pxStr.indexOf("px");
+      if(idx>-1){
+        return parseFloat(pxStr.substring(0,idx));
+      }else{
+        return parseFloat(pxStr);
+      }  
+    }else if(typeof(pxStr)=="number"){
+      return parseFloat(pxStr);
+    }else{
+      return parseFloat(pxStr);
+    }  
+  }
+  return pxStr;
 }
 
 //定义查询方式和保存查询结果
@@ -352,7 +352,7 @@ function showSearchResultList(){
         optRound = '<span id="'+unReadId+'" class="div_float_left circleFillRed" style="margin-left:5px;"/>';
         ahrf_file = '<a href="###" onclick="showReport(\''+id+'\',\''+unReadId+'\');"><strong>'+fileFull+'</strong></a>';
       } else {
-    	optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;visibility:hidden;"/>';
+      optRound = '<span class="div_float_left circleFillRed" style="margin-left:5px;visibility:hidden;"/>';
         ahrf_file = '<a href="###" onclick="showReport(\''+id+'\');"><strong>'+fileFull+'</strong></a>';
       }
       ahrf_file = optRound + ahrf_file;
@@ -439,17 +439,16 @@ function showSearchResultThumb(){
     }
     thumbHtmlStr += '</section>';
   }
-    
   _objThumb.html(thumbHtmlStr);
 }
 
 //组装一行操作按钮
 function getOptHtml(aJsonRow,floatStyle,unReadId){
-	if(!aJsonRow){
-		return "";
-	}
-	var reportId = aJsonRow["id"];
-	var fileId = aJsonRow["fileId"];
+  if(!aJsonRow){
+    return "";
+  }
+  var reportId = aJsonRow["id"];
+  var fileId = aJsonRow["fileId"];
   var fileName = aJsonRow["reportName"];
   var fileFull = fileName;
   //构建操作按钮
@@ -458,18 +457,18 @@ function getOptHtml(aJsonRow,floatStyle,unReadId){
   var unRead = getMainPage().isUnReadReportById(reportId); //是否未读过
   var optReportView = '';
   if(unRead){
-	  optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\',\''+unReadId+'\');"><i class="icon-building"></i>浏览</button>'; 
+    optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\',\''+unReadId+'\');"><i class="icon-building"></i>浏览</button>'; 
   }else{
-	  optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>浏览</button>';
+    optReportView = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>浏览</button>';
   }
   var optContent = optReportView+"&nbsp;&nbsp;"+optRelation+"";
   var optHtml = optContent;
   if(typeof(floatStyle) != "undefined" && floatStyle=="floatRight"){
-	  if(floatStyle=="floatRight"){
-		  optHtml = "<div style='float:right;margin-right:10px;'>"+optContent+"</div>";
-	  }else if(floatStyle=="floatLeft"){
-	      optHtml = "<div style='float:left;margin-left:10px;'>"+optContent+"</div>";
-	  }
+    if(floatStyle=="floatRight"){
+      optHtml = "<div style='float:right;margin-right:10px;'>"+optContent+"</div>";
+    }else if(floatStyle=="floatLeft"){
+      optHtml = "<div style='float:left;margin-left:10px;'>"+optContent+"</div>";
+    }
   }
   return optHtml;  
 }
@@ -479,6 +478,5 @@ function getInputSearchFileStr(){
   var searchedStr = ($("#inp_filename").val()==searchTxt)?"":$("#inp_filename").val();
   return searchedStr;
 }
-
 </script>
 </html>
