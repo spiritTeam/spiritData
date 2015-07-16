@@ -4,8 +4,11 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
+
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import com.spiritdata.dataanal.exceptionC.Dtal0402CException;
 import com.spiritdata.dataanal.exceptionC.Dtal0404CException;
 import com.spiritdata.dataanal.report.service.ReportService;
@@ -25,6 +28,10 @@ import com.spiritdata.framework.util.StringUtils;
 import com.spiritdata.jsonD.model.JsonD;
 import com.spiritdata.jsonD.model.JsonDHead;
 
+/**
+ * 任务执行的壳程序
+ * @author wh
+ */
 public class TaskExecutorShell implements Runnable {
     //需要执行的任务信息
     private TaskInfo ti;
@@ -45,6 +52,7 @@ public class TaskExecutorShell implements Runnable {
     public void run() {
         if (this.ti!=null) {
             ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();
+            if (WebApplicationContextUtils.getWebApplicationContext(sc)==null) throw new Dtal0404CException(new NullPointerException("无法获得spring上下文环境！"));
 
             //1-设置为执行状态
             this.ti.setProcessing();

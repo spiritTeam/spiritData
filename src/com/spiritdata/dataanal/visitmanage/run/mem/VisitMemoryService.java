@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.spiritdata.dataanal.common.model.Owner;
+import com.spiritdata.dataanal.exceptionC.Dtal1201CException;
 import com.spiritdata.dataanal.visitmanage.core.service.VL_CategoryService;
 import com.spiritdata.dataanal.visitmanage.core.service.VisitLogService;
 import com.spiritdata.dataanal.visitmanage.core.enumeration.ObjType;
@@ -44,6 +45,7 @@ public class VisitMemoryService {
     protected VisitLogService vls = null;
     private void setVls() {
         ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();
+        if (WebApplicationContextUtils.getWebApplicationContext(sc)==null) throw new Dtal1201CException(new NullPointerException("无法获得spring上下文环境！"));
         this.vls = (VisitLogService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("visitLogService");
     }
     private VisitLogService getVls() {
