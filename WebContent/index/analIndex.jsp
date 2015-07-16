@@ -113,8 +113,8 @@ var wWidth = "330";
 var INIT_PARAM = {
   pageObjs: {
     topId: "topSegment",
-    mainId: "mainSegment"
-    mainId: "footSegment"
+    mainId: "mainSegment",
+    footId: "footSegment"
   },
   page_width: -1,
   page_height: -1,
