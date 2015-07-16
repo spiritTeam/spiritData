@@ -76,6 +76,9 @@
   <iframe frameborder="no" style="display:none;" id="ifmSearch" _src="analApp/listView/main.jsp"></iframe>
 </div>
 
+<!-- 脚步测试 -->
+<div id="footSegment"></div>
+
 <form method="post" action="<%=path%>/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe" style="width:0px; height:0px;">        
   <input id="upf" name="upf" type="file" style="display:none;" onchange="uploadF()"/>
 </form>
@@ -111,12 +114,15 @@ var INIT_PARAM = {
   pageObjs: {
     topId: "topSegment",
     mainId: "mainSegment"
+    mainId: "footSegment"
   },
   page_width: -1,
   page_height: -1,
   top_shadow_color:"#E6E6E6",
   top_height: 50,
   top_peg: false,
+  foot_height: 30,
+  foot_peg: false,
   win_min_width: 870, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分宽度也照此设置
   win_min_height: 480, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分高度也照此设置
   myInit: initPosition,

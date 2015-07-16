@@ -145,6 +145,7 @@ public class TaskMemoryService {
         log.info("[清理任务缓存，并装载可执行任务到缓存]"+(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSSS", Locale.CHINESE)).format(new Date()));
         //这里需要用到Spring的容器
         ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();
+        if (WebApplicationContextUtils.getWebApplicationContext(sc)==null) return;
         TaskManageService tmService = (TaskManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("taskManageService");
         FileManageService fmService = (FileManageService)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("fileManageService");
 

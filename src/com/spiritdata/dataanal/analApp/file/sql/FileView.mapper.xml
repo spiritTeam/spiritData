@@ -56,6 +56,43 @@
     order by a.cTime desc
   </select>
   
+  <!-- 获得查询结果列表总数，带有即时报告REPORTID，可以查看即时报告 -->
+  <select id="getFileListCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+    select count(*) from vsa_imp_log a
+      left join (select m.fid,n.id reportid, l.* from sa_file_rel l, sa_file_category m, sa_report_info n 
+      where l.bid=m.id and n.fid=m.fid and l.btype=2 and m.type1='REPORT') b
+    on a.cateId=b.aId and b.rtype1=1 and b.rtype2='即时报告'
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="1==1"></if>
+        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR}</if>
+        <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="searchStr!=null"> and a.cFileName like CONCAT('%',#{searchStr,jdbcType=VARCHAR},'%')</if>
+      </trim>
+    </where>         
+  </select>
+  
+  <!-- 获得查询结果列表，分页查询，带有即时报告REPORTID，可以查看即时报告 -->
+  <select id="getFilePageList" resultMap="FileViewMap" parameterType="java.util.Map">
+    select b.bId, b.rtype2, b.descn descn2, b.reportid, a.* from vsa_imp_log a
+      left join (select m.fid,n.id reportid, l.* from sa_file_rel l, sa_file_category m, sa_report_info n 
+      where l.bid=m.id and n.fid=m.fid and l.btype=2 and m.type1='REPORT') b
+    on a.cateId=b.aId and b.rtype1=1 and b.rtype2='即时报告'
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="1==1"></if>
+        <if test="ownerId!=null"> and a.ownerId = #{ownerId,jdbcType=VARCHAR}</if>
+        <if test="ownerType!=null and ownerType!=0"> and a.ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="startTime!=null"> <![CDATA[and a.cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="endTime!=null"> <![CDATA[and a.cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="searchStr!=null"> and a.cFileName like CONCAT('%',#{searchStr,jdbcType=VARCHAR},'%')</if>
+      </trim>
+    </where>     
+    order by a.cTime desc
+  </select>
+  
   <!-- 显示文件信息，表结构 -->
   <select id="getFileDataInfo" resultMap="FileViewMap" parameterType="java.util.Map">
     select a.fid id, b.tablename tmpTableName, a.tmid,a.sheetName, b.ownerId, b.ownerType from sa_imp_tabmap_rel a, sa_md_tabmap_rel b
