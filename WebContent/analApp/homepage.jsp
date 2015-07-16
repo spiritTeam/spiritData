@@ -95,6 +95,7 @@
   ©2015 灵派诺达 京ICP备15028482号 
   </div>
 </div>
+<div id="footSegment" class="div_center"></div>
 <iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:none;"></iframe>
 <script>
 var mainPage;
@@ -107,12 +108,13 @@ var _suClicked=false;
 var INIT_PARAM = {
   //页面中所用到的元素的id，只用到三个Div，另，这三个div应在body层
   pageObjs: {
-    mainId: "mainSegment" //主体Id
+    mainId: "mainSegment", //主体Id
+    footId: "footSegment" //主体Id
   },
   page_width: 0,
   page_height: 0,
 
-  foot_height: 0, //脚部高度
+  foot_height: 30, //脚部高度
   foot_peg: false, //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
 
   win_min_width: -1, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分宽度也照此设置
@@ -143,7 +145,7 @@ function initPosition() {//注意，不要在此设置topSegment/mainSegment/foo
 }
 //当界面尺寸改变
 function myResize() {
-  if (INIT_PARAM.page_width==0) {
+  if (INIT_PARAM.page_width<0) {
     //控制中心区域图片
     var left=(parseFloat($("#mainSegment").width())-parseFloat($("#fileIn").width()))/2;
     $("#fileIn").css({"left": left});
