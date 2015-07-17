@@ -133,33 +133,38 @@ border-radius:10px;
         </td>    
         <td style="text-align:right;">
           <a href="#" class="">
-            <img src="<%=path%>/analApp/images/file_list.png" style="height:45px;width:45px;" onclick="showSearchResult(SHOW_TYPE_LIST);" title="列表预览" alt="列表预览"/>
+            <img src="<%=path%>/analApp/images/file_list.png" style="height:45px;width:45px;" onclick="switchShowDivResult(SHOW_TYPE_LIST);" title="列表预览" alt="列表预览"/>
           </a>
           <a href="#" class="">
-            <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="showSearchResult(SHOW_TYPE_THUMB);" title="缩略图预览" alt="缩略图预览"/>
+            <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="switchShowDivResult(SHOW_TYPE_THUMB);" title="缩略图预览" alt="缩略图预览"/>
           </a>
         </td>
       </tr>
     </table> 
   </div>
              
-  <div class="div border_no" style="border:0px solid red; ">
+  <div id="div_list_group" class="div border_no" style="border:0px solid red;display:none;">
     <!-- 查询结果列表显示-->
-    <div id="dgList" style="display:none;"></div>
-    <!-- 查询结果缩略图显示 -->
-    <div id="dgThumb" style="display:none;"></div>
+    <div id="dgList"></div>
     <!-- 分页条 -->
-    <div id="div_pager" style="">
-    </div>
+    <div id="div_pager_list"></div>
+  </div>
+  <div id="div_thumb_group" class="div border_no" style="border:0px solid red;display:none;">
+    <!-- 查询结果缩略图显示 -->
+    <div id="dgThumb"></div>
+    <!-- 分页条 -->
+    <div id="div_pager_thumb"></div>
   </div>
 </body>
 <script>
 //*** begin 常量定义 ***
-var pageSize = 10; //每页显示的条数
+var pager_list_size = 10; //列表显示时，每页显示的条数
+var pager_thumb_size = 10; //卡片显示时，每页显示的条数
 //*** end 常量定义 ***
 
 //*** begin 变量定义 ***
-var pager = null; //分页对象
+var pager_list = null; //列表分页对象
+var pager_thumb = null; //卡片分页对象
 //*** end 变量定义 ***
 
 //主函数
@@ -179,8 +184,11 @@ $(function() {
 
 //初始化分页
 function initPager(){
-  pager = new $.ZuiPager({"pageSize":pageSize,"divPageId":"div_pager","onSelectPage":function onSelectPage(pageNumber, pageSize){selectPage(pageNumber,pageSize);}}); 
-  pager.initPager();
+  pager_list = new $.ZuiPager(); 
+  pager_list.initPager({"pageSize":pager_list_size,"divPageId":"div_pager_list","objPager":pager_list,"onSelectPage":selectPage});
+    
+  pager_thumb = new $.ZuiPager(); 
+  pager_thumb.initPager({"pageSize":pager_thumb_size,"divPageId":"div_pager_thumb","objPager":pager_thumb,"onSelectPage":selectPage});
 }
 //选择了某个页面
 function selectPage(pageNumber, pageSize){
@@ -282,8 +290,8 @@ var showType = SHOW_TYPE_LIST; //默认是列表显示查询结果
 var thumbPath = "<%=path%>/analApp/images/"; //文件缩略图所存储的路径
 //根据文件后缀名查找相应的图标
 var fileSuffixImg = {"default":"file.png","xlsx":"excel.png","xls":"excel.png"};
-var searchResultJsonData = null; //保存查询后的结果
-var objDatatable = null; //列表显示对象
+var searchResultJsonData_list = null; //保存查询后的结果，列表查询，由于加上了分页功能，所以需要分别保存查询结果
+var searchResultJsonData_thumb = null; //保存查询后的结果,卡片查询，由于加上了分页功能，所以需要分别保存查询结果
 var unReadObjJsonArr = []; //当缩略图显示时，未读小红点位置需要调整到文件名左上角
 
 //取出输入条件，提交查询
@@ -293,7 +301,7 @@ function startSearch(searchParam){
 	//设置查询条件
   //var searchStr = getInputSearchFileStr();
   if(!searchParam){
-	  searchParam = {"pageNumber":1, "pageSize":pageSize};
+	  searchParam = {"pageNumber":1, "pageSize":showType==SHOW_TYPE_LIST?pager_list_size:pager_thumb_size};
   }
   searchParam.searchStr = $("#inp_filename").val();
   searchParam.startDateStr = $("#startDate").val();
@@ -306,10 +314,20 @@ function startSearch(searchParam){
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr){
       try{
-        //alert("fileSearch() search result="+jsonStr);
-        searchResultJsonData = str2JsonObj(jsonStr); 
-        showSearchResult(showType);
-        pager.setTotalCount(searchResultJsonData.total);
+        //alert("fileSearch() search result="+jsonStr); 
+        switchShowDivResult(showType);
+    	  if(showType == SHOW_TYPE_THUMB){
+    		  showSearchResultThumb(jsonStr);
+    		}else if(showType == SHOW_TYPE_LIST){
+    		  showSearchResultList(jsonStr);
+    		  //第一次访问时，只访问了list，没有访问thumb，所以切换时会没有数据显示，此时需要把第一页查询结果给thumb
+    		  if(searchParam.pageNumber==1 && searchResultJsonData_thumb == null){
+    			  //searchResultJsonData_thumb = searchResultJsonData_list;
+    			  showSearchResultThumb(jsonStr);
+    			  //alert("searchResultJsonData_thumb="+searchResultJsonData_thumb);
+    		  }
+    		}
+        //pager.setTotalCount(searchResultJsonData.total);
       }catch(e){
         showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
@@ -320,29 +338,27 @@ function startSearch(searchParam){
   }); 
 }
 
-//显示查询结果
-function showSearchResult(_showType){
-  //alert("showSearchResult() showType="+_showType);
-  showType = _showType;
-  $('#dgList').css("display","none");
-  $('#dgThumb').css("display","none");
-    
-  if(showType == SHOW_TYPE_LIST){
-    showSearchResultList();
-  }else if(showType == SHOW_TYPE_THUMB){
-    showSearchResultThumb();
-  }else{
-    showType = SHOW_TYPE_LIST;
-    showSearchResultList();
-  }
+//开关显示查询结果
+function switchShowDivResult(_showType){
+	showType = _showType;
+	//alert("switchShowDivResult() showType="+_showType);
+	$('#div_list_group').css("display","none");
+	$('#div_thumb_group').css("display","none");
+	if(showType == SHOW_TYPE_THUMB){
+		$('#div_thumb_group').css("display","block");
+		pager_thumb.alignCenter();
+	}else{
+		$('#div_list_group').css("display","block");
+	}
 }
 
+
 //列表显示查询结果
-function showSearchResultList(){
+function showSearchResultList(jsonStr){
+  searchResultJsonData_list = str2JsonObj(jsonStr); 
+  //alert("searchResultJsonData_list="+searchResultJsonData_list);
   var _objList = $('#dgList');
   _objList.empty();
-  _objList.css("display","block");
-  var showType = "list";
   //构建dbopts
   var dbopts={
     customizable: true, 
@@ -367,8 +383,8 @@ function showSearchResultList(){
   };
   //组装显示结果行
   var dtrows =[];
-  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
-    var jsonRows = searchResultJsonData.rows;
+  if(searchResultJsonData_list!=null && searchResultJsonData_list.rows!=null && searchResultJsonData_list.rows.length>0){
+    var jsonRows = searchResultJsonData_list.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
       var fileIndexId = jsonRows[i]["fileIndexId"];
@@ -398,17 +414,19 @@ function showSearchResultList(){
 
   //添加到dglist中
   _objList.append(objDatatable);
+  
+  //设置分页条
+  pager_list.setTotalCount(searchResultJsonData_list.total);
 }
 
 //缩略图显示查询结果
-function showSearchResultThumb(){
-  var _objThumb = $('#dgThumb');
-  _objThumb.css("display","block");
-  var showType = "thumb";
+function showSearchResultThumb(jsonStr){
+	var _objThumb = $('#dgThumb');
   var thumbHtmlStr = '';
-  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
+  searchResultJsonData_thumb = str2JsonObj(jsonStr); 
+  if(searchResultJsonData_thumb!=null && searchResultJsonData_thumb.rows!=null && searchResultJsonData_thumb.rows.length>0){
     thumbHtmlStr += '<section id="section_thumb" class="cards">';
-    var jsonRows = searchResultJsonData.rows;
+    var jsonRows = searchResultJsonData_thumb.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
       var fileIndexId = jsonRows[i]["fileIndexId"];
@@ -462,6 +480,9 @@ function showSearchResultThumb(){
       .css("padding-left", (parseInt($(this).parent().width())-textLength)/2);
     });    
   },1*200);
+
+  //设置分页条
+  pager_thumb.setTotalCount(searchResultJsonData_thumb.total);
   
   //卡片 section居中
   //alert($("#dgThumb").width()+"  "+$("#section_thumb").width());
