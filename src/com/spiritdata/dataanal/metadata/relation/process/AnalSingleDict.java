@@ -46,6 +46,7 @@ public class AnalSingleDict implements TaskProcess {
         if (param.get("mid")==null)  throw new Dtal0404CException(new NullPointerException("参数中没有“数据id”信息！"));
   
         ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();//通过此获得Spring中定义的对象，这种方法似乎不好
+        if (WebApplicationContextUtils.getWebApplicationContext(sc)==null)  throw new Dtal0404CException(new NullPointerException("无法获取Spring上下文环境！"));
 
         Map<String, Object> ret = new HashMap<String, Object>();
         Map<String, Object> sysRd = new HashMap<String, Object>();
