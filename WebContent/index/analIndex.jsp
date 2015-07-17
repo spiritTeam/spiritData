@@ -217,7 +217,7 @@ $(function() {
 
 //初始化界面
 function initPosition() {
-  $("iframe").each(function(){
+  $("#mainSegment>iframe").each(function(){
     $(this).width($("#mainSegment").width()-4).height($("#mainSegment").height()-4);
   });
   $("#mask").css({"width":$(window).width()-2, "height":$(window).height()-2});
@@ -225,7 +225,7 @@ function initPosition() {
 }
 //当界面尺寸改变
 function myResize() {
-  $("iframe").each(function(){
+  $("#mainSegment>iframe").each(function(){
     $(this).width($("#mainSegment").width()-4).height($("#mainSegment").height()-4);
   });
   $("#mask").css({"width":$(window).width()-2, "height":$(window).height()-2});
