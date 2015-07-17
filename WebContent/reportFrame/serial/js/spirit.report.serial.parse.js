@@ -638,15 +638,20 @@ var D_tag={
     if (ret.showType=="text"&&(!ret.decorateView||!ret.decorateView.view)) {
       ret.transLog+="\n[showType=text]类型的D标签，必须设置decorateView(显示修饰)属性";
     }
-
-    //6-查合法性
+    //6-htmlExt
+    _tempStr=jqObj.attr("htmlExt");
+    if (_tempStr) { //解析param
+      _tempStr=replaceInnerKH(_tempStr);
+      ret.htmlExt=eval("("+tempStr+")");
+    }
+    //7-查合法性
     if (ret.showType!="value") {
       ret.tdParseData=D_tag.tableDataFun.parseDtag(ret);
       _tempStr=D_tag.tableDataFun.checkDtag(ret);
       if (_tempStr) ret.transLog+="\n"+_tempStr;
     }
     if (ret.transLog) ret.transLog=(ret.transLog+"").substring(1);
-
+    
     return ret;
     //内部函数：内部串^|~的转码
     function replaceInnerKH(str) {
@@ -796,7 +801,7 @@ var D_tag={
             var _oneT=new Object();
             _oneT.field=p;
             _oneT.title=fTdata.titles[p];
-            _oneT.width=100;
+            _oneT.width=80;
             var canInsert=true;
             if (dtag.param&&dtag.tdParseData&&dtag.tdParseData.param) {
               var filterCols=dtag.tdParseData.param.okL?dtag.tdParseData.param.okL:dtag.tdParseData.param.defL;
@@ -823,6 +828,7 @@ var D_tag={
           }
         }
         if (gridWidth<800) gridWidth++;
+        if (dtag.htmlExt&&dtag.htmlExt.style) jqEle.attr("style", .htmlExt.style);
         jqEle.css({"width":(gridWidth+10)+"px", "margin-top":"5px"});
         jqEle.datagrid({
           singleSelect:true,
@@ -849,6 +855,7 @@ var D_tag={
           series: {pie: {show: true}},
           grid: {hoverable: true}
         });
+        if (dtag.htmlExt&&dtag.htmlExt.style) jqEle.attr("style", .htmlExt.style);
         jqEle.bind("plothover", function(event, pos, obj) {
           if (!obj) {
             D_tag.draw.hideTooltip();
@@ -874,6 +881,7 @@ var D_tag={
           var row=fTdata.dList[i];
           lineData.push([row[dtag.param["xAxis"]], row[dtag.param["yAxis"]]]);
         }
+        if (dtag.htmlExt&&dtag.htmlExt.style) jqEle.attr("style", .htmlExt.style);
         $.plot(jqEle, [{"label":d.titles[dtag.param["xAxis"]], "data":lineData}], {
           series: {
             lines: {show: true},
@@ -920,6 +928,7 @@ var D_tag={
           var row=fTdata.dList[i];
           barData.push([row[dtag.param["xAxis"]], row[dtag.param["yAxis"]]]);
         }
+        if (dtag.htmlExt&&dtag.htmlExt.style) jqEle.attr("style", .htmlExt.style);
         $.plot(jqEle, [{"label":d.titles[dtag.param["xAxis"]], "data":barData}], {
           series: {
             bars: {show: true, barWidth: 0.3, align: "center", fill:0.6}
@@ -1397,7 +1406,7 @@ var D_tag={
 var D_Tags={
   /*
   dsid:null, //整篇文档中，Dtags的编号
-  loadAll:yes|no|err,//是否
+  htmlExt:, //类似dtag
   dArray:null, //每个dTag标签对应的情况，包括如下：
     index:序号
     dTag:dtag对象
@@ -1410,8 +1419,14 @@ var D_Tags={
   buildByDtagsHtml: function(dtagsHtml, divId, treeNode) {
     var ret = new Object();
     var i=0;
+
+    _tempStr=jqObj.attr("htmlExt");
+    if (_tempStr) { //解析param
+      _tempStr=replaceInnerKH(_tempStr);
+      ret.htmlExt=eval("("+tempStr+")");
+    }
+
     ret.dsid=divId;
-    ret.loadAll="no";
     ml=dtagsHtml.match(/<d .*?(<\/d>|\/>)/gi);//match list
     if (ml&&ml.length>0) {
       for (; i<ml.length; i++) {
@@ -1440,6 +1455,12 @@ var D_Tags={
     if (!ret.transLog) ret.transLog=null;
 
     return ret;
+    //内部函数：内部串^|~的转码
+    function replaceInnerKH(str) {
+      str=str.replace(/\^/g,"\"");
+      str=str.replace(/\~/g,"\'");
+      return str;
+    }
   },
   /**
    * 若读取数据错误，处理相关联的Ds标签区域，把错误信息显示出来
@@ -1514,9 +1535,9 @@ var D_Tags={
                       loadData.push([row[dtag.param["xAxis"]], row[dtag.param["yAxis"]]]);
                     }
                     if (dtag.showType=="bar") {
-                      dTags.dArray[i].loadData={"label":_tData.titles[dtag.param["xAxis"]], "data":loadData, "bars":{show:true, barWidth: 0.3, align: "center", fill:0.6}};
+                      dTags.dArray[i].loadData={"label":(dtag.param["label"]?dtag.param["label"]:_tData.titles[dtag.param["xAxis"]]), "data":loadData, "bars":{show:true, barWidth: 0.3, align: "center", fill:0.6}};
                     } else if (dtag.showType=="line") {
-                      dTags.dArray[i].loadData={"label":_tData.titles[dtag.param["xAxis"]], "data":loadData, "lines":{show:true}, "points":{show:true}};
+                      dTags.dArray[i].loadData={"label":(dtag.param["label"]?dtag.param["label"]:_tData.titles[dtag.param["xAxis"]]), "data":loadData, "lines":{show:true}, "points":{show:true}};
                     }
                   }
                 }
@@ -1545,6 +1566,7 @@ var D_Tags={
   },
   //画折线图:jqEle(html元素的jquery对象)，dtag(标签信息)，d(表数据)
   drawTags: function(jqEle, dTags) {
+    if (dTags.htmlExt&&dTags.htmlExt.style) jqEle.attr("style", .htmlExt.style);
   	if (dTags&&dTags.dArray&&dTags.dArray.length>0) {
   		var series=new Array();
   		for (var i=0; i<dTags.dArray.length; i++) {

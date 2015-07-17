@@ -28,6 +28,7 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataTableMapRel;
 import com.spiritdata.dataanal.report.enumeration.DtagShowType;
 import com.spiritdata.dataanal.report.generate.AbstractGenerateSessionReport;
 import com.spiritdata.dataanal.report.model.D_Tag;
+import com.spiritdata.dataanal.report.model.D_Tags;
 import com.spiritdata.dataanal.report.model.Report;
 import com.spiritdata.dataanal.report.model.ReportHead;
 import com.spiritdata.dataanal.report.model.ReportSegment;
@@ -238,65 +239,102 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 tableDt.setDid(report.getDid(tempStr)+"");
                                 tableDt.setValue("dictData[^"+mc.getColumnName()+"^]");
                                   //显示哪些列
-                                Map<String,String> showTBColMap = new LinkedHashMap<String,String>();
-                                showTBColMap.put(mc.getTitleName(), "category");
-                                showTBColMap.put("数量", "count");
-                                showTBColMap.put("百分比", "percent(count)");
-                                tableDt.setParam(showTBColMap);
+                                Map<String,String> tempMap = new LinkedHashMap<String,String>();
+                                tempMap.put(mc.getTitleName(), "category");
+                                tempMap.put("数量", "count");
+                                tempMap.put("百分比", "percent(count)");
+                                tableDt.setParam(tempMap);
                                 //显示饼图
                                 D_Tag pieDt = new D_Tag();
                                 pieDt.setShowType(DtagShowType.PIE);
                                 pieDt.setDid(report.getDid(tempStr)+"");
                                 pieDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
-                                Map<String,String> showPieColMap = new HashMap<String,String>();
-                                showPieColMap.put("xAxis", "category");
-                                showPieColMap.put("yAxis", "count");
-                                pieDt.setParam(showPieColMap);
+                                tempMap = new HashMap<String,String>();
+                                tempMap.put("xAxis", "category");
+                                tempMap.put("yAxis", "count");
+                                pieDt.setParam(tempMap);
                                 pieDt.setDecorateView("#category#, #percent(count)#");
-                                tempContent += discriptDt.toHtmlTag()+"，具体数据为：<br/>"+tableDt.toHtmlTag()+pieDt.toHtmlTag();
+                                tempContent += discriptDt.toHtmlTag()+"，具体数据为：<br/><table><tr><td>"+tableDt.toHtmlTag()+"</td><td>"+pieDt.toHtmlTag()+"</td></tr></table>";
                                 //第二：针对每个字典项，循环数值列，显示二维表和饼图
+                                String numbContent="";
                                 for(int nidx=0;nidx<numColList.size();nidx++){
                                 	MetadataColumn acolmc = (MetadataColumn)numColList.get(nidx);
-                                	String colName = acolmc.getColumnName();
-                                	String sumCol = "SUM_"+colName;
                                     //第一步：显示字典项和某个数值项的二维表和饼图
-                                    //显示文本
-                                    discriptDt = new D_Tag();
-                                    discriptDt.setShowType(DtagShowType.TEXT);
-                                    discriptDt.setDid(report.getDid(tempStr)+"");
-                                    discriptDt.setValue("dictData[^"+mc.getColumnName()+"^]");
-                                    discriptDt.setValueFilterFun("first(3|"+sumCol+")");
-                                    discriptDt.setDecorateView("{#category#}占#percent("+sumCol+")#%");
-                                    if (dm.dictTree.getChildCount()>3) {
-                                        tempContent += "["+mc.getTitleName()+"]["+acolmc.getTitleName()+"]中，大多数为";
-                                    } else {
-                                        tempContent += "["+mc.getTitleName()+"]["+acolmc.getTitleName()+"]中，";
-                                    }
-                                    //显示二维表格
+                                    numbContent += "数值列["+mc.getTitleName()+"]对["+acolmc.getTitleName()+"]的统计情况如下：<br/>";
+                                    //第二步：显示二维表格
                                     tableDt = new D_Tag();
                                     tableDt.setShowType(DtagShowType.TABLE);
                                     tableDt.setDid(report.getDid(tempStr)+"");
                                     tableDt.setValue("dictData[^"+mc.getColumnName()+"^]");
-                                      //显示哪些列
-                                    showTBColMap = new LinkedHashMap<String,String>();
-                                    showTBColMap.put(mc.getTitleName(), "category");
-                                    showTBColMap.put(acolmc.getTitleName(), sumCol);
-                                    showTBColMap.put("百分比", "percent("+sumCol+")");
-                                    tableDt.setParam(showTBColMap);
-                                    //显示饼图
+                                    //显示哪些列
+                                    tempMap = new LinkedHashMap<String,String>();
+                                    tempMap.put(mc.getTitleName(), "category");
+                                    tempMap.put("总量(Σ)", "SUM_"+acolmc.getColumnName());
+                                    tempMap.put("最大值(max)", "MAX_"+acolmc.getColumnName());
+                                    tempMap.put("最小值(max)", "MIN_"+acolmc.getColumnName());
+                                    tempMap.put("平均值(max)", "AVG_"+acolmc.getColumnName());
+                                    tempMap.put("非空个数", "COUNT_"+acolmc.getColumnName());
+                                    tableDt.setParam(tempMap);
+                                    tempMap = new HashMap<String,String>();
+                                    tempMap.put("style", "width:500px");
+                                    tableDt.setHtmlExt(tempMap);
+                                    //显示总量饼图
                                     pieDt = new D_Tag();
                                     pieDt.setShowType(DtagShowType.PIE);
                                     pieDt.setDid(report.getDid(tempStr)+"");
                                     pieDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
-                                    showPieColMap = new HashMap<String,String>();
-                                    showPieColMap.put("xAxis", "category");
-                                    showPieColMap.put("yAxis", sumCol);
-                                    pieDt.setParam(showPieColMap);
-                                    pieDt.setDecorateView("#category#, #percent("+sumCol+")#");
-                                    tempContent += "<br/>"+discriptDt.toHtmlTag()+"，具体数据为：<br/>"+tableDt.toHtmlTag()+pieDt.toHtmlTag();                                	
-                                }                                
+                                    tempMap = new HashMap<String,String>();
+                                    tempMap.put("xAxis", "category");
+                                    tempMap.put("yAxis", "SUM_"+acolmc.getColumnName());
+                                    pieDt.setParam(tempMap);
+                                    pieDt.setDecorateView("#category#, #percent(SUM_"+acolmc.getColumnName()+")#");
+                                    numbContent += "<table><tr><td>"+tableDt.toHtmlTag()+"</td><td>"+pieDt.toHtmlTag()+"</td></tr></table><br/>";
+                                    //第三步：显示组图
+                                    D_Tags dTags = new D_Tags();
+                                    tempMap = new HashMap<String,String>();
+                                    tempMap.put("style", "width:500px");
+                                    dTags.setHtmlExt(tempMap);
+                                    //最大值
+                                    D_Tag lineMaxDt = new D_Tag();
+                                    lineMaxDt.setShowType(DtagShowType.LINE);
+                                    lineMaxDt.setDid(report.getDid(tempStr)+"");
+                                    lineMaxDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    tempMap = new HashMap<String,String>();
+                                    tempMap.put("label", "最大值");
+                                    tempMap.put("xAxis", "category");
+                                    tempMap.put("yAxis", "MAX_"+acolmc.getColumnName());
+                                    lineMaxDt.setParam(tempMap);
+                                    lineMaxDt.setDecorateView("#category#, #MAX_"+acolmc.getColumnName()+"#");
+                                    dTags.addOneDTag(lineMaxDt);
+                                    //最小值
+                                    D_Tag lineMinDt = new D_Tag();
+                                    lineMinDt.setShowType(DtagShowType.LINE);
+                                    lineMinDt.setDid(report.getDid(tempStr)+"");
+                                    lineMinDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    tempMap = new HashMap<String,String>();
+                                    tempMap.put("label", "最小值");
+                                    tempMap.put("xAxis", "category");
+                                    tempMap.put("yAxis", "MIN_"+acolmc.getColumnName());
+                                    lineMinDt.setParam(tempMap);
+                                    lineMinDt.setDecorateView("#category#, #MIN_"+acolmc.getColumnName()+"#");
+                                    dTags.addOneDTag(lineMinDt);
+                                    //平均值
+                                    D_Tag lineAvgDt = new D_Tag();
+                                    tempMap.put("label", "平均值");
+                                    lineAvgDt.setShowType(DtagShowType.LINE);
+                                    lineAvgDt.setDid(report.getDid(tempStr)+"");
+                                    lineAvgDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    tempMap = new HashMap<String,String>();
+                                    tempMap.put("xAxis", "category");
+                                    tempMap.put("yAxis", "AVG_"+acolmc.getColumnName());
+                                    lineAvgDt.setParam(tempMap);
+                                    lineAvgDt.setDecorateView("#category#, #AVG_"+acolmc.getColumnName()+"#");
+                                    dTags.addOneDTag(lineAvgDt);
+                                    numbContent += dTags.toHtmlTag()+"<br/>";
+                                }
                                 //加到节点上
-                                rs1_1_loop.setContent(tempContent);
+                                if (!numbContent.equals("")) numbContent="<span style='font-weight:bold'>数值列情况如下:</span><br/>"+numbContent;
+                                rs1_1_loop.setContent(tempContent+numbContent);
                                 TreeNode<ReportSegment> rsTn1_1_loop = new TreeNode<ReportSegment>(rs1_1_loop);
                                 rsTn1_1.addChild(rsTn1_1_loop);
                             }

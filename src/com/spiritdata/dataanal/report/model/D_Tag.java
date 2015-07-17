@@ -27,6 +27,7 @@ public class D_Tag implements Serializable{
     private String valueFilterFun; //数据过滤函数
     private String decorateView; //显示修饰语法
     private Map<String, String> dvExt; //显示修饰的扩展部分，在标签中串中以json格式存在
+    private Map<String, String> htmlExt; //html的扩展属性，是一个json串
 
     public String getDid() {
         return did;
@@ -70,6 +71,12 @@ public class D_Tag implements Serializable{
     public void setDvExt(Map<String, String> dvExt) {
         this.dvExt = dvExt;
     }
+    public Map<String, String> getHtmlExt() {
+        return htmlExt;
+    }
+    public void setHtmlExt(Map<String, String> htmlExt) {
+        this.htmlExt = htmlExt;
+    }
 
     /**
      * 把D标签转换为html标签<d>
@@ -103,6 +110,11 @@ public class D_Tag implements Serializable{
                 ret += "::"+replaceQuotation(temp);
             }
             ret += "'";
+        }
+        //6-htmlExt
+        if (this.htmlExt!=null&&this.htmlExt.size()>0) {
+            temp = JsonUtils.objToJson(this.htmlExt);
+            ret += " htmlExt='"+this.replaceQuotation(temp)+"'";
         }
         return ret+"/>"; //标签结束
     }

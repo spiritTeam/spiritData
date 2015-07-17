@@ -2,9 +2,11 @@ package com.spiritdata.dataanal.report.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.spiritdata.dataanal.exceptionC.Dtal1005CException;
 import com.spiritdata.dataanal.report.enumeration.DtagShowType;
+import com.spiritdata.jsonD.util.JsonUtils;
 
 /**
  * 出现在Content中的Ds标签，主要为转换为ds标签的html字符串。
@@ -17,8 +19,15 @@ import com.spiritdata.dataanal.report.enumeration.DtagShowType;
  */
 
 public class D_Tags {
-    private List<D_Tag> D_TagList;
+    private Map<String, String> htmlExt; //html的扩展属性，是一个json串
+    public Map<String, String> getHtmlExt() {
+        return htmlExt;
+    }
+    public void setHtmlExt(Map<String, String> htmlExt) {
+        this.htmlExt = htmlExt;
+    }
 
+    private List<D_Tag> D_TagList;
     /**
      * 获得D标签组中的所有D标签
      * @return D标签组中的所有D标签
@@ -43,10 +52,18 @@ public class D_Tags {
      */
     public String toHtmlTag() {
         if (this.D_TagList==null||this.D_TagList.size()==0) return "";
-        String ret = "<ds>"; //标签开始
+        String ret = "<ds"; //标签开始
+        if (this.htmlExt!=null&&this.htmlExt.size()>0) ret+=" htmlExt='"+this.replaceQuotation(JsonUtils.objToJson(this.htmlExt))+"'";
+        ret+=">";
         for (int i=0; i<this.D_TagList.size(); i++) {
             ret+=this.D_TagList.get(i).toHtmlTag();
         }
         return ret+"</ds>";
+    }
+
+    private String replaceQuotation(String sourceStr) {
+        sourceStr = sourceStr.replaceAll("'", "~");
+        sourceStr = sourceStr.replaceAll("\"", "^");
+        return sourceStr;
     }
 }

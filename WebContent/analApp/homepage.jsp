@@ -145,7 +145,7 @@ function initPosition() {//注意，不要在此设置topSegment/mainSegment/foo
 }
 //当界面尺寸改变
 function myResize() {
-  if (INIT_PARAM.page_width<0) {
+  if (INIT_PARAM.page_width<=0) {
     //控制中心区域图片
     var left=(parseFloat($("#mainSegment").width())-parseFloat($("#fileIn").width()))/2;
     $("#fileIn").css({"left": left});
