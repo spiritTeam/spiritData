@@ -149,6 +149,7 @@
       //this.alertArgs("adjust:");
       //_argInit.objPager.alertArgs("adjust2:");
       //alert("adjustPageShowStyle() pageNumber="+_argDynamic.pageNumber);
+      this.showPager();
       //判断前一页
       var obj_li_pre = $("#li_prev"+_argInit.divPageId);
       obj_li_pre.unbind("click");
@@ -264,6 +265,17 @@
       }catch(e){
   	    showAlert("调整样式", "调整分页居中失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }	  
+    };
+
+    //当没有查到记录的时候，需要把分页工具条隐藏
+    this.hidePager = function(){
+      var obj_div_pager = $("#"+_argInit.divPageId);
+      obj_div_pager.css({"visibility":"hidden"});
+    };
+    //当查到记录的时候，需要把分页工具条显示
+    this.showPager = function(){
+      var obj_div_pager = $("#"+_argInit.divPageId);
+      obj_div_pager.css({"visibility":"visible"});
     };
     
   };  
