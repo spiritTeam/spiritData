@@ -42,7 +42,7 @@ public class ReportViewController {
     private ReportVisitService rvService;
 
     /**
-     * 条件查询报告列表
+     * 条件查询报告列表，不分页，显示所有符合条件的数据
      * @param req
      * @return
      */
@@ -63,6 +63,37 @@ public class ReportViewController {
             int count = dataList!=null?dataList.size():0;
             retMap.put("total", new Integer(count));
             retMap.put("rows", dataList);            
+        }catch(Exception ex){
+            logger.error("failed to search report list.",ex);
+        }
+        return retMap;
+    }
+
+    /**
+     * 条件查询报告列表，分页显示符合条件的数据
+     * @param req
+     * @return
+     */
+    @RequestMapping("searchReportPageList.do")
+    public @ResponseBody Map<String,Object> searchReportPageList(HttpServletRequest req){
+        Map<String,Object> retMap = new HashMap<String,Object>();
+        try {
+            Map<String,Object> paramMap = new HashMap<String,Object>();
+            String reportName = this.trimStr(req.getParameter("searchStr"));
+            if (reportName!=null) paramMap.put("searchStr", reportName);
+            Timestamp startTime = this.str2TimeStamp(req.getParameter("startDateStr"));
+            if (startTime!=null) paramMap.put("startTime", startTime);
+            Timestamp endTime = this.str2TimeStamp(req.getParameter("endDateStr"));
+            if (endTime!=null)paramMap.put("endTime", endTime);
+            
+			int pageNumber = Integer.parseInt(req.getParameter("pageNumber"));
+			paramMap.put("pageNumber", pageNumber);
+			int pageSize = Integer.parseInt(req.getParameter("pageSize"));
+			paramMap.put("pageSize", pageSize);
+
+            ViewControllerUtil.setSearchOwnerInfo(req, paramMap);
+
+            retMap = reportViewService.searchReportPageList(paramMap);
         }catch(Exception ex){
             logger.error("failed to search report list.",ex);
         }

@@ -52,4 +52,19 @@
     order by cTime desc
   </select>
   
+  <!-- 获得查询结果列表总数，用于分页查询显示总数   -->
+  <select id="getReportListCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+    select count(*) from sa_report_info
+    <where>
+      <trim prefix="(" suffix=")" prefixOverrides="and">
+        <if test="1==1"></if>
+        <if test="ownerId!=null"> and ownerId = #{ownerId,jdbcType=VARCHAR}</if>
+        <if test="ownerType!=null and ownerType!=0"> and ownerType=#{ownerType,jdbcType=INTEGER}</if>
+        <if test="startTime!=null"> <![CDATA[and cTime>= #{startTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="endTime!=null"> <![CDATA[and cTime < #{endTime,jdbcType=TIMESTAMP}]]></if>
+        <if test="searchStr!=null"> and reportName like CONCAT('%',#{searchStr,jdbcType=VARCHAR},'%')</if>
+      </trim>
+    </where>     
+  </select>
+    
 </mapper>

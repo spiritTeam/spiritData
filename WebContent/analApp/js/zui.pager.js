@@ -64,9 +64,14 @@
       return _argDynamic;
     };
     //设置总共多少条数据
-    this.setTotalCount = function(totalCount){
+    this.setTotalCount = function(totalCount,pageNumber){
       if(!totalCount){
         return;
+      }
+      if(pageNumber && pageNumber==1 && _argDynamic.pageNumber!= pageNumber){
+    	_argDynamic.pageNumber = pageNumber;
+        _argDynamic.beginPage = 1;
+	    _argDynamic.endPage = _argDynamic.beginPage + _argInit.pageShowCount - 1;  
       }
       _argDynamic.totalCount = totalCount;
       var totalPage = Math.ceil(totalCount/_argInit.pageSize);

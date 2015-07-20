@@ -101,7 +101,7 @@ border-radius:10px;
   white-space:normal;
 }
 /* 脚部 */
-.footSegment2{
+.footSegment_bgwhite_bordertop{
   border: 0px solid #95b8e7;
   border-top: 1px solid #95b8e7;
   background-color: #FFF;
@@ -140,10 +140,10 @@ border-radius:10px;
         </td>    
         <td style="text-align:right;">
           <a href="#" class="">
-            <img src="<%=path%>/analApp/images/file_list.png" style="height:45px;width:45px;" onclick="switchShowDivResult(SHOW_TYPE_LIST);" title="列表预览" alt="列表预览"/>
+            <img src="<%=path%>/analApp/images/file_list.png" style="height:45px;width:45px;" onclick="setShowType(SHOW_TYPE_LIST);startSearch(pager_selected_list);" title="列表预览" alt="列表预览"/>
           </a>
           <a href="#" class="">
-            <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="switchShowDivResult(SHOW_TYPE_THUMB);" title="缩略图预览" alt="缩略图预览"/>
+            <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="setShowType(SHOW_TYPE_THUMB);startSearch(pager_selected_thumb);" title="缩略图预览" alt="缩略图预览"/>
           </a>
         </td>
       </tr>
@@ -155,14 +155,14 @@ border-radius:10px;
     <div id="dgThumb"></div>
   </div>
              
-  <div id="footSegment" class="div_center footSegment2">    
+  <div id="footSegment" class="div_center footSegment_bgwhite_bordertop">    
     <!-- 列表显示分页条 -->
     <div id="div_pager_list"></div>
     <!-- 卡片显示分页条 -->
     <div id="div_pager_thumb"></div>
   </div>
 </body>
-<script>alert("ddd");
+<script>
 //*** begin 常量定义 ***
 var pager_list_size = 10; //列表显示时，每页显示的条数
 var pager_thumb_size = 10; //卡片显示时，每页显示的条数
@@ -171,6 +171,8 @@ var pager_thumb_size = 10; //卡片显示时，每页显示的条数
 //*** begin 变量定义 ***
 var pager_list = null; //列表分页对象
 var pager_thumb = null; //卡片分页对象
+var pager_selected_list = null; //存储最近一次选择的页码，用于切换列表/卡片显示时再次查询
+var pager_selected_thumb = null; //存储最近一次选择的页码，用于切换列表/卡片显示时再次查询
 //*** end 变量定义 ***
 
 //主窗口参数
@@ -194,7 +196,7 @@ $(function() {
     showAlert("页面初始化失败", initStr, "error");
     return ;
   };
-  $("#footSegment").removeClass("footSegment").addClass("footSegment2");
+  $("#footSegment").removeClass("footSegment").addClass("footSegment_bgwhite_bordertop");
   initSubmitBt();
   initSearchFileInput();
   initDatePicker();
@@ -325,13 +327,8 @@ function startSearch(searchParam){
   //清除未读报告信息
   unReadObjJsonArr = [];
   //设置查询条件
-  //var searchStr = getInputSearchFileStr();
-  if(!searchParam){
-    searchParam = {"pageNumber":1, "pageSize":showType==SHOW_TYPE_LIST?pager_list_size:pager_thumb_size};
-  }
-  searchParam.searchStr = $("#inp_filename").val();
-  searchParam.startDateStr = $("#startDate").val();
-  searchParam.endDateStr = $("#endDate").val();
+  //var searchStr = getInputSearchFileStr();   
+  searchParam = combineSearchParam(searchParam);
   
   //异步查询文件列表  
   //alert("startSearch(): searchParam="+JSON.stringify(searchParam));
@@ -347,11 +344,11 @@ function startSearch(searchParam){
         }else if(showType == SHOW_TYPE_LIST){
           showSearchResultList(jsonStr);
           //第一次访问时，只访问了list，没有访问thumb，所以切换时会没有数据显示，此时需要把第一页查询结果给thumb
-          if(searchParam.pageNumber==1 && searchResultJsonData_thumb == null){
+          //if(searchParam.pageNumber==1 && searchResultJsonData_thumb == null){
             //searchResultJsonData_thumb = searchResultJsonData_list;
-            showSearchResultThumb(jsonStr);
+          //  showSearchResultThumb(jsonStr);
             //alert("searchResultJsonData_thumb="+searchResultJsonData_thumb);
-          }
+          //}
         }
         //pager.setTotalCount(searchResultJsonData.total);
       }catch(e){
@@ -362,6 +359,35 @@ function startSearch(searchParam){
       showAlert("查询异常", "查询失败：</br>"+(errorData?errorData.responseText:"")+"！<br/>", "error", function(){});
     }
   }); 
+}
+
+//过滤查询条件，组装成符合逻辑的查询条件
+function combineSearchParam(searchParam){
+	var searchStr = $("#inp_filename").val();
+	var startDateStr = $("#startDate").val();
+	var endDateStr = $("#endDate").val();
+	if(showType==SHOW_TYPE_LIST){
+	  //如果不存在查询条件（说明是第一次查询），如果查询条件改变，则重置查询页面参数
+	  if(!searchParam || !pager_selected_list || searchStr!=pager_selected_list.searchStr|| startDateStr!=pager_selected_list.startDateStr|| endDateStr!=pager_selected_list.endDateStr){        
+	    searchParam = {"pageNumber":1, "pageSize":pager_list_size, "searchStr":searchStr, "startDateStr":startDateStr, "endDateStr":endDateStr};
+	  }else{
+	    searchParam.searchStr = searchStr;
+	    searchParam.startDateStr = startDateStr;
+	    searchParam.endDateStr = endDateStr;
+	  }
+	  pager_selected_list = searchParam;    
+	  return pager_selected_list;
+	}else{
+	  if(!searchParam || searchStr!=pager_selected_thumb.searchStr|| startDateStr!=pager_selected_thumb.startDateStr|| endDateStr!=pager_selected_thumb.endDateStr){ 
+	    searchParam = {"pageNumber":1, "pageSize":pager_thumb_size, "searchStr":searchStr, "startDateStr":startDateStr, "endDateStr":endDateStr};
+	  }else{
+	    searchParam.searchStr = searchStr;
+	    searchParam.startDateStr = startDateStr;
+	    searchParam.endDateStr = endDateStr;
+	  }
+	  pager_selected_thumb = searchParam;
+	  return pager_selected_thumb;
+	} 
 }
 
 //开关显示查询结果
@@ -446,7 +472,7 @@ function showSearchResultList(jsonStr){
   _objList.append(objDatatable);
   
   //设置分页条
-  pager_list.setTotalCount(searchResultJsonData_list.total);
+  pager_list.setTotalCount(searchResultJsonData_list.total,pager_selected_list.pageNumber);
 }
 
 //缩略图显示查询结果
@@ -512,7 +538,7 @@ function showSearchResultThumb(jsonStr){
   },1*200);
 
   //设置分页条
-  pager_thumb.setTotalCount(searchResultJsonData_thumb.total);
+  pager_thumb.setTotalCount(searchResultJsonData_thumb.total,pager_selected_thumb.pageNumber);
   
   //卡片 section居中
   //alert($("#dgThumb").width()+"  "+$("#section_thumb").width());
@@ -612,5 +638,13 @@ function getUnReadReportId(reportId,showType){
   return retId;
 }
 
+//设置显示样式
+function setShowType(_showType){
+	if(_showType == SHOW_TYPE_LIST || _showType == SHOW_TYPE_THUMB){
+	  showType = _showType;
+	}else{
+	  showType = SHOW_TYPE_LIST;
+	}
+}
 </script>
 </html>

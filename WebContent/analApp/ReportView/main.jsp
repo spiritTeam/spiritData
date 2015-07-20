@@ -20,14 +20,17 @@
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
 <script src="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.js"></script>
 <!-- 加载analApp的JS -->
+<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <script src="<%=path%>/resources/js/visit.utils.js"></script>
 <script src="<%=path%>/analApp/js/analApp.view.js"></script>
+<script src="<%=path%>/analApp/js/zui.pager.js"></script>
 <script src="<%=path%>/reportFrame/serial/js/spirit.report.serial.utils.js"></script>
 
 <title>报告主界面</title>
 </head>
 <style>
 .div{padding:2px;border:1px solid #ddd;width:90%;margin:0 auto;}
+.div_center{margin:0 auto;text-align:center;}
 
 /*** start 列表数据显示样式 ***/
 .dg_border_left_1{border-left:1px grey solid;}
@@ -86,10 +89,16 @@ border-radius:10px;
   word-break:break-all;
   white-space:normal;
 }
+/* 脚部 */
+.footSegment_bgwhite_bordertop{
+  border: 0px solid #95b8e7;
+  border-top: 1px solid #95b8e7;
+  background-color: #FFF;
+}
 
 </style>
 <body class="padding_top5" style="background-color:#FFFFFF">
-  <div class="div border_no">
+  <div id="mainSegment"  class="div div_center border_no">
     <table style="width:100%;">
       <tr>
         <td style="width:100px;">          
@@ -119,36 +128,91 @@ border-radius:10px;
         </td>    
         <td style="text-align:right;">
           <a href="#" class="">
-            <img src="<%=path%>/analApp/images/file_list.png" style="height:45px;width:45px;" onclick="showSearchResult(SHOW_TYPE_LIST);" title="列表预览" alt="列表预览"/>
+            <img src="<%=path%>/analApp/images/file_list.png" style="height:45px;width:45px;" onclick="setShowType(SHOW_TYPE_LIST);startSearch(pager_selected_list);" title="列表预览" alt="列表预览"/>
           </a>
           <a href="#" class="">
-            <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="showSearchResult(SHOW_TYPE_THUMB);" title="缩略图预览" alt="缩略图预览"/>
+            <img src="<%=path%>/analApp/images/file_thumb.png" style="height:45px;width:45px;" onclick="setShowType(SHOW_TYPE_THUMB);startSearch(pager_selected_thumb);" title="缩略图预览" alt="缩略图预览"/>
           </a>
         </td>
       </tr>
     </table>    
-  </div>
              
-  <div class="div border_no">
     <!-- 查询结果列表显示-->
     <div id="dgList" style="display:none;"></div>
     <!-- 查询结果缩略图显示 -->
     <div id="dgThumb" style="display:none;"></div>
   </div>
+             
+  <div id="footSegment" class="div_center footSegment_bgwhite_bordertop">    
+    <!-- 列表显示分页条 -->
+    <div id="div_pager_list"></div>
+    <!-- 卡片显示分页条 -->
+    <div id="div_pager_thumb"></div>
+  </div>
 </body>
 <script>
+//*** begin 常量定义 ***
+var pager_list_size = 10; //列表显示时，每页显示的条数
+var pager_thumb_size = 10; //卡片显示时，每页显示的条数
+//*** end 常量定义 ***
+
+//*** begin 变量定义 ***
+var pager_list = null; //列表分页对象
+var pager_thumb = null; //卡片分页对象
+var pager_selected_list = null; //存储最近一次选择的页码，用于切换列表/卡片显示时再次查询
+var pager_selected_thumb = null; //存储最近一次选择的页码，用于切换列表/卡片显示时再次查询
+//*** end 变量定义 ***
+
+//主窗口参数
+var INIT_PARAM = {
+  //页面中所用到的元素的id，只用到三个Div，另，这三个div应在body层
+  pageObjs: {
+    mainId: "mainSegment", //主体Id
+    footId: "footSegment" //主体Id
+  },
+  page_width: 0,
+  page_height: 0,
+
+  foot_height: 60, //脚部高度
+  foot_peg: false //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
+};
+
 //主函数
 $(function() {
-  initSubmitBt();
+	var initStr = $.spiritPageFrame(INIT_PARAM);
+	if (initStr) {
+	  showAlert("页面初始化失败", initStr, "error");
+	  return ;
+	};
+	$("#footSegment").removeClass("footSegment").addClass("footSegment_bgwhite_bordertop");
+  
+	initSubmitBt();
   initSearchFileInput();
   initDatePicker();
   //初始化日期清除按钮
   initDataCloseBT();
+  //初始化分页
+  initPager();
+  
   _urlPath = "<%=path%>";
   startSearch();
   //定期自动查询报告，前提是必须先访问这个页面才行
   setInterval(startSearch,30*1000);
 });
+
+//初始化分页
+function initPager(){
+	pager_list = new $.ZuiPager(); 
+	pager_list.initPager({"pageSize":pager_list_size,"divPageId":"div_pager_list","objPager":pager_list,"onSelectPage":selectPage});
+	  
+	pager_thumb = new $.ZuiPager(); 
+	pager_thumb.initPager({"pageSize":pager_thumb_size,"divPageId":"div_pager_thumb","objPager":pager_thumb,"onSelectPage":selectPage});
+}
+//选择了某个页面
+function selectPage(pageNumber, pageSize){
+  //alert("onSelectPage()... pageNumber="+pageNumber+";pageSize="+pageSize);
+  startSearch({"pageNumber":pageNumber, "pageSize":pageSize});
+}
 
 //初始化查询输入框
 var searchTxt = "请输入查询内容...";
@@ -240,27 +304,35 @@ var SHOW_TYPE_THUMB = "THUMB"; //缩略图显示常量
 var showType = SHOW_TYPE_LIST; //默认是列表显示查询结果
 var thumbPath = "<%=path%>/analApp/images/"; //报告缩略图所存储的路径
 var defaultThumbImg = "excel.png"; //默认显示的缩略图名称
-var searchResultJsonData = null; //保存查询后的结果
+var searchResultJsonData_list = null; //保存查询后的结果，列表查询，由于加上了分页功能，所以需要分别保存查询结果
+var searchResultJsonData_thumb = null; //保存查询后的结果,卡片查询，由于加上了分页功能，所以需要分别保存查询结果
 var objDatatable = null; //列表显示对象
 
 //取出输入条件，提交查询
 var maxAlertCount_searchReports=3;
 var maxCount_searchReports=1000;
 var alertCount_searchReports=0;
-function startSearch(){
-  var searchStr = $("#inp_filename").val();
-  var startDateStr = $("#startDate").val();
-  var endDateStr = $("#endDate").val();
-  
-  //异步查询文件列表
-  var searchParam={"searchStr":searchStr,"startDateStr":startDateStr,"endDateStr":endDateStr};
+function startSearch(searchParam){
+	//alert("startSearch() searchParam="+JSON.stringify(searchParam));
+	searchParam = combineSearchParam(searchParam);
+	 
   //alert("查询参数："+allFields(searchParam));
-  var url="<%=path%>/reportview/searchReportList.do";
+  //var url="<%=path%>/reportview/searchReportList.do";
+  var url="<%=path%>/reportview/searchReportPageList.do";
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"text",
     success:function(jsonStr) {
       try {
-        searchResultJsonData = str2JsonObj(jsonStr); 
-        showSearchResult(showType);
+        switchShowDivResult(showType);
+
+        if(showType == SHOW_TYPE_THUMB){
+          showSearchResultThumb(jsonStr);
+        }else if(showType == SHOW_TYPE_LIST){
+          showSearchResultList(jsonStr);
+          //第一次访问时，只访问了list，没有访问thumb，所以切换时会没有数据显示，此时需要把第一页查询结果给thumb
+          //if(searchParam.pageNumber==1 && searchResultJsonData_thumb == null){
+          //  showSearchResultThumb(jsonStr);
+          //}
+        }
       } catch(e) {
         alertCount_searchReports++;
         if (alertCount_searchReports<maxAlertCount_searchReports) {
@@ -289,28 +361,58 @@ function startSearch(){
   }); 
 }
 
-//显示查询结果
-function showSearchResult(_showType){
-  //showAlert("showSearchResult()","showType="+_showType,"info");
-  showType = _showType;
-  $('#dgList').css("display","none");
-  $('#dgThumb').css("display","none");
-    
-  if(showType == SHOW_TYPE_LIST){
-    showSearchResultList();
-  }else if(showType == SHOW_TYPE_THUMB){
-    showSearchResultThumb();
-  }else{
-    showType = SHOW_TYPE_LIST;
-    showSearchResultList();
-  }
+//过滤查询条件，组装成符合逻辑的查询条件
+function combineSearchParam(searchParam){
+	var searchStr = $("#inp_filename").val();
+	var startDateStr = $("#startDate").val();
+	var endDateStr = $("#endDate").val();
+	if(showType==SHOW_TYPE_LIST){
+		//如果不存在查询条件（说明是第一次查询），如果查询条件改变，则重置查询页面参数
+	  if(!searchParam || !pager_selected_list || searchStr!=pager_selected_list.searchStr|| startDateStr!=pager_selected_list.startDateStr|| endDateStr!=pager_selected_list.endDateStr){        
+	    searchParam = {"pageNumber":1, "pageSize":pager_list_size, "searchStr":searchStr, "startDateStr":startDateStr, "endDateStr":endDateStr};
+	  }else{
+		  searchParam.searchStr = searchStr;
+	    searchParam.startDateStr = startDateStr;
+	    searchParam.endDateStr = endDateStr;
+	  }
+	  pager_selected_list = searchParam;	  
+	  return pager_selected_list;
+	}else{
+	  if(!searchParam || searchStr!=pager_selected_thumb.searchStr|| startDateStr!=pager_selected_thumb.startDateStr|| endDateStr!=pager_selected_thumb.endDateStr){ 
+	    searchParam = {"pageNumber":1, "pageSize":pager_thumb_size, "searchStr":searchStr, "startDateStr":startDateStr, "endDateStr":endDateStr};
+	  }else{
+	    searchParam.searchStr = searchStr;
+	    searchParam.startDateStr = startDateStr;
+	    searchParam.endDateStr = endDateStr;
+	  }
+	  pager_selected_thumb = searchParam;
+	  return pager_selected_thumb;
+	} 
+}
+
+//开关显示查询结果
+function switchShowDivResult(_showType){
+	showType = _showType;
+	//alert("switchShowDivResult() showType="+_showType);
+	$('#dgList').css("display","none");
+	$('#div_pager_list').css("display","none");
+	$('#dgThumb').css("display","none");
+	$('#div_pager_thumb').css("display","none");
+	if(showType == SHOW_TYPE_THUMB){
+	  $('#dgThumb').css("display","block");
+	  $('#div_pager_thumb').css("display","block");
+	  pager_thumb.alignCenter();
+	}else{
+	  $('#dgList').css("display","block");
+	  $('#div_pager_list').css("display","block");
+	}
 }
 
 //列表显示查询结果
-function showSearchResultList(){
+function showSearchResultList(jsonStr){
+  searchResultJsonData_list = str2JsonObj(jsonStr); 
   var _objList = $('#dgList');
   _objList.empty();
-  _objList.css("display","block");
   //构建dbopts
   var dbopts={
     customizable: true, 
@@ -335,8 +437,8 @@ function showSearchResultList(){
   };
   //组装显示结果行
   var dtrows =[];
-  if (searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0) {
-    var jsonRows = searchResultJsonData.rows;
+  if (searchResultJsonData_list!=null && searchResultJsonData_list.rows!=null && searchResultJsonData_list.rows.length>0) {
+    var jsonRows = searchResultJsonData_list.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
       var id = jsonRows[i]["id"];
@@ -378,16 +480,19 @@ function showSearchResultList(){
 
   //添加到dglist中
   _objList.append(objDatatable);
+  
+  //设置分页条
+  pager_list.setTotalCount(searchResultJsonData_list.total,pager_selected_list.pageNumber);
 }
 
 //缩略图显示查询结果
-function showSearchResultThumb(){
+function showSearchResultThumb(jsonStr){
   var _objThumb = $('#dgThumb');
-  _objThumb.css("display","block");
   var thumbHtmlStr = '';
-  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
+  searchResultJsonData_thumb = str2JsonObj(jsonStr); 
+  if(searchResultJsonData_thumb!=null && searchResultJsonData_thumb.rows!=null && searchResultJsonData_thumb.rows.length>0){
     thumbHtmlStr += '<section class="cards">';
-    var jsonRows = searchResultJsonData.rows;
+    var jsonRows = searchResultJsonData_thumb.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
       var id = jsonRows[i]["id"];
@@ -440,6 +545,9 @@ function showSearchResultThumb(){
     thumbHtmlStr += '</section>';
   }
   _objThumb.html(thumbHtmlStr);
+
+  //设置分页条
+  pager_thumb.setTotalCount(searchResultJsonData_thumb.total,pager_selected_thumb.pageNumber);  
 }
 
 //组装一行操作按钮
@@ -477,6 +585,15 @@ function getOptHtml(aJsonRow,floatStyle,unReadId){
 function getInputSearchFileStr(){
   var searchedStr = ($("#inp_filename").val()==searchTxt)?"":$("#inp_filename").val();
   return searchedStr;
+}
+
+//设置显示样式
+function setShowType(_showType){
+	if(_showType == SHOW_TYPE_LIST || _showType == SHOW_TYPE_THUMB){
+		showType = _showType;
+	}else{
+		showType = SHOW_TYPE_LIST;
+	}
 }
 </script>
 </html>
