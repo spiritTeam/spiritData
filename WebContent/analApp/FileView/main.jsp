@@ -20,6 +20,7 @@
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
 <script src="<%=path%>/resources/plugins/zui/lib/datetimepicker/datetimepicker.min.js"></script>
 <!-- 加载analApp的JS -->
+<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <script src="<%=path%>/resources/js/visit.utils.js"></script>
 <script src="<%=path%>/analApp/js/analApp.view.js"></script>
 <script src="<%=path%>/analApp/js/zui.pager.js"></script>
@@ -99,9 +100,15 @@ border-radius:10px;
   word-break:break-all;
   white-space:normal;
 }
+/* 脚部 */
+.footSegment2{
+  border: 0px solid #95b8e7;
+  border-top: 1px solid #95b8e7;
+  background-color: #FFF;
+}
 </style>
 <body class="padding_top5" style="background-color:#FFFFFF">
-  <div class="div border_no">
+  <div id="mainSegment"  class="div div_center border_no">
     <table style="width:100%;">
       <tr>
         <td style="width:100px;">          
@@ -140,23 +147,22 @@ border-radius:10px;
           </a>
         </td>
       </tr>
-    </table> 
-  </div>
-             
-  <div id="div_list_group" class="div border_no" style="border:0px solid red;display:none;">
+    </table>     
+    
     <!-- 查询结果列表显示-->
     <div id="dgList"></div>
-    <!-- 分页条 -->
-    <div id="div_pager_list"></div>
-  </div>
-  <div id="div_thumb_group" class="div border_no" style="border:0px solid red;display:none;">
     <!-- 查询结果缩略图显示 -->
     <div id="dgThumb"></div>
-    <!-- 分页条 -->
+  </div>
+             
+  <div id="footSegment" class="div_center footSegment2">    
+    <!-- 列表显示分页条 -->
+    <div id="div_pager_list"></div>
+    <!-- 卡片显示分页条 -->
     <div id="div_pager_thumb"></div>
   </div>
 </body>
-<script>
+<script>alert("ddd");
 //*** begin 常量定义 ***
 var pager_list_size = 10; //列表显示时，每页显示的条数
 var pager_thumb_size = 10; //卡片显示时，每页显示的条数
@@ -167,8 +173,28 @@ var pager_list = null; //列表分页对象
 var pager_thumb = null; //卡片分页对象
 //*** end 变量定义 ***
 
+//主窗口参数
+var INIT_PARAM = {
+  //页面中所用到的元素的id，只用到三个Div，另，这三个div应在body层
+  pageObjs: {
+    mainId: "mainSegment", //主体Id
+    footId: "footSegment" //主体Id
+  },
+  page_width: 0,
+  page_height: 0,
+
+  foot_height: 60, //脚部高度
+  foot_peg: false //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
+};
+
 //主函数
 $(function() {
+  var initStr = $.spiritPageFrame(INIT_PARAM);
+  if (initStr) {
+    showAlert("页面初始化失败", initStr, "error");
+    return ;
+  };
+  $("#footSegment").removeClass("footSegment").addClass("footSegment2");
   initSubmitBt();
   initSearchFileInput();
   initDatePicker();
@@ -192,8 +218,8 @@ function initPager(){
 }
 //选择了某个页面
 function selectPage(pageNumber, pageSize){
-	//alert("onSelectPage()... pageNumber="+pageNumber+";pageSize="+pageSize);
-	startSearch({"pageNumber":pageNumber, "pageSize":pageSize});
+  //alert("onSelectPage()... pageNumber="+pageNumber+";pageSize="+pageSize);
+  startSearch({"pageNumber":pageNumber, "pageSize":pageSize});
 }
 
 //初始化查询输入框
@@ -296,12 +322,12 @@ var unReadObjJsonArr = []; //当缩略图显示时，未读小红点位置需要
 
 //取出输入条件，提交查询
 function startSearch(searchParam){
-	//清除未读报告信息
-	unReadObjJsonArr = [];
-	//设置查询条件
+  //清除未读报告信息
+  unReadObjJsonArr = [];
+  //设置查询条件
   //var searchStr = getInputSearchFileStr();
   if(!searchParam){
-	  searchParam = {"pageNumber":1, "pageSize":showType==SHOW_TYPE_LIST?pager_list_size:pager_thumb_size};
+    searchParam = {"pageNumber":1, "pageSize":showType==SHOW_TYPE_LIST?pager_list_size:pager_thumb_size};
   }
   searchParam.searchStr = $("#inp_filename").val();
   searchParam.startDateStr = $("#startDate").val();
@@ -316,17 +342,17 @@ function startSearch(searchParam){
       try{
         //alert("fileSearch() search result="+jsonStr); 
         switchShowDivResult(showType);
-    	  if(showType == SHOW_TYPE_THUMB){
-    		  showSearchResultThumb(jsonStr);
-    		}else if(showType == SHOW_TYPE_LIST){
-    		  showSearchResultList(jsonStr);
-    		  //第一次访问时，只访问了list，没有访问thumb，所以切换时会没有数据显示，此时需要把第一页查询结果给thumb
-    		  if(searchParam.pageNumber==1 && searchResultJsonData_thumb == null){
-    			  //searchResultJsonData_thumb = searchResultJsonData_list;
-    			  showSearchResultThumb(jsonStr);
-    			  //alert("searchResultJsonData_thumb="+searchResultJsonData_thumb);
-    		  }
-    		}
+        if(showType == SHOW_TYPE_THUMB){
+          showSearchResultThumb(jsonStr);
+        }else if(showType == SHOW_TYPE_LIST){
+          showSearchResultList(jsonStr);
+          //第一次访问时，只访问了list，没有访问thumb，所以切换时会没有数据显示，此时需要把第一页查询结果给thumb
+          if(searchParam.pageNumber==1 && searchResultJsonData_thumb == null){
+            //searchResultJsonData_thumb = searchResultJsonData_list;
+            showSearchResultThumb(jsonStr);
+            //alert("searchResultJsonData_thumb="+searchResultJsonData_thumb);
+          }
+        }
         //pager.setTotalCount(searchResultJsonData.total);
       }catch(e){
         showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
@@ -340,16 +366,20 @@ function startSearch(searchParam){
 
 //开关显示查询结果
 function switchShowDivResult(_showType){
-	showType = _showType;
-	//alert("switchShowDivResult() showType="+_showType);
-	$('#div_list_group').css("display","none");
-	$('#div_thumb_group').css("display","none");
-	if(showType == SHOW_TYPE_THUMB){
-		$('#div_thumb_group').css("display","block");
-		pager_thumb.alignCenter();
-	}else{
-		$('#div_list_group').css("display","block");
-	}
+  showType = _showType;
+  //alert("switchShowDivResult() showType="+_showType);
+  $('#dgList').css("display","none");
+  $('#div_pager_list').css("display","none");
+  $('#dgThumb').css("display","none");
+  $('#div_pager_thumb').css("display","none");
+  if(showType == SHOW_TYPE_THUMB){
+    $('#dgThumb').css("display","block");
+    $('#div_pager_thumb').css("display","block");
+    pager_thumb.alignCenter();
+  }else{
+    $('#dgList').css("display","block");
+    $('#div_pager_list').css("display","block");
+  }
 }
 
 
@@ -421,7 +451,7 @@ function showSearchResultList(jsonStr){
 
 //缩略图显示查询结果
 function showSearchResultThumb(jsonStr){
-	var _objThumb = $('#dgThumb');
+  var _objThumb = $('#dgThumb');
   var thumbHtmlStr = '';
   searchResultJsonData_thumb = str2JsonObj(jsonStr); 
   if(searchResultJsonData_thumb!=null && searchResultJsonData_thumb.rows!=null && searchResultJsonData_thumb.rows.length>0){
@@ -509,7 +539,7 @@ function getOptHtml(aJsonRow,floatStyle,showType){
   //var optReport = '<button type="button" class="btn bt_13_no" data-type="ajax" data-url="<%=path%>/demo/Rd/resultRdEchart.jsp" data-toggle="modal">报告</button>';
   var optReport = '';
   if(!isUndefinedNullEmpty(reportId)){
-	  var unReadId = getUnReadReportId(reportId,showType);
+    var unReadId = getUnReadReportId(reportId,showType);
     optReport = '<button type="button" class="btn bt_13_no" onclick="showReport(\''+reportId+'\',\''+unReadId+'\');"><i class="icon-building"></i>报告</button>';
   }else{
     optReport = '<button type="button" style="visibility:hidden;" class="btn bt_13_no" onclick="showReport(\''+reportId+'\');"><i class="icon-building"></i>报告</button>';
@@ -547,24 +577,24 @@ function getSuffixImgName(suffixName){
  * unReadPre -- 未读ID的前缀，如果是列表则为list_，如果是卡片则为thumb_
  */
 function getFileHrefHtml(fileIndexId,fileFull,reportId,showType,hrefClass) {
-	var unReadId = getUnReadReportId(reportId,showType);
+  var unReadId = getUnReadReportId(reportId,showType);
   var optRound = '<div id="'+unReadId+'" class="'+(unReadId?'circleFillRed':'circleOpacity')+'"/>';
-	return '<a href="#" class="'+(hrefClass?hrefClass:'')+'" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');">'+optRound+fileFull+'</a>';
+  return '<a href="#" class="'+(hrefClass?hrefClass:'')+'" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');">'+optRound+fileFull+'</a>';
   //是否未读，如果未读则前面加个小红点用于标识
 //  $(retHtml).html(optRound+fileFull);
 //  if(unReadId){
-//		optRound = '<div id="'+unReadId+'" class="circleFillRed div_float_left thumbText"/>';
-		//optRound = '<div id="'+unReadId+'" class="div_float_left div_inline" style="margin-left:5px;"/>';
-//		unReadObjJsonArr.push({unReadId:"a_"+unReadId});
+//    optRound = '<div id="'+unReadId+'" class="circleFillRed div_float_left thumbText"/>';
+    //optRound = '<div id="'+unReadId+'" class="div_float_left div_inline" style="margin-left:5px;"/>';
+//    unReadObjJsonArr.push({unReadId:"a_"+unReadId});
 //  }
   //组装html
   //retHtml += optRound;
-	//retHtml += '<a href="###" class="'+(hrefClass?hrefClass:null)+'" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong id="a_'+unReadId+'">'+fileFull+'</strong></a>';
-//	var ahrf_file = '<a href="###" class="'+(hrefClass?hrefClass:null)+'" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong id="a_'+unReadId+'">'+fileFull+'</strong></a>';
-//	  var retHtml = '<div><div class="div_float_left,div_inline">'+optRound+'</div><div class="div_float_left,div_inline">'+ahrf_file+'</div></div>';
+  //retHtml += '<a href="###" class="'+(hrefClass?hrefClass:null)+'" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong id="a_'+unReadId+'">'+fileFull+'</strong></a>';
+//  var ahrf_file = '<a href="###" class="'+(hrefClass?hrefClass:null)+'" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong id="a_'+unReadId+'">'+fileFull+'</strong></a>';
+//    var retHtml = '<div><div class="div_float_left,div_inline">'+optRound+'</div><div class="div_float_left,div_inline">'+ahrf_file+'</div></div>';
 //  retHtml = '<div>'+optRound+ahrf_file+'</div>';
-	//retHtml += '<a href="###" class="'+(hrefClass?hrefClass:null)+'" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong id="a_'+unReadId+'"><div class="div_center">'+optRound+'<div class="div_inline">'+fileFull+'</div></div></strong></a>';
-	//return retHtml;
+  //retHtml += '<a href="###" class="'+(hrefClass?hrefClass:null)+'" onclick="showFile(\''+fileIndexId+'\',\''+fileFull+'\');"><strong id="a_'+unReadId+'"><div class="div_center">'+optRound+'<div class="div_inline">'+fileFull+'</div></div></strong></a>';
+  //return retHtml;
 }
 
 /**
@@ -573,13 +603,13 @@ function getFileHrefHtml(fileIndexId,fileFull,reportId,showType,hrefClass) {
 function getUnReadReportId(reportId,showType){
   var retId = null;
   //if(!isUndefinedNullEmpty(reportId)){
-	if(reportId){
-		var unRead = getMainPage().isUnReadReportById(reportId); //是否报告未读过
-		if(unRead){
-			retId = "unRead_"+showType+"_"+reportId;
-		}		
-	}
-	return retId;
+  if(reportId){
+    var unRead = getMainPage().isUnReadReportById(reportId); //是否报告未读过
+    if(unRead){
+      retId = "unRead_"+showType+"_"+reportId;
+    }   
+  }
+  return retId;
 }
 
 </script>
