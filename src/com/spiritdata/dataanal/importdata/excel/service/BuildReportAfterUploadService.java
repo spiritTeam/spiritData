@@ -248,7 +248,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 D_Tag pieDt = new D_Tag();
                                 pieDt.setShowType(DtagShowType.PIE);
                                 pieDt.setDid(report.getDid(tempStr)+"");
-                                pieDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                pieDt.setValue("dictData[^"+mc.getColumnName()+"^]");
                                 tempMap = new HashMap<String,String>();
                                 tempMap.put("xAxis", "category");
                                 tempMap.put("yAxis", "count");
@@ -259,9 +259,8 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 String numbContent="";
                                 for(int nidx=0;nidx<numColList.size();nidx++){
                                 	MetadataColumn acolmc = (MetadataColumn)numColList.get(nidx);
-                                    //第一步：显示字典项和某个数值项的二维表和饼图
                                     numbContent += "数值列["+mc.getTitleName()+"]对["+acolmc.getTitleName()+"]的统计情况如下：<br/>";
-                                    //第二步：显示二维表格
+                                    //1：二维表数据
                                     tableDt = new D_Tag();
                                     tableDt.setShowType(DtagShowType.TABLE);
                                     tableDt.setDid(report.getDid(tempStr)+"");
@@ -276,9 +275,9 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     tempMap.put("非空个数", "COUNT_"+acolmc.getColumnName());
                                     tableDt.setParam(tempMap);
                                     tempMap = new HashMap<String,String>();
-                                    tempMap.put("style", "width:500px");
+                                    tempMap.put("style", "{~width~:~500px~}");
                                     tableDt.setHtmlExt(tempMap);
-                                    //显示总量饼图
+                                    //2：总量饼图
                                     pieDt = new D_Tag();
                                     pieDt.setShowType(DtagShowType.PIE);
                                     pieDt.setDid(report.getDid(tempStr)+"");
@@ -288,19 +287,21 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     tempMap.put("yAxis", "SUM_"+acolmc.getColumnName());
                                     pieDt.setParam(tempMap);
                                     pieDt.setDecorateView("#category#, #percent(SUM_"+acolmc.getColumnName()+")#");
-                                    numbContent += "<table><tr><td>"+tableDt.toHtmlTag()+"</td><td>"+pieDt.toHtmlTag()+"</td></tr></table><br/>";
-                                    //第三步：显示组图
+                                    tempMap = new HashMap<String,String>();
+                                    tempMap.put("style", "{~width~:~240px~, ~height~:~160px~}");
+                                    pieDt.setHtmlExt(tempMap);
+                                    //3：数值显示组图
                                     D_Tags dTags = new D_Tags();
                                     tempMap = new HashMap<String,String>();
-                                    tempMap.put("style", "width:500px");
+                                    tempMap.put("style", "{~width~:~240px~, ~height~:~160px~}");
                                     dTags.setHtmlExt(tempMap);
                                     //最大值
                                     D_Tag lineMaxDt = new D_Tag();
                                     lineMaxDt.setShowType(DtagShowType.LINE);
                                     lineMaxDt.setDid(report.getDid(tempStr)+"");
                                     lineMaxDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    lineMaxDt.setLabel("最大值");
                                     tempMap = new HashMap<String,String>();
-                                    tempMap.put("label", "最大值");
                                     tempMap.put("xAxis", "category");
                                     tempMap.put("yAxis", "MAX_"+acolmc.getColumnName());
                                     lineMaxDt.setParam(tempMap);
@@ -311,8 +312,8 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     lineMinDt.setShowType(DtagShowType.LINE);
                                     lineMinDt.setDid(report.getDid(tempStr)+"");
                                     lineMinDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    lineMinDt.setLabel("最小值");
                                     tempMap = new HashMap<String,String>();
-                                    tempMap.put("label", "最小值");
                                     tempMap.put("xAxis", "category");
                                     tempMap.put("yAxis", "MIN_"+acolmc.getColumnName());
                                     lineMinDt.setParam(tempMap);
@@ -320,17 +321,19 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     dTags.addOneDTag(lineMinDt);
                                     //平均值
                                     D_Tag lineAvgDt = new D_Tag();
-                                    tempMap.put("label", "平均值");
                                     lineAvgDt.setShowType(DtagShowType.LINE);
                                     lineAvgDt.setDid(report.getDid(tempStr)+"");
                                     lineAvgDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    lineAvgDt.setLabel("平均值");
                                     tempMap = new HashMap<String,String>();
                                     tempMap.put("xAxis", "category");
                                     tempMap.put("yAxis", "AVG_"+acolmc.getColumnName());
                                     lineAvgDt.setParam(tempMap);
                                     lineAvgDt.setDecorateView("#category#, #AVG_"+acolmc.getColumnName()+"#");
                                     dTags.addOneDTag(lineAvgDt);
-                                    numbContent += dTags.toHtmlTag()+"<br/>";
+
+                                    numbContent += "<table><tr><td colspan=2>"+tableDt.toHtmlTag()+"</td></tr>"
+                                    +"<tr><td>"+pieDt.toHtmlTag()+"</td><td>"+dTags.toHtmlTag()+"</td></tr></table><br/>";
                                 }
                                 //加到节点上
                                 if (!numbContent.equals("")) numbContent="<span style='font-weight:bold'>数值列情况如下:</span><br/>"+numbContent;

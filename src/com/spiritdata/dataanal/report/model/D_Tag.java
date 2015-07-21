@@ -25,6 +25,7 @@ public class D_Tag implements Serializable{
     private Map<String, String> param; //showType附属说明，在标签串中以json格式存在
     private String value; //数据，获取_DATA中的那个对象
     private String valueFilterFun; //数据过滤函数
+    private String label; //只在ds中有效
     private String decorateView; //显示修饰语法
     private Map<String, String> dvExt; //显示修饰的扩展部分，在标签中串中以json格式存在
     private Map<String, String> htmlExt; //html的扩展属性，是一个json串
@@ -58,6 +59,12 @@ public class D_Tag implements Serializable{
     }
     public void setValueFilterFun(String valueFilterFun) {
         this.valueFilterFun = valueFilterFun;
+    }
+    public String getLabel() {
+        return label;
+    }
+    public void setLabel(String label) {
+        this.label = label;
     }
     public String getDecorateView() {
         return decorateView;
@@ -102,7 +109,9 @@ public class D_Tag implements Serializable{
         ret += " value='"+this.value;
         if (!StringUtils.isNullOrEmptyOrSpace(this.valueFilterFun)) ret += "::"+this.valueFilterFun;
         ret += "'";
-        //5-decorateView
+        //5-label
+        if (!StringUtils.isNullOrEmptyOrSpace(this.label)) ret += " label='"+this.label+"'";
+        //6-decorateView
         if (!StringUtils.isNullOrEmptyOrSpace(this.decorateView)) {
             ret += " decorateView='"+replaceQuotation(this.decorateView);
             if (this.dvExt!=null&&this.dvExt.size()>0) {
@@ -111,7 +120,7 @@ public class D_Tag implements Serializable{
             }
             ret += "'";
         }
-        //6-htmlExt
+        //7-htmlExt
         if (this.htmlExt!=null&&this.htmlExt.size()>0) {
             temp = JsonUtils.objToJson(this.htmlExt);
             ret += " htmlExt='"+this.replaceQuotation(temp)+"'";
