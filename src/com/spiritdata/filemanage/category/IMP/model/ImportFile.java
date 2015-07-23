@@ -2,12 +2,10 @@ package com.spiritdata.filemanage.category.IMP.model;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Date;
 
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
-import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
 import com.spiritdata.filemanage.core.model.FileInfo;
@@ -71,7 +69,7 @@ public class ImportFile implements Serializable, BeManageFile {
         ret.setId(this.id);
         ret.setOwner(this.owner);
         ret.setAccessType(1);
-        ret.setDesc("导入数据，文件为:"+FileNameUtils.getFileName(this.serverFileName)+"；导入时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime(f))));
+        ret.setDesc("导入数据，文件为:"+FileNameUtils.getFileName(this.serverFileName)+"；导入时间:"+DateUtils.convert2TimeChineseStr(ret.getFcTime()));
         //分类信息
         FileCategory fc = new FileCategory();
         fc.setFType1(FileCategoryType1.IMP);

@@ -136,7 +136,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         tg.setDesc("{\"任务名称\":\""+tg.getWorkName()+"\"}");
         
         //4-构建报告体，并生成相关的任务
-        AnalResultFile arf;
+        AnalResultFile arf = null;
         Map<String, Object> taskParam = new HashMap<String, Object>();//任务参数结构，所有的任务都用此函数作为
         SegmentList<TreeNode<ReportSegment>> reportBody = new SegmentList<TreeNode<ReportSegment>>();
 

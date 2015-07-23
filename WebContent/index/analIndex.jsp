@@ -253,11 +253,13 @@ function setAfterFirstUpload() {//上传文件后，显示所有页签，并定�
   __STATUS=1;
   getNoVisitReports();
   //显示页签
+  var showReport=false;
+  if ($("#nav_report").is(":hidden")) showReport=true;
   $("#nav_report").show();
   $("#nav_file").show();
   $("#funBar").show();
   //点击报告页
-  $("#nav_report").click();
+  if (showReport) $("#nav_report").click();
 }
 //2----登录状态处理
 function setLoginPage() {
@@ -385,6 +387,7 @@ function selF() {
   $("#upf").click();
 }
 function uploadF() {
+	alert("DDD");
   try {
     var fileName=$("#upf").val();
     var _pos=fileName.lastIndexOf('.');
@@ -394,7 +397,7 @@ function uploadF() {
       showAlert("数据上传", "抱歉！目前系统不支持对此格式文件的数据处理。", "warning");
       return;
     }
-
+alert("ABC");
     var form = $('#afUpload');
     $(form).attr('action', _PATH+'/fileUpLoad.do');
     $(form).attr('method', 'POST');
@@ -408,23 +411,29 @@ function uploadF() {
         try {
           respJson=str2JsonObj(respStr);
         } catch(e) {
-          showAlert("上传异常","str 2 json err. jsonStr="+respStr,"error");
+          showAlert("上传异常", e.message+"<br/>返回数据为="+respStr,"error");
         }
         var success=(respJson.jsonType==1&&respJson.data&&(respJson.data.length==1&&respJson.data[0].success));
-        if (success) getNoVisitReports();//重新获取未读
+        alert(success);
+        if (success+""=="TRUE") getNoVisitReports();//重新获取未读
         else {
-          var msg = respJson.data?respJson.data:respJson.message;
-          if (!(msg instanceof string)) msg = allFields(msg);
-          showAlert("上传文件结果", msg, "error");
+          var msg = "";
+          if (respJson.data) {
+            msg=allFields(respJson.data[0]);
+          } else {
+            if (respJson.message instanceof string) msg=respJson.message;
+            else msg=allFields(respJson.message[0]);
+          }
+          if (!msg) msg="未知问题";
+          showAlert("数据上传", "数据文件上传失败！<br/>"+msg, "error");
         }
       },
       error: function(errData) {
-        showAlert("上传文件提交失败","failed to upload file. errData="+errData,"error");
+        showAlert("上传失败", errData, "error");
       }
     });
   } catch(e) {
-    if (mainPage) mainPage.$.messager.alert("文件上传失败", e, "error");
-    else $.messager.alert("文件上传失败", e, "error");
+    showAlert("上传失败", e.message, "error");
   }
 }
 

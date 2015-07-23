@@ -52,10 +52,10 @@ public class AnalDict implements AnalMetadata {
         if (qt==null) qt = mdQuotaService.caculateQuota(mm, mm.getTableName());//为空，则重新计算指标
         if (qt.getAllCount()==0) return null;//返回空，表中没有数据，无法分析
         if (qt.getQuotaColList()==null||qt.getQuotaColList().size()==0) return null;
-        
+
         Map<String, Object> ret  = new HashMap<String, Object>();
         for (QuotaColumn qc: qt.getQuotaColList()) {
-            if (qc.getColumn().getColumnType().equals("String")&&qc.getCompressRate()>AnalDict.compressThreshold) {//是字典项
+            if (qc.getCompressRate()>AnalDict.compressThreshold&&(qc.getColumn().getColumnType().equals("String")||qc.getColumn().getColumnType().equals("Integer"))) {//是字典项
                 ret.put(qc.getColumn().getColumnName(), qc.getCompressRate());
             }
         }

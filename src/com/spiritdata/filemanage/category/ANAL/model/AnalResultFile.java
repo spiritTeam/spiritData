@@ -2,14 +2,12 @@ package com.spiritdata.filemanage.category.ANAL.model;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
-import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.jsonD.util.JsonUtils;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
 import com.spiritdata.filemanage.core.model.FileCategory;
@@ -123,7 +121,7 @@ public class AnalResultFile extends AbstractToBeStoreFile implements Serializabl
         if (this.CTime==null) this.CTime=new Timestamp(new Date().getTime());
         ret.setCTime(this.CTime);
         */
-        ret.setDesc("分析结果文件，文件为:"+FileNameUtils.getFileName(this.fileName)+"；得到分析结果时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime(f)))
+        ret.setDesc("分析结果文件，文件为:"+FileNameUtils.getFileName(this.fileName)+"；得到分析结果时间:"+DateUtils.convert2TimeChineseStr(ret.getFcTime())
                 +"；分析类型："+this.analType+"::"+this.subType+"，jsonD代码："+this.jsonDCode);
         //分类信息
         FileCategory fc = new FileCategory();

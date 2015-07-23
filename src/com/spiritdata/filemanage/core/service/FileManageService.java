@@ -51,8 +51,9 @@ public class FileManageService {
             try {
                 fileIndexDao.insert(fiPo);
             } catch(Exception e) {
+                e.printStackTrace();
                 existFi = this.getFileInfoById(fi.getId());
-                fileIndexDao.update(fiPo);
+                if (existFi!=null) fileIndexDao.update(fiPo);
             }
             //文件分类表
             if (fi.getFileCategoryList()!=null&&fi.getFileCategoryList().size()>0) {

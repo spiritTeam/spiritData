@@ -44,7 +44,7 @@ public class AnalSingleDict implements TaskProcess {
         if (param.get("pType")==null)  throw new Dtal0404CException(new NullPointerException("参数中没有“参数类型pType”的数据！"));
         if (!((String)param.get("pType")).toLowerCase().equals("metadata")) new Dtal0404CException(new IllegalArgumentException("参数中必须指定参数类型pType是元数据id[metadata]"));
         if (param.get("mid")==null)  throw new Dtal0404CException(new NullPointerException("参数中没有“数据id”信息！"));
-  
+
         ServletContext sc = (ServletContext)SystemCache.getCache(FConstants.SERVLET_CONTEXT).getContent();//通过此获得Spring中定义的对象，这种方法似乎不好
         if (WebApplicationContextUtils.getWebApplicationContext(sc)==null)  throw new Dtal0404CException(new NullPointerException("无法获取Spring上下文环境！"));
 
@@ -60,7 +60,7 @@ public class AnalSingleDict implements TaskProcess {
         String colName = "";
         Map<MetadataColumn, MetadataColSemanteme> dictColM = new HashMap<MetadataColumn, MetadataColSemanteme>(); //字典列的列名，以及对应的列的字典组Id
         List<MetadataColSemanteme> mcsL = null;
-        List<String> fieldL = new ArrayList<String>();//列选择器字符串
+        Map<String, String> fieldM = new HashMap<String,String>();//列选择器字符串
         Map<String, String> titleM = new LinkedHashMap<String, String>();//列描述对象，为生成title描述
         String tempColStr = "", groupSql = "";
         List<String> numColNameList = new ArrayList<String>();
@@ -78,7 +78,7 @@ public class AnalSingleDict implements TaskProcess {
                         break;
                     }
                 }
-                if (isDict) continue;
+                //if (isDict) continue;
             }
             //数值列
             DataType colDT = DataType.getDataType(mc.getColumnType());
@@ -89,7 +89,7 @@ public class AnalSingleDict implements TaskProcess {
                         +", avg("+colName+") as AVG_"+colName
                         +", max("+colName+") as MAX_"+colName
                         +", min("+colName+") as MIN_"+colName;
-                fieldL.add(tempColStr);
+                fieldM.put(colName, tempColStr);
                 titleM.put("COUNT_"+colName, mc.getTitleName()+"个数");
                 titleM.put("SUM_"+colName, mc.getTitleName()+"总量");
                 titleM.put("AVG_"+colName, mc.getTitleName()+"平均值");
@@ -120,15 +120,16 @@ public class AnalSingleDict implements TaskProcess {
             //数据统计
             tempColStr = "count(*) allCount";
             titleM.put("allCount", "总个数");
-            for (String s: fieldL) {
-                tempColStr += ","+s;
+
+            for (Map.Entry<String, String> entry : fieldM.entrySet()) {
+                tempColStr += ","+entry.getValue();
             }
             String countSql = "select "+tempColStr+" from "+mm.getTableName();
             ps = conn.prepareStatement(countSql);
             rs = ps.executeQuery();
             if (rs.next()) {
                 for (String key: titleM.keySet()) {
-                	if(key.indexOf("percent(")>-1){continue;}
+                    if(key.indexOf("percent(")>-1){continue;}
                     sumRow.put(key, rs.getObject(key));
                 }
             }
@@ -139,7 +140,11 @@ public class AnalSingleDict implements TaskProcess {
                 groupMap.put("mc", mc);
                 MetadataColSemanteme mcs = dictColM.get(mc);
                 groupMap.put("mcs", mcs);
-                colName = mc.getColumnName();               
+                colName = mc.getColumnName();
+                tempColStr = "count(*) allCount";
+                for (Map.Entry<String, String> entry : fieldM.entrySet()) {
+                    if (!entry.getKey().equals(colName)) tempColStr += ","+entry.getValue();
+                }
                 groupSql = "select "+tempColStr+","+colName+" from "+mm.getTableName() + " group by "+colName+" order by count("+colName+") desc";
                 rs = ps.executeQuery(groupSql);
                 groupTdList = new ArrayList<Map<String, Object>>();
@@ -147,7 +152,7 @@ public class AnalSingleDict implements TaskProcess {
                     groupRow = new HashMap<String, Object>();
                     groupRow.put(colName, rs.getObject(colName));
                     for (String key: titleM.keySet()) {
-                    	if(key.indexOf("percent(")>-1){continue;}
+                        if(key.indexOf("percent(")>-1){continue;}
                         groupRow.put(key, rs.getObject(key));
                     }                    
                     groupTdList.add(groupRow);
@@ -241,18 +246,18 @@ public class AnalSingleDict implements TaskProcess {
             float aRowCount = groupRow.get("allCount")==null?0:Float.parseFloat(groupRow.get("allCount").toString());
             float colCount =  sumRow.get("allCount")==null?0:Float.parseFloat(sumRow.get("allCount").toString());
             float percent = aRowCount * 100 / colCount;
-        	percent = (float)(Math.round(percent*100))/100;
+            percent = (float)(Math.round(percent*100))/100;
             rowM.put("percent(SUM_"+colName+")", percent);
             rowM.put("percent(count)", percent);
             //计算各个数值列项的百分比
             for(int nidx=0;nidx<numColNameList.size();nidx++){
-            	String ncolName = (String)numColNameList.get(nidx);
-            	String ncolSumName = "SUM_"+ncolName;
-            	aRowCount = groupRow.get(ncolSumName)==null?0:Float.parseFloat(groupRow.get(ncolSumName).toString());
-            	colCount =  sumRow.get(ncolSumName)==null?0:Float.parseFloat(sumRow.get(ncolSumName).toString());
-            	percent = aRowCount * 100 / colCount;
-            	percent = (float)(Math.round(percent*100))/100;
-            	rowM.put("percent(SUM_"+ncolName+")", percent);
+                String ncolName = (String)numColNameList.get(nidx);
+                String ncolSumName = "SUM_"+ncolName;
+                aRowCount = groupRow.get(ncolSumName)==null?0:Float.parseFloat(groupRow.get(ncolSumName).toString());
+                colCount =  sumRow.get(ncolSumName)==null?0:Float.parseFloat(sumRow.get(ncolSumName).toString());
+                percent = aRowCount * 100 / colCount;
+                percent = (float)(Math.round(percent*100))/100;
+                rowM.put("percent(SUM_"+ncolName+")", percent);
             }
             
             //加入数值类型统计信息列值
@@ -261,7 +266,7 @@ public class AnalSingleDict implements TaskProcess {
                 while(iterTitleM.hasNext()){
                     String keyTitleM = (String)iterTitleM.next();
                     Object valTitleM = (Object)groupRow.get(keyTitleM);
-                	if(keyTitleM.indexOf("percent(")>-1){continue;}
+                    if(keyTitleM.indexOf("percent(")>-1){continue;}
                     rowM.put(keyTitleM, valTitleM);
                 }
             }

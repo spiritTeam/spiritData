@@ -272,6 +272,7 @@ CREATE TABLE sa_task_info (
   id            varchar(32)      NOT NULL                  COMMENT '任务表ID(UUID)',
   taskGId       varchar(32)                                COMMENT '外键任务组表ID(UUID)，可为空，任务可独立',
   resultFileId  varchar(32)                                COMMENT '结果文件Id，若没有执行结果，此字段可以为空',
+  taskType      varchar(50)      NOT NULL                  COMMENT '任务类型，任务功能的分类信息',
   taskName      varchar(100)     NOT NULL                  COMMENT '任务名称',
   langType      varchar(50)      NOT NULL  DEFAULT 'java'  COMMENT '任务执行语言：目前只有Java',
   executeFunc   varchar(200)     NOT NULL                  COMMENT '任务执行方法，要实现一个接口',

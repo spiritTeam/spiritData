@@ -2,7 +2,6 @@ package com.spiritdata.filemanage.category.REPORT.model;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Date;
 
 import com.spiritdata.dataanal.common.model.Owner;
 import com.spiritdata.filemanage.core.enumeration.FileCategoryType1;
@@ -13,7 +12,6 @@ import com.spiritdata.filemanage.core.pattern.model.BeManageFile;
 import com.spiritdata.filemanage.exceptionC.Flmg0001CException;
 import com.spiritdata.framework.util.DateUtils;
 import com.spiritdata.framework.util.FileNameUtils;
-import com.spiritdata.framework.util.FileUtils;
 
 /**
  * 报告文件对象
@@ -75,7 +73,7 @@ public class ReportFile extends AbstractToBeStoreFile implements Serializable, B
         ret.setId(this.id);
         ret.setOwner(this.owner);
         ret.setAccessType(1);
-        ret.setDesc("分析报告文件:"+FileNameUtils.getFileName(this.fileName)+"；生成报告时间:"+DateUtils.convert2TimeChineseStr(new Date(FileUtils.getFileCreateTime(f)))
+        ret.setDesc("分析报告文件:"+FileNameUtils.getFileName(this.fileName)+"；生成报告时间:"+DateUtils.convert2TimeChineseStr(ret.getFcTime())
                 +"；报告文件Id："+this.reportId+"，对应的任务组ID："+this.taskGId);
         //分类信息
         FileCategory fc = new FileCategory();

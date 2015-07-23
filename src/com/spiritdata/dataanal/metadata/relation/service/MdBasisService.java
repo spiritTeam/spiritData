@@ -79,12 +79,12 @@ public class MdBasisService {
 
         param.clear();
         param.put("mdMId", id);
+        param.put("orderByClause", "columnIndex");
         //查询列
         List<MetadataColumn> clist = mcDao.queryForList(param);
         if (clist==null||clist.size()==0) return null;
-        for (MetadataColumn mc: clist) {
-            ret.addColumn(mc);
-        }
+        for (MetadataColumn mc: clist) ret.addColumn(mc);
+
         //查询语义
         param.put("orderByClause", "cId");//按列排序
         List<MetadataColSemanteme> cslist = mcsDao.queryForList(param);

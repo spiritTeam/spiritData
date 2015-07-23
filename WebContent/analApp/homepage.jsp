@@ -32,7 +32,7 @@
       <div id="descript">无模式·开放型·数据探索平台</div>
     </div>
     <div id="inForm">
-      <form method="post" action="<%=path%>/fileUpLoad.do" enctype="multipart/form-data" id="afUpload" target="tframe">        
+      <form method="post" action="<%=path%>/fileUpLoad.do" enctype="multipart/form-data" id="afUpload">
         <input id="upf" name="upf" type=file style="display:yes;" onchange="showFileInfo()"/>
         <div>
           <div id="upIcon" onclick="upIcon_clk();"></div>
@@ -96,7 +96,6 @@
   </div>
 </div>
 
-<iframe id="tframe" name="tframe" style="width:600px;heigth:200px;display:none;"></iframe>
 <script>
 var mainPage;
 //提示信息
@@ -218,56 +217,52 @@ function uploadF() {
   }
   try {
     var form = $('#afUpload');
+    if (mainPage) mainPage.showMask(1, "正在上传文件，进行即时分析。<br/>请等待...");
+
     $(form).attr('action', _PATH+'/fileUpLoad.do');
     $(form).attr('method', 'POST');
     $(form).attr('target', 'tframe');
     if (form.encoding) form.encoding = 'multipart/form-data';
     else form.enctype = 'multipart/form-data';
-    $(form).submit();
-    //等待处理
-    if (mainPage.__STATUS==0&&!mainPage._loginName) {
-      if (mainPage) mainPage.showMask(1, "正在上传文件，进行即时分析。<br/>请等待...");
-      checkProcessId = setInterval(checkUploadStatus, 200);
-    } else {
-      $("#upfs").val(_promptMessage);
-      if (mainPage) mainPage.setAfterFirstUpload();
-    }
+    $(form).form('submit',{
+      async: true,
+      success: function(respStr) {
+        var respJson = null;
+        try {
+          respJson=str2JsonObj(respStr);
+        } catch(e) {
+          showAlert("上传异常", e.message+"<br/>返回数据为="+respStr,"error");
+        }
+        var success=(respJson.jsonType==1&&respJson.data&&(respJson.data.length==1&&respJson.data[0].success));
+        if (success+""=="TRUE") {
+          $("#upfs").val(_promptMessage);
+          if (mainPage) {
+            mainPage.getNoVisitReports();//重新获取未ert读
+            mainPage.setAfterFirstUpload();
+          }
+        } else {
+          var msg = "";
+          if (respJson.data) {
+            msg=allFields(respJson.data[0]);
+          } else {
+            if (respJson.message instanceof string) msg=respJson.message;
+            else msg=allFields(respJson.message[0]);
+          }
+          if (!msg) msg="未知问题";
+          showAlert("数据上传", "数据文件上传失败！<br/>"+msg, "error");
+        }
+        mainPage.showMask(0);
+      },
+      error: function(errData) {
+        showAlert("上传失败", errData, "error");
+        mainPage.showMask(0);
+      }
+    });
   } catch(e) {
-  	showAlert("文件上传失败", e, "error");
-  }
-}
-function checkUploadStatus() {
-  var ret = document.getElementById('tframe').contentWindow.document.body;
-  if (!ret) return; 
-  ret = ret.innerHTML;
-  if (!ret) return;
-  else {
-    ret = eval("("+ret+")");
-    clearInterval(checkProcessId);//删除进程
-    var success=(ret.jsonType==1&&ret.data&&(ret.data.length==1&&ret.data[0].success));
-    if (success+""=="TRUE") {//成功
-      if (mainPage) {
-        $("#upfs").val(_promptMessage);
-        mainPage.setAfterFirstUpload();
-      }
-    } else {
-      var msg = "";
-      if (ret.data) {
-      	msg=allFields(ret.data[0]);
-      } else {
-      	if (ret.message instanceof string) msg=ret.message;
-      	else msg=allFields(ret.message[0]);
-      }
-      if (!msg) msg="未知问题";
-      showAlert("数据上传", "数据文件上传失败！<br/>"+msg, "error");
-    }
-    mainPage.showMask(0);
+  	showAlert("文件上传失败", e.message, "error");
   }
 }
 
-function showResult() {
-  openSWinInMain({"title":"探索分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
-}
 function changeTab(tabIndex) {
   $("#tabBar>div").each(function(i) {
   	$(this).css({"height":"30px"});
@@ -282,8 +277,11 @@ function changeTab(tabIndex) {
   else if (tabIndex==2) $("#declare").show();
   else if (tabIndex==3) $("#introduce").show();
 }
+function showResult() {
+  openSWinInMain({"title":"分析结果", "url":"demo/Rd/resultRd.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
+}
 function showDemo() {
-  openSWinInMain({"title":"探索分析报告Demo", "url":"demo/Rd/resultRdEchart.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
+  openSWinInMain({"title":"分析报告Demo", "url":"demo/Rd/resultRdEchart.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
 }
 </script>
 </body>
