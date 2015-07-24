@@ -70,11 +70,11 @@ public class AnalSingleDict implements TaskProcess {
             //找字典项
             mcsL = mc.getColSemList();
             if (mcsL!=null && mcsL.size()>0){ //判断是否字典项
-                boolean isDict = false;
+                //boolean isDict = false;
                 for (MetadataColSemanteme mcs: mcsL) {
                     if (mcs.getSemantemeType()==SemantemeType.DICT) {
                         dictColM.put(mc, mcs);
-                        isDict = true;
+                        //isDict = true;
                         break;
                     }
                 }
@@ -84,11 +84,19 @@ public class AnalSingleDict implements TaskProcess {
             DataType colDT = DataType.getDataType(mc.getColumnType());
             if (colDT==DataType.DOUBLE||colDT==DataType.LONG||colDT==DataType.INTEGER) {
                 colName = mc.getColumnName();
-                tempColStr = "count("+colName+") as COUNT_"+colName
-                        +", sum("+colName+") as SUM_"+colName
-                        +", avg("+colName+") as AVG_"+colName
-                        +", max("+colName+") as MAX_"+colName
-                        +", min("+colName+") as MIN_"+colName;
+                if (colDT==DataType.DOUBLE) {
+                    tempColStr = "count("+colName+") as COUNT_"+colName
+                            +", round(sum("+colName+"),2) as SUM_"+colName
+                            +", round(avg("+colName+"),2) as AVG_"+colName
+                            +", round(max("+colName+"),2) as MAX_"+colName
+                            +", round(min("+colName+"),2) as MIN_"+colName;
+                } else {
+                    tempColStr = "count("+colName+") as COUNT_"+colName
+                            +", sum("+colName+") as SUM_"+colName
+                            +", round(avg("+colName+"),2) as AVG_"+colName
+                            +", max("+colName+") as MAX_"+colName
+                            +", min("+colName+") as MIN_"+colName;
+                }
                 fieldM.put(colName, tempColStr);
                 titleM.put("COUNT_"+colName, mc.getTitleName()+"个数");
                 titleM.put("SUM_"+colName, mc.getTitleName()+"总量");
@@ -100,100 +108,99 @@ public class AnalSingleDict implements TaskProcess {
             }
         }
         if (dictColM!=null&&dictColM.size()>0) {
-            sysRd.put("resultType", 2);
-        }
-        //数据分析
-        Map<String, Object> sumRow = new HashMap<String, Object>();
-        Map<String, Object> groupRow = null;
-        List<Map<String, Object>> groupTdList = null;
-        List<Map<String, Object>> groupList = new ArrayList<Map<String, Object>>();
+            //数据分析
+            Map<String, Object> sumRow = new HashMap<String, Object>();
+            Map<String, Object> groupRow = null;
+            List<Map<String, Object>> groupTdList = null;
+            List<Map<String, Object>> groupList = new ArrayList<Map<String, Object>>();
 
-        DataSource dataSource = (BasicDataSource)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("dataSource");
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Connection conn = null;
-        boolean autoCommitFlag = true;
-        try {
-            conn = dataSource.getConnection();
-            autoCommitFlag = conn.getAutoCommit();
-            conn.setAutoCommit(false);
-            //数据统计
-            tempColStr = "count(*) allCount";
-            titleM.put("allCount", "总个数");
-
-            for (Map.Entry<String, String> entry : fieldM.entrySet()) {
-                tempColStr += ","+entry.getValue();
-            }
-            String countSql = "select "+tempColStr+" from "+mm.getTableName();
-            ps = conn.prepareStatement(countSql);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                for (String key: titleM.keySet()) {
-                    if(key.indexOf("percent(")>-1){continue;}
-                    sumRow.put(key, rs.getObject(key));
-                }
-            }
-            rs.close();
-            //分项统计
-            for (MetadataColumn mc: dictColM.keySet()) {
-                Map<String, Object> groupMap = new HashMap<String, Object>();
-                groupMap.put("mc", mc);
-                MetadataColSemanteme mcs = dictColM.get(mc);
-                groupMap.put("mcs", mcs);
-                colName = mc.getColumnName();
+            DataSource dataSource = (BasicDataSource)WebApplicationContextUtils.getWebApplicationContext(sc).getBean("dataSource");
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            Connection conn = null;
+            boolean autoCommitFlag = true;
+            try {
+                conn = dataSource.getConnection();
+                autoCommitFlag = conn.getAutoCommit();
+                conn.setAutoCommit(false);
+                //数据统计
                 tempColStr = "count(*) allCount";
-                for (Map.Entry<String, String> entry : fieldM.entrySet()) {
-                    if (!entry.getKey().equals(colName)) tempColStr += ","+entry.getValue();
-                }
-                groupSql = "select "+tempColStr+","+colName+" from "+mm.getTableName() + " group by "+colName+" order by count("+colName+") desc";
-                rs = ps.executeQuery(groupSql);
-                groupTdList = new ArrayList<Map<String, Object>>();
-                while (rs.next()) {
-                    groupRow = new HashMap<String, Object>();
-                    groupRow.put(colName, rs.getObject(colName));
-                    for (String key: titleM.keySet()) {
-                        if(key.indexOf("percent(")>-1){continue;}
-                        groupRow.put(key, rs.getObject(key));
-                    }                    
-                    groupTdList.add(groupRow);
-                }
-                groupMap.put("groupData", groupTdList);
-                groupList.add(groupMap);
-            }
-            
-        } catch (Exception e) {
-            throw new Dtal0404CException(e);
-        } finally {
-            if (conn!=null) {
-                try {
-                    conn.rollback();      
-                    conn.setAutoCommit(autoCommitFlag);
-                } catch (SQLException sqlE) {
-                    sqlE.printStackTrace();
-                }
-            }
-            try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
-            try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
-            try { if (conn!=null) {conn.close(); conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
-        }
+                titleM.put("allCount", "总个数");
 
-        Map<String, Object> userDataM = new HashMap<String, Object>();//元数据信息的数组
-        for (Map<String, Object> gM: groupList) {
-            userDataM.put(((MetadataColumn)gM.get("mc")).getColumnName(),_getJsonDTable_SD(gM, sumRow,titleM,numColNameList));
-        }
-        if (userDataM.size()>0) {
-            sysRd.put("resultType", 1);
-            Map<String, Object> t = new HashMap<String, Object>();
-            //表数据描述
-            Map<String, Object> tbInfoM = new HashMap<String, Object>();
-            JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
-            _dataElement.setAtomData("_tableName", "string", mm.getTableName());
-            tbInfoM.putAll(_dataElement.toJsonMap());
-            t.put("tbInfo", tbInfoM);
-            //字典项统计数据
-            t.put("dictData", userDataM);
-            
-            ret.put("userResultData", t);
+                for (Map.Entry<String, String> entry : fieldM.entrySet()) {
+                    tempColStr += ","+entry.getValue();
+                }
+                String countSql = "select "+tempColStr+" from "+mm.getTableName();
+                ps = conn.prepareStatement(countSql);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    for (String key: titleM.keySet()) {
+                        if (key.indexOf("percent(")>-1) continue;
+                        sumRow.put(key, rs.getObject(key));
+                    }
+                }
+                rs.close();
+                //分项统计
+                for (MetadataColumn mc: dictColM.keySet()) {
+                    Map<String, Object> groupMap = new HashMap<String, Object>();
+                    groupMap.put("mc", mc);
+                    MetadataColSemanteme mcs = dictColM.get(mc);
+                    groupMap.put("mcs", mcs);
+                    colName = mc.getColumnName();
+                    tempColStr = "count(*) allCount";
+                    for (Map.Entry<String, String> entry : fieldM.entrySet()) {
+                        if (!entry.getKey().equals(colName)) tempColStr += ","+entry.getValue();
+                    }
+                    groupSql = "select "+tempColStr+","+colName+" from "+mm.getTableName() + " group by "+colName+" order by count("+colName+") desc";
+                    rs = ps.executeQuery(groupSql);
+                    groupTdList = new ArrayList<Map<String, Object>>();
+                    while (rs.next()) {
+                        groupRow = new HashMap<String, Object>();
+                        groupRow.put(colName, rs.getObject(colName));
+                        for (String key: titleM.keySet()) {
+                            if (key.indexOf("percent(")>-1) continue;
+                            if (key.indexOf(colName)>-1) continue;
+                            groupRow.put(key, rs.getObject(key));
+                        }                    
+                        groupTdList.add(groupRow);
+                    }
+                    groupMap.put("groupData", groupTdList);
+                    groupList.add(groupMap);
+                }
+            } catch (Exception e) {
+                throw new Dtal0404CException(e);
+            } finally {
+                if (conn!=null) {
+                    try {
+                        conn.rollback();
+                        conn.setAutoCommit(autoCommitFlag);
+                    } catch (SQLException sqlE) {
+                        sqlE.printStackTrace();
+                    }
+                }
+                try { if (rs!=null) {rs.close();rs = null;} } catch (Exception e) {e.printStackTrace();} finally {rs = null;};
+                try { if (ps!=null) {ps.close();ps = null;} } catch (Exception e) {e.printStackTrace();} finally {ps = null;};
+                try { if (conn!=null) {conn.close(); conn = null;} } catch (Exception e) {e.printStackTrace();} finally {conn = null;};
+            }
+
+            Map<String, Object> userDataM = new HashMap<String, Object>();//元数据信息的数组
+            for (Map<String, Object> gM: groupList) {
+                userDataM.put(((MetadataColumn)gM.get("mc")).getColumnName(),_getJsonDTable_SD(gM, sumRow, titleM, numColNameList));
+            }
+            if (userDataM.size()>0) {
+                sysRd.put("resultType", 1);
+                Map<String, Object> t = new HashMap<String, Object>();
+                //表数据描述
+                Map<String, Object> tbInfoM = new HashMap<String, Object>();
+                JsonDAtomData _dataElement = new JsonDAtomData("_mdMId", "string", mm.getId());
+                _dataElement.setAtomData("_tableName", "string", mm.getTableName());
+                tbInfoM.putAll(_dataElement.toJsonMap());
+                t.put("tbInfo", tbInfoM);
+                //字典项统计数据
+                t.put("dictData", userDataM);
+                
+                ret.put("userResultData", t);
+            } else sysRd.put("resultType", 2);
         } else sysRd.put("resultType", 2);
 
         return ret;
@@ -209,7 +216,6 @@ public class AnalSingleDict implements TaskProcess {
         Map<String, Object> ret = new HashMap<String, Object>();
         MetadataColumn mc = (MetadataColumn)groupMap.get("mc");
         List<Map<String, Object>> groupTdList = (List<Map<String, Object>>)groupMap.get("groupData");
-        
         
         String colName = mc.getColumnName();
         Map<String, Object> tableInfoM = new HashMap<String, Object>();
@@ -230,7 +236,7 @@ public class AnalSingleDict implements TaskProcess {
             while(iterTitleM.hasNext()){
                 String keyTitleM = (String)iterTitleM.next();
                 String valTitleM = (String)titleM.get(keyTitleM);
-                _titleM.put(keyTitleM, valTitleM); 
+                if (groupTdList.get(0).get(keyTitleM)!=null) _titleM.put(keyTitleM, valTitleM); 
             }
         }
 
@@ -238,7 +244,7 @@ public class AnalSingleDict implements TaskProcess {
         //dataList
         List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
         tableM.put("dataList", dataList);
-        for(Map<String, Object> groupRow : groupTdList){
+        for (Map<String, Object> groupRow : groupTdList) {
             Map<String, Object> rowM = new HashMap<String, Object>();
             rowM.put("category", groupRow.get(colName));
             rowM.put("count", groupRow.get("allCount"));
@@ -259,15 +265,15 @@ public class AnalSingleDict implements TaskProcess {
                 percent = (float)(Math.round(percent*100))/100;
                 rowM.put("percent(SUM_"+ncolName+")", percent);
             }
-            
+
             //加入数值类型统计信息列值
             if(titleM!=null && titleM.size()>0){
                 Iterator<String> iterTitleM = titleM.keySet().iterator();
                 while(iterTitleM.hasNext()){
                     String keyTitleM = (String)iterTitleM.next();
                     Object valTitleM = (Object)groupRow.get(keyTitleM);
-                    if(keyTitleM.indexOf("percent(")>-1){continue;}
-                    rowM.put(keyTitleM, valTitleM);
+                    if(keyTitleM.indexOf("percent(")>-1) continue;
+                    if (valTitleM!=null) rowM.put(keyTitleM, valTitleM);
                 }
             }
             dataList.add(rowM);            

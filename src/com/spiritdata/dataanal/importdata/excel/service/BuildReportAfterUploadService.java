@@ -159,11 +159,12 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                 reportBody.add(rsTn1);
                 //字典内容处理——某一个表
                 ReportSegment rs1_1 = new ReportSegment();
-                rs1_1.setTitle("单项指标分析");
+                rs1_1.setTitle("单字典项指标分析");
                 rs1_1.setId(tempStr);
+                String sIContent="";
                 TreeNode<ReportSegment> rsTn1_1 = new TreeNode<ReportSegment>(rs1_1);
 
-            	//找出数值列(col_1,col2)
+            	//找出数值列
             	List<MetadataColumn> numColList = new ArrayList<MetadataColumn>();
             	for (MetadataColumn mc: mm.getColumnList()) {
             		if (mc.isPk()) continue;
@@ -176,16 +177,17 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                 hasDictTask = false;
                 for (MetadataColumn mc: mm.getColumnList()) {
                     List<MetadataColSemanteme> csl = mc.getColSemList();
-                    if (csl!=null&&csl.size()>0) {                    	
+                    if (csl!=null&&csl.size()>0) {
                         for (int i=0; i<csl.size(); i++) {
                             MetadataColSemanteme mcs = csl.get(i);
                             if (mcs.getSemantemeType()==1&&_od!=null&&_od.getDictModelById(mcs.getSemantemeCode())!=null) {//是字典
+                                sIContent+="、"+mc.getColumnName();
                                 if (!hasDictTask) { //有字典项，生成字典项任务
                                     //任务处理
                                     //4.a.1-单项字典项分析
                                     TaskInfo analSingleDict_Task = new TaskInfo();
                                     analSingleDict_Task.setId(tempStr);
-                                    analSingleDict_Task.setTaskName(mm.getTitleName()+"单项指标分析");
+                                    analSingleDict_Task.setTaskName(mm.getTitleName()+"单字典项指标分析");
                                     analSingleDict_Task.setTaskType(SDConstants.ANAL_MD_SDICT);
                                     analSingleDict_Task.setLangType(TaskLangType.JAVA);
                                     analSingleDict_Task.setExecuteFunc("com.spiritdata.dataanal.metadata.relation.process.AnalSingleDict");
@@ -228,11 +230,9 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 discriptDt.setValue("dictData[^"+mc.getColumnName()+"^]");
                                 discriptDt.setValueFilterFun("first(3|count)");
                                 discriptDt.setDecorateView("{#category#}占#percent(count)#%");
-                                if (dm.dictTree.getChildCount()>3) {
-                                    tempContent += "["+mc.getTitleName()+"]中，大多数为";
-                                } else {
-                                    tempContent += "["+mc.getTitleName()+"]中，";
-                                }
+                                tempContent += "<span style='font-weight:bold'>数量分布</span>";
+                                if (dm.dictTree.getChildCount()>3) tempContent += "，前三位是";
+
                                 //显示二维表格
                                 D_Tag tableDt = new D_Tag();
                                 tableDt.setShowType(DtagShowType.TABLE);
@@ -259,7 +259,8 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                 String numbContent="";
                                 for(int nidx=0;nidx<numColList.size();nidx++){
                                 	MetadataColumn acolmc = (MetadataColumn)numColList.get(nidx);
-                                    numbContent += "数值列["+mc.getTitleName()+"]对["+acolmc.getTitleName()+"]的统计情况如下：<br/>";
+                                	if (acolmc.getTitleName().equals(mc.getTitleName())) continue;
+                                    numbContent += "数值列<span style='font-weight:bold;'>["+acolmc.getTitleName()+"]</span>对["+mc.getTitleName()+"]的统计情况如下：<br/>";
                                     //1：二维表数据
                                     tableDt = new D_Tag();
                                     tableDt.setShowType(DtagShowType.TABLE);
@@ -281,7 +282,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     pieDt = new D_Tag();
                                     pieDt.setShowType(DtagShowType.PIE);
                                     pieDt.setDid(report.getDid(tempStr)+"");
-                                    pieDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    pieDt.setValue("dictData[^"+mc.getColumnName()+"^]");
                                     tempMap = new HashMap<String,String>();
                                     tempMap.put("xAxis", "category");
                                     tempMap.put("yAxis", "SUM_"+acolmc.getColumnName());
@@ -299,7 +300,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     D_Tag lineMaxDt = new D_Tag();
                                     lineMaxDt.setShowType(DtagShowType.LINE);
                                     lineMaxDt.setDid(report.getDid(tempStr)+"");
-                                    lineMaxDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    lineMaxDt.setValue("dictData[^"+mc.getColumnName()+"^]");         
                                     lineMaxDt.setLabel("最大值");
                                     tempMap = new HashMap<String,String>();
                                     tempMap.put("xAxis", "category");
@@ -311,7 +312,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     D_Tag lineMinDt = new D_Tag();
                                     lineMinDt.setShowType(DtagShowType.LINE);
                                     lineMinDt.setDid(report.getDid(tempStr)+"");
-                                    lineMinDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    lineMinDt.setValue("dictData[^"+mc.getColumnName()+"^]");
                                     lineMinDt.setLabel("最小值");
                                     tempMap = new HashMap<String,String>();
                                     tempMap.put("xAxis", "category");
@@ -323,7 +324,7 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     D_Tag lineAvgDt = new D_Tag();
                                     lineAvgDt.setShowType(DtagShowType.LINE);
                                     lineAvgDt.setDid(report.getDid(tempStr)+"");
-                                    lineAvgDt.setValue("dictData[^"+mc.getColumnName()+"^]");                               
+                                    lineAvgDt.setValue("dictData[^"+mc.getColumnName()+"^]");
                                     lineAvgDt.setLabel("平均值");
                                     tempMap = new HashMap<String,String>();
                                     tempMap.put("xAxis", "category");
@@ -333,15 +334,16 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
                                     dTags.addOneDTag(lineAvgDt);
 
                                     numbContent += "<table><tr><td colspan=2>"+tableDt.toHtmlTag()+"</td></tr>"
-                                    +"<tr><td>"+pieDt.toHtmlTag()+"</td><td>"+dTags.toHtmlTag()+"</td></tr></table><br/>";
+                                        +"<tr><td>"+pieDt.toHtmlTag()+"</td><td>"+dTags.toHtmlTag()+"</td></tr></table><br/>";
                                 }
                                 //加到节点上
-                                if (!numbContent.equals("")) numbContent="<span style='font-weight:bold'>数值列情况如下:</span><br/>"+numbContent;
+                                if (!numbContent.equals("")) numbContent="<span style='font-weight:bold'>本指标对应各数值列情况如下:</span><br/>"+numbContent;
                                 rs1_1_loop.setContent(tempContent+numbContent);
                                 TreeNode<ReportSegment> rsTn1_1_loop = new TreeNode<ReportSegment>(rs1_1_loop);
                                 rsTn1_1.addChild(rsTn1_1_loop);
                             }
                         }
+                        sIContent+="经分析Sheet1中可作为指标(字典)项处理的列为："+sIContent.substring(1)+",各指标项分析情况如下——";
                     }
                 }
                 //元数据分析，结构分析
