@@ -201,7 +201,7 @@ $(function() {
   //================显示状态
   setInitPage();
   getNoVisitReports();//先查一次
-  setInterval(getNoVisitReports,30*1000);//半分钟获取一次未读足以，获取未读报告
+  //setInterval(getNoVisitReports,30*1000);//半分钟获取一次未读足以，获取未读报告
   if (activeFlag) {
     var msg="", _type="info";
     if (activeFlag==0||activeFlag==2) {
@@ -387,7 +387,6 @@ function selF() {
   $("#upf").click();
 }
 function uploadF() {
-	alert("DDD");
   try {
     var fileName=$("#upf").val();
     var _pos=fileName.lastIndexOf('.');
@@ -397,7 +396,6 @@ function uploadF() {
       showAlert("数据上传", "抱歉！目前系统不支持对此格式文件的数据处理。", "warning");
       return;
     }
-alert("ABC");
     var form = $('#afUpload');
     $(form).attr('action', _PATH+'/fileUpLoad.do');
     $(form).attr('method', 'POST');
@@ -414,7 +412,6 @@ alert("ABC");
           showAlert("上传异常", e.message+"<br/>返回数据为="+respStr,"error");
         }
         var success=(respJson.jsonType==1&&respJson.data&&(respJson.data.length==1&&respJson.data[0].success));
-        alert(success);
         if (success+""=="TRUE") getNoVisitReports();//重新获取未读
         else {
           var msg = "";

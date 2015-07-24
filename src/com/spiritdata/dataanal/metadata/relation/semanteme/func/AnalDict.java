@@ -31,6 +31,7 @@ import com.spiritdata.dataanal.exceptionC.Dtal0203CException;
  */
 @Component
 public class AnalDict implements AnalMetadata {
+    private final static String dictSemantemeStrs = "班级;类型;类别;型号;分类;type;class";//目前只是中文
     private final static float compressThreshold = 0.7f; //压缩率的阀值，当压缩率大于此值，则认为是字典项目
 
     @Resource
@@ -38,6 +39,20 @@ public class AnalDict implements AnalMetadata {
     @Resource
     private AnalResultFileService arfService;
 
+    /*
+     * 判断数值列是否是字典项的列，通过列名称判断
+     * @param colName 列名称；
+     * @return
+     */
+    private boolean isDictNumbCol(String colName) {
+        String[] flagStrList = dictSemantemeStrs.split(";");
+        for (String flagStr: flagStrList) {
+            if (colName.toLowerCase().indexOf(flagStr)!=-1) {
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * 扫描元数据，分析字典语义，把分析结果写入文件
      *
@@ -55,7 +70,10 @@ public class AnalDict implements AnalMetadata {
 
         Map<String, Object> ret  = new HashMap<String, Object>();
         for (QuotaColumn qc: qt.getQuotaColList()) {
-            if (qc.getCompressRate()>AnalDict.compressThreshold&&(qc.getColumn().getColumnType().equals("String")||qc.getColumn().getColumnType().equals("Integer"))) {//是字典项
+            if (qc.getCompressRate()>AnalDict.compressThreshold&&qc.getColumn().getColumnType().equals("String")) {//是字典项
+                ret.put(qc.getColumn().getColumnName(), qc.getCompressRate());
+            }
+            if (qc.getCompressRate()>AnalDict.compressThreshold&&qc.getColumn().getColumnType().equals("Integer")&&isDictNumbCol(qc.getColumn().getTitleName())) {//是字典项
                 ret.put(qc.getColumn().getColumnName(), qc.getCompressRate());
             }
         }

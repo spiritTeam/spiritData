@@ -24,6 +24,7 @@ import com.spiritdata.dataanal.metadata.relation.pojo.MetadataModel;
 import com.spiritdata.dataanal.metadata.relation.semanteme.SemantemeType;
 import com.spiritdata.framework.core.model.tree.TreeNode;
 import com.spiritdata.framework.util.SequenceUUID;
+import com.spiritdata.framework.util.StringUtils;
 
 /**
  * 元数据字典项调整处理服务
@@ -127,6 +128,7 @@ public class MdDictService {
                     boolean find = false;
                     while (rs.next()) {//处理每个字典项
                         String dictDetailName = rs.getString(1);
+                        if (StringUtils.isNullOrEmptyOrSpace(dictDetailName)) continue;
                         find=false;
                         //找看看是否有相同的
                         if (_dictCache.ddList!=null&&_dictCache.ddList.size()>0) {
