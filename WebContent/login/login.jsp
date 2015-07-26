@@ -99,7 +99,7 @@ if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObjec
 var win;
 var mainPage;
 var winId;
-var checkCode="";
+var _cC="";
 //用于记录未激活用户的信息
 var userInfo = null;
 //此数组有5个元素，分别代表5个需要验证的输入框
@@ -148,12 +148,12 @@ function validateLoginName(){
 }
 //验证码验证
 function validateCheckCode(){
-	var valided = true;
+  var valided = true;
   var val = ($('#checkCode').val()).toUpperCase();
   if (val) {
     win.setMessage({'msg':''});
     vdInfoAry[2] = "";
-    if(val!=checkCode){
+    if(val!=_cC){
       vdInfoAry[2] = "验证码填写错误";
       valided = false;
     }
@@ -161,10 +161,7 @@ function validateCheckCode(){
     $("#checkCode").parent().parent().find(".alertImg").hide();
     vdInfoAry[2] = "验证码为必填项";
     valided = false;
-    //用于测试，等正式上线后需去掉！！！
-    if(ignoreCheckCode){
-      vdInfoAry[2] = "";
-    }
+    if(ignoreCheckCode) vdInfoAry[2] = "";
   }
   ma = getMainAlert($("#checkCode"));
   ma.find(".alertImg").attr("title", vdInfoAry[2]);
@@ -172,14 +169,10 @@ function validateCheckCode(){
   return valided;
 }
 //监测验证码输入
-function checkCodeKeyDown(e){
-	//alert("checkCodeKeyDown()");
-	var e = e||window.event;
-	if(e.keyCode == 13){//回车
-		//if(validateCheckCode()){
-			commit();
-		//}
-	}
+function checkCodeKeyDown(e) {
+  var e = e||window.event;
+  if(e.keyCode == 13){//回车
+  }
 }
 //=以上为验证=============================================
 

@@ -1,13 +1,17 @@
 package com.spiritdata.dataanal.login.web;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,7 +30,8 @@ import com.spiritdata.dataanal.exceptionC.Dtal1101CException;
 import com.spiritdata.dataanal.exceptionC.Dtal1102CException;
 import com.spiritdata.dataanal.exceptionC.Dtal1103CException;
 import com.spiritdata.dataanal.exceptionC.Dtal1104CException;
-import com.spiritdata.dataanal.login.util.RandomValidateCode;
+import com.spiritdata.dataanal.login.checkImage.mem.CheckImageMemoryService;
+import com.spiritdata.dataanal.login.checkImage.mem.OneCheckImage;
 import com.spiritdata.dataanal.login.util.SendValidataUrlToMail;
 
 /**
@@ -113,8 +118,6 @@ public class RegisterController {
             user.setUserName(userName);
             int rst = userService.updateUser(user);
             if (rst==1) {
-                String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
-                FileUtils.deleteFile(new File(toDeletURI));
                 HttpSession session = request.getSession();
                 User userInfo = ((User)session.getAttribute(FConstants.SESSION_USER));
                 if (userInfo!=null) {
@@ -382,22 +385,53 @@ public class RegisterController {
         }
         return retMap;
     }
+
     /**
-     * 得到验证码
+     * 从内存获得一个新的验证码
      */
-    @RequestMapping("login/refreshValidateCode.do")
-    public @ResponseBody Map<String,Object> refreshValidateCode(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping("login/getNewCheckImage.do")
+    public @ResponseBody Map<String,Object> getNewCheckImage(HttpServletRequest request, HttpServletResponse response) {
         Map<String,Object> retMap = new HashMap<String,Object>();
         try {
-            RandomValidateCode randomValidateCode = new RandomValidateCode();
+            CheckImageMemoryService cims = CheckImageMemoryService.getInstance();
+            OneCheckImage oci = cims.getOneCheckImage();
+            request.getSession().setAttribute("BufferImage", oci.getCheckImage());
             retMap.put("success", true);
-            retMap.putAll(randomValidateCode.saveImg2File(request));
-            return retMap;
+            retMap.put("checkCode", oci.getCheckCode());
         } catch (Exception e) {
             retMap.put("success", false);
             retMap.put("retInfo", e.getMessage());
             e.printStackTrace();
-            return retMap;
+        }
+        return retMap;
+    }
+    @RequestMapping("login/drawCheckImage.do")
+    public void drawCheckImage(HttpServletRequest request, HttpServletResponse response) {
+        //禁止图像缓存
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+        response.setContentType("image/jpeg");
+
+        ServletOutputStream sos=null;
+        try {
+            BufferedImage bi = (BufferedImage)request.getSession().getAttribute("BufferImage");
+            if (bi==null) {
+                CheckImageMemoryService cims = CheckImageMemoryService.getInstance();
+                bi = (cims.getCheckImage(request.getParameter("checkCode"))).getCheckImage();
+            }
+            sos = response.getOutputStream();
+            if (bi!=null) ImageIO.write(bi, "jpeg", sos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (sos!=null) {
+                try {
+                    sos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -446,9 +480,6 @@ public class RegisterController {
                 user.setValidataSequence(validatsaSequence);
                 int rst = userService.insertUser(user);
                 if(rst==1){
-                    //删除图片
-                    String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
-                    FileUtils.deleteFile(new File(toDeletURI));
                     //去掉邮件确认的功能
 //                    String deployName = request.getContextPath();
 //                    int  serverPort = request.getServerPort();

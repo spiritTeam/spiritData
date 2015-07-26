@@ -91,7 +91,7 @@
 var win;
 var mainPage;
 var winId;
-var checkCode="";
+var _cC="";
 //此数组有5个元素，分别代表5个需要验证的输入框
 var vdInfoAry = ['账号不能为空','邮箱不能为空','密码不能为空','确认密码不能为空','验证码不能为空'];
 
@@ -244,7 +244,7 @@ function validateCheckCode(){
     $("#checkCode").parent().parent().find(".alertImg").show();
     win.setMessage({'msg':''});
     vdInfoAry[4] = "";
-    if(val!=checkCode){
+    if(val!=_cC){
       vdInfoAry[4] = "验证码填写错误";
       win.setMessage({'msg':vdInfoAry[4]});
       $("#checkCode").parent().parent().find(".alertImg").css("background-image", "url(images/cross.png)");

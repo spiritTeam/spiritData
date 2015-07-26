@@ -48,7 +48,7 @@
     </div>
     <div id="tabPanels">
       <div id="versionDesc" class="tabPanel">
-<span>目前版本</span>：Ver(0.00…00..0.1.0)版(内部公开测试——0.0.1版)<br/>
+<span>目前版本</span>：Ver(0.00…00..0.2.0)版<a href="#" onclick="showVer()" style="text-decoration:underline;">(内部公开测试——0.0.2版)</a><br/>
 <br/>
 <span>提供功能：</span>对电子表格数据Excel的无模式分析。并且仅能分析：<br/>
 1-对一个Excel中的多个页签进行处理<br/>
@@ -57,6 +57,7 @@
 内测版本，功能不完善。预理解报告功能，可浏览<a href="#" onclick="showDemo()" style="text-decoration:underline;">报告样例</a>。
       </div>
       <div id="declare" class="tabPanel">
+<span style="color:red;">我们将于2015年7月28日(周一)22:00至次日凌晨5:00对系统进行维护，若给您带来不便，请见谅！</span><br/><br/>
 <span>在公开内测阶段，我们将：</span><br/>
 1-保证您所上传数据资产的安全性。<br/>
 2-对内测中存在的问题进行及时修改。<br/>
@@ -282,6 +283,9 @@ function showResult() {
 }
 function showDemo() {
   openSWinInMain({"title":"分析报告Demo", "url":"demo/Rd/resultRdEchart.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
+}
+function showVer() {
+  openSWinInMain({"title":"版本说明", "url":"common/version.jsp", "width":1000, "height":600, "iframeScroll":"yes"});
 }
 </script>
 </body>

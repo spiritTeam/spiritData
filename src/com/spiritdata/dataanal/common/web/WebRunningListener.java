@@ -5,6 +5,7 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
+import com.spiritdata.dataanal.login.checkImage.mem.CheckImageMemoryService;
 import com.spiritdata.dataanal.task.run.TaskContextConfig;
 import com.spiritdata.dataanal.task.run.TaskRunning;
 import com.spiritdata.dataanal.visitmanage.run.VisitLogRunning;
@@ -22,6 +23,8 @@ public class WebRunningListener implements ServletContextListener {
             TaskRunning.Beginning(tcc);
             //访问日志框架启动
             VisitLogRunning.Beginning();
+            //初始化验证码内存
+            CheckImageMemoryService.getInstance().initMemory();
         } catch(Exception e) {
             logger.error("初始化任务执行环境异常：",e);
         }

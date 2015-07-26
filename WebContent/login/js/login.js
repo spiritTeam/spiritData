@@ -184,21 +184,19 @@ function initMask(){
 function refreshCCImg(deployName) {
   $("#waittingText").html("请稍候，获取验证码图片...");
   $("#mask").show();
-  $.ajax({type:"post", async:true, url:deployName+"/login/refreshValidateCode.do?"+Math.random(), dataType:"json",
+  $.ajax({type:"post", async:true, url:deployName+"/login/getNewCheckImage.do?"+Math.random(), dataType:"json",
     success: function(json) {
       if (json.success) {
-        $('#checkCode').val('');
-        checkCode = json.checkCode;
-        $("#vcimg").attr("src", deployName+"/"+json.imgSrc+"?"+Math.random());
+        $('#checkCode').val();
+        _cC = json.checkCode;
+        $("#vcimg").attr("src", deployName+"/login/drawCheckImage.do?"+Math.random()+"&checkCode="+json.checkCode);
         $("#mask").hide();
-//        $("#waittingText").html("请稍候，数据提交中...");
       }else {
         if(mainPage) {
           mainPage.$.messager.alert('验证码获取异常',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'error');
         } else {
           $.messager.alert('验证码获取异常',"<div style='margin-left:40px;'>"+json.retInfo+"</div>",'error');
         }
-//        $("#waittingText").html("请稍候，数据提交中...");
       }
     }
   });

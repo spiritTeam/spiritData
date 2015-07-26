@@ -25,7 +25,6 @@ public class SendValidataUrlToMail {
         props.put("mail.smtp.host", host);
         props.put("mail.smtp.auth", Boolean.valueOf(true));
         if (debug) props.put("mail.debug", Boolean.valueOf(debug));
-        System.out.println("开始发送邮件===================targetMail="+targetMail+",mailName="+mailName+", password="+password+",msgText="+msgText);
         MailAuth auth = new MailAuth(mailName, password);
         Session session = Session.getInstance(props, auth);
         session.setDebug(debug);
@@ -37,6 +36,5 @@ public class SendValidataUrlToMail {
         msg.setSentDate(new Date());
         msg.setText(msgText);
         Transport.send(msg);
-        System.out.println("结束发送邮件===================targetMail="+targetMail+",mailName="+mailName+", password="+password+",msgText="+msgText);
     }
 }  

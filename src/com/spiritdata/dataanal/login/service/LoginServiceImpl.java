@@ -58,8 +58,6 @@ public class LoginServiceImpl implements LoginService {
                 retMap.put("user", user);
             } else {
                 changeOwnerId(request.getSession(), user.getUserId());
-                String toDeletURI = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent()+"/checkCodeImges/"+request.getSession().getId();
-                FileUtils.deleteFile(new File(toDeletURI));
                 retMap.put("retInfo", "登录成功！");
                 retMap.put("success", "success");
             }

@@ -17,6 +17,7 @@ import com.spiritdata.filemanage.core.persistence.pojo.FileIndexPo;
 import com.spiritdata.filemanage.core.service.FileManageService;
 import com.spiritdata.filemanage.exceptionC.Flmg0101CException;
 import com.spiritdata.framework.FConstants;
+import com.spiritdata.framework.core.SysConfigManage;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.core.dao.mybatis.MybatisDAO;
 import com.spiritdata.framework.util.FileNameUtils;
@@ -66,8 +67,9 @@ public class AnalResultFileService extends AbstractWriteString2FileByToBeStoreFi
     //=以下文件处理==================
     @Override
     public String buildFileName(String fileNameSeed) {
-        String root = (String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent();
-        String storeFile = FileNameUtils.concatPath(root, "DataCenter/analysis"+File.separator+fileNameSeed+".json");
+        String setDataCenter = SysConfigManage.getValue("DataCenterPath");
+        String root = setDataCenter==null?(String)(SystemCache.getCache(FConstants.APPOSPATH)).getContent():setDataCenter;
+        String storeFile = FileNameUtils.concatPath(root, "/analysis"+File.separator+fileNameSeed+".json");
         return storeFile.replace("\\", "/");
     }
 
