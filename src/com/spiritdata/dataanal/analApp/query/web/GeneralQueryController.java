@@ -65,6 +65,33 @@ public class GeneralQueryController {
 		}
 		return retMap;
     }
+
+    /**
+     * 分页查询,通用查询文件、报告列表，按时间降序排列
+     * @param req
+     * @return
+     */
+    @RequestMapping("searchGeneralPageList.do")
+    public @ResponseBody Map<String,Object> searchGeneralPageList(HttpServletRequest req){
+		Map<String,Object> retMap = new HashMap<String,Object>();
+		try{
+			//组装查询参数
+			Map<String,Object> paramMap = new HashMap<String,Object>();
+			String searchStr = this.trimStr(req.getParameter("searchStr"));
+			if (searchStr!=null) paramMap.put("searchStr", searchStr);
+			int pageNumber = Integer.parseInt(req.getParameter("pageNumber"));
+			paramMap.put("pageNumber", pageNumber);
+			int pageSize = Integer.parseInt(req.getParameter("pageSize"));
+			paramMap.put("pageSize", pageSize);
+			ViewControllerUtil.setSearchOwnerInfo(req, paramMap);
+
+			//查询通用列表(包括文件和报告)
+			retMap = queryViewService.searchGeneralPageList(paramMap);
+		}catch(Exception ex){
+			logger.error("failed to search report list.",ex);
+		}
+		return retMap;
+    }
     
     /**
      * 去掉字符串的空格，如果为空则返回NULL

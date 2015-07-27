@@ -19,13 +19,18 @@
 <link href="<%=path%>/resources/plugins/zui/css/example.css" rel="stylesheet">
 <script src="<%=path%>/resources/plugins/zui/js/zui.min.js"></script>
 <!-- 加载analApp的JS -->
+<script type="text/javascript" src="<%=path%>/resources/plugins/spiritui/jq.spirit.pageFrame.js"></script>
 <script src="<%=path%>/resources/js/visit.utils.js"></script>
 <script src="<%=path%>/analApp/js/analApp.view.js"></script>
+<script src="<%=path%>/analApp/js/zui.pager.js"></script>
 <script src="<%=path%>/reportFrame/serial/js/spirit.report.serial.utils.js"></script>
 
 <title>列表显示查询结果主界面</title>
 </head>
 <style>
+.div{padding:2px;border:1px solid #ddd;width:90%;margin:0 auto;}
+.div_center{margin:0 auto;text-align:center;}
+.border_no{border:0px solid red; }
 .div_float_left{float:left;}
 .padding_top5{padding-top:5px;}
 .font_size13{font-size:13px;}
@@ -55,40 +60,100 @@ background-color: inherit;
 border-radius:10px;
 }
 /*** end 小红圆点，标识未读报告 ***/
+/* 脚部 */
+.footSegment_bgwhite_bordertop{
+  border: 0px solid #95b8e7;
+  border-top: 1px solid #95b8e7;
+  background-color: #FFF;
+}
 </style>
 <body class="padding_top5" style="background-color:#FFFFFF">
-  <div class="list div_float_left" style="width:60%;margin:0 auto;padding:10px 20px 10px 160px;">
+  <div id="mainSegment" class="list div_float_left" style="width:100%;margin:0 auto;padding:10px 30px;">  
     <section id="sectionListId" class="items items-hover">      
-    </section>
+    </section>  
+    <!-- 由于footSegment会遮住mainSegment的底部，所以需要设置一个DIV，不让footSegment遮 -->
+    <div style="height:60px;">
+    </div>  
+  </div>  
+  <div id="footSegment" class="div_center footSegment_bgwhite_bordertop">    
+    <!-- 列表显示分页条 -->
+    <div id="div_pager_list"></div>
   </div>
 </body>
 <script>
-//变量定义
+//*** begin 常量定义 ***
+var pager_list_size = 10; //列表显示时，每页显示的条数
+//*** end 常量定义 ***
+
+//*** begin 变量定义 ***
 var thumbPath = "<%=path%>/analApp/images/"; //报告缩略图所存储的路径
 var defaultThumbImg = "pie.png"; //默认显示的缩略图名称
-var searchResultJsonData = null; //保存查询后的结果
+var searchResultJsonData_list = null; //保存查询后的结果
 var _searchStr = getUrlParam(window.location.href, "searchStr");
 _searchStr = decodeURIComponent(_searchStr);
 
+var pager_list = null; //列表分页对象
+var pager_selected_list = null; //存储最近一次选择的页码，用于切换列表/卡片显示时再次查询
+
+//主窗口参数
+var INIT_PARAM = {
+  //页面中所用到的元素的id，只用到三个Div，另，这三个div应在body层
+  pageObjs: {
+    mainId: "mainSegment", //主体Id
+    footId: "footSegment" //主体Id
+  },
+  page_width: 0,
+  page_height: 0,
+
+  foot_height: 60, //脚部高度
+  foot_peg: false //是否钉住脚部在底端。false：脚部随垂直滚动条移动(浮动)；true：脚部钉在底端
+};
+
+//*** end 变量定义 ***
+
 //主函数
 $(function() {
+	//初始化页面框架
+	var initStr = $.spiritPageFrame(INIT_PARAM);
+	if (initStr) {
+	  showAlert("页面初始化失败", initStr, "error");
+	  return ;
+	};
+	$("#footSegment").removeClass("footSegment").addClass("footSegment_bgwhite_bordertop");
+	
+	//初始化分页
+	initPager();
+	
+	//查询
 	_urlPath = "<%=path%>";  
   startSearch();
 });
 
+//初始化分页
+function initPager(){
+	pager_list = new $.ZuiPager(); 
+	pager_list.initPager({"pageSize":pager_list_size,"divPageId":"div_pager_list","objPager":pager_list,"onSelectPage":selectPage});  
+}
+//选择了某个页面
+function selectPage(pageNumber, pageSize){
+	//alert("onSelectPage()... pageNumber="+pageNumber+";pageSize="+pageSize);
+	startSearch({"pageNumber":pageNumber, "pageSize":pageSize});
+}
+
 //开始查询
-function startSearch() {
-  searchResultJsonData = {};
+function startSearch(searchParam) {
+  //searchResultJsonData_list = {};
   //异步查询文件列表  
-  var searchParam={"searchStr":_searchStr};
-  var url = "<%=path%>/listview/searchGeneralList.do";
+  searchParam = combineSearchParam(searchParam);
+  //var url = "<%=path%>/listview/searchGeneralList.do";
+  var url = "<%=path%>/listview/searchGeneralPageList.do";
   //alert(allFields(searchParam));
   $.ajax({type:"post", async:true, url:url, data:searchParam, dataType:"json",
-    success: function(jsonStr) {
+    success: function(jsonObj) {
       try {
         //searchResultJsonData = str2JsonObj(jsonStr);
-        searchResultJsonData=jsonStr; 
-        showSearchResult();
+        //searchResultJsonData_list=jsonStr;         
+        showSearchResult(jsonObj);
       }catch(e){
         showAlert("解析异常", "查询结果解析成JSON失败：</br>"+(e.message)+"！<br/>", "error", function(){});
       }
@@ -100,11 +165,13 @@ function startSearch() {
 }
 
 //显示查询结果
-function showSearchResult() {
-  if(searchResultJsonData!=null && searchResultJsonData.rows!=null && searchResultJsonData.rows.length>0){
-    var _objList = $('#sectionListId');
-    _objList.empty();
-    var jsonRows = searchResultJsonData.rows;
+function showSearchResult(jsonObj) {
+	searchResultJsonData_list = jsonObj; 
+	var _objList = $('#sectionListId');
+  _objList.empty();
+    
+  if(searchResultJsonData_list!=null && searchResultJsonData_list.rows!=null && searchResultJsonData_list.rows.length>0){
+   var jsonRows = searchResultJsonData_list.rows;
     var len = jsonRows.length;
     for(var i=0;i<len;i++){
       //读取一条记录的内容
@@ -178,9 +245,10 @@ function showSearchResult() {
           +'上传时间：'+highlightStr(createDate,_searchStr)+'&nbsp;&nbsp;&nbsp;'+'简介：'+highlightStr(desc,_searchStr)+'</div>');      
       }
     }
+
+    //设置分页条
+    pager_list.setTotalCount(searchResultJsonData_list.total,pager_selected_list.pageNumber);
   } else {
-    var _objList = $('#sectionListId');
-    _objList.empty();
     //创建一条记录的div
     var divItem = $('<div class="item"></div>');
     divItem.appendTo(_objList);
@@ -195,7 +263,24 @@ function showSearchResult() {
     //创建item-footer       
     var divItemFooter = $('<div class="item-footer"></div>');
     divItemFooter.appendTo(divItem);
+    
+    //隐藏分页条
+    pager_list.hidePager();
   }
 }
+
+
+//过滤查询条件，组装成符合逻辑的查询条件
+function combineSearchParam(searchParam){
+  //如果不存在查询条件（说明是第一次查询），如果查询条件改变，则重置查询页面参数
+  if(!searchParam || !pager_selected_list || _searchStr!=pager_selected_list.searchStr){        
+	  searchParam = {"pageNumber":1, "pageSize":pager_list_size, "searchStr":_searchStr};
+  }else{
+	  searchParam.searchStr = _searchStr;
+  }
+  pager_selected_list = searchParam;   
+  return pager_selected_list;
+}
+
 </script>
 </html>
