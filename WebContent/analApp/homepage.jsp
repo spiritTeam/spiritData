@@ -57,7 +57,7 @@
 内测版本，功能不完善。预理解报告功能，可浏览<a href="#" onclick="showDemo()" style="text-decoration:underline;">报告样例</a>。
       </div>
       <div id="declare" class="tabPanel">
-<span style="color:red;">我们将于2015年7月28日(周一)22:00至次日凌晨5:00对系统进行维护，若给您带来不便，请见谅！</span><br/><br/>
+<!-- <span style="color:red;">我们将于2015年7月28日(周一)22:00至次日凌晨5:00对系统进行维护，若给您带来不便，请见谅！</span><br/><br/>-->
 <span>在公开内测阶段，我们将：</span><br/>
 1-保证您所上传数据资产的安全性。<br/>
 2-对内测中存在的问题进行及时修改。<br/>
@@ -233,6 +233,7 @@ function uploadF() {
           respJson=str2JsonObj(respStr);
         } catch(e) {
           showAlert("上传异常", e.message+"<br/>返回数据为="+respStr,"error");
+          mainPage.showMask(0);
         }
         var success=(respJson.jsonType==1&&respJson.data&&(respJson.data.length==1&&respJson.data[0].success));
         if (success+""=="TRUE") {
@@ -243,9 +244,8 @@ function uploadF() {
           }
         } else {
           var msg = "";
-          if (respJson.data) {
-            msg=allFields(respJson.data[0]);
-          } else {
+          if (respJson.data&&respJson.data[0].message) msg=respJson.data[0].message;
+          else {
             if (respJson.message instanceof string) msg=respJson.message;
             else msg=allFields(respJson.message[0]);
           }

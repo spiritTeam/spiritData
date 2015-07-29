@@ -1,7 +1,6 @@
 package com.spiritdata.dataanal.login.web;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spiritdata.framework.FConstants;
-import com.spiritdata.framework.core.cache.SystemCache;
-import com.spiritdata.framework.util.FileUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.dataanal.UGA.pojo.User;
 import com.spiritdata.dataanal.UGA.service.UserService;

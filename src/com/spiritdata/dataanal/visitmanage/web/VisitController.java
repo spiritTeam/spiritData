@@ -57,4 +57,41 @@ public class VisitController {
         VisitMemoryService vms = VisitMemoryService.getInstance();
         vms.put2Queue(vlp);
     }
+
+    @RequestMapping("_gather.gif")
+    public void gatherWeb(HttpServletRequest req) throws InterruptedException {
+        VisitLogPo vlp = new VisitLogPo();
+
+        Owner o = SessionUtils.getOwner(req.getSession());
+        vlp.setOwnerId(o.getOwnerId());
+        vlp.setOwnerType(o.getOwnerType());
+
+        String temp = req.getParameter("pointInfo");
+        vlp.setPointInfo(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("clientIp");
+        vlp.setClientIp(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("clientMac");
+        vlp.setClientMac(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("equipName");
+        vlp.setEquipName(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("equipVer");
+        vlp.setEquipVer(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("exploreName");
+        vlp.setExploreName(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("exploreVer");
+        vlp.setExploreVer(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("objType");
+        vlp.setObjType(StringUtils.isNullOrEmptyOrSpace(temp)?null:Integer.parseInt(temp));
+        temp = req.getParameter("objId");
+        vlp.setObjId(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("objUrl");
+        vlp.setObjUrl(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+        temp = req.getParameter("fromUrl");
+        vlp.setFromUrl(StringUtils.isNullOrEmptyOrSpace(temp)?null:temp);
+
+        vlp.setVisitTime(new Timestamp(System.currentTimeMillis()));
+
+        VisitMemoryService vms = VisitMemoryService.getInstance();
+        vms.put2Queue(vlp);
+    }
 }

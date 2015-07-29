@@ -88,11 +88,13 @@
     <div class="menuItem" id="updateUser" onclick="updateUser()">&nbsp;修&nbsp;改&nbsp;</div>
   </div>
 </div>
+<!--
 <div id="footSegment">
 <center>
 <div style="align:center;color:red;padding-top:5px;font-weight:bold">我们将于2015年7月28日(周一)22:00至次日凌晨5:00对系统进行维护，若给您带来不便，请见谅！</div>
 </center>
 </div>
+-->
 </body>
 
 <script>
@@ -115,16 +117,16 @@ var wWidth = "330";
 var INIT_PARAM = {
   pageObjs: {
     topId: "topSegment",
-    mainId: "mainSegment",
-    footId: "footSegment"
+//    footId: "footSegment",
+    mainId: "mainSegment"
   },
   page_width: -1,
   page_height: -1,
   top_shadow_color:"#E6E6E6",
   top_height: 50,
   top_peg: false,
-  foot_height: 30,
-  foot_peg: false,
+//  foot_height: 30,
+//  foot_peg: false,
   win_min_width: 870, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分宽度也照此设置
   win_min_height: 480, //页面最小的高度。当窗口高度小于这个值，不对界面位置及尺寸进行调整。主体部分高度也照此设置
   myInit: initPosition,
@@ -423,9 +425,8 @@ function uploadF() {
         if (success+""=="TRUE") getNoVisitReports();//重新获取未读
         else {
           var msg = "";
-          if (respJson.data) {
-            msg=allFields(respJson.data[0]);
-          } else {
+          if (respJson.data&&respJson.data[0].message) msg=respJson.data[0].message;
+          else {
             if (respJson.message instanceof string) msg=respJson.message;
             else msg=allFields(respJson.message[0]);
           }

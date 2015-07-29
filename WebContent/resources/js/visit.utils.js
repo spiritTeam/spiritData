@@ -2,7 +2,6 @@
  * 访问信息收集方法
  * 注意，这个js需要sysInclude.jsp要引用
  */
-
 /**
  * 上传访问日志信息
  * @param objInfo 对象的属性，包括：objType, objId，或objUrl，或fromUrl
@@ -14,7 +13,7 @@
  *   fromUrl:可以设置，也可以不设置
  * }
  */
-function visitLog(objInfo) {
+function visitLog(objInfo) {alert("EEE");
   //获得纯页面信息
   function getPurePage() {
     objInfo = new Object();
