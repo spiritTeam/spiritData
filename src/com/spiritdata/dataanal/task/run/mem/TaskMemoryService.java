@@ -164,12 +164,11 @@ public class TaskMemoryService {
         //一.1 清理内存中的任务结构，注意要在这个过程中，增加已处理对象存储
         //一.1.1 清除任务组
         if (taskGroupMap!=null&&taskGroupMap.size()>0) {
-            boolean canClean = true;
+            boolean canClean = false;
             for (String tgId: taskGroupMap.keySet()) {
-                canClean = false;
+                canClean = (tg.getStatus()==StatusType.SUCCESS||tg.getStatus()==StatusType.ABATE);
                 tg = taskGroupMap.get(tgId);
                 tg.adjustStatus();
-                if (tg.getStatus()==StatusType.SUCCESS||tg.getStatus()==StatusType.ABATE) canClean=true;
                 if (canClean) {
                     //写数据库
                     tmService.updateTaskGroupStatus(tg);

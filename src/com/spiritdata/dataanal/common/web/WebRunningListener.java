@@ -9,10 +9,9 @@ import com.spiritdata.dataanal.login.checkImage.mem.CheckImageMemoryService;
 import com.spiritdata.dataanal.task.run.TaskContextConfig;
 import com.spiritdata.dataanal.task.run.TaskRunning;
 import com.spiritdata.dataanal.visitmanage.run.VisitLogRunning;
-import com.spiritdata.framework.core.web.InitSysConfigListener;
 
 public class WebRunningListener implements ServletContextListener {
-    private Logger logger = Logger.getLogger(InitSysConfigListener.class);
+    private Logger logger = Logger.getLogger(WebRunningListener.class);
 
     @Override
     //初始化

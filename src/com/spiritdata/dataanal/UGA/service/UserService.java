@@ -71,5 +71,4 @@ public class UserService implements UgaUserService {
         }
         return i;
     }
-
 }

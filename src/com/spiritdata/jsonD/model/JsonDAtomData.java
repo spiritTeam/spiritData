@@ -30,7 +30,6 @@ public class JsonDAtomData implements Serializable, Convert2Json {
     public String getDataName() {
         return dataName;
     }
-
     /**
      * 获得数据类型
      * @return 数据类型

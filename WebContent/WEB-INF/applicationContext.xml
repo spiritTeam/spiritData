@@ -57,7 +57,7 @@
   </bean>
 
   <!-- 平台缓存池-->
-  <bean id="cachePool" class=" com.spiritdata.framework.core.cache.CachePool">
+  <bean id="cachePool" class="com.spiritdata.framework.core.cache.CachePool">
     <property name="caches">
       <map>
         <!--<entry key="0" value-ref="cacheDataAnalManage"/>

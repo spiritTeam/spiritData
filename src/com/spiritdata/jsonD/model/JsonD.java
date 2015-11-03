@@ -12,6 +12,7 @@ public class JsonD implements Serializable, Convert2Json {
     private Object _HEAD;//头信息，可以是String reportHead 对象
     private Object _DATA;//报告主题信息，可以是String reportHead 对象
 
+
     public Object get_HEAD() {
         return _HEAD;
     }
@@ -48,5 +49,4 @@ public class JsonD implements Serializable, Convert2Json {
         }
         return jsonS+"}";
     }
-
 }
