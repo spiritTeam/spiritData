@@ -3,6 +3,7 @@
 /test
 /bakSetting.rar
 /Doc
+Doc
 /WebContent/log
 /WebContent/DataCenter
 /WebContent/tempUpload
@@ -10,8 +11,8 @@
 /WebContent/test
 /WebContent/log
 /WebContent/checkCodeImges
-/WebContent/WEB-INF/lib
 /WebContent/WEB-INF/classes
+/WebContent/WEB-INF/lib/BasicPlat-0.1.0.6.jar
 /pom.xml
 /.classpath
 /.project
