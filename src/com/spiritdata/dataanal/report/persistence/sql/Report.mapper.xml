@@ -45,13 +45,13 @@
 
   <!-- 获得记录条数-->
   <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
-    select count(*) from sa_report_info <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+    select count(*) from sa_report_info <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </select>
 
   <!-- 获得列表 -->
   <select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
     select <include refid="Base_Column_List"/> from sa_report_info
-    <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+    <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
     <if test="orderByClause!=null">order by ${orderByClause}</if>
   </select>
 
@@ -67,7 +67,7 @@ where c.id is null and d.id is null and a.ownerType=1 order by a.ownerId,a.cTime
 
   <!-- 获得一条数据 -->
   <select id="getInfo" resultMap="BaseResultMap" parameterType="java.util.Map">
-    select <include refid="Base_Column_List"/> from sa_report_info <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+    select <include refid="Base_Column_List"/> from sa_report_info <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </select>
   <select id="getInfoById" resultMap="BaseResultMap" parameterType="java.lang.String">
     select <include refid="Base_Column_List"/> from sa_report_info where id=#{id,jdbcType=VARCHAR}
@@ -121,6 +121,6 @@ where c.id is null and d.id is null and a.ownerType=1 order by a.ownerId,a.cTime
     delete from sa_report_info where id=#{id,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByEntity" parameterType="java.util.Map">
-    delete from sa_report_info <if test="_parameter=null"><include refid="WhereClauseByEntiey"/></if>
+    delete from sa_report_info <if test="_parameter!=null"><include refid="WhereClauseByEntiey"/></if>
   </delete>
 </mapper>
