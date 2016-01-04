@@ -41,6 +41,7 @@ import com.spiritdata.framework.FConstants;
 import com.spiritdata.framework.core.cache.CacheEle;
 import com.spiritdata.framework.core.cache.SystemCache;
 import com.spiritdata.framework.core.model.tree.TreeNode;
+import com.spiritdata.framework.core.model.tree.TreeNodeBean;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.jsonD.model.AccessJsonD;
 import com.spiritdata.jsonD.model.JsonD;
@@ -316,7 +317,7 @@ public class WordService {
      * @param docx 文档对象
      * @param outLineLvl 
      */
-    private void buildSegmentGroup(TreeNode<ReportSegment> treeNode,XWPFDocument docx, int outLineLvl) {
+    private void buildSegmentGroup(TreeNode<? extends TreeNodeBean> treeNode,XWPFDocument docx, int outLineLvl) {
         //段落
         XWPFParagraph paragraph = docx.createParagraph();
         //设置段落大纲等级 id为前缀+outLineLvl(0~8)
@@ -324,7 +325,7 @@ public class WordService {
         //小标题
         XWPFRun titleRun = paragraph.createRun();
         
-        ReportSegment rs = treeNode.getTnEntity();
+        ReportSegment rs = (ReportSegment)treeNode.getTnEntity();
         String pTitle = rs.getTitle();
         titleRun.setText(pTitle);
         titleRun.setBold(true);
@@ -337,7 +338,7 @@ public class WordService {
             contentRun.setText(content);
             contentRun.setFontSize(WordConstants.REPORT_CONTENT_FONT_SIZZE);
         }
-        List<TreeNode<ReportSegment>> childList  = treeNode.getChildren();
+        List<TreeNode<? extends TreeNodeBean>> childList  = treeNode.getChildren();
         if (childList!=null&&childList.size()>0) {
         	outLineLvl = outLineLvl+1;
             for (int i=0;i<childList.size();i++) {

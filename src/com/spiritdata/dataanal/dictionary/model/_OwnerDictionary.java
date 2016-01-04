@@ -13,7 +13,7 @@ import com.spiritdata.dataanal.common.model.Owner;
  * @author wh
  */
 public class _OwnerDictionary {
-    public ConcurrentHashMap<String, DictModel> dictModelMap; //所有者字典模型的数据集合
+    public ConcurrentHashMap<String, DictModel> dictModelMap; //系统字典项目
     public List<DictMaster> dmList = null; //所有者字典组列表
     public List<DictDetail> ddList = null; //所有者字典项列表
 

@@ -43,6 +43,7 @@ import com.spiritdata.filemanage.category.ANAL.model.AnalResultFile;
 import com.spiritdata.filemanage.category.ANAL.service.AnalResultFileService;
 import com.spiritdata.filemanage.core.model.FileInfo;
 import com.spiritdata.framework.core.model.tree.TreeNode;
+import com.spiritdata.framework.core.model.tree.TreeNodeBean;
 import com.spiritdata.framework.util.FileNameUtils;
 import com.spiritdata.framework.util.SequenceUUID;
 import com.spiritdata.jsonD.util.JsonUtils;
@@ -393,8 +394,8 @@ public class BuildReportAfterUploadService extends AbstractGenerateSessionReport
         if (reportBody!=null&&reportBody.size()>0) {
             for (TreeNode<ReportSegment> rsTn: reportBody) {
                 if (rsTn.getChildCount()>0) {
-                    for (TreeNode<ReportSegment> _rsTn: rsTn.getChildren()) {
-                        ReportSegment rs = _rsTn.getTnEntity();
+                    for (TreeNode<? extends TreeNodeBean> _rsTn: rsTn.getChildren()) {
+                        ReportSegment rs = (ReportSegment)_rsTn.getTnEntity();
                         if (rs.getTitle().equals("结构分析")) {
                             D_Tag tableDt = new D_Tag();
                             tableDt.setShowType(DtagShowType.TABLE);
