@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.spiritdata.framework.core.model.tree.TreeNode;
+import com.spiritdata.framework.core.model.tree.TreeNodeBean;
 import com.spiritdata.jsonD.Convert2Json;
 
 /**
@@ -42,19 +43,19 @@ public class SegmentList<E> extends ArrayList<TreeNode<ReportSegment>> implement
         return ret+"]";
     }
 
-    private String convertList2Json(List<TreeNode<ReportSegment>> children) {
+    private String convertList2Json(List<TreeNode<? extends TreeNodeBean>> children) {
         if (children.size()==0) return "[]";
         String ret = "[";
         String tempStr;
         for (int i=0; i<children.size(); i++) {
-            TreeNode<ReportSegment> oneSeg = children.get(i);
+            TreeNode<? extends TreeNodeBean> oneSeg = children.get(i);
             if (i>0) ret +=",";
             ret +="{\"id\":\""+oneSeg.getId()+"\"";
             tempStr = oneSeg.getTnEntity().getNodeName();
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"name\":\""+tempStr+"\"";
-            tempStr = oneSeg.getTnEntity().getTitle();
+            tempStr = ((ReportSegment)oneSeg.getTnEntity()).getTitle();
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"title\":\""+tempStr+"\"";
-            tempStr = oneSeg.getTnEntity().getContent();
+            tempStr = ((ReportSegment)oneSeg.getTnEntity()).getContent();
             if (tempStr!=null&&tempStr.trim().length()>0) ret +=",\"content\":\""+tempStr+"\"";
             //处理子树
             if (oneSeg.getChildren()!=null&&oneSeg.getChildren().size()>0) {
